@@ -53,7 +53,7 @@ extension ExploreCollectionsController {
         section.orthogonalScrollingBehavior = .groupPaging
         section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
 
-        let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(44)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
+        let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(50)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
         supp.contentInsets = .init(top: 0, leading: 0, bottom: 15, trailing: 0)
         section.boundarySupplementaryItems = [supp]
         return section
@@ -80,7 +80,7 @@ extension ExploreCollectionsController {
         section.orthogonalScrollingBehavior = .continuous
         section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
 
-        let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(44)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
+        let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(50)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
         supp.contentInsets = .init(top: 0, leading: 0, bottom: 7, trailing: 0)
         section.boundarySupplementaryItems = [supp]
 
@@ -108,7 +108,7 @@ extension ExploreCollectionsController {
         section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
         section.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
         section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
-        let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(44)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
+        let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(50)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
         supp.contentInsets = .init(top: 0, leading: 0, bottom: 15, trailing: 0)
         section.boundarySupplementaryItems = [supp]
         return section
@@ -135,7 +135,7 @@ extension ExploreCollectionsController {
         section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
         section.orthogonalScrollingBehavior = .none
         section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
-        let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(44)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
+        let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(50)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
         supp.contentInsets = .init(top: 0, leading: 0, bottom: 15, trailing: 0)
         section.boundarySupplementaryItems = [supp]
         return section
@@ -162,7 +162,7 @@ extension ExploreCollectionsController {
         section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
         section.orthogonalScrollingBehavior = .groupPaging
         section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
-        let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(44)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
+        let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(50)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
         supp.contentInsets = .init(top: 0, leading: 0, bottom: 15, trailing: 0)
         section.boundarySupplementaryItems = [supp]
         return section

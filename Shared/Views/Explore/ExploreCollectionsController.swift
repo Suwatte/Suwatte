@@ -589,12 +589,12 @@ extension CTR {
         var request: DSKCommon.SearchRequest?
         @EnvironmentObject var source: DSK.ContentSource
         var body: some View {
-            HStack(alignment: .center) {
+            HStack(alignment: .bottom) {
                 VStack(alignment: .leading) {
-                    Spacer()
                     Text(excerpt.title)
                         .font(.headline)
                         .fontWeight(.semibold)
+                        .lineLimit(2)
                     if let subtitle = excerpt.subtitle {
                         Text(subtitle)
                             .font(.subheadline)
@@ -609,6 +609,7 @@ extension CTR {
                     }
                 }
             }
+            .frame(maxWidth: UIScreen.main.bounds.width - 20)
         }
     }
 
