@@ -792,7 +792,7 @@
 			path = Categories;
 			sourceTree = "<group>";
 		};
-		DF6B5751288F41E9007C6B78 /* DaisukeEngine */ = {
+		DF6B5751288F41E9007C6B78 /* Daisuke */ = {
 			isa = PBXGroup;
 			children = (
 				DF9BD65628924100006628D0 /* EventHandlers */,
@@ -804,7 +804,7 @@
 				DF6B5753288F42D6007C6B78 /* Daisuke.swift */,
 				DF6B5761288F6893007C6B78 /* DSK+Protocol.swift */,
 			);
-			path = DaisukeEngine;
+			path = Daisuke;
 			sourceTree = "<group>";
 		};
 		DF6B5757288F4529007C6B78 /* Error */ = {
@@ -915,7 +915,7 @@
 		DF8D09DF2800EE47003E4C3E /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				DF6B5751288F41E9007C6B78 /* DaisukeEngine */,
+				DF6B5751288F41E9007C6B78 /* Daisuke */,
 				DFB47EF52880C1E70040A1BD /* OPDS */,
 				DF248F10281385F400818300 /* Services */,
 				DF8D09E42800EE47003E4C3E /* Singletons */,
