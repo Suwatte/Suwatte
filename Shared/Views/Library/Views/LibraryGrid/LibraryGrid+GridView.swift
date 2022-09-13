@@ -98,7 +98,7 @@ extension LibraryView.LibraryGrid {
                         let editCollectionsAction = UIAction(title: "Manage", image: .init(systemName: "gearshape"))
                             { _ in
                                 //
-                                let controller = UIHostingController(rootView: ProfileView.Sheets.LibrarySheet().environmentObject(content))
+                                let controller = UIHostingController(rootView: ProfileView.Sheets.LibrarySheet(storedContent: content))
                                 KEY_WINDOW?.rootViewController?.present(controller, animated: true)
                             }
 

@@ -20,7 +20,7 @@ extension ProfileView {
         var body: some View {
             Main
                 .sheet(isPresented: $viewModel.presentCollectionsSheet, content: {
-                    ProfileView.Sheets.LibrarySheet()
+                    ProfileView.Sheets.LibrarySheet(storedContent: viewModel.storedContent)
                 })
                 .sheet(isPresented: $viewModel.presentTrackersSheet, content: {
                     ProfileView.Sheets.TrackersSheet()

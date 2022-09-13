@@ -52,7 +52,8 @@ extension DaisukeEngine.Structs {
         
         var subtitle: String?
         var tags: [String]?
-        
+        var stats: Stats?
+        var updates: Updates?
         var id: String {
             contentId
         }
@@ -61,6 +62,18 @@ extension DaisukeEngine.Structs {
             var covers = [cover]
             covers += additionalCovers ?? []
             return Array(Set(covers))
+        }
+        
+        struct Stats: Parsable, Hashable {
+            var views: Int?
+            var follows: Int?
+            var rating: Double?
+        }
+        
+        struct Updates: Parsable, Hashable {
+            var label: String
+            var date: Date?
+            var count: Int?
         }
     }
 }

@@ -30,9 +30,9 @@ extension StoredChapter: Codable {
         volume = try container.decodeIfPresent(Double.self, forKey: .volume)
 
         title = try container.decodeIfPresent(String.self, forKey: .title)
-        language = try container.decode(String.self, forKey: .language)
+        language = try container.decodeIfPresent(String.self, forKey: .language)
         date = try container.decode(Date.self, forKey: .date)
-        webUrl = try container.decode(String.self, forKey: .webUrl)
+        webUrl = try container.decodeIfPresent(String.self, forKey: .webUrl)
         providers = try container.decodeIfPresent(List<ChapterProvider>.self, forKey: .providers) ?? List<ChapterProvider>() // Schema 6 Addition
     }
 

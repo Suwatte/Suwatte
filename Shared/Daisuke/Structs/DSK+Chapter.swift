@@ -8,22 +8,22 @@
 import Foundation
 
 extension DaisukeEngine.Structs {
-    struct Chapter: Parsable, Identifiable, Hashable {
-        var id: String
+    struct Chapter: Parsable, Hashable {
+        var chapterId: String
         var contentId: String
         var number: Double
         var volume: Double?
-        var language: String
+        var language: String?
         var title: String?
         var date: Date
         var data: ChapterData?
-        var providers: [DSKCommon.ChapterProvider]
+        var providers: [DSKCommon.ChapterProvider]?
         var index: Int
-        var webUrl: String
+        var webUrl: String?
     }
 
-    struct ChapterData: Parsable, Identifiable, Hashable {
-        var id: String
+    struct ChapterData: Parsable, Hashable {
+        var chapterId: String
         var contentId: String
         var pages: [StoredChapterPage]
         var text: String?

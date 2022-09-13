@@ -27,7 +27,7 @@ struct ChapterListTile: View {
             }
 
             HStack {
-                Text(String.getFlag(from: chapter.language))
+                Text(String.getFlag(from: chapter.language ?? "unknown"))
                 ScanlatorView()
                 Spacer()
                 Text(chapter.date.timeAgoGrouped())

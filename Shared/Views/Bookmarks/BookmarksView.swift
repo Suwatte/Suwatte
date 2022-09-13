@@ -10,7 +10,6 @@ import RealmSwift
 import SwiftUI
 
 struct BookmarksView: View {
-    @EnvironmentObject var entry: StoredContent
     @EnvironmentObject var model: ProfileView.ViewModel
     @ObservedResults(Bookmark.self) var bookmarks
     @State var selectedChapter: StoredChapter?
@@ -60,7 +59,7 @@ struct BookmarksView: View {
             .navigationTitle("Bookmarks")
             .closeButton()
             .fullScreenCover(item: $selectedChapter) { chapter in
-                ReaderGateWay(readingMode: entry.recommendedReadingMode, chapterList: [chapter], openTo: chapter, pageIndex: openToIndex)
+                ReaderGateWay(readingMode: model.content.recommendedReadingMode ?? .PAGED_COMIC, chapterList: [chapter], openTo: chapter, pageIndex: openToIndex)
             }
         }
     }
@@ -73,8 +72,8 @@ struct BookmarksView: View {
         bookmarks
             .where { $0.marker != nil }
             .where { $0.marker.chapter != nil }
-            .where { $0.marker.chapter.sourceId == entry.sourceId }
-            .where { $0.marker.chapter.contentId == entry.contentId }
+            .where { $0.marker.chapter.sourceId == model.source.id }
+            .where { $0.marker.chapter.contentId == model.content.contentId }
     }
 
     var SortedIdentifiers: [ChapterMarker] {

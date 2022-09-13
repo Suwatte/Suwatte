@@ -11,8 +11,6 @@ import SwiftUI
 import UIKit
 
 extension ProfileView {
-    // TODO: Rework this, complicated mess that could be made 10x Simpler
-    // Remove Realm Objects?
     final class ViewModel: ObservableObject {
         @Published var entry: DaisukeEngine.Structs.Highlight
         var source: DaisukeEngine.ContentSource
@@ -68,9 +66,9 @@ extension ProfileView.ViewModel {
             } catch {
                 print("Storage Error" ,error)
             }
-//            Task {
-//                await self.loadChapters(parsed.chapters)
-//            }
+            Task {
+                await self.loadChapters(parsed.chapters)
+            }
         } catch {
             await MainActor.run(body: {
                 if loadableContent.LOADED {
@@ -99,29 +97,32 @@ extension ProfileView.ViewModel {
         } else {
             do {
                 let parsedChapters = try await source.getContentChapters(contentId: entry.id)
-                await MainActor.run(body: {
-                    threadSafeChapters = parsedChapters
-                })
                 let stored = parsedChapters.map { $0.toStoredChapter(withSource: source) }
                 DataManager.shared.storeChapters(stored)
-//
                 let unmanaged = parsedChapters.map { $0.toStoredChapter(withSource: source) }
-
-                await UIView.animate(withDuration: 0.1) { [weak self] in
-                    self?.chapters = .loaded(unmanaged)
-                    self?.working = false
-                } completion: { complete in
-                    if !complete { return }
-                }
+                
+                await MainActor.run(body: {
+                    threadSafeChapters = parsedChapters
+                    chapters = .loaded(unmanaged)
+                    working = false
+                })
             } catch {
-                if chapters.LOADED {
-                    ToastManager.shared.setError(msg: "Failed to Fetch Chapters")
-                    return
-                } else {
-                    chapters = .failed(error)
+                
+                await MainActor.run(body: {
+                    if chapters.LOADED {
+                        ToastManager.shared.setError(msg: "Failed to Fetch Chapters")
+                        return
+                    } else {
+                        chapters = .failed(error)
+                    }
+                    working = false
+                    ToastManager.shared.setError(error: error)
+                })
+                
+                Task {
+                    setChaptersFromDB()
                 }
-                working = false
-                ToastManager.shared.setError(error: error)
+                
             }
         }
 
@@ -139,6 +140,8 @@ extension ProfileView.ViewModel {
         notificationToken?.invalidate()
         notificationToken = nil
     }
+    
+    func setChaptersFromDB() {}
 
     @MainActor
     func getMarkers() {
@@ -339,7 +342,7 @@ extension ProfileView.ViewModel {
         // Init Realm
         // Save New Chapters
         let targets = chapters
-            .filter { readChapterIds.contains($0.id) }
+            .filter { readChapterIds.contains($0.chapterId) }
             .map { $0.toStoredChapter(withSource: source) }
 
         // Mark Chapters As Read

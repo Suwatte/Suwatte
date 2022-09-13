@@ -91,8 +91,7 @@ extension ReaderView {
                     }
                 }
                 .sheet(isPresented: $openCollectionSheet) {
-                    ProfileView.Sheets.LibrarySheet()
-                        .environmentObject(entry)
+                    ProfileView.Sheets.LibrarySheet(storedContent: entry)
                 }
                 .padding()
                 .background(Color.primary.opacity(0.05))

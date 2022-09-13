@@ -62,20 +62,20 @@ extension ExploreView.HighlightTile {
                 }
 
                 Spacer()
-//                VStack(alignment: .leading) {
-//                    if let views = entry.stats?.views, views != 0 {
-//                        Text("\(views) Views")
-//                    }
-//                    if let follows = entry.stats?.follows, follows != 0 {
-//                        Text("\(follows) Follows")
-//                    }
-//
-//                    if let rating = entry.stats?.rating {
-//                        Text("\(rating.clean) \(Image(systemName: "star.fill"))")
-//                    }
-//                }
-//                .font(.subheadline.weight(.light))
-//                .opacity(0.55)
+                VStack(alignment: .leading) {
+                    if let views = entry.stats?.views, views != 0 {
+                        Text("\(views) Views")
+                    }
+                    if let follows = entry.stats?.follows, follows != 0 {
+                        Text("\(follows) Follows")
+                    }
+
+                    if let rating = entry.stats?.rating {
+                        Text("\(rating.clean) \(Image(systemName: "star.fill"))")
+                    }
+                }
+                .font(.subheadline.weight(.light))
+                .opacity(0.55)
             }
             .padding(.vertical, 7)
             .padding(.trailing, 5)
@@ -139,15 +139,24 @@ extension ExploreView.HighlightTile {
                     .fontWeight(.bold)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
+                if let subtitle = entry.subtitle {
+                    Text(subtitle + "This is a test")
+                        .font(.headline)
+                        .fontWeight(.light)
 
-//                if let chapter = entry.chapter {
-//                    Text("\(chapter.label) • \(chapter.date.timeAgo())")
-//                        .font(.headline)
-//                        .fontWeight(.light)
-//                    Text("\(chapter.badge) Update\(chapter.badge > 1 ? "s" : "")")
-//                        .font(.subheadline)
-//                        .fontWeight(.light)
-//                }
+                }
+
+                if let updates = entry.updates {
+                    let date = updates.date?.timeAgo()
+                    Text("\(updates.label)\(date.map({ " • \($0)" }) ?? "")")
+                        .font(.headline)
+                        .fontWeight(.light)
+                    if let badge = updates.count {
+                        Text("\(badge) Update\(badge > 1 ? "s" : "")")
+                            .font(.subheadline)
+                            .fontWeight(.light)
+                    }
+                }
             }
             .padding(.vertical, 7)
             .padding(.trailing, 5)

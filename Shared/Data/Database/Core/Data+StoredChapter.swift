@@ -21,10 +21,10 @@ final class StoredChapter: Object, ObjectKeyIdentifiable {
     @Persisted var number: Double
     @Persisted var volume: Double?
     @Persisted var title: String?
-    @Persisted var language: String
+    @Persisted var language: String?
     @Persisted var date: Date
 
-    @Persisted var webUrl: String
+    @Persisted var webUrl: String?
 
     @Persisted var providers: List<ChapterProvider>
 
@@ -60,11 +60,11 @@ extension DaisukeEngine.Structs.Chapter {
     func toStoredChapter(withSource source: DaisukeEngine.ContentSource) -> StoredChapter {
         let chapter = StoredChapter()
 
-        chapter._id = "\(source.id)||\(contentId)||\(id)"
+        chapter._id = "\(source.id)||\(contentId)||\(chapterId)"
 
         chapter.sourceId = source.id
         chapter.contentId = contentId
-        chapter.chapterId = id
+        chapter.chapterId = chapterId
 
         chapter.number = number
         chapter.volume = (volume == nil || volume == 0.0) ? nil : volume
@@ -75,7 +75,7 @@ extension DaisukeEngine.Structs.Chapter {
         chapter.index = index
         chapter.webUrl = webUrl
 
-        let providers = providers.map { provider -> ChapterProvider in
+        let providers = providers?.map { provider -> ChapterProvider in
             let links = provider.links.map { link -> ChapterProviderLink in
                 let l = ChapterProviderLink()
                 l.url = link.url
@@ -88,7 +88,7 @@ extension DaisukeEngine.Structs.Chapter {
             p.name = provider.name
             p.id = provider.id
             return p
-        }
+        } ?? []
         chapter.providers.append(objectsIn: providers)
         return chapter
     }
