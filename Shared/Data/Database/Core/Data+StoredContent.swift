@@ -51,7 +51,6 @@ final class StoredContent: Object, ObjectKeyIdentifiable {
 extension StoredContent {
     func updateId() {
         _id = "\(sourceId)||\(contentId)"
-        print("UPDATING:", _id)
     }
     func toHighlight() -> DaisukeEngine.Structs.Highlight {
         .init(contentId: contentId, cover: cover, title: title)

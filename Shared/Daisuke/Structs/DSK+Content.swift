@@ -59,9 +59,10 @@ extension DaisukeEngine.Structs {
         }
         
         var covers: [String] {
-            var covers = [cover]
-            covers += additionalCovers ?? []
-            return Array(Set(covers))
+            var covers = additionalCovers ?? []
+            covers.removeAll(where: { $0 == cover })
+            covers.insert(cover, at: 0)
+            return covers
         }
         
         struct Stats: Parsable, Hashable {

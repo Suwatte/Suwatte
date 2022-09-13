@@ -54,8 +54,7 @@ struct ChapterList: View {
             if let chapters = model.chapters.value {
                 ChaptersView(orderedChapters(chapters))
                     .fullScreenCover(item: $selection) { chapter in
-                        Text("")
-//                        ReaderGateWay(readingMode: model.content.recommendedReadingMode ?? .PAGED_COMIC, chapterList: chapters, openTo: chapter)
+                        ReaderGateWay(readingMode: model.content.recommendedReadingMode ?? .PAGED_COMIC, chapterList: chapters, openTo: chapter)
                     }
             } else {
                 Text("No Chapters Found")

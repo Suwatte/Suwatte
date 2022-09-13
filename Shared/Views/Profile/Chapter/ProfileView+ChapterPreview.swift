@@ -42,6 +42,9 @@ extension ProfileView.Skeleton.ChapterView {
                 Spacer()
             }
             .animation(.easeInOut(duration: 0.25), value: model.chapters)
+            .onAppear {
+                $markers.where = { $0.chapter.sourceId == model.source.id && $0.chapter.contentId == model.content.contentId && $0.chapter != nil }
+            }
         }
 
         @ViewBuilder
