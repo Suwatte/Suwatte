@@ -38,76 +38,73 @@ extension DaisukeEngine.Structs {
             "\(sourceId)||\(contentId)"
         }
     }
-
+    
     struct URLContentIdentifer: Parsable {
         var contentId: String
         var chapterId: String?
     }
-
+    
     struct Highlight: Parsable, Identifiable, Hashable {
-        var id: String
-        var covers: [String]
+        var contentId: String
+        var cover: String
+        var additionalCovers: [String]?
         var title: String
-
+        
         var subtitle: String?
         var tags: [String]?
-
-        var stats: Stats?
-        var chapter: Chapter?
-
-        struct Stats: Parsable, Hashable {
-            var rating: Double?
-            var views: Int?
-            var follows: Int?
+        
+        var id: String {
+            contentId
         }
-
-        struct Chapter: Parsable, Hashable {
-            var label: String
-            var id: String
-            var date: Date
-            var badge: Int
+        
+        var covers: [String] {
+            var covers = [cover]
+            covers += additionalCovers ?? []
+            return Array(Set(covers))
         }
     }
 }
 
 extension DaisukeEngine.Structs {
-    struct Content: Parsable, Identifiable, Hashable {
-        var id: String
+    struct Content: Parsable, Hashable {
+        
+        var contentId: String
         var title: String
-        var additionalTitles: [String]
-        var status: ContentStatus
-        var covers: [String]
-        var creators: [String]
-        var summary: String
-        var adultContent: Bool
-        var url: String
-        var properties: [StoredProperty]
-        var recommendedReadingMode: ReadingMode
-        var chapters: [Chapter]?
-        var trackerInfo: TrackerInfo?
+        var cover: String
+        
+        var additionalCovers: [String]?
+        var webUrl: String?
+        var status: ContentStatus?
+        var creators: [String]?
+        var summary: String?
+        var adultContent: Bool?
+        var additionalTitles: [String]?
+        var properties: [Property]?
+        var contentType: ExternalContentType?
+        var recommendedReadingMode: ReadingMode?
+        var nonInteractiveProperties: [NonInteractiveProperty]?
         var includedCollections: [HighlightCollection]?
-        var contentType: ExternalContentType
-
-        struct TrackerInfo: Parsable, Hashable {
-            var al: String?
-            var mal: String?
-            var kt: String?
-            var mu: String?
+        var trackerInfo: [String: String]?
+        var chapters: [Chapter]?
+        
+        var covers: [String] {
+            var covers = [cover]
+            covers += additionalCovers ?? []
+            return Array(Set(covers))
         }
+        
+        static let placeholder: Self = .init(contentId: .random(), title: .random(), cover: .random())
     }
 }
 
 extension DaisukeEngine.Structs.Highlight {
     static func placeholders() -> [Self] {
-        var out = [Self]()
-        for _ in 1 ... 30 {
-            let entry = Self(id: UUID().uuidString, covers: [""], title: String.random(), subtitle: String.random(), tags: nil, stats: nil, chapter: nil)
-            out.append(entry)
+        (0...30).map { val in
+            Self.init(contentId: String.random(), cover: String.random(), title: String.random())
         }
-        return out
     }
 
     static func withId(id: String) -> Self {
-        .init(id: id, covers: [], title: "", subtitle: nil, tags: nil, stats: nil, chapter: nil)
+        .init(contentId: id, cover: String.random(), title: String.random())
     }
 }

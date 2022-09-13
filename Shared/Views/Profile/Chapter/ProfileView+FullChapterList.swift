@@ -51,10 +51,11 @@ struct ChapterList: View {
     @Environment(\.editMode) var editMode
     var body: some View {
         Group {
-            if let chapters = model.chapters.value, let content = model.content.value {
+            if let chapters = model.chapters.value {
                 ChaptersView(orderedChapters(chapters))
                     .fullScreenCover(item: $selection) { chapter in
-                        ReaderGateWay(readingMode: content.recommendedReadingMode, chapterList: chapters, openTo: chapter)
+                        Text("")
+//                        ReaderGateWay(readingMode: model.content.recommendedReadingMode ?? .PAGED_COMIC, chapterList: chapters, openTo: chapter)
                     }
             } else {
                 Text("No Chapters Found")
@@ -65,65 +66,65 @@ struct ChapterList: View {
         })
         .animation(.default, value: selections)
         .navigationTitle("Chapters")
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                EditButton()
-
-                if editMode?.wrappedValue == .active {
-                    Menu {
-                        Menu("Select") {
-                            Button("Select All") { selectAll() }
-                            Button("Deselect All") { deselectAll() }
-                            Button("Fill Range") { fillRange() }
-                            Button("Invert Selection") { invertSelection() }
-                        }
-                        Menu("Mark") {
-                            Button("Read") { markAsRead() }
-                            Button("Unread") { markAsUnread() }
-                        }
-
-                        Menu("Options") {
-                            if let readingMode = model.content.value?.recommendedReadingMode, ![ReadingMode.NOVEL, .WEB].contains(readingMode) {
-                                Button("Download Chapter(s)") { addToDownloadQueue() }
-                                Button("Delete / Cancel Download(s)") { removeDownload() }
-                            }
-
-                            Button("Reset Chapter Data", role: .destructive) { clearChapterData() }
-                        }
-
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
-                    }
-                } else {
-                    Menu {
-                        Picker("Sort By", selection: $sortKey) {
-                            ForEach(ChapterSortOption.allCases) {
-                                Text($0.description)
-                                    .tag($0)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        Button {
-                            sortDesc.toggle()
-                        } label: {
-                            Label("Order", systemImage: sortDesc ? "chevron.down" : "chevron.up")
-                        }
-                        Divider()
-                        Button { showOnlyDownloads.toggle() } label: {
-                            HStack {
-                                Text("Downloaded Only")
-                                Spacer()
-                                if showOnlyDownloads {
-                                    Image(systemName: "checkmark")
-                                }
-                            }
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
-                    }
-                }
-            }
-        }
+//        .toolbar {
+//            ToolbarItemGroup(placement: .navigationBarTrailing) {
+//                EditButton()
+//
+//                if editMode?.wrappedValue == .active {
+//                    Menu {
+//                        Menu("Select") {
+//                            Button("Select All") { selectAll() }
+//                            Button("Deselect All") { deselectAll() }
+//                            Button("Fill Range") { fillRange() }
+//                            Button("Invert Selection") { invertSelection() }
+//                        }
+//                        Menu("Mark") {
+//                            Button("Read") { markAsRead() }
+//                            Button("Unread") { markAsUnread() }
+//                        }
+//
+//                        Menu("Options") {
+//                            if let readingMode = model.content.value?.recommendedReadingMode, ![ReadingMode.NOVEL, .WEB].contains(readingMode) {
+//                                Button("Download Chapter(s)") { addToDownloadQueue() }
+//                                Button("Delete / Cancel Download(s)") { removeDownload() }
+//                            }
+//
+//                            Button("Reset Chapter Data", role: .destructive) { clearChapterData() }
+//                        }
+//
+//                    } label: {
+//                        Image(systemName: "ellipsis.circle")
+//                    }
+//                } else {
+//                    Menu {
+//                        Picker("Sort By", selection: $sortKey) {
+//                            ForEach(ChapterSortOption.allCases) {
+//                                Text($0.description)
+//                                    .tag($0)
+//                            }
+//                        }
+//                        .pickerStyle(.menu)
+//                        Button {
+//                            sortDesc.toggle()
+//                        } label: {
+//                            Label("Order", systemImage: sortDesc ? "chevron.down" : "chevron.up")
+//                        }
+//                        Divider()
+//                        Button { showOnlyDownloads.toggle() } label: {
+//                            HStack {
+//                                Text("Downloaded Only")
+//                                Spacer()
+//                                if showOnlyDownloads {
+//                                    Image(systemName: "checkmark")
+//                                }
+//                            }
+//                        }
+//                    } label: {
+//                        Image(systemName: "ellipsis.circle")
+//                    }
+//                }
+//            }
+//        }
     }
 
     func ChaptersView(_ chapters: [StoredChapter]) -> some View {
@@ -248,8 +249,8 @@ extension ChapterList {
         } else {
             Button {
                 ICDM.shared.add(chapters: [chapter])
-
-                if let c = model.content.value,!DataManager.shared.isInLibrary(content: c) {
+                let c = model.storedContent
+                if !DataManager.shared.isInLibrary(content: c) {
                     DataManager.shared.toggleLibraryState(for: c)
                 }
             } label: {
@@ -361,7 +362,8 @@ extension ChapterList {
         DataManager.shared.bulkMarkChapter(chapters: Array(selections), completed: false)
         deselectAll()
 
-        if let c = model.content.value, !DataManager.shared.isInLibrary(content: c) {
+        let c = model.storedContent
+        if !DataManager.shared.isInLibrary(content: c) {
             DataManager.shared.toggleLibraryState(for: c)
         }
     }

@@ -8,7 +8,7 @@
 import Foundation
 
 extension DSKCommon {
-    enum AuthMethod: Int, Decodable {
+    enum AuthMethod: Int, Codable {
         case username_pw, email_pw, web, oauth
 
         var isBasic: Bool {

@@ -306,7 +306,8 @@ extension NovelReaderView.ViewModel {
     }
 
     private func getTrackerInfo(_ id: String) -> StoredTrackerInfo? {
-        content?.trackerInfo ?? DataManager.shared.getTrackerInfo(id)
+//        content?.trackerInfo ?? DataManager.shared.getTrackerInfo(id)
+        return nil
     }
 
     func handleNavigation(_ point: CGPoint) {

@@ -71,7 +71,7 @@ extension DataManager {
         Task { @MainActor in
             do {
                 let content = try await source.getContent(id: contentID)
-                let storedContent = content.toStoredContent(withSource: source)
+                let storedContent = try content.toStoredContent(withSource: source)
 
                 let realm = try await Realm()
                 try! realm.safeWrite {

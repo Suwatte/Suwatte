@@ -20,7 +20,7 @@ struct SuwatteApp: App {
                 }
                 .sheet(item: $navModel.identifier) { ids in
                     NavigationView {
-                        ProfileView(entry: .init(id: ids.contentId, covers: [], title: ""), sourceId: ids.sourceId)
+                        ProfileView(entry: .init(contentId: ids.contentId, cover: STTHost.coverNotFound.absoluteString, title: ""), sourceId: ids.sourceId)
                             .closeButton()
                     }
                 }

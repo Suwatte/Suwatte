@@ -384,7 +384,7 @@ extension ReaderView.ViewModel {
     }
 
     private func getTrackerInfo(_ id: String) -> StoredTrackerInfo? {
-        content?.trackerInfo ?? DataManager.shared.getTrackerInfo(id)
+        return nil
     }
 }
 

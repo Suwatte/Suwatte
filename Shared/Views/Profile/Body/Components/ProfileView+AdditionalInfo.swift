@@ -11,7 +11,9 @@ import SwiftUI
 extension ProfileView.Skeleton {
     struct AdditionalInfoView: View {
         @EnvironmentObject var model: ProfileView.ViewModel
-        @EnvironmentObject var entry: StoredContent
+        var entry: DSKCommon.Content {
+            model.content
+        }
         var body: some View {
             VStack(alignment: .leading) {
                 AdditionalProperties
@@ -23,8 +25,8 @@ extension ProfileView.Skeleton {
 
         @ViewBuilder
         var AdditionalProperties: some View {
-            if entry.properties.count > 1 {
-                ForEach(entry.properties[1...], id: \.label) { property in
+            if let props = entry.properties ,props.count > 1 {
+                ForEach(props[1...], id: \.label) { property in
 
                     VStack(alignment: .leading, spacing: 3) {
                         Text(property.label)
@@ -39,12 +41,12 @@ extension ProfileView.Skeleton {
 
         @ViewBuilder
         var AdditionalTitles: some View {
-            if !entry.additionalTitles.isEmpty {
+            if let titles = entry.additionalTitles, !titles.isEmpty {
                 VStack(alignment: .leading, spacing: 7) {
                     Text("Also Called...")
                         .font(.headline)
                         .fontWeight(.semibold)
-                    Text("\(entry.additionalTitles.joined(separator: ", "))")
+                    Text("\(titles.joined(separator: ", "))")
                         .fixedSize(horizontal: false, vertical: true)
                         .multilineTextAlignment(.leading)
                 }
@@ -54,10 +56,10 @@ extension ProfileView.Skeleton {
     }
 
     struct AdditionalCoversView: View {
-        @EnvironmentObject var entry: StoredContent
+        @EnvironmentObject var model: ProfileView.ViewModel
         @State var presentCovers = false
         var body: some View {
-            if entry.covers.count > 1 {
+            if !model.content.covers.isEmpty {
                 VStack(alignment: .leading, spacing: 7) {
                     Divider()
                     Button { presentCovers.toggle() } label: {
@@ -79,7 +81,7 @@ extension ProfileView.Skeleton {
                     .cornerRadius(7)
                 }
                 .fullScreenCover(isPresented: $presentCovers) {
-                    ProfileView.CoversSheet(covers: entry.covers.toArray())
+                    ProfileView.CoversSheet(covers: model.content.covers)
                 }
             }
         }

@@ -82,7 +82,7 @@ extension LibraryView.LibraryGrid {
                     var nonDestructiveActions = [UIAction]()
                     var destructiveActions: [UIAction] = []
 
-                    if let url = URL(string: content.content?.url ?? "") {
+                    if let url = URL(string: content.content?.webUrl ?? "") {
                         // Share
                         let shareAction = UIAction(title: "Share", image: .init(systemName: "square.and.arrow.up"))
                             { _ in

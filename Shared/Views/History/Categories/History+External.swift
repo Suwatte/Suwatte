@@ -25,7 +25,7 @@ extension HistoryView {
                             .transition(HistoryView.transition)
                             .onTapGesture {
                                 let chapter = marker.chapter!
-                                selection = (chapter.sourceId, DSKCommon.Highlight(id: chapter.contentId, covers: [], title: ""))
+                                selection = (chapter.sourceId, DSKCommon.Highlight.withId(id: chapter.contentId))
                             }
                     }
                 }
@@ -93,7 +93,7 @@ extension HistoryView.ExternalView {
         @ViewBuilder
         func ContentFound(_ entry: StoredContent) -> some View {
             HStack {
-                ImageView(imageUrl: entry.covers.first!)
+                ImageView(imageUrl: entry.cover)
 
                 VStack(alignment: .leading) {
                     Text(entry.title)

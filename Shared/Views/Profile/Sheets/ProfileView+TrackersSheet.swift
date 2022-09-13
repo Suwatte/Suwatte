@@ -11,7 +11,7 @@ import SwiftUI
 
 extension ProfileView.Sheets {
     struct TrackersSheet: View {
-        @EnvironmentObject var entry: StoredContent
+        @EnvironmentObject var model: ProfileView.ViewModel
         @ObservedResults(TrackerLink.self) var trackerLinks
         var body: some View {
             NavigationView {
@@ -19,10 +19,10 @@ extension ProfileView.Sheets {
                     // Anilist
                     Section {
                         // ID is Linked
-                        if let strId = entry.trackerInfo?.al ?? linkedTracker?.trackerInfo?.al, let id = Int(strId) {
+                        if let strId = model.content.trackerInfo?["al"] ?? linkedTracker?.trackerInfo?.al, let id = Int(strId) {
                             AnilistView.TrackerExcerptView(id: id)
                         } else {
-                            NavigationLink(destination: AnilistView.LinkerView(storedContent: entry)) {
+                            NavigationLink(destination: AnilistView.LinkerView(entry: model.content, sourceId: model.source.id)) {
                                 MSLabelView(title: "Link Content", imageName: "anilist")
                             }
                         }
@@ -46,7 +46,7 @@ extension ProfileView.Sheets {
         }
 
         var linkedTracker: TrackerLink? {
-            trackerLinks.first(where: { entry._id == $0._id })
+            trackerLinks.first(where: { model.sttIdentifier().id == $0._id })
         }
     }
 }

@@ -91,7 +91,7 @@ extension DownloadsQueueView {
         Section {
             if let chapter = download.chapter, let entry = DataManager.shared.getStoredContent(chapter.sourceId, chapter.contentId) {
                 HStack(alignment: .center) {
-                    BaseImageView(url: URL(string: entry.covers.first ?? ""))
+                    BaseImageView(url: URL(string: entry.cover))
                         .frame(width: 75, height: 75 * 1.5, alignment: .center)
                         .cornerRadius(7)
 

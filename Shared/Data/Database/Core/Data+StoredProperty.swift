@@ -9,6 +9,7 @@ import Foundation
 import RealmSwift
 
 final class StoredProperty: EmbeddedObject, Parsable {
+    @Persisted var id: String
     @Persisted var label: String
     @Persisted var tags: List<StoredTag>
 }

@@ -14,7 +14,8 @@ extension AnilistView {
             @Published var text: String = ""
         }
 
-        var storedContent: StoredContent
+        var entry: DSKCommon.Content
+        var sourceId: String
         @ObservedObject var model = SearchModel()
         @State var loadable = Loadable<Anilist.Page>.idle
         @Environment(\.presentationMode) var presentationMode
@@ -22,11 +23,11 @@ extension AnilistView {
             List {
                 Section {
                     HStack(alignment: .top) {
-                        STTImageView(url: URL(string: storedContent.covers.first ?? ""), identifier: .init(contentId: storedContent.contentId, sourceId: storedContent.sourceId))
+                        STTImageView(url: URL(string: entry.cover), identifier: .init(contentId: entry.contentId, sourceId: sourceId))
                             .frame(width: 100, height: 150, alignment: .center)
                             .cornerRadius(7)
                         VStack(alignment: .leading) {
-                            Text(storedContent.title)
+                            Text(entry.title)
                                 .font(.headline)
                                 .fontWeight(.semibold)
                         }
@@ -45,7 +46,7 @@ extension AnilistView {
                                 LinkerCell(data: media)
                                     .contentShape(Rectangle())
                                     .onTapGesture {
-                                        DataManager.shared.linkContentToTracker(id: storedContent._id, al: media.id.description)
+                                        DataManager.shared.linkContentToTracker(id: DSKCommon.SuwatteContentIdentifier(contentId: entry.contentId, sourceId: sourceId).id, al: media.id.description)
                                         presentationMode.wrappedValue.dismiss()
                                     }
                             } header: {
@@ -63,7 +64,7 @@ extension AnilistView {
                 actionTask()
             }
             .onAppear {
-                model.text = storedContent.title
+                model.text = entry.title
             }
             .onReceive(model.$text.debounce(for: .seconds(0.45), scheduler: DispatchQueue.main).dropFirst()) { val in
                 if val.isEmpty { return }

@@ -23,6 +23,13 @@ extension DaisukeEngine.Structs {
         var label: String
         var tags: [Tag]
     }
+    
+    
+    struct NonInteractiveProperty: Parsable, Hashable {
+        var id: String
+        var label: String
+        var tags: [String]
+    }
 
     struct Tag: Parsable, Hashable, Identifiable {
         var id: String
