@@ -62,7 +62,7 @@ extension Skeleton.Header {
                 presentThumbnails.toggle()
             }
             .fullScreenCover(isPresented: $presentThumbnails) {
-                ProfileView.CoversSheet(covers: entry.additionalCovers ?? [])
+                ProfileView.CoversSheet(covers: entry.covers)
             }
     }
 }

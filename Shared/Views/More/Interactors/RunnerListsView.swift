@@ -12,7 +12,7 @@ import RealmSwift
 import SwiftUI
 
 struct RunnerListsView: View {
-    @State var presentAddSheet = false
+    @State var presentAlert = false
     @ObservedResults(StoredRunnerList.self) var runnerLists
     var body: some View {
         List {
@@ -32,17 +32,56 @@ struct RunnerListsView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("\(Image(systemName: "plus"))") {
-                    presentAddSheet.toggle()
+                    presentAlert.toggle()
                 }
             }
         }
-        .partialSheet(isPresented: $presentAddSheet, content: {
-            AddSheet(presenting: $presentAddSheet)
-        })
-        .attachPartialSheetToRoot()
+        .onChange(of: presentAlert) { newValue in
+            if newValue {
+                promptURL()
+            }
+        }
     }
 }
+extension RunnerListsView {
+    func handleSubmit(url: String) async {
+        if url.isEmpty { return }
+        do {
+            try await DaisukeEngine.shared.saveRunnerList(at: url)
+            DispatchQueue.main.async {
+                ToastManager.shared.setComplete()
+            }
+        } catch {
+            DispatchQueue.main.async {
+                ToastManager.shared.setError(error: error)
+            }
+        }
+        presentAlert = false
+    }
+    func promptURL() {
+        let ac = UIAlertController(title: "Enter List URL", message: "Suwatte will automatically parse valid URLS.", preferredStyle: .alert)
+        ac.addTextField()
+        let field = ac.textFields![0]
+        field.autocorrectionType = .no
+        field.keyboardType = .URL
+        let submitAction = UIAlertAction(title: "Submit", style: .default) { [unowned ac] _ in
+            let field = ac.textFields?.first
+            guard let text = field?.text else {
+                return
+            }
+            Task {
+                await handleSubmit(url:text)
+            }
+        }
+        ac.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in
+            presentAlert = false
+        }))
+        ac.addAction(submitAction)
 
+        KEY_WINDOW?.rootViewController?.present(ac, animated: true)
+        
+    }
+}
 extension RunnerListsView {
     struct RunnerListInfo: View {
         var listURL: String

@@ -41,7 +41,7 @@ enum ChapterSortOption: Int, CaseIterable, Identifiable {
 
 struct ChapterList: View {
     @EnvironmentObject var model: ProfileView.ViewModel
-    @State var selection: StoredChapter?
+    @State var selection: String?
     @State var selections = Set<StoredChapter>()
     @ObservedResults(ICDMDownloadObject.self) var downloads
     @ObservedResults(ChapterMarker.self, where: { $0.chapter != nil }) var markers
@@ -53,7 +53,8 @@ struct ChapterList: View {
         Group {
             if let chapters = model.chapters.value {
                 ChaptersView(orderedChapters(chapters))
-                    .fullScreenCover(item: $selection) { chapter in
+                    .fullScreenCover(item: $selection) { chapterId in
+                        let chapter = chapters.first(where: { $0.chapterId == chapterId })!
                         ReaderGateWay(readingMode: model.content.recommendedReadingMode ?? .PAGED_COMIC, chapterList: chapters, openTo: chapter)
                     }
             } else {
@@ -133,7 +134,7 @@ struct ChapterList: View {
             let progress = chapterProgress(chapter)
             let download = getDownload(chapter)
             Button {
-                selection = chapter
+                selection = chapter.chapterId
             } label: {
                 ChapterListTile(chapter: chapter,
                                 isCompleted: completed,
