@@ -41,7 +41,7 @@ final class ToastManager: ObservableObject {
     }
 
     func setError(error: Error) {
-        print(error)
+        print("\n\n", error, "\n\n")
         toast = AlertToast(type: .error(.red), title: error.localizedDescription)
     }
 

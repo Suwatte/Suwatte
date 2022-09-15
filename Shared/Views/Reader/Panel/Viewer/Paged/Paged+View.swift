@@ -130,7 +130,7 @@ class ReaderPageView: UIView {
         var kfOptions: [KingfisherOptionsInfoItem] = [
             .scaleFactor(UIScreen.main.scale),
             .retryStrategy(DelayRetryStrategy(maxRetryCount: 3, retryInterval: .seconds(1))),
-            .requestModifier(AsyncImageModifier()),
+            .requestModifier(AsyncImageModifier(sourceId: page.sourceId)),
             .backgroundDecode,
         ]
 

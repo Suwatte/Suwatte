@@ -76,6 +76,7 @@ extension ProfileView.ViewModel {
             await MainActor.run(body: {
                 if loadableContent.LOADED {
                     ToastManager.shared.setError(msg: "Failed to Update Profile")
+                    print(error)
                 } else {
                     loadableContent = .failed(error)
                 }
@@ -145,7 +146,7 @@ extension ProfileView.ViewModel {
     
     func didLoadChapters() async {
         Task {
-//            await getMarkers()
+            await getMarkers()
             try await Task.sleep()
             DataManager.shared.clearUpdates(id: sttIdentifier().id)
             await handleSync()

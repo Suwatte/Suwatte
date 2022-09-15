@@ -19,16 +19,29 @@ extension DSKCommon {
         var params: CodableDict?
         var body: CodableDict?
         var headers: [String: String]?
-        var cookies: [String: String]?
+        var cookies: [Cookie]?
         var timeout: Double?
         var maxRetries: Int?
     }
+    
+    struct Cookie:Codable, Parsable, Hashable {
+        var name: String
+        var domain: String
+        var value: String
+        var path: String?
+        var expires: Date?
+        
+        var httpCookie : HTTPCookie? {
+            .init(properties: [.name: name, .domain: domain, .value: value, .path: path ?? "/", .expires: expires as Any])
+        }
+    }
 
+    
     struct RequestConfig: Codable, Parsable {
         var params: CodableDict?
         var body: CodableDict?
         var headers: [String: String]?
-        var cookies: [String: String]?
+        var cookies: [Cookie]?
         var timeout: Double?
         var maxRetries: Int?
 
@@ -81,6 +94,7 @@ extension DSKCommon.Request {
 
         // Body
         let isURLEncoded = headers?["content-type"]?.contains("x-www-form-urlencoded") ?? false
+        
         if isURLEncoded {
             let parsedBody = try body?.asDictionary()
             request = try URLEncoding(destination: .httpBody).encode(request, with: parsedBody)

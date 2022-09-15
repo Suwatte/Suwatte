@@ -234,7 +234,6 @@
 		DF8D0BB72800EE48003E4C3E /* STTWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0AC22800EE47003E4C3E /* STTWebView.swift */; };
 		DF8D0BB82800EE48003E4C3E /* SelectionLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0AC32800EE47003E4C3E /* SelectionLabel.swift */; };
 		DF8D0BB92800EE48003E4C3E /* MSLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0AC42800EE47003E4C3E /* MSLabelView.swift */; };
-		DF8D0BFC280106D8003E4C3E /* Cheerio.js in Resources */ = {isa = PBXBuildFile; fileRef = DF8D0BFB280106D8003E4C3E /* Cheerio.js */; };
 		DF91D9742859ADD60099D864 /* CloudflareErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF91D9732859ADD50099D864 /* CloudflareErrorView.swift */; };
 		DF9BD6402891BDA9006628D0 /* CommonLibs.js in Resources */ = {isa = PBXBuildFile; fileRef = DF9BD63F2891BDA8006628D0 /* CommonLibs.js */; };
 		DF9BD6462891C16D006628D0 /* DSK+Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BD6452891C16D006628D0 /* DSK+Tag.swift */; };
@@ -505,7 +504,6 @@
 		DF8D0AC22800EE47003E4C3E /* STTWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = STTWebView.swift; sourceTree = "<group>"; };
 		DF8D0AC32800EE47003E4C3E /* SelectionLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectionLabel.swift; sourceTree = "<group>"; };
 		DF8D0AC42800EE47003E4C3E /* MSLabelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MSLabelView.swift; sourceTree = "<group>"; };
-		DF8D0BFB280106D8003E4C3E /* Cheerio.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = Cheerio.js; sourceTree = "<group>"; };
 		DF91D9732859ADD50099D864 /* CloudflareErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudflareErrorView.swift; sourceTree = "<group>"; };
 		DF9BD63F2891BDA8006628D0 /* CommonLibs.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = CommonLibs.js; sourceTree = "<group>"; };
 		DF9BD6452891C16D006628D0 /* DSK+Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Tag.swift"; sourceTree = "<group>"; };
@@ -867,7 +865,6 @@
 		DF7B18862830B467006A54C9 /* Reader */ = {
 			isa = PBXGroup;
 			children = (
-				DF7B18882830B4A1006A54C9 /* Web */,
 				DF7B18872830B49B006A54C9 /* Novel */,
 				DF8D0A2E2800EE47003E4C3E /* Panel */,
 				DF7B18892830B4B1006A54C9 /* ReaderGateWay.swift */,
@@ -886,13 +883,6 @@
 				DF29CE9E283C5419001F9823 /* NovelReaderView.swift */,
 			);
 			path = Novel;
-			sourceTree = "<group>";
-		};
-		DF7B18882830B4A1006A54C9 /* Web */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Web;
 			sourceTree = "<group>";
 		};
 		DF83DD3F282321690021575B /* Packages */ = {
@@ -1598,7 +1588,6 @@
 			isa = PBXGroup;
 			children = (
 				DF9BD63F2891BDA8006628D0 /* CommonLibs.js */,
-				DF8D0BFB280106D8003E4C3E /* Cheerio.js */,
 			);
 			path = Dependencies;
 			sourceTree = "<group>";
@@ -1849,7 +1838,6 @@
 				DF79D2712810E7500052470D /* placeholder.json in Resources */,
 				DF9BD6402891BDA9006628D0 /* CommonLibs.js in Resources */,
 				DF86CACA285841BA0008B17A /* STTLaunchScreen.storyboard in Resources */,
-				DF8D0BFC280106D8003E4C3E /* Cheerio.js in Resources */,
 				DF8D0B272800EE47003E4C3E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

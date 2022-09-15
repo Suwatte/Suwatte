@@ -40,7 +40,7 @@ let STTUserDefaults: [String: Any] = [
 ]
 
 let SCHEMA_VERSION = 7
-let STT_BRIDGE_VERSION = "1.0.4"
+let STT_BRIDGE_VERSION = "1.1.0"
 
 let KEY_WINDOW = UIApplication
     .shared

@@ -81,8 +81,7 @@ extension AnilistView {
             ZStack {
                 // BG
                 if let banner = account.bannerImage {
-                    BaseImageView(url: URL(string: banner))
-                        .blur(radius: 3)
+                    LazyImage(url: URL(string: banner), resizingMode: .aspectFill)
                 }
 
                 // Gradient
@@ -98,16 +97,15 @@ extension AnilistView {
                         }
                         .frame(width: 100, height: 100, alignment: .center)
                         .clipShape(Circle())
-                        .shadow(radius: 10)
+                        .shadow(radius: 3)
                         .overlay(Circle().stroke(Color.accentColor, lineWidth: 1))
-                        .shadow(radius: 10)
+                        .shadow(radius: 5)
                         .overlay(Circle().stroke(profileColor, lineWidth: 2))
-                        .shadow(color: profileColor, radius: 10)
+                        .shadow(color: profileColor, radius: 7)
                         .padding(.vertical, 7)
                     Text(account.name)
                         .font(.title)
                         .fontWeight(.bold)
-                        .shadow(radius: 5)
                 }
             }
 

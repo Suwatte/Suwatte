@@ -119,11 +119,12 @@ extension DaisukeEngine.NetworkClient {
         let intercepter = NetworkRequstIntercepter()
         intercepter.handler = requestInterceptHandler
 
-        // TODO: Cookies
-        //            let cookies = request.cookies?.compactMap { $0.toHTTPCookie() } ?? []
-        //            cookies.forEach { cookie in
-        //                self.session.sessionConfiguration.httpCookieStorage?.setCookie(cookie)
-        //            }
+        if let cookies = request.cookies {
+            let mapped = cookies.map(\.httpCookie).compactMap({ $0 })
+            mapped.forEach { cookie in
+                self.session.sessionConfiguration.httpCookieStorage?.setCookie(cookie)
+            }
+        }
 
         let urlRequest = try request.toURLRequest()
 
@@ -159,7 +160,7 @@ extension URLRequest {
         let headers = self.headers.dictionary
         var body: [String: AnyCodable]?
         if let data = httpBody {
-            body = try JSONDecoder().decode(DSKCommon.CodableDict.self, from: data)
+            body = try? JSONDecoder().decode(DSKCommon.CodableDict.self, from: data)
         }
         var params: [String: AnyCodable]?
 

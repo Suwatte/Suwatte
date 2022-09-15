@@ -109,7 +109,7 @@ extension ReaderView {
                     let arr = zip(paths.indices, paths)
                     let file = chapter.contentId
                     pages = arr.map {
-                        Page(chapterId: chapterId, index: $0, archivePath: $1, archiveFile: file)
+                        Page(index: $0, chapterId: chapterId,contentId: chapter.contentId, sourceId: chapter.sourceId, archivePath: $1, archiveFile: file)
                     }
                 }
                 // Downloaded
@@ -117,7 +117,7 @@ extension ReaderView {
                     let urls = chapterData.urls
                     let arr = zip(urls.indices, urls)
                     pages = arr.map {
-                        Page(chapterId: chapterId, index: $0, downloadURL: $1)
+                        Page(index: $0, chapterId: chapterId,contentId: chapter.contentId, sourceId: chapter.sourceId, downloadURL: $1)
                     }
                 }
 
@@ -126,7 +126,7 @@ extension ReaderView {
                     let raws = chapterData.rawDatas
                     let arr = zip(raws.indices, raws)
                     pages = arr.map {
-                        Page(chapterId: chapterId, index: $0, rawData: $1)
+                        Page(index: $0, chapterId: chapterId,contentId: chapter.contentId, sourceId: chapter.sourceId, rawData: $1)
                     }
                 }
                 // URL
@@ -135,7 +135,7 @@ extension ReaderView {
                     let arr = zip(images.indices, images)
 
                     pages = arr.map {
-                        Page(chapterId: chapterId, index: $0, hostedURL: $1)
+                        Page(index: $0, chapterId: chapterId,contentId: chapter.contentId, sourceId: chapter.sourceId, hostedURL: $1)
                     }
                 }
             }
@@ -166,26 +166,20 @@ extension ReaderView {
             archivePath != nil || downloadURL != nil
         }
 
-        var downloadURL: URL?
-        var hostedURL: String?
-        var rawData: String?
-        var archivePath: String?
-        var archiveFile: String?
         var number: Int {
             index + 1
         }
 
         var chapterId: String
+        var contentId: String
+        var sourceId: String
 
-        init(chapterId: String, index: Int, hostedURL: String? = nil, downloadURL: URL? = nil, rawData: String? = nil, archivePath: String? = nil, archiveFile: String? = nil) {
-            self.chapterId = chapterId
-            self.index = index
-            self.downloadURL = downloadURL
-            self.hostedURL = hostedURL
-            self.rawData = rawData
-            self.archivePath = archivePath
-            self.archiveFile = archiveFile
-        }
+        
+        var downloadURL: URL? = nil
+        var hostedURL: String? = nil
+        var rawData: String? = nil
+        var archivePath: String? = nil
+        var archiveFile: String? = nil
 
         static func == (lhs: Page, rhs: Page) -> Bool {
             return lhs.chapterId == rhs.chapterId && lhs.index == rhs.index
