@@ -110,4 +110,18 @@ extension DataManager {
             .objects(StoredContent.self)
             .filter("_id IN %@", ids)
     }
+    
+    func refreshStored(contentId: String, sourceId: String) async {
+        
+        guard let source = DaisukeEngine.shared.getSource(with: sourceId) else {
+            return
+        }
+        
+        let data = try? await source.getContent(id: contentId)
+        guard let stored = try? data?.toStoredContent(withSource: source) else {
+            return
+        }
+        storeContent(stored)
+
+    }
 }
