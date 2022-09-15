@@ -25,7 +25,7 @@ extension DaisukeEngine.Structs {
     struct ChapterData: Parsable, Hashable {
         var chapterId: String
         var contentId: String
-        var pages: [StoredChapterPage]
+        var pages: [StoredChapterPage]?
         var text: String?
     }
 

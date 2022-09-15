@@ -29,7 +29,7 @@ extension NovelReaderView.PagedViewer {
             let requestedIndex = rChapter.requestedPageIndex
             rChapter.requestedPageOffset = nil
             let openingIndex = model.sections.first?.lastIndex(where: { $0.lastPageIndex <= requestedIndex }) ?? 0
-            collectionView.scrollToItem(at: .init(item: openingIndex, section: 0), at: .centeredHorizontally, animated: false)
+//            collectionView.scrollToItem(at: .init(item: openingIndex, section: 0), at: .centeredHorizontally, animated: false)
             calculateCurrentChapterScrollRange()
             model.currentSectionPageNumber = openingIndex + 1
             collectionView.isHidden = false
@@ -53,7 +53,7 @@ extension Controller {
     }
 
     func getLayout() -> UICollectionViewLayout {
-        let layout = HorizontalContentSizePreservingFlowLayout()
+        let layout = NovelOffsetPreservingLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
@@ -132,7 +132,7 @@ extension Controller {
                 let data = model.sections[section]
                 let paths = data.indices.map { IndexPath(item: $0, section: section) }
 
-                let layout = collectionView.collectionViewLayout as? HorizontalContentSizePreservingFlowLayout
+                let layout = collectionView.collectionViewLayout as? NovelOffsetPreservingLayout
                 layout?.isInsertingCellsToTop = section == 0 && model.sections.count != 0
 
                 CATransaction.begin()

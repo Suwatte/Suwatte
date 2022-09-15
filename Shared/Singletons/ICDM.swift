@@ -201,8 +201,8 @@ extension ICDM {
 
         let data = try await source.getChapterData(contentId: ids.content, chapterId: ids.chapter)
 
-        let urls = data.pages.compactMap { URL(string: $0.url ?? "") }
-        let b64Raws = data.pages.compactMap { $0.raw?.toBase64() }
+        let urls = data.pages?.compactMap { URL(string: $0.url ?? "") } ?? []
+        let b64Raws = data.pages?.compactMap { $0.raw?.toBase64() } ?? []
         let raws = b64Raws.compactMap { Data(base64Encoded: $0) }
 
         return (urls: urls, raws: raws)

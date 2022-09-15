@@ -35,7 +35,9 @@ struct NovelReaderView: View {
         }
 
         .animation(.default, value: model.menuControl.menu)
-        .sheet(isPresented: $model.menuControl.settings, content: {
+        .sheet(isPresented: $model.menuControl.settings, onDismiss: {
+            model.updatedPreferences()
+        }, content: {
             SettingsView()
         })
         .sheet(isPresented: $model.menuControl.chapterList) {
