@@ -114,7 +114,7 @@ extension NovelReaderView.ViewModel {
         let text = chapter.text ?? "No Text Returned from Source"
         let joined = "\(chapter.chapter?.displayName ?? "")\n\n" + text + "\n"
         var textStorage: NSTextStorage?
-        let data = Data(text.utf8)
+        let data = Data(joined.utf8)
         if let attributedString = try? NSAttributedString(data: data,
                                                           options: [.documentType: NSAttributedString.DocumentType.html,.characterEncoding: String.Encoding.utf8.rawValue,],
                                                           documentAttributes: nil) {
@@ -136,6 +136,7 @@ extension NovelReaderView.ViewModel {
             textLayout.addTextContainer(textContainer)
 
             let textView = UITextView(frame: .init(x: 0, y: 0, width: size.width, height: size.height), textContainer: textContainer)
+            
             textView.isScrollEnabled = false
             textView.isUserInteractionEnabled = false
             textView.backgroundColor = .clear

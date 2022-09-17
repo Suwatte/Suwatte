@@ -125,7 +125,7 @@ extension AnilistView.ProfileView.DataView {
             ZStack(alignment: .leading) {
                 BaseImageView(url: URL(string: data.bannerImage ?? ""))
                     .blur(radius: 2.5)
-                    .frame(width: UIScreen.main.bounds.width, height: 220, alignment: .center)
+                    .frame( height: 220, alignment: .center)
                     .clipped()
 
                 LinearGradient(colors: [.clear, Color(uiColor: UIColor.systemBackground)], startPoint: .top, endPoint: .bottom)
@@ -141,7 +141,7 @@ extension AnilistView.ProfileView.DataView {
                         .padding(.horizontal)
                 }
             }
-            .frame(width: UIScreen.main.bounds.width, height: 220, alignment: .center)
+            .frame(height: 220, alignment: .center)
             VStack(alignment: .leading) {
                 Text(data.title.userPreferred)
                     .font(.title3)

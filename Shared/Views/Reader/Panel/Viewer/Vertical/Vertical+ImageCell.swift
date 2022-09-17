@@ -29,6 +29,7 @@ class VerticalImageCell: UICollectionViewCell {
     var progressModel = ReaderView.ProgressObject()
     var subscriptions = Set<AnyCancellable>()
     var imageTask: ImageTask?
+    var currentKey: String?
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -78,6 +79,8 @@ class VerticalImageCell: UICollectionViewCell {
         addSubview(imageView)
         activateConstraints()
         subscribe()
+        
+        currentKey = page.CELL_KEY
     }
 
     func subscribe() {
@@ -120,7 +123,7 @@ class VerticalImageCell: UICollectionViewCell {
     }
 
     func setImage() {
-        guard imageView.image == nil, let source = page.toKFSource() else {
+        guard currentKey == page.CELL_KEY, imageView.image == nil, let source = page.toKFSource() else {
             return
         }
 
