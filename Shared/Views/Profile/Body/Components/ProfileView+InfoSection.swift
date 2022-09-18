@@ -26,6 +26,8 @@ extension ProfileView.Skeleton {
                     Text(entry.title)
                         .font(.title2)
                         .fontWeight(.semibold)
+                        .textSelection(.enabled)
+
                     Spacer()
                 }
                 if let summary, summary.trimmingCharacters(in: .whitespacesAndNewlines).count != 0 {

@@ -49,6 +49,7 @@ extension ProfileView.Skeleton {
                     Text("\(titles.joined(separator: ", "))")
                         .fixedSize(horizontal: false, vertical: true)
                         .multilineTextAlignment(.leading)
+                        .textSelection(.enabled)
                 }
                 .padding(.vertical, 2.5)
             }

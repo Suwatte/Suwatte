@@ -83,7 +83,7 @@ extension AnilistView {
         @MainActor
         func load() async {
             loadable = .loading
-            let request = Anilist.SearchRequest(type: .manga, search: model.text)
+            let request = Anilist.SearchRequest(type: .manga, isAdult: entry.adultContent, search: model.text)
             do {
                 let response = try await Anilist.shared.search(request)
                 withAnimation {

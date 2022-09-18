@@ -16,7 +16,7 @@ extension ProfileView.Sheets {
         var body: some View {
             NavigationView {
                 List {
-                    // Anilist
+                    // Anilist, This will be changed around when others are added
                     Section {
                         // ID is Linked
                         if let strId = model.content.trackerInfo?["al"] ?? linkedTracker?.trackerInfo?.al, let id = Int(strId) {

@@ -35,6 +35,14 @@ extension Skeleton {
                     Text(model.source.name)
                         .font(.subheadline)
                         .fontWeight(.semibold)
+                    if let ac = entry.adultContent, ac {
+                        Text("18+")
+                            .font(.caption)
+                            .fontWeight(.light)
+                            .padding(.all, 2)
+                            .background(Color.red.opacity(0.4))
+                            .cornerRadius(5)
+                    }
 
                     Spacer()
                     ActionButtons()

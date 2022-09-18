@@ -31,7 +31,7 @@ extension ExploreView {
 
             // MARK: Filter Sheet
 
-            .sheet(isPresented: $model.presentFilters, onDismiss: defaultCall) {
+            .fullScreenCover(isPresented: $model.presentFilters, onDismiss: defaultCall) {
                 FilterSheet()
             }
 

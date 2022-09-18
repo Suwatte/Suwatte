@@ -10,7 +10,9 @@ import SwiftUI
 extension ExploreView.SearchView {
     struct FilterSheet: View {
         @EnvironmentObject var model: ExploreView.SearchView.ViewModel
-        @State var filters: Loadable<[DaisukeEngine.Structs.Filter]> = .idle
+        typealias Filter =  DaisukeEngine.Structs.Filter
+        @State var filters: Loadable<[Filter]> = .idle
+        @State var query = ""
         var body: some View {
             NavigationView {
                 LoadableView(loadable: filters, {
@@ -26,34 +28,40 @@ extension ExploreView.SearchView {
                         }
                     }
                 }, { value in
-                    LoadedFiltersView(filters: value, request: $model.request)
-                        .toolbar {
-                            ToolbarItemGroup(placement: .bottomBar) {
-                                Button("Reset") {
-                                    model.request = .init(page: 1)
-                                    model.request.sort = model.sorters.first
-                                    model.presentFilters.toggle()
-                                }
-
-                                Spacer()
-                                Button("Apply") {
-                                    DataManager.shared.saveSearch(model.request.includedTags, model.request.excludedTags, model.source.id, value)
-                                    model.presentFilters.toggle()
-                                }
-                            }
-                        }
+                    LoadedFiltersView(filters: value, request: $model.request, query: $query)
                 })
+                .animation(.default, value: query)
                 .navigationTitle("Filters")
                 .navigationBarTitleDisplayMode(.inline)
+                .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always))
                 .toolbar {
                     ToolbarItemGroup(placement: .navigationBarLeading) {
                         Button("Close") {
                             model.presentFilters.toggle()
                         }
                     }
+                    ToolbarItemGroup(placement: .bottomBar) {
+                        Button("Reset") {
+                            model.request = .init(page: 1)
+                            model.request.sort = model.sorters.first
+                            model.presentFilters.toggle()
+                        }
+
+                        Spacer()
+                        if let filters = filters.value {
+                            Button("Apply") {
+                                DataManager.shared.saveSearch(model.request.includedTags, model.request.excludedTags, model.source.id, filters)
+                                model.presentFilters.toggle()
+                            }
+                        }
+                        
+                    }
+                    
+                    
                 }
             }
         }
+
 
         func loadFilters() async {
             do {
@@ -70,6 +78,7 @@ extension ExploreView.SearchView.FilterSheet {
     struct LoadedFiltersView: View {
         @State var filters: [DaisukeEngine.Structs.Filter]
         @Binding var request: DaisukeEngine.Structs.SearchRequest
+        @Binding var query: String
 
         var body: some View {
             ScrollView {
@@ -80,7 +89,7 @@ extension ExploreView.SearchView.FilterSheet {
                                 .font(.headline)
                                 .fontWeight(.bold)
 
-                            InteractiveTagView(filter.property.tags.sorted(by: { $0.label.lowercased() < $1.label.lowercased() })) { tag in
+                            InteractiveTagView(filteredTags(tags: filter.property.tags)) { tag in
                                 Button {
                                     withAnimation {
                                         handleAction(for: tag, canExclude: filter.canExclude)
@@ -98,7 +107,17 @@ extension ExploreView.SearchView.FilterSheet {
                 .padding()
             }
         }
-
+        
+        func filteredTags(tags: [DSKCommon.Tag]) -> [DSKCommon.Tag] {
+            var tags = tags
+            
+            if !query.isEmpty {
+                tags = tags.filter({
+                    $0.label.lowercased().contains(query.lowercased())
+                })
+            }
+            return tags.sorted(by: \.label, descending: false)
+        }
         typealias Tag = DaisukeEngine.Structs.Tag
         func backgroundColor(tag: Tag) -> Color {
             includes(tag) ? .green : excludes(tag) ? .red : .primary.opacity(0.1)
