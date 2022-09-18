@@ -284,6 +284,7 @@ extension ReaderView.ViewModel {
 
             // Last Page
             if page.index + 1 == activeChapter.pages?.count, let chapter = chapterCache[page.chapterId], recursiveGetChapter(for: chapter.chapter) == nil {
+                onPageChanged(page: page)
                 onChapterChanged(chapter: chapter)
             } else {
                 // Reg, Page Change
