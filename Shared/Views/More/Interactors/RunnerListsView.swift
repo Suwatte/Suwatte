@@ -10,6 +10,7 @@ import Nuke
 import NukeUI
 import RealmSwift
 import SwiftUI
+import Kingfisher
 
 struct RunnerListsView: View {
     @State var presentAlert = false
@@ -214,11 +215,10 @@ extension RunnerListsView {
 
         func RunnerHeader(runner: Runner) -> some View {
             HStack {
-                LazyImage(url: runner.getThumbURL(in: listURL), resizingMode: .fill)
-                    .processors([.resize(size: .init(width: 44, height: 44))])
-                    .frame(width: 44, height: 44, alignment: .center)
+                STTThumbView(url: runner.getThumbURL(in: listURL))
+                    .frame(width: 44, height: 44)
                     .cornerRadius(7)
-
+                    
                 VStack(alignment: .leading, spacing: 5) {
                     Text(runner.name)
                         .fontWeight(.semibold)

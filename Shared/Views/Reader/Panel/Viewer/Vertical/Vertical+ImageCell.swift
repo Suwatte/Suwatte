@@ -53,6 +53,7 @@ class VerticalImageCell: UICollectionViewCell {
         indexPath = nil
         zoomDelegate = nil
         resizeDelegate = nil
+        currentKey = nil
         imageView.removeGestureRecognizer(zoomingTap)
     }
 
