@@ -212,7 +212,7 @@ extension VerticalController {
                 currentOffset = collectionView.contentSize.height - collectionView.frame.height
             }
             DispatchQueue.main.async {
-                collectionView.setContentOffset(.init(x: 0, y: currentOffset), animated: true)
+                self.collectionView.setContentOffset(.init(x: 0, y: currentOffset), animated: true)
             }
         }
         .store(in: &subscriptions)
