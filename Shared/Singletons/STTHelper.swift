@@ -72,11 +72,14 @@ class STTHelpers {
         case .EXTERNAL:
             // Get from ICDM
             do {
-                let urls = try ICDM.shared.getDownloadedImages(for: chapter._id)
-                if let urls = urls {
+                let download = try ICDM.shared.getCompletedDownload(for: chapter._id)
+                if let download = download {
                     let obj = StoredChapterData()
                     obj.chapter = chapter
-                    obj.urls = urls
+                    obj.text = download.text
+                    if let urls = download.urls {
+                        obj.urls = urls
+                    }
                     return .loaded(obj)
                 }
             } catch {
