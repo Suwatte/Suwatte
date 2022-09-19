@@ -90,10 +90,11 @@ extension AnilistView.ProfileView {
                 mediaList = data.mediaListEntry
             })
             .fullScreenCover(isPresented: $presentTrackerEdit) {
-                if let entry = data.mediaListEntry, let format = scoreFormat {
+                if let entry = mediaList, let format = scoreFormat {
                     NavigationView {
                         AnilistView.EntryEditor(entry: entry, media: data, scoreFormat: format, onListUpdated: { list in
                             data.mediaListEntry = list
+                            mediaList = list
                         })
                         .navigationTitle(data.title.userPreferred)
                         .navigationBarTitleDisplayMode(.inline)

@@ -19,13 +19,13 @@ extension ProfileView {
 
         var body: some View {
             Main
-                .sheet(isPresented: $viewModel.presentCollectionsSheet, content: {
+                .fullScreenCover(isPresented: $viewModel.presentCollectionsSheet, content: {
                     ProfileView.Sheets.LibrarySheet(storedContent: viewModel.storedContent)
                 })
-                .sheet(isPresented: $viewModel.presentTrackersSheet, content: {
+                .fullScreenCover(isPresented: $viewModel.presentTrackersSheet, content: {
                     ProfileView.Sheets.TrackersSheet()
                 })
-                .sheet(isPresented: $viewModel.presentBookmarksSheet, content: {
+                .fullScreenCover(isPresented: $viewModel.presentBookmarksSheet, content: {
                     BookmarksView()
                 })
 
