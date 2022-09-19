@@ -366,8 +366,6 @@ extension ProfileView.ViewModel {
         // Sync to Source
         await source.onChaptersCompleted(contentId: entry.id, chapterIds: markers)
 
-        // TODO: Anilist Chapter Sync
-
         await MainActor.run(body: {
             syncState = .done
         })

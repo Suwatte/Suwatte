@@ -11,7 +11,7 @@ import RealmSwift
 extension StoredContent: Codable {
     enum CodingKeys: String, CodingKey {
         case id, sourceId, contentId, title, additionalTitles, additionalCovers, cover, creators, status
-        case originalLanuguage, summary, adultContent, webUrl, properties, recommendedReadingMode, contentType
+        case originalLanuguage, summary, adultContent, webUrl, properties, recommendedReadingMode, contentType, trackerInfo
     }
 
     convenience init(from decoder: Decoder) throws {
@@ -41,6 +41,9 @@ extension StoredContent: Codable {
         }
         recommendedReadingMode = try container.decodeIfPresent(ReadingMode.self, forKey: .recommendedReadingMode) ?? .PAGED_MANGA
         contentType = try container.decodeIfPresent(ExternalContentType.self, forKey: .contentType) ?? .unknown
+        if let info = try container.decodeIfPresent(Map<String, String>.self, forKey: .trackerInfo) {
+            trackerInfo = info
+        }
     }
 
     func encode(to encoder: Encoder) throws {
@@ -61,6 +64,7 @@ extension StoredContent: Codable {
         try container.encode(properties, forKey: .properties)
         try container.encode(recommendedReadingMode, forKey: .recommendedReadingMode)
         try container.encode(contentType, forKey: .contentType)
+        try container.encode(trackerInfo, forKey: .trackerInfo)
     }
 }
 

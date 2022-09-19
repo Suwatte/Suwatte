@@ -291,6 +291,7 @@ extension Anilist {
         return try await request(query: Queries.MEDIA_QUERY + Queries.PROFILE_FRAGMENT + Queries.SEARCH_RESULT_FRAGMENT + Queries.MEDIALIST_FRAGMENT, variables: ["id": id], to: MediaResponse.self).data.Media
     }
 
+    @discardableResult
     func updateMediaListEntry(mediaId: Int, data: JSON) async throws -> Media.MediaListEntry {
         var variables = data
         variables["mediaId"] = mediaId
@@ -307,5 +308,19 @@ extension Anilist {
         }
 
         return try await request(query: Queries.MEDIA_LIST_MUTATION + Queries.MEDIALIST_FRAGMENT, variables: variables, to: MediaResponse.MediaListResponse.self).data.SaveMediaListEntry
+    }
+    
+    @discardableResult
+    func beginTracking(id: Int) async throws -> Media.MediaListEntry{
+        
+        let entry = try await getProfile(id)
+        
+        guard entry.mediaListEntry == nil else {
+            return entry.mediaListEntry!
+        }
+        
+        return try await updateMediaListEntry(mediaId: id,
+                                       data: ["status": MediaListStatus.CURRENT.rawValue])
+        
     }
 }

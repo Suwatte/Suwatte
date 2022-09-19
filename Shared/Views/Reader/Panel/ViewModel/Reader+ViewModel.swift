@@ -318,9 +318,9 @@ extension ReaderView.ViewModel {
         }
 
         // Update Entry Last Read
-        if let content = content {
-            DataManager.shared.updateLastRead(forId: content._id)
-        }
+        let id = DSKCommon.SuwatteContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId).id
+        DataManager.shared.updateLastRead(forId: id)
+
     }
 
     private func handleTransition(transition: ReaderView.Transition) {
@@ -361,31 +361,42 @@ extension ReaderView.ViewModel {
             DataManager.shared.setProgress(chapter: lastChapter.chapter)
         }
 
-        // Trackers
-        let trackerInfo = getTrackerInfo(DaisukeEngine.Structs.SuwatteContentIdentifier(contentId: lastChapter.chapter.contentId, sourceId: lastChapter.chapter.sourceId).id)
-        let chapterNumber = Int(lastChapter.chapter.number)
-        var chapterVolume: Int?
-        if let vol = lastChapter.chapter.volume {
-            chapterVolume = Int(vol)
-        }
-        Task {
-            // Anilist
-            do {
-                try await STTHelpers.syncToAnilist(mediaID: trackerInfo?.al, progress: chapterNumber, progressVolume: chapterVolume)
-            } catch {
-                print(error)
-            }
-        }
+        // Syncing
 
-        // Services
-        let source = DaisukeEngine.shared.getSource(with: lastChapter.chapter.sourceId)
-        Task {
-            await source?.onChaptersCompleted(contentId: lastChapter.chapter.contentId, chapterIds: [lastChapter.chapter.chapterId])
-        }
+        handleTrackerSync(number: lastChapter.chapter.number,
+                          volume: lastChapter.chapter.volume)
+
+        handleSourceSync(contentId: lastChapter.chapter.contentId,
+                         sourceId: lastChapter.chapter.sourceId,
+                         chapterId: lastChapter.chapter.chapterId)
+    }
+    private func getStoredTrackerInfo() -> StoredTrackerInfo? {
+        let id = DSKCommon.SuwatteContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId).id
+        return DataManager.shared.getTrackerInfo(id)
     }
 
-    private func getTrackerInfo(_ id: String) -> StoredTrackerInfo? {
-        return nil
+    private func handleTrackerSync(number: Double, volume: Double?) {
+        let chapterNumber = Int(number)
+        let chapterVolume = volume.map({ Int($0) })
+        
+        
+        // Ids
+        // Anilist
+        let alId = content?.trackerInfo["al"] ?? getStoredTrackerInfo()?.al
+        Task {
+            do {
+                try await STTHelpers.syncToAnilist(mediaID: alId, progress: chapterNumber, progressVolume: chapterVolume)
+            } catch {
+                ToastManager.shared.setError(msg: "Anilist Sync Failed")
+            }
+        }
+    }
+    private func handleSourceSync(contentId: String, sourceId: String, chapterId: String) {
+        // Services
+        let source = DaisukeEngine.shared.getSource(with: sourceId)
+        Task {
+            await source?.onChaptersCompleted(contentId: contentId, chapterIds: [chapterId])
+        }
     }
 }
 
@@ -401,10 +412,16 @@ extension STTHelpers {
 
         let media = try await Anilist.shared.getProfile(mediaID)
 
-        // Check if Tracking
-        guard let mediaListEntry = media.mediaListEntry else {
+        var entry = media.mediaListEntry
+        
+        if entry == nil && Preferences.standard.nonSelectiveSync {
+            entry = try await Anilist.shared.beginTracking(id: mediaID)
+        }
+        
+        guard let mediaListEntry = entry else {
             return
         }
+        
 
         // Progress is above current point
         if mediaListEntry.progress > progress {

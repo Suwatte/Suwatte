@@ -100,10 +100,22 @@ extension DataManager {
             obj.lastOpened = Date()
             realm.add(obj, update: .modified)
         }
+        
+        // Get Ids
+        let anilistId = content.trackerInfo["al"]
+        
 
         // Run Addition Event
         Task {
             await source?.onContentsAddedToLibrary(ids: [ids.contentId])
+        }
+        
+        print(anilistId)
+        Task {
+            guard let indx = anilistId.map({ Int($0) }), let id = indx else {
+                return
+            }
+            try? await Anilist.shared.beginTracking(id: id)
         }
         return true
     }

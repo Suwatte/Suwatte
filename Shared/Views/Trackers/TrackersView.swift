@@ -8,15 +8,40 @@
 import SwiftUI
 
 struct TrackersView: View {
+    @Preference(\.nonSelectiveSync) var nonSelectiveSync
+    @State var presentAlert = false
+    
     var body: some View {
         List {
-            NavigationLink(destination: AnilistView.Gateway()) {
-                MSLabelView(title: "Anilist", imageName: "anilist")
+            Section {
+                NavigationLink(destination: AnilistView.Gateway()) {
+                    MSLabelView(title: "Anilist", imageName: "anilist")
+                }
+
+                NavigationLink(destination: Text("Placeholder")) {
+                    MSLabelView(title: "MyAnimeList", imageName: "mal")
+                }
+            }
+            
+            Section {
+                Toggle(isOn: $nonSelectiveSync) {
+                    Text("Non-Selective Sync \(Image(systemName: "info.circle"))")
+                        .onTapGesture {
+                        presentAlert.toggle()
+                    }
+                }
+                
+            } header: {
+                Text("Settings")
+            }
+            .alert("Non-Selective Sync", isPresented: $presentAlert) {
+                Button("OK", role: .cancel){}
+            } message: {
+                Text("Forces Suwatte to track regardless of library status. This will automatically begin tracking previously untracked titles.")
+                    
             }
 
-            NavigationLink(destination: Text("Placeholder")) {
-                MSLabelView(title: "MyAnimeList", imageName: "mal")
-            }
+
         }
         .navigationTitle("Tracking")
     }

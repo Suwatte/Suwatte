@@ -37,7 +37,7 @@ final class StoredContent: Object, ObjectKeyIdentifiable {
     @Persisted var adultContent: Bool = false
     @Persisted var recommendedReadingMode: ReadingMode = .PAGED_MANGA
     @Persisted var contentType: ExternalContentType = .unknown
-
+    @Persisted var trackerInfo: Map<String, String>
     var SourceName: String {
         DaisukeEngine.shared.getSource(with: sourceId)?.name ?? "Unrecognized : \(sourceId)"
     }

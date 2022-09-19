@@ -39,7 +39,7 @@ let STTUserDefaults: [String: Any] = [
     STTKeys.LibrarySections: LibraryView.LibrarySectionOrder.allCases.map { $0.rawValue },
 ]
 
-let SCHEMA_VERSION = 8
+let SCHEMA_VERSION = 9
 let STT_BRIDGE_VERSION = "1.1.0"
 
 let KEY_WINDOW = UIApplication
