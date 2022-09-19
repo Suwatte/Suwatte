@@ -53,7 +53,7 @@ struct ChapterList: View {
         Group {
             if let chapters = model.chapters.value {
                 ChaptersView(orderedChapters(chapters))
-                    .fullScreenCover(item: $selection) { chapterId in
+                    .fullScreenCover(item: $selection, onDismiss: handleReconnection) { chapterId in
                         let chapter = chapters.first(where: { $0.chapterId == chapterId })!
                         ReaderGateWay(readingMode: model.content.recommendedReadingMode ?? .PAGED_COMIC, chapterList: chapters, openTo: chapter)
                     }
@@ -127,6 +127,9 @@ struct ChapterList: View {
         }
     }
 
+    func handleReconnection() {
+        model.getMarkers()
+    }
     func ChaptersView(_ chapters: [StoredChapter]) -> some View {
         List(chapters, id: \.self, selection: $selections) { chapter in
             let completed = isChapterCompleted(chapter)
