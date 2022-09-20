@@ -105,14 +105,12 @@ extension DataManager {
             lastOffset = Double(offset)
         }
         let total = !isNovel ? chapter.pages?.count ?? 0 : chapter.data.value?.pages.count ?? 0
-        let completed = last == total
-
         let marker = ChapterMarker()
         marker.chapter = chapter.chapter
         marker.dateRead = Date()
         marker.lastPageRead = last
         marker.totalPageCount = total
-        marker.completed = completed
+        marker.completed = false
         marker.lastPageOffset = lastOffset
 
         try! realm.safeWrite {
