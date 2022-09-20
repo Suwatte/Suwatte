@@ -50,7 +50,7 @@ extension NovelReaderView {
 
         var body: some View {
             NavigationView {
-                List {
+                Form {
                     Section {
                         Text("Lorem ipsum dolor sit amet")
                             .font(.custom(novelFont, size: CGFloat(fontSize)))
@@ -60,13 +60,22 @@ extension NovelReaderView {
                         Text("Preview")
                     }
                     Section {
-                        Picker("Font", selection: $novelFont) {
-                            ForEach(fontList) { font in
-                                Text(font.name)
-                                    .font(.custom(font.id, size: 20))
-                                    .tag(font.id)
+                        NavigationLink {
+                            Form {
+                                Picker("Font", selection: $novelFont) {
+                                    ForEach(fontList) { font in
+                                        Text(font.name)
+                                            .font(.custom(font.id, size: 20))
+                                            .tag(font.id)
+                                    }
+                                }
+                                .pickerStyle(.inline)
                             }
+                            
+                        } label: {
+                            STTLabelView(title: "Font", label: fontList.first(where: {$0.id == novelFont})?.name ?? "")
                         }
+                        
                         Stepper(value: $fontSize, in: 10 ... 35) {
                             HStack {
                                 Text("Font Size")

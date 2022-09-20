@@ -17,21 +17,21 @@ extension ProfileView {
             colorScheme == .dark ? .init(hex: "6A5ACD") : .init(hex: "473C8A")
         }
 
-        @EnvironmentObject var entry: StoredContent
         var body: some View {
             Main
-                .sheet(isPresented: $viewModel.presentCollectionsSheet, content: {
-                    ProfileView.Sheets.LibrarySheet()
+                .fullScreenCover(isPresented: $viewModel.presentCollectionsSheet, content: {
+                    ProfileView.Sheets.LibrarySheet(storedContent: viewModel.storedContent)
                 })
-                .sheet(isPresented: $viewModel.presentTrackersSheet, content: {
+                .fullScreenCover(isPresented: $viewModel.presentTrackersSheet, content: {
                     ProfileView.Sheets.TrackersSheet()
                 })
-                .sheet(isPresented: $viewModel.presentBookmarksSheet, content: {
+                .fullScreenCover(isPresented: $viewModel.presentBookmarksSheet, content: {
                     BookmarksView()
                 })
+
                 .safariView(isPresented: $viewModel.presentSafariView) {
                     SafariView(
-                        url: URL(string: entry.url) ?? STTHost.notFound,
+                        url: URL(string: viewModel.content.webUrl ?? "") ?? STTHost.notFound,
                         configuration: SafariView.Configuration(
                             entersReaderIfAvailable: false,
                             barCollapsingEnabled: true
@@ -57,7 +57,7 @@ private extension ProfileView.Skeleton {
                 VStack(spacing: 5.5) {
                     Summary()
                     Divider()
-                    CorePropertySection
+                    CorePropertiesView()
                     Divider()
                 }
                 .padding(.horizontal)
@@ -68,7 +68,7 @@ private extension ProfileView.Skeleton {
                 AdditionalInfoView()
                 AdditionalCoversView()
                     .padding(.horizontal)
-                if let collections = viewModel.threadSafeContent?.includedCollections, !collections.isEmpty {
+                if let collections = viewModel.content.includedCollections, !collections.isEmpty {
                     RelatedContentView(collections: collections)
                 }
             }

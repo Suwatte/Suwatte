@@ -5,7 +5,7 @@
 //  Created by Mantton on 2022-03-28.
 //
 
-import NukeUI
+//import NukeUI
 import SwiftUI
 
 struct MSLabelView: View {
@@ -36,13 +36,13 @@ struct STTThumbView: View {
                 Image(systemName: systemName)
                     .resizable()
             } else if let url = url {
-                LazyImage(url: url, resizingMode: .aspectFill)
-                    .processors([.resize(size: .init(width: 44, height: 44))])
-                    .onFailure { _ in
-                        print("failing")
-                        self.url = nil
-                    }
-
+                AsyncImage(url: url) { image in
+                    image
+                        .resizable()
+                } placeholder: {
+                    Image(assetName ?? "stt_icon")
+                        .resizable()
+                }
             } else {
                 Image(assetName ?? "stt_icon")
                     .resizable()

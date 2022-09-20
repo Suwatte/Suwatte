@@ -82,7 +82,7 @@ extension LibraryView.LibraryGrid {
                     var nonDestructiveActions = [UIAction]()
                     var destructiveActions: [UIAction] = []
 
-                    if let url = URL(string: content.content?.url ?? "") {
+                    if let url = URL(string: content.content?.webUrl ?? "") {
                         // Share
                         let shareAction = UIAction(title: "Share", image: .init(systemName: "square.and.arrow.up"))
                             { _ in
@@ -98,7 +98,7 @@ extension LibraryView.LibraryGrid {
                         let editCollectionsAction = UIAction(title: "Manage", image: .init(systemName: "gearshape"))
                             { _ in
                                 //
-                                let controller = UIHostingController(rootView: ProfileView.Sheets.LibrarySheet().environmentObject(content))
+                                let controller = UIHostingController(rootView: ProfileView.Sheets.LibrarySheet(storedContent: content))
                                 KEY_WINDOW?.rootViewController?.present(controller, animated: true)
                             }
 

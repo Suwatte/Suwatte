@@ -51,22 +51,8 @@ class BackupManager: ObservableObject {
         refresh()
     }
 
-    func restore(from url: URL) async throws {
-        // Load
-        var backup: Backup?
-        do {
-            backup = try Backup.load(from: url)
-        } catch {
-            print(error)
-            throw error
-        }
-
-        guard let backup = backup else {
-            throw BackUpError.InvalidBackup
-        }
-
-        let runners = backup.runners?.map { ($0.id, $0.listURL) } ?? []
-        let realm = try await Realm()
+    private func restoreDB(backup: Backup) {
+        let realm = try! Realm()
         try! realm.safeWrite {
             // Delete old objects
             realm.delete(realm.objects(LibraryEntry.self))
@@ -125,7 +111,25 @@ class BackupManager: ObservableObject {
             }
         }
 
+    }
+    func restore(from url: URL) async throws {
+        // Load
+        var backup: Backup?
+        do {
+            backup = try Backup.load(from: url)
+        } catch {
+            print(error)
+            throw error
+        }
+
+        guard let backup = backup else {
+            throw BackUpError.InvalidBackup
+        }
+
+        let runners = backup.runners?.map { ($0.id, $0.listURL) } ?? []
+        
         // Install
+        restoreDB(backup: backup)
 
         guard !runners.isEmpty else { return }
 

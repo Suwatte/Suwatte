@@ -13,24 +13,24 @@ extension ProfileView {
         @StateObject var viewModel: ProfileView.ViewModel
         @Environment(\.presentationMode) var presentationMode
         var body: some View {
-            LoadableView(loadable: viewModel.content,
+            LoadableView(loadable: viewModel.loadableContent,
                          { PLACEHOLDER
-                             .onAppear {
-                                 viewModel.loadContentFromDatabase()
+                             .task {
+                                 await viewModel.loadContentFromDatabase()
                              }
                          },
                          { PLACEHOLDER },
                          { error in ErrorView(error: error, action: {
                              Task {
                                  await MainActor.run(body: {
-                                     viewModel.content = .loading
+                                     viewModel.loadableContent = .loading
                                  })
                                  await viewModel.loadContentFromNetwork()
                              }
                          }) },
-                         { entry in
+                         { _ in
                              ProfileView.Skeleton()
-                                 .navigationTitle(entry.title)
+                                .navigationTitle(viewModel.content.title)
                                  .fullScreenCover(item: $viewModel.selection, onDismiss: {
                                      Task {
                                          viewModel.getMarkers()
@@ -40,7 +40,7 @@ extension ProfileView {
                                      let chapterList = viewModel.chapters.value ?? []
                                      let chapter = chapterList.first(where: { $0._id == id })
                                      if let chapter = chapter {
-                                         ReaderGateWay(readingMode: entry.recommendedReadingMode, chapterList: chapterList, openTo: chapter)
+                                         ReaderGateWay(readingMode: viewModel.content.recommendedReadingMode ?? .PAGED_COMIC, chapterList: chapterList, openTo: chapter)
                                              .onAppear {
                                                  viewModel.removeNotifier()
                                              }
@@ -51,7 +51,6 @@ extension ProfileView {
                                          }
                                      }
                                  }
-                                 .environmentObject(entry)
                          })
 
                          .toolbar {

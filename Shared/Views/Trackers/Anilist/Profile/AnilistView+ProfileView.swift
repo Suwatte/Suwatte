@@ -90,10 +90,11 @@ extension AnilistView.ProfileView {
                 mediaList = data.mediaListEntry
             })
             .fullScreenCover(isPresented: $presentTrackerEdit) {
-                if let entry = data.mediaListEntry, let format = scoreFormat {
+                if let entry = mediaList, let format = scoreFormat {
                     NavigationView {
                         AnilistView.EntryEditor(entry: entry, media: data, scoreFormat: format, onListUpdated: { list in
                             data.mediaListEntry = list
+                            mediaList = list
                         })
                         .navigationTitle(data.title.userPreferred)
                         .navigationBarTitleDisplayMode(.inline)
@@ -125,7 +126,7 @@ extension AnilistView.ProfileView.DataView {
             ZStack(alignment: .leading) {
                 BaseImageView(url: URL(string: data.bannerImage ?? ""))
                     .blur(radius: 2.5)
-                    .frame(width: UIScreen.main.bounds.width, height: 220, alignment: .center)
+                    .frame( height: 220, alignment: .center)
                     .clipped()
 
                 LinearGradient(colors: [.clear, Color(uiColor: UIColor.systemBackground)], startPoint: .top, endPoint: .bottom)
@@ -141,7 +142,7 @@ extension AnilistView.ProfileView.DataView {
                         .padding(.horizontal)
                 }
             }
-            .frame(width: UIScreen.main.bounds.width, height: 220, alignment: .center)
+            .frame(height: 220, alignment: .center)
             VStack(alignment: .leading) {
                 Text(data.title.userPreferred)
                     .font(.title3)

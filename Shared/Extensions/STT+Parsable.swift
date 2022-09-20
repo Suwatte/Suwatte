@@ -8,7 +8,7 @@
 import Foundation
 import JavaScriptCore
 
-protocol Parsable: Decodable {
+protocol Parsable: Codable {
     init(value: JSValue) throws
 }
 

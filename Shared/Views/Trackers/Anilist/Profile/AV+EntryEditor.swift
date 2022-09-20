@@ -13,6 +13,8 @@ extension AnilistView {
         @State var entry: Anilist.Media.MediaListEntry
         var media: Anilist.Media
         @ObservedObject var toastManager = ToastManager()
+        @State var working = false
+        
         var isManga: Bool {
             media.type == .manga
         }
@@ -227,31 +229,41 @@ extension AnilistView {
                     Toggle("Private", isOn: $entry.private)
                 }
             }
+            
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
-                        toastManager.setLoading()
+                        working = true
                         Task { @MainActor in
-                            do {
-                                let response = try await Anilist.shared.updateMediaListEntry(entry: entry)
-                                self.entry = response
-                                self.onListUpdated(response)
-                                toastManager.setComplete(title: "Synced")
-                            } catch {
-                                toastManager.setError(error: error)
-                            }
+                            toastManager.setLoading()
+                            await update()
+                            working = false
                         }
                     }
+                    .disabled(working)
                 }
             }
+            
+            .animation(.default, value: entry)
             .toast(isPresenting: $toastManager.show) {
                 toastManager.toast
             }
-            .animation(.default, value: entry)
         }
     }
 }
-
+extension AnilistView.EntryEditor {
+    @MainActor
+    func update() async {
+        do {
+            let response = try await Anilist.shared.updateMediaListEntry(entry: entry)
+            self.entry = response
+            self.onListUpdated(response)
+            toastManager.setComplete(title: "Synced")
+        } catch {
+            toastManager.setError(error: error)
+        }
+    }
+}
 extension AnilistView.EntryEditor {
     struct ReReadPicker: View {
         @Binding var value: Int

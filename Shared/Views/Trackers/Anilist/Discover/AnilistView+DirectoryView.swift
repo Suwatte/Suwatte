@@ -133,7 +133,7 @@ extension AnilistView.DirectoryView {
             model.request.search = nil
             model.request.sort = [isDesc ? .POPULARITY_DESC : .POPULARITY]
         } else {
-            model.request = model.request.type == .anime ? .defaultAnimeRequest : .defaultMangaRequest
+//            model.request = model.request.type == .anime ? .defaultAnimeRequest : .defaultMangaRequest
             model.request.search = val
             model.request.sort = [.SEARCH_MATCH]
         }

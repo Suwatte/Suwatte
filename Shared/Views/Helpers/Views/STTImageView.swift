@@ -54,10 +54,30 @@ struct BaseImageView: View {
 }
 
 class AsyncImageModifier: AsyncImageDownloadRequestModifier {
+    init(sourceId:String?) {
+        self.sourceId = sourceId
+    }
+    let sourceId: String?
     func modified(for request: URLRequest, reportModified: @escaping (URLRequest?) -> Void) {
-        var r = request
-        r.setValue(STT_USER_AGENT, forHTTPHeaderField: "User-Agent")
-        reportModified(r)
+        guard let sourceId, let source = DaisukeEngine.shared.getSource(with: sourceId)  else {
+            reportModified(request)
+            return
+        }
+        do {
+            let req = try request.toDaisukeNetworkRequest()
+            Task {
+                let modified = try await source.willRequestImage(request: req)
+                if let modified {
+                    try Task.checkCancellation()
+                    reportModified(try modified.toURLRequest())
+                } else {
+                    reportModified(request)
+                }
+            }
+        } catch {
+            reportModified(request)
+        }
+        
     }
 
     var onDownloadTaskStarted: ((DownloadTask?) -> Void)?

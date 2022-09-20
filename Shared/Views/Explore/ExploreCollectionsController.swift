@@ -11,7 +11,6 @@ import RealmSwift
 import SwiftUI
 import UIKit
 
-// TODO: THIS MF LEAKS SO MUCH MEMORY LAWD
 final class ExploreCollectionsController: UICollectionViewController {
     var source: DSK.ContentSource!
     typealias Snapshot = NSDiffableDataSourceSnapshot<String, SectionObject>
@@ -338,6 +337,25 @@ extension CTR {
     func addSection(id: String) {
         if snapshot.sectionIdentifiers.contains(id) { return }
         snapshot.appendSections([id])
+        reorderSections()
+    }
+    
+    func reorderSections() {
+        // Move Tags to Top, Latests to Bottom
+        if snapshot.sectionIdentifiers.isEmpty { return }
+        let ids = snapshot.sectionIdentifiers
+        for id in ids {
+            // Move Tags to Top
+            if id == TAG_SECTION_ID && id != ids.first {
+                snapshot.moveSection(id, beforeSection: ids.first! )
+            }
+            
+            // Move Update List Style Collections to bottom
+            if let style = cache[id]?.style, style == .UPDATE_LIST && id != ids.last {
+                snapshot.moveSection(id, afterSection: ids.last!)
+            }
+        }
+        
     }
 
     func removeSection(id: String) {
@@ -571,12 +589,12 @@ extension CTR {
         var request: DSKCommon.SearchRequest?
         @EnvironmentObject var source: DSK.ContentSource
         var body: some View {
-            HStack(alignment: .center) {
+            HStack(alignment: .bottom) {
                 VStack(alignment: .leading) {
-                    Spacer()
                     Text(excerpt.title)
                         .font(.headline)
                         .fontWeight(.semibold)
+                        .lineLimit(2)
                     if let subtitle = excerpt.subtitle {
                         Text(subtitle)
                             .font(.subheadline)
@@ -591,6 +609,7 @@ extension CTR {
                     }
                 }
             }
+            .frame(maxWidth: UIScreen.main.bounds.width - 20)
         }
     }
 

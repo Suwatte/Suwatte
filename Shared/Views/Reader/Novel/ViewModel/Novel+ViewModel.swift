@@ -23,6 +23,7 @@ extension NovelReaderView {
         @Published var toast = ToastManager()
         @Published var scrubbingPageNumber: Int?
         @Published var currentSectionPageNumber = 1
+        
 
         var subscriptions = Set<AnyCancellable>()
 
@@ -110,11 +111,20 @@ extension NovelReaderView {
 extension NovelReaderView.ViewModel {
     func generateViews(for chapter: StoredChapterData) -> [NovelPage] {
         var pages = [NovelPage]()
-        let texts = chapter.texts
-        let joined = "\(chapter.chapter?.displayName ?? "")\n\n" + texts.joined(separator: "\n\n") + "\n"
-        let textStorage = NSTextStorage(string: joined)
+        let text = chapter.text ?? "No Text Returned from Source"
+        let joined = "\(chapter.chapter?.displayName ?? "")\n\n" + text + "\n"
+        var textStorage: NSTextStorage?
+        let data = Data(joined.utf8)
+        if let attributedString = try? NSAttributedString(data: data,
+                                                          options: [.documentType: NSAttributedString.DocumentType.html,.characterEncoding: String.Encoding.utf8.rawValue,],
+                                                          documentAttributes: nil) {
+            textStorage = .init(attributedString: attributedString)
+        } else {
+            textStorage = NSTextStorage(string: text)
+        }
+
         let textLayout = NSLayoutManager()
-        textStorage.addLayoutManager(textLayout)
+        textStorage?.addLayoutManager(textLayout)
 
         var lastRenderedGlyph = 0
         let topInset = KEY_WINDOW?.safeAreaInsets.top ?? 0
@@ -126,8 +136,9 @@ extension NovelReaderView.ViewModel {
             textLayout.addTextContainer(textContainer)
 
             let textView = UITextView(frame: .init(x: 0, y: 0, width: size.width, height: size.height), textContainer: textContainer)
+            
             textView.isScrollEnabled = false
-            textView.isUserInteractionEnabled = true
+            textView.isUserInteractionEnabled = false
             textView.backgroundColor = .clear
 
             let useSystemColor = Preferences.standard.novelUseSystemColor
@@ -135,22 +146,23 @@ extension NovelReaderView.ViewModel {
             textView.textColor = useSystemColor ? .init(Color.primary) : .init(Color(rawValue: UserDefaults.standard.string(forKey: STTKeys.NovelFontColor) ?? "") ?? .white)
             textView.isSelectable = true
 
-            textView.font = UIFont(name: Preferences.standard.novelFont, size: CGFloat(Preferences.standard.novelFontSize))
+            let font = Preferences.standard.novelFont
+            let size = CGFloat(Preferences.standard.novelFontSize)
+            textView.font = UIFont(name: font, size: size)
             // get the last Glyph rendered into the current textContainer
             let range = textLayout.glyphRange(for: textContainer)
-
             lastRenderedGlyph = NSMaxRange(range)
 
             textView.backgroundColor = .clear
 
             let lowerBound = joined.index(joined.startIndex, offsetBy: range.lowerBound)
             let upperBound = joined.index(joined.startIndex, offsetBy: range.upperBound)
-            let pagedText = joined[lowerBound ..< upperBound]
+//            let pagedText = joined[lowerBound ..< upperBound]
 
             let prevLastIndex = pages.last?.lastPageIndex ?? 0
 
-            let unusedPages = chapter.pages[prevLastIndex...]
-            let lastIndex = unusedPages.firstIndex(where: { $0.text != nil && pagedText.contains($0.text!) }) ?? chapter.pages.count - 1
+//            let unusedPages = chapter.pages[prevLastIndex...]
+            let lastIndex = 0
             pages.append(.init(view: textView, lastPageIndex: lastIndex))
         }
         // Update Last Page To Match the Last Page Index
@@ -179,14 +191,14 @@ extension NovelReaderView.ViewModel {
 
     func listen() {
         //        let targets: [PartialKeyPath<Preferences>] = [\.novelBGColor, \.novelFontSize, \.novelFontColor, \.novelUseVertical, \.novelOrientationLock, \.novelUseSystemColor, \.novelUseDoublePaged]
-        Preferences.standard.preferencesChangedSubject
-            .filter { [\Preferences.novelBGColor, \Preferences.novelFontSize, \Preferences.novelFontColor, \Preferences.novelUseVertical, \Preferences.novelOrientationLock, \Preferences.novelUseDoublePaged, \Preferences.novelUseSystemColor, \Preferences.novelFont].contains($0)
-            }
-            .sink { [weak self] _ in
-                self?.updatedPreferences()
-            }
-            .store(in: &subscriptions)
-
+//        Preferences.standard.preferencesChangedSubject
+//            .filter { [\Preferences.novelBGColor, \Preferences.novelFontSize, \Preferences.novelFontColor, \Preferences.novelUseVertical, \Preferences.novelOrientationLock, \Preferences.novelUseDoublePaged, \Preferences.novelUseSystemColor, \Preferences.novelFont].contains($0)
+//            }
+//            .sink { [weak self] _ in
+//                self?.updatedPreferences()
+//            }
+//            .store(in: &subscriptions)
+        
         toast.objectWillChange.sink { [weak self] _ in
             self?.objectWillChange.send()
         }.store(in: &subscriptions)
@@ -275,24 +287,26 @@ extension NovelReaderView.ViewModel {
         // Trackers
         let trackerInfo = getTrackerInfo(DaisukeEngine.Structs.SuwatteContentIdentifier(contentId: lastChapter.chapter.contentId, sourceId: lastChapter.chapter.sourceId).id)
         let chapterNumber = Int(lastChapter.chapter.number)
-
+        var chapterVolume: Int?
+        if let vol = lastChapter.chapter.volume {
+            chapterVolume = Int(vol)
+        }
+        let vol = chapterVolume
         Task {
             // Anilist
-            var chapterVolume: Int?
-            if let vol = lastChapter.chapter.volume {
-                chapterVolume = Int(vol)
-            }
             do {
-                try await STTHelpers.syncToAnilist(mediaID: trackerInfo?.al, progress: chapterNumber, progressVolume: chapterVolume)
+                try await STTHelpers.syncToAnilist(mediaID: trackerInfo?.al, progress: chapterNumber, progressVolume: vol)
             } catch {
-                toast.setError(msg: "Failed to Sync")
+                print(error)
             }
         }
 
         // Services
         let source = DaisukeEngine.shared.getSource(with: lastChapter.chapter.sourceId)
+        let contentId = lastChapter.chapter.contentId
+        let chapterId = lastChapter.chapter.chapterId
         Task {
-            await source?.onChaptersCompleted(contentId: lastChapter.chapter.contentId, chapterIds: [lastChapter.chapter.chapterId])
+            await source?.onChaptersCompleted(contentId: contentId , chapterIds: [chapterId])
         }
     }
 
@@ -306,7 +320,8 @@ extension NovelReaderView.ViewModel {
     }
 
     private func getTrackerInfo(_ id: String) -> StoredTrackerInfo? {
-        content?.trackerInfo ?? DataManager.shared.getTrackerInfo(id)
+//        content?.trackerInfo ?? DataManager.shared.getTrackerInfo(id)
+        return nil
     }
 
     func handleNavigation(_ point: CGPoint) {

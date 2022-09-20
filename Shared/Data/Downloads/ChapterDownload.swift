@@ -18,26 +18,12 @@ enum PageDownloadStatus {
 
 typealias ChapterIndentifier = (source: String, content: String, chapter: String)
 
-final class ICDMTextDownloadObject: Object {
-    // Identifiers
-    @Persisted(primaryKey: true) var _id: String
-    @Persisted var dateAdded: Date
-    @Persisted var textData: String
-    @Persisted var chapter: StoredChapter? {
-        didSet {
-            guard let chapter = chapter else {
-                return
-            }
-            _id = chapter._id
-        }
-    }
-}
-
 final class ICDMDownloadObject: Object, ObjectKeyIdentifiable {
     // Identifiers
     @Persisted(primaryKey: true) var _id: String
     @Persisted var dateAdded: Date
     @Persisted var status: DownloadStatus
+    @Persisted var textData: String?
     @Persisted var chapter: StoredChapter? {
         didSet {
             guard let chapter = chapter else {

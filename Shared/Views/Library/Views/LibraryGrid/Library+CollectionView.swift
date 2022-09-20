@@ -75,6 +75,20 @@ extension LibraryView {
                                 } label: {
                                     Label("Settings", systemImage: "gearshape")
                                 }
+                                
+                                Button {
+                                    let targets = filteredLibrary().compactMap({ $0.content }).map({ ($0.contentId, $0.sourceId) }) as [(String, String)]
+                                    Task {
+                                        for content in targets {
+                                            await DataManager.shared.refreshStored(contentId: content.0, sourceId: content.1)
+                                        }
+                                        await MainActor.run {
+                                            ToastManager.shared.setComplete()
+                                        }
+                                    }
+                                } label: {
+                                    Label("Refresh Database", systemImage: "arrow.triangle.2.circlepath")
+                                }
                             } label: {
                                 Image(systemName: "ellipsis.circle")
                                     .imageScale(.large)

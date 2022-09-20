@@ -8,7 +8,7 @@
 import Foundation
 
 extension DaisukeEngine.Structs {
-    enum PreferenceType: Int, Decodable {
+    enum PreferenceType: Int, Codable {
         case select, multiSelect, stepper, toggle, textfield
     }
 

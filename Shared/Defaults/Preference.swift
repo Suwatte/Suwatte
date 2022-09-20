@@ -84,6 +84,9 @@ final class Preferences {
 
     @UserDefault(STTKeys.NovelFont)
     var novelFont = "Avenir-Regular"
+    
+    @UserDefault(STTKeys.NonSelectiveSync)
+    var nonSelectiveSync = false
 }
 
 @propertyWrapper

@@ -57,7 +57,16 @@ struct MoreView: View {
 
         Section {
             NavigationLink("Social") {
-                Text("Not Ready")
+                List {
+                    Link(destination: URL(string: "https://ko-fi.com/suwatte")!) {
+                        Text("Support on KoFi")
+                    }
+                    Link(destination: URL(string: "https://www.reddit.com/r/MangaSoup/")!) {
+                        Text("Reddit")
+                    }
+                }
+                .navigationTitle("Social")
+                
             }
             Link("About Suwatte", destination: STTHost.root)
                 .buttonStyle(.plain)

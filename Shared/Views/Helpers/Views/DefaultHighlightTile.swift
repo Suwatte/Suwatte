@@ -29,7 +29,7 @@ struct DefaultTile: View {
     }
 
     var ImageV: some View {
-        STTImageView(url: URL(string: entry.covers.first ?? ""), identifier: .init(contentId: entry.id, sourceId: sourceId ?? ""))
+        STTImageView(url: URL(string: entry.cover), identifier: .init(contentId: entry.id, sourceId: sourceId ?? ""))
     }
 
     func CompactStyle(reader: GeometryProxy) -> some View {

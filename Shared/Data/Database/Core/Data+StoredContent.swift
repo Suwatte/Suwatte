@@ -11,26 +11,33 @@ import RealmSwift
 final class StoredContent: Object, ObjectKeyIdentifiable {
     // Identifiers
     @Persisted(primaryKey: true) var _id: String
-    @Persisted(indexed: true) var sourceId: String
-    @Persisted(indexed: true) var contentId: String
-
-    @Persisted var title: String
-    @Persisted var additionalTitles: List<String>
-
-    @Persisted var covers: List<String>
-    @Persisted var creators: List<String>
-
-    @Persisted var status: ContentStatus
-    @Persisted var summary: String
-    @Persisted var adultContent: Bool
-    @Persisted var url: String
-
-    @Persisted var properties: List<StoredProperty>
-
-    var cover: String {
-        covers.first ?? STTHost.coverNotFound.absoluteString
+    @Persisted(indexed: true) var sourceId: String {
+        didSet {
+            updateId()
+        }
+    }
+    @Persisted(indexed: true) var contentId: String {
+        didSet {
+            updateId()
+        }
     }
 
+    @Persisted(indexed: true) var title: String
+    @Persisted var cover: String
+    
+    @Persisted var webUrl: String?
+    @Persisted var summary: String?
+
+    @Persisted var additionalTitles: List<String>
+    @Persisted var additionalCovers: List<String>
+    @Persisted var properties: List<StoredProperty>
+
+    @Persisted var creators: List<String>
+    @Persisted var status: ContentStatus = .UNKNOWN
+    @Persisted var adultContent: Bool = false
+    @Persisted var recommendedReadingMode: ReadingMode = .PAGED_MANGA
+    @Persisted var contentType: ExternalContentType = .unknown
+    @Persisted var trackerInfo: Map<String, String>
     var SourceName: String {
         DaisukeEngine.shared.getSource(with: sourceId)?.name ?? "Unrecognized : \(sourceId)"
     }
@@ -39,15 +46,14 @@ final class StoredContent: Object, ObjectKeyIdentifiable {
         return .init(contentId: contentId, sourceId: sourceId)
     }
 
-    var includedCollections: [DaisukeEngine.Structs.HighlightCollection]?
-    @Persisted var trackerInfo: StoredTrackerInfo?
-    @Persisted var recommendedReadingMode: ReadingMode = .PAGED_MANGA
-    @Persisted var contentType: ExternalContentType = .unknown
 }
 
 extension StoredContent {
+    func updateId() {
+        _id = "\(sourceId)||\(contentId)"
+    }
     func toHighlight() -> DaisukeEngine.Structs.Highlight {
-        .init(id: contentId, covers: covers.toArray(), title: title, subtitle: nil, tags: nil, stats: nil, chapter: nil)
+        .init(contentId: contentId, cover: cover, title: title)
     }
 
     func convertProperties() -> [DSKCommon.Property] {
@@ -57,40 +63,22 @@ extension StoredContent {
             return .init(id: UUID().uuidString, label: prop.label, tags: tags)
         }
     }
+    
+    func toDSKContent() throws -> DSKCommon.Content {
+        let data = try DaisukeEngine.encode(value: self)
+        return try DaisukeEngine.decode(data: data, to: DSKCommon.Content.self)
+    }
 }
 
 extension ContentStatus: PersistableEnum, Codable {}
 extension ReadingMode: PersistableEnum, Codable {}
 
 extension DaisukeEngine.Structs.Content {
-    func toStoredContent(withSource source: DaisukeEngine.ContentSource) -> StoredContent {
-        let content = StoredContent()
-
-        content.sourceId = source.id
-        content.contentId = id
-        content.title = title
-        content.additionalTitles.append(objectsIn: additionalTitles)
-        content.covers.append(objectsIn: covers)
-        content.status = status
-        content.creators.append(objectsIn: creators)
-        content.summary = summary
-        content.adultContent = adultContent
-        content.url = url
-        content.properties.append(objectsIn: properties)
-        content.includedCollections = includedCollections
-
-        if let trackerInfo = trackerInfo {
-            let info = StoredTrackerInfo()
-            info.mal = trackerInfo.mal
-            info.al = trackerInfo.al
-            info.kt = trackerInfo.kt
-            info.mu = trackerInfo.mu
-            content.trackerInfo = info
-        }
-        content.recommendedReadingMode = recommendedReadingMode
-        content.contentType = contentType
-        content._id = "\(source.id)||\(id)"
-        return content
+    func toStoredContent(withSource source: DaisukeEngine.ContentSource) throws -> StoredContent {
+        let data = try DaisukeEngine.encode(value: self)
+        let stored = try DaisukeEngine.decode(data: data, to: StoredContent.self)
+        stored.sourceId = source.id
+        return stored
     }
 }
 
@@ -121,5 +109,19 @@ extension DataManager {
         return realm
             .objects(StoredContent.self)
             .filter("_id IN %@", ids)
+    }
+    
+    func refreshStored(contentId: String, sourceId: String) async {
+        
+        guard let source = DaisukeEngine.shared.getSource(with: sourceId) else {
+            return
+        }
+        
+        let data = try? await source.getContent(id: contentId)
+        guard let stored = try? data?.toStoredContent(withSource: source) else {
+            return
+        }
+        storeContent(stored)
+
     }
 }

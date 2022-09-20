@@ -192,7 +192,7 @@ extension ICDM {
 
 //
 extension ICDM {
-    private func getImages(of ids: ChapterIndentifier) async throws -> (urls: [URL], raws: [Data]) {
+    private func getImages(of ids: ChapterIndentifier) async throws -> (urls: [URL], raws: [Data], text: String) {
         let source = DaisukeEngine.shared.getSource(with: ids.source)
 
         guard let source = source else {
@@ -201,11 +201,11 @@ extension ICDM {
 
         let data = try await source.getChapterData(contentId: ids.content, chapterId: ids.chapter)
 
-        let urls = data.pages.compactMap { URL(string: $0.url ?? "") }
-        let b64Raws = data.pages.compactMap { $0.raw?.toBase64() }
+        let urls = data.pages?.compactMap { URL(string: $0.url ?? "") } ?? []
+        let b64Raws = data.pages?.compactMap { $0.raw?.toBase64() } ?? []
         let raws = b64Raws.compactMap { Data(base64Encoded: $0) }
-
-        return (urls: urls, raws: raws)
+        let text = data.text ?? ""
+        return (urls: urls, raws: raws, text: text)
     }
 }
 
@@ -275,7 +275,11 @@ extension ICDM {
 
         await announce(ids, state: .downloading(progress: 0.0))
         do {
-            if !data.urls.isEmpty {
+            if !data.text.isEmpty {
+                setText(for: generateID(of: ids), with: data.text)
+                await didFinishTasksAtHead(of: ids, with: .completed)
+            }
+            else if !data.urls.isEmpty {
                 // Handle URL List
                 let completion = try await downloadImages(of: ids, with: data.urls)
                 if completion {
@@ -294,6 +298,20 @@ extension ICDM {
             print(error)
             await didFinishTasksAtHead(of: ids, with: .failed)
             return
+        }
+    }
+    
+    private func setText(for id: String, with data: String){
+        let realm = try! Realm()
+        
+        guard let obj = realm.objects(ICDMDownloadObject.self)
+            .where({ $0._id == id })
+            .first else {
+            return
+        }
+        
+        try! realm.safeWrite {
+            obj.textData = data
         }
     }
 
@@ -397,15 +415,37 @@ extension ICDM {
         try FileManager.default.moveItem(at: path, to: destination)
     }
 
-    func getDownloadedImages(for id: String) throws -> [URL]? {
+    func getCompletedDownload(for id: String) throws -> DownloadedChapter? {
+        let realm = try Realm()
+        let obj = realm.objects(ICDMDownloadObject.self)
+            .where({ $0._id == id })
+            .where({ $0.status == .completed })
+            .first
+        
+        guard let obj = obj else {
+            return nil
+        }
+        
+        // Text
+        if let text = obj.textData {
+            return .init(text: text)
+        }
+        
+        // Images
         let directory = ICDM.shared.directory.appendingPathComponent(id)
         if directory.exists {
             var urls = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
             urls = urls
                 .sorted(by: { STTHelpers.optionalCompare(firstVal: Int($0.fileName), secondVal: Int($1.fileName)) })
-            return urls
+            return .init(urls: urls)
         }
         return nil
+        
+    }
+    
+    struct DownloadedChapter {
+        var text: String?
+        var urls: [URL]?
     }
 }
 
@@ -416,3 +456,5 @@ extension URL {
         return lastPathComponent.replacingOccurrences(of: ".\(fileExt)", with: "")
     }
 }
+
+

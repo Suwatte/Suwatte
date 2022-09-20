@@ -41,7 +41,7 @@ extension ExploreView.HighlightTile {
     var INFO: some View {
         return HStack(alignment: .top, spacing: 5) {
             // Image
-            STTImageView(url: URL(string: entry.covers.first ?? ""), identifier: .init(contentId: entry.id, sourceId: sourceId))
+            STTImageView(url: URL(string: entry.cover), identifier: .init(contentId: entry.id, sourceId: sourceId))
                 .frame(width: 100)
                 .cornerRadius(7)
                 .padding(.all, 5)
@@ -88,7 +88,7 @@ extension ExploreView.HighlightTile {
     var NORMAL_CPT: some View {
         GeometryReader { reader in
             ZStack {
-                STTImageView(url: URL(string: entry.covers.first ?? ""), identifier: .init(contentId: entry.id, sourceId: sourceId))
+                STTImageView(url: URL(string: entry.cover), identifier: .init(contentId: entry.id, sourceId: sourceId))
                     .cornerRadius(10)
 
                 LinearGradient(gradient: Gradient(colors: [.clear, Color(red: 15 / 255, green: 15 / 255, blue: 15 / 255)]), startPoint: .center, endPoint: .bottom)
@@ -112,7 +112,7 @@ extension ExploreView.HighlightTile {
     var NORMAL_SEP: some View {
         GeometryReader { reader in
             VStack(alignment: .leading, spacing: 5) {
-                STTImageView(url: URL(string: entry.covers.first ?? ""), identifier: .init(contentId: entry.id, sourceId: sourceId))
+                STTImageView(url: URL(string: entry.cover), identifier: .init(contentId: entry.id, sourceId: sourceId))
                     .frame(height: reader.size.width * 1.5)
                     .cornerRadius(7)
 
@@ -127,7 +127,7 @@ extension ExploreView.HighlightTile {
     var LATEST: some View {
         HStack(alignment: .top, spacing: 5) {
             // Image
-            STTImageView(url: URL(string: entry.covers.first ?? ""), identifier: .init(contentId: entry.id, sourceId: sourceId))
+            STTImageView(url: URL(string: entry.cover), identifier: .init(contentId: entry.id, sourceId: sourceId))
                 .frame(width: 100)
                 .cornerRadius(7)
                 .padding(.all, 7)
@@ -139,14 +139,23 @@ extension ExploreView.HighlightTile {
                     .fontWeight(.bold)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
-
-                if let chapter = entry.chapter {
-                    Text("\(chapter.label) • \(chapter.date.timeAgo())")
+                if let subtitle = entry.subtitle {
+                    Text(subtitle + "This is a test")
                         .font(.headline)
                         .fontWeight(.light)
-                    Text("\(chapter.badge) Update\(chapter.badge > 1 ? "s" : "")")
-                        .font(.subheadline)
+
+                }
+
+                if let updates = entry.updates {
+                    let date = updates.date?.timeAgo()
+                    Text("\(updates.label)\(date.map({ " • \($0)" }) ?? "")")
+                        .font(.headline)
                         .fontWeight(.light)
+                    if let badge = updates.count {
+                        Text("\(badge) Update\(badge > 1 ? "s" : "")")
+                            .font(.subheadline)
+                            .fontWeight(.light)
+                    }
                 }
             }
             .padding(.vertical, 7)
@@ -168,7 +177,9 @@ extension ExploreView.HighlightTile {
         }
 
         var urls: [URL] {
-            entry.covers.compactMap { URL(string: $0) }
+            (
+                entry.additionalCovers.map({ $0 }) ?? []
+            ).compactMap({ URL(string: $0) })
         }
 
         var body: some View {

@@ -10,9 +10,13 @@ import SwiftUI
 
 extension ProfileView.Skeleton {
     struct Summary: View {
-        @EnvironmentObject var entry: StoredContent
         @State var expand = false
-        var summary: String {
+        @EnvironmentObject var model: ProfileView.ViewModel
+        
+        var entry: DSKCommon.Content {
+            model.content
+        }
+        var summary: String? {
             entry.summary
         }
 
@@ -22,9 +26,11 @@ extension ProfileView.Skeleton {
                     Text(entry.title)
                         .font(.title2)
                         .fontWeight(.semibold)
+                        .textSelection(.enabled)
+
                     Spacer()
                 }
-                if summary.trimmingCharacters(in: .whitespacesAndNewlines).count != 0 {
+                if let summary, summary.trimmingCharacters(in: .whitespacesAndNewlines).count != 0 {
                     MarkDownView(text: summary)
                         .lineLimit(expand ? nil : 3)
                         .padding(.top, 5.0)
@@ -37,16 +43,19 @@ extension ProfileView.Skeleton {
         }
     }
 
-    var CorePropertySection: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            if entry.properties.count >= 1 {
-                PropertyTagsView(property: entry.properties[0], source: viewModel.source)
+    struct CorePropertiesView: View {
+        @EnvironmentObject var model: ProfileView.ViewModel
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                if let properties = model.content.properties, !properties.isEmpty, let core = properties.get(index: 0) {
+                    PropertyTagsView(property: core, source: model.source)
+                }
             }
+
         }
     }
-
     struct PropertyTagsView: View {
-        var property: StoredProperty
+        var property: DSKCommon.Property
         var source: DaisukeEngine.ContentSource
         var body: some View {
             InteractiveTagView(property.tags) { tag in

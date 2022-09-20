@@ -50,8 +50,14 @@ extension DaisukeEngine.ContentSource {
 }
 
 extension DaisukeEngine.ContentSource {
-    func willReqeustImage(request _: DaisukeEngine.NetworkClient.Request) async throws -> DaisukeEngine.NetworkClient.Request {
-        throw DaisukeEngine.Errors.MethodNotImplemented
+    func willRequestImage(request : DaisukeEngine.NetworkClient.Request) async throws -> DaisukeEngine.NetworkClient.Request? {
+        
+        guard methodExists(method: "willRequestImage") else {
+            return nil
+        }
+        let dict = try request.asDictionary()
+        
+        return try await callMethodReturningDecodable(method: "willRequestImage", arguments: [dict], resolvesTo: DaisukeEngine.NetworkClient.Request.self)
     }
 
     func willAttemptCloudflareVerification() async throws -> URL {

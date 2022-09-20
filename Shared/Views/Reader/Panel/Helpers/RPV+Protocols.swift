@@ -60,6 +60,34 @@ class HorizontalContentSizePreservingFlowLayout: UICollectionViewFlowLayout {
         return layoutAttributes
     }
 }
+class NovelOffsetPreservingLayout: UICollectionViewFlowLayout {
+    var isInsertingCellsToTop: Bool = false {
+        didSet {
+            if isInsertingCellsToTop {
+                contentSizeBeforeInsertingToTop = collectionViewContentSize
+            }
+        }
+    }
+
+    private var contentSizeBeforeInsertingToTop: CGSize?
+
+    override func prepare() {
+        if isInsertingCellsToTop {
+            if let collectionView = collectionView, let oldContentSize = contentSizeBeforeInsertingToTop {
+                UIView.performWithoutAnimation {
+                    let newContentSize = self.collectionViewContentSize
+                    let contentOffsetX = collectionView.contentOffset.x + (newContentSize.width - oldContentSize.width)
+                    let contentOffsetY = collectionView.contentOffset.y + (newContentSize.height - oldContentSize.height)
+                    let newOffset = CGPoint(x: contentOffsetX, y: contentOffsetY)
+                    collectionView.contentOffset = newOffset
+                }
+            }
+            contentSizeBeforeInsertingToTop = nil
+            isInsertingCellsToTop = false
+        }
+    }
+
+}
 
 class VerticalContentOffsetPreservingLayout: UICollectionViewFlowLayout {
     var isInsertingCellsToTop: Bool = false {

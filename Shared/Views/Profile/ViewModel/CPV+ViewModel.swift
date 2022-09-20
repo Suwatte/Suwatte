@@ -10,13 +10,24 @@ import RealmSwift
 import SwiftUI
 import UIKit
 
+extension Task where Success == Never, Failure == Never {
+    static func sleep(seconds: Double = 1.0) async throws {
+        let duration = UInt64(seconds * 1000000000)
+        try await Task.sleep(nanoseconds: duration)
+    }
+}
+
 extension ProfileView {
-    // TODO: Rework this, complicated mess that could be made 10x Simpler
-    // Remove Realm Objects?
     final class ViewModel: ObservableObject {
         @Published var entry: DaisukeEngine.Structs.Highlight
         var source: DaisukeEngine.ContentSource
-        @Published var content: Loadable<StoredContent> = .idle
+        
+        @Published var content: DSKCommon.Content = .placeholder
+        @Published var loadableContent: Loadable<Bool> = .idle
+        var storedContent: StoredContent {
+            try! content.toStoredContent(withSource: source)
+        }
+        
         @Published var chapters: Loadable<[StoredChapter]> = .idle
         @Published var working = false
         @Published var linkedHasUpdate = false
@@ -29,7 +40,6 @@ extension ProfileView {
         @Published var lastReadMarker: ChapterMarker?
         @Published var actionState: ActionState = .init(state: .none)
 
-        @Published var threadSafeContent: DSKCommon.Content?
         @Published var threadSafeChapters: [DSKCommon.Chapter]?
         var notificationToken: NotificationToken?
         var syncTask: Task<Void, Error>?
@@ -50,29 +60,25 @@ extension ProfileView.ViewModel {
         do {
             // Fetch From JS
             let parsed = try await source.getContent(id: entry.id)
-            await MainActor.run(body: {
-                threadSafeContent = parsed
-            })
-            let stored = parsed.toStoredContent(withSource: source)
-            DataManager.shared.storeContent(stored)
-            @ThreadSafe var threadSafeRef = stored
-            await UIView.animate(withDuration: 0.1) {
-                if let threadSafeRef = threadSafeRef {
-                    self.content = .loaded(threadSafeRef)
-                }
+            Task { @MainActor in
+                self.content = parsed
+                self.loadableContent = .loaded(true)
                 self.working = false
-            } completion: { complete in
-                if !complete { return }
-                Task {
-                    await self.loadChapters(parsed.chapters)
-                }
             }
+            Task {
+                await self.loadChapters(parsed.chapters)
+            }
+            if let stored = try? parsed.toStoredContent(withSource: source) {
+                DataManager.shared.storeContent(stored)
+            }
+
         } catch {
             await MainActor.run(body: {
-                if content.LOADED {
+                if loadableContent.LOADED {
                     ToastManager.shared.setError(msg: "Failed to Update Profile")
+                    print(error)
                 } else {
-                    content = .failed(error)
+                    loadableContent = .failed(error)
                 }
                 working = false
             })
@@ -87,46 +93,48 @@ extension ProfileView.ViewModel {
             threadSafeChapters = parsedChapters
         })
         if let chapters = parsedChapters {
-            let stored = chapters.map { $0.toStoredChapter(withSource: source) }.sorted(by: { $0.index < $1.index })
+            let unmanaged = chapters.map { $0.toStoredChapter(withSource: source) }
+            await MainActor.run(body: {
+                threadSafeChapters = chapters
+                self.chapters = .loaded(unmanaged)
+                working = false
+            })
+            let stored = chapters.map { $0.toStoredChapter(withSource: source) }
             DataManager.shared.storeChapters(stored)
-            self.chapters = .loaded(stored)
-            working = false
+            await didLoadChapters()
 
         } else {
             do {
                 let parsedChapters = try await source.getContentChapters(contentId: entry.id)
+
+                let unmanaged = parsedChapters.map { $0.toStoredChapter(withSource: source) }
                 await MainActor.run(body: {
                     threadSafeChapters = parsedChapters
+                    self.chapters = .loaded(unmanaged)
+                    working = false
                 })
                 let stored = parsedChapters.map { $0.toStoredChapter(withSource: source) }
                 DataManager.shared.storeChapters(stored)
-//
-                let unmanaged = parsedChapters.map { $0.toStoredChapter(withSource: source) }
+                await didLoadChapters()
 
-                await UIView.animate(withDuration: 0.1) { [weak self] in
-                    self?.chapters = .loaded(unmanaged)
-                    self?.working = false
-                } completion: { complete in
-                    if !complete { return }
-                }
+               
             } catch {
-                if chapters.LOADED {
-                    ToastManager.shared.setError(msg: "Failed to Fetch Chapters")
-                    return
-                } else {
-                    chapters = .failed(error)
+                
+                await MainActor.run(body: {
+                    if chapters.LOADED {
+                        ToastManager.shared.setError(msg: "Failed to Fetch Chapters")
+                        return
+                    } else {
+                        chapters = .failed(error)
+                    }
+                    working = false
+                    ToastManager.shared.setError(error: error)
+                })
+                
+                Task {
+                    setChaptersFromDB()
                 }
-                working = false
-                ToastManager.shared.setError(error: error)
-            }
-        }
-
-        if chapters.LOADED {
-            DataManager.shared.clearUpdates(id: sttIdentifier().id)
-            Task {
-                await handleSync()
-                await getMarkers()
-                try await handleAnilistSync()
+                
             }
         }
     }
@@ -135,6 +143,18 @@ extension ProfileView.ViewModel {
         notificationToken?.invalidate()
         notificationToken = nil
     }
+    
+    func didLoadChapters() async {
+        Task {
+            await getMarkers()
+            try await Task.sleep()
+            DataManager.shared.clearUpdates(id: sttIdentifier().id)
+            await handleSync()
+            try await handleAnilistSync()
+        }
+    }
+    
+    func setChaptersFromDB() {}
 
     @MainActor
     func getMarkers() {
@@ -165,8 +185,7 @@ extension ProfileView.ViewModel {
             actionState = .init(state: .none)
             return
         }
-
-        guard let entry = content.value else {
+        guard content.contentId == entry.contentId else {
             return
         }
         guard let marker = lastReadMarker, let chapter = marker.chapter else {
@@ -203,7 +222,7 @@ extension ProfileView.ViewModel {
         // Set action state to re-read
         // marker is nil to avoid progress display
         if index == 0 {
-            if entry.status == .COMPLETED, let chapter = chapters.last {
+            if content.status == .COMPLETED, let chapter = chapters.last {
                 actionState = .init(state: .restart, chapter: chapter, marker: nil)
                 return
             }
@@ -216,20 +235,27 @@ extension ProfileView.ViewModel {
         actionState = .init(state: .upNext, chapter: chapters.get(index: index), marker: nil)
     }
 
-    func loadContentFromDatabase() {
-        withAnimation {
-            self.content = .loading
-        }
-
-        let realm = try! Realm()
-        // Get Saved Content
-        let target = realm.objects(StoredContent.self)
-            .first(where: { $0.sourceId == source.id && $0.contentId == entry.id })
-
-        if let target = target {
-            withAnimation(.easeInOut(duration: 0.25)) {
-                self.content = .loaded(target)
+    func loadContentFromDatabase() async {
+        await MainActor.run(body: {
+            withAnimation {
+                self.loadableContent = .loading
             }
+        })
+
+        let target = DataManager.shared.getStoredContent(source.id,entry.id)
+        
+        if let target = target {
+            do {
+                let c = try target.toDSKContent()
+                await MainActor.run(body: {
+                    content = c
+                    loadableContent = .loaded(true)
+                })
+                
+            } catch {
+                
+            }
+            
         }
 
         Task {
@@ -262,13 +288,13 @@ extension ProfileView.ViewModel {
     }
 
     private func handleAnilistSync() async throws {
-        guard let content = threadSafeContent, let chapters = threadSafeChapters else {
+        guard let chapters = threadSafeChapters else {
             return
         }
 
         var id: Int?
 
-        if let idStr = content.trackerInfo?.al, let x = Int(idStr) {
+        if let idStr = content.trackerInfo?["al"], let x = Int(idStr) {
             id = x
         } else {
             id = getSavedTrackerLink()
@@ -329,7 +355,7 @@ extension ProfileView.ViewModel {
         // Init Realm
         // Save New Chapters
         let targets = chapters
-            .filter { readChapterIds.contains($0.id) }
+            .filter { readChapterIds.contains($0.chapterId) }
             .map { $0.toStoredChapter(withSource: source) }
 
         // Mark Chapters As Read
@@ -339,8 +365,6 @@ extension ProfileView.ViewModel {
         let markers = getOutOfSyncMarkers(with: readChapterIds)
         // Sync to Source
         await source.onChaptersCompleted(contentId: entry.id, chapterIds: markers)
-
-        // TODO: Anilist Chapter Sync
 
         await MainActor.run(body: {
             syncState = .done

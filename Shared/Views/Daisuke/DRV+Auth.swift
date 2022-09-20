@@ -315,7 +315,7 @@ extension DaisukeContentSourceView {
                             currentStored?.contentId = entry.id
                             currentStored?.sourceId = source.id
                             currentStored?.title = entry.title
-                            currentStored?.covers.append(objectsIn: entry.covers)
+//                            currentStored?.cover = entry
                         }
                         guard let currentStored = currentStored else {
                             return

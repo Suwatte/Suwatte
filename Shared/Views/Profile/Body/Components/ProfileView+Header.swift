@@ -12,18 +12,20 @@ import SwiftUI
 private typealias Skeleton = ProfileView.Skeleton
 extension Skeleton {
     struct Header: View {
-        @EnvironmentObject var entry: StoredContent
         @EnvironmentObject var model: ProfileView.ViewModel
         @State var presentThumbnails = false
 
+        var entry: DSKCommon.Content {
+            model.content
+        }
         var ImageWidth = 150.0
         var body: some View {
             HStack {
                 CoverImage
 
                 VStack(alignment: .leading, spacing: 10) {
-                    if entry.creators.count > 0 {
-                        Text("By: \(entry.creators.joined(separator: ", "))")
+                    if let creators = entry.creators, !creators.isEmpty {
+                        Text("By: \(creators.joined(separator: ", "))")
                             .font(.subheadline)
                             .fontWeight(.semibold)
                             .multilineTextAlignment(.leading)
@@ -33,6 +35,14 @@ extension Skeleton {
                     Text(model.source.name)
                         .font(.subheadline)
                         .fontWeight(.semibold)
+                    if let ac = entry.adultContent, ac {
+                        Text("18+")
+                            .font(.caption)
+                            .fontWeight(.light)
+                            .padding(.all, 2)
+                            .background(Color.red.opacity(0.4))
+                            .cornerRadius(5)
+                    }
 
                     Spacer()
                     ActionButtons()
@@ -49,14 +59,10 @@ extension Skeleton {
 // MARK: Thumbnail
 
 extension Skeleton.Header {
-    var cover: URL {
-        let str = entry.covers.first ?? DEFAULT_THUMB
-
-        return URL(string: str)!
-    }
 
     var CoverImage: some View {
-        STTImageView(url: URL(string: entry.cover), identifier: entry.ContentIdentifier)
+        STTImageView(url: URL(string: entry.cover), identifier: model.sttIdentifier())
+        
             .frame(width: ImageWidth, height: ImageWidth * 1.5)
             .cornerRadius(7)
             .shadow(radius: 3)
@@ -64,7 +70,7 @@ extension Skeleton.Header {
                 presentThumbnails.toggle()
             }
             .fullScreenCover(isPresented: $presentThumbnails) {
-                ProfileView.CoversSheet(covers: entry.covers.toArray())
+                ProfileView.CoversSheet(covers: entry.covers)
             }
     }
 }
@@ -72,14 +78,18 @@ extension Skeleton.Header {
 // MARK: Status
 
 extension Skeleton.Header {
+    
+    var entryStatus: ContentStatus {
+        entry.status ?? .UNKNOWN
+    }
     var Status: some View {
         HStack(spacing: 3) {
             Image(systemName: "clock")
-            Text("\(entry.status.description)")
+            Text("\(entryStatus.description)")
                 .font(.subheadline)
                 .fontWeight(.semibold)
         }
-        .foregroundColor(entry.status.color)
+        .foregroundColor(entryStatus.color)
     }
 }
 
@@ -88,7 +98,6 @@ extension Skeleton.Header {
 private extension Skeleton {
     struct ActionButtons: View {
         @State var currentAction: Option?
-        @EnvironmentObject var entry: StoredContent
         @ObservedResults(LibraryEntry.self) var libraryEntries
         @State var presentSafariView = false
         @EnvironmentObject var model: ProfileView.ViewModel
@@ -101,7 +110,7 @@ private extension Skeleton {
                         switch action.option {
                         case .COLLECTIONS:
                             if !EntryInLibrary {
-                                DataManager.shared.toggleLibraryState(for: entry)
+                                DataManager.shared.toggleLibraryState(for: model.storedContent)
                             }
                             model.presentCollectionsSheet.toggle()
                         case .TRACKERS: model.presentTrackersSheet.toggle()

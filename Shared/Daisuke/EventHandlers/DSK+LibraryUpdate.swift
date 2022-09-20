@@ -58,7 +58,7 @@ extension DaisukeEngine {
             let updates = chapters?
                 .filter { $0.date > entry.lastUpdated }
                 .filter { $0.date > entry.lastOpened }
-                .filter { !(marked?.contains($0.id) ?? false) }
+                .filter { !(marked?.contains($0.chapterId) ?? false) }
                 .count ?? 0
 
             // No Updates Return 0

@@ -21,6 +21,7 @@ class StoredChapterData: Object {
     @Persisted(primaryKey: true) var _id: String
 
     @Persisted var pages: List<StoredChapterPage>
+    @Persisted var text: String?
 
     var imageURLs: [String] {
         pages.compactMap { $0.url }
@@ -30,10 +31,6 @@ class StoredChapterData: Object {
         pages.compactMap { $0.raw?.toBase64() }
     }
 
-    var texts: [String] {
-        pages.compactMap { $0.text }
-    }
-
     var urls: [URL] = []
     var archivePaths: [String] = []
 }
@@ -41,14 +38,14 @@ class StoredChapterData: Object {
 class StoredChapterPage: EmbeddedObject, Parsable {
     @Persisted var url: String?
     @Persisted var raw: String?
-    @Persisted var text: String?
 }
 
 extension DaisukeEngine.Structs.ChapterData {
     func toStored(withStoredChapter chapter: StoredChapter) -> StoredChapterData {
         let object = StoredChapterData()
         object.chapter = chapter
-        object.pages.append(objectsIn: pages)
+        object.pages.append(objectsIn: pages ?? [])
+        object.text = text
         return object
     }
 }

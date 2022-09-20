@@ -41,7 +41,7 @@ enum ChapterSortOption: Int, CaseIterable, Identifiable {
 
 struct ChapterList: View {
     @EnvironmentObject var model: ProfileView.ViewModel
-    @State var selection: StoredChapter?
+    @State var selection: String?
     @State var selections = Set<StoredChapter>()
     @ObservedResults(ICDMDownloadObject.self) var downloads
     @ObservedResults(ChapterMarker.self, where: { $0.chapter != nil }) var markers
@@ -51,10 +51,11 @@ struct ChapterList: View {
     @Environment(\.editMode) var editMode
     var body: some View {
         Group {
-            if let chapters = model.chapters.value, let content = model.content.value {
+            if let chapters = model.chapters.value {
                 ChaptersView(orderedChapters(chapters))
-                    .fullScreenCover(item: $selection) { chapter in
-                        ReaderGateWay(readingMode: content.recommendedReadingMode, chapterList: chapters, openTo: chapter)
+                    .fullScreenCover(item: $selection, onDismiss: handleReconnection) { chapterId in
+                        let chapter = chapters.first(where: { $0.chapterId == chapterId })!
+                        ReaderGateWay(readingMode: model.content.recommendedReadingMode ?? .PAGED_COMIC, chapterList: chapters, openTo: chapter)
                     }
             } else {
                 Text("No Chapters Found")
@@ -83,7 +84,7 @@ struct ChapterList: View {
                         }
 
                         Menu("Options") {
-                            if let readingMode = model.content.value?.recommendedReadingMode, ![ReadingMode.NOVEL, .WEB].contains(readingMode) {
+                            if let readingMode = model.content.recommendedReadingMode, ![ReadingMode.NOVEL, .WEB].contains(readingMode) {
                                 Button("Download Chapter(s)") { addToDownloadQueue() }
                                 Button("Delete / Cancel Download(s)") { removeDownload() }
                             }
@@ -126,6 +127,9 @@ struct ChapterList: View {
         }
     }
 
+    func handleReconnection() {
+        model.getMarkers()
+    }
     func ChaptersView(_ chapters: [StoredChapter]) -> some View {
         List(chapters, id: \.self, selection: $selections) { chapter in
             let completed = isChapterCompleted(chapter)
@@ -133,7 +137,9 @@ struct ChapterList: View {
             let progress = chapterProgress(chapter)
             let download = getDownload(chapter)
             Button {
-                selection = chapter
+                if editMode?.wrappedValue != .active {
+                    selection = chapter.chapterId
+                }
             } label: {
                 ChapterListTile(chapter: chapter,
                                 isCompleted: completed,
@@ -248,8 +254,8 @@ extension ChapterList {
         } else {
             Button {
                 ICDM.shared.add(chapters: [chapter])
-
-                if let c = model.content.value,!DataManager.shared.isInLibrary(content: c) {
+                let c = model.storedContent
+                if !DataManager.shared.isInLibrary(content: c) {
                     DataManager.shared.toggleLibraryState(for: c)
                 }
             } label: {
@@ -361,7 +367,8 @@ extension ChapterList {
         DataManager.shared.bulkMarkChapter(chapters: Array(selections), completed: false)
         deselectAll()
 
-        if let c = model.content.value, !DataManager.shared.isInLibrary(content: c) {
+        let c = model.storedContent
+        if !DataManager.shared.isInLibrary(content: c) {
             DataManager.shared.toggleLibraryState(for: c)
         }
     }

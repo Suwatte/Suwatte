@@ -13,13 +13,17 @@ extension ReaderView {
         var transition: Transition
         @EnvironmentObject var viewModel: ViewModel
         var body: some View {
-            ZStack {
-                switch transition.type {
-                case .NEXT: NEXT
-                case .PREV: PREV
+            GeometryReader { proxy in
+                Group {
+                    switch transition.type {
+                    case .NEXT: NEXT
+                    case .PREV: PREV
+                    }
                 }
+                .frame(width: proxy.size.width, height: proxy.size.height)
             }
             .ignoresSafeArea()
+            .edgesIgnoringSafeArea(.all)            
         }
 
         @ViewBuilder
@@ -91,8 +95,7 @@ extension ReaderView {
                     }
                 }
                 .sheet(isPresented: $openCollectionSheet) {
-                    ProfileView.Sheets.LibrarySheet()
-                        .environmentObject(entry)
+                    ProfileView.Sheets.LibrarySheet(storedContent: entry)
                 }
                 .padding()
                 .background(Color.primary.opacity(0.05))

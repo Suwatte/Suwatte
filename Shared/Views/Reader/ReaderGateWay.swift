@@ -36,7 +36,7 @@ struct WebReader: View {
 
     var body: some View {
         NavigationView {
-            STTWebView(url: URL(string: chapter.webUrl))
+            STTWebView(url: URL(string: chapter.webUrl ?? ""))
                 .closeButton()
                 .navigationTitle(chapter.displayName)
                 .navigationBarTitleDisplayMode(.inline)
