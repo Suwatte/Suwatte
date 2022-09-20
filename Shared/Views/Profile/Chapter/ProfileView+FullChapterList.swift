@@ -137,7 +137,9 @@ struct ChapterList: View {
             let progress = chapterProgress(chapter)
             let download = getDownload(chapter)
             Button {
-                selection = chapter.chapterId
+                if editMode?.wrappedValue != .active {
+                    selection = chapter.chapterId
+                }
             } label: {
                 ChapterListTile(chapter: chapter,
                                 isCompleted: completed,
