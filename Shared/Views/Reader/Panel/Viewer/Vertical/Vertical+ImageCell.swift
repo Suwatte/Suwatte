@@ -73,10 +73,12 @@ class VerticalImageCell: UICollectionViewCell {
         // Panel Delegate
         progressView = UIHostingController(rootView: ReaderView.PageProgressView(model: progressModel)).view!
         progressView.translatesAutoresizingMaskIntoConstraints = false
+        progressView.backgroundColor = .clear
         addSubview(progressView)
 
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.backgroundColor = .clear
         addSubview(imageView)
         activateConstraints()
         subscribe()
