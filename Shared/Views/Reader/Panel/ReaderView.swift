@@ -50,14 +50,14 @@ struct ReaderView: View {
                     .closeButton()
             }
         }
-//        .sheet(isPresented: $model.menuControl.chapterList) {
-//            NavigationView {
-//                ChapterSheet()
-//                    .navigationTitle("Chapter List")
-//                    .navigationBarTitleDisplayMode(.inline)
-//                    .closeButton()
-//            }
-//        }
+        .sheet(isPresented: $model.menuControl.chapterList) {
+            NavigationView {
+                ChapterSheet()
+                    .navigationTitle("Chapter List")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .closeButton()
+            }
+        }
         .environmentObject(model)
         .onChange(of: model.slider.isScrubbing) { val in
 

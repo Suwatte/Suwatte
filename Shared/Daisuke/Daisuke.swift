@@ -143,7 +143,6 @@ extension DaisukeEngine {
         let path = directory.appendingPathComponent("\(id).stt")
         try FileManager.default.removeItem(at: path)
 
-        // TODO: Remove Saved Object
         DataManager.shared.removeRunnerInformation(id: id)
     }
 }

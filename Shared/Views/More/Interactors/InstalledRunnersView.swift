@@ -11,7 +11,7 @@ import SwiftUI
 struct InstalledRunnersView: View {
     @ObservedObject var engine = DaisukeEngine.shared
     @ObservedResults(StoredRunnerObject.self) var savedRunners
-
+    @State var showAddSheet = false
     var body: some View {
         let sources = engine.getSources()
         List {
@@ -44,6 +44,38 @@ struct InstalledRunnersView: View {
             }
         }
         .navigationTitle("Installed Runners")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("\(Image(systemName: "plus"))") {
+                    showAddSheet.toggle()
+                }
+            }
+        }
+        .fileImporter(isPresented: $showAddSheet, allowedContentTypes: [.init(filenameExtension: "stt")!]) { result in
+
+            guard let path = try? result.get() else {
+                ToastManager.shared.setError(msg: "Task Failed")
+                return
+            }
+
+            if path.startAccessingSecurityScopedResource() {
+                Task {
+                    do {
+                        try await DaisukeEngine.shared.importRunner(from:path)
+                        await MainActor.run {
+                            ToastManager.shared.setComplete(title: "Added!")
+                        }
+                    } catch {
+                        await MainActor.run {
+                            ToastManager.shared.setError(error:error)
+                        }
+                    }
+                    path.stopAccessingSecurityScopedResource()
+
+                }
+            }
+
+        }
     }
 
     func getSaved(_ id: String) -> StoredRunnerObject? {

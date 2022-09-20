@@ -274,7 +274,6 @@
 		DFC39E9C28A164A600450EC4 /* ToastModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC39E9B28A164A500450EC4 /* ToastModifier.swift */; };
 		DFC39E9E28A1F9F000450EC4 /* ICDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC39E9D28A1F9EF00450EC4 /* ICDM.swift */; };
 		DFC9B0F7280A67A400C675EF /* Vertical+Zoomable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC9B0F6280A67A400C675EF /* Vertical+Zoomable.swift */; };
-		DFCA94702841947F0017E88A /* ExternalInteractorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFCA946F2841947F0017E88A /* ExternalInteractorsView.swift */; };
 		DFCE6EB6280148E4002E220C /* ReaderView+ChapterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFCE6EB5280148E4002E220C /* ReaderView+ChapterSheet.swift */; };
 		DFCE6EB828014F8D002E220C /* ReaderCustomOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFCE6EB728014F8D002E220C /* ReaderCustomOverlay.swift */; };
 		DFF1043E28A9963D00E2C3A4 /* AnyCodable in Frameworks */ = {isa = PBXBuildFile; productRef = DFF1043D28A9963D00E2C3A4 /* AnyCodable */; };
@@ -539,7 +538,6 @@
 		DFC39E9B28A164A500450EC4 /* ToastModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastModifier.swift; sourceTree = "<group>"; };
 		DFC39E9D28A1F9EF00450EC4 /* ICDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICDM.swift; sourceTree = "<group>"; };
 		DFC9B0F6280A67A400C675EF /* Vertical+Zoomable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+Zoomable.swift"; sourceTree = "<group>"; };
-		DFCA946F2841947F0017E88A /* ExternalInteractorsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalInteractorsView.swift; sourceTree = "<group>"; };
 		DFCE6EAF280108EA002E220C /* Suwatte.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Suwatte.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DFCE6EB5280148E4002E220C /* ReaderView+ChapterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReaderView+ChapterSheet.swift"; sourceTree = "<group>"; };
 		DFCE6EB728014F8D002E220C /* ReaderCustomOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderCustomOverlay.swift; sourceTree = "<group>"; };
@@ -1105,7 +1103,6 @@
 				DFB47EF82880C3BC0040A1BD /* OPDS */,
 				DFF363242863E496006D02C5 /* Migrate */,
 				DF59C97E28500E080027F19D /* Local */,
-				DFCA946E2841946F0017E88A /* Interactors */,
 				DF7B18862830B467006A54C9 /* Reader */,
 				DF248F0628137F6A00818300 /* Trackers */,
 				DF72E4902813226E00E40E52 /* ImageSearch */,
@@ -1699,14 +1696,6 @@
 			path = Filter;
 			sourceTree = "<group>";
 		};
-		DFCA946E2841946F0017E88A /* Interactors */ = {
-			isa = PBXGroup;
-			children = (
-				DFCA946F2841947F0017E88A /* ExternalInteractorsView.swift */,
-			);
-			path = Interactors;
-			sourceTree = "<group>";
-		};
 		DFCE6EB4280148CE002E220C /* Chapters */ = {
 			isa = PBXGroup;
 			children = (
@@ -2100,7 +2089,6 @@
 				DF8D0B922800EE48003E4C3E /* SearchView.swift in Sources */,
 				DF9BD64A2891D837006628D0 /* DSK+Chapter.swift in Sources */,
 				DF8D0B962800EE48003E4C3E /* ProfileView+Covers.swift in Sources */,
-				DFCA94702841947F0017E88A /* ExternalInteractorsView.swift in Sources */,
 				DF1FD5C8284B49EA00A67F0E /* DoublePaged+ReaderPageView.swift in Sources */,
 				DF8D0B6B2800EE48003E4C3E /* HorizontalSlider.swift in Sources */,
 				DF9BD6462891C16D006628D0 /* DSK+Tag.swift in Sources */,
