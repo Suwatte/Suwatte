@@ -14,7 +14,6 @@ struct DaisukeContentSourceView: View {
     @AppStorage(STTKeys.SourcesHiddenFromGlobalSearch) var sourcesHiddenFromGlobalSearch: [String] = []
     var body: some View {
         List {
-            // TODO: Source Info
             HeaderSection
             InfoSection
             if let info = (source.info as? DSK.ContentSource.ContentSourceInfo), let authMethod = info.authMethod {
