@@ -397,7 +397,7 @@ extension ReaderView.ViewModel {
         // Services
         let source = DaisukeEngine.shared.getSource(with: sourceId)
         Task {
-            await source?.onChaptersCompleted(contentId: contentId, chapterIds: [chapterId])
+            await source?.onChapterRead(contentId: contentId, chapterId: chapterId)
         }
     }
 }

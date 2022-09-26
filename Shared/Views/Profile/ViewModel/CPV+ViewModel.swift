@@ -364,7 +364,7 @@ extension ProfileView.ViewModel {
         // Get Chapters that are out of sync
         let markers = getOutOfSyncMarkers(with: readChapterIds)
         // Sync to Source
-        await source.onChaptersCompleted(contentId: entry.id, chapterIds: markers)
+        await source.onChaptersMarked(contentId: entry.id, chapterIds: markers, completed: true)
 
         await MainActor.run(body: {
             syncState = .done

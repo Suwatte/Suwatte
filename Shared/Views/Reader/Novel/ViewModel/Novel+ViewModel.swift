@@ -306,7 +306,7 @@ extension NovelReaderView.ViewModel {
         let contentId = lastChapter.chapter.contentId
         let chapterId = lastChapter.chapter.chapterId
         Task {
-            await source?.onChaptersCompleted(contentId: contentId , chapterIds: [chapterId])
+            await source?.onChapterRead(contentId: contentId, chapterId: chapterId)
         }
     }
 

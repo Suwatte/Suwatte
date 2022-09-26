@@ -32,9 +32,17 @@ extension DaisukeEngine.ContentSource {
         }
     }
 
-    func onChaptersCompleted(contentId: String, chapterIds: [String]) async {
+    func onChaptersMarked(contentId: String, chapterIds: [String], completed: Bool) async {
         do {
-            try await callOptionalVoidMethod(method: "onChaptersCompleted", arguments: [contentId, chapterIds])
+            try await callOptionalVoidMethod(method: "onChaptersMarked", arguments: [contentId, chapterIds, completed])
+        } catch {
+            ToastManager.shared.setError(error: error)
+        }
+    }
+    
+    func onChapterRead(contentId: String, chapterId: String) async {
+        do {
+            try await callOptionalVoidMethod(method: "onChapterRead", arguments: [contentId, chapterId])
         } catch {
             ToastManager.shared.setError(error: error)
         }

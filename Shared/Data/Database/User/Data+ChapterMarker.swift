@@ -67,17 +67,19 @@ extension DataManager {
             }
         }
 
-        if completed {
-            let grouped = Dictionary(grouping: chapters, by: { $0.sourceId })
-            for (key, value) in grouped {
-                let source = DaisukeEngine.shared.getSource(with: key)
-                let groupedByContent = Dictionary(grouping: value, by: { $0.contentId })
+        notifySourceOfMarkState(chapters: chapters, completed: completed)
+    }
+    
+    private func notifySourceOfMarkState(chapters: [StoredChapter], completed: Bool) {
+        let grouped = Dictionary(grouping: chapters, by: { $0.sourceId })
+        for (key, value) in grouped {
+            let source = DaisukeEngine.shared.getSource(with: key)
+            let groupedByContent = Dictionary(grouping: value, by: { $0.contentId })
 
-                for (k, v) in groupedByContent {
-                    let t = v.map { $0.chapterId }
-                    Task {
-                        await source?.onChaptersCompleted(contentId: k, chapterIds: t)
-                    }
+            for (k, v) in groupedByContent {
+                let t = v.map { $0.chapterId }
+                Task {
+                    await source?.onChaptersMarked(contentId: k, chapterIds: t, completed: completed)
                 }
             }
         }
