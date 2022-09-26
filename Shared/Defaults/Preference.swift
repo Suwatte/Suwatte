@@ -19,7 +19,8 @@ final class Preferences {
     init(userDefaults: UserDefaults) {
         self.userDefaults = userDefaults
     }
-
+    @UserDefault(STTKeys.incognito)
+    var incognitoMode: Bool = false
     // Page Level
     @UserDefault(STTKeys.CropWhiteSpaces)
     var cropWhiteSpaces: Bool = false

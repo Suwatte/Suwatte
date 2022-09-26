@@ -297,7 +297,7 @@ extension ReaderView.ViewModel {
     }
 
     private var incognitoMode: Bool {
-        UserDefaults.standard.bool(forKey: STTKeys.incognito)
+        Preferences.standard.incognitoMode
     }
 
     private var sourcesDisabledFromProgressMarking: [String] {
@@ -356,16 +356,18 @@ extension ReaderView.ViewModel {
             return
         }
 
-        // Mark As Completed
-        if canMark(sourceId: lastChapter.chapter.sourceId) {
-            DataManager.shared.setProgress(chapter: lastChapter.chapter)
+        if !canMark(sourceId: lastChapter.chapter.sourceId) {
+            return
         }
+        
+        // Mark As Completed
+        DataManager.shared.setProgress(chapter: lastChapter.chapter)
 
-        // Syncing
-
+        // Anilist Sync
         handleTrackerSync(number: lastChapter.chapter.number,
                           volume: lastChapter.chapter.volume)
-
+        
+        // Source Sync
         handleSourceSync(contentId: lastChapter.chapter.contentId,
                          sourceId: lastChapter.chapter.sourceId,
                          chapterId: lastChapter.chapter.chapterId)

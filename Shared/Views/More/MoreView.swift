@@ -10,7 +10,7 @@ import Nuke
 import SwiftUI
 
 struct MoreView: View {
-    @AppStorage(STTKeys.incognito) var incognitoMode = false
+    @Preference(\.incognitoMode) var incognitoMode
     @State var cacheSize = Loadable<UInt>.idle
     var body: some View {
         NavigationView {
