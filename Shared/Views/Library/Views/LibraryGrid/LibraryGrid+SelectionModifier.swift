@@ -23,9 +23,6 @@ extension LibraryView.LibraryGrid {
         @EnvironmentObject var model: ViewModel
         func body(content: Content) -> some View {
             content
-                .onChange(of: model.isSelecting, perform: { newValue in
-                    print("CHANGED \n\n\n\n\n")
-                })
                 .sheet(item: $selectionOption, onDismiss: { model.selectedIndexes.removeAll() }) { option in
                     switch option {
                     case .collections: MoveCollectionsView(entries: entries)
