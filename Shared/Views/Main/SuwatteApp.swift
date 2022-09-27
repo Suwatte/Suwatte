@@ -90,7 +90,7 @@ extension SuwatteApp {
 
 final class NavigationModel: ObservableObject {
     static let shared = NavigationModel()
-    @Published var identifier: DaisukeEngine.Structs.SuwatteContentIdentifier?
+    @Published var identifier: ContentIdentifier?
 }
 
-extension DaisukeEngine.Structs.SuwatteContentIdentifier: Identifiable {}
+extension ContentIdentifier: Identifiable {}

@@ -318,7 +318,7 @@ extension ReaderView.ViewModel {
         }
 
         // Update Entry Last Read
-        let id = DSKCommon.SuwatteContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId).id
+        let id = ContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId).id
         DataManager.shared.updateLastRead(forId: id)
 
     }
@@ -373,7 +373,7 @@ extension ReaderView.ViewModel {
                          chapterId: lastChapter.chapter.chapterId)
     }
     private func getStoredTrackerInfo() -> StoredTrackerInfo? {
-        let id = DSKCommon.SuwatteContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId).id
+        let id = ContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId).id
         return DataManager.shared.getTrackerInfo(id)
     }
 

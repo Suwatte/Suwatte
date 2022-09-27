@@ -85,7 +85,7 @@ extension DataManager {
         }
     }
 
-    func getHighestMarked(id: DSKCommon.SuwatteContentIdentifier) -> StoredChapter? {
+    func getHighestMarked(id: ContentIdentifier) -> StoredChapter? {
         let realm = try! Realm()
 
         return realm

@@ -285,7 +285,7 @@ extension NovelReaderView.ViewModel {
         }
 
         // Trackers
-        let trackerInfo = getTrackerInfo(DaisukeEngine.Structs.SuwatteContentIdentifier(contentId: lastChapter.chapter.contentId, sourceId: lastChapter.chapter.sourceId).id)
+        let trackerInfo = getTrackerInfo(ContentIdentifier(contentId: lastChapter.chapter.contentId, sourceId: lastChapter.chapter.sourceId).id)
         let chapterNumber = Int(lastChapter.chapter.number)
         var chapterVolume: Int?
         if let vol = lastChapter.chapter.volume {

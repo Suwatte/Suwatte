@@ -6,6 +6,14 @@
 //
 
 import Foundation
+struct ContentIdentifier: Parsable, Hashable {
+    var contentId: String
+    var sourceId: String
+
+    var id: String {
+        "\(sourceId)||\(contentId)"
+    }
+}
 
 enum ContentStatus: Int, CaseIterable, Hashable {
     case UNKNOWN, ONGOING, COMPLETED, CANCELLED, HIATUS
@@ -30,14 +38,6 @@ enum ReadingMode: Int, CaseIterable, Hashable {
 }
 
 extension DaisukeEngine.Structs {
-    struct SuwatteContentIdentifier: Parsable, Hashable {
-        var contentId: String
-        var sourceId: String
-
-        var id: String {
-            "\(sourceId)||\(contentId)"
-        }
-    }
     
     struct URLContentIdentifer: Parsable {
         var contentId: String

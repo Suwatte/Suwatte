@@ -152,7 +152,7 @@ extension ProfileView.Skeleton.BottomBar {
         @State private var selections: (DaisukeEngine.Structs.Highlight, String)?
         @EnvironmentObject var model: ProfileView.ViewModel
 
-        var sttId: DSKCommon.SuwatteContentIdentifier {
+        var sttId: ContentIdentifier {
             model.sttIdentifier()
         }
 

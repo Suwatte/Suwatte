@@ -46,7 +46,7 @@ extension AnilistView {
                                 LinkerCell(data: media)
                                     .contentShape(Rectangle())
                                     .onTapGesture {
-                                        DataManager.shared.linkContentToTracker(id: DSKCommon.SuwatteContentIdentifier(contentId: entry.contentId, sourceId: sourceId).id, al: media.id.description)
+                                        DataManager.shared.linkContentToTracker(id: ContentIdentifier(contentId: entry.contentId, sourceId: sourceId).id, al: media.id.description)
                                         presentationMode.wrappedValue.dismiss()
                                     }
                             } header: {

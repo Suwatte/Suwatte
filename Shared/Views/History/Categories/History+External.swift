@@ -77,8 +77,8 @@ extension HistoryView.ExternalView {
             marker.chapter!
         }
 
-        var identifier: DaisukeEngine.Structs.SuwatteContentIdentifier {
-            DaisukeEngine.Structs.SuwatteContentIdentifier(contentId: chapter.contentId, sourceId: chapter.sourceId)
+        var identifier: ContentIdentifier {
+            ContentIdentifier(contentId: chapter.contentId, sourceId: chapter.sourceId)
         }
 
         // Views

@@ -13,7 +13,7 @@ import SwiftUI
 
 struct STTImageView: View {
     var url: URL?
-    var identifier: DaisukeEngine.Structs.SuwatteContentIdentifier
+    var identifier: ContentIdentifier
     @ObservedResults(CustomThumbnail.self) var thumbnails
     var body: some View {
         GeometryReader { proxy in

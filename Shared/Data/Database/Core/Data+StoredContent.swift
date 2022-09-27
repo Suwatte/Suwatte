@@ -42,7 +42,7 @@ final class StoredContent: Object, ObjectKeyIdentifiable {
         DaisukeEngine.shared.getSource(with: sourceId)?.name ?? "Unrecognized : \(sourceId)"
     }
 
-    var ContentIdentifier: DaisukeEngine.Structs.SuwatteContentIdentifier {
+    var ContentIdentifier: ContentIdentifier {
         return .init(contentId: contentId, sourceId: sourceId)
     }
 

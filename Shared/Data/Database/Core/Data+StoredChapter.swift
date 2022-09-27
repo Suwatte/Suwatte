@@ -46,7 +46,7 @@ final class StoredChapter: Object, ObjectKeyIdentifiable {
     }
 
     var ContentIdentifer: String {
-        DaisukeEngine.Structs.SuwatteContentIdentifier(contentId: contentId, sourceId: sourceId).id
+        ContentIdentifier(contentId: contentId, sourceId: sourceId).id
     }
 
     var chapterType: ReaderView.ReaderChapter.ChapterType {

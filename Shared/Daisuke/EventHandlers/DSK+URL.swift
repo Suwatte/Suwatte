@@ -9,9 +9,9 @@ import Foundation
 import UIKit
 
 extension DaisukeEngine {
-    func handleGetIdentifier(for url: String) async -> [DaisukeEngine.Structs.SuwatteContentIdentifier] {
+    func handleGetIdentifier(for url: String) async -> [ContentIdentifier] {
         let sources = getSources()
-        var results = [Structs.SuwatteContentIdentifier]()
+        var results = [ContentIdentifier]()
         for source in sources {
             do {
                 let result = try await source.getIdentifiers(for: url)

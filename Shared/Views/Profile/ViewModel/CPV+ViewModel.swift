@@ -263,7 +263,7 @@ extension ProfileView.ViewModel {
         }
     }
 
-    func sttIdentifier() -> DaisukeEngine.Structs.SuwatteContentIdentifier {
+    func sttIdentifier() -> ContentIdentifier {
         .init(contentId: entry.id, sourceId: source.id)
     }
 
