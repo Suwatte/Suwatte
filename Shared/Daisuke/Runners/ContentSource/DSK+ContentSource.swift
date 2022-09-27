@@ -135,3 +135,28 @@ extension DaisukeEngine.ContentSource {
         }
     }
 }
+
+
+extension DaisukeEngine.ContentSource {
+    
+    func registerDefaultPrefs() async throws {
+        
+        let groups = try await getUserPreferences()
+        
+        guard let groups else {
+            return
+        }
+        
+        let prefs = groups.flatMap({ $0.children })
+        
+        for pref in prefs {
+            let v = DataManager.shared.getStoreValue(for: id, key: pref.key)
+            guard v == nil else {
+                return
+            }
+            DataManager.shared.setStoreValue(for: id, key: pref.key, value: pref.defaultValue)
+        }
+        print("Updated Prefs")
+        
+    }
+}

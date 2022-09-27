@@ -133,6 +133,7 @@ extension DaisukeEngine {
         runners.updateValue(runner, forKey: runner.id)
         if let runner = runner as? ContentSource {
             Task {
+                try? await runner.registerDefaultPrefs()
                 await runner.onSourceLoaded()
             }
         }
