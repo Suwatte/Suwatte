@@ -303,45 +303,10 @@ extension DaisukeContentSourceView {
         }
 
         func handleContentSync() async throws {
-            // Set Loading
             await MainActor.run(body: {
                 ToastManager.shared.setLoading()
             })
-
-            // Get Sync Object
-            let library = try await source.getUserLibrary()
-
-            // Add Synced Objects
-            let realm = try Realm(queue: nil)
-            try! realm.safeWrite {
-                for entry in library {
-                    let target = realm.objects(LibraryEntry.self).where { $0.content.contentId == entry.id && $0.content.sourceId == source.id }.first
-
-                    if let target = target {
-                        target.flag = entry.readingFlag
-                    } else {
-                        var currentStored = realm.objects(StoredContent.self).where { $0.contentId == entry.id && $0.sourceId == source.id }.first
-                        if currentStored == nil {
-                            currentStored = StoredContent()
-                            currentStored?._id = "\(source.id)||\(entry.id)"
-                            currentStored?.contentId = entry.id
-                            currentStored?.sourceId = source.id
-                            currentStored?.title = entry.title
-//                            currentStored?.cover = entry
-                        }
-                        guard let currentStored = currentStored else {
-                            return
-                        }
-
-                        realm.add(currentStored, update: .modified)
-                        let libraryObject = LibraryEntry()
-                        libraryObject.content = currentStored
-                        libraryObject.flag = entry.readingFlag
-                        realm.add(libraryObject)
-                    }
-                }
-            }
-
+            try await source.syncUserLibrary()
             await MainActor.run(body: {
                 ToastManager.shared.setComplete(title: "Synced")
             })

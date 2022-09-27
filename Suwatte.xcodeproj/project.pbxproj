@@ -74,6 +74,7 @@
 		DF59C98D2850558C0027F19D /* LCM+Rar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59C98C2850558C0027F19D /* LCM+Rar.swift */; };
 		DF59C98F28505C9F0027F19D /* LCV+Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59C98E28505C9F0027F19D /* LCV+Grid.swift */; };
 		DF67EB8828E3674900076FF5 /* LG+MoveFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */; };
+		DF67EB8A28E39E2200076FF5 /* DSK+Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */; };
 		DF68249828A588E900AB30A1 /* DSK+CS+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249728A588E900AB30A1 /* DSK+CS+Events.swift */; };
 		DF68249A28A58A2D00AB30A1 /* DSK+CS+Trackers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249928A58A2C00AB30A1 /* DSK+CS+Trackers.swift */; };
 		DF68249C28A5CF6D00AB30A1 /* DSK+Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */; };
@@ -347,6 +348,7 @@
 		DF59C98C2850558C0027F19D /* LCM+Rar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LCM+Rar.swift"; sourceTree = "<group>"; };
 		DF59C98E28505C9F0027F19D /* LCV+Grid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LCV+Grid.swift"; sourceTree = "<group>"; };
 		DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LG+MoveFlag.swift"; sourceTree = "<group>"; };
+		DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Sync.swift"; sourceTree = "<group>"; };
 		DF68249728A588E900AB30A1 /* DSK+CS+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+CS+Events.swift"; sourceTree = "<group>"; };
 		DF68249928A58A2C00AB30A1 /* DSK+CS+Trackers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+CS+Trackers.swift"; sourceTree = "<group>"; };
 		DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Preferences.swift"; sourceTree = "<group>"; };
@@ -1610,6 +1612,7 @@
 				DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */,
 				DFF1043F28A9A6B800E2C3A4 /* DSK+Networking.swift */,
 				DF515FF628E2A779002B6D60 /* DSK+Actions.swift */,
+				DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */,
 			);
 			path = Structs;
 			sourceTree = "<group>";
@@ -2017,6 +2020,7 @@
 				DF13892628BE9F400035BDBB /* Explore+Layout.swift in Sources */,
 				DF8D0B312800EE47003E4C3E /* STT+UIImage.swift in Sources */,
 				DF8D0B4C2800EE47003E4C3E /* Data+ReadLater.swift in Sources */,
+				DF67EB8A28E39E2200076FF5 /* DSK+Sync.swift in Sources */,
 				DF8D0B8E2800EE48003E4C3E /* ESV+ViewModel.swift in Sources */,
 				DF52FBC7289C7EBB008FAD3A /* LCV+SettingsSheet.swift in Sources */,
 				DF8D0B652800EE47003E4C3E /* ReaderView.swift in Sources */,
