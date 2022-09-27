@@ -11,12 +11,16 @@ import JavaScriptCore
 @objc protocol DaisukeValueStoreProtocol: JSExport, JSObjectProtocol {
     func get(key: String) throws -> String
     func set(key: String, value: String) throws
+    func remove(key: String) throws
 
     @objc(get:)
     func _get(key: JSValue) -> JSValue
 
     @objc(set::)
     func _set(key: JSValue, value: JSValue) -> JSValue
+    
+    @objc(remove:)
+    func _remove(key: JSValue) -> JSValue
 }
 
 extension DaisukeEngine {
@@ -46,9 +50,28 @@ extension DaisukeEngine {
         func set(key: String, value: String) throws {
             DataManager.shared.setStoreValue(for: try getContainerId(), key: key, value: value)
         }
+        
+        func remove(key: String) throws {
+            DataManager.shared.removeStoreValue(for: try getContainerId(), key: key)
+        }
+        
+        func _remove(key: JSValue) -> JSValue {
+            .init(newPromiseIn: key.context) { resolve, reject in
+                guard let key = key.toString() else {
+                    reject?.call(withArguments: [Errors.ValueStoreErrorKeyValuePairInvalid])
+                    return
+                }
+                do {
+                    try self.remove(key: key)
+                    resolve?.call(withArguments: nil)
+                } catch {
+                    reject?.call(withArguments: [error])
+                }
+            }
+        }
 
         func _get(key: JSValue) -> JSValue {
-            return .init(newPromiseIn: key.context) { resolve, reject in
+            .init(newPromiseIn: key.context) { resolve, reject in
                 let context = key.context
                 guard let key = key.toString() else {
                     reject?.call(withArguments: [Errors.ValueStoreErrorKeyIsNotString])
@@ -66,7 +89,7 @@ extension DaisukeEngine {
         }
 
         func _set(key: JSValue, value: JSValue) -> JSValue {
-            return .init(newPromiseIn: key.context) { resolve, reject in
+            .init(newPromiseIn: key.context) { resolve, reject in
                 guard let key = key.toString(), let value = value.toString() else {
                     reject?.call(withArguments: [Errors.ValueStoreErrorKeyValuePairInvalid])
                     return
