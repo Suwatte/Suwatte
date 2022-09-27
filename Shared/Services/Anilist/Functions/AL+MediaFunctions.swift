@@ -311,7 +311,7 @@ extension Anilist {
     }
     
     @discardableResult
-    func beginTracking(id: Int) async throws -> Media.MediaListEntry{
+    func beginTracking(id: Int) async throws -> Media.MediaListEntry {
         
         let entry = try await getProfile(id)
         

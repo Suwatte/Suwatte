@@ -12,7 +12,7 @@ private struct CloseButton: ViewModifier {
     func body(content: Content) -> some View {
         content
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .cancellationAction) {
                     Button("Close") {
                         presentationMode.wrappedValue.dismiss()
                     }

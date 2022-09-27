@@ -105,9 +105,9 @@ extension LibraryView {
                         Label("Reading History", systemImage: "clock")
                     }
 
-                    NavigationLink(destination: UpdateFeedView()) {
-                        Label("Update Feed", systemImage: "bell")
-                    }
+//                    NavigationLink(destination: UpdateFeedView()) {
+//                        Label("Update Feed", systemImage: "bell")
+//                    }
                     NavigationLink(destination: DownloadsView()) {
                         Label("Downloads", systemImage: "square.and.arrow.down")
                     }

@@ -73,6 +73,7 @@
 		DF59C98B285054C20027F19D /* LCM+Zip.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59C98A285054C20027F19D /* LCM+Zip.swift */; };
 		DF59C98D2850558C0027F19D /* LCM+Rar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59C98C2850558C0027F19D /* LCM+Rar.swift */; };
 		DF59C98F28505C9F0027F19D /* LCV+Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59C98E28505C9F0027F19D /* LCV+Grid.swift */; };
+		DF67EB8828E3674900076FF5 /* LG+MoveFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */; };
 		DF68249828A588E900AB30A1 /* DSK+CS+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249728A588E900AB30A1 /* DSK+CS+Events.swift */; };
 		DF68249A28A58A2D00AB30A1 /* DSK+CS+Trackers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249928A58A2C00AB30A1 /* DSK+CS+Trackers.swift */; };
 		DF68249C28A5CF6D00AB30A1 /* DSK+Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */; };
@@ -181,7 +182,7 @@
 		DF8D0B732800EE48003E4C3E /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A5A2800EE47003E4C3E /* LibraryView.swift */; };
 		DF8D0B742800EE48003E4C3E /* LibraryGrid+GridTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A5D2800EE47003E4C3E /* LibraryGrid+GridTile.swift */; };
 		DF8D0B752800EE48003E4C3E /* LibraryGrid+OptionsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A5F2800EE47003E4C3E /* LibraryGrid+OptionsSheet.swift */; };
-		DF8D0B762800EE48003E4C3E /* LibraryGrid+MoveSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A602800EE47003E4C3E /* LibraryGrid+MoveSheet.swift */; };
+		DF8D0B762800EE48003E4C3E /* LG+MoveCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A602800EE47003E4C3E /* LG+MoveCollection.swift */; };
 		DF8D0B772800EE48003E4C3E /* Library+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A612800EE47003E4C3E /* Library+CollectionView.swift */; };
 		DF8D0B782800EE48003E4C3E /* LibraryGrid+SelectionModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A622800EE47003E4C3E /* LibraryGrid+SelectionModifier.swift */; };
 		DF8D0B792800EE48003E4C3E /* LibraryGrid+ProfileModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A632800EE47003E4C3E /* LibraryGrid+ProfileModifier.swift */; };
@@ -345,6 +346,7 @@
 		DF59C98A285054C20027F19D /* LCM+Zip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LCM+Zip.swift"; sourceTree = "<group>"; };
 		DF59C98C2850558C0027F19D /* LCM+Rar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LCM+Rar.swift"; sourceTree = "<group>"; };
 		DF59C98E28505C9F0027F19D /* LCV+Grid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LCV+Grid.swift"; sourceTree = "<group>"; };
+		DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LG+MoveFlag.swift"; sourceTree = "<group>"; };
 		DF68249728A588E900AB30A1 /* DSK+CS+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+CS+Events.swift"; sourceTree = "<group>"; };
 		DF68249928A58A2C00AB30A1 /* DSK+CS+Trackers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+CS+Trackers.swift"; sourceTree = "<group>"; };
 		DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Preferences.swift"; sourceTree = "<group>"; };
@@ -453,7 +455,7 @@
 		DF8D0A5A2800EE47003E4C3E /* LibraryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
 		DF8D0A5D2800EE47003E4C3E /* LibraryGrid+GridTile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LibraryGrid+GridTile.swift"; sourceTree = "<group>"; };
 		DF8D0A5F2800EE47003E4C3E /* LibraryGrid+OptionsSheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LibraryGrid+OptionsSheet.swift"; sourceTree = "<group>"; };
-		DF8D0A602800EE47003E4C3E /* LibraryGrid+MoveSheet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LibraryGrid+MoveSheet.swift"; sourceTree = "<group>"; };
+		DF8D0A602800EE47003E4C3E /* LG+MoveCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LG+MoveCollection.swift"; sourceTree = "<group>"; };
 		DF8D0A612800EE47003E4C3E /* Library+CollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Library+CollectionView.swift"; sourceTree = "<group>"; };
 		DF8D0A622800EE47003E4C3E /* LibraryGrid+SelectionModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LibraryGrid+SelectionModifier.swift"; sourceTree = "<group>"; };
 		DF8D0A632800EE47003E4C3E /* LibraryGrid+ProfileModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LibraryGrid+ProfileModifier.swift"; sourceTree = "<group>"; };
@@ -1304,7 +1306,8 @@
 			isa = PBXGroup;
 			children = (
 				DF8D0A5F2800EE47003E4C3E /* LibraryGrid+OptionsSheet.swift */,
-				DF8D0A602800EE47003E4C3E /* LibraryGrid+MoveSheet.swift */,
+				DF8D0A602800EE47003E4C3E /* LG+MoveCollection.swift */,
+				DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */,
 			);
 			path = Sheets;
 			sourceTree = "<group>";
@@ -1863,7 +1866,7 @@
 				DF248F162813897200818300 /* AL+Interceptor.swift in Sources */,
 				DFB47EEE2880928C0040A1BD /* RefreshableScrollView.swift in Sources */,
 				DF30193B28C045E30024AA8B /* Backup+Runner.swift in Sources */,
-				DF8D0B762800EE48003E4C3E /* LibraryGrid+MoveSheet.swift in Sources */,
+				DF8D0B762800EE48003E4C3E /* LG+MoveCollection.swift in Sources */,
 				DF248F36281474A100818300 /* STT+Encodable.swift in Sources */,
 				DF1FD5C4284B31BC00A67F0E /* DoublePaged+Controller.swift in Sources */,
 				DF8D0B7D2800EE48003E4C3E /* AppearanceView.swift in Sources */,
@@ -2094,6 +2097,7 @@
 				DF52FBAF28939745008FAD3A /* PagingScrollView.swift in Sources */,
 				DF8D0B5D2800EE47003E4C3E /* Reader+SettingsView.swift in Sources */,
 				DF9BD6512891E5E3006628D0 /* DSK+CS+Content.swift in Sources */,
+				DF67EB8828E3674900076FF5 /* LG+MoveFlag.swift in Sources */,
 				DF8D0B952800EE48003E4C3E /* ProfileView+LibrarySheet.swift in Sources */,
 				DF8D0B412800EE47003E4C3E /* Data+StoredChapterData.swift in Sources */,
 				DF248F0828137F7A00818300 /* TrackersView.swift in Sources */,

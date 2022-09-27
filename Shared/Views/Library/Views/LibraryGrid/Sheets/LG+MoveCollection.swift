@@ -10,7 +10,7 @@ import RealmSwift
 import SwiftUI
 
 extension LibraryView.LibraryGrid {
-    struct MoveView: View {
+    struct MoveCollectionsView: View {
         var entries: Results<LibraryEntry>
         @EnvironmentObject var model: ViewModel
         @ObservedResults(LibraryCollection.self) var collections
@@ -49,12 +49,12 @@ extension LibraryView.LibraryGrid {
                 .navigationBarTitleDisplayMode(.inline)
                 .toast(isPresenting: $toastManager.show, alert: { toastManager.toast })
                 .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
+                    ToolbarItem(placement: .cancellationAction) {
                         Button("Cancel") {
                             presentationMode.wrappedValue.dismiss()
                         }
                     }
-                    ToolbarItem(placement: .navigationBarTrailing) {
+                    ToolbarItem(placement: .confirmationAction) {
                         Button("Done") {
                             toastManager.toast = .init(type: .loading)
                             let targets = zip(entries.indices, entries)

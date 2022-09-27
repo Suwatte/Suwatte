@@ -72,6 +72,20 @@ extension DataManager {
             object.flag = flag
         }
     }
+    
+    func bulkSetReadingFlag(for ids: Set<String>, to flag: LibraryFlag) {
+        let realm = try! Realm()
+        
+        let targets = realm
+            .objects(LibraryEntry.self)
+            .where({ $0._id.in(ids) })
+        
+        try! realm.safeWrite {
+            for target in targets {
+                target.flag = flag
+            }
+        }
+    }
 
     @discardableResult
     func toggleLibraryState(for content: StoredContent) -> Bool {
@@ -110,12 +124,11 @@ extension DataManager {
             await source?.onContentsAddedToLibrary(ids: [ids.contentId])
         }
         
-        print(anilistId)
         Task {
             guard let indx = anilistId.map({ Int($0) }), let id = indx else {
                 return
             }
-            try? await Anilist.shared.beginTracking(id: id)
+            let _ = try? await Anilist.shared.beginTracking(id: id)
         }
         return true
     }
