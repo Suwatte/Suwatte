@@ -71,6 +71,13 @@ extension DataManager {
         try! realm.safeWrite {
             object.flag = flag
         }
+        
+        guard let id = object.content?.contentId, let sourceId = object.content?.sourceId, let source = DaisukeEngine.shared.getSource(with: sourceId) else {
+            return
+        }
+        Task {
+            await source.onContentsReadingFlagChanged(contentIds: [id], flag: flag)
+        }
     }
     
     func bulkSetReadingFlag(for ids: Set<String>, to flag: LibraryFlag) {
@@ -85,6 +92,23 @@ extension DataManager {
                 target.flag = flag
             }
         }
+        
+        let sourceIds = Set(targets.compactMap({ $0.content?.sourceId }))
+        for id in sourceIds {
+            guard let source = DaisukeEngine.shared.getSource(with: id) else {
+                return
+            }
+            
+            let contentIds = targets
+                .where({ $0.content.sourceId == id })
+                .compactMap({ $0.content?.contentId }) as [String]
+            
+            Task {
+                await source.onContentsReadingFlagChanged(contentIds:contentIds, flag: flag)
+            }
+        }
+        
+        
     }
 
     @discardableResult

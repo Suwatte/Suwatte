@@ -106,6 +106,12 @@ extension LibraryView.LibraryGrid {
                 model.selectedIndexes.removeAll()
             }
         }
+        
+        var selectedEntries : [LibraryEntry] {
+            zip(entries.indices, entries)
+                .filter { model.selectedIndexes.contains($0.0) }
+                .map({ $0.1 })
+        }
     }
 }
 

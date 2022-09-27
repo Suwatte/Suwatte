@@ -89,7 +89,7 @@ extension DaisukeEngine {
                 let stored = chapters?
                     .map({ $0.toStoredChapter(withSource: source)})
                 if let stored {
-                    realm.add(stored)
+                    realm.add(stored, update: .modified)
                 }
             }
 

@@ -18,6 +18,8 @@ extension LibraryView.LibraryGrid {
     struct MoveReadingFlag: View {
         var entries: Results<LibraryEntry>
         @Environment(\.presentationMode) var presentationMode
+        @EnvironmentObject var model: ViewModel
+
         var body: some View {
             NavigationView {
                 List {
@@ -43,6 +45,7 @@ extension LibraryView.LibraryGrid {
                                     .foregroundColor(.gray)
                                 }
                             }
+                            .contentShape(Rectangle())
 
                         }
                     } header: {
@@ -56,7 +59,10 @@ extension LibraryView.LibraryGrid {
         }
         
         func setFlags(_ flag: LibraryFlag) {
-            let ids = Set(entries.map(\._id))
+            let targets = zip(entries.indices, entries)
+                .filter { model.selectedIndexes.contains($0.0) }
+                .map { $0.1._id }
+            let ids = Set(targets)
             DataManager.shared.bulkSetReadingFlag(for: ids, to: flag)
             presentationMode.wrappedValue.dismiss()
             
