@@ -20,6 +20,7 @@ extension DSKCommon {
         var id: String
         var username: String
         var avatar: String?
+        var info: [String]?
     }
 
     struct SyncedContent: Parsable, Hashable {

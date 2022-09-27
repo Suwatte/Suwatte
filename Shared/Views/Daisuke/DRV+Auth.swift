@@ -249,6 +249,16 @@ extension DaisukeContentSourceView {
                     .font(.title3)
                     .fontWeight(.bold)
             }
+            if let info = user.info {
+                Section {
+                    InteractiveTagView(info) { tag in
+                        Text(tag)
+                            .modifier(ProfileTagStyle())
+                    }
+                } header: {
+                    Text("Info")
+                }
+            }
             Section {
                 Button {
                     presentShouldSync.toggle()
@@ -256,6 +266,8 @@ extension DaisukeContentSourceView {
                     Label("Sync Library", systemImage: "tray.and.arrow.down.fill")
                 }
                 .buttonStyle(.plain)
+            } header: {
+                Text("Sync")
             }
             .alert("Sync Library", isPresented: $presentShouldSync, actions: {
                 Button("Cancel", role: .cancel) {}
