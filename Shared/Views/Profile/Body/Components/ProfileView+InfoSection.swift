@@ -61,13 +61,8 @@ extension ProfileView.Skeleton {
             InteractiveTagView(property.tags) { tag in
                 NavigationLink(destination: ExploreView.SearchView(model: .init(request: generateSearchRequest(tagId: tag.id), source: source), tagLabel: tag.label)) {
                     Text(tag.label)
-                        .fontWeight(.semibold)
-                        .font(.callout)
-                        .padding(.vertical, 5)
-                        .padding(.horizontal, 8)
-                        .background(Color.primary.opacity(0.1))
-                        .foregroundColor(Color.primary)
-                        .cornerRadius(5)
+                        .modifier(ProfileTagStyle())
+                        
                 }
                 .buttonStyle(.plain)
             }
@@ -76,5 +71,18 @@ extension ProfileView.Skeleton {
         fileprivate func generateSearchRequest(tagId: String) -> DaisukeEngine.Structs.SearchRequest {
             .init(page: 1, includedTags: [tagId])
         }
+    }
+}
+
+
+struct ProfileTagStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.callout.weight(.semibold))
+            .padding(.vertical, 5)
+            .padding(.horizontal, 8)
+            .background(Color.primary.opacity(0.1))
+            .foregroundColor(Color.primary)
+            .cornerRadius(5)
     }
 }

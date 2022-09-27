@@ -37,6 +37,21 @@ extension ProfileView.Skeleton {
                     .padding(.vertical, 2.5)
                 }
             }
+            if let props = entry.nonInteractiveProperties {
+                ForEach(props) { property in
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(property.label)
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                        InteractiveTagView(property.tags) { tag in
+                            Text(tag)
+                                .modifier(ProfileTagStyle())
+                        }
+                    }
+                    .padding(.vertical, 2.5)
+                    
+                }
+            }
         }
 
         @ViewBuilder

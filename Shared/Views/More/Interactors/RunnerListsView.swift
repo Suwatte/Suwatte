@@ -190,7 +190,7 @@ extension RunnerListsView {
             }
 
             var noInstall: Bool {
-                self == .appOutDated || self == .outdated
+                self == .appOutDated || self == .sourceOutdated
             }
         }
 
