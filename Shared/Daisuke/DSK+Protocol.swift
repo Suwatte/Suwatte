@@ -8,6 +8,8 @@
 import Foundation
 import JavaScriptCore
 
+protocol DaisukeInterface: Codable, Hashable, Identifiable {}
+
 protocol DaisukeRunnerProtocol {
     var runnerClass: JSValue { get }
     var info: DaisukeRunnerInfoProtocol { get }

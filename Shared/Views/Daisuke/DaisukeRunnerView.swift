@@ -26,6 +26,12 @@ struct DaisukeContentSourceView: View {
                         .environmentObject(source)
                         .navigationTitle("Preferences")
                 }
+                NavigationLink("Actions") {
+                    ActionsView()
+                        .environmentObject(source)
+                }
+            } header:{
+                Text("Settings")
             }
             
             

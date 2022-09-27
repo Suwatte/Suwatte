@@ -57,6 +57,9 @@
 		DF47DDDC28B5542D00D779E5 /* AV+EntryEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF47DDDB28B5542D00D779E5 /* AV+EntryEditor.swift */; };
 		DF47DDDE28B55BA600D779E5 /* AdaptiveSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF47DDDD28B55BA500D779E5 /* AdaptiveSheet.swift */; };
 		DF47DDE128B5608D00D779E5 /* PartialSheet in Frameworks */ = {isa = PBXBuildFile; productRef = DF47DDE028B5608D00D779E5 /* PartialSheet */; };
+		DF515FF728E2A779002B6D60 /* DSK+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF515FF628E2A779002B6D60 /* DSK+Actions.swift */; };
+		DF515FF928E2A8DC002B6D60 /* DSK+CS+Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF515FF828E2A8DC002B6D60 /* DSK+CS+Action.swift */; };
+		DF515FFB28E2A9E5002B6D60 /* DRV+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF515FFA28E2A9E5002B6D60 /* DRV+Actions.swift */; };
 		DF52FBAF28939745008FAD3A /* PagingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF52FBAE28939745008FAD3A /* PagingScrollView.swift */; };
 		DF52FBBA28947031008FAD3A /* ASCollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = DF52FBB928947031008FAD3A /* ASCollectionView */; };
 		DF52FBBE289487C6008FAD3A /* STTGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF52FBBD289487C6008FAD3A /* STTGridView.swift */; };
@@ -329,6 +332,9 @@
 		DF32646A2802A6C70066EB08 /* STTImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STTImageView.swift; sourceTree = "<group>"; };
 		DF47DDDB28B5542D00D779E5 /* AV+EntryEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AV+EntryEditor.swift"; sourceTree = "<group>"; };
 		DF47DDDD28B55BA500D779E5 /* AdaptiveSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveSheet.swift; sourceTree = "<group>"; };
+		DF515FF628E2A779002B6D60 /* DSK+Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Actions.swift"; sourceTree = "<group>"; };
+		DF515FF828E2A8DC002B6D60 /* DSK+CS+Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+CS+Action.swift"; sourceTree = "<group>"; };
+		DF515FFA28E2A9E5002B6D60 /* DRV+Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DRV+Actions.swift"; sourceTree = "<group>"; };
 		DF52FBAE28939745008FAD3A /* PagingScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingScrollView.swift; sourceTree = "<group>"; };
 		DF52FBBD289487C6008FAD3A /* STTGridView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = STTGridView.swift; sourceTree = "<group>"; };
 		DF52FBC12896F761008FAD3A /* CollectionManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionManagementView.swift; sourceTree = "<group>"; };
@@ -772,6 +778,7 @@
 				DF68249E28A5D2CF00AB30A1 /* DaisukeRunnerView.swift */,
 				DF6824A428A5FD6100AB30A1 /* DRV+Preferences.swift */,
 				DF6824A628A5FD8000AB30A1 /* DRV+Auth.swift */,
+				DF515FFA28E2A9E5002B6D60 /* DRV+Actions.swift */,
 			);
 			path = Daisuke;
 			sourceTree = "<group>";
@@ -1599,6 +1606,7 @@
 				DF9BD64D2891DF23006628D0 /* DSK+Explore.swift */,
 				DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */,
 				DFF1043F28A9A6B800E2C3A4 /* DSK+Networking.swift */,
+				DF515FF628E2A779002B6D60 /* DSK+Actions.swift */,
 			);
 			path = Structs;
 			sourceTree = "<group>";
@@ -1615,6 +1623,7 @@
 				DF6824A028A5D4AE00AB30A1 /* DSK+CS+Preferences.swift */,
 				DF6824A228A5ECEB00AB30A1 /* DSK+CS+Authentication.swift */,
 				DF23393628ABFA1400F89FD0 /* DSK+CS+Sync.swift */,
+				DF515FF828E2A8DC002B6D60 /* DSK+CS+Action.swift */,
 			);
 			path = ContentSource;
 			sourceTree = "<group>";
@@ -1912,6 +1921,7 @@
 				DFC39E9528A093D700450EC4 /* RunnerListsView.swift in Sources */,
 				DF8D0B392800EE47003E4C3E /* STT+Realm.swift in Sources */,
 				DF6A896828834AC40045529D /* Orientation.swift in Sources */,
+				DF515FF728E2A779002B6D60 /* DSK+Actions.swift in Sources */,
 				DF8D0BAA2800EE48003E4C3E /* DownloadsView.swift in Sources */,
 				DFAC77982815D48D00AF6394 /* STTHelper.swift in Sources */,
 				DF8D0B522800EE47003E4C3E /* Backup+LibraryEntry.swift in Sources */,
@@ -1927,6 +1937,7 @@
 				DF8D0BA62800EE48003E4C3E /* BrowseView.swift in Sources */,
 				DF8D0B212800EE47003E4C3E /* STTNotifier.swift in Sources */,
 				DFF1044028A9A6B800E2C3A4 /* DSK+Networking.swift in Sources */,
+				DF515FF928E2A8DC002B6D60 /* DSK+CS+Action.swift in Sources */,
 				DF8D0B662800EE47003E4C3E /* ReaderNavigation.swift in Sources */,
 				DF6824A328A5ECEB00AB30A1 /* DSK+CS+Authentication.swift in Sources */,
 				DF8D0B632800EE47003E4C3E /* VerticalImage+Zoomable.swift in Sources */,
@@ -1986,6 +1997,7 @@
 				DF8D0BAD2800EE48003E4C3E /* BackupsView.swift in Sources */,
 				DFB47EFD2880E9C90040A1BD /* OPDS+AddServer.swift in Sources */,
 				DF8D0B642800EE47003E4C3E /* RPV+ProgressView.swift in Sources */,
+				DF515FFB28E2A9E5002B6D60 /* DRV+Actions.swift in Sources */,
 				DF8D0B702800EE48003E4C3E /* ToastManager.swift in Sources */,
 				DF03F72928454E7A00602E59 /* Novel+Paged+Representable.swift in Sources */,
 				DF8D0B432800EE47003E4C3E /* Data+StoredChapter.swift in Sources */,
