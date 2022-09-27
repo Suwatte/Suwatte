@@ -68,19 +68,21 @@ extension DataManager {
             return
         }
 
-        Task { @MainActor in
+        Task {
             do {
                 let content = try await source.getContent(id: contentID)
                 let storedContent = try content.toStoredContent(withSource: source)
 
-                let realm = try await Realm()
+                let realm = try Realm(queue: nil)
                 try! realm.safeWrite {
                     realm.add(storedContent)
                     obj.content = storedContent
                     realm.add(obj, update: .all)
                 }
             } catch {
-                ToastManager.shared.setError(error: error)
+                await MainActor.run(body: {
+                    ToastManager.shared.setError(error: error)
+                })
             }
         }
     }
