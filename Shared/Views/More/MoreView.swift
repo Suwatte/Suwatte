@@ -58,14 +58,39 @@ struct MoreView: View {
         Section {
             NavigationLink("Social") {
                 List {
-                    Link(destination: URL(string: "https://ko-fi.com/suwatte")!) {
-                        Text("Support on KoFi")
+                    Section {
+                        Link(destination: URL(string: "https://ko-fi.com/suwatte")!) {
+                            Text("Support on KoFi")
+                        }
+                        Link(destination: URL(string: "https://patreon.con/mantton")!) {
+                            Text("Support on Patreon")
+                        }
                     }
-                    Link(destination: URL(string: "https://www.reddit.com/r/MangaSoup/")!) {
-                        Text("Reddit")
+                    
+                    Section {
+                        Link(destination: URL(string: "https://www.reddit.com/r/MangaSoup/")!) {
+                            Text("App Subreddit")
+                        }
+                        Link(destination: URL(string: "https://discord.gg/nvtZGrvyZT")!) {
+                            Text("Discord Server")
+                        }
+                        Link(destination: URL(string: "https://suwatte.mantton.com")!) {
+                            Text("Website")
+                        }
                     }
+                    
+                    Section {
+                        Link(destination: URL(string: "https://twitter.com/ceresmir")!) {
+                            Text("Developer Twitter")
+                        }
+                        Link(destination: URL(string: "https://mantton.com")!) {
+                            Text("Developer Website")
+                        }
+                    }
+                    
                 }
                 .navigationTitle("Social")
+                .buttonStyle(.plain)
                 
             }
             Link("About Suwatte", destination: STTHost.root)
