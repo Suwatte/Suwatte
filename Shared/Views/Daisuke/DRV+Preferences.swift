@@ -201,7 +201,7 @@ extension ContentSourceSettingsView {
         }
 
         var body: some View {
-            Stepper(value: $value, in: 1 ... 100) {
+            Stepper(value: $value, in: pref.minStepper ... pref.maxStepper) {
                 FieldLabel(primary: pref.label, secondary: value.description)
             }
             .onChange(of: value) { val in
@@ -233,14 +233,10 @@ extension ContentSourceSettingsView {
             NavigationLink {
                 List {
                     ForEach(pref.options ?? [], id: \.self) { option in
-                        SelectionLabel(label: option.label, isSelected: selections.contains(option.value)) {
-                            if selections.contains(option.value) {
-                                if selections.count != 1 {
-                                    selections.removeAll(where: { $0 == option.value })
-                                }
-                            } else {
-                                selections.append(option.value)
-                            }
+                        let value = option.value
+                        let isSelected = selections.contains(value)
+                        SelectionLabel(label: option.label, isSelected: isSelected) {
+                            toggleSelection(value: value)
                         }
                         .buttonStyle(.plain)
                     }
@@ -256,6 +252,16 @@ extension ContentSourceSettingsView {
             }
         }
 
+        func toggleSelection(value: String) {
+            let count = selections.count
+            if selections.contains(value) {
+                if count - 1 >= pref.minSelect {
+                    selections.removeAll(where: { $0 == value })
+                }
+            } else if count + 1 <= pref.maxSelect {
+                selections.append(value)
+            }
+        }
         var LABEL_V: String {
             if selections.isEmpty {
                 return "None"
