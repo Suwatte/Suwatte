@@ -9,17 +9,14 @@ import Foundation
 import RealmSwift
 
 extension DaisukeEngine {
-//    @MainActor
     func handleBackgroundLibraryUpdate() async -> Int {
         return await fetchLibaryUpdates()
     }
 
-//    @MainActor
     func handleForegroundLibraryUpdate() async -> Int {
         return await fetchLibaryUpdates()
     }
 
-//    @MainActor
     private func fetchLibaryUpdates() async -> Int {
         let updateCounts = await getSources().asyncMap { source -> Int in
             (try? await fetchUpdatesForSource(source: source)) ?? 0
@@ -29,7 +26,7 @@ extension DaisukeEngine {
         return updateCounts.reduce(0, +)
     }
 
-//    @MainActor
+    @MainActor
     private func fetchUpdatesForSource(source: ContentSource) async throws -> Int {
         let realm = try! Realm(queue: nil)
 
