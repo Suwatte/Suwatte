@@ -14,6 +14,8 @@ struct AppearanceView: View {
     @AppStorage(STTKeys.incognito) var incognitoMode = false
     @AppStorage(STTKeys.GridItemsPerRow_P) var IPRP = 2
     @AppStorage(STTKeys.GridItemsPerRow_LS) var IPRLS = 6
+    
+    @Preference(\.selectiveUpdates) var selectiveUpdates
     let options = AppTabs.defaultSettings
     var body: some View {
         List {
@@ -72,6 +74,12 @@ struct AppearanceView: View {
                 LibraryAuthenticationToggleView()
             } header: {
                 Text("Library")
+            }
+            
+            Section {
+                Toggle("Selective Updates", isOn: $selectiveUpdates)
+            } footer: {
+                Text("When enabled Suwatte will only fetch updates for titles flagged as 'Reading'.")
             }
         }
         .buttonStyle(.plain)

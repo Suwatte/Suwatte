@@ -88,6 +88,9 @@ final class Preferences {
     
     @UserDefault(STTKeys.NonSelectiveSync)
     var nonSelectiveSync = false
+    
+    @UserDefault(STTKeys.SelectiveUpdates)
+    var selectiveUpdates = false
 }
 
 @propertyWrapper

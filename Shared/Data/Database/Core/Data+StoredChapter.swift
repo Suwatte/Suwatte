@@ -104,6 +104,19 @@ extension DataManager {
         }
         .sorted(by: \.index, ascending: true)
     }
+    
+    func getLatestStoredChapter(_ sourceId: String, _ contentId: String)-> StoredChapter? {
+        let realm = try! Realm()
+        
+        let chapter = realm
+            .objects(StoredChapter.self)
+            .where({ $0.contentId == contentId })
+            .where({ $0.sourceId == sourceId })
+            .sorted(by: \.index, ascending: true)
+            .first
+        
+        return chapter
+    }
 
     func storeChapters(_ chapters: [StoredChapter]) {
         let realm = try! Realm()

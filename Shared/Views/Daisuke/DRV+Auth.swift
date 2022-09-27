@@ -300,7 +300,7 @@ extension DaisukeContentSourceView {
             let library = try await source.getUserLibrary()
 
             // Add Synced Objects
-            let realm = try await Realm()
+            let realm = try Realm(queue: nil)
             try! realm.safeWrite {
                 for entry in library {
                     let target = realm.objects(LibraryEntry.self).where { $0.content.contentId == entry.id && $0.content.sourceId == source.id }.first
