@@ -47,7 +47,7 @@ extension LibraryView.LibraryGrid {
                 }
                 .navigationTitle("Select Collections")
                 .navigationBarTitleDisplayMode(.inline)
-                .toast(isPresenting: $toastManager.show, alert: { toastManager.toast })
+                .toast()
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Cancel") {
@@ -56,13 +56,12 @@ extension LibraryView.LibraryGrid {
                     }
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Done") {
-                            toastManager.toast = .init(type: .loading)
+                            ToastManager.shared.loading.toggle()
                             let targets = zip(entries.indices, entries)
                                 .filter { model.selectedIndexes.contains($0.0) }
                                 .map { $0.1._id }
                             DataManager.shared.moveToCollections(entries: Set(targets), cids: selectedCollections)
-
-                            toastManager.show.toggle()
+                            ToastManager.shared.loading.toggle()
                             presentationMode.wrappedValue.dismiss()
                         }
                     }

@@ -105,7 +105,7 @@ extension LibraryView {
                                     await DataManager.shared.refreshStored(contentId: content.0, sourceId: content.1)
                                 }
                                 await MainActor.run {
-                                    ToastManager.shared.setComplete()
+                                    ToastManager.shared.info("Database Refreshed Successfully")
                                 }
                             }
                         } label: {

@@ -12,7 +12,6 @@ extension AnilistView {
     struct EntryEditor: View {
         @State var entry: Anilist.Media.MediaListEntry
         var media: Anilist.Media
-        @ObservedObject var toastManager = ToastManager()
         @State var working = false
         
         var isManga: Bool {
@@ -235,9 +234,10 @@ extension AnilistView {
                     Button("Save") {
                         working = true
                         Task { @MainActor in
-                            toastManager.setLoading()
+                            ToastManager.shared.loading.toggle()
                             await update()
                             working = false
+                            ToastManager.shared.loading.toggle()
                         }
                     }
                     .disabled(working)
@@ -245,9 +245,7 @@ extension AnilistView {
             }
             
             .animation(.default, value: entry)
-            .toast(isPresenting: $toastManager.show) {
-                toastManager.toast
-            }
+            .toast()
         }
     }
 }
@@ -258,9 +256,9 @@ extension AnilistView.EntryEditor {
             let response = try await Anilist.shared.updateMediaListEntry(entry: entry)
             self.entry = response
             self.onListUpdated(response)
-            toastManager.setComplete(title: "Synced")
+            ToastManager.shared.display(.info("Synced!"))
         } catch {
-            toastManager.setError(error: error)
+            ToastManager.shared.display(.error(error))
         }
     }
 }

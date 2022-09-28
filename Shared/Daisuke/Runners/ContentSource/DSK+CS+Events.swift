@@ -12,7 +12,7 @@ extension DaisukeEngine.ContentSource {
         do {
             try await callOptionalVoidMethod(method: "onSourceLoaded", arguments: [])
         } catch {
-            ToastManager.shared.setError(error: error)
+            ToastManager.shared.display(.error(nil, "[\(id)] [onSourceLoaded] \(error.localizedDescription)"))
         }
     }
 
@@ -20,7 +20,7 @@ extension DaisukeEngine.ContentSource {
         do {
             try await callOptionalVoidMethod(method: "onContentsAddedToLibrary", arguments: [ids])
         } catch {
-            ToastManager.shared.setError(error: error)
+            ToastManager.shared.display(.error(nil, "[\(id)] [onContentsAddedToLibrary] \(error.localizedDescription)"))
         }
     }
 
@@ -28,7 +28,7 @@ extension DaisukeEngine.ContentSource {
         do {
             try await callOptionalVoidMethod(method: "onContentsRemovedFromLibrary", arguments: [ids])
         } catch {
-            ToastManager.shared.setError(error: error)
+            ToastManager.shared.display(.error(nil, "[\(id)] [onContentsRemovedFromLibrary] \(error.localizedDescription)"))
         }
     }
 
@@ -36,7 +36,7 @@ extension DaisukeEngine.ContentSource {
         do {
             try await callOptionalVoidMethod(method: "onChaptersMarked", arguments: [contentId, chapterIds, completed])
         } catch {
-            ToastManager.shared.setError(error: error)
+            ToastManager.shared.display(.error(nil, "[\(id)] [onChaptersMarked] \(error.localizedDescription)"))
         }
     }
     
@@ -44,7 +44,7 @@ extension DaisukeEngine.ContentSource {
         do {
             try await callOptionalVoidMethod(method: "onChapterRead", arguments: [contentId, chapterId])
         } catch {
-            ToastManager.shared.setError(error: error)
+            ToastManager.shared.display(.error(nil, "[\(id)] [onChapterRead] \(error.localizedDescription)"))
         }
     }
 
@@ -52,7 +52,7 @@ extension DaisukeEngine.ContentSource {
         do {
             try await callOptionalVoidMethod(method: "onContentsReadingFlagChanged", arguments: [contentIds, flag.rawValue])
         } catch {
-            ToastManager.shared.setError(error: error)
+            ToastManager.shared.display(.error(nil, "[\(id)] [onContentsReadingFlagChanged] \(error.localizedDescription)"))
         }
     }
 }

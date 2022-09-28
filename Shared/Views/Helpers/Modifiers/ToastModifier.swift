@@ -8,30 +8,14 @@
 import Foundation
 import SwiftUI
 
-struct ToastModifier: ViewModifier {
-    @ObservedObject var toastManager = ToastManager.shared
-    
-    func body(content: Content) -> some View {
-        content
-            .toast(isPresenting: $toastManager.show) {
-                toastManager.toast
-            }
-    }
-}
-
 extension View {
-    func toaster() -> some View {
+    func toast() -> some View {
         modifier(ToastModifier())
     }
-    func toast2() -> some View {
-        modifier(ToastModifier2())
-    }
 }
 
-
-struct ToastModifier2: ViewModifier {
-    @EnvironmentObject var toaster: ToastManager2
-    let bottomPadding = (KEY_WINDOW?.safeAreaInsets.bottom ?? 0) + 20
+struct ToastModifier: ViewModifier {
+    @EnvironmentObject var toaster: ToastManager
     func body(content: Content) -> some View {
         content
             .allowsHitTesting(!toaster.loading)
@@ -46,7 +30,6 @@ struct ToastModifier2: ViewModifier {
                     .cornerRadius(14)
                     .transition(.opacity)
                 }
-                
             }
             .overlay(alignment: .bottom) {
                 if let toast = toaster.toast {
@@ -54,7 +37,7 @@ struct ToastModifier2: ViewModifier {
                         .onTapGesture {
                             toaster.cancel()
                         }
-                        .padding(.bottom, bottomPadding)
+                        .padding(.bottom)
                         .padding(.horizontal)
                         .id(toast.id)
                         .transition(.move(edge: .bottom))
@@ -67,7 +50,7 @@ struct ToastModifier2: ViewModifier {
 
 
 struct ToastView: View {
-    var toast: ToastManager2.ToastType
+    var toast: ToastManager.ToastType
     var body: some View {
         Group {
             switch toast {

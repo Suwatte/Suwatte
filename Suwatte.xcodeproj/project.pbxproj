@@ -77,7 +77,7 @@
 		DF67EB8A28E39E2200076FF5 /* DSK+Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */; };
 		DF67EB8C28E3F22700076FF5 /* STT+Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8B28E3F22700076FF5 /* STT+Logger.swift */; };
 		DF67EB8F28E4054C00076FF5 /* LogsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8E28E4054C00076FF5 /* LogsView.swift */; };
-		DF67EB9128E4CB6500076FF5 /* STTToastManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB9028E4CB6500076FF5 /* STTToastManager.swift */; };
+		DF67EB9128E4CB6500076FF5 /* ToastManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB9028E4CB6500076FF5 /* ToastManager.swift */; };
 		DF68249828A588E900AB30A1 /* DSK+CS+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249728A588E900AB30A1 /* DSK+CS+Events.swift */; };
 		DF68249A28A58A2D00AB30A1 /* DSK+CS+Trackers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249928A58A2C00AB30A1 /* DSK+CS+Trackers.swift */; };
 		DF68249C28A5CF6D00AB30A1 /* DSK+Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */; };
@@ -114,7 +114,6 @@
 		DF7B188A2830B4B1006A54C9 /* ReaderGateWay.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7B18892830B4B1006A54C9 /* ReaderGateWay.swift */; };
 		DF83DD3328223B680021575B /* ProfileView+TrackersSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF83DD3228223B670021575B /* ProfileView+TrackersSheet.swift */; };
 		DF83DD3528224E710021575B /* Data+TrackerLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF83DD3428224E700021575B /* Data+TrackerLink.swift */; };
-		DF83DD3D28231E280021575B /* AlertToast in Frameworks */ = {isa = PBXBuildFile; productRef = DF83DD3C28231E280021575B /* AlertToast */; };
 		DF83DD432823377C0021575B /* AnilistView+LinkerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF83DD422823377C0021575B /* AnilistView+LinkerView.swift */; };
 		DF84060E2807C85600ECB402 /* VerticalSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF84060D2807C85600ECB402 /* VerticalSlider.swift */; };
 		DF86CACA285841BA0008B17A /* STTLaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DF86CAC9285841BA0008B17A /* STTLaunchScreen.storyboard */; };
@@ -180,7 +179,6 @@
 		DF8D0B6A2800EE48003E4C3E /* ReaderMenuOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A492800EE47003E4C3E /* ReaderMenuOverlay.swift */; };
 		DF8D0B6B2800EE48003E4C3E /* HorizontalSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A4B2800EE47003E4C3E /* HorizontalSlider.swift */; };
 		DF8D0B6F2800EE48003E4C3E /* Loadable+View.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A512800EE47003E4C3E /* Loadable+View.swift */; };
-		DF8D0B702800EE48003E4C3E /* ToastManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A542800EE47003E4C3E /* ToastManager.swift */; };
 		DF8D0B712800EE48003E4C3E /* ManageCollectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A572800EE47003E4C3E /* ManageCollectionsView.swift */; };
 		DF8D0B722800EE48003E4C3E /* ReadLaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A592800EE47003E4C3E /* ReadLaterView.swift */; };
 		DF8D0B732800EE48003E4C3E /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A5A2800EE47003E4C3E /* LibraryView.swift */; };
@@ -354,7 +352,7 @@
 		DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Sync.swift"; sourceTree = "<group>"; };
 		DF67EB8B28E3F22700076FF5 /* STT+Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+Logger.swift"; sourceTree = "<group>"; };
 		DF67EB8E28E4054C00076FF5 /* LogsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsView.swift; sourceTree = "<group>"; };
-		DF67EB9028E4CB6500076FF5 /* STTToastManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STTToastManager.swift; sourceTree = "<group>"; };
+		DF67EB9028E4CB6500076FF5 /* ToastManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastManager.swift; sourceTree = "<group>"; };
 		DF68249728A588E900AB30A1 /* DSK+CS+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+CS+Events.swift"; sourceTree = "<group>"; };
 		DF68249928A58A2C00AB30A1 /* DSK+CS+Trackers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+CS+Trackers.swift"; sourceTree = "<group>"; };
 		DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Preferences.swift"; sourceTree = "<group>"; };
@@ -457,7 +455,6 @@
 		DF8D0A492800EE47003E4C3E /* ReaderMenuOverlay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReaderMenuOverlay.swift; sourceTree = "<group>"; };
 		DF8D0A4B2800EE47003E4C3E /* HorizontalSlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HorizontalSlider.swift; sourceTree = "<group>"; };
 		DF8D0A512800EE47003E4C3E /* Loadable+View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Loadable+View.swift"; sourceTree = "<group>"; };
-		DF8D0A542800EE47003E4C3E /* ToastManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ToastManager.swift; sourceTree = "<group>"; };
 		DF8D0A572800EE47003E4C3E /* ManageCollectionsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManageCollectionsView.swift; sourceTree = "<group>"; };
 		DF8D0A592800EE47003E4C3E /* ReadLaterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReadLaterView.swift; sourceTree = "<group>"; };
 		DF8D0A5A2800EE47003E4C3E /* LibraryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
@@ -573,7 +570,6 @@
 				DF47DDE128B5608D00D779E5 /* PartialSheet in Frameworks */,
 				DF59C988285054670027F19D /* Unrar in Frameworks */,
 				DF248F0C2813844C00818300 /* KeychainSwift in Frameworks */,
-				DF83DD3D28231E280021575B /* AlertToast in Frameworks */,
 				DF0D96082824892C00E592D9 /* RealmSwift in Frameworks */,
 				DF2DA77327CF11C50046FE20 /* Alamofire in Frameworks */,
 				DFAEE12728B839E500B11484 /* NukeExtensions in Frameworks */,
@@ -945,7 +941,6 @@
 		DF8D09E42800EE47003E4C3E /* Singletons */ = {
 			isa = PBXGroup;
 			children = (
-				DF8D0A542800EE47003E4C3E /* ToastManager.swift */,
 				DF8D09E12800EE47003E4C3E /* STTNotifier.swift */,
 				DF8D09E22800EE47003E4C3E /* STTScheduler.swift */,
 				DF8D09E62800EE47003E4C3E /* LocalAuthManager.swift */,
@@ -955,7 +950,7 @@
 				DFAC77972815D48D00AF6394 /* STTHelper.swift */,
 				DFC39E9D28A1F9EF00450EC4 /* ICDM.swift */,
 				DF67EB8B28E3F22700076FF5 /* STT+Logger.swift */,
-				DF67EB9028E4CB6500076FF5 /* STTToastManager.swift */,
+				DF67EB9028E4CB6500076FF5 /* ToastManager.swift */,
 			);
 			path = Singletons;
 			sourceTree = "<group>";
@@ -1784,7 +1779,6 @@
 				DF2DA72427CD83440046FE20 /* Kingfisher */,
 				DF2DA77227CF11C50046FE20 /* Alamofire */,
 				DF248F0B2813844C00818300 /* KeychainSwift */,
-				DF83DD3C28231E280021575B /* AlertToast */,
 				DF0D96052824892C00E592D9 /* Realm */,
 				DF0D96072824892C00E592D9 /* RealmSwift */,
 				DF59C97C285004860027F19D /* ZIPFoundation */,
@@ -2022,7 +2016,6 @@
 				DFB47EFD2880E9C90040A1BD /* OPDS+AddServer.swift in Sources */,
 				DF8D0B642800EE47003E4C3E /* RPV+ProgressView.swift in Sources */,
 				DF515FFB28E2A9E5002B6D60 /* DRV+Actions.swift in Sources */,
-				DF8D0B702800EE48003E4C3E /* ToastManager.swift in Sources */,
 				DF03F72928454E7A00602E59 /* Novel+Paged+Representable.swift in Sources */,
 				DF8D0B432800EE47003E4C3E /* Data+StoredChapter.swift in Sources */,
 				DF8D0BB22800EE48003E4C3E /* MarkDownView.swift in Sources */,
@@ -2127,7 +2120,7 @@
 				DF8D0B9B2800EE48003E4C3E /* ProfileView+InfoSection.swift in Sources */,
 				DF8D0B922800EE48003E4C3E /* SearchView.swift in Sources */,
 				DF9BD64A2891D837006628D0 /* DSK+Chapter.swift in Sources */,
-				DF67EB9128E4CB6500076FF5 /* STTToastManager.swift in Sources */,
+				DF67EB9128E4CB6500076FF5 /* ToastManager.swift in Sources */,
 				DF8D0B962800EE48003E4C3E /* ProfileView+Covers.swift in Sources */,
 				DF1FD5C8284B49EA00A67F0E /* DoublePaged+ReaderPageView.swift in Sources */,
 				DF8D0B6B2800EE48003E4C3E /* HorizontalSlider.swift in Sources */,
@@ -2518,11 +2511,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar" */;
 			productName = Unrar;
-		};
-		DF83DD3C28231E280021575B /* AlertToast */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DF83DD3B28231E280021575B /* XCRemoteSwiftPackageReference "AlertToast" */;
-			productName = AlertToast;
 		};
 		DFAEE12428B839E500B11484 /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;

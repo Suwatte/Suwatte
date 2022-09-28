@@ -54,7 +54,7 @@ struct InstalledRunnersView: View {
         .fileImporter(isPresented: $showAddSheet, allowedContentTypes: [.init(filenameExtension: "stt")!]) { result in
 
             guard let path = try? result.get() else {
-                ToastManager.shared.setError(msg: "Task Failed")
+                ToastManager.shared.error("Task Failed")
                 return
             }
 
@@ -63,11 +63,11 @@ struct InstalledRunnersView: View {
                     do {
                         try await DaisukeEngine.shared.importRunner(from:path)
                         await MainActor.run {
-                            ToastManager.shared.setComplete(title: "Added!")
+                            ToastManager.shared.info("Added!")
                         }
                     } catch {
                         await MainActor.run {
-                            ToastManager.shared.setError(error:error)
+                            ToastManager.shared.error(error)
                         }
                     }
                     path.stopAccessingSecurityScopedResource()

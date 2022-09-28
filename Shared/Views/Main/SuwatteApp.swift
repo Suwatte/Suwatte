@@ -35,13 +35,13 @@ extension SuwatteApp {
             handleDirectoryPath(url)
         } else if url.scheme == "suwatte" {
             guard let host = url.host else { return }
-
-            ToastManager.shared.toast = .init(displayMode: .alert, type: .loading)
+            
+            ToastManager.shared.display(.info("Handling URL"))
             switch host {
             case "content": // Handle Open Content
                 let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
                 guard let contentUrl = components?.queryItems?.first(where: { $0.name == "url" })?.value, let url = URL(string: contentUrl) else {
-                    ToastManager.shared.setError(msg: "Could not parse URL")
+                    ToastManager.shared.display(.error(nil, "Unable to parse URL"))
                     break
                 }
                 Task {
@@ -53,8 +53,6 @@ extension SuwatteApp {
                 break
             default: break
             }
-
-            ToastManager.shared.show = false
         }
     }
 
@@ -64,10 +62,9 @@ extension SuwatteApp {
 
             do {
                 try BackupManager.shared.import(from: url)
-                ToastManager.shared.setToast(toast: .init(type: .complete(.green), title: "File Imported"))
-
+                ToastManager.shared.display(.info("File Imported"))
             } catch {
-                ToastManager.shared.setError(error: error)
+                ToastManager.shared.display(.error(error))
             }
 
         case "stt":
@@ -76,10 +73,10 @@ extension SuwatteApp {
                 do {
                     try await DaisukeEngine.shared.importRunner(from: url)
                     await MainActor.run(body: {
-                        ToastManager.shared.setToast(toast: .init(type: .complete(.green), title: "Imported!"))
+                        ToastManager.shared.display(.info("Imported Runner!"))
                     })
                 } catch {
-                    ToastManager.shared.setError(error: error)
+                    ToastManager.shared.display(.error(error))
                 }
             }
 

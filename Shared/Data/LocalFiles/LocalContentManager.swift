@@ -183,7 +183,7 @@ final class LocalContentManager: ObservableObject {
             let destinationPath = directory.appendingPathComponent("\(name).\(book.fileExt)")
             try FileManager.default.moveItem(at: originPath, to: destinationPath)
         } catch {
-            ToastManager.shared.setError(error: error)
+            ToastManager.shared.error(error)
         }
     }
 

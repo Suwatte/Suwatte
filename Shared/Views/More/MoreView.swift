@@ -48,7 +48,7 @@ struct MoreView: View {
             Text("MS Version")
                 .badge("2.0.0")
                 .onTapGesture(count: 2) {
-                    ToastManager.shared.setToast(toast: .init(displayMode: .alert, type: .image("stt_old", .accentColor), title: "In Our Hearts Forever"))
+                    ToastManager.shared.display(.info("In Our Hears Forever"))
                 }
 
         } header: {

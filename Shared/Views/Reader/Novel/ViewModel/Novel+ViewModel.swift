@@ -275,7 +275,7 @@ extension NovelReaderView.ViewModel {
     private func onChapterChanged(chapter: ReaderView.ReaderChapter) {
         let lastChapter = activeChapter
         activeChapter = chapter
-        toast.toast = .init(displayMode: .alert, type: .systemImage("book", .accentColor), title: "Now Reading \(activeChapter.chapter.displayName)")
+        ToastManager.shared.info("Now Reading \(activeChapter.chapter.displayName)")
 
         if incognitoMode { return }
 

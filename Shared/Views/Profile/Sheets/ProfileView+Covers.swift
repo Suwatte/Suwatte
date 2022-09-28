@@ -14,7 +14,6 @@ extension ProfileView {
     struct CoversSheet: View {
         var covers: [String]
         @Environment(\.presentationMode) var presentMode
-        @ObservedObject var toastManager = ToastManager()
         var body: some View {
             NavigationView {
                 TabView {
@@ -45,8 +44,7 @@ extension ProfileView {
                 .navigationTitle("Covers")
                 .navigationViewStyle(.stack)
             }
-
-            .toast(isPresenting: $toastManager.show) { toastManager.toast }
+            .toast()
         }
 
         func handleSaveEvent(for cover: String) {
@@ -54,10 +52,10 @@ extension ProfileView {
             KingfisherManager.shared.retrieveImage(with: URL(string: cover)!) { result in
                 switch result {
                 case let .failure(error):
-                    toastManager.setError(error: error)
+                        ToastManager.shared.display(.error(error))
                 case let .success(KIR):
                     STTPhotoAlbum.shared.save(KIR.image)
-                    toastManager.setToast(toast: .init(type: .complete(.green), title: "Saved"))
+                    ToastManager.shared.display(.info("Saved Cover Image"))
                 }
             }
         }

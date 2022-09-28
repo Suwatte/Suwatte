@@ -17,7 +17,6 @@ extension AnilistView {
         var onStatusUpdated: (_ id: Int, _ status: Anilist.MediaListStatus) -> Void
         @State var loadable = Loadable<Anilist.Media>.idle
         @State var scoreFormat: Anilist.MediaListOptions.ScoreFormat?
-        @ObservedObject var toastManager = ToastManager()
         @ObservedObject var anilistModel = Anilist.shared
         var body: some View {
             LoadableView(load, loadable) { data in
@@ -25,10 +24,7 @@ extension AnilistView {
             }
             .navigationTitle(entry.title.userPreferred)
             .navigationBarTitleDisplayMode(.inline)
-            .toast(isPresenting: $toastManager.show) {
-                toastManager.toast
-            }
-            .environmentObject(toastManager)
+            .toast()
             .onChange(of: anilistModel.notifier) { _ in
                 load()
             }
@@ -220,10 +216,9 @@ extension PView {
                                                                         data: ["status": option.rawValue])
             mediaList = updated
             onStatusUpdated(updated.id, updated.status)
-            toastManager.setComplete(title: "Synced.")
-
+            ToastManager.shared.display(.info("Synced!"))
         } catch {
-            toastManager.setError(error: error)
+            ToastManager.shared.display(.error(error))
         }
     }
 

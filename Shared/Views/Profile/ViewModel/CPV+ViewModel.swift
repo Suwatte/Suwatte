@@ -76,7 +76,7 @@ extension ProfileView.ViewModel {
         } catch {
             await MainActor.run(body: {
                 if loadableContent.LOADED {
-                    ToastManager.shared.setError(msg: "Failed to Update Profile")
+                    ToastManager.shared.error("Failed to Update Profile")
                     Logger.shared.error("[ProfileView] \(error.localizedDescription)", .init(function: #function))
                 } else {
                     loadableContent = .failed(error)
@@ -120,16 +120,16 @@ extension ProfileView.ViewModel {
 
                
             } catch {
-                
+                Logger.shared.error(error.localizedDescription)
                 await MainActor.run(body: {
                     if chapters.LOADED {
-                        ToastManager.shared.setError(msg: "Failed to Fetch Chapters")
+                        ToastManager.shared.error("Failed to Fetch Chapters")
                         return
                     } else {
                         chapters = .failed(error)
                     }
                     working = false
-                    ToastManager.shared.setError(error: error)
+                    ToastManager.shared.error(error)
                 })
                 
                 Task {
@@ -174,7 +174,7 @@ extension ProfileView.ViewModel {
                 case let .update(results, _, _, _):
                     self.lastReadMarker = results.first
                 case let .error(error):
-                    ToastManager.shared.setError(error: error)
+                    ToastManager.shared.error(error)
                 }
 
                 self.calculateActionState()
@@ -284,7 +284,7 @@ extension ProfileView.ViewModel {
             Logger.shared.error("[ProfileView] [Sync] - \(error.localizedDescription)")
             await MainActor.run(body: {
                 syncState = .failure
-                ToastManager.shared.setError(error: error)
+                ToastManager.shared.error(error)
             })
         }
     }

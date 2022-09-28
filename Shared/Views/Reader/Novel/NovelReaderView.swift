@@ -30,9 +30,7 @@ struct NovelReaderView: View {
         .onChange(of: fontColor, perform: { _ in
             model.updatedPreferences()
         })
-        .toast(isPresenting: $model.toast.show) {
-            model.toast.toast
-        }
+        .toast()
 
         .animation(.default, value: model.menuControl.menu)
         .sheet(isPresented: $model.menuControl.settings, onDismiss: {

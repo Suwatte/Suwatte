@@ -50,11 +50,11 @@ extension RunnerListsView {
         do {
             try await DaisukeEngine.shared.saveRunnerList(at: url)
             DispatchQueue.main.async {
-                ToastManager.shared.setComplete()
+                ToastManager.shared.display(.info("Saved Runner!"))
             }
         } catch {
             DispatchQueue.main.async {
-                ToastManager.shared.setError(error: error)
+                ToastManager.shared.display(.error(error))
             }
         }
         presentAlert = false
@@ -151,7 +151,7 @@ extension RunnerListsView {
                                     try await DaisukeEngine.shared.importRunner(from: url)
                                     DataManager.shared.saveRunnerInfomation(runner: runner, at: url)
                                 } catch {
-                                    ToastManager.shared.setError(error: error)
+                                    ToastManager.shared.display(.error(error))
                                 }
                             }
                         } label: {
@@ -263,7 +263,7 @@ extension RunnerListsView {
                 .background(Color.fadedPrimary)
                 .cornerRadius(7)
             }
-            .toaster()
+            .toast()
             .onSubmit(of: .text) {
                 Task {
                     await handleSubmit(url: listURL)
@@ -278,13 +278,13 @@ extension RunnerListsView {
             do {
                 try await DaisukeEngine.shared.saveRunnerList(at: url)
                 DispatchQueue.main.async {
-                    ToastManager.shared.setComplete()
+                    ToastManager.shared.display(.info("Saved Runner!"))
                     presenting.toggle()
                 }
 
             } catch {
                 DispatchQueue.main.async {
-                    ToastManager.shared.setError(error: error)
+                    ToastManager.shared.display(.error(error))
                 }
             }
         }

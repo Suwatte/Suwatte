@@ -389,7 +389,7 @@ extension ReaderView.ViewModel {
             do {
                 try await STTHelpers.syncToAnilist(mediaID: alId, progress: chapterNumber, progressVolume: chapterVolume)
             } catch {
-                ToastManager.shared.setError(msg: "Anilist Sync Failed")
+                ToastManager.shared.error("Anilist Sync Failed")
             }
         }
     }

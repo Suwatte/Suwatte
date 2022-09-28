@@ -277,9 +277,10 @@ extension DaisukeContentSourceView {
                             try await handleContentSync()
                         } catch {
                             await MainActor.run(body: {
-                                ToastManager.shared.setError(error: error)
+                                ToastManager.shared.error(error)
                             })
                         }
+                        ToastManager.shared.loading = false
                     }
                 }
             }, message: {
@@ -292,7 +293,7 @@ extension DaisukeContentSourceView {
                         do {
                             try await source.handleUserSignOut()
                         } catch {
-                            ToastManager.shared.setError(error: error)
+                            ToastManager.shared.error(error)
                         }
                         await MainActor.run(body: {
                             shouldRefresh.toggle()
@@ -304,11 +305,11 @@ extension DaisukeContentSourceView {
 
         func handleContentSync() async throws {
             await MainActor.run(body: {
-                ToastManager.shared.setLoading()
+                ToastManager.shared.loading.toggle()
             })
             try await source.syncUserLibrary()
             await MainActor.run(body: {
-                ToastManager.shared.setComplete(title: "Synced")
+                ToastManager.shared.info("Synced!")
             })
         }
     }

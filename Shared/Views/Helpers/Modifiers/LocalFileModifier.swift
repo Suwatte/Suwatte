@@ -17,13 +17,13 @@ struct OpenLocalModifier: ViewModifier {
             .fileImporter(isPresented: $isPresenting, allowedContentTypes: types) { result in
                 switch result {
                 case let .failure(error):
-                    ToastManager.shared.setError(error: error)
+                    ToastManager.shared.error(error)
                 case let .success(url):
                     if url.startAccessingSecurityScopedResource() {
                         do {
                             try LocalContentManager.shared.importFile(at: url)
                         } catch {
-                            ToastManager.shared.setError(error: error)
+                            ToastManager.shared.error(error)
                         }
                     }
                     url.stopAccessingSecurityScopedResource()

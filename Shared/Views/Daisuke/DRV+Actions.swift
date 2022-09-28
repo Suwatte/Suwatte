@@ -104,14 +104,13 @@ extension DaisukeContentSourceView {
         
         func trigger(_ key: String) {
             Task { @MainActor in
-                ToastManager.shared.setLoading()
+                ToastManager.shared.loading.toggle()
+                defer { ToastManager.shared.loading.toggle() }
                 do {
                     try await source.didTriggerAction(key: key)
                 } catch {
-                    ToastManager.shared.setError(error: error)
+                    ToastManager.shared.error(error)
                 }
-                
-                ToastManager.shared.setComplete()
                 
             }
         }

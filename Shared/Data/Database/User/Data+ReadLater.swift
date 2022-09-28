@@ -64,7 +64,7 @@ extension DataManager {
         }
 
         guard let source = DaisukeEngine.shared.getSource(with: sourceID) else {
-            ToastManager.shared.toast = AlertToast(type: .error(.red), title: "Source Not Found")
+            ToastManager.shared.error("[ReadLater] Source not Found")
             return
         }
 
@@ -81,7 +81,7 @@ extension DataManager {
                 }
             } catch {
                 await MainActor.run(body: {
-                    ToastManager.shared.setError(error: error)
+                    ToastManager.shared.error(error)
                 })
             }
         }
