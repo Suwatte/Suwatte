@@ -66,6 +66,20 @@ extension ToastManager {
         queue.enqueue(.init(type: type))
         
         if !busy { run() }
+         
+         Task {
+             let context = "[ToastManager]"
+             switch type {
+                 case .info(let msg):
+                     Logger.shared.log("\(context) \(msg)")
+                 case .error(let err, let msg):
+                     if let err {
+                         Logger.shared.error("\(context) [Duplicate] \(err)")
+                     } else {
+                         Logger.shared.error("\(context) \(msg)")
+                     }
+             }
+         }
     }
     
     func info(_ str: String) {
