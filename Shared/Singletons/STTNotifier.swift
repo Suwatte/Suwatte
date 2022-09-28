@@ -29,10 +29,10 @@ class STTNotifier {
         let center = UNUserNotificationCenter.current()
         center.add(request) { error in
             if let error = error {
-                print(error.localizedDescription)
+                Logger.shared.error(error.localizedDescription, .init(file: #file, function: #function, line: #line))
             }
         }
-        print("Notification Scheduled")
+        Logger.shared.log("Notification Scheduled")
     }
 
     func clearBadge() {

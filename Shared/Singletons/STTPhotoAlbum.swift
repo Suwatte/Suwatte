@@ -94,7 +94,7 @@ internal extension STTPhotoAlbum {
             }
 
             guard error == nil else {
-                print("error \(error!)")
+                Logger.shared.error("[STTPhotoAlbum] \(error?.localizedDescription)")
                 return
             }
 

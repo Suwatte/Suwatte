@@ -67,7 +67,7 @@ extension DaisukeEngine {
             let content = try String(contentsOfFile: pathToFile!, encoding: String.Encoding.utf8)
             _ = context.evaluateScript(content)
         } catch {
-            print("Commons Injection Failed")
+            Logger.shared.error(error.localizedDescription, .init(file: #file, function: #function, line: #line))
         }
     }
 

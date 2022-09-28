@@ -30,7 +30,7 @@ extension VerticalViewer {
         var prefetcher: ImagePrefetcher?
 
         deinit {
-            print("Vertical Controller Deallocated")
+            Logger.shared.debug("Vertical Controller Deallocated")
         }
     }
 }

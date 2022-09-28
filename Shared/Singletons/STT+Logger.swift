@@ -45,7 +45,7 @@ extension Logger {
     struct Context: Codable {
         var file: String?
         var function: String?
-        var line: String?
+        var line: Int?
     }
 }
 
@@ -121,7 +121,7 @@ extension Logger.Context {
             str += (file as NSString).lastPathComponent + ":"
         }
         if let line {
-            str += line
+            str += line.description
         }
         
         if let function {

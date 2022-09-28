@@ -297,7 +297,7 @@ extension NovelReaderView.ViewModel {
             do {
                 try await STTHelpers.syncToAnilist(mediaID: trackerInfo?.al, progress: chapterNumber, progressVolume: vol)
             } catch {
-                print(error)
+                Logger.shared.error("[Novel VM] [Anilist] \(error)")
             }
         }
 

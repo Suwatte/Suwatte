@@ -80,7 +80,7 @@ extension OPDSView {
 
                             } catch {
                                 toastManager.setError(msg: "Server Connection Failed")
-                                print(error)
+                                Logger.shared.error("[OPDS] \(error.localizedDescription)")
                             }
                         }
                     }

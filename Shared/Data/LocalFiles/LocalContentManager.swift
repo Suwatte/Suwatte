@@ -30,17 +30,17 @@ final class LocalContentManager: ObservableObject {
         let descriptor = open(directory.path, O_EVTONLY)
         let observer = DispatchSource.makeFileSystemObjectSource(fileDescriptor: descriptor, eventMask: .write, queue: .global(qos: .utility))
         observer.setEventHandler { [weak self] in
-            print("[LOCAL CM]", "Event Caught")
+            Logger.shared.log("[LOCAL CM] Event Caught")
             self?.updateBooks()
         }
 
         observer.setRegistrationHandler { [weak self] in
-            print("[LOCAL CM]", "Observer Registered")
+            Logger.shared.log("[LOCAL CM] Observer Registered")
             self?.updateBooks()
         }
 
         observer.setCancelHandler {
-            print("[LOCAL CM]", "Closing Observer")
+            Logger.shared.log("[LOCAL CM] Closing Observer")
             close(descriptor)
         }
         observer.resume()
@@ -66,7 +66,7 @@ final class LocalContentManager: ObservableObject {
     func importFile(at url: URL) throws {
         let targetLocation = directory.appendingPathComponent(url.lastPathComponent)
         if targetLocation.exists {
-            print("File Exists")
+            Logger.shared.error("[Local CM] File Exists")
             throw Errors.FileExists
         }
         try FileManager.default.copyItem(at: url, to: targetLocation)
@@ -183,7 +183,6 @@ final class LocalContentManager: ObservableObject {
             let destinationPath = directory.appendingPathComponent("\(name).\(book.fileExt)")
             try FileManager.default.moveItem(at: originPath, to: destinationPath)
         } catch {
-            print(error)
             ToastManager.shared.setError(error: error)
         }
     }

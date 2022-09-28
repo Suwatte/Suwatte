@@ -19,8 +19,7 @@ extension DaisukeEngine {
                     results.append(.init(contentId: result.contentId, sourceId: source.id))
                 }
             } catch {
-                // TODO: Show This is logs & Toasts
-                print(error)
+                Logger.shared.error("\(error.localizedDescription)",.init(file: #file, function: #function, line: #line))
             }
         }
         return results

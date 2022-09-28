@@ -30,7 +30,7 @@ extension Anilist {
                     if error.responseCode == 401 {
                         self?.deleteToken()
                     }
-                    print(error.localizedDescription)
+                    Logger.shared.error(error.localizedDescription, .init(file: #file, function: #function, line: #line))
                     continuation.resume(throwing: error)
                 }
             }

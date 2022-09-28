@@ -118,7 +118,7 @@ class BackupManager: ObservableObject {
         do {
             backup = try Backup.load(from: url)
         } catch {
-            print(error)
+            Logger.shared.error("[Backups] \(error.localizedDescription)")
             throw error
         }
 

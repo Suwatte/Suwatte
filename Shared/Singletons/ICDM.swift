@@ -28,7 +28,7 @@ final class InteractorContentDownloader: ObservableObject {
     init() {
         directory.createDirectory()
         tempDir.createDirectory()
-        print("[ICDM] Resource Initialized")
+        Logger.shared.log("[ICDM] Resource Initialized")
         resetActives()
         fire()
         runTasks()
@@ -152,8 +152,8 @@ extension ICDM {
             .where { $0.status == .cancelled }
         cancelledTasks.append(contentsOf: targets.map { $0._id })
         clean()
-
-        print("Deleting", targets.count, "Objects")
+        
+        Logger.shared.log("[ICDM] Deleting \(targets.count) Objects")
         try! realm.safeWrite {
             realm.delete(targets)
         }
@@ -257,7 +257,7 @@ extension ICDM {
         isIdle = false
 
         guard let ids = queue.first?.getIdentifiers() else {
-            print("Queue Empty")
+            Logger.shared.log("[ICDM] Queue Empty")
             isIdle = true
             return
         }
@@ -295,7 +295,7 @@ extension ICDM {
                 throw DaisukeEngine.Errors.MethodNotImplemented
             }
         } catch {
-            print(error)
+            Logger.shared.error("[ICDM] [\(generateID(of: ids))] \(error.localizedDescription)")
             await didFinishTasksAtHead(of: ids, with: .failed)
             return
         }

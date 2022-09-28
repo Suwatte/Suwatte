@@ -61,7 +61,7 @@ extension DaisukeEngine {
         let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds // <<<<< Difference in nano seconds (UInt64)
         let timeInterval = Double(nanoTime) / 1_000_000_000 // Technically could overflow for long running tests
 
-        print("Evaluated in \(timeInterval) seconds")
+        Logger.shared.debug("Evaluated in \(timeInterval) seconds")
     }
 }
 
@@ -84,7 +84,7 @@ extension DaisukeEngine {
                 continue
             }
             try? addRunner(runner: runner)
-            print(STT_EV, "Started", runner.name)
+            Logger.shared.log("\(STT_EV) Started \(runner.name)")
         }
     }
 

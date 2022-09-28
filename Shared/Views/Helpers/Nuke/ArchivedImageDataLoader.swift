@@ -59,7 +59,6 @@ final class ArchivedImageDataLoader: Nuke.DataLoading {
                     try Task.checkCancellation()
                     let data = try archive.extract(entry)
                     let response = URLResponse(url: URL(string: "https://www.stt_local.com/\(id)/\(fileName)") ?? STTHost.notFound, mimeType: "image/jpeg", expectedContentLength: data.count, textEncodingName: nil)
-                    print(response.url)
                     didReceiveData(data, response)
 
                 default: break

@@ -20,7 +20,7 @@ class STTScheduler {
         BGTaskScheduler.shared.register(forTaskWithIdentifier: update_task, using: nil) { task in
             self.handleLibraryUpdate(task: task as! BGProcessingTask)
         }
-        print("[STTScheduler] Background Tasks Registered")
+        Logger.shared.log("[STTScheduler] Background Tasks Registered")
     }
 
     func scheduleLibraryUpdate() {
@@ -31,19 +31,19 @@ class STTScheduler {
         do {
             try BGTaskScheduler.shared.submit(request)
         } catch {
-            print("[STTScheduler] [\(update_task)] Failed To Schedule : \(error)")
+            Logger.shared.error("[STTScheduler] [\(update_task)] Failed To Schedule : \(error)")
         }
     }
 
     func handleLibraryUpdate(task: BGProcessingTask) {
-        print("[STTScheduler] [\(update_task)] Task Called")
+        Logger.shared.log("[STTScheduler] [\(update_task)] Task Called")
 
         let now = Date()
         let oneHour = TimeInterval(1 * 60 * 60)
         let lastChecked = UserDefaults.standard.object(forKey: STTKeys.LastFetchedUpdates) as? Date ?? .distantPast
 
         guard now > (lastChecked + oneHour) else {
-            print("[STTScheduler] [\(update_task)] Update Interval not met, Exiting...")
+            Logger.shared.log("[STTScheduler] [\(update_task)] Update Interval not met, Exiting...")
             task.setTaskCompleted(success: true)
             return
         }
@@ -54,12 +54,12 @@ class STTScheduler {
             if updates > 0 {
                 STTNotifier.shared.scheduleUpdateNotification(count: updates)
             }
-            print("[STTScheduler] [\(self?.update_task ?? #function)] Update Interval not met, Exiting...")
+            Logger.shared.log("[STTScheduler] [\(self?.update_task ?? #function)] Update Interval not met, Exiting...")
             task.setTaskCompleted(success: true)
         }
 
         task.expirationHandler = { [weak self] in
-            print("[STTScheduler] [\(self?.update_task ?? #function)] Expiration Handler Triggered. Exiting...")
+            Logger.shared.log("[STTScheduler] [\(self?.update_task ?? #function)] Expiration Handler Triggered. Exiting...")
             updateTask.cancel()
             task.setTaskCompleted(success: false)
         }

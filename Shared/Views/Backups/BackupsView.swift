@@ -104,6 +104,7 @@ extension BackupsView {
             ToastManager.shared.show = false
         } catch {
             print(error)
+            Logger.shared.error("[Backup] [Save New] \(error.localizedDescription)")
             ToastManager.shared.setError(error: error)
         }
     }
@@ -129,7 +130,7 @@ extension BackupsView {
                 })
 
             } catch {
-                print("Failed to restore \(error.localizedDescription)")
+                Logger.shared.error("[BackUpView] [Restore] \(error)")
                 await MainActor.run(body: {
                     ToastManager.shared.setError(error: error)
 

@@ -31,7 +31,7 @@ struct CloudFlareErrorView: View {
             }
             Button {
                 self.showSheet.toggle()
-                print("Resolving Cloudflare")
+                Logger.shared.debug("[ErrorView] [CloudFlare] Resolve for \(sourceID)")
             }
                 label: {
                 Text("Resolve & Retry")

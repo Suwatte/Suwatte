@@ -46,7 +46,7 @@ extension DaisukeEngine {
             .map { $0 } as [LibraryEntry]
             
         var updateCount = 0
-        print("[DAISUKE] [UPDATER] [\(source.id)] \(library.count) Titles Matching")
+        Logger.shared.log("[DAISUKE] [UPDATER] [\(source.id)] \(library.count) Titles Matching")
         for entry in library {
             guard let contentId = entry.content?.contentId else {
                 continue

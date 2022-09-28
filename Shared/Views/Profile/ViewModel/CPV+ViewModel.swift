@@ -76,7 +76,7 @@ extension ProfileView.ViewModel {
             await MainActor.run(body: {
                 if loadableContent.LOADED {
                     ToastManager.shared.setError(msg: "Failed to Update Profile")
-                    print(error)
+                    Logger.shared.error("[ProfileView] \(error.localizedDescription)", .init(function: #function))
                 } else {
                     loadableContent = .failed(error)
                 }
@@ -280,6 +280,7 @@ extension ProfileView.ViewModel {
             try await handleReadMarkers()
         } catch {
             print("sync error")
+            Logger.shared.error("[ProfileView] [Sync] - \(error.localizedDescription)")
             await MainActor.run(body: {
                 syncState = .failure
                 ToastManager.shared.setError(error: error)
@@ -314,7 +315,7 @@ extension ProfileView.ViewModel {
                 do {
                     let _ = try await Anilist.shared.updateMediaListEntry(mediaId: id, data: ["progress": chapter.number])
                 } catch {
-                    print(error.localizedDescription)
+                    Logger.shared.error("[ProfileView] [Anilist] \(error.localizedDescription)")
                 }
             }
         }

@@ -51,7 +51,7 @@ final class ExploreCollectionsController: UICollectionViewController {
     var tileStyleObserver: NSObjectProtocol?
 
     deinit {
-        print("ExploreViewController Deallocated")
+        Logger.shared.debug("ExploreViewController Deallocated")
     }
 
     func listenToQueries() {
@@ -368,7 +368,7 @@ extension CTR {
             do {
                 try await loadCollections()
             } catch {
-                print(error)
+                Logger.shared.error("[ExploreViewController] \(error.localizedDescription)", .init(function: #function, line: #line))
             }
         }
 
@@ -402,7 +402,7 @@ extension CTR {
             }
         } catch {
             // Handle Error
-            print(error)
+            Logger.shared.error("[ExploreViewController] \(error)", .init(function: #function))
             errors.updateValue(error, forKey: id)
             // Add Placeholder Item
             let toBeDeleted = snapshot.itemIdentifiers.filter { $0.sectionId == id }

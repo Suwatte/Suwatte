@@ -15,8 +15,10 @@ struct LogsView: View {
         ScrollView {
             ForEach(logger.logs, id: \.message.hashValue) { log in
                 HStack {
-                    Text(log.DisplayMessage)
+                    Text(log.DisplayMessage.trimmingCharacters(in: .whitespacesAndNewlines))
                         .foregroundColor(log.level.color)
+                        .font(.caption)
+                        .fontWeight(.light)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)

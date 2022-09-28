@@ -156,7 +156,7 @@ extension DaisukeEngine.ContentSource {
             }
             DataManager.shared.setStoreValue(for: id, key: pref.key, value: pref.defaultValue)
         }
-        print("Updated Prefs")
+        Logger.shared.log("[\(id)] Registered Default Preferences")
         
     }
 }

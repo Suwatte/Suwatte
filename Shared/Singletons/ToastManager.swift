@@ -41,7 +41,7 @@ final class ToastManager: ObservableObject {
     }
 
     func setError(error: Error) {
-        print("\n\n", error, "\n\n")
+        Logger.shared.error("[ToastManager] [DUP] \(error.localizedDescription)")
         toast = AlertToast(type: .error(.red), title: error.localizedDescription)
     }
 

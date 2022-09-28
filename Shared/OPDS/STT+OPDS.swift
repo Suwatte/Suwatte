@@ -105,7 +105,6 @@ class OPDSLocalParser: Loggable {
         }
 
         for entry in root.children(tag: "entry") {
-//            print(entry)
             var isNavigation = true
             var collectionLink: Link?
 
