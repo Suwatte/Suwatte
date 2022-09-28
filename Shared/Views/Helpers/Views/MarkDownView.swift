@@ -29,3 +29,26 @@ struct MarkDownView: View {
         try? formattedText = AttributedString(markdown: text, options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace))
     }
 }
+struct HTMLStringView: View {
+    @State private var formatted = ""
+    var text: String
+    var body: some View {
+        Text(formatted)
+            .task {
+                formatted = text
+                if let x = try? text.htmlToString() {
+                    formatted = x
+                }
+            }
+    }
+}
+
+
+extension String {
+    fileprivate func htmlToString() throws -> String {
+        try NSAttributedString(data: self.data(using: .utf16)!,
+                                        options: [.documentType: NSAttributedString.DocumentType.html],
+                                        documentAttributes: nil).string
+    }
+}
+

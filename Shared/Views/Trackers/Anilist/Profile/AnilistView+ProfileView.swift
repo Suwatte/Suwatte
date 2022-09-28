@@ -145,7 +145,8 @@ extension AnilistView.ProfileView.DataView {
                     .fontWeight(.semibold)
 
                 if let summary = data.description {
-                    MarkDownView(text: summary)
+                    HTMLStringView(text: summary)
+                        .font(.body.weight(.light))
                         .lineLimit(lineLimit)
                         .onTapGesture {
                             if lineLimit != nil {
