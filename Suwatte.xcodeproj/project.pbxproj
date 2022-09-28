@@ -77,6 +77,7 @@
 		DF67EB8A28E39E2200076FF5 /* DSK+Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */; };
 		DF67EB8C28E3F22700076FF5 /* STT+Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8B28E3F22700076FF5 /* STT+Logger.swift */; };
 		DF67EB8F28E4054C00076FF5 /* LogsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8E28E4054C00076FF5 /* LogsView.swift */; };
+		DF67EB9128E4CB6500076FF5 /* STTToastManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB9028E4CB6500076FF5 /* STTToastManager.swift */; };
 		DF68249828A588E900AB30A1 /* DSK+CS+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249728A588E900AB30A1 /* DSK+CS+Events.swift */; };
 		DF68249A28A58A2D00AB30A1 /* DSK+CS+Trackers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249928A58A2C00AB30A1 /* DSK+CS+Trackers.swift */; };
 		DF68249C28A5CF6D00AB30A1 /* DSK+Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */; };
@@ -353,6 +354,7 @@
 		DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Sync.swift"; sourceTree = "<group>"; };
 		DF67EB8B28E3F22700076FF5 /* STT+Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+Logger.swift"; sourceTree = "<group>"; };
 		DF67EB8E28E4054C00076FF5 /* LogsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsView.swift; sourceTree = "<group>"; };
+		DF67EB9028E4CB6500076FF5 /* STTToastManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STTToastManager.swift; sourceTree = "<group>"; };
 		DF68249728A588E900AB30A1 /* DSK+CS+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+CS+Events.swift"; sourceTree = "<group>"; };
 		DF68249928A58A2C00AB30A1 /* DSK+CS+Trackers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+CS+Trackers.swift"; sourceTree = "<group>"; };
 		DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Preferences.swift"; sourceTree = "<group>"; };
@@ -953,6 +955,7 @@
 				DFAC77972815D48D00AF6394 /* STTHelper.swift */,
 				DFC39E9D28A1F9EF00450EC4 /* ICDM.swift */,
 				DF67EB8B28E3F22700076FF5 /* STT+Logger.swift */,
+				DF67EB9028E4CB6500076FF5 /* STTToastManager.swift */,
 			);
 			path = Singletons;
 			sourceTree = "<group>";
@@ -2124,6 +2127,7 @@
 				DF8D0B9B2800EE48003E4C3E /* ProfileView+InfoSection.swift in Sources */,
 				DF8D0B922800EE48003E4C3E /* SearchView.swift in Sources */,
 				DF9BD64A2891D837006628D0 /* DSK+Chapter.swift in Sources */,
+				DF67EB9128E4CB6500076FF5 /* STTToastManager.swift in Sources */,
 				DF8D0B962800EE48003E4C3E /* ProfileView+Covers.swift in Sources */,
 				DF1FD5C8284B49EA00A67F0E /* DoublePaged+ReaderPageView.swift in Sources */,
 				DF8D0B6B2800EE48003E4C3E /* HorizontalSlider.swift in Sources */,
