@@ -102,9 +102,10 @@ extension DaisukeEngine.Structs {
         var chapters: [Chapter]?
         
         var covers: [String] {
-            var covers = [cover]
-            covers += additionalCovers ?? []
-            return Array(Set(covers))
+            var covers = additionalCovers ?? []
+            covers.removeAll(where: { $0 == cover })
+            covers.insert(cover, at: 0)
+            return covers
         }
         
         static let placeholder: Self = .init(contentId: .random(), title: .random(), cover: .random())

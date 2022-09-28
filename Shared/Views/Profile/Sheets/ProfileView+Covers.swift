@@ -48,14 +48,12 @@ extension ProfileView {
         }
 
         func handleSaveEvent(for cover: String) {
-            //            toastManager.setToast(toast: .init(type: .loading, title: "Saving"))
             KingfisherManager.shared.retrieveImage(with: URL(string: cover)!) { result in
                 switch result {
                 case let .failure(error):
                         ToastManager.shared.display(.error(error))
                 case let .success(KIR):
                     STTPhotoAlbum.shared.save(KIR.image)
-                    ToastManager.shared.display(.info("Saved Cover Image"))
                 }
             }
         }
