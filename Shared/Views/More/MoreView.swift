@@ -105,7 +105,9 @@ struct MoreView: View {
             NavigationLink("Backups") {
                 BackupsView()
             }
-
+            NavigationLink("Logs") {
+                LogsView()
+            }
             Button {
                 KingfisherManager.shared.cache.clearCache()
                 ImagePipeline.shared.configuration.dataCache?.removeAll()

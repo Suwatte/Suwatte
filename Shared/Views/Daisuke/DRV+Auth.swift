@@ -263,7 +263,7 @@ extension DaisukeContentSourceView {
                 Button {
                     presentShouldSync.toggle()
                 } label: {
-                    Label("Sync Library", systemImage: "tray.and.arrow.down.fill")
+                    Label("Sync Library", systemImage: "arrow.triangle.2.circlepath")
                 }
                 .buttonStyle(.plain)
             } header: {

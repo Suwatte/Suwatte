@@ -37,7 +37,7 @@ final class DaisukeEngine: ObservableObject {
 
         // Create Directory
         directory.createDirectory()
-        print(STT_EV, "Daisuke Engine Started.")
+        Logger.shared.log("\(STT_EV) Daisuke Engine Started.")
         startRunners()
     }
 }

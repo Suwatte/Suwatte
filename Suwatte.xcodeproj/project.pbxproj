@@ -75,6 +75,8 @@
 		DF59C98F28505C9F0027F19D /* LCV+Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59C98E28505C9F0027F19D /* LCV+Grid.swift */; };
 		DF67EB8828E3674900076FF5 /* LG+MoveFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */; };
 		DF67EB8A28E39E2200076FF5 /* DSK+Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */; };
+		DF67EB8C28E3F22700076FF5 /* STT+Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8B28E3F22700076FF5 /* STT+Logger.swift */; };
+		DF67EB8F28E4054C00076FF5 /* LogsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8E28E4054C00076FF5 /* LogsView.swift */; };
 		DF68249828A588E900AB30A1 /* DSK+CS+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249728A588E900AB30A1 /* DSK+CS+Events.swift */; };
 		DF68249A28A58A2D00AB30A1 /* DSK+CS+Trackers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249928A58A2C00AB30A1 /* DSK+CS+Trackers.swift */; };
 		DF68249C28A5CF6D00AB30A1 /* DSK+Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */; };
@@ -349,6 +351,8 @@
 		DF59C98E28505C9F0027F19D /* LCV+Grid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LCV+Grid.swift"; sourceTree = "<group>"; };
 		DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LG+MoveFlag.swift"; sourceTree = "<group>"; };
 		DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Sync.swift"; sourceTree = "<group>"; };
+		DF67EB8B28E3F22700076FF5 /* STT+Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+Logger.swift"; sourceTree = "<group>"; };
+		DF67EB8E28E4054C00076FF5 /* LogsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsView.swift; sourceTree = "<group>"; };
 		DF68249728A588E900AB30A1 /* DSK+CS+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+CS+Events.swift"; sourceTree = "<group>"; };
 		DF68249928A58A2C00AB30A1 /* DSK+CS+Trackers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+CS+Trackers.swift"; sourceTree = "<group>"; };
 		DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Preferences.swift"; sourceTree = "<group>"; };
@@ -776,6 +780,14 @@
 			path = LocalFiles;
 			sourceTree = "<group>";
 		};
+		DF67EB8D28E4053C00076FF5 /* Log */ = {
+			isa = PBXGroup;
+			children = (
+				DF67EB8E28E4054C00076FF5 /* LogsView.swift */,
+			);
+			path = Log;
+			sourceTree = "<group>";
+		};
 		DF68249D28A5D2BB00AB30A1 /* Daisuke */ = {
 			isa = PBXGroup;
 			children = (
@@ -940,6 +952,7 @@
 				DF72E48E281269A900E40E52 /* SauceNao.swift */,
 				DFAC77972815D48D00AF6394 /* STTHelper.swift */,
 				DFC39E9D28A1F9EF00450EC4 /* ICDM.swift */,
+				DF67EB8B28E3F22700076FF5 /* STT+Logger.swift */,
 			);
 			path = Singletons;
 			sourceTree = "<group>";
@@ -1110,6 +1123,7 @@
 		DF8D0A2D2800EE47003E4C3E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				DF67EB8D28E4053C00076FF5 /* Log */,
 				DF68249D28A5D2BB00AB30A1 /* Daisuke */,
 				DFB47EF82880C3BC0040A1BD /* OPDS */,
 				DFF363242863E496006D02C5 /* Migrate */,
@@ -1886,6 +1900,7 @@
 				DF03F72B28454E9800602E59 /* Novel+Paged+Controller.swift in Sources */,
 				DFC39E9728A0B0BC00450EC4 /* Runner.swift in Sources */,
 				DF6824A528A5FD6100AB30A1 /* DRV+Preferences.swift in Sources */,
+				DF67EB8F28E4054C00076FF5 /* LogsView.swift in Sources */,
 				DF8D0B692800EE48003E4C3E /* Paged+Representable.swift in Sources */,
 				DF23393728ABFA1400F89FD0 /* DSK+CS+Sync.swift in Sources */,
 				DFB47F02288107D00040A1BD /* OPDS+FeedView.swift in Sources */,
@@ -2009,6 +2024,7 @@
 				DF8D0B432800EE47003E4C3E /* Data+StoredChapter.swift in Sources */,
 				DF8D0BB22800EE48003E4C3E /* MarkDownView.swift in Sources */,
 				DF6824A128A5D4AF00AB30A1 /* DSK+CS+Preferences.swift in Sources */,
+				DF67EB8C28E3F22700076FF5 /* STT+Logger.swift in Sources */,
 				DF59C98528501BE50027F19D /* LocalContentManager.swift in Sources */,
 				DF6A8975288B721E0045529D /* History+Local.swift in Sources */,
 				DF8D0B252800EE47003E4C3E /* LocalAuthManager.swift in Sources */,
