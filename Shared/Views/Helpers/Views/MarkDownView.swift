@@ -22,7 +22,9 @@ struct MarkDownView: View {
                     .fontWeight(font)
             }
         }
-        .onAppear(perform: formatText)
+        .task {
+            formatText()
+        }
     }
 
     private func formatText() {

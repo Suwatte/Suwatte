@@ -21,12 +21,26 @@ extension AnilistView {
         var body: some View {
             LoadableView(load, loadable) { data in
                 DataView(data: data, onStatusUpdated: onStatusUpdated, scoreFormat: scoreFormat)
+                    .transition(.opacity)
             }
             .navigationTitle(entry.title.userPreferred)
             .navigationBarTitleDisplayMode(.inline)
             .toast()
             .onChange(of: anilistModel.notifier) { _ in
                 load()
+            }
+            .animation(.easeOut, value: loadable)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
+                        Link(destination: entry.webUrl ?? STTHost.notFound) {
+                            Label("Share", systemImage: "square.and.arrow.up")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                    }
+                    
+                }
             }
         }
 
