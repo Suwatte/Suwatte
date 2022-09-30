@@ -132,45 +132,70 @@ extension RunnerListsView {
     struct InternalListInfoView: View {
         var list: RunnerList
         var listURL: String
-        @ObservedObject var engine = DaisukeEngine.shared
         var body: some View {
             List {
                 ForEach(list.runners, id: \.self) { runner in
-                    let runnerState = getRunnerState(runner: runner)
-                    HStack {
-                        RunnerHeader(runner: runner)
-                        Spacer()
-                        Button {
-                            Task { @MainActor in
-                                let base = URL(string: listURL)!
-
-                                let url = base
-                                    .appendingPathComponent("runners")
-                                    .appendingPathComponent("\(runner.path).stt")
-                                do {
-                                    try await DaisukeEngine.shared.importRunner(from: url)
-                                    DataManager.shared.saveRunnerInfomation(runner: runner, at: url)
-                                } catch {
-                                    ToastManager.shared.display(.error(error))
-                                }
-                            }
-                        } label: {
-                            Text(runnerState.description)
-                                .font(.footnote)
-                                .fontWeight(.bold)
-                                .padding(.all, 5)
-                                .foregroundColor(.primary)
-                                .background(Color.fadedPrimary)
-                                .cornerRadius(5)
-                        }
-                        .buttonStyle(.plain)
-                        .disabled(runnerState.noInstall)
-                    }
+                    RunnerListInfo.RunnerListCell(listURL: listURL, runner: runner)
                     .frame(height: 75)
                 }
             }
         }
 
+       
+    }
+}
+
+extension RunnerListsView.RunnerListInfo {
+    
+    struct RunnerListCell: View {
+        @State var isLoading = false
+        @ObservedObject var engine = DaisukeEngine.shared
+        var listURL: String
+        var runner: Runner
+        var body: some View {
+            let runnerState = getRunnerState(runner: runner)
+
+            HStack {
+                RunnerHeader(runner: runner)
+                Spacer()
+                Button {
+                    Task { @MainActor in
+                        isLoading = true
+                        let base = URL(string: listURL)!
+
+                        let url = base
+                            .appendingPathComponent("runners")
+                            .appendingPathComponent("\(runner.path).stt")
+                        do {
+                            try await DaisukeEngine.shared.importRunner(from: url)
+                            DataManager.shared.saveRunnerInfomation(runner: runner, at: url)
+                            ToastManager.shared.info("\(runner.name) Loaded!")
+                        } catch {
+                            ToastManager.shared.display(.error(error))
+                        }
+                        
+                        isLoading = false
+                    }
+                } label: {
+                    Group {
+                        if !isLoading {
+                            Text(runnerState.description)
+                        } else {
+                            ProgressView()
+                        }
+                    }
+                    .font(.footnote.weight(.bold))
+                    .padding(.all, 5)
+                    .foregroundColor(.primary)
+                    .background(Color.fadedPrimary)
+                    .cornerRadius(5)
+                    
+                }
+                .buttonStyle(.plain)
+                .disabled(runnerState.noInstall)
+            }
+        }
+        
         enum RunnerState {
             case installed, outdated, sourceOutdated, notInstalled, appOutDated
 
@@ -241,6 +266,7 @@ extension RunnerListsView {
             .frame(height: 70, alignment: .center)
         }
     }
+    
 }
 
 extension RunnerListsView {
