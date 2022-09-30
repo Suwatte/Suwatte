@@ -134,7 +134,7 @@ extension DaisukeEngine.NetworkClient {
             .response
 
         guard let httpResponse = afResponse.response, let httpRequest = afResponse.request else {
-            throw DaisukeEngine.Errors.NamedError(name: "NWTK_CLT", message: "Recieved Empty Response")
+            throw DaisukeEngine.Errors.NamedError(name: "Network Client", message: "Recieved Empty Response")
         }
         let request = try httpRequest.toDaisukeNetworkRequest()
         let data = try afResponse.result.get()

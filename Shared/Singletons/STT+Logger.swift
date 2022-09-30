@@ -53,6 +53,9 @@ extension Logger {
     fileprivate func add(entry: Entry) {
         
         // Add Entry
+        if logs.count >= 100 {
+            logs.removeAll()
+        }
         logs.append(entry)
         
         // Print to console in debugging
@@ -61,8 +64,9 @@ extension Logger {
         #endif
         
         // Write to File
-        write(entry: entry)
-        
+        Task {
+            write(entry: entry)
+        }
     }
     
     private func `write`(entry: Entry) {

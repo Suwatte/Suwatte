@@ -12,7 +12,7 @@ struct LogsView: View {
     @State var presenting = false
     var body: some View {
         
-        ScrollView {
+        List {
             ForEach(logger.logs, id: \.message.hashValue) { log in
                 HStack {
                     Text(log.DisplayMessage.trimmingCharacters(in: .whitespacesAndNewlines))
@@ -20,11 +20,9 @@ struct LogsView: View {
                         .font(.caption)
                         .fontWeight(.light)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal)
-                
             }
         }
+        .listStyle(.plain)
         .navigationTitle("Logs")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
