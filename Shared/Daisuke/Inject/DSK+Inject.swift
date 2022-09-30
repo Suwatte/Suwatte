@@ -52,7 +52,7 @@ extension DaisukeEngine {
 
 extension DaisukeEngine {
     func injectLogger(_ context: JSContext) {
-        context.evaluateScript("var console = { log: function(message, ...options) { daisuke_log(message, options) } }")
+        context.evaluateScript("var console = { log: function(message, ...options) { daisuke_log(JSON.stringify(message), options.map(JSON.stringify)) } }")
         let consoleLog: @convention(block) (JSValue, JSValue) -> Void = {
             DSK.shared.consoleLog(message: $0, options: $1)
         }
