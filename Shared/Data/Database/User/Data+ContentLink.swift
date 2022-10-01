@@ -35,7 +35,12 @@ extension DataManager {
 
         let obj = ContentLink()
         obj.parent = parent
-        obj.child = child
+        
+        let savedChild = realm
+            .objects(StoredContent.self)
+            .where({ $0._id == child._id })
+            .first
+        obj.child = savedChild ?? child
 
         try! realm.safeWrite {
             realm.add(obj, update: .modified)
@@ -55,6 +60,20 @@ extension DataManager {
         try! realm.safeWrite {
             realm.delete(matches)
         }
+    }
+    
+    func getLinkedContent(for id: String) -> [StoredContent] {
+        let realm = try! Realm()
+        let matches = realm
+            .objects(ContentLink.self)
+            .where({ $0.parent._id == id || $0.child._id == id })
+        
+        let entries = matches.map { link in
+            if link.parent?._id == id { return link.child }
+            return link.parent
+        }.compactMap({ $0 }) as [StoredContent]
+        
+        return entries
     }
 }
 

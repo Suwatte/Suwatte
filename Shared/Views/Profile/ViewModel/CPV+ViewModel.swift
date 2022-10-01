@@ -42,7 +42,7 @@ extension ProfileView {
         @Published var syncState = SyncState.idle
         @Published var lastReadMarker: ChapterMarker?
         @Published var actionState: ActionState = .init(state: .none)
-
+        @Published var linkedUpdates: [HighlightIndentier] = []
         @Published var threadSafeChapters: [DSKCommon.Chapter]?
         var notificationToken: NotificationToken?
         var syncTask: Task<Void, Error>?
@@ -150,10 +150,15 @@ extension ProfileView.ViewModel {
     func didLoadChapters() async {
         Task {
             await getMarkers()
-            try await Task.sleep()
-            DataManager.shared.clearUpdates(id: sttIdentifier().id)
+            try await Task.sleep(seconds: 0.5)
             await handleSync()
             try await handleAnilistSync()
+        }
+        Task {
+            DataManager.shared.clearUpdates(id: sttIdentifier().id)
+        }
+        Task {
+            await checkLinkedForUpdates()
         }
     }
     
@@ -418,6 +423,52 @@ extension ProfileView.ViewModel {
             case .restart:
                 return "Restart"
             }
+        }
+    }
+}
+
+
+// MARK: Linked Content
+extension ProfileView.ViewModel {
+
+    func checkLinkedForUpdates() async {
+        let linked = DataManager.shared.getLinkedContent(for: sttIdentifier().id)
+        let identifiers: [HighlightIndentier] = linked.map(({ ($0.sourceId, $0.toHighlight())}))
+        let lastChapter = threadSafeChapters?.first
+        
+        guard let lastChapter, !linked.isEmpty else {
+            return
+        }
+        
+        let updates = await withTaskGroup(of: (Bool, HighlightIndentier).self, returning: [HighlightIndentier].self, body: { group -> [HighlightIndentier] in
+            for entry in identifiers {
+                guard let src = DaisukeEngine.shared.getSource(with: entry.sourceId) else {
+                    continue
+                }
+                
+                group.addTask {
+                    let chapters = try? await src.getContentChapters(contentId: entry.entry.contentId)
+                    guard let target = chapters?.first else {
+                        return (false, entry)
+                    }
+                    
+                    let hasChapterOfHigherNumber = target.number > lastChapter.number
+                    return (hasChapterOfHigherNumber, entry)
+                }
+                
+            }
+            
+            var matches: [HighlightIndentier] = []
+            for await result in group {
+                if result.0 {
+                    matches.append(result.1)
+                }
+            }
+            return matches
+        })
+        
+        Task { @MainActor in
+            self.linkedUpdates = updates
         }
     }
 }

@@ -65,6 +65,7 @@ extension ProfileView.Skeleton.ChapterView {
                         .font(.title3)
                         .fontWeight(.bold)
                     Spacer()
+                    LinkedUpdatesView()
                 }
 
                 VStack(alignment: .leading, spacing: 6) {
@@ -143,5 +144,39 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
         downloads
             .where { $0._id == chapter._id }
             .first
+    }
+}
+
+
+struct LinkedUpdatesView: View {
+    @EnvironmentObject var model: ProfileView.ViewModel
+    @State var selection: HighlightIndentier?
+    var body: some View {
+        let data = filtered()
+        Menu {
+            Text("Linked Titles Containing More Chapters")
+            Divider()
+            ForEach(data, id: \.entry.hashValue) { id in
+                Button("\(id.entry.title) [\(DaisukeEngine.shared.getSource(with: id.sourceId)!.name)]") {
+                    selection = id
+                }
+            }
+        } label: {
+            ZStack {
+                Image(systemName: "link.circle")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20)
+                ColoredBadge(color: .blue, bodySize: 13, internalSize: 8)
+            }
+            .frame(height: 20)
+                
+        }
+        .opacity(data.isEmpty ? 0 : 1)
+        .modifier(InteractableContainer(selection: $selection))
+    }
+    
+    func filtered() -> [HighlightIndentier] {
+        model.linkedUpdates.filter({ DaisukeEngine.shared.getSource(with: $0.sourceId) != nil })
     }
 }

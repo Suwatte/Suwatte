@@ -325,16 +325,19 @@ extension LocalContentView {
 
 struct ColoredBadge: View {
     var color: Color
+    var bodySize: CGFloat = 17.0
+    var internalSize: CGFloat = 12
+    var offset: CGFloat = 8.0
     var body: some View {
         ZStack(alignment: .center) {
             Circle()
                 .foregroundColor(.systemBackground)
             Circle()
                 .foregroundColor(color)
-                .frame(width: 12, height: 12)
+                .frame(width: internalSize, height: internalSize)
         }
-        .frame(width: 17, height: 17, alignment: .leading)
-        .offset(x: 8, y: -8)
+        .frame(width: bodySize, height: bodySize, alignment: .leading)
+        .offset(x: offset, y: -offset)
         .transition(.scale)
     }
 }
