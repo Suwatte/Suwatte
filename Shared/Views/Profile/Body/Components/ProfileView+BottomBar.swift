@@ -218,7 +218,7 @@ extension ProfileView.Skeleton.BottomBar {
         @ViewBuilder
         var MigrateButton: some View {
             if library.contains(where: { $0._id == sttId.id }) {
-                Button {} label: {
+                Button { model.presentMigrationView.toggle() } label: {
                     Label("Migrate", systemImage: "tray.full")
                 }
             }

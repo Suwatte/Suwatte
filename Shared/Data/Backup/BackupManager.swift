@@ -22,12 +22,13 @@ class BackupManager: ObservableObject {
         urls = directory.contents.sorted(by: \.lastModified, descending: true)
     }
 
-    func save() throws {
+    func save(name: String? = nil) throws {
         let backup = create()
         let json = try backup.encoded()
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM-dd-yyyy HH:mm:ss"
-        let path = directory.appendingPathComponent("STT_BACKUP_\(dateFormatter.string(from: backup.date)).json")
+        let name = name ?? .random(length: 5)
+        let path = directory.appendingPathComponent("STT_BACKUP_\(name)_\(dateFormatter.string(from: backup.date)).json")
         try json.write(to: path)
         refresh()
     }

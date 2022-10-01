@@ -23,11 +23,15 @@ extension LibraryView.LibraryGrid {
         @EnvironmentObject var model: ViewModel
         func body(content: Content) -> some View {
             content
-                .sheet(item: $selectionOption, onDismiss: { model.selectedIndexes.removeAll() }) { option in
+                .fullScreenCover(item: $selectionOption, onDismiss: { model.selectedIndexes.removeAll() }) { option in
                     switch option {
                     case .collections: MoveCollectionsView(entries: entries)
                     case .flags: MoveReadingFlag(entries: entries)
-                    case .migrate: Text("Migrate")
+                    case .migrate:
+                            NavigationView {
+                                MigrationView(contents: selectedEntries.compactMap(\.content))
+                            }
+                            .navigationViewStyle(.stack)
                     }
                 }
                 .alert("Remove From Library", isPresented: $confirmRemoval, actions: {
@@ -55,6 +59,9 @@ extension LibraryView.LibraryGrid {
                                 Menu("Options") {
                                     Button(role: .destructive) { confirmRemoval.toggle() } label: {
                                         Label("Remove From Library", systemImage: "trash")
+                                    }
+                                    Button { selectionOption = .migrate } label: {
+                                        Label("Migrate Titles", systemImage: "shippingbox")
                                     }
                                     Button { selectionOption = .flags } label: {
                                         Label("Change Reading Flag", systemImage: "flag")

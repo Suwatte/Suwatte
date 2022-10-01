@@ -34,6 +34,11 @@ extension ProfileView {
                             .closeButton()
                     }
                 })
+                .fullScreenCover(isPresented: $viewModel.presentMigrationView, content: {
+                    NavigationView {
+                        MigrationView(contents: [viewModel.storedContent])
+                    }
+                })
                 .safariView(isPresented: $viewModel.presentSafariView) {
                     SafariView(
                         url: URL(string: viewModel.content.webUrl ?? "") ?? STTHost.notFound,

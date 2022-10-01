@@ -39,6 +39,7 @@ extension ProfileView {
         @Published var presentBookmarksSheet = false
         @Published var presentAddContentLink = false
         @Published var presentManageContentLinks = false
+        @Published var presentMigrationView = false
         @Published var syncState = SyncState.idle
         @Published var lastReadMarker: ChapterMarker?
         @Published var actionState: ActionState = .init(state: .none)
