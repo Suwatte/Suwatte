@@ -28,7 +28,12 @@ extension ProfileView {
                 .fullScreenCover(isPresented: $viewModel.presentBookmarksSheet, content: {
                     BookmarksView()
                 })
-
+                .fullScreenCover(isPresented: $viewModel.presentManageContentLinks, content: {
+                    NavigationView {
+                        ManageContentLinks(content: viewModel.storedContent)
+                            .closeButton()
+                    }
+                })
                 .safariView(isPresented: $viewModel.presentSafariView) {
                     SafariView(
                         url: URL(string: viewModel.content.webUrl ?? "") ?? STTHost.notFound,

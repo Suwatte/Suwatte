@@ -7,8 +7,15 @@
 
 import SwiftUI
 
+
+struct PreMigrationView: View {
+    var body: some View {
+        Text("")
+    }
+}
+
+
 struct MigrationView: View {
-    var libraryEntries: [LibraryEntry]
     var body: some View {
         Text("")
     }

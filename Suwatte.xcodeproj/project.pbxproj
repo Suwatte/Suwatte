@@ -78,6 +78,9 @@
 		DF67EB8C28E3F22700076FF5 /* STT+Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8B28E3F22700076FF5 /* STT+Logger.swift */; };
 		DF67EB8F28E4054C00076FF5 /* LogsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8E28E4054C00076FF5 /* LogsView.swift */; };
 		DF67EB9128E4CB6500076FF5 /* ToastManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB9028E4CB6500076FF5 /* ToastManager.swift */; };
+		DF67EB9328E7A62D00076FF5 /* STT+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB9228E7A62D00076FF5 /* STT+Migration.swift */; };
+		DF67EB9928E7B07700076FF5 /* AddContentLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB9828E7B07700076FF5 /* AddContentLink.swift */; };
+		DF67EB9B28E7B08400076FF5 /* ManageContentLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB9A28E7B08400076FF5 /* ManageContentLinks.swift */; };
 		DF68249828A588E900AB30A1 /* DSK+CS+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249728A588E900AB30A1 /* DSK+CS+Events.swift */; };
 		DF68249A28A58A2D00AB30A1 /* DSK+CS+Trackers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249928A58A2C00AB30A1 /* DSK+CS+Trackers.swift */; };
 		DF68249C28A5CF6D00AB30A1 /* DSK+Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */; };
@@ -353,6 +356,9 @@
 		DF67EB8B28E3F22700076FF5 /* STT+Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+Logger.swift"; sourceTree = "<group>"; };
 		DF67EB8E28E4054C00076FF5 /* LogsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogsView.swift; sourceTree = "<group>"; };
 		DF67EB9028E4CB6500076FF5 /* ToastManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastManager.swift; sourceTree = "<group>"; };
+		DF67EB9228E7A62D00076FF5 /* STT+Migration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+Migration.swift"; sourceTree = "<group>"; };
+		DF67EB9828E7B07700076FF5 /* AddContentLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContentLink.swift; sourceTree = "<group>"; };
+		DF67EB9A28E7B08400076FF5 /* ManageContentLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageContentLinks.swift; sourceTree = "<group>"; };
 		DF68249728A588E900AB30A1 /* DSK+CS+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+CS+Events.swift"; sourceTree = "<group>"; };
 		DF68249928A58A2C00AB30A1 /* DSK+CS+Trackers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+CS+Trackers.swift"; sourceTree = "<group>"; };
 		DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Preferences.swift"; sourceTree = "<group>"; };
@@ -786,6 +792,15 @@
 			path = Log;
 			sourceTree = "<group>";
 		};
+		DF67EB9728E7B05C00076FF5 /* ContentLink */ = {
+			isa = PBXGroup;
+			children = (
+				DF67EB9828E7B07700076FF5 /* AddContentLink.swift */,
+				DF67EB9A28E7B08400076FF5 /* ManageContentLinks.swift */,
+			);
+			path = ContentLink;
+			sourceTree = "<group>";
+		};
 		DF68249D28A5D2BB00AB30A1 /* Daisuke */ = {
 			isa = PBXGroup;
 			children = (
@@ -951,6 +966,7 @@
 				DFC39E9D28A1F9EF00450EC4 /* ICDM.swift */,
 				DF67EB8B28E3F22700076FF5 /* STT+Logger.swift */,
 				DF67EB9028E4CB6500076FF5 /* ToastManager.swift */,
+				DF67EB9228E7A62D00076FF5 /* STT+Migration.swift */,
 			);
 			path = Singletons;
 			sourceTree = "<group>";
@@ -1121,6 +1137,7 @@
 		DF8D0A2D2800EE47003E4C3E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				DF67EB9728E7B05C00076FF5 /* ContentLink */,
 				DF67EB8D28E4053C00076FF5 /* Log */,
 				DF68249D28A5D2BB00AB30A1 /* Daisuke */,
 				DFB47EF82880C3BC0040A1BD /* OPDS */,
@@ -1924,6 +1941,7 @@
 				DF8D0B2D2800EE47003E4C3E /* STT+Color.swift in Sources */,
 				DF248F1B28138BEF00818300 /* AL+UserFunctions.swift in Sources */,
 				DFAC77942814D1BA00AF6394 /* AnilistView+DirectoryView+FilterSheet.swift in Sources */,
+				DF67EB9328E7A62D00076FF5 /* STT+Migration.swift in Sources */,
 				DFC39E9E28A1F9F000450EC4 /* ICDM.swift in Sources */,
 				DF8D0B7C2800EE48003E4C3E /* MoreView.swift in Sources */,
 				DF8D0BAC2800EE48003E4C3E /* ErrorView.swift in Sources */,
@@ -2104,7 +2122,9 @@
 				DF03F72D28454FD600602E59 /* Novel+Paged+ContentCell.swift in Sources */,
 				DF8D0B4D2800EE47003E4C3E /* Data+ChapterMarker.swift in Sources */,
 				DF248F22281393A400818300 /* AnilistView.swift in Sources */,
+				DF67EB9928E7B07700076FF5 /* AddContentLink.swift in Sources */,
 				DFAC779E28165FA400AF6394 /* AL+Data.swift in Sources */,
+				DF67EB9B28E7B08400076FF5 /* ManageContentLinks.swift in Sources */,
 				DF8D0B3D2800EE47003E4C3E /* Preference.swift in Sources */,
 				DF13892828BEA0450035BDBB /* Explore+Representable.swift in Sources */,
 				DF8D0BA92800EE48003E4C3E /* SuwatteApp.swift in Sources */,
