@@ -7,6 +7,9 @@
 
 import RealmSwift
 import SwiftUI
+import UIKit
+import WebKit
+import Alamofire
 
 extension DaisukeContentSourceView {
     struct AuthSection: View {
@@ -15,6 +18,7 @@ extension DaisukeContentSourceView {
         @State var loadable = Loadable<DSKCommon.User?>.idle
         @EnvironmentObject var source: DaisukeEngine.ContentSource
         @State var presentBasicAuthSheet = false
+        @State var presentWebView = false
         @State var shouldRefresh = false
         var body: some View {
             LoadableView(loadable: loadable) {
@@ -34,6 +38,11 @@ extension DaisukeContentSourceView {
                     }
                     Spacer()
                 }
+                Section {
+                    Button("Sign Out in WebView", role: .destructive) {
+                        presentWebView.toggle()
+                    }
+                }
 
             } _: { value in
                 if let user = value {
@@ -49,6 +58,16 @@ extension DaisukeContentSourceView {
                         .closeButton()
                 }
             }
+            .fullScreenCover(isPresented: $presentWebView, onDismiss: {
+                shouldRefresh = true
+            }, content: {
+                NavigationView {
+                    WebAuthWebView(source: source)
+                        .navigationBarTitle("WebView Auth", displayMode: .inline)
+                        .closeButton(title: "Done")
+                        .toast()
+                }
+            })
             .animation(.default, value: loadable)
             .onChange(of: shouldRefresh) { _ in
                 if shouldRefresh {
@@ -76,7 +95,7 @@ extension DaisukeContentSourceView {
 
         @ViewBuilder
         func LoadedUserView(user: DSKCommon.User) -> some View {
-            AuthenticatedUserView(shouldRefresh: $shouldRefresh, canSync: canSync, user: user)
+            AuthenticatedUserView(shouldRefresh: $shouldRefresh, canSync: canSync, user: user, presentWebView: $presentWebView)
         }
 
         func LoadedNoUserView() -> some View {
@@ -87,7 +106,8 @@ extension DaisukeContentSourceView {
                         presentBasicAuthSheet.toggle()
                     case .oauth:
                         break
-                    case .web: break
+                    case .web:
+                        presentWebView.toggle()
                     }
                 } label: {
                     Label("Sign In", systemImage: "person.fill.viewfinder")
@@ -237,6 +257,7 @@ extension DaisukeContentSourceView {
         var canSync: Bool
         var user: DSKCommon.User
         @State var presentShouldSync = false
+        @Binding var presentWebView: Bool
         var body: some View {
             HStack(alignment: .center) {
                 BaseImageView(url: URL(string: user.avatar ?? ""))
@@ -259,45 +280,61 @@ extension DaisukeContentSourceView {
                     Text("Info")
                 }
             }
-            Section {
-                Button {
-                    presentShouldSync.toggle()
-                } label: {
-                    Label("Sync Library", systemImage: "arrow.triangle.2.circlepath")
-                }
-                .buttonStyle(.plain)
-            } header: {
-                Text("Sync")
-            }
-            .alert("Sync Library", isPresented: $presentShouldSync, actions: {
-                Button("Cancel", role: .cancel) {}
-                Button("Proceed") {
-                    Task {
-                        do {
-                            try await handleContentSync()
-                        } catch {
-                            await MainActor.run(body: {
-                                ToastManager.shared.error(error)
-                            })
-                        }
-                        ToastManager.shared.loading = false
+            if canSync {
+                Section {
+                    Button {
+                        presentShouldSync.toggle()
+                    } label: {
+                        Label("Sync Library", systemImage: "arrow.triangle.2.circlepath")
                     }
+                    .buttonStyle(.plain)
+                } header: {
+                    Text("Sync")
                 }
-            }, message: {
-                Text("Are you sure you want to sync your \(source.name) library?")
-            })
-
+                .alert("Sync Library", isPresented: $presentShouldSync, actions: {
+                    Button("Cancel", role: .cancel) {}
+                    Button("Proceed") {
+                        Task {
+                            do {
+                                try await handleContentSync()
+                            } catch {
+                                await MainActor.run(body: {
+                                    ToastManager.shared.error(error)
+                                })
+                            }
+                            ToastManager.shared.loading = false
+                        }
+                    }
+                }, message: {
+                    Text("Are you sure you want to sync your \(source.name) library?")
+                })
+            }
+            
             Section {
                 Button("Sign Out", role: .destructive) {
                     Task {
                         do {
-                            try await source.handleUserSignOut()
+                            guard let info = (source.info as? DSK.ContentSource.ContentSourceInfo), let authMethod = info.authMethod, authMethod == .web else {
+                                return
+                            }
+                            switch authMethod {
+                                case .username_pw, .email_pw, .oauth:
+                                    try await source.handleUserSignOut()
+                                case .web:
+                                    presentWebView.toggle()
+                                    
+                            }
+                           
+
                         } catch {
                             ToastManager.shared.error(error)
                         }
-                        await MainActor.run(body: {
-                            shouldRefresh.toggle()
-                        })
+                        if !presentWebView {
+                            await MainActor.run(body: {
+                                shouldRefresh.toggle()
+                            })
+                        }
+                        
                     }
                 }
             }
@@ -314,3 +351,71 @@ extension DaisukeContentSourceView {
         }
     }
 }
+
+// MARK: WebView
+struct WebAuthWebView: UIViewControllerRepresentable {
+    var source: DSK.ContentSource
+    func makeUIViewController(context _: Context) -> some Controller {
+        let view = Controller()
+        view.source = source
+        return view
+    }
+
+    func updateUIViewController(_: UIViewControllerType, context _: Context) {}
+}
+
+
+extension WebAuthWebView {
+    class Controller: UIViewController, WKUIDelegate {
+        var webView: WKWebView!
+        var source: DSK.ContentSource!
+
+        override func viewDidLoad() {
+            super.viewDidLoad()
+            let webConfiguration = WKWebViewConfiguration()
+
+            webView = WKWebView(frame: view.bounds, configuration: webConfiguration)
+            webView.customUserAgent = STT_USER_AGENT
+            webView.uiDelegate = self
+            webView.navigationDelegate = self
+            view.addSubview(webView)
+        }
+
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            Task { @MainActor in
+                do {
+                    let dskRequest = try await source.willRequestWebViewAuth()
+                    let request = try dskRequest.toURLRequest()
+                    let _ = self.webView.load(request)
+                } catch {
+                    ToastManager.shared.error(error)
+                }
+            }
+        }
+    }
+
+}
+extension WebAuthWebView.Controller: WKNavigationDelegate {
+    func webView(_: WKWebView, decidePolicyFor _: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
+        decisionHandler(.allow)
+    }
+
+    func webView(_ webView: WKWebView, didFinish _: WKNavigation!) {
+        let cookieStore = webView.configuration.websiteDataStore.httpCookieStore
+        cookieStore.getAllCookies {[weak self] cookies in
+            
+            cookies.forEach { cookie in
+                AF.session.configuration.httpCookieStorage?.setCookie(cookie)
+                Task { @MainActor in
+                    guard let self else { return }
+                    let isValid = (try? await self.source.didReceiveWebAuthCookie(name: cookie.name)) ?? false
+                    if isValid {
+                        ToastManager.shared.info("[\(self.source.name)] Logged In!")
+                    }
+                }
+            }
+        }
+    }
+}
+

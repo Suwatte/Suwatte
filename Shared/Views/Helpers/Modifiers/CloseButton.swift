@@ -9,11 +9,12 @@ import SwiftUI
 
 private struct CloseButton: ViewModifier {
     @Environment(\.presentationMode) var presentationMode
+    var title: String
     func body(content: Content) -> some View {
         content
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") {
+                    Button(title) {
                         presentationMode.wrappedValue.dismiss()
                     }
                 }
@@ -22,7 +23,7 @@ private struct CloseButton: ViewModifier {
 }
 
 extension View {
-    func closeButton() -> some View {
-        modifier(CloseButton())
+    func closeButton(title: String = "Close") -> some View {
+        modifier(CloseButton(title: title))
     }
 }
