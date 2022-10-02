@@ -15,4 +15,8 @@ extension FileManager {
     var libraryDirectory: URL {
         urls(for: .libraryDirectory, in: .userDomainMask)[0]
     }
+    
+    var applicationSupport: URL {
+        urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+    }
 }

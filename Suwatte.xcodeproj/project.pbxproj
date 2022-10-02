@@ -83,6 +83,7 @@
 		DF67EB9B28E7B08400076FF5 /* ManageContentLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB9A28E7B08400076FF5 /* ManageContentLinks.swift */; };
 		DF67EB9D28E8AD8A00076FF5 /* MigrationContextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB9C28E8AD8A00076FF5 /* MigrationContextView.swift */; };
 		DF67EB9F28E8FC4C00076FF5 /* ManualDestinationSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB9E28E8FC4C00076FF5 /* ManualDestinationSelectionView.swift */; };
+		DF67EBA428EA34DE00076FF5 /* DSK+Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EBA328EA34DE00076FF5 /* DSK+Common.swift */; };
 		DF68249828A588E900AB30A1 /* DSK+CS+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249728A588E900AB30A1 /* DSK+CS+Events.swift */; };
 		DF68249A28A58A2D00AB30A1 /* DSK+CS+Trackers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249928A58A2C00AB30A1 /* DSK+CS+Trackers.swift */; };
 		DF68249C28A5CF6D00AB30A1 /* DSK+Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */; };
@@ -246,7 +247,6 @@
 		DF8D0BB82800EE48003E4C3E /* SelectionLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0AC32800EE47003E4C3E /* SelectionLabel.swift */; };
 		DF8D0BB92800EE48003E4C3E /* MSLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0AC42800EE47003E4C3E /* MSLabelView.swift */; };
 		DF91D9742859ADD60099D864 /* CloudflareErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF91D9732859ADD50099D864 /* CloudflareErrorView.swift */; };
-		DF9BD6402891BDA9006628D0 /* CommonLibs.js in Resources */ = {isa = PBXBuildFile; fileRef = DF9BD63F2891BDA8006628D0 /* CommonLibs.js */; };
 		DF9BD6462891C16D006628D0 /* DSK+Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BD6452891C16D006628D0 /* DSK+Tag.swift */; };
 		DF9BD6482891D5B4006628D0 /* DSK+Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BD6472891D5B3006628D0 /* DSK+Content.swift */; };
 		DF9BD64A2891D837006628D0 /* DSK+Chapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BD6492891D837006628D0 /* DSK+Chapter.swift */; };
@@ -363,6 +363,7 @@
 		DF67EB9A28E7B08400076FF5 /* ManageContentLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageContentLinks.swift; sourceTree = "<group>"; };
 		DF67EB9C28E8AD8A00076FF5 /* MigrationContextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationContextView.swift; sourceTree = "<group>"; };
 		DF67EB9E28E8FC4C00076FF5 /* ManualDestinationSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualDestinationSelectionView.swift; sourceTree = "<group>"; };
+		DF67EBA328EA34DE00076FF5 /* DSK+Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Common.swift"; sourceTree = "<group>"; };
 		DF68249728A588E900AB30A1 /* DSK+CS+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+CS+Events.swift"; sourceTree = "<group>"; };
 		DF68249928A58A2C00AB30A1 /* DSK+CS+Trackers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+CS+Trackers.swift"; sourceTree = "<group>"; };
 		DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Preferences.swift"; sourceTree = "<group>"; };
@@ -527,7 +528,6 @@
 		DF8D0AC32800EE47003E4C3E /* SelectionLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectionLabel.swift; sourceTree = "<group>"; };
 		DF8D0AC42800EE47003E4C3E /* MSLabelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MSLabelView.swift; sourceTree = "<group>"; };
 		DF91D9732859ADD50099D864 /* CloudflareErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudflareErrorView.swift; sourceTree = "<group>"; };
-		DF9BD63F2891BDA8006628D0 /* CommonLibs.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = CommonLibs.js; sourceTree = "<group>"; };
 		DF9BD6452891C16D006628D0 /* DSK+Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Tag.swift"; sourceTree = "<group>"; };
 		DF9BD6472891D5B3006628D0 /* DSK+Content.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Content.swift"; sourceTree = "<group>"; };
 		DF9BD6492891D837006628D0 /* DSK+Chapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Chapter.swift"; sourceTree = "<group>"; };
@@ -945,7 +945,6 @@
 				DFB47EF52880C1E70040A1BD /* OPDS */,
 				DF248F10281385F400818300 /* Services */,
 				DF8D09E42800EE47003E4C3E /* Singletons */,
-				DF8D0BFA280106D8003E4C3E /* Dependencies */,
 				DF8D09E72800EE47003E4C3E /* Resources */,
 				DF8D09EA2800EE47003E4C3E /* Models */,
 				DF8D09EC2800EE47003E4C3E /* State */,
@@ -1626,14 +1625,6 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		DF8D0BFA280106D8003E4C3E /* Dependencies */ = {
-			isa = PBXGroup;
-			children = (
-				DF9BD63F2891BDA8006628D0 /* CommonLibs.js */,
-			);
-			path = Dependencies;
-			sourceTree = "<group>";
-		};
 		DF9BD6442891C15A006628D0 /* Structs */ = {
 			isa = PBXGroup;
 			children = (
@@ -1646,6 +1637,7 @@
 				DFF1043F28A9A6B800E2C3A4 /* DSK+Networking.swift */,
 				DF515FF628E2A779002B6D60 /* DSK+Actions.swift */,
 				DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */,
+				DF67EBA328EA34DE00076FF5 /* DSK+Common.swift */,
 			);
 			path = Structs;
 			sourceTree = "<group>";
@@ -1874,7 +1866,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DF79D2712810E7500052470D /* placeholder.json in Resources */,
-				DF9BD6402891BDA9006628D0 /* CommonLibs.js in Resources */,
 				DF86CACA285841BA0008B17A /* STTLaunchScreen.storyboard in Resources */,
 				DF8D0B272800EE47003E4C3E /* Assets.xcassets in Resources */,
 			);
@@ -2056,6 +2047,7 @@
 				DF13892628BE9F400035BDBB /* Explore+Layout.swift in Sources */,
 				DF8D0B312800EE47003E4C3E /* STT+UIImage.swift in Sources */,
 				DF8D0B4C2800EE47003E4C3E /* Data+ReadLater.swift in Sources */,
+				DF67EBA428EA34DE00076FF5 /* DSK+Common.swift in Sources */,
 				DF67EB8A28E39E2200076FF5 /* DSK+Sync.swift in Sources */,
 				DF8D0B8E2800EE48003E4C3E /* ESV+ViewModel.swift in Sources */,
 				DF52FBC7289C7EBB008FAD3A /* LCV+SettingsSheet.swift in Sources */,

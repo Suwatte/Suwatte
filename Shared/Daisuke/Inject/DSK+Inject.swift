@@ -61,10 +61,10 @@ extension DaisukeEngine {
     }
 
     func injectCommonLibraries(_ context: JSContext) {
-        let pathToFile = Bundle.main.path(forResource: "CommonLibs", ofType: "js")
+        
 
         do {
-            let content = try String(contentsOfFile: pathToFile!, encoding: String.Encoding.utf8)
+            let content = try String(contentsOf: commons, encoding: .utf8)
             _ = context.evaluateScript(content)
         } catch {
             Logger.shared.error(error.localizedDescription, .init(file: #file, function: #function, line: #line))
