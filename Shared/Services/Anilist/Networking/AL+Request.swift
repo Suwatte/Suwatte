@@ -30,7 +30,6 @@ extension Anilist {
                     if error.responseCode == 401 {
                         self?.deleteToken()
                     }
-                    print(error.localizedDescription)
                     continuation.resume(throwing: error)
                 }
             }

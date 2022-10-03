@@ -54,7 +54,9 @@ import UIKit
                 let enumeration: NSArray = [placeholder]
                 albumChangeRequest.addAssets(enumeration)
 
-            }, completionHandler: nil)
+            }, completionHandler: { _, _ in
+                ToastManager.shared.display(.info("Saved Image"))
+            })
         }
     }
 }
@@ -94,7 +96,7 @@ internal extension STTPhotoAlbum {
             }
 
             guard error == nil else {
-                print("error \(error!)")
+                Logger.shared.error("[STTPhotoAlbum] \(error?.localizedDescription)")
                 return
             }
 

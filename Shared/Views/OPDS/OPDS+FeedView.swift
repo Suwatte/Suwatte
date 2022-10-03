@@ -166,9 +166,8 @@ extension Target {
                     if publication.isStreamable {
                         do {
                             chapter = try publication.toStoredChapter()
-
                         } catch {
-                            ToastManager.shared.setError(error: error)
+                            ToastManager.shared.display(.error(error))
                         }
                     } else {
                         // Open Download Dialog

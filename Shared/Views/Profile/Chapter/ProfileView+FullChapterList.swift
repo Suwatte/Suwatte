@@ -66,62 +66,62 @@ struct ChapterList: View {
         })
         .animation(.default, value: selections)
         .navigationTitle("Chapters")
+        .modifier(ConditionalToolBarModifier(showBB: Binding.constant(editMode?.wrappedValue == .active)))
+        .toolbar {
+            ToolbarItemGroup(placement: .bottomBar) {
+                if editMode?.wrappedValue == .active {
+                    Menu("Select") {
+                        Button("Select All") { selectAll() }
+                        Button("Deselect All") { deselectAll() }
+                        Button("Fill Range") { fillRange() }
+                        Button("Invert Selection") { invertSelection() }
+                    }
+                    Spacer()
+                    Menu("Mark") {
+                        Button("Read") { markAsRead() }
+                        Button("Unread") { markAsUnread() }
+                    }
+                    Spacer()
+                    Menu("Options") {
+                        if let readingMode = model.content.recommendedReadingMode, ![ReadingMode.NOVEL, .WEB].contains(readingMode) {
+                            Button("Download Chapter(s)") { addToDownloadQueue() }
+                            Button("Delete / Cancel Download(s)", role: .destructive) { removeDownload() }
+                        }
+
+                        Button("Reset Chapter Data", role: .destructive) { clearChapterData() }
+                    }
+                }
+            }
+        }
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 EditButton()
 
-                if editMode?.wrappedValue == .active {
-                    Menu {
-                        Menu("Select") {
-                            Button("Select All") { selectAll() }
-                            Button("Deselect All") { deselectAll() }
-                            Button("Fill Range") { fillRange() }
-                            Button("Invert Selection") { invertSelection() }
+                Menu {
+                    Picker("Sort By", selection: $sortKey) {
+                        ForEach(ChapterSortOption.allCases) {
+                            Text($0.description)
+                                .tag($0)
                         }
-                        Menu("Mark") {
-                            Button("Read") { markAsRead() }
-                            Button("Unread") { markAsUnread() }
-                        }
-
-                        Menu("Options") {
-                            if let readingMode = model.content.recommendedReadingMode, ![ReadingMode.NOVEL, .WEB].contains(readingMode) {
-                                Button("Download Chapter(s)") { addToDownloadQueue() }
-                                Button("Delete / Cancel Download(s)") { removeDownload() }
-                            }
-
-                            Button("Reset Chapter Data", role: .destructive) { clearChapterData() }
-                        }
-
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
                     }
-                } else {
-                    Menu {
-                        Picker("Sort By", selection: $sortKey) {
-                            ForEach(ChapterSortOption.allCases) {
-                                Text($0.description)
-                                    .tag($0)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        Button {
-                            sortDesc.toggle()
-                        } label: {
-                            Label("Order", systemImage: sortDesc ? "chevron.down" : "chevron.up")
-                        }
-                        Divider()
-                        Button { showOnlyDownloads.toggle() } label: {
-                            HStack {
-                                Text("Downloaded Only")
-                                Spacer()
-                                if showOnlyDownloads {
-                                    Image(systemName: "checkmark")
-                                }
-                            }
-                        }
+                    .pickerStyle(.menu)
+                    Button {
+                        sortDesc.toggle()
                     } label: {
-                        Image(systemName: "ellipsis.circle")
+                        Label("Order", systemImage: sortDesc ? "chevron.down" : "chevron.up")
                     }
+                    Divider()
+                    Button { showOnlyDownloads.toggle() } label: {
+                        HStack {
+                            Text("Downloaded Only")
+                            Spacer()
+                            if showOnlyDownloads {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
                 }
             }
         }
@@ -130,6 +130,7 @@ struct ChapterList: View {
     func handleReconnection() {
         model.getMarkers()
     }
+
     func ChaptersView(_ chapters: [StoredChapter]) -> some View {
         List(chapters, id: \.self, selection: $selections) { chapter in
             let completed = isChapterCompleted(chapter)

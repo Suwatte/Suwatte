@@ -11,7 +11,7 @@ import SwiftUI
 
 struct BrowseView: View {
     @ObservedObject var daisuke = DaisukeEngine.shared
-    @ObservedResults(StoredRunnerObject.self) var savedRunners
+    @ObservedResults(StoredRunnerObject.self, sortDescriptor: .init(keyPath: "order")) var savedRunners
     @State var presentImporter = false
     var body: some View {
         NavigationView {
@@ -40,9 +40,11 @@ struct BrowseView: View {
         }
     }
 
+    @ViewBuilder
     var InstalledSourcesSection: some View {
+        let sources = daisuke.getSources().sorted(by: { getSaved($0.id)?.order ?? 0 < getSaved($1.id)?.order ?? 0})
         Section {
-            ForEach(daisuke.getSources()) { source in
+            ForEach(sources) { source in
                 NavigationLink {
                     ExploreView()
                         .environmentObject(source)

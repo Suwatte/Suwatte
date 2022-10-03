@@ -22,7 +22,7 @@ extension DoublePagedViewer {
         var forcedSingles: [ReaderView.Page] = []
 
         deinit {
-            print("DoublePagedController Deallocated")
+            Logger.shared.debug("DoublePagedController Deallocated")
         }
     }
 }
@@ -451,7 +451,6 @@ extension Controller {
 
                 collectionView.performBatchUpdates({
                     let set = IndexSet(integer: section)
-                    print(set.count)
                     collectionView.insertSections(set)
                     collectionView.insertItems(at: paths)
                 }) { finished in

@@ -25,7 +25,7 @@ extension PagedViewer {
         var enableInteractions: Bool = Preferences.standard.imageInteractions
 
         deinit {
-            print("Paged Controller Deallocated")
+            Logger.shared.debug("Paged Controller Deallocated")
         }
     }
 }

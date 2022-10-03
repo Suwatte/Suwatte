@@ -43,7 +43,6 @@ final class SauceNao {
     }
 }
 
-// TODO: Create Decodable Type For Result
 extension SauceNao {
     struct Response: Decodable {
         var results: [Entry]

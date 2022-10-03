@@ -30,5 +30,29 @@ extension DaisukeEngine.Structs {
         var type: PreferenceType
         var defaultValue: String
         var options: [SelectOption]?
+
+        // Stepper
+        var maxStepperValue: Int?
+        var minStepperValue: Int?
+
+        // MultiSelect
+        var minSelectionCount: Int?
+        var maxSelectionCount: Int?
+
+        var minStepper: Int {
+            minStepperValue ?? 1
+        }
+
+        var maxStepper: Int {
+            maxStepperValue ?? 100
+        }
+
+        var minSelect: Int {
+            minSelectionCount ?? 1
+        }
+
+        var maxSelect: Int {
+            maxSelectionCount ?? 10
+        }
     }
 }

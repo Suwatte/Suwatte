@@ -11,7 +11,6 @@ extension OPDSView {
     struct AddNewServerSheet: View {
         @State var entry: NewServer = .init()
         @Environment(\.presentationMode) var presentationMode
-        @StateObject var toastManager = ToastManager()
         @FocusState private var isFocused: Bool
         var body: some View {
             List {
@@ -53,9 +52,7 @@ extension OPDSView {
                     Text("Authentication")
                 }
             }
-            .toast(isPresenting: $toastManager.show, alert: {
-                toastManager.toast
-            })
+            .toast()
             .font(.subheadline.weight(.light))
             .navigationTitle("Add Server")
             .navigationBarTitleDisplayMode(.inline)
@@ -79,8 +76,8 @@ extension OPDSView {
                                 presentationMode.wrappedValue.dismiss()
 
                             } catch {
-                                toastManager.setError(msg: "Server Connection Failed")
-                                print(error)
+                                ToastManager.shared.error("Server Connection Failed")
+                                Logger.shared.error("[OPDS] \(error.localizedDescription)")
                             }
                         }
                     }

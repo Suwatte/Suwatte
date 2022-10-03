@@ -96,4 +96,7 @@ enum STTKeys {
 
     static var LibrarySections = "LIBRARY.sections"
     static var NonSelectiveSync = "TRACKER.non_selective"
+
+    static var SelectiveUpdates = "APP.selective_updates"
+    static var JSCommonsVersion = "APP.js_common_version"
 }

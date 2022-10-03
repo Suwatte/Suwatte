@@ -6,6 +6,14 @@
 //
 
 import Foundation
+struct ContentIdentifier: Parsable, Hashable {
+    var contentId: String
+    var sourceId: String
+
+    var id: String {
+        "\(sourceId)||\(contentId)"
+    }
+}
 
 enum ContentStatus: Int, CaseIterable, Hashable {
     case UNKNOWN, ONGOING, COMPLETED, CANCELLED, HIATUS
@@ -30,26 +38,17 @@ enum ReadingMode: Int, CaseIterable, Hashable {
 }
 
 extension DaisukeEngine.Structs {
-    struct SuwatteContentIdentifier: Parsable, Hashable {
-        var contentId: String
-        var sourceId: String
-
-        var id: String {
-            "\(sourceId)||\(contentId)"
-        }
-    }
-    
     struct URLContentIdentifer: Parsable {
         var contentId: String
         var chapterId: String?
     }
-    
+
     struct Highlight: Parsable, Identifiable, Hashable {
         var contentId: String
         var cover: String
         var additionalCovers: [String]?
         var title: String
-        
+
         var subtitle: String?
         var tags: [String]?
         var stats: Stats?
@@ -57,20 +56,20 @@ extension DaisukeEngine.Structs {
         var id: String {
             contentId
         }
-        
+
         var covers: [String] {
             var covers = additionalCovers ?? []
             covers.removeAll(where: { $0 == cover })
             covers.insert(cover, at: 0)
             return covers
         }
-        
+
         struct Stats: Parsable, Hashable {
             var views: Int?
             var follows: Int?
             var rating: Double?
         }
-        
+
         struct Updates: Parsable, Hashable {
             var label: String
             var date: Date?
@@ -81,11 +80,10 @@ extension DaisukeEngine.Structs {
 
 extension DaisukeEngine.Structs {
     struct Content: Parsable, Hashable {
-        
         var contentId: String
         var title: String
         var cover: String
-        
+
         var additionalCovers: [String]?
         var webUrl: String?
         var status: ContentStatus?
@@ -100,21 +98,22 @@ extension DaisukeEngine.Structs {
         var includedCollections: [HighlightCollection]?
         var trackerInfo: [String: String]?
         var chapters: [Chapter]?
-        
+
         var covers: [String] {
-            var covers = [cover]
-            covers += additionalCovers ?? []
-            return Array(Set(covers))
+            var covers = additionalCovers ?? []
+            covers.removeAll(where: { $0 == cover })
+            covers.insert(cover, at: 0)
+            return covers
         }
-        
+
         static let placeholder: Self = .init(contentId: .random(), title: .random(), cover: .random())
     }
 }
 
 extension DaisukeEngine.Structs.Highlight {
     static func placeholders() -> [Self] {
-        (0...30).map { val in
-            Self.init(contentId: String.random(), cover: String.random(), title: String.random())
+        (0 ... 30).map { _ in
+            Self(contentId: String.random(), cover: String.random(), title: String.random())
         }
     }
 

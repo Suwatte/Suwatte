@@ -297,7 +297,7 @@ extension ReaderView.ViewModel {
     }
 
     private var incognitoMode: Bool {
-        UserDefaults.standard.bool(forKey: STTKeys.incognito)
+        Preferences.standard.incognitoMode
     }
 
     private var sourcesDisabledFromProgressMarking: [String] {
@@ -318,9 +318,8 @@ extension ReaderView.ViewModel {
         }
 
         // Update Entry Last Read
-        let id = DSKCommon.SuwatteContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId).id
+        let id = ContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId).id
         DataManager.shared.updateLastRead(forId: id)
-
     }
 
     private func handleTransition(transition: ReaderView.Transition) {
@@ -356,30 +355,32 @@ extension ReaderView.ViewModel {
             return
         }
 
-        // Mark As Completed
-        if canMark(sourceId: lastChapter.chapter.sourceId) {
-            DataManager.shared.setProgress(chapter: lastChapter.chapter)
+        if !canMark(sourceId: lastChapter.chapter.sourceId) {
+            return
         }
 
-        // Syncing
+        // Mark As Completed
+        DataManager.shared.setProgress(chapter: lastChapter.chapter)
 
+        // Anilist Sync
         handleTrackerSync(number: lastChapter.chapter.number,
                           volume: lastChapter.chapter.volume)
 
+        // Source Sync
         handleSourceSync(contentId: lastChapter.chapter.contentId,
                          sourceId: lastChapter.chapter.sourceId,
                          chapterId: lastChapter.chapter.chapterId)
     }
+
     private func getStoredTrackerInfo() -> StoredTrackerInfo? {
-        let id = DSKCommon.SuwatteContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId).id
+        let id = ContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId).id
         return DataManager.shared.getTrackerInfo(id)
     }
 
     private func handleTrackerSync(number: Double, volume: Double?) {
         let chapterNumber = Int(number)
-        let chapterVolume = volume.map({ Int($0) })
-        
-        
+        let chapterVolume = volume.map { Int($0) }
+
         // Ids
         // Anilist
         let alId = content?.trackerInfo["al"] ?? getStoredTrackerInfo()?.al
@@ -387,15 +388,16 @@ extension ReaderView.ViewModel {
             do {
                 try await STTHelpers.syncToAnilist(mediaID: alId, progress: chapterNumber, progressVolume: chapterVolume)
             } catch {
-                ToastManager.shared.setError(msg: "Anilist Sync Failed")
+                ToastManager.shared.error("Anilist Sync Failed")
             }
         }
     }
+
     private func handleSourceSync(contentId: String, sourceId: String, chapterId: String) {
         // Services
         let source = DaisukeEngine.shared.getSource(with: sourceId)
         Task {
-            await source?.onChaptersCompleted(contentId: contentId, chapterIds: [chapterId])
+            await source?.onChapterRead(contentId: contentId, chapterId: chapterId)
         }
     }
 }
@@ -413,15 +415,14 @@ extension STTHelpers {
         let media = try await Anilist.shared.getProfile(mediaID)
 
         var entry = media.mediaListEntry
-        
-        if entry == nil && Preferences.standard.nonSelectiveSync {
+
+        if entry == nil, Preferences.standard.nonSelectiveSync {
             entry = try await Anilist.shared.beginTracking(id: mediaID)
         }
-        
+
         guard let mediaListEntry = entry else {
             return
         }
-        
 
         // Progress is above current point
         if mediaListEntry.progress > progress {

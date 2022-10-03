@@ -10,9 +10,10 @@ import RealmSwift
 import SwiftUI
 import UIKit
 
+// Reference: KingBri <https://github.com/bdashore3>
 extension Task where Success == Never, Failure == Never {
     static func sleep(seconds: Double = 1.0) async throws {
-        let duration = UInt64(seconds * 1000000000)
+        let duration = UInt64(seconds * 1_000_000_000)
         try await Task.sleep(nanoseconds: duration)
     }
 }
@@ -21,13 +22,13 @@ extension ProfileView {
     final class ViewModel: ObservableObject {
         @Published var entry: DaisukeEngine.Structs.Highlight
         var source: DaisukeEngine.ContentSource
-        
+
         @Published var content: DSKCommon.Content = .placeholder
         @Published var loadableContent: Loadable<Bool> = .idle
         var storedContent: StoredContent {
             try! content.toStoredContent(withSource: source)
         }
-        
+
         @Published var chapters: Loadable<[StoredChapter]> = .idle
         @Published var working = false
         @Published var linkedHasUpdate = false
@@ -36,10 +37,13 @@ extension ProfileView {
         @Published var presentTrackersSheet = false
         @Published var presentSafariView = false
         @Published var presentBookmarksSheet = false
+        @Published var presentAddContentLink = false
+        @Published var presentManageContentLinks = false
+        @Published var presentMigrationView = false
         @Published var syncState = SyncState.idle
         @Published var lastReadMarker: ChapterMarker?
         @Published var actionState: ActionState = .init(state: .none)
-
+        @Published var linkedUpdates: [HighlightIndentier] = []
         @Published var threadSafeChapters: [DSKCommon.Chapter]?
         var notificationToken: NotificationToken?
         var syncTask: Task<Void, Error>?
@@ -73,14 +77,18 @@ extension ProfileView.ViewModel {
             }
 
         } catch {
+            Task {
+                await loadChapters()
+            }
             await MainActor.run(body: {
                 if loadableContent.LOADED {
-                    ToastManager.shared.setError(msg: "Failed to Update Profile")
-                    print(error)
+                    ToastManager.shared.error("Failed to Update Profile")
+                    Logger.shared.error("[ProfileView] \(error.localizedDescription)", .init(function: #function))
                 } else {
                     loadableContent = .failed(error)
                 }
                 working = false
+
             })
         }
     }
@@ -117,24 +125,21 @@ extension ProfileView.ViewModel {
                 DataManager.shared.storeChapters(stored)
                 await didLoadChapters()
 
-               
             } catch {
-                
+                Task { @MainActor in
+                    setChaptersFromDB()
+                }
+                Logger.shared.error(error.localizedDescription)
                 await MainActor.run(body: {
                     if chapters.LOADED {
-                        ToastManager.shared.setError(msg: "Failed to Fetch Chapters")
+                        ToastManager.shared.error("Failed to Fetch Chapters")
                         return
                     } else {
                         chapters = .failed(error)
                     }
                     working = false
-                    ToastManager.shared.setError(error: error)
+                    ToastManager.shared.error(error)
                 })
-                
-                Task {
-                    setChaptersFromDB()
-                }
-                
             }
         }
     }
@@ -143,18 +148,39 @@ extension ProfileView.ViewModel {
         notificationToken?.invalidate()
         notificationToken = nil
     }
-    
+
     func didLoadChapters() async {
         Task {
             await getMarkers()
-            try await Task.sleep()
-            DataManager.shared.clearUpdates(id: sttIdentifier().id)
+            try await Task.sleep(seconds: 0.5)
             await handleSync()
             try await handleAnilistSync()
         }
+        Task {
+            DataManager.shared.clearUpdates(id: sttIdentifier().id)
+        }
+        Task {
+            await checkLinkedForUpdates()
+        }
     }
-    
-    func setChaptersFromDB() {}
+
+    func setChaptersFromDB() {
+        let realm = try! Realm()
+        let storedChapters = realm
+            .objects(StoredChapter.self)
+            .where { $0.contentId == entry.contentId }
+            .where { $0.sourceId == source.id }
+            .sorted(by: \.index, ascending: true)
+            .map { $0 } as [StoredChapter]
+
+        print("LOADING FROM DB", storedChapters.count)
+        if storedChapters.isEmpty { return }
+
+        chapters = .loaded(storedChapters)
+        Task {
+            await getMarkers()
+        }
+    }
 
     @MainActor
     func getMarkers() {
@@ -173,7 +199,7 @@ extension ProfileView.ViewModel {
                 case let .update(results, _, _, _):
                     self.lastReadMarker = results.first
                 case let .error(error):
-                    ToastManager.shared.setError(error: error)
+                    ToastManager.shared.error(error)
                 }
 
                 self.calculateActionState()
@@ -242,8 +268,8 @@ extension ProfileView.ViewModel {
             }
         })
 
-        let target = DataManager.shared.getStoredContent(source.id,entry.id)
-        
+        let target = DataManager.shared.getStoredContent(source.id, entry.id)
+
         if let target = target {
             do {
                 let c = try target.toDSKContent()
@@ -251,11 +277,8 @@ extension ProfileView.ViewModel {
                     content = c
                     loadableContent = .loaded(true)
                 })
-                
-            } catch {
-                
-            }
-            
+
+            } catch {}
         }
 
         Task {
@@ -263,7 +286,7 @@ extension ProfileView.ViewModel {
         }
     }
 
-    func sttIdentifier() -> DaisukeEngine.Structs.SuwatteContentIdentifier {
+    func sttIdentifier() -> ContentIdentifier {
         .init(contentId: entry.id, sourceId: source.id)
     }
 
@@ -280,9 +303,10 @@ extension ProfileView.ViewModel {
             try await handleReadMarkers()
         } catch {
             print("sync error")
+            Logger.shared.error("[ProfileView] [Sync] - \(error.localizedDescription)")
             await MainActor.run(body: {
                 syncState = .failure
-                ToastManager.shared.setError(error: error)
+                ToastManager.shared.error(error)
             })
         }
     }
@@ -314,7 +338,7 @@ extension ProfileView.ViewModel {
                 do {
                     let _ = try await Anilist.shared.updateMediaListEntry(mediaId: id, data: ["progress": chapter.number])
                 } catch {
-                    print(error.localizedDescription)
+                    Logger.shared.error("[ProfileView] [Anilist] \(error.localizedDescription)")
                 }
             }
         }
@@ -364,7 +388,7 @@ extension ProfileView.ViewModel {
         // Get Chapters that are out of sync
         let markers = getOutOfSyncMarkers(with: readChapterIds)
         // Sync to Source
-        await source.onChaptersCompleted(contentId: entry.id, chapterIds: markers)
+        await source.onChaptersMarked(contentId: entry.id, chapterIds: markers, completed: true)
 
         await MainActor.run(body: {
             syncState = .done
@@ -414,6 +438,50 @@ extension ProfileView.ViewModel {
             case .restart:
                 return "Restart"
             }
+        }
+    }
+}
+
+// MARK: Linked Content
+
+extension ProfileView.ViewModel {
+    func checkLinkedForUpdates() async {
+        let linked = DataManager.shared.getLinkedContent(for: sttIdentifier().id)
+        let identifiers: [HighlightIndentier] = linked.map(({ ($0.sourceId, $0.toHighlight()) }))
+        let lastChapter = threadSafeChapters?.first
+
+        guard let lastChapter, !linked.isEmpty else {
+            return
+        }
+
+        let updates = await withTaskGroup(of: (Bool, HighlightIndentier).self, returning: [HighlightIndentier].self, body: { group -> [HighlightIndentier] in
+            for entry in identifiers {
+                guard let src = DaisukeEngine.shared.getSource(with: entry.sourceId) else {
+                    continue
+                }
+
+                group.addTask {
+                    let chapters = try? await src.getContentChapters(contentId: entry.entry.contentId)
+                    guard let target = chapters?.first else {
+                        return (false, entry)
+                    }
+
+                    let hasChapterOfHigherNumber = target.number > lastChapter.number
+                    return (hasChapterOfHigherNumber, entry)
+                }
+            }
+
+            var matches: [HighlightIndentier] = []
+            for await result in group {
+                if result.0 {
+                    matches.append(result.1)
+                }
+            }
+            return matches
+        })
+
+        Task { @MainActor in
+            self.linkedUpdates = updates
         }
     }
 }

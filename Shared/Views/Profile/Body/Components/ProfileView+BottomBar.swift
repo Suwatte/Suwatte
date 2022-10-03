@@ -32,6 +32,7 @@ extension ProfileView.Skeleton {
 }
 
 // MARK: Chapter List
+
 extension ProfileView.Skeleton.BottomBar {
     struct ChapterListButton: View {
         @EnvironmentObject var model: ProfileView.ViewModel
@@ -146,22 +147,20 @@ extension ProfileView.Skeleton.BottomBar {
         @ObservedResults(ContentLink.self) var contentLinks
         @State private var inputImage: UIImage?
         @State private var presentImageSheet = false
-        @State private var presentAddCL = false
-        @State private var presentManageCL = false
         @State private var presentNextEntry = false
         @State private var selections: (DaisukeEngine.Structs.Highlight, String)?
         @EnvironmentObject var model: ProfileView.ViewModel
 
-        var sttId: DSKCommon.SuwatteContentIdentifier {
+        var sttId: ContentIdentifier {
             model.sttIdentifier()
         }
 
         var body: some View {
             Menu {
-                SaveForLaterButton
+                ManageLinkedContentButton
                 MigrateButton
+                SaveForLaterButton
                 CustomThumbnailButton
-//                LinkContentButton
             } label: {
                 Image(systemName: "ellipsis")
                     .font(Font.title3.weight(.semibold))
@@ -173,12 +172,7 @@ extension ProfileView.Skeleton.BottomBar {
             .sheet(isPresented: $presentImageSheet) {
                 ImagePicker(image: $inputImage)
             }
-            .sheet(isPresented: $presentManageCL, content: {
-                NavigationView {
-                    Text("Manage Linked Content")
-                        .closeButton()
-                }
-            })
+
             .onChange(of: inputImage) { val in
                 if let val = val {
                     DataManager.shared.setCustomThumbnail(image: val, id: model.sttIdentifier().id)
@@ -225,7 +219,7 @@ extension ProfileView.Skeleton.BottomBar {
         @ViewBuilder
         var MigrateButton: some View {
             if library.contains(where: { $0._id == sttId.id }) {
-                Button {} label: {
+                Button { model.presentMigrationView.toggle() } label: {
                     Label("Migrate", systemImage: "tray.full")
                 }
             }
@@ -233,13 +227,10 @@ extension ProfileView.Skeleton.BottomBar {
 
         @ViewBuilder
         var ManageLinkedContentButton: some View {
-            Button { presentAddCL.toggle() } label: {
-                Label("Add Link", systemImage: "link.badge.plus")
-            }
             Button {
-                presentManageCL.toggle()
+                model.presentManageContentLinks.toggle()
             } label: {
-                Label("Manage Linked Content", systemImage: "gear")
+                Label("Linked Titles", systemImage: "link")
             }
         }
 

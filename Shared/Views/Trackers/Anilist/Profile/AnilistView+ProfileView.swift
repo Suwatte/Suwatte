@@ -17,20 +17,29 @@ extension AnilistView {
         var onStatusUpdated: (_ id: Int, _ status: Anilist.MediaListStatus) -> Void
         @State var loadable = Loadable<Anilist.Media>.idle
         @State var scoreFormat: Anilist.MediaListOptions.ScoreFormat?
-        @ObservedObject var toastManager = ToastManager()
         @ObservedObject var anilistModel = Anilist.shared
         var body: some View {
             LoadableView(load, loadable) { data in
                 DataView(data: data, onStatusUpdated: onStatusUpdated, scoreFormat: scoreFormat)
+                    .transition(.opacity)
             }
             .navigationTitle(entry.title.userPreferred)
             .navigationBarTitleDisplayMode(.inline)
-            .toast(isPresenting: $toastManager.show) {
-                toastManager.toast
-            }
-            .environmentObject(toastManager)
+            .toast()
             .onChange(of: anilistModel.notifier) { _ in
                 load()
+            }
+            .animation(.easeOut, value: loadable)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
+                        Link(destination: entry.webUrl ?? STTHost.notFound) {
+                            Label("Share", systemImage: "square.and.arrow.up")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                    }
+                }
             }
         }
 
@@ -126,7 +135,7 @@ extension AnilistView.ProfileView.DataView {
             ZStack(alignment: .leading) {
                 BaseImageView(url: URL(string: data.bannerImage ?? ""))
                     .blur(radius: 2.5)
-                    .frame( height: 220, alignment: .center)
+                    .frame(height: 220, alignment: .center)
                     .clipped()
 
                 LinearGradient(colors: [.clear, Color(uiColor: UIColor.systemBackground)], startPoint: .top, endPoint: .bottom)
@@ -149,7 +158,8 @@ extension AnilistView.ProfileView.DataView {
                     .fontWeight(.semibold)
 
                 if let summary = data.description {
-                    MarkDownView(text: summary)
+                    HTMLStringView(text: summary)
+                        .font(.body.weight(.light))
                         .lineLimit(lineLimit)
                         .onTapGesture {
                             if lineLimit != nil {
@@ -220,10 +230,9 @@ extension PView {
                                                                         data: ["status": option.rawValue])
             mediaList = updated
             onStatusUpdated(updated.id, updated.status)
-            toastManager.setComplete(title: "Synced.")
-
+            ToastManager.shared.display(.info("Synced!"))
         } catch {
-            toastManager.setError(error: error)
+            ToastManager.shared.display(.error(error))
         }
     }
 

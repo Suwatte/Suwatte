@@ -14,13 +14,12 @@ extension ProfileView {
     struct CoversSheet: View {
         var covers: [String]
         @Environment(\.presentationMode) var presentMode
-        @ObservedObject var toastManager = ToastManager()
+        @EnvironmentObject var model: ProfileView.ViewModel
         var body: some View {
             NavigationView {
                 TabView {
                     ForEach(covers, id: \.self) { cover in
-
-                        LazyImage(url: URL(string: cover), resizingMode: .aspectFit)
+                        BaseImageView(url: URL(string: cover), mode: .aspectFit, sourceId: model.source.id)
                             .contextMenu {
                                 Button {
                                     handleSaveEvent(for: cover)
@@ -45,19 +44,16 @@ extension ProfileView {
                 .navigationTitle("Covers")
                 .navigationViewStyle(.stack)
             }
-
-            .toast(isPresenting: $toastManager.show) { toastManager.toast }
+            .toast()
         }
 
         func handleSaveEvent(for cover: String) {
-            //            toastManager.setToast(toast: .init(type: .loading, title: "Saving"))
             KingfisherManager.shared.retrieveImage(with: URL(string: cover)!) { result in
                 switch result {
                 case let .failure(error):
-                    toastManager.setError(error: error)
+                    ToastManager.shared.display(.error(error))
                 case let .success(KIR):
                     STTPhotoAlbum.shared.save(KIR.image)
-                    toastManager.setToast(toast: .init(type: .complete(.green), title: "Saved"))
                 }
             }
         }

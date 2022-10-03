@@ -30,7 +30,7 @@ extension ProfileView {
                          }) },
                          { _ in
                              ProfileView.Skeleton()
-                                .navigationTitle(viewModel.content.title)
+                                 .navigationTitle(viewModel.content.title)
                                  .fullScreenCover(item: $viewModel.selection, onDismiss: {
                                      Task {
                                          viewModel.getMarkers()
@@ -77,36 +77,6 @@ extension ProfileView {
         @ViewBuilder
         var PLACEHOLDER: some View {
             ProgressView()
-            //            Group {
-            //                if let placeholder = ContentPlaceholder() {
-            //                    ProfileView.Skeleton(entry: placeholder)
-            //                        .redacted(reason: .placeholder)
-            //                        .shimmering()
-            //                } else {
-            //                    ProgressView()
-            //                }
-            //
-            //            }
-        }
-
-        func ContentPlaceholder() -> StoredContent? {
-            if let url = Bundle.main.url(forResource: "placeholder", withExtension: "json") {
-                do {
-                    let data = try Data(contentsOf: url)
-                    let decoder = JSONDecoder()
-                    let jsonData = try decoder.decode(StoredContent.self, from: data)
-                    let realm = try! Realm()
-
-                    try! realm.safeWrite {
-                        realm.add(jsonData, update: .all)
-                    }
-
-                    return jsonData
-                } catch {
-                    print("error:\(error)")
-                }
-            }
-            return nil
         }
     }
 

@@ -34,7 +34,7 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
         center.requestAuthorization(options: [.alert, .badge, .sound]) { granted, _ in
             if granted {
             } else {
-                ToastManager.shared.setError(msg: "Notifications Disabled")
+                ToastManager.shared.display(.error(nil, "Notifications Disabled"))
             }
         }
 

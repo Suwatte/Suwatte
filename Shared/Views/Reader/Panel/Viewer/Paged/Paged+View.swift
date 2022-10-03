@@ -39,13 +39,17 @@ class ReaderPageView: UIView {
 
         scrollView = ZoomingScrollView(frame: UIScreen.main.bounds)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-
         addSubview(scrollView)
 
         imageView.frame = UIScreen.main.bounds
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.target = imageView
+
+        progressView.backgroundColor = .clear
+        scrollView.backgroundColor = .clear
+        imageView.backgroundColor = .clear
+
         activateConstraints()
         subscribe()
     }

@@ -9,9 +9,9 @@ import Foundation
 import UIKit
 
 extension DaisukeEngine {
-    func handleGetIdentifier(for url: String) async -> [DaisukeEngine.Structs.SuwatteContentIdentifier] {
+    func handleGetIdentifier(for url: String) async -> [ContentIdentifier] {
         let sources = getSources()
-        var results = [Structs.SuwatteContentIdentifier]()
+        var results = [ContentIdentifier]()
         for source in sources {
             do {
                 let result = try await source.getIdentifiers(for: url)
@@ -19,8 +19,7 @@ extension DaisukeEngine {
                     results.append(.init(contentId: result.contentId, sourceId: source.id))
                 }
             } catch {
-                // TODO: Show This is logs & Toasts
-                print(error)
+                Logger.shared.error("\(error.localizedDescription)", .init(file: #file, function: #function, line: #line))
             }
         }
         return results

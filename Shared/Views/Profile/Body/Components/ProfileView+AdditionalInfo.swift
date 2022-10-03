@@ -14,6 +14,7 @@ extension ProfileView.Skeleton {
         var entry: DSKCommon.Content {
             model.content
         }
+
         var body: some View {
             VStack(alignment: .leading) {
                 AdditionalProperties
@@ -25,7 +26,7 @@ extension ProfileView.Skeleton {
 
         @ViewBuilder
         var AdditionalProperties: some View {
-            if let props = entry.properties ,props.count > 1 {
+            if let props = entry.properties, props.count > 1 {
                 ForEach(props[1...], id: \.label) { property in
 
                     VStack(alignment: .leading, spacing: 3) {
@@ -33,6 +34,20 @@ extension ProfileView.Skeleton {
                             .font(.headline)
                             .fontWeight(.semibold)
                         ProfileView.Skeleton.PropertyTagsView(property: property, source: model.source)
+                    }
+                    .padding(.vertical, 2.5)
+                }
+            }
+            if let props = entry.nonInteractiveProperties {
+                ForEach(props) { property in
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(property.label)
+                            .font(.headline)
+                            .fontWeight(.semibold)
+                        InteractiveTagView(property.tags) { tag in
+                            Text(tag)
+                                .modifier(ProfileTagStyle())
+                        }
                     }
                     .padding(.vertical, 2.5)
                 }

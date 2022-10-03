@@ -13,16 +13,42 @@ import SwiftUI
 
 struct STTImageView: View {
     var url: URL?
-    var identifier: DaisukeEngine.Structs.SuwatteContentIdentifier
+    var identifier: ContentIdentifier
     @ObservedResults(CustomThumbnail.self) var thumbnails
+    @StateObject private var loader = FetchImage()
+
     var body: some View {
         GeometryReader { proxy in
             let size: CGSize = .init(width: proxy.size.width, height: proxy.size.width * 1.5)
-            let processor: [ImageProcessing] = [.resize(size: size)]
-            LazyImage(url: imageURL, resizingMode: .aspectFill)
-                .processors(processor)
-                .frame(height: proxy.size.width * 1.5, alignment: .center)
-                .background(Color.gray.opacity(0.25))
+            Group {
+                if let view = loader.view {
+                    view
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } else {
+                    Color.gray.opacity(0.25)
+                        .shimmering()
+                }
+            }
+            .task {
+                load(size)
+            }
+            .frame(height: proxy.size.width * 1.5, alignment: .center)
+            .background(Color.gray.opacity(0.25))
+        }
+    }
+
+    func load(_ size: CGSize) {
+        loader.processors = [.resize(size: size)]
+        loader.animation = .easeOut(duration: 0.25)
+        guard let imageURL, imageURL.isHTTP else {
+            loader.load(url)
+            return
+        }
+        Task {
+            let source = DaisukeEngine.shared.getSource(with: identifier.sourceId)
+            let req = try? await source?.willRequestImage(request: .init(url: imageURL.absoluteString))?.toURLRequest()
+            loader.load(req ?? imageURL)
         }
     }
 
@@ -41,25 +67,57 @@ struct STTImageView: View {
 struct BaseImageView: View {
     var url: URL?
     var mode: ImageResizingMode = .aspectFill
+    var sourceId: String?
+    @StateObject private var loader = FetchImage()
+
     var body: some View {
         GeometryReader { proxy in
             let size: CGSize = .init(width: proxy.size.width, height: proxy.size.width * 1.5)
-            let processor: [ImageProcessing] = [.resize(size: size)]
-            LazyImage(url: url, resizingMode: mode)
-                .processors(processor)
-                .frame(height: proxy.size.width * 1.5, alignment: .center)
-                .background(Color.gray.opacity(0.25))
+            Group {
+                if let view = loader.view {
+                    view
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } else {
+                    Color.gray.opacity(0.25)
+                        .shimmering()
+                }
+            }
+            .task {
+                load(size)
+            }
+            .frame(height: proxy.size.width * 1.5, alignment: .center)
+            .background(Color.gray.opacity(0.25))
+        }
+    }
+
+    func load(_ size: CGSize) {
+        loader.processors = [.resize(size: size)]
+        loader.animation = .easeOut(duration: 0.25)
+
+        guard let url, url.isHTTP else {
+            loader.load(url)
+            return
+        }
+        Task {
+            if let sourceId = sourceId, let source = DaisukeEngine.shared.getSource(with: sourceId) {
+                let req = try? await source.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
+                loader.load(req ?? url)
+                return
+            }
+            loader.load(url)
         }
     }
 }
 
 class AsyncImageModifier: AsyncImageDownloadRequestModifier {
-    init(sourceId:String?) {
+    init(sourceId: String?) {
         self.sourceId = sourceId
     }
+
     let sourceId: String?
     func modified(for request: URLRequest, reportModified: @escaping (URLRequest?) -> Void) {
-        guard let sourceId, let source = DaisukeEngine.shared.getSource(with: sourceId)  else {
+        guard let sourceId, let source = DaisukeEngine.shared.getSource(with: sourceId) else {
             reportModified(request)
             return
         }
@@ -77,7 +135,6 @@ class AsyncImageModifier: AsyncImageDownloadRequestModifier {
         } catch {
             reportModified(request)
         }
-        
     }
 
     var onDownloadTaskStarted: ((DownloadTask?) -> Void)?

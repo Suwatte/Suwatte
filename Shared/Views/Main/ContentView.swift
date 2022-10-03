@@ -12,7 +12,7 @@ struct ContentView: View {
     @State var tabs = AppTabs.defaultSettings
     @AppStorage(STTKeys.IntialTabIndex) var InitialSelection = 3
     @State var selection = 0
-    @StateObject var toastModel = ToastManager.shared
+    @StateObject var toaster = ToastManager.shared
     @Environment(\.scenePhase) private var scenePhase
     var body: some View {
         TabView(selection: $selection) {
@@ -24,13 +24,10 @@ struct ContentView: View {
                             // SwiftUI AHIG Override: https://stackoverflow.com/a/70058260
                             .environment(\.symbolVariants, .none)
                     }
+                    .toast()
             }
         }
         .navigationViewStyle(.stack)
-        .onAppear {
-            selection = InitialSelection
-        }
-        .toast(isPresenting: $toastModel.show) { toastModel.toast }
         .onChange(of: scenePhase) { phase in
             switch phase {
             case .background:
@@ -38,5 +35,6 @@ struct ContentView: View {
             default: break
             }
         }
+        .environmentObject(toaster)
     }
 }

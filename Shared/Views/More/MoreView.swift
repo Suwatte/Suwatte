@@ -10,7 +10,7 @@ import Nuke
 import SwiftUI
 
 struct MoreView: View {
-    @AppStorage(STTKeys.incognito) var incognitoMode = false
+    @Preference(\.incognitoMode) var incognitoMode
     @State var cacheSize = Loadable<UInt>.idle
     var body: some View {
         NavigationView {
@@ -48,7 +48,7 @@ struct MoreView: View {
             Text("MS Version")
                 .badge("2.0.0")
                 .onTapGesture(count: 2) {
-                    ToastManager.shared.setToast(toast: .init(displayMode: .alert, type: .image("stt_old", .accentColor), title: "In Our Hearts Forever"))
+                    ToastManager.shared.display(.info("In Our Hears Forever"))
                 }
 
         } header: {
@@ -58,15 +58,38 @@ struct MoreView: View {
         Section {
             NavigationLink("Social") {
                 List {
-                    Link(destination: URL(string: "https://ko-fi.com/suwatte")!) {
-                        Text("Support on KoFi")
+                    Section {
+                        Link(destination: URL(string: "https://ko-fi.com/suwatte")!) {
+                            Text("Support on KoFi")
+                        }
+                        Link(destination: URL(string: "https://patreon.con/mantton")!) {
+                            Text("Support on Patreon")
+                        }
                     }
-                    Link(destination: URL(string: "https://www.reddit.com/r/MangaSoup/")!) {
-                        Text("Reddit")
+
+                    Section {
+                        Link(destination: URL(string: "https://www.reddit.com/r/MangaSoup/")!) {
+                            Text("App Subreddit")
+                        }
+                        Link(destination: URL(string: "https://discord.gg/nvtZGrvyZT")!) {
+                            Text("Discord Server")
+                        }
+                        Link(destination: URL(string: "https://suwatte.mantton.com")!) {
+                            Text("Website")
+                        }
+                    }
+
+                    Section {
+                        Link(destination: URL(string: "https://twitter.com/ceresmir")!) {
+                            Text("Developer Twitter")
+                        }
+                        Link(destination: URL(string: "https://mantton.com")!) {
+                            Text("Developer Website")
+                        }
                     }
                 }
                 .navigationTitle("Social")
-                
+                .buttonStyle(.plain)
             }
             Link("About Suwatte", destination: STTHost.root)
                 .buttonStyle(.plain)
@@ -80,7 +103,9 @@ struct MoreView: View {
             NavigationLink("Backups") {
                 BackupsView()
             }
-
+            NavigationLink("Logs") {
+                LogsView()
+            }
             Button {
                 KingfisherManager.shared.cache.clearCache()
                 ImagePipeline.shared.configuration.dataCache?.removeAll()

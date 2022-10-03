@@ -35,10 +35,16 @@ extension DaisukeEngine {
             if let error = errorValue.toObject() as? Error {
                 return error
             }
-            let errorName = errorValue.objectForKeyedSubscript("name")?.toString() ?? "UnknownError"
-            let errorMessage = errorValue.objectForKeyedSubscript("message")?.toString() ?? errorValue.toString() ?? "Unknown message"
-            let error = DaisukeEngine.Errors.NamedError(name: errorName, message: errorMessage)
-            return error
+
+            var name = "JS Error"
+            var message = "\(errorValue)"
+            if let value = errorValue.objectForKeyedSubscript("name"), !value.isUndefined, !value.isNull {
+                name = value.toString() ?? name
+            }
+            if let value = errorValue.objectForKeyedSubscript("message"), !value.isUndefined, !value.isNull {
+                message = value.toString() ?? message
+            }
+            return DaisukeEngine.Errors.NamedError(name: name, message: message)
         }
     }
 }

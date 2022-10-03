@@ -24,7 +24,6 @@ class Anilist: NSObject, ObservableObject {
 
 extension Anilist {
     func deleteToken() {
-        print("Clearing Anilist Token")
         let keychain = KeychainSwift()
         keychain.synchronizable = true
         keychain.delete(STTKeys.anilistAccessToken)

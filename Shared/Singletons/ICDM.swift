@@ -28,7 +28,7 @@ final class InteractorContentDownloader: ObservableObject {
     init() {
         directory.createDirectory()
         tempDir.createDirectory()
-        print("[ICDM] Resource Initialized")
+        Logger.shared.log("[ICDM] Resource Initialized")
         resetActives()
         fire()
         runTasks()
@@ -153,7 +153,7 @@ extension ICDM {
         cancelledTasks.append(contentsOf: targets.map { $0._id })
         clean()
 
-        print("Deleting", targets.count, "Objects")
+        Logger.shared.log("[ICDM] Deleting \(targets.count) Objects")
         try! realm.safeWrite {
             realm.delete(targets)
         }
@@ -257,7 +257,7 @@ extension ICDM {
         isIdle = false
 
         guard let ids = queue.first?.getIdentifiers() else {
-            print("Queue Empty")
+            Logger.shared.log("[ICDM] Queue Empty")
             isIdle = true
             return
         }
@@ -278,8 +278,7 @@ extension ICDM {
             if !data.text.isEmpty {
                 setText(for: generateID(of: ids), with: data.text)
                 await didFinishTasksAtHead(of: ids, with: .completed)
-            }
-            else if !data.urls.isEmpty {
+            } else if !data.urls.isEmpty {
                 // Handle URL List
                 let completion = try await downloadImages(of: ids, with: data.urls)
                 if completion {
@@ -295,21 +294,22 @@ extension ICDM {
                 throw DaisukeEngine.Errors.MethodNotImplemented
             }
         } catch {
-            print(error)
+            Logger.shared.error("[ICDM] [\(generateID(of: ids))] \(error.localizedDescription)")
             await didFinishTasksAtHead(of: ids, with: .failed)
             return
         }
     }
-    
-    private func setText(for id: String, with data: String){
+
+    private func setText(for id: String, with data: String) {
         let realm = try! Realm()
-        
+
         guard let obj = realm.objects(ICDMDownloadObject.self)
             .where({ $0._id == id })
-            .first else {
+            .first
+        else {
             return
         }
-        
+
         try! realm.safeWrite {
             obj.textData = data
         }
@@ -418,19 +418,19 @@ extension ICDM {
     func getCompletedDownload(for id: String) throws -> DownloadedChapter? {
         let realm = try Realm()
         let obj = realm.objects(ICDMDownloadObject.self)
-            .where({ $0._id == id })
-            .where({ $0.status == .completed })
+            .where { $0._id == id }
+            .where { $0.status == .completed }
             .first
-        
+
         guard let obj = obj else {
             return nil
         }
-        
+
         // Text
         if let text = obj.textData {
             return .init(text: text)
         }
-        
+
         // Images
         let directory = ICDM.shared.directory.appendingPathComponent(id)
         if directory.exists {
@@ -440,9 +440,8 @@ extension ICDM {
             return .init(urls: urls)
         }
         return nil
-        
     }
-    
+
     struct DownloadedChapter {
         var text: String?
         var urls: [URL]?
@@ -456,5 +455,3 @@ extension URL {
         return lastPathComponent.replacingOccurrences(of: ".\(fileExt)", with: "")
     }
 }
-
-

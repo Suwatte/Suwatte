@@ -81,15 +81,15 @@ struct BackupsView: View {
                     // Copy To Local Document
                     do {
                         try BackupManager.shared.import(from: url)
-                        ToastManager.shared.setComplete(title: "Imported")
+                        ToastManager.shared.info("Imported Backup")
                     } catch {
-                        ToastManager.shared.setError(error: error)
+                        ToastManager.shared.error(error)
                     }
                     url.stopAccessingSecurityScopedResource()
                 }
 
             case let .failure(error):
-                ToastManager.shared.setError(error: error)
+                ToastManager.shared.error(error)
             }
         })
         .protectContent()
@@ -98,13 +98,15 @@ struct BackupsView: View {
 
 extension BackupsView {
     func saveNewBackup() {
-        ToastManager.shared.setToast(toast: .init(type: .loading))
+        ToastManager.shared.loading.toggle()
+        defer {
+            ToastManager.shared.loading.toggle()
+        }
         do {
             try BackupManager.shared.save()
-            ToastManager.shared.show = false
         } catch {
-            print(error)
-            ToastManager.shared.setError(error: error)
+            Logger.shared.error("[Backup] [Save New] \(error.localizedDescription)")
+            ToastManager.shared.error(error)
         }
     }
 
@@ -114,7 +116,7 @@ extension BackupsView {
     }
 
     func handleRestore(url: URL) {
-        ToastManager.shared.setToast(toast: .init(type: .loading))
+        ToastManager.shared.loading.toggle()
 
         restoreTask = Task {
             do {
@@ -124,15 +126,14 @@ extension BackupsView {
                 try await manager.restore(from: url)
 
                 await MainActor.run(body: {
-                    ToastManager.shared.show.toggle()
-                    ToastManager.shared.setToast(toast: .init(type: .complete(.accentColor), title: "Complete"))
+                    ToastManager.shared.loading.toggle()
+                    ToastManager.shared.info("Restored Backup!")
                 })
 
             } catch {
-                print("Failed to restore \(error.localizedDescription)")
+                Logger.shared.error("[BackUpView] [Restore] \(error)")
                 await MainActor.run(body: {
-                    ToastManager.shared.setError(error: error)
-
+                    ToastManager.shared.error(error)
                 })
             }
         }

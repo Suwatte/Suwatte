@@ -120,7 +120,7 @@ extension DaisukeEngine.NetworkClient {
         intercepter.handler = requestInterceptHandler
 
         if let cookies = request.cookies {
-            let mapped = cookies.map(\.httpCookie).compactMap({ $0 })
+            let mapped = cookies.map(\.httpCookie).compactMap { $0 }
             mapped.forEach { cookie in
                 self.session.sessionConfiguration.httpCookieStorage?.setCookie(cookie)
             }
@@ -134,7 +134,7 @@ extension DaisukeEngine.NetworkClient {
             .response
 
         guard let httpResponse = afResponse.response, let httpRequest = afResponse.request else {
-            throw DaisukeEngine.Errors.NamedError(name: "NWTK_CLT", message: "Recieved Empty Response")
+            throw DaisukeEngine.Errors.NamedError(name: "Network Client", message: "Recieved Empty Response")
         }
         let request = try httpRequest.toDaisukeNetworkRequest()
         let data = try afResponse.result.get()

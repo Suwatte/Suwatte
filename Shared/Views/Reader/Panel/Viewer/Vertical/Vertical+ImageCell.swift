@@ -28,8 +28,7 @@ class VerticalImageCell: UICollectionViewCell {
     var progressView: UIView!
     var progressModel = ReaderView.ProgressObject()
     var subscriptions = Set<AnyCancellable>()
-    var imageTask: ImageTask?
-    var currentKey: String?
+    var working: Bool = false
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -53,7 +52,7 @@ class VerticalImageCell: UICollectionViewCell {
         indexPath = nil
         zoomDelegate = nil
         resizeDelegate = nil
-        currentKey = nil
+        working = false
         imageView.removeGestureRecognizer(zoomingTap)
     }
 
@@ -73,15 +72,15 @@ class VerticalImageCell: UICollectionViewCell {
         // Panel Delegate
         progressView = UIHostingController(rootView: ReaderView.PageProgressView(model: progressModel)).view!
         progressView.translatesAutoresizingMaskIntoConstraints = false
+        progressView.backgroundColor = .clear
         addSubview(progressView)
 
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.backgroundColor = .clear
         addSubview(imageView)
         activateConstraints()
         subscribe()
-        
-        currentKey = page.CELL_KEY
     }
 
     func subscribe() {
@@ -118,18 +117,19 @@ class VerticalImageCell: UICollectionViewCell {
     }
 
     func cancelTasks() {
-        imageTask?.cancel()
         downloadTask?.cancel()
         imageView.kf.cancelDownloadTask()
     }
 
     func setImage() {
-        guard currentKey == page.CELL_KEY, imageView.image == nil, let source = page.toKFSource() else {
+        guard !working, imageView.image == nil, let source = page.toKFSource(), downloadTask == nil else {
             return
         }
 
         Task { @MainActor in
             cancelTasks()
+            working = true
+
             // KF Options
             var kfOptions: [KingfisherOptionsInfoItem] = [
                 .scaleFactor(UIScreen.main.scale),
@@ -157,9 +157,13 @@ class VerticalImageCell: UICollectionViewCell {
                 kfOptions.append(.processor(processor))
             }
 
+            if Task.isCancelled {
+                working = false
+                return
+            }
             downloadTask = KingfisherManager.shared.retrieveImage(with: source,
                                                                   options: kfOptions,
-                                                                  progressBlock: { [weak self] in self?.handleProgressBlock($0, $1) },
+                                                                  progressBlock: { [weak self] in self?.handleProgressBlock($0, $1, source) },
                                                                   completionHandler: { [weak self] in self?.onImageProvided($0) })
         }
     }
@@ -167,12 +171,19 @@ class VerticalImageCell: UICollectionViewCell {
     func onImageProvided(_ result: Result<RetrieveImageResult, KingfisherError>) {
         switch result {
         case let .success(imageResult):
-
+            if page.CELL_KEY != imageResult.source.cacheKey {
+                working = false
+                return
+            }
             // Hide Progress
             if progressModel.progress != 1 {
                 progressModel.setProgress(1)
             }
-            DispatchQueue.main.async {
+
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else {
+                    return
+                }
                 self.resizeDelegate?.didLoadImage(at: self.indexPath, with: imageResult.image.size)
                 UIView.transition(with: self.imageView,
                                   duration: 0.33,
@@ -180,9 +191,11 @@ class VerticalImageCell: UICollectionViewCell {
                                   animations: {
                                       self.progressView.isHidden = true
                                       self.imageView.image = imageResult.image
+
                                   }) { _ in
                     self.imageView.addGestureRecognizer(self.zoomingTap)
                     self.imageView.isUserInteractionEnabled = true
+                    self.working = false
                 }
             }
 
@@ -197,7 +210,11 @@ class VerticalImageCell: UICollectionViewCell {
         }
     }
 
-    func handleProgressBlock(_ recieved: Int64, _ total: Int64) {
+    func handleProgressBlock(_ recieved: Int64, _ total: Int64, _ source: Kingfisher.Source) {
+        if source.cacheKey != page.CELL_KEY {
+            downloadTask?.cancel()
+            return
+        }
         progressModel.setProgress(CGFloat(recieved) / CGFloat(total))
     }
 

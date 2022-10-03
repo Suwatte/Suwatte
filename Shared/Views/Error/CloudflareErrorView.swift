@@ -31,7 +31,7 @@ struct CloudFlareErrorView: View {
             }
             Button {
                 self.showSheet.toggle()
-                print("Resolving Cloudflare")
+                Logger.shared.debug("[ErrorView] [CloudFlare] Resolve for \(sourceID)")
             }
                 label: {
                 Text("Resolve & Retry")
@@ -85,12 +85,15 @@ extension CloudFlareErrorView {
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
             Task { @MainActor in
-                guard let url = try? await DaisukeEngine.shared.getSource(with: sourceID)?.willAttemptCloudflareVerification() else {
+                guard let source = DaisukeEngine.shared.getSource(with: sourceID) else {
+                    return
+                }
+                guard let dsk = try? await source.willAttemptCloudflareVerification() else {
                     return
                 }
 
-                let request = URLRequest(url: url)
-                self.webView.load(request)
+                let request = try dsk.toURLRequest()
+                let _ = self.webView.load(request)
             }
         }
     }

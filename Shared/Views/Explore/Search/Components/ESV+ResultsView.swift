@@ -10,7 +10,6 @@ import Kingfisher
 import RealmSwift
 import SwiftUI
 
-// TODO: Simplify this fucking mess lmao
 extension ExploreView.SearchView {
     struct ResultsView: View {
         typealias Highlight = DaisukeEngine.Structs.Highlight

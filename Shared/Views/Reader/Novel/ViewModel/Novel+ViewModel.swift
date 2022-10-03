@@ -23,7 +23,6 @@ extension NovelReaderView {
         @Published var toast = ToastManager()
         @Published var scrubbingPageNumber: Int?
         @Published var currentSectionPageNumber = 1
-        
 
         var subscriptions = Set<AnyCancellable>()
 
@@ -116,8 +115,9 @@ extension NovelReaderView.ViewModel {
         var textStorage: NSTextStorage?
         let data = Data(joined.utf8)
         if let attributedString = try? NSAttributedString(data: data,
-                                                          options: [.documentType: NSAttributedString.DocumentType.html,.characterEncoding: String.Encoding.utf8.rawValue,],
-                                                          documentAttributes: nil) {
+                                                          options: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding: String.Encoding.utf8.rawValue],
+                                                          documentAttributes: nil)
+        {
             textStorage = .init(attributedString: attributedString)
         } else {
             textStorage = NSTextStorage(string: text)
@@ -136,7 +136,7 @@ extension NovelReaderView.ViewModel {
             textLayout.addTextContainer(textContainer)
 
             let textView = UITextView(frame: .init(x: 0, y: 0, width: size.width, height: size.height), textContainer: textContainer)
-            
+
             textView.isScrollEnabled = false
             textView.isUserInteractionEnabled = false
             textView.backgroundColor = .clear
@@ -198,7 +198,7 @@ extension NovelReaderView.ViewModel {
 //                self?.updatedPreferences()
 //            }
 //            .store(in: &subscriptions)
-        
+
         toast.objectWillChange.sink { [weak self] _ in
             self?.objectWillChange.send()
         }.store(in: &subscriptions)
@@ -275,7 +275,7 @@ extension NovelReaderView.ViewModel {
     private func onChapterChanged(chapter: ReaderView.ReaderChapter) {
         let lastChapter = activeChapter
         activeChapter = chapter
-        toast.toast = .init(displayMode: .alert, type: .systemImage("book", .accentColor), title: "Now Reading \(activeChapter.chapter.displayName)")
+        ToastManager.shared.info("Now Reading \(activeChapter.chapter.displayName)")
 
         if incognitoMode { return }
 
@@ -285,7 +285,7 @@ extension NovelReaderView.ViewModel {
         }
 
         // Trackers
-        let trackerInfo = getTrackerInfo(DaisukeEngine.Structs.SuwatteContentIdentifier(contentId: lastChapter.chapter.contentId, sourceId: lastChapter.chapter.sourceId).id)
+        let trackerInfo = getTrackerInfo(ContentIdentifier(contentId: lastChapter.chapter.contentId, sourceId: lastChapter.chapter.sourceId).id)
         let chapterNumber = Int(lastChapter.chapter.number)
         var chapterVolume: Int?
         if let vol = lastChapter.chapter.volume {
@@ -297,7 +297,7 @@ extension NovelReaderView.ViewModel {
             do {
                 try await STTHelpers.syncToAnilist(mediaID: trackerInfo?.al, progress: chapterNumber, progressVolume: vol)
             } catch {
-                print(error)
+                Logger.shared.error("[Novel VM] [Anilist] \(error)")
             }
         }
 
@@ -306,7 +306,7 @@ extension NovelReaderView.ViewModel {
         let contentId = lastChapter.chapter.contentId
         let chapterId = lastChapter.chapter.chapterId
         Task {
-            await source?.onChaptersCompleted(contentId: contentId , chapterIds: [chapterId])
+            await source?.onChapterRead(contentId: contentId, chapterId: chapterId)
         }
     }
 
@@ -319,7 +319,7 @@ extension NovelReaderView.ViewModel {
         content?.title ?? ""
     }
 
-    private func getTrackerInfo(_ id: String) -> StoredTrackerInfo? {
+    private func getTrackerInfo(_: String) -> StoredTrackerInfo? {
 //        content?.trackerInfo ?? DataManager.shared.getTrackerInfo(id)
         return nil
     }

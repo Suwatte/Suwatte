@@ -45,11 +45,7 @@ extension ExploreView.SearchView {
                         handleClear()
                     }
                 }
-                .toast(isPresenting: $toastManager.show) {
-                    toastManager.toast
-                }
-
-                .animation(.default, value: toastManager.show)
+                .toast()
                 .animation(.default, value: results)
             }
         }
@@ -69,9 +65,9 @@ extension ExploreView.SearchView.HistoryView {
 
 extension ExploreView.SearchView.HistoryView {
     func handleClear() {
-        toastManager.setToast(toast: .init(type: .loading))
+        ToastManager.shared.loading.toggle()
         DataManager.shared.deleteSearchHistory(for: model.source.id)
-        toastManager.show.toggle()
+        ToastManager.shared.loading.toggle()
     }
 
     func didTap(_ entry: SearchHistory) {

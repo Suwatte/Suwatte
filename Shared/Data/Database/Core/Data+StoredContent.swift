@@ -16,6 +16,7 @@ final class StoredContent: Object, ObjectKeyIdentifiable {
             updateId()
         }
     }
+
     @Persisted(indexed: true) var contentId: String {
         didSet {
             updateId()
@@ -24,7 +25,7 @@ final class StoredContent: Object, ObjectKeyIdentifiable {
 
     @Persisted(indexed: true) var title: String
     @Persisted var cover: String
-    
+
     @Persisted var webUrl: String?
     @Persisted var summary: String?
 
@@ -42,16 +43,16 @@ final class StoredContent: Object, ObjectKeyIdentifiable {
         DaisukeEngine.shared.getSource(with: sourceId)?.name ?? "Unrecognized : \(sourceId)"
     }
 
-    var ContentIdentifier: DaisukeEngine.Structs.SuwatteContentIdentifier {
+    var ContentIdentifier: ContentIdentifier {
         return .init(contentId: contentId, sourceId: sourceId)
     }
-
 }
 
 extension StoredContent {
     func updateId() {
         _id = "\(sourceId)||\(contentId)"
     }
+
     func toHighlight() -> DaisukeEngine.Structs.Highlight {
         .init(contentId: contentId, cover: cover, title: title)
     }
@@ -63,7 +64,7 @@ extension StoredContent {
             return .init(id: UUID().uuidString, label: prop.label, tags: tags)
         }
     }
-    
+
     func toDSKContent() throws -> DSKCommon.Content {
         let data = try DaisukeEngine.encode(value: self)
         return try DaisukeEngine.decode(data: data, to: DSKCommon.Content.self)
@@ -110,18 +111,16 @@ extension DataManager {
             .objects(StoredContent.self)
             .filter("_id IN %@", ids)
     }
-    
+
     func refreshStored(contentId: String, sourceId: String) async {
-        
         guard let source = DaisukeEngine.shared.getSource(with: sourceId) else {
             return
         }
-        
+
         let data = try? await source.getContent(id: contentId)
         guard let stored = try? data?.toStoredContent(withSource: source) else {
             return
         }
         storeContent(stored)
-
     }
 }

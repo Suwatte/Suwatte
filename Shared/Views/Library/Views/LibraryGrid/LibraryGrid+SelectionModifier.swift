@@ -14,7 +14,7 @@ extension LibraryView.LibraryGrid {
                 return hashValue
             }
 
-            case move, migrate
+            case collections, flags, migrate
         }
 
         var entries: Results<LibraryEntry>
@@ -23,10 +23,15 @@ extension LibraryView.LibraryGrid {
         @EnvironmentObject var model: ViewModel
         func body(content: Content) -> some View {
             content
-                .sheet(item: $selectionOption, onDismiss: { model.selectedIndexes.removeAll() }) { option in
+                .fullScreenCover(item: $selectionOption, onDismiss: { model.selectedIndexes.removeAll() }) { option in
                     switch option {
-                    case .move: MoveView(entries: entries)
-                    case .migrate: Text("Migrate")
+                    case .collections: MoveCollectionsView(entries: entries)
+                    case .flags: MoveReadingFlag(entries: entries)
+                    case .migrate:
+                        NavigationView {
+                            MigrationView(contents: selectedEntries.compactMap(\.content))
+                        }
+                        .navigationViewStyle(.stack)
                     }
                 }
                 .alert("Remove From Library", isPresented: $confirmRemoval, actions: {
@@ -37,6 +42,7 @@ extension LibraryView.LibraryGrid {
                     Text("Are you sure you want to remove these \(model.selectedIndexes.count) titles from your library?")
 
                 })
+                .modifier(ConditionalToolBarModifier(showBB: $model.isSelecting))
                 .toolbar {
                     ToolbarItemGroup(placement: .bottomBar) {
                         if model.isSelecting {
@@ -46,26 +52,23 @@ extension LibraryView.LibraryGrid {
                                 Button("Deselect All") { withAnimation { deselectAll() } }
                                 Button("Select All") { withAnimation { selectAll() } }
                             }
-
                             .padding()
                             Spacer()
                             if !model.selectedIndexes.isEmpty {
                                 Menu("Options") {
-                                    Button("Remove From Library") {
-                                        confirmRemoval.toggle()
+                                    Button(role: .destructive) { confirmRemoval.toggle() } label: {
+                                        Label("Remove From Library", systemImage: "trash")
                                     }
-
-                                    Button("Move to Collection(s)") {
-                                        selectionOption = .move
+                                    Button { selectionOption = .migrate } label: {
+                                        Label("Migrate Titles", systemImage: "shippingbox")
+                                    }
+                                    Button { selectionOption = .flags } label: {
+                                        Label("Change Reading Flag", systemImage: "flag")
+                                    }
+                                    Button { selectionOption = .collections } label: {
+                                        Label("Move Collections", systemImage: "archivebox")
                                     }
                                 }
-                                .padding()
-
-//                                Spacer()
-//                                Button("Migrate") {
-//                                    selectionOption = .migrate
-//                                }
-//                                .padding()
                             }
                         }
                     }
@@ -106,6 +109,24 @@ extension LibraryView.LibraryGrid {
             DispatchQueue.main.async {
                 model.selectedIndexes.removeAll()
             }
+        }
+
+        var selectedEntries: [LibraryEntry] {
+            zip(entries.indices, entries)
+                .filter { model.selectedIndexes.contains($0.0) }
+                .map { $0.1 }
+        }
+    }
+}
+
+struct ConditionalToolBarModifier: ViewModifier {
+    @Binding var showBB: Bool
+    func body(content: Content) -> some View {
+        if #available(iOS 16, *) {
+            content
+                .toolbar(showBB ? .visible : .hidden, for: .bottomBar)
+        } else {
+            content
         }
     }
 }

@@ -53,7 +53,7 @@ struct ErrorView: View {
             .buttonStyle(.plain)
         }
         .onAppear {
-            print(error)
+            Logger.shared.error("[ErrorView] \(getMessage(for: error))")
         }
     }
 

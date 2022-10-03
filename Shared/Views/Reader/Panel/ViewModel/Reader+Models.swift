@@ -109,7 +109,7 @@ extension ReaderView {
                     let arr = zip(paths.indices, paths)
                     let file = chapter.contentId
                     pages = arr.map {
-                        Page(index: $0, chapterId: chapterId,contentId: chapter.contentId, sourceId: chapter.sourceId, archivePath: $1, archiveFile: file)
+                        Page(index: $0, chapterId: chapterId, contentId: chapter.contentId, sourceId: chapter.sourceId, archivePath: $1, archiveFile: file)
                     }
                 }
                 // Downloaded
@@ -117,7 +117,7 @@ extension ReaderView {
                     let urls = chapterData.urls
                     let arr = zip(urls.indices, urls)
                     pages = arr.map {
-                        Page(index: $0, chapterId: chapterId,contentId: chapter.contentId, sourceId: chapter.sourceId, downloadURL: $1)
+                        Page(index: $0, chapterId: chapterId, contentId: chapter.contentId, sourceId: chapter.sourceId, downloadURL: $1)
                     }
                 }
 
@@ -126,7 +126,7 @@ extension ReaderView {
                     let raws = chapterData.rawDatas
                     let arr = zip(raws.indices, raws)
                     pages = arr.map {
-                        Page(index: $0, chapterId: chapterId,contentId: chapter.contentId, sourceId: chapter.sourceId, rawData: $1)
+                        Page(index: $0, chapterId: chapterId, contentId: chapter.contentId, sourceId: chapter.sourceId, rawData: $1)
                     }
                 }
                 // URL
@@ -135,7 +135,7 @@ extension ReaderView {
                     let arr = zip(images.indices, images)
 
                     pages = arr.map {
-                        Page(index: $0, chapterId: chapterId,contentId: chapter.contentId, sourceId: chapter.sourceId, hostedURL: $1)
+                        Page(index: $0, chapterId: chapterId, contentId: chapter.contentId, sourceId: chapter.sourceId, hostedURL: $1)
                     }
                 }
             }
@@ -174,7 +174,6 @@ extension ReaderView {
         var contentId: String
         var sourceId: String
 
-        
         var downloadURL: URL? = nil
         var hostedURL: String? = nil
         var rawData: String? = nil

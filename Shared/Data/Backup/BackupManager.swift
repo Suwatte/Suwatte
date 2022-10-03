@@ -22,12 +22,13 @@ class BackupManager: ObservableObject {
         urls = directory.contents.sorted(by: \.lastModified, descending: true)
     }
 
-    func save() throws {
+    func save(name: String? = nil) throws {
         let backup = create()
         let json = try backup.encoded()
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM-dd-yyyy HH:mm:ss"
-        let path = directory.appendingPathComponent("STT_BACKUP_\(dateFormatter.string(from: backup.date)).json")
+        let name = name ?? .random(length: 5)
+        let path = directory.appendingPathComponent("STT_BACKUP_\(name)_\(dateFormatter.string(from: backup.date)).json")
         try json.write(to: path)
         refresh()
     }
@@ -110,15 +111,15 @@ class BackupManager: ObservableObject {
                 realm.add(runnerLists, update: .all)
             }
         }
-
     }
+
     func restore(from url: URL) async throws {
         // Load
         var backup: Backup?
         do {
             backup = try Backup.load(from: url)
         } catch {
-            print(error)
+            Logger.shared.error("[Backups] \(error.localizedDescription)")
             throw error
         }
 
@@ -127,7 +128,7 @@ class BackupManager: ObservableObject {
         }
 
         let runners = backup.runners?.map { ($0.id, $0.listURL) } ?? []
-        
+
         // Install
         restoreDB(backup: backup)
 
@@ -135,7 +136,7 @@ class BackupManager: ObservableObject {
 
         await withTaskGroup(of: Void.self) { group in
             for runner in runners {
-                guard let list = runner.1, let url = URL(string: list)?.sttBase else { return }
+                guard let list = runner.1, let url = URL(string: list) else { return }
                 group.addTask {
                     try? await DaisukeEngine.shared.importRunner(from: url, with: runner.0)
                 }

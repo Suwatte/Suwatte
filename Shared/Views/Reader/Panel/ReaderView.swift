@@ -50,14 +50,14 @@ struct ReaderView: View {
                     .closeButton()
             }
         }
-//        .sheet(isPresented: $model.menuControl.chapterList) {
-//            NavigationView {
-//                ChapterSheet()
-//                    .navigationTitle("Chapter List")
-//                    .navigationBarTitleDisplayMode(.inline)
-//                    .closeButton()
-//            }
-//        }
+        .sheet(isPresented: $model.menuControl.chapterList) {
+            NavigationView {
+                ChapterSheet()
+                    .navigationTitle("Chapter List")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .closeButton()
+            }
+        }
         .environmentObject(model)
         .onChange(of: model.slider.isScrubbing) { val in
 
@@ -65,6 +65,11 @@ struct ReaderView: View {
                 model.scrubEndPublisher.send()
             }
         }
+        .onChange(of: model.menuControl.menu, perform: { newValue in
+            if !newValue {
+                model.slider.isScrubbing = false
+            }
+        })
         .background(useSystemBG ? nil : backgroundColor.ignoresSafeArea())
         .background(Color.primary.opacity(0.01).gesture(model.bgTap))
         .ignoresSafeArea()

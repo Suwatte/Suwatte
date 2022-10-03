@@ -26,19 +26,33 @@ final class DaisukeEngine: ObservableObject {
         .documentDirectory
         .appendingPathComponent("DaisukeRunners", isDirectory: true)
 
+    internal var commons: URL {
+        directory
+            .appendingPathComponent("common.js")
+    }
+
     // MARK: Runners
 
     @Published var runners: [String: DaisukeRunnerProtocol] = [:]
 
     init() {
         // Start Virtual Machine
-        let queue = DispatchQueue(label: "daisuke")
+        let queue = DispatchQueue(label: "com.suwatte.daisuke")
         vm = queue.sync { JSVirtualMachine()! }
 
         // Create Directory
         directory.createDirectory()
-        print(STT_EV, "Daisuke Engine Started.")
-        startRunners()
+        Logger.shared.log("\(STT_EV) Daisuke Engine Started.")
+        Task { @MainActor in
+            do {
+                try await getDependencies()
+                startRunners()
+            } catch {
+                ToastManager.shared.error("Failed to Start Runners")
+                Logger.shared.error("\(error)")
+            }
+            ToastManager.shared.loading = false
+        }
     }
 }
 
@@ -61,7 +75,7 @@ extension DaisukeEngine {
         let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds // <<<<< Difference in nano seconds (UInt64)
         let timeInterval = Double(nanoTime) / 1_000_000_000 // Technically could overflow for long running tests
 
-        print("Evaluated in \(timeInterval) seconds")
+        Logger.shared.debug("Evaluated in \(timeInterval) seconds")
     }
 }
 
@@ -74,17 +88,17 @@ extension DaisukeEngine {
             .contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
             .filter { $0.isFileURL }
 
-        guard let urls = urls else {
+        guard let urls = urls?.filter({ $0.lastPathComponent.contains(".stt") }) else {
             return
         }
         for url in urls {
-            let runner = try? startRunner(at: url)
-
-            guard let runner = runner else {
-                continue
+            do {
+                let runner = try startRunner(at: url)
+                try addRunner(runner: runner)
+                Logger.shared.log("\(STT_EV) Started \(runner.name)")
+            } catch {
+                ToastManager.shared.error(error)
             }
-            try? addRunner(runner: runner)
-            print(STT_EV, "Started", runner.name)
         }
     }
 
@@ -133,6 +147,7 @@ extension DaisukeEngine {
         runners.updateValue(runner, forKey: runner.id)
         if let runner = runner as? ContentSource {
             Task {
+                try? await runner.registerDefaultPrefs()
                 await runner.onSourceLoaded()
             }
         }
@@ -143,7 +158,6 @@ extension DaisukeEngine {
         let path = directory.appendingPathComponent("\(id).stt")
         try FileManager.default.removeItem(at: path)
 
-        // TODO: Remove Saved Object
         DataManager.shared.removeRunnerInformation(id: id)
     }
 }
@@ -232,4 +246,55 @@ extension DaisukeEngine {
 //    func getService(with id: String) -> Service? {
 //        services.first(where: { $0.id == id })
 //    }
+}
+
+// MARK: CommonLibrary
+
+extension DaisukeEngine {
+    func getDependencies() async throws {
+        if commons.exists { return }
+
+        await MainActor.run(body: {
+            ToastManager.shared.loading = true
+        })
+        try await getCommons()
+        await MainActor.run(body: {
+            ToastManager.shared.info("Updated Commons")
+        })
+    }
+
+    private func getCommons() async throws {
+        let base = URL(string: "https://suwatte.github.io/Common")!
+        var url = base.appendingPathComponent("versioning.json")
+
+        let data = try await AF
+            .request(url)
+            .validate()
+            .serializingDecodable(DSKCommon.JSCommon.self)
+            .value
+
+        let saved = UserDefaults.standard.string(forKey: STTKeys.JSCommonsVersion)
+        let shouldRedownload = saved == nil || [ComparisonResult.orderedDescending].contains(data.version.compare(saved!)) || !commons.exists
+
+        if !shouldRedownload {
+            return
+        }
+        print("Refetching Commons")
+
+        url = base.appendingPathComponent("lib.js")
+        let req = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 10)
+
+        let tempLocation = directory
+            .appendingPathComponent("__temp__", isDirectory: true)
+            .appendingPathComponent("lib.js")
+
+        let destination: DownloadRequest.Destination = { _, _ in
+            (tempLocation, [.removePreviousFile, .createIntermediateDirectories])
+        }
+        let request = AF.download(req, to: destination)
+        let downloadURL = try await request.serializingDownloadedFileURL().result.get()
+        let _ = try FileManager.default.replaceItemAt(commons, withItemAt: downloadURL)
+        try? FileManager.default.removeItem(at: downloadURL)
+        UserDefaults.standard.set(data.version, forKey: STTKeys.JSCommonsVersion)
+    }
 }

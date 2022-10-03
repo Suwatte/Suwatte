@@ -12,7 +12,7 @@ extension DaisukeEngine.ContentSource {
         do {
             try await callOptionalVoidMethod(method: "onSourceLoaded", arguments: [])
         } catch {
-            ToastManager.shared.setError(error: error)
+            ToastManager.shared.display(.error(nil, "[\(id)] [onSourceLoaded] \(error.localizedDescription)"))
         }
     }
 
@@ -20,7 +20,7 @@ extension DaisukeEngine.ContentSource {
         do {
             try await callOptionalVoidMethod(method: "onContentsAddedToLibrary", arguments: [ids])
         } catch {
-            ToastManager.shared.setError(error: error)
+            ToastManager.shared.display(.error(nil, "[\(id)] [onContentsAddedToLibrary] \(error.localizedDescription)"))
         }
     }
 
@@ -28,15 +28,23 @@ extension DaisukeEngine.ContentSource {
         do {
             try await callOptionalVoidMethod(method: "onContentsRemovedFromLibrary", arguments: [ids])
         } catch {
-            ToastManager.shared.setError(error: error)
+            ToastManager.shared.display(.error(nil, "[\(id)] [onContentsRemovedFromLibrary] \(error.localizedDescription)"))
         }
     }
 
-    func onChaptersCompleted(contentId: String, chapterIds: [String]) async {
+    func onChaptersMarked(contentId: String, chapterIds: [String], completed: Bool) async {
         do {
-            try await callOptionalVoidMethod(method: "onChaptersCompleted", arguments: [contentId, chapterIds])
+            try await callOptionalVoidMethod(method: "onChaptersMarked", arguments: [contentId, chapterIds, completed])
         } catch {
-            ToastManager.shared.setError(error: error)
+            ToastManager.shared.display(.error(nil, "[\(id)] [onChaptersMarked] \(error.localizedDescription)"))
+        }
+    }
+
+    func onChapterRead(contentId: String, chapterId: String) async {
+        do {
+            try await callOptionalVoidMethod(method: "onChapterRead", arguments: [contentId, chapterId])
+        } catch {
+            ToastManager.shared.display(.error(nil, "[\(id)] [onChapterRead] \(error.localizedDescription)"))
         }
     }
 
@@ -44,23 +52,22 @@ extension DaisukeEngine.ContentSource {
         do {
             try await callOptionalVoidMethod(method: "onContentsReadingFlagChanged", arguments: [contentIds, flag.rawValue])
         } catch {
-            ToastManager.shared.setError(error: error)
+            ToastManager.shared.display(.error(nil, "[\(id)] [onContentsReadingFlagChanged] \(error.localizedDescription)"))
         }
     }
 }
 
 extension DaisukeEngine.ContentSource {
-    func willRequestImage(request : DaisukeEngine.NetworkClient.Request) async throws -> DaisukeEngine.NetworkClient.Request? {
-        
+    func willRequestImage(request: DaisukeEngine.NetworkClient.Request) async throws -> DaisukeEngine.NetworkClient.Request? {
         guard methodExists(method: "willRequestImage") else {
             return nil
         }
         let dict = try request.asDictionary()
-        
+
         return try await callMethodReturningDecodable(method: "willRequestImage", arguments: [dict], resolvesTo: DaisukeEngine.NetworkClient.Request.self)
     }
 
-    func willAttemptCloudflareVerification() async throws -> URL {
-        throw DaisukeEngine.Errors.MethodNotImplemented
+    func willAttemptCloudflareVerification() async throws -> DSKCommon.Request {
+        try await callMethodReturningDecodable(method: "willAttemptCloudflareVerification", arguments: [], resolvesTo: DSKCommon.Request.self)
     }
 }

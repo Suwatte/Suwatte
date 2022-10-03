@@ -51,7 +51,7 @@ final class ExploreCollectionsController: UICollectionViewController {
     var tileStyleObserver: NSObjectProtocol?
 
     deinit {
-        print("ExploreViewController Deallocated")
+        Logger.shared.debug("ExploreViewController Deallocated")
     }
 
     func listenToQueries() {
@@ -339,23 +339,22 @@ extension CTR {
         snapshot.appendSections([id])
         reorderSections()
     }
-    
+
     func reorderSections() {
         // Move Tags to Top, Latests to Bottom
         if snapshot.sectionIdentifiers.isEmpty { return }
         let ids = snapshot.sectionIdentifiers
         for id in ids {
             // Move Tags to Top
-            if id == TAG_SECTION_ID && id != ids.first {
-                snapshot.moveSection(id, beforeSection: ids.first! )
+            if id == TAG_SECTION_ID, id != ids.first {
+                snapshot.moveSection(id, beforeSection: ids.first!)
             }
-            
+
             // Move Update List Style Collections to bottom
-            if let style = cache[id]?.style, style == .UPDATE_LIST && id != ids.last {
+            if let style = cache[id]?.style, style == .UPDATE_LIST, id != ids.last {
                 snapshot.moveSection(id, afterSection: ids.last!)
             }
         }
-        
     }
 
     func removeSection(id: String) {
@@ -368,7 +367,7 @@ extension CTR {
             do {
                 try await loadCollections()
             } catch {
-                print(error)
+                Logger.shared.error("[ExploreViewController] \(error.localizedDescription)", .init(function: #function, line: #line))
             }
         }
 
@@ -402,7 +401,7 @@ extension CTR {
             }
         } catch {
             // Handle Error
-            print(error)
+            Logger.shared.error("[ExploreViewController] \(error)", .init(function: #function))
             errors.updateValue(error, forKey: id)
             // Add Placeholder Item
             let toBeDeleted = snapshot.itemIdentifiers.filter { $0.sectionId == id }
@@ -617,18 +616,24 @@ extension CTR {
         var tag: DSKCommon.Tag
         @State var color: Color = .fadedPrimary
         @EnvironmentObject var source: DSK.ContentSource
+        @StateObject private var loader = FetchImage()
+
         var body: some View {
             NavigationLink(destination: ExploreView.SearchView(model: .init(request: request, source: source), tagLabel: tag.label)) {
                 ZStack(alignment: .bottom) {
-                    LazyImage(url: URL(string: tag.imageUrl ?? ""), resizingMode: .aspectFill)
-                        .onSuccess { result in
-                            if let avgColor = result.image.averageColor {
-                                color = Color(uiColor: avgColor)
-                            }
+                    Group {
+                        if let view = loader.view {
+                            view
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        } else {
+                            Color.clear
                         }
-                        .frame(height: 120)
-                        .background(Color.accentColor.opacity(0.80))
-                        .clipped()
+                    }
+                    .frame(height: 120)
+                    .background(Color.accentColor.opacity(0.80))
+                    .clipped()
+                    .shimmering(active: loader.isLoading)
 
                     Text(tag.label)
                         .font(.subheadline)
@@ -644,6 +649,18 @@ extension CTR {
                 .animation(.default, value: color)
             }
             .buttonStyle(NeutralButtonStyle())
+            .task {
+                loader.animation = .default
+                loader.onSuccess = { result in
+                    if let avgColor = result.image.averageColor {
+                        color = Color(uiColor: avgColor)
+                    }
+                }
+                if let str = tag.imageUrl, let url = URL(string: str) {
+                    let req = try? await source.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
+                    loader.load(req ?? url)
+                }
+            }
         }
 
         var request: DSKCommon.SearchRequest {

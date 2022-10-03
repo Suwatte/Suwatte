@@ -10,7 +10,7 @@ import SwiftUI
 extension ExploreView.SearchView {
     struct FilterSheet: View {
         @EnvironmentObject var model: ExploreView.SearchView.ViewModel
-        typealias Filter =  DaisukeEngine.Structs.Filter
+        typealias Filter = DaisukeEngine.Structs.Filter
         @State var filters: Loadable<[Filter]> = .idle
         @State var query = ""
         var body: some View {
@@ -54,14 +54,10 @@ extension ExploreView.SearchView {
                                 model.presentFilters.toggle()
                             }
                         }
-                        
                     }
-                    
-                    
                 }
             }
         }
-
 
         func loadFilters() async {
             do {
@@ -107,17 +103,18 @@ extension ExploreView.SearchView.FilterSheet {
                 .padding()
             }
         }
-        
+
         func filteredTags(tags: [DSKCommon.Tag]) -> [DSKCommon.Tag] {
             var tags = tags
-            
+
             if !query.isEmpty {
-                tags = tags.filter({
+                tags = tags.filter {
                     $0.label.lowercased().contains(query.lowercased())
-                })
+                }
             }
             return tags.sorted(by: \.label, descending: false)
         }
+
         typealias Tag = DaisukeEngine.Structs.Tag
         func backgroundColor(tag: Tag) -> Color {
             includes(tag) ? .green : excludes(tag) ? .red : .primary.opacity(0.1)

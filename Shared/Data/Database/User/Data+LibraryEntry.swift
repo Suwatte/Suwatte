@@ -71,6 +71,42 @@ extension DataManager {
         try! realm.safeWrite {
             object.flag = flag
         }
+
+        guard let id = object.content?.contentId, let sourceId = object.content?.sourceId, let source = DaisukeEngine.shared.getSource(with: sourceId) else {
+            return
+        }
+        Task {
+            await source.onContentsReadingFlagChanged(contentIds: [id], flag: flag)
+        }
+    }
+
+    func bulkSetReadingFlag(for ids: Set<String>, to flag: LibraryFlag) {
+        let realm = try! Realm()
+
+        let targets = realm
+            .objects(LibraryEntry.self)
+            .where { $0._id.in(ids) }
+
+        try! realm.safeWrite {
+            for target in targets {
+                target.flag = flag
+            }
+        }
+
+        let sourceIds = Set(targets.compactMap { $0.content?.sourceId })
+        for id in sourceIds {
+            guard let source = DaisukeEngine.shared.getSource(with: id) else {
+                return
+            }
+
+            let contentIds = targets
+                .where { $0.content.sourceId == id }
+                .compactMap { $0.content?.contentId } as [String]
+
+            Task {
+                await source.onContentsReadingFlagChanged(contentIds: contentIds, flag: flag)
+            }
+        }
     }
 
     @discardableResult
@@ -100,22 +136,20 @@ extension DataManager {
             obj.lastOpened = Date()
             realm.add(obj, update: .modified)
         }
-        
+
         // Get Ids
         let anilistId = content.trackerInfo["al"]
-        
 
         // Run Addition Event
         Task {
             await source?.onContentsAddedToLibrary(ids: [ids.contentId])
         }
-        
-        print(anilistId)
+
         Task {
             guard let indx = anilistId.map({ Int($0) }), let id = indx else {
                 return
             }
-            try? await Anilist.shared.beginTracking(id: id)
+            let _ = try? await Anilist.shared.beginTracking(id: id)
         }
         return true
     }

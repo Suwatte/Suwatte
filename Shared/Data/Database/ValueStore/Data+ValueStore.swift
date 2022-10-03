@@ -42,6 +42,21 @@ extension DataManager {
 
         return obj.value
     }
+
+    func removeStoreValue(for id: String, key: String) {
+        let realm = try! Realm()
+
+        let target = realm
+            .objects(InteractorStoreObject.self)
+            .where { $0.key == key }
+            .where { $0.interactorId == id }
+            .first
+        if let target {
+            try! realm.safeWrite {
+                realm.delete(target)
+            }
+        }
+    }
 }
 
 extension DataManager {

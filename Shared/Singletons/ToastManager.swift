@@ -1,55 +1,95 @@
 //
-//  Toast+ViewModel.swift
-//  Suwatte
+//  ToastManager.swift
+//  Suwatte (iOS)
 //
-//  Created by Mantton on 2022-03-09.
+//  Created by Mantton on 2022-09-28.
 //
 
-import AlertToast
-import Combine
-import SwiftUI
+import Foundation
 
 final class ToastManager: ObservableObject {
-    @Published var show = false
-    @Published var toast = AlertToast(type: .regular, title: "Default") {
-        didSet {
-            withAnimation {
-                show = false
-            }
+    static let shared = ToastManager()
+    private var queue: Queue<Entry> = .init()
+    private var task: Task<Void, Never>?
+    @Published var toast: Entry? = nil
+    @Published var loading: Bool = false
 
-            if toast.type != .loading {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    withAnimation {
-                        self.show = true
-                    }
+    fileprivate func run() {
+        let message = queue.head
+        guard let message else { return }
+
+        task?.cancel()
+        task = Task { @MainActor in
+            try? await Task.sleep(seconds: 0.3)
+            toast = message
+            try? await Task.sleep(seconds: 3)
+            toast = nil
+            queue.dequeue()
+            run()
+        }
+    }
+
+    func cancel() {
+        task?.cancel()
+        toast = nil
+    }
+}
+
+// MARK: Models
+
+extension ToastManager {
+    enum ToastType {
+        case info(_ msg: String)
+        case error(_ error: Error? = nil, _ msg: String = "An Error Occurred")
+    }
+
+    struct Entry: Equatable {
+        var id = UUID().uuidString
+        var type: ToastType
+
+        static func == (lhs: Self, rhs: Self) -> Bool {
+            lhs.id == rhs.id
+        }
+    }
+}
+
+// MARK: Functions
+
+extension ToastManager {
+    private var busy: Bool {
+        queue.head != nil || toast != nil
+    }
+
+    func display(_ type: ToastType) {
+        let busy = busy
+        queue.enqueue(.init(type: type))
+
+        if !busy { run() }
+
+        Task {
+            let context = "[ToastManager]"
+            switch type {
+            case let .info(msg):
+                Logger.shared.log("\(context) \(msg)")
+            case let .error(err, msg):
+                if let err {
+                    Logger.shared.error("\(context) [Duplicate] \(err)")
+                } else {
+                    Logger.shared.error("\(context) \(msg)")
                 }
             }
         }
     }
 
-    static var shared = ToastManager()
-    func stop() {
-        show = false
+    func info(_ str: String) {
+        display(.info(str))
     }
 
-    func setToast(toast: AlertToast) {
-        self.toast = toast
+    func error(_ error: Error) {
+        display(.error(error))
     }
 
-    func setLoading() {
-        toast = .init(displayMode: .alert, type: .loading)
-    }
-
-    func setError(error: Error) {
-        print("\n\n", error, "\n\n")
-        toast = AlertToast(type: .error(.red), title: error.localizedDescription)
-    }
-
-    func setError(msg: String) {
-        toast = .init(displayMode: .alert, type: .error(.red), title: msg)
-    }
-
-    func setComplete(title: String? = nil) {
-        toast = .init(displayMode: .alert, type: .complete(.green), title: title)
+    func error(_ error: String) {
+        display(.error(nil, error))
     }
 }

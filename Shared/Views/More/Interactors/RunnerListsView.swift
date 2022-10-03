@@ -6,11 +6,11 @@
 //
 
 import Alamofire
+import Kingfisher
 import Nuke
 import NukeUI
 import RealmSwift
 import SwiftUI
-import Kingfisher
 
 struct RunnerListsView: View {
     @State var presentAlert = false
@@ -44,21 +44,23 @@ struct RunnerListsView: View {
         }
     }
 }
+
 extension RunnerListsView {
     func handleSubmit(url: String) async {
         if url.isEmpty { return }
         do {
             try await DaisukeEngine.shared.saveRunnerList(at: url)
             DispatchQueue.main.async {
-                ToastManager.shared.setComplete()
+                ToastManager.shared.display(.info("Saved Runner!"))
             }
         } catch {
             DispatchQueue.main.async {
-                ToastManager.shared.setError(error: error)
+                ToastManager.shared.display(.error(error))
             }
         }
         presentAlert = false
     }
+
     func promptURL() {
         let ac = UIAlertController(title: "Enter List URL", message: "Suwatte will automatically parse valid URLS.", preferredStyle: .alert)
         ac.addTextField()
@@ -71,7 +73,7 @@ extension RunnerListsView {
                 return
             }
             Task {
-                await handleSubmit(url:text)
+                await handleSubmit(url: text)
             }
         }
         ac.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in
@@ -80,9 +82,9 @@ extension RunnerListsView {
         ac.addAction(submitAction)
 
         KEY_WINDOW?.rootViewController?.present(ac, animated: true)
-        
     }
 }
+
 extension RunnerListsView {
     struct RunnerListInfo: View {
         var listURL: String
@@ -117,8 +119,7 @@ extension RunnerListsView {
                 guard let url = URL(string: listURL) else {
                     throw DaisukeEngine.Errors.NamedError(name: "Parse Error", message: "Invalid URL")
                 }
-                let runnerPath = url.appendingPathComponent("runners.json")
-                let data = try await DaisukeEngine.shared.getRunnerList(at: runnerPath)
+                let data = try await DaisukeEngine.shared.getRunnerList(at: url)
 
                 loadable = .loaded(data)
                 DataManager.shared.saveRunnerList(data, at: url)
@@ -132,42 +133,63 @@ extension RunnerListsView {
     struct InternalListInfoView: View {
         var list: RunnerList
         var listURL: String
-        @ObservedObject var engine = DaisukeEngine.shared
         var body: some View {
             List {
                 ForEach(list.runners, id: \.self) { runner in
-                    let runnerState = getRunnerState(runner: runner)
-                    HStack {
-                        RunnerHeader(runner: runner)
-                        Spacer()
-                        Button {
-                            Task { @MainActor in
-                                let base = URL(string: listURL)!
-
-                                let url = base
-                                    .appendingPathComponent("runners")
-                                    .appendingPathComponent("\(runner.path).stt")
-                                do {
-                                    try await DaisukeEngine.shared.importRunner(from: url)
-                                    DataManager.shared.saveRunnerInfomation(runner: runner, at: url)
-                                } catch {
-                                    ToastManager.shared.setError(error: error)
-                                }
-                            }
-                        } label: {
-                            Text(runnerState.description)
-                                .font(.footnote)
-                                .fontWeight(.bold)
-                                .padding(.all, 5)
-                                .foregroundColor(.primary)
-                                .background(Color.fadedPrimary)
-                                .cornerRadius(5)
-                        }
-                        .buttonStyle(.plain)
-                        .disabled(runnerState.noInstall)
-                    }
-                    .frame(height: 75)
+                    RunnerListInfo.RunnerListCell(listURL: listURL, runner: runner)
+                        .frame(height: 75)
                 }
+            }
+        }
+    }
+}
+
+extension RunnerListsView.RunnerListInfo {
+    struct RunnerListCell: View {
+        @State var isLoading = false
+        @ObservedObject var engine = DaisukeEngine.shared
+        var listURL: String
+        var runner: Runner
+        var body: some View {
+            let runnerState = getRunnerState(runner: runner)
+
+            HStack {
+                RunnerHeader(runner: runner)
+                Spacer()
+                Button {
+                    Task { @MainActor in
+                        isLoading = true
+                        let base = URL(string: listURL)!
+
+                        let url = base
+                            .appendingPathComponent("runners")
+                            .appendingPathComponent("\(runner.path).stt")
+                        do {
+                            try await DaisukeEngine.shared.importRunner(from: url)
+                            DataManager.shared.saveRunnerInfomation(runner: runner, at: base)
+                            ToastManager.shared.info("\(runner.name) Loaded!")
+                        } catch {
+                            ToastManager.shared.display(.error(error))
+                        }
+
+                        isLoading = false
+                    }
+                } label: {
+                    Group {
+                        if !isLoading {
+                            Text(runnerState.description)
+                        } else {
+                            ProgressView()
+                        }
+                    }
+                    .font(.footnote.weight(.bold))
+                    .padding(.all, 5)
+                    .foregroundColor(.primary)
+                    .background(Color.fadedPrimary)
+                    .cornerRadius(5)
+                }
+                .buttonStyle(.plain)
+                .disabled(runnerState.noInstall)
             }
         }
 
@@ -190,7 +212,7 @@ extension RunnerListsView {
             }
 
             var noInstall: Bool {
-                self == .appOutDated || self == .outdated
+                self == .appOutDated || self == .sourceOutdated
             }
         }
 
@@ -218,7 +240,7 @@ extension RunnerListsView {
                 STTThumbView(url: runner.getThumbURL(in: listURL))
                     .frame(width: 44, height: 44)
                     .cornerRadius(7)
-                    
+
                 VStack(alignment: .leading, spacing: 5) {
                     Text(runner.name)
                         .fontWeight(.semibold)
@@ -263,7 +285,7 @@ extension RunnerListsView {
                 .background(Color.fadedPrimary)
                 .cornerRadius(7)
             }
-            .toaster()
+            .toast()
             .onSubmit(of: .text) {
                 Task {
                     await handleSubmit(url: listURL)
@@ -278,13 +300,13 @@ extension RunnerListsView {
             do {
                 try await DaisukeEngine.shared.saveRunnerList(at: url)
                 DispatchQueue.main.async {
-                    ToastManager.shared.setComplete()
+                    ToastManager.shared.display(.info("Saved Runner!"))
                     presenting.toggle()
                 }
 
             } catch {
                 DispatchQueue.main.async {
-                    ToastManager.shared.setError(error: error)
+                    ToastManager.shared.display(.error(error))
                 }
             }
         }
@@ -293,7 +315,8 @@ extension RunnerListsView {
 
 extension DaisukeEngine {
     func getRunnerList(at url: URL) async throws -> RunnerList {
-        let req = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 10)
+        let listUrl = url.lastPathComponent == "runners.json" ? url : url.runnersListURL
+        let req = URLRequest(url: listUrl, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 10)
         let task = AF.request(req).validate().serializingDecodable(RunnerList.self)
 
         let runnerList = try await task.value
@@ -303,28 +326,28 @@ extension DaisukeEngine {
     // Get Source List Info
     func saveRunnerList(at url: String) async throws {
         // Get runner list
-        let base = URL(string: url)?.sttBase
-        let url = URL(string: "runners.json", relativeTo: base)
-        guard let url = url else {
-            return
+        let base = URL(string: url)
+        guard let base else {
+            throw Errors.NamedError(name: "", message: "Invalid URL")
         }
-
+        let url = base.runnersListURL
         let runnerList = try await getRunnerList(at: url)
-
-        // Get the Base URL
-        let baseURL = url.baseURL
-        guard let baseURL = baseURL else {
-            throw Errors.NamedError(name: "Parse Error", message: "Unable to Parse Base URL")
-        }
-
         await MainActor.run(body: {
             let realm = try! Realm()
             let obj = StoredRunnerList()
             obj.listName = runnerList.listName
-            obj.url = baseURL.absoluteString
+            obj.url = base.absoluteString
             try! realm.safeWrite {
                 realm.add(obj, update: .modified)
             }
         })
+    }
+}
+
+
+extension URL {
+    
+    var runnersListURL: URL {
+        self.appendingPathComponent("runners.json")
     }
 }

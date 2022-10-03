@@ -116,7 +116,7 @@ final class LocalAuthManager: ObservableObject {
                 }
             }
         } else {
-            ToastManager.shared.setError(msg: error?.localizedDescription ?? "An Error Occurred")
+            ToastManager.shared.error(error?.localizedDescription ?? "An Error Occurred")
             handleFail(toggle: toggleOnFail)
         }
     }

@@ -26,7 +26,7 @@ extension AnilistView {
                     loadable = .loaded(data)
                 } catch {
                     loadable = .failed(error)
-                    print("ERROR", error)
+                    Logger.shared.error("[Anilist] [UserView] \(error.localizedDescription)")
                 }
             }
         }

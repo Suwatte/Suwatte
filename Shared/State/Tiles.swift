@@ -11,12 +11,8 @@ import SwiftUI // The CGFloat type DNE on foundation
 enum TileStyle: Int, CaseIterable {
     case COMPACT, SEPARATED
 
-    var tileHeight: CGFloat {
-        self == .COMPACT ? 240.0 : 275.0
-    }
-
-    var tileRatio: Double {
-        self == .COMPACT ? 1.4 : 1.6
+    var titleHeight: CGFloat {
+        self == .SEPARATED ? 50 : 0
     }
 
     var description: String {

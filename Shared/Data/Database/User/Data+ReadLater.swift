@@ -24,7 +24,7 @@ final class ReadLater: Object, ObjectKeyIdentifiable {
 
 extension DataManager {
     func toggleReadLater(_ source: String, _ content: String) {
-        let id = DaisukeEngine.Structs.SuwatteContentIdentifier(contentId: content, sourceId: source).id
+        let id = ContentIdentifier(contentId: content, sourceId: source).id
         let realm = try! Realm()
         if let obj = realm.objects(ReadLater.self).first(where: { $0._id == id }) {
             try! realm.safeWrite {
@@ -64,23 +64,25 @@ extension DataManager {
         }
 
         guard let source = DaisukeEngine.shared.getSource(with: sourceID) else {
-            ToastManager.shared.toast = AlertToast(type: .error(.red), title: "Source Not Found")
+            ToastManager.shared.error("[ReadLater] Source not Found")
             return
         }
 
-        Task { @MainActor in
+        Task {
             do {
                 let content = try await source.getContent(id: contentID)
                 let storedContent = try content.toStoredContent(withSource: source)
 
-                let realm = try await Realm()
+                let realm = try Realm(queue: nil)
                 try! realm.safeWrite {
                     realm.add(storedContent)
                     obj.content = storedContent
                     realm.add(obj, update: .all)
                 }
             } catch {
-                ToastManager.shared.setError(error: error)
+                await MainActor.run(body: {
+                    ToastManager.shared.error(error)
+                })
             }
         }
     }

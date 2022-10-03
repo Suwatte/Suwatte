@@ -67,23 +67,25 @@ extension DataManager {
             }
         }
 
-        if completed {
-            let grouped = Dictionary(grouping: chapters, by: { $0.sourceId })
-            for (key, value) in grouped {
-                let source = DaisukeEngine.shared.getSource(with: key)
-                let groupedByContent = Dictionary(grouping: value, by: { $0.contentId })
+        notifySourceOfMarkState(chapters: chapters, completed: completed)
+    }
 
-                for (k, v) in groupedByContent {
-                    let t = v.map { $0.chapterId }
-                    Task {
-                        await source?.onChaptersCompleted(contentId: k, chapterIds: t)
-                    }
+    private func notifySourceOfMarkState(chapters: [StoredChapter], completed: Bool) {
+        let grouped = Dictionary(grouping: chapters, by: { $0.sourceId })
+        for (key, value) in grouped {
+            let source = DaisukeEngine.shared.getSource(with: key)
+            let groupedByContent = Dictionary(grouping: value, by: { $0.contentId })
+
+            for (k, v) in groupedByContent {
+                let t = v.map { $0.chapterId }
+                Task {
+                    await source?.onChaptersMarked(contentId: k, chapterIds: t, completed: completed)
                 }
             }
         }
     }
 
-    func getHighestMarked(id: DSKCommon.SuwatteContentIdentifier) -> StoredChapter? {
+    func getHighestMarked(id: ContentIdentifier) -> StoredChapter? {
         let realm = try! Realm()
 
         return realm
@@ -105,14 +107,12 @@ extension DataManager {
             lastOffset = Double(offset)
         }
         let total = !isNovel ? chapter.pages?.count ?? 0 : chapter.data.value?.pages.count ?? 0
-        let completed = last == total
-
         let marker = ChapterMarker()
         marker.chapter = chapter.chapter
         marker.dateRead = Date()
         marker.lastPageRead = last
         marker.totalPageCount = total
-        marker.completed = completed
+        marker.completed = false
         marker.lastPageOffset = lastOffset
 
         try! realm.safeWrite {

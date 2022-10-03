@@ -5,12 +5,11 @@
 //  Created by Mantton on 2022-03-25.
 //
 
-import AlertToast
 import RealmSwift
 import SwiftUI
 
 extension LibraryView.LibraryGrid {
-    struct MoveView: View {
+    struct MoveCollectionsView: View {
         var entries: Results<LibraryEntry>
         @EnvironmentObject var model: ViewModel
         @ObservedResults(LibraryCollection.self) var collections
@@ -47,22 +46,21 @@ extension LibraryView.LibraryGrid {
                 }
                 .navigationTitle("Select Collections")
                 .navigationBarTitleDisplayMode(.inline)
-                .toast(isPresenting: $toastManager.show, alert: { toastManager.toast })
+                .toast()
                 .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
+                    ToolbarItem(placement: .cancellationAction) {
                         Button("Cancel") {
                             presentationMode.wrappedValue.dismiss()
                         }
                     }
-                    ToolbarItem(placement: .navigationBarTrailing) {
+                    ToolbarItem(placement: .confirmationAction) {
                         Button("Done") {
-                            toastManager.toast = .init(type: .loading)
+                            ToastManager.shared.loading.toggle()
                             let targets = zip(entries.indices, entries)
                                 .filter { model.selectedIndexes.contains($0.0) }
                                 .map { $0.1._id }
                             DataManager.shared.moveToCollections(entries: Set(targets), cids: selectedCollections)
-
-                            toastManager.show.toggle()
+                            ToastManager.shared.loading.toggle()
                             presentationMode.wrappedValue.dismiss()
                         }
                     }

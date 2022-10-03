@@ -25,7 +25,7 @@ extension DataManager {
         let realm = try! Realm()
 
         guard let content = realm.objects(StoredContent.self).where({ $0._id == id }).first else {
-            ToastManager.shared.setError(error: DaisukeEngine.Errors.RealmThawFailure)
+            ToastManager.shared.display(.error(DaisukeEngine.Errors.RealmThawFailure))
             return
         }
         do {
@@ -38,7 +38,7 @@ extension DataManager {
                 realm.add(object)
             }
         } catch {
-            ToastManager.shared.setError(error: error)
+            ToastManager.shared.display(.error(error))
         }
     }
 

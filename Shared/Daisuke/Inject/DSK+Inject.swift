@@ -52,7 +52,7 @@ extension DaisukeEngine {
 
 extension DaisukeEngine {
     func injectLogger(_ context: JSContext) {
-        context.evaluateScript("var console = { log: function(message, ...options) { daisuke_log(message, options) } }")
+        context.evaluateScript("var console = { log: function(message, ...options) { daisuke_log(JSON.stringify(message), options.map(JSON.stringify)) } }")
         let consoleLog: @convention(block) (JSValue, JSValue) -> Void = {
             DSK.shared.consoleLog(message: $0, options: $1)
         }
@@ -61,13 +61,11 @@ extension DaisukeEngine {
     }
 
     func injectCommonLibraries(_ context: JSContext) {
-        let pathToFile = Bundle.main.path(forResource: "CommonLibs", ofType: "js")
-
         do {
-            let content = try String(contentsOfFile: pathToFile!, encoding: String.Encoding.utf8)
+            let content = try String(contentsOf: commons, encoding: .utf8)
             _ = context.evaluateScript(content)
         } catch {
-            print("Commons Injection Failed")
+            Logger.shared.error(error.localizedDescription, .init(file: #file, function: #function, line: #line))
         }
     }
 

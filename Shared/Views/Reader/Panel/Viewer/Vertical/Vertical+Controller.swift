@@ -30,7 +30,7 @@ extension VerticalViewer {
         var prefetcher: ImagePrefetcher?
 
         deinit {
-            print("Vertical Controller Deallocated")
+            Logger.shared.debug("Vertical Controller Deallocated")
         }
     }
 }
@@ -258,7 +258,7 @@ extension VerticalController {
             handleChapterPreload(at: indexPath)
         }
 
-        if let cell = cell as? ImageCell, cell.downloadTask == nil, cell.imageView.image == nil {
+        if let cell = cell as? ImageCell, cell.downloadTask == nil, cell.imageView.image == nil, cell.indexPath == indexPath {
             cell.setImage()
         }
     }

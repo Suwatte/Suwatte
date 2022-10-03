@@ -104,7 +104,7 @@ extension LibraryView {
                     NavigationLink(destination: HistoryView()) {
                         Label("Reading History", systemImage: "clock")
                     }
-                    // TODO: FIX THIS 100% ON MAIN
+
 //                    NavigationLink(destination: UpdateFeedView()) {
 //                        Label("Update Feed", systemImage: "bell")
 //                    }

@@ -98,6 +98,11 @@ extension Anilist {
                 var enabled: Bool
             }
         }
+
+        var webUrl: URL? {
+            let path = type == .manga ? "manga" : "anime"
+            return URL(string: "https://anilist.co/\(path)/\(id)")
+        }
     }
 }
 

@@ -20,13 +20,7 @@ extension DSKCommon {
         var id: String
         var username: String
         var avatar: String?
-    }
-
-    struct SyncedContent: Parsable, Hashable {
-        var id: String
-        var title: String
-        var covers: [String]
-        var readingFlag: LibraryFlag
+        var info: [String]?
     }
 }
 
@@ -58,10 +52,6 @@ extension DSK.ContentSource {
             }
         }
     }
-
-    func getUserLibrary() async throws -> [DSKCommon.SyncedContent] {
-        try await callMethodReturningDecodable(method: "getUserLibrary", arguments: [], resolvesTo: [DSKCommon.SyncedContent].self)
-    }
 }
 
 extension DSK.ContentSource {
@@ -76,5 +66,26 @@ extension DSK.ContentSource {
             throw DSK.Errors.NamedError(name: "Implementation Error", message: "Source Author has not implemented the required handleBasicAuth Method. Please reach out to the maintainer")
         }
         try await callOptionalVoidMethod(method: "handleBasicAuth", arguments: [id, password])
+    }
+}
+
+// MARK: Web
+
+extension DSK.ContentSource {
+    func willRequestWebViewAuth() async throws -> DSKCommon.Request {
+        let method = "willRequestWebViewAuth"
+        if !methodExists(method: method) {
+            throw DSK.Errors.NamedError(name: "Implementation Error", message: "Source Author Failed to Implement required functions to use WebView Authentication [\(method)]")
+        }
+        return try await callMethodReturningObject(method: method, arguments: [], resolvesTo: DSKCommon.Request.self)
+    }
+
+    func didReceiveWebAuthCookie(name: String) async throws -> Bool {
+        let method = "didReceiveWebAuthCookie"
+        if !methodExists(method: method) {
+            throw DSK.Errors.NamedError(name: "Implementation Error", message: "Source Author Failed to Implement required functions to use WebView Authentication [\(method)]")
+        }
+
+        return try await callMethodReturningDecodable(method: method, arguments: [name], resolvesTo: Bool.self)
     }
 }

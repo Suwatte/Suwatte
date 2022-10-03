@@ -12,7 +12,7 @@ import SwiftUI
 
 extension AnilistView {
     struct DirectoryView: View {
-        @ObservedObject var model: ViewModel
+        @StateObject var model: ViewModel
         @State var presentFiltersSheet = false
         @State var presentSortDialog = false
         @State var isDesc = true

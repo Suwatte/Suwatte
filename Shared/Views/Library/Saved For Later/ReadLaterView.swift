@@ -99,13 +99,13 @@ extension LibraryView {
                         .pickerStyle(.menu)
                         Divider()
                         Button {
-                            let targets = entries.compactMap({ $0.content }).map({ ($0.contentId, $0.sourceId) }) as [(String, String)]
+                            let targets = entries.compactMap { $0.content }.map { ($0.contentId, $0.sourceId) } as [(String, String)]
                             Task {
                                 for content in targets {
                                     await DataManager.shared.refreshStored(contentId: content.0, sourceId: content.1)
                                 }
                                 await MainActor.run {
-                                    ToastManager.shared.setComplete()
+                                    ToastManager.shared.info("Database Refreshed Successfully")
                                 }
                             }
                         } label: {
@@ -114,7 +114,6 @@ extension LibraryView {
                     } label: {
                         Image(systemName: "ellipsis.circle")
                     }
-                   
                 }
             }
             .searchable(text: $text, collection: $unsortedEntries, keyPath: \.content!.title, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Titles")

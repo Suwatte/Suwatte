@@ -12,7 +12,7 @@ import SwiftUI
 struct SearchView: View {
     typealias Highlight = DaisukeEngine.Structs.Highlight
 
-    @ObservedObject var model = ViewModel()
+    @StateObject var model = ViewModel()
 
     @ObservedResults(LibraryEntry.self) var library
     @ObservedResults(ReadLater.self) var readLater
