@@ -88,11 +88,11 @@ extension CloudFlareErrorView {
                 guard let source = DaisukeEngine.shared.getSource(with: sourceID) else {
                     return
                 }
-                guard let url = try? await source.willAttemptCloudflareVerification() else {
+                guard let dsk = try? await source.willAttemptCloudflareVerification() else {
                     return
                 }
 
-                let request = URLRequest(url: url)
+                let request = try dsk.toURLRequest()
                 let _ = self.webView.load(request)
             }
         }

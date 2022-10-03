@@ -68,7 +68,7 @@ extension DaisukeEngine.ContentSource {
         return try await callMethodReturningDecodable(method: "willRequestImage", arguments: [dict], resolvesTo: DaisukeEngine.NetworkClient.Request.self)
     }
 
-    func willAttemptCloudflareVerification() async throws -> URL {
-        throw DaisukeEngine.Errors.MethodNotImplemented
+    func willAttemptCloudflareVerification() async throws -> DSKCommon.Request {
+        try await callMethodReturningDecodable(method: "willAttemptCloudflareVerification", arguments: [], resolvesTo: DSKCommon.Request.self)
     }
 }

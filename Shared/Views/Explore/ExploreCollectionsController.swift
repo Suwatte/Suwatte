@@ -617,18 +617,24 @@ extension CTR {
         var tag: DSKCommon.Tag
         @State var color: Color = .fadedPrimary
         @EnvironmentObject var source: DSK.ContentSource
+        @StateObject private var loader = FetchImage()
+
         var body: some View {
             NavigationLink(destination: ExploreView.SearchView(model: .init(request: request, source: source), tagLabel: tag.label)) {
                 ZStack(alignment: .bottom) {
-                    LazyImage(url: URL(string: tag.imageUrl ?? ""), resizingMode: .aspectFill)
-                        .onSuccess { result in
-                            if let avgColor = result.image.averageColor {
-                                color = Color(uiColor: avgColor)
-                            }
+                    Group {
+                        if let view = loader.view {
+                            view
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                        } else {
+                            Color.clear
                         }
-                        .frame(height: 120)
-                        .background(Color.accentColor.opacity(0.80))
-                        .clipped()
+                    }
+                    .frame(height: 120)
+                    .background(Color.accentColor.opacity(0.80))
+                    .clipped()
+                    .shimmering(active: loader.isLoading)
 
                     Text(tag.label)
                         .font(.subheadline)
@@ -644,7 +650,21 @@ extension CTR {
                 .animation(.default, value: color)
             }
             .buttonStyle(NeutralButtonStyle())
+            .task {
+                loader.animation = .default
+                loader.onSuccess = { result in
+                    if let avgColor = result.image.averageColor {
+                        color = Color(uiColor: avgColor)
+                    }
+                }
+                if let str = tag.imageUrl, let url = URL(string: str) {
+                    let req = try? await source.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
+                    loader.load(req ?? url)
+                }
+                
+            }
         }
+        
 
         var request: DSKCommon.SearchRequest {
             .init(query: nil, page: 1, includedTags: [tag.id], excludedTags: [], sort: nil)

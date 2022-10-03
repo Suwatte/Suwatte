@@ -168,37 +168,38 @@ extension ExploreView.HighlightTile {
 
     struct GALLERY: View {
         var entry: DaisukeEngine.Structs.Highlight
-        @State var endColor = Color.black
-        @State var timer: Timer?
-        @State var currentImageIndex = 0
-        let prefetcher = ImagePrefetcher()
-        var foreGroundColor: Color {
+        @EnvironmentObject var source: DSK.ContentSource
+        @State private var endColor = Color.black
+        @State private var timer: Timer?
+        @State private var currentImageIndex = 0
+        private let prefetcher = ImagePrefetcher()
+        private var foreGroundColor: Color {
             endColor.isDark ? .white : .black
         }
-
+        @StateObject private var loader = FetchImage()
         var urls: [URL] {
-            (
-                entry.additionalCovers.map({ $0 }) ?? []
-            ).compactMap({ URL(string: $0) })
+            let strs = Set([entry.cover] + (entry.additionalCovers ?? []))
+            return strs.compactMap({ URL(string: $0) })
         }
 
         var body: some View {
             ZStack(alignment: .bottom) {
-                LazyImage(url: URL(string: entry.covers.get(index: currentImageIndex) ?? ""), resizingMode: .aspectFill)
-                    .onSuccess { response in
-                        if let color = response.image.averageColor {
-                            endColor = Color(color)
-                        }
-                    }
-                    .animation(.default)
-                    .onAppear {
-                        prefetcher.startPrefetching(with: urls)
-                    }
-                    .onDisappear(perform: {
-                        prefetcher.stopPrefetching(with: urls)
-                    })
+                
+                Group {
+                    if let view = loader.view {
+                        GeometryReader { proxy in
+                            view
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(height: proxy.size.width * 1.5, alignment: .center)
 
-                    .background(Color.sttGray)
+                        }
+                        
+                    } else {
+                        Color.gray.opacity(0.25)
+                            .shimmering()
+                    }
+                }
 
                 LinearGradient(gradient: Gradient(colors: [.clear, endColor]), startPoint: .center, endPoint: .bottom)
                 VStack {
@@ -240,22 +241,57 @@ extension ExploreView.HighlightTile {
             }
             .animation(.default, value: currentImageIndex)
             .animation(.default, value: endColor)
+            .onChange(of: currentImageIndex, perform: { newValue in
+                Task {
+                    guard let url = urls.get(index: currentImageIndex) else { return }
+                    await load(url:url)
+                }
+            })
             .cornerRadius(7)
-
-//            .onAppear {
-//                timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
-//                    withAnimation {
-//                        if entry.covers.indices.contains(currentImageIndex + 1) {
-//                            currentImageIndex += 1
-//                        } else {
-//                            currentImageIndex = 0
-//                        }
-//                    }
-//                }
-//            }
-//            .onDisappear {
-//                timer?.invalidate()
-//            }
+            .onAppear(perform: didAppear)
+            .onDisappear(perform: timer?.invalidate)
+            .onAppear {
+                prefetcher.startPrefetching(with: urls)
+            }
+            .onDisappear(perform: {
+                prefetcher.stopPrefetching(with: urls)
+            })
+        }
+        
+        func load(url: URL?) async {
+            guard let url else { return }
+            let req = try? await source.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
+            loader.animation = .easeOut(duration: 0.25)
+            loader.load(req ?? url)
+        }
+        
+        func didAppear() {
+            // Update Loader
+            loader.onSuccess = { response in
+                if let color = response.image.averageColor {
+                    endColor = Color(color)
+                }
+            }
+            
+            // Load First Image
+            Task {
+                await load(url:urls.first)
+            }
+            
+            if urls.count == 1 {
+                return
+            }
+            // Set Timer
+            timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
+                withAnimation {
+                    if entry.covers.indices.contains(currentImageIndex + 1) {
+                        currentImageIndex += 1
+                    } else {
+                        currentImageIndex = 0
+                    }
+                }
+            }
+            
         }
     }
 }
