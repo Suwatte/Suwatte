@@ -30,7 +30,7 @@ extension StoredRunnerList: Codable {
 
 extension StoredRunnerObject: Codable {
     enum Keys: String, CodingKey {
-        case id, name, listURL, thumbnail
+        case id, name, listURL, thumbnail, order
     }
 
     convenience init(from decoder: Decoder) throws {
@@ -41,6 +41,7 @@ extension StoredRunnerObject: Codable {
         name = try container.decode(String.self, forKey: .name)
         listURL = try container.decodeIfPresent(String.self, forKey: .listURL)
         thumbnail = try container.decodeIfPresent(String.self, forKey: .thumbnail)
+        order = try container.decodeIfPresent(Int.self, forKey: .order) ?? 0
     }
 
     func encode(to encoder: Encoder) throws {

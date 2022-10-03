@@ -10,10 +10,11 @@ import SwiftUI
 
 struct InstalledRunnersView: View {
     @ObservedObject var engine = DaisukeEngine.shared
-    @ObservedResults(StoredRunnerObject.self) var savedRunners
+    @ObservedResults(StoredRunnerObject.self, sortDescriptor: .init(keyPath: "order", ascending: true)) var savedRunners
     @State var showAddSheet = false
+    @Environment(\.editMode) var editMode
     var body: some View {
-        let sources = engine.getSources()
+        let sources = engine.getSources().sorted(by: { getSaved($0.id)?.order ?? 0 < getSaved($1.id)?.order ?? 0})
         List {
             Section {
                 ForEach(sources) { source in
@@ -32,6 +33,7 @@ struct InstalledRunnersView: View {
                             }
                         }
                     }
+                    .disabled(editMode?.wrappedValue == .active)
                 }
                 .onDelete { indexSet in
                     let sources = indexSet.compactMap(sources.get(index:))
@@ -39,16 +41,19 @@ struct InstalledRunnersView: View {
                         try? engine.removeRunner(id: s.id)
                     }
                 }
+                .onMove(perform: move)
             } header: {
                 Text("Content Sources")
             }
         }
         .navigationTitle("Installed Runners")
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button("\(Image(systemName: "plus"))") {
-                    showAddSheet.toggle()
+            
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                Button { showAddSheet.toggle() } label: {
+                    Label("Add Runner", systemImage: "plus")
                 }
+                EditButton()
             }
         }
         .fileImporter(isPresented: $showAddSheet, allowedContentTypes: [.init(filenameExtension: "stt")!]) { result in
@@ -80,5 +85,28 @@ struct InstalledRunnersView: View {
         savedRunners
             .where { $0.id == id }
             .first
+    }
+    
+    func move(from source: IndexSet, to destination: Int) {
+        var arr = Array(savedRunners)
+        arr.move(fromOffsets: source, toOffset: destination)
+        DataManager.shared.reorderRunners(arr)
+    }
+}
+
+
+extension DataManager {
+    
+    fileprivate func reorderRunners(_ arr: [StoredRunnerObject]) {
+        let realm = try! Realm()
+
+        try! realm.safeWrite {
+            for runner in arr {
+                if let target = realm.objects(StoredRunnerObject.self).first(where: { $0.id == runner.id }) {
+                    target.order = arr.firstIndex(of: runner)!
+                }
+            }
+        }
+        
     }
 }

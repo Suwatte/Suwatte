@@ -37,7 +37,7 @@ struct Runner: Codable, Hashable {
         }
 
         // Thumbnail is Asset Object
-        guard let url = URL(string: list)?.sttBase else {
+        guard let url = URL(string: list) else {
             return nil
         }
 
@@ -57,6 +57,8 @@ final class StoredRunnerObject: Object, Identifiable {
     @Persisted var listURL: String?
     @Persisted var name: String
     @Persisted var thumbnail: String?
+    @Persisted var order: Int
+    @Persisted var dateAdded: Date = Date()
 
     func thumb() -> URL? {
         guard let thumbnail = thumbnail else {
@@ -69,7 +71,7 @@ final class StoredRunnerObject: Object, Identifiable {
         }
 
         // Thumbnail is Asset Object
-        guard let url = URL(string: listURL ?? "")?.sttBase else {
+        guard let url = URL(string: listURL ?? "") else {
             return nil
         }
 
@@ -95,10 +97,10 @@ extension DataManager {
         let obj = StoredRunnerObject()
 
         obj.id = runner.id
-        obj.listURL = url.sttBase?.absoluteString
+        obj.listURL = url.absoluteString
         obj.name = runner.name
         obj.thumbnail = runner.thumbnail
-
+        obj.order = realm.objects(StoredRunnerObject.self).count
         try! realm.safeWrite {
             realm.add(obj, update: .modified)
         }

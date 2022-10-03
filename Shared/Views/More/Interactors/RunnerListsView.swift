@@ -119,8 +119,7 @@ extension RunnerListsView {
                 guard let url = URL(string: listURL) else {
                     throw DaisukeEngine.Errors.NamedError(name: "Parse Error", message: "Invalid URL")
                 }
-                let runnerPath = url.appendingPathComponent("runners.json")
-                let data = try await DaisukeEngine.shared.getRunnerList(at: runnerPath)
+                let data = try await DaisukeEngine.shared.getRunnerList(at: url)
 
                 loadable = .loaded(data)
                 DataManager.shared.saveRunnerList(data, at: url)
@@ -167,7 +166,7 @@ extension RunnerListsView.RunnerListInfo {
                             .appendingPathComponent("\(runner.path).stt")
                         do {
                             try await DaisukeEngine.shared.importRunner(from: url)
-                            DataManager.shared.saveRunnerInfomation(runner: runner, at: url)
+                            DataManager.shared.saveRunnerInfomation(runner: runner, at: base)
                             ToastManager.shared.info("\(runner.name) Loaded!")
                         } catch {
                             ToastManager.shared.display(.error(error))
@@ -316,7 +315,8 @@ extension RunnerListsView {
 
 extension DaisukeEngine {
     func getRunnerList(at url: URL) async throws -> RunnerList {
-        let req = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 10)
+        let listUrl = url.lastPathComponent == "runners.json" ? url : url.runnersListURL
+        let req = URLRequest(url: listUrl, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 10)
         let task = AF.request(req).validate().serializingDecodable(RunnerList.self)
 
         let runnerList = try await task.value
@@ -326,28 +326,28 @@ extension DaisukeEngine {
     // Get Source List Info
     func saveRunnerList(at url: String) async throws {
         // Get runner list
-        let base = URL(string: url)?.sttBase
-        let url = URL(string: "runners.json", relativeTo: base)
-        guard let url = url else {
-            return
+        let base = URL(string: url)
+        guard let base else {
+            throw Errors.NamedError(name: "", message: "Invalid URL")
         }
-
+        let url = base.runnersListURL
         let runnerList = try await getRunnerList(at: url)
-
-        // Get the Base URL
-        let baseURL = url.baseURL
-        guard let baseURL = baseURL else {
-            throw Errors.NamedError(name: "Parse Error", message: "Unable to Parse Base URL")
-        }
-
         await MainActor.run(body: {
             let realm = try! Realm()
             let obj = StoredRunnerList()
             obj.listName = runnerList.listName
-            obj.url = baseURL.absoluteString
+            obj.url = base.absoluteString
             try! realm.safeWrite {
                 realm.add(obj, update: .modified)
             }
         })
+    }
+}
+
+
+extension URL {
+    
+    var runnersListURL: URL {
+        self.appendingPathComponent("runners.json")
     }
 }

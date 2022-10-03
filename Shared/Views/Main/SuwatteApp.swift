@@ -49,8 +49,21 @@ extension SuwatteApp {
                 }
             case "anilist":
                 break // TODO: Open Anilist Profile
-            case "list": // TODO: Add Source List
-                break
+            case "list":
+                    let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+                    guard let contentUrl = components?.queryItems?.first(where: { $0.name == "url" })?.value, let url = URL(string: contentUrl) else {
+                        ToastManager.shared.display(.error(nil, "Unable to parse URL"))
+                        break
+                    }
+                    Task {
+                        do {
+                            try await  DaisukeEngine.shared.saveRunnerList(at: url.absoluteString)
+                            ToastManager.shared.info("Runner List Saved")
+                        } catch {
+                            ToastManager.shared.error("Failed to save Runner List: \(error.localizedDescription)")
+                            Logger.shared.error("\(error)")
+                        }
+                    }
             default: break
             }
         }
