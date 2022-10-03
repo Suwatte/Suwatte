@@ -28,7 +28,7 @@ extension ReaderView {
 
         func configure(_ data: ReaderView.Transition) {
             view = UIHostingController(rootView: ReaderView.ChapterTransitionView(transition: data)).view
-            
+
             guard let view = view else {
                 return
             }

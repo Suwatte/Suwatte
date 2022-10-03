@@ -18,7 +18,7 @@ import JavaScriptCore
 
     @objc(set::)
     func _set(key: JSValue, value: JSValue) -> JSValue
-    
+
     @objc(remove:)
     func _remove(key: JSValue) -> JSValue
 }
@@ -50,11 +50,11 @@ extension DaisukeEngine {
         func set(key: String, value: String) throws {
             DataManager.shared.setStoreValue(for: try getContainerId(), key: key, value: value)
         }
-        
+
         func remove(key: String) throws {
             DataManager.shared.removeStoreValue(for: try getContainerId(), key: key)
         }
-        
+
         func _remove(key: JSValue) -> JSValue {
             .init(newPromiseIn: key.context) { resolve, reject in
                 guard let key = key.toString() else {

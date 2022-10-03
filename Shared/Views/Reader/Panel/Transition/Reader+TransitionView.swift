@@ -23,7 +23,7 @@ extension ReaderView {
                 .frame(width: proxy.size.width, height: proxy.size.height)
             }
             .ignoresSafeArea()
-            .edgesIgnoringSafeArea(.all)            
+            .edgesIgnoringSafeArea(.all)
         }
 
         @ViewBuilder

@@ -111,8 +111,8 @@ class BackupManager: ObservableObject {
                 realm.add(runnerLists, update: .all)
             }
         }
-
     }
+
     func restore(from url: URL) async throws {
         // Load
         var backup: Backup?
@@ -128,7 +128,7 @@ class BackupManager: ObservableObject {
         }
 
         let runners = backup.runners?.map { ($0.id, $0.listURL) } ?? []
-        
+
         // Install
         restoreDB(backup: backup)
 

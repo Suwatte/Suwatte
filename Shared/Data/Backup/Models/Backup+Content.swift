@@ -36,7 +36,7 @@ extension StoredContent: Codable {
         summary = try container.decodeIfPresent(String.self, forKey: .summary)
         adultContent = try container.decodeIfPresent(Bool.self, forKey: .adultContent) ?? false
         webUrl = try container.decodeIfPresent(String.self, forKey: .webUrl)
-        if let props = try container.decodeIfPresent(List<StoredProperty>.self, forKey:.properties) {
+        if let props = try container.decodeIfPresent(List<StoredProperty>.self, forKey: .properties) {
             properties.append(objectsIn: props)
         }
         recommendedReadingMode = try container.decodeIfPresent(ReadingMode.self, forKey: .recommendedReadingMode) ?? .PAGED_MANGA

@@ -21,7 +21,6 @@ struct STTImageView: View {
         GeometryReader { proxy in
             let size: CGSize = .init(width: proxy.size.width, height: proxy.size.width * 1.5)
             Group {
-                
                 if let view = loader.view {
                     view
                         .resizable()
@@ -38,7 +37,7 @@ struct STTImageView: View {
             .background(Color.gray.opacity(0.25))
         }
     }
-    
+
     func load(_ size: CGSize) {
         loader.processors = [.resize(size: size)]
         loader.animation = .easeOut(duration: 0.25)
@@ -52,6 +51,7 @@ struct STTImageView: View {
             loader.load(req ?? imageURL)
         }
     }
+
     var imageURL: URL? {
         if hasCustomThumb {
             return STTImageProvider.urlFor(id: identifier.id)
@@ -74,7 +74,6 @@ struct BaseImageView: View {
         GeometryReader { proxy in
             let size: CGSize = .init(width: proxy.size.width, height: proxy.size.width * 1.5)
             Group {
-                
                 if let view = loader.view {
                     view
                         .resizable()
@@ -91,7 +90,7 @@ struct BaseImageView: View {
             .background(Color.gray.opacity(0.25))
         }
     }
-    
+
     func load(_ size: CGSize) {
         loader.processors = [.resize(size: size)]
         loader.animation = .easeOut(duration: 0.25)
@@ -101,7 +100,7 @@ struct BaseImageView: View {
             return
         }
         Task {
-            if let sourceId = sourceId,let source = DaisukeEngine.shared.getSource(with: sourceId) {
+            if let sourceId = sourceId, let source = DaisukeEngine.shared.getSource(with: sourceId) {
                 let req = try? await source.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
                 loader.load(req ?? url)
                 return
@@ -112,12 +111,13 @@ struct BaseImageView: View {
 }
 
 class AsyncImageModifier: AsyncImageDownloadRequestModifier {
-    init(sourceId:String?) {
+    init(sourceId: String?) {
         self.sourceId = sourceId
     }
+
     let sourceId: String?
     func modified(for request: URLRequest, reportModified: @escaping (URLRequest?) -> Void) {
-        guard let sourceId, let source = DaisukeEngine.shared.getSource(with: sourceId)  else {
+        guard let sourceId, let source = DaisukeEngine.shared.getSource(with: sourceId) else {
             reportModified(request)
             return
         }
@@ -135,7 +135,6 @@ class AsyncImageModifier: AsyncImageDownloadRequestModifier {
         } catch {
             reportModified(request)
         }
-        
     }
 
     var onDownloadTaskStarted: ((DownloadTask?) -> Void)?

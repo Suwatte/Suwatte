@@ -75,9 +75,9 @@ extension LibraryView {
                                 } label: {
                                     Label("Settings", systemImage: "gearshape")
                                 }
-                                
+
                                 Button {
-                                    let targets = filteredLibrary().compactMap({ $0.content }).map({ ($0.contentId, $0.sourceId) }) as [(String, String)]
+                                    let targets = filteredLibrary().compactMap { $0.content }.map { ($0.contentId, $0.sourceId) } as [(String, String)]
                                     Task {
                                         for content in targets {
                                             await DataManager.shared.refreshStored(contentId: content.0, sourceId: content.1)

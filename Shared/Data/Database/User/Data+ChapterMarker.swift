@@ -69,7 +69,7 @@ extension DataManager {
 
         notifySourceOfMarkState(chapters: chapters, completed: completed)
     }
-    
+
     private func notifySourceOfMarkState(chapters: [StoredChapter], completed: Bool) {
         let grouped = Dictionary(grouping: chapters, by: { $0.sourceId })
         for (key, value) in grouped {

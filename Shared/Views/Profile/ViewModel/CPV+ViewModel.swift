@@ -13,7 +13,7 @@ import UIKit
 // Reference: KingBri <https://github.com/bdashore3>
 extension Task where Success == Never, Failure == Never {
     static func sleep(seconds: Double = 1.0) async throws {
-        let duration = UInt64(seconds * 1000000000)
+        let duration = UInt64(seconds * 1_000_000_000)
         try await Task.sleep(nanoseconds: duration)
     }
 }
@@ -22,13 +22,13 @@ extension ProfileView {
     final class ViewModel: ObservableObject {
         @Published var entry: DaisukeEngine.Structs.Highlight
         var source: DaisukeEngine.ContentSource
-        
+
         @Published var content: DSKCommon.Content = .placeholder
         @Published var loadableContent: Loadable<Bool> = .idle
         var storedContent: StoredContent {
             try! content.toStoredContent(withSource: source)
         }
-        
+
         @Published var chapters: Loadable<[StoredChapter]> = .idle
         @Published var working = false
         @Published var linkedHasUpdate = false
@@ -121,7 +121,6 @@ extension ProfileView.ViewModel {
                 DataManager.shared.storeChapters(stored)
                 await didLoadChapters()
 
-               
             } catch {
                 Logger.shared.error(error.localizedDescription)
                 await MainActor.run(body: {
@@ -134,11 +133,10 @@ extension ProfileView.ViewModel {
                     working = false
                     ToastManager.shared.error(error)
                 })
-                
+
                 Task {
                     setChaptersFromDB()
                 }
-                
             }
         }
     }
@@ -147,7 +145,7 @@ extension ProfileView.ViewModel {
         notificationToken?.invalidate()
         notificationToken = nil
     }
-    
+
     func didLoadChapters() async {
         Task {
             await getMarkers()
@@ -162,7 +160,7 @@ extension ProfileView.ViewModel {
             await checkLinkedForUpdates()
         }
     }
-    
+
     func setChaptersFromDB() {}
 
     @MainActor
@@ -251,8 +249,8 @@ extension ProfileView.ViewModel {
             }
         })
 
-        let target = DataManager.shared.getStoredContent(source.id,entry.id)
-        
+        let target = DataManager.shared.getStoredContent(source.id, entry.id)
+
         if let target = target {
             do {
                 let c = try target.toDSKContent()
@@ -260,11 +258,8 @@ extension ProfileView.ViewModel {
                     content = c
                     loadableContent = .loaded(true)
                 })
-                
-            } catch {
-                
-            }
-            
+
+            } catch {}
         }
 
         Task {
@@ -428,37 +423,35 @@ extension ProfileView.ViewModel {
     }
 }
 
-
 // MARK: Linked Content
-extension ProfileView.ViewModel {
 
+extension ProfileView.ViewModel {
     func checkLinkedForUpdates() async {
         let linked = DataManager.shared.getLinkedContent(for: sttIdentifier().id)
-        let identifiers: [HighlightIndentier] = linked.map(({ ($0.sourceId, $0.toHighlight())}))
+        let identifiers: [HighlightIndentier] = linked.map(({ ($0.sourceId, $0.toHighlight()) }))
         let lastChapter = threadSafeChapters?.first
-        
+
         guard let lastChapter, !linked.isEmpty else {
             return
         }
-        
+
         let updates = await withTaskGroup(of: (Bool, HighlightIndentier).self, returning: [HighlightIndentier].self, body: { group -> [HighlightIndentier] in
             for entry in identifiers {
                 guard let src = DaisukeEngine.shared.getSource(with: entry.sourceId) else {
                     continue
                 }
-                
+
                 group.addTask {
                     let chapters = try? await src.getContentChapters(contentId: entry.entry.contentId)
                     guard let target = chapters?.first else {
                         return (false, entry)
                     }
-                    
+
                     let hasChapterOfHigherNumber = target.number > lastChapter.number
                     return (hasChapterOfHigherNumber, entry)
                 }
-                
             }
-            
+
             var matches: [HighlightIndentier] = []
             for await result in group {
                 if result.0 {
@@ -467,7 +460,7 @@ extension ProfileView.ViewModel {
             }
             return matches
         })
-        
+
         Task { @MainActor in
             self.linkedUpdates = updates
         }

@@ -13,7 +13,7 @@ extension AnilistView {
         @State var entry: Anilist.Media.MediaListEntry
         var media: Anilist.Media
         @State var working = false
-        
+
         var isManga: Bool {
             media.type == .manga
         }
@@ -228,7 +228,7 @@ extension AnilistView {
                     Toggle("Private", isOn: $entry.private)
                 }
             }
-            
+
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Save") {
@@ -243,25 +243,27 @@ extension AnilistView {
                     .disabled(working)
                 }
             }
-            
+
             .animation(.default, value: entry)
             .toast()
         }
     }
 }
+
 extension AnilistView.EntryEditor {
     @MainActor
     func update() async {
         do {
             let response = try await Anilist.shared.updateMediaListEntry(entry: entry)
-            self.entry = response
-            self.onListUpdated(response)
+            entry = response
+            onListUpdated(response)
             ToastManager.shared.display(.info("Synced!"))
         } catch {
             ToastManager.shared.display(.error(error))
         }
     }
 }
+
 extension AnilistView.EntryEditor {
     struct ReReadPicker: View {
         @Binding var value: Int

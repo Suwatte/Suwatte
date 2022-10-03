@@ -23,7 +23,6 @@ extension NovelReaderView {
         @Published var toast = ToastManager()
         @Published var scrubbingPageNumber: Int?
         @Published var currentSectionPageNumber = 1
-        
 
         var subscriptions = Set<AnyCancellable>()
 
@@ -116,8 +115,9 @@ extension NovelReaderView.ViewModel {
         var textStorage: NSTextStorage?
         let data = Data(joined.utf8)
         if let attributedString = try? NSAttributedString(data: data,
-                                                          options: [.documentType: NSAttributedString.DocumentType.html,.characterEncoding: String.Encoding.utf8.rawValue,],
-                                                          documentAttributes: nil) {
+                                                          options: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding: String.Encoding.utf8.rawValue],
+                                                          documentAttributes: nil)
+        {
             textStorage = .init(attributedString: attributedString)
         } else {
             textStorage = NSTextStorage(string: text)
@@ -136,7 +136,7 @@ extension NovelReaderView.ViewModel {
             textLayout.addTextContainer(textContainer)
 
             let textView = UITextView(frame: .init(x: 0, y: 0, width: size.width, height: size.height), textContainer: textContainer)
-            
+
             textView.isScrollEnabled = false
             textView.isUserInteractionEnabled = false
             textView.backgroundColor = .clear
@@ -198,7 +198,7 @@ extension NovelReaderView.ViewModel {
 //                self?.updatedPreferences()
 //            }
 //            .store(in: &subscriptions)
-        
+
         toast.objectWillChange.sink { [weak self] _ in
             self?.objectWillChange.send()
         }.store(in: &subscriptions)
@@ -319,7 +319,7 @@ extension NovelReaderView.ViewModel {
         content?.title ?? ""
     }
 
-    private func getTrackerInfo(_ id: String) -> StoredTrackerInfo? {
+    private func getTrackerInfo(_: String) -> StoredTrackerInfo? {
 //        content?.trackerInfo ?? DataManager.shared.getTrackerInfo(id)
         return nil
     }

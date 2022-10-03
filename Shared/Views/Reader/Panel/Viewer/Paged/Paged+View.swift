@@ -45,11 +45,11 @@ class ReaderPageView: UIView {
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.target = imageView
-        
+
         progressView.backgroundColor = .clear
         scrollView.backgroundColor = .clear
         imageView.backgroundColor = .clear
-        
+
         activateConstraints()
         subscribe()
     }

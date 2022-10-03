@@ -112,11 +112,10 @@ extension Anilist {
             var id: Int
             var status: MediaListStatus
         }
-        
+
         var webUrl: URL? {
             let path = type == .manga ? "manga" : "anime"
             return URL(string: "https://anilist.co/\(path)/\(id)")
-            
         }
     }
 

@@ -262,6 +262,7 @@ extension ContentSourceSettingsView {
                 selections.append(value)
             }
         }
+
         var LABEL_V: String {
             if selections.isEmpty {
                 return "None"

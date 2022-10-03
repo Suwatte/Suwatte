@@ -39,7 +39,6 @@ extension AnilistView {
                     } label: {
                         Image(systemName: "ellipsis")
                     }
-                    
                 }
             }
         }
@@ -136,7 +135,7 @@ extension AnilistView.ProfileView.DataView {
             ZStack(alignment: .leading) {
                 BaseImageView(url: URL(string: data.bannerImage ?? ""))
                     .blur(radius: 2.5)
-                    .frame( height: 220, alignment: .center)
+                    .frame(height: 220, alignment: .center)
                     .clipped()
 
                 LinearGradient(colors: [.clear, Color(uiColor: UIColor.systemBackground)], startPoint: .top, endPoint: .bottom)

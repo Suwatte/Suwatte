@@ -130,6 +130,7 @@ struct ChapterList: View {
     func handleReconnection() {
         model.getMarkers()
     }
+
     func ChaptersView(_ chapters: [StoredChapter]) -> some View {
         List(chapters, id: \.self, selection: $selections) { chapter in
             let completed = isChapterCompleted(chapter)

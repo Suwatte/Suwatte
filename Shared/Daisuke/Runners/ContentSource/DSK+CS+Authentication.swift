@@ -69,10 +69,8 @@ extension DSK.ContentSource {
     }
 }
 
-
-
-
 // MARK: Web
+
 extension DSK.ContentSource {
     func willRequestWebViewAuth() async throws -> DSKCommon.Request {
         let method = "willRequestWebViewAuth"
@@ -81,13 +79,13 @@ extension DSK.ContentSource {
         }
         return try await callMethodReturningObject(method: method, arguments: [], resolvesTo: DSKCommon.Request.self)
     }
-    
+
     func didReceiveWebAuthCookie(name: String) async throws -> Bool {
         let method = "didReceiveWebAuthCookie"
         if !methodExists(method: method) {
             throw DSK.Errors.NamedError(name: "Implementation Error", message: "Source Author Failed to Implement required functions to use WebView Authentication [\(method)]")
         }
-        
+
         return try await callMethodReturningDecodable(method: method, arguments: [name], resolvesTo: Bool.self)
     }
 }

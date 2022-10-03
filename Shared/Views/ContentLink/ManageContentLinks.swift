@@ -5,26 +5,27 @@
 //  Created by Mantton on 2022-09-30.
 //
 
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 struct ManageContentLinks: View {
     @ObservedResults(ContentLink.self) var entries
     var content: StoredContent
     @State var presentAddSheet = false
-    
+
     init(content: StoredContent) {
         self.content = content
         let id = content._id
         $entries.where = { $0.parent._id == id || $0.child._id == id }
     }
+
     var body: some View {
         let data = fetch()
         List {
             ForEach(data) { linked in
                 NavigationLink {
                     ProfileView(entry: linked.toHighlight(), sourceId: linked.sourceId)
-                } label : {
+                } label: {
                     EntryCell(linked)
                 }
                 .buttonStyle(.plain)
@@ -53,14 +54,14 @@ struct ManageContentLinks: View {
             }
         })
     }
-    
+
     func fetch() -> [StoredContent] {
         entries.map { link in
             if link.parent?._id == content._id { return link.child }
             return link.parent
-        }.compactMap({ $0 })
+        }.compactMap { $0 }
     }
-    
+
     @ViewBuilder
     func EntryCell(_ content: StoredContent) -> some View {
         HStack {
@@ -69,7 +70,7 @@ struct ManageContentLinks: View {
                 .scaledToFit()
                 .cornerRadius(5)
                 .padding(.vertical, 3)
-            
+
             VStack(alignment: .leading, spacing: 5) {
                 Text(content.title)
                     .font(.headline)

@@ -16,11 +16,10 @@ struct AddContentLink: View {
     @Environment(\.presentationMode) var presentationMode
     var body: some View {
         List {
-            ForEach(model.sources.filter({ $0.id != content.sourceId})) { source in
+            ForEach(model.sources.filter { $0.id != content.sourceId }) { source in
                 SourceCell(source: source)
                     .listRowInsets(.init(top: 5, leading: 0, bottom: 20, trailing: 0))
                     .listRowSeparator(.hidden)
-
             }
         }
         .listStyle(.plain)
@@ -40,29 +39,29 @@ struct AddContentLink: View {
             model.makeRequests()
         }
     }
-    
+
     @ViewBuilder
-    func SourceCell( source: DSK.ContentSource) -> some View {
+    func SourceCell(source: DSK.ContentSource) -> some View {
         let id = source.id
         let data = model.results[id] ?? .loading
         Section {
             LoadableView(loadable: data) {
-                ResultGroup(DSKCommon.Highlight.placeholders(), id )
+                ResultGroup(DSKCommon.Highlight.placeholders(), id)
                     .redacted(reason: .placeholder)
             } _: {
-                ResultGroup(DSKCommon.Highlight.placeholders(), id )
+                ResultGroup(DSKCommon.Highlight.placeholders(), id)
                     .redacted(reason: .placeholder)
             } _: { error in
                 HStack {
                     Spacer()
-                    ErrorView(error: error, action: { model.loadForSource(id: id)}, sourceID: id)
+                    ErrorView(error: error, action: { model.loadForSource(id: id) }, sourceID: id)
                     Spacer()
                 }
             } _: { value in
                 if value.results.isEmpty {
                     EmptyResults
                 } else {
-                    ResultGroup(value.results, id )
+                    ResultGroup(value.results, id)
                 }
             }
         } header: {
@@ -78,7 +77,7 @@ struct AddContentLink: View {
                 guard let selection else { return }
                 let result = DataManager.shared.linkContent(content, selection.entry, selection.sourceId)
                 presentationMode.wrappedValue.dismiss()
-                
+
                 if result {
                     ToastManager.shared.info("Linked Contents!")
                 }
@@ -95,10 +94,9 @@ struct AddContentLink: View {
             if !newValue { selection = nil }
         }
     }
-    
-    
+
     @ViewBuilder
-    func ResultGroup(_ result : [DSKCommon.Highlight], _ sourceId: String) -> some View {
+    func ResultGroup(_ result: [DSKCommon.Highlight], _ sourceId: String) -> some View {
         HStack {
             ScrollView(.horizontal) {
                 LazyHStack {
@@ -112,18 +110,15 @@ struct AddContentLink: View {
                 }
                 .frame(height: CELL_HEIGHT)
                 .padding(.leading)
-                
             }
-            
         }
-       
     }
-    
+
     var CELL_HEIGHT: CGFloat {
-        (150 * 1.5) + (tileStyle == .SEPARATED ? 50 : 0 )
+        (150 * 1.5) + (tileStyle == .SEPARATED ? 50 : 0)
         // Base + Title
     }
-    
+
     var EmptyResults: some View {
         HStack {
             Spacer()
@@ -135,14 +130,13 @@ struct AddContentLink: View {
                     .font(.subheadline)
                     .fontWeight(.ultraLight)
             }
-            
+
             Spacer()
         }
     }
-    
+
     func handleSelection(_ h: DSKCommon.Highlight, _ s: String) {
         selection = (sourceId: s, entry: h)
         isPresenting.toggle()
     }
 }
-

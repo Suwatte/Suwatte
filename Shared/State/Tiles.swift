@@ -14,6 +14,7 @@ enum TileStyle: Int, CaseIterable {
     var titleHeight: CGFloat {
         self == .SEPARATED ? 50 : 0
     }
+
     var description: String {
         switch self {
         case .COMPACT:

@@ -7,10 +7,7 @@
 
 import SwiftUI
 
-
 extension DaisukeContentSourceView {
-    
-    
     struct ActionsView: View {
         @EnvironmentObject var source: DSK.ContentSource
         @State var loadable: Loadable<[DSKCommon.ActionGroup]?> = .idle
@@ -38,9 +35,8 @@ extension DaisukeContentSourceView {
                 }
             }
             .navigationTitle("Actions")
-            
         }
-        
+
         @MainActor
         func load() async {
             loadable = .loading
@@ -51,16 +47,16 @@ extension DaisukeContentSourceView {
                 loadable = .failed(error)
             }
         }
-        
+
         @ViewBuilder
-        func Loaded( data: [DSKCommon.ActionGroup]) -> some View {
+        func Loaded(data: [DSKCommon.ActionGroup]) -> some View {
             List {
                 ForEach(data) { group in
                     Cell(group)
                 }
             }
         }
-        
+
         @ViewBuilder
         func Cell(_ data: DSKCommon.ActionGroup) -> some View {
             Section {
@@ -79,7 +75,6 @@ extension DaisukeContentSourceView {
                             if let image = action.systemImage {
                                 Image(systemName: image)
                             }
-                            
                         }
                     }
                     .buttonStyle(.plain)
@@ -87,8 +82,6 @@ extension DaisukeContentSourceView {
                         view
                             .foregroundColor(.red)
                     }
-                    
-                    
                 }
             } header: {
                 if let header = data.header {
@@ -99,9 +92,8 @@ extension DaisukeContentSourceView {
                     Text(footer)
                 }
             }
-            
         }
-        
+
         func trigger(_ key: String) {
             Task { @MainActor in
                 ToastManager.shared.loading.toggle()
@@ -111,10 +103,7 @@ extension DaisukeContentSourceView {
                 } catch {
                     ToastManager.shared.error(error)
                 }
-                
             }
         }
     }
-    
-    
 }

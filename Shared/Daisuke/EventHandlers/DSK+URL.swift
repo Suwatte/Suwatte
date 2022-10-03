@@ -19,7 +19,7 @@ extension DaisukeEngine {
                     results.append(.init(contentId: result.contentId, sourceId: source.id))
                 }
             } catch {
-                Logger.shared.error("\(error.localizedDescription)",.init(file: #file, function: #function, line: #line))
+                Logger.shared.error("\(error.localizedDescription)", .init(file: #file, function: #function, line: #line))
             }
         }
         return results

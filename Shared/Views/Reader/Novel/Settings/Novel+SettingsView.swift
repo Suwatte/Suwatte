@@ -71,11 +71,11 @@ extension NovelReaderView {
                                 }
                                 .pickerStyle(.inline)
                             }
-                            
+
                         } label: {
-                            STTLabelView(title: "Font", label: fontList.first(where: {$0.id == novelFont})?.name ?? "")
+                            STTLabelView(title: "Font", label: fontList.first(where: { $0.id == novelFont })?.name ?? "")
                         }
-                        
+
                         Stepper(value: $fontSize, in: 10 ... 35) {
                             HStack {
                                 Text("Font Size")

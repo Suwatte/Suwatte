@@ -9,14 +9,14 @@ import SwiftUI
 
 struct ManualDestinationSelectionView: View {
     var content: StoredContent
-    @Binding var states : [String: MigrationView.ItemState]
+    @Binding var states: [String: MigrationView.ItemState]
     @StateObject private var model = SearchView.ViewModel()
     @AppStorage(STTKeys.TileStyle) private var tileStyle = TileStyle.SEPARATED
     @State private var isPresenting = false
     @Environment(\.presentationMode) private var presentationMode
     var body: some View {
         List {
-            ForEach(model.sources.filter({ $0.id != content.sourceId})) { source in
+            ForEach(model.sources.filter { $0.id != content.sourceId }) { source in
                 SourceCell(source: source)
                     .listRowInsets(.init(top: 5, leading: 0, bottom: 20, trailing: 0))
                     .listRowSeparator(.hidden)
@@ -46,29 +46,29 @@ struct ManualDestinationSelectionView: View {
             }
         }
     }
-    
+
     @ViewBuilder
-    func SourceCell( source: DSK.ContentSource) -> some View {
+    func SourceCell(source: DSK.ContentSource) -> some View {
         let id = source.id
         let data = model.results[id] ?? .loading
         Section {
             LoadableView(loadable: data) {
-                ResultGroup(DSKCommon.Highlight.placeholders(), id )
+                ResultGroup(DSKCommon.Highlight.placeholders(), id)
                     .redacted(reason: .placeholder)
             } _: {
-                ResultGroup(DSKCommon.Highlight.placeholders(), id )
+                ResultGroup(DSKCommon.Highlight.placeholders(), id)
                     .redacted(reason: .placeholder)
             } _: { error in
                 HStack {
                     Spacer()
-                    ErrorView(error: error, action: { model.loadForSource(id: id)}, sourceID: id)
+                    ErrorView(error: error, action: { model.loadForSource(id: id) }, sourceID: id)
                     Spacer()
                 }
             } _: { value in
                 if value.results.isEmpty {
                     EmptyResults
                 } else {
-                    ResultGroup(value.results, id )
+                    ResultGroup(value.results, id)
                 }
             }
         } header: {
@@ -79,10 +79,9 @@ struct ManualDestinationSelectionView: View {
         }
         .headerProminence(.increased)
     }
-    
-    
+
     @ViewBuilder
-    func ResultGroup(_ result : [DSKCommon.Highlight], _ sourceId: String) -> some View {
+    func ResultGroup(_ result: [DSKCommon.Highlight], _ sourceId: String) -> some View {
         HStack {
             ScrollView(.horizontal) {
                 LazyHStack {
@@ -96,18 +95,15 @@ struct ManualDestinationSelectionView: View {
                 }
                 .frame(height: CELL_HEIGHT)
                 .padding(.leading)
-                
             }
-            
         }
-       
     }
-    
+
     var CELL_HEIGHT: CGFloat {
-        (150 * 1.5) + (tileStyle == .SEPARATED ? 50 : 0 )
+        (150 * 1.5) + (tileStyle == .SEPARATED ? 50 : 0)
         // Base + Title
     }
-    
+
     var EmptyResults: some View {
         HStack {
             Spacer()
@@ -119,14 +115,13 @@ struct ManualDestinationSelectionView: View {
                     .font(.subheadline)
                     .fontWeight(.ultraLight)
             }
-            
+
             Spacer()
         }
     }
-    
+
     func handleSelection(_ h: DSKCommon.Highlight, _ s: String) {
         states[content._id] = .found((s, h))
         isPresenting.toggle()
     }
 }
-

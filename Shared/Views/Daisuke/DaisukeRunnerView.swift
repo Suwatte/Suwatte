@@ -5,8 +5,8 @@
 //  Created by Mantton on 2022-08-11.
 //
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 struct DaisukeContentSourceView: View {
     @ObservedObject var source: DaisukeEngine.ContentSource
@@ -19,7 +19,7 @@ struct DaisukeContentSourceView: View {
             if let info = (source.info as? DSK.ContentSource.ContentSourceInfo), let authMethod = info.authMethod {
                 AuthSection(authMethod: authMethod, canSync: info.canSync)
             }
-            
+
             Section {
                 NavigationLink("Preferences") {
                     PreferencesView()
@@ -30,12 +30,10 @@ struct DaisukeContentSourceView: View {
                     ActionsView()
                         .environmentObject(source)
                 }
-            } header:{
+            } header: {
                 Text("Settings")
             }
-            
-            
-            
+
             Section {
                 Toggle("Disable Progress Marking", isOn: .init(get: {
                     sourcesDisabledFromHistory.contains(source.id)
@@ -64,55 +62,49 @@ struct DaisukeContentSourceView: View {
         .navigationTitle(source.name)
         .environmentObject(source)
     }
-    
-    
+
     @ViewBuilder
     func SourceInfo(source: DSK.ContentSource) -> some View {
         let info = source.info
-        
-        Section {
-            
-        }
-    }
-    
-    
-    var HeaderSection: some View {
-            Section {
-                HStack {
 
-                    VStack(alignment: .leading) {
-                        Text(source.name)
-                            .font(.headline)
-                            .fontWeight(.bold)
-                        Text(source.version.description)
-                            .font(.subheadline)
-                            .fontWeight(.light)
-                            .foregroundColor(.primary.opacity(0.5))
-                    }
+        Section {}
+    }
+
+    var HeaderSection: some View {
+        Section {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(source.name)
+                        .font(.headline)
+                        .fontWeight(.bold)
+                    Text(source.version.description)
+                        .font(.subheadline)
+                        .fontWeight(.light)
+                        .foregroundColor(.primary.opacity(0.5))
                 }
             }
         }
-    
-    
+    }
+
     var InfoSection: some View {
         Section {
             Text("Supported Language")
                 .badge(Text(flag))
 
             Link(destination: URL(string: source.sourceInfo.website) ?? STTHost.notFound) {
-                                HStack {
-                                    Text("Visit Website")
-                                    Spacer()
-                                    Image(systemName: "globe")
-                                }
-                            }
-                            .buttonStyle(.plain)
+                HStack {
+                    Text("Visit Website")
+                    Spacer()
+                    Image(systemName: "globe")
+                }
+            }
+            .buttonStyle(.plain)
         }
     }
-    
+
     var flag: String {
         let count = source.sourceInfo.supportedLanguages.count
-        if  count == 0 || count > 1 {
+        if count == 0 || count > 1 {
             return .getFlag(from: "multi")
         } else if let s = source.sourceInfo.supportedLanguages.first {
             return .getFlag(from: s)

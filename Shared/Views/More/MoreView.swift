@@ -66,7 +66,7 @@ struct MoreView: View {
                             Text("Support on Patreon")
                         }
                     }
-                    
+
                     Section {
                         Link(destination: URL(string: "https://www.reddit.com/r/MangaSoup/")!) {
                             Text("App Subreddit")
@@ -78,7 +78,7 @@ struct MoreView: View {
                             Text("Website")
                         }
                     }
-                    
+
                     Section {
                         Link(destination: URL(string: "https://twitter.com/ceresmir")!) {
                             Text("Developer Twitter")
@@ -87,11 +87,9 @@ struct MoreView: View {
                             Text("Developer Website")
                         }
                     }
-                    
                 }
                 .navigationTitle("Social")
                 .buttonStyle(.plain)
-                
             }
             Link("About Suwatte", destination: STTHost.root)
                 .buttonStyle(.plain)

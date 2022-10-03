@@ -18,6 +18,7 @@ extension Skeleton {
         var entry: DSKCommon.Content {
             model.content
         }
+
         var ImageWidth = 150.0
         var body: some View {
             HStack {
@@ -59,10 +60,9 @@ extension Skeleton {
 // MARK: Thumbnail
 
 extension Skeleton.Header {
-
     var CoverImage: some View {
         STTImageView(url: URL(string: entry.cover), identifier: model.sttIdentifier())
-        
+
             .frame(width: ImageWidth, height: ImageWidth * 1.5)
             .cornerRadius(7)
             .shadow(radius: 3)
@@ -78,10 +78,10 @@ extension Skeleton.Header {
 // MARK: Status
 
 extension Skeleton.Header {
-    
     var entryStatus: ContentStatus {
         entry.status ?? .UNKNOWN
     }
+
     var Status: some View {
         HStack(spacing: 3) {
             Image(systemName: "clock")

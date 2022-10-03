@@ -7,15 +7,12 @@
 
 import Foundation
 
-
 extension DSKCommon {
-    
     struct UpSyncedContent: Parsable, DaisukeInterface {
         var id: String
         var flag: LibraryFlag
     }
-    
-    
+
     struct DownSyncedContent: Parsable, DaisukeInterface {
         var id: String
         var title: String

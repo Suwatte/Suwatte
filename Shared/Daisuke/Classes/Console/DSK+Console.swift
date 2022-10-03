@@ -28,12 +28,12 @@ extension DSK {
         if let message = message?.toObject() {
             messages.insert(message, at: 0)
         }
-        
+
         var context = "[Daisuke]"
         let runner = options.context.daisukeRunner()
         let runnerId = runner?.forProperty("info")?.forProperty("id")?.toString() ?? "UNKNOWN RUNNER"
         context += " [\(runnerId)] "
-        context += messages.map({ "\($0)" }).joined(separator: " ")
+        context += messages.map { "\($0)" }.joined(separator: " ")
         Logger.shared.log(context)
     }
 }

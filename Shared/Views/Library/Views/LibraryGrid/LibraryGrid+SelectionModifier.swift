@@ -28,10 +28,10 @@ extension LibraryView.LibraryGrid {
                     case .collections: MoveCollectionsView(entries: entries)
                     case .flags: MoveReadingFlag(entries: entries)
                     case .migrate:
-                            NavigationView {
-                                MigrationView(contents: selectedEntries.compactMap(\.content))
-                            }
-                            .navigationViewStyle(.stack)
+                        NavigationView {
+                            MigrationView(contents: selectedEntries.compactMap(\.content))
+                        }
+                        .navigationViewStyle(.stack)
                     }
                 }
                 .alert("Remove From Library", isPresented: $confirmRemoval, actions: {
@@ -44,7 +44,6 @@ extension LibraryView.LibraryGrid {
                 })
                 .modifier(ConditionalToolBarModifier(showBB: $model.isSelecting))
                 .toolbar {
-
                     ToolbarItemGroup(placement: .bottomBar) {
                         if model.isSelecting {
                             Menu("Select") {
@@ -73,8 +72,6 @@ extension LibraryView.LibraryGrid {
                             }
                         }
                     }
-                    
-                    
                 }
         }
 
@@ -113,15 +110,14 @@ extension LibraryView.LibraryGrid {
                 model.selectedIndexes.removeAll()
             }
         }
-        
-        var selectedEntries : [LibraryEntry] {
+
+        var selectedEntries: [LibraryEntry] {
             zip(entries.indices, entries)
                 .filter { model.selectedIndexes.contains($0.0) }
-                .map({ $0.1 })
+                .map { $0.1 }
         }
     }
 }
-
 
 struct ConditionalToolBarModifier: ViewModifier {
     @Binding var showBB: Bool
@@ -134,4 +130,3 @@ struct ConditionalToolBarModifier: ViewModifier {
         }
     }
 }
-

@@ -35,7 +35,7 @@ extension SuwatteApp {
             handleDirectoryPath(url)
         } else if url.scheme == "suwatte" {
             guard let host = url.host else { return }
-            
+
             ToastManager.shared.display(.info("Handling URL"))
             switch host {
             case "content": // Handle Open Content

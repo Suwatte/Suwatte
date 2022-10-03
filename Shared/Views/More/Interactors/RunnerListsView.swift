@@ -6,11 +6,11 @@
 //
 
 import Alamofire
+import Kingfisher
 import Nuke
 import NukeUI
 import RealmSwift
 import SwiftUI
-import Kingfisher
 
 struct RunnerListsView: View {
     @State var presentAlert = false
@@ -44,6 +44,7 @@ struct RunnerListsView: View {
         }
     }
 }
+
 extension RunnerListsView {
     func handleSubmit(url: String) async {
         if url.isEmpty { return }
@@ -59,6 +60,7 @@ extension RunnerListsView {
         }
         presentAlert = false
     }
+
     func promptURL() {
         let ac = UIAlertController(title: "Enter List URL", message: "Suwatte will automatically parse valid URLS.", preferredStyle: .alert)
         ac.addTextField()
@@ -71,7 +73,7 @@ extension RunnerListsView {
                 return
             }
             Task {
-                await handleSubmit(url:text)
+                await handleSubmit(url: text)
             }
         }
         ac.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in
@@ -80,9 +82,9 @@ extension RunnerListsView {
         ac.addAction(submitAction)
 
         KEY_WINDOW?.rootViewController?.present(ac, animated: true)
-        
     }
 }
+
 extension RunnerListsView {
     struct RunnerListInfo: View {
         var listURL: String
@@ -136,17 +138,14 @@ extension RunnerListsView {
             List {
                 ForEach(list.runners, id: \.self) { runner in
                     RunnerListInfo.RunnerListCell(listURL: listURL, runner: runner)
-                    .frame(height: 75)
+                        .frame(height: 75)
                 }
             }
         }
-
-       
     }
 }
 
 extension RunnerListsView.RunnerListInfo {
-    
     struct RunnerListCell: View {
         @State var isLoading = false
         @ObservedObject var engine = DaisukeEngine.shared
@@ -173,7 +172,7 @@ extension RunnerListsView.RunnerListInfo {
                         } catch {
                             ToastManager.shared.display(.error(error))
                         }
-                        
+
                         isLoading = false
                     }
                 } label: {
@@ -189,13 +188,12 @@ extension RunnerListsView.RunnerListInfo {
                     .foregroundColor(.primary)
                     .background(Color.fadedPrimary)
                     .cornerRadius(5)
-                    
                 }
                 .buttonStyle(.plain)
                 .disabled(runnerState.noInstall)
             }
         }
-        
+
         enum RunnerState {
             case installed, outdated, sourceOutdated, notInstalled, appOutDated
 
@@ -243,7 +241,7 @@ extension RunnerListsView.RunnerListInfo {
                 STTThumbView(url: runner.getThumbURL(in: listURL))
                     .frame(width: 44, height: 44)
                     .cornerRadius(7)
-                    
+
                 VStack(alignment: .leading, spacing: 5) {
                     Text(runner.name)
                         .fontWeight(.semibold)
@@ -266,7 +264,6 @@ extension RunnerListsView.RunnerListInfo {
             .frame(height: 70, alignment: .center)
         }
     }
-    
 }
 
 extension RunnerListsView {

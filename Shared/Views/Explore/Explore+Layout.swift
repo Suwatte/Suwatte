@@ -76,7 +76,6 @@ extension ExploreCollectionsController {
         )
         itemsGroup.edgeSpacing = .init(leading: .none, top: .none, trailing: .none, bottom: .fixed(10))
 
-
         //            itemsGroup.interItemSpacing = .fixed(10)
         let section = NSCollectionLayoutSection(group: itemsGroup)
         section.interGroupSpacing = 7

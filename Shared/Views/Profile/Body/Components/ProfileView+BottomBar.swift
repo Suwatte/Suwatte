@@ -32,6 +32,7 @@ extension ProfileView.Skeleton {
 }
 
 // MARK: Chapter List
+
 extension ProfileView.Skeleton.BottomBar {
     struct ChapterListButton: View {
         @EnvironmentObject var model: ProfileView.ViewModel
@@ -226,7 +227,6 @@ extension ProfileView.Skeleton.BottomBar {
 
         @ViewBuilder
         var ManageLinkedContentButton: some View {
-            
             Button {
                 model.presentManageContentLinks.toggle()
             } label: {

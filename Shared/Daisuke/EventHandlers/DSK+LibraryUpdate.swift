@@ -39,12 +39,12 @@ extension DaisukeEngine {
         }
         let validStatuses = [ContentStatus.ONGOING, .HIATUS, .UNKNOWN]
         let library = realm.objects(LibraryEntry.self)
-            .where({ $0.dateAdded < date })
-            .where({ $0.content.sourceId == source.id })
-            .where({ $0.content.status.in(validStatuses) })
-            .where({ $0.flag.in(validFlags) })
+            .where { $0.dateAdded < date }
+            .where { $0.content.sourceId == source.id }
+            .where { $0.content.status.in(validStatuses) }
+            .where { $0.flag.in(validFlags) }
             .map { $0 } as [LibraryEntry]
-            
+
         var updateCount = 0
         Logger.shared.log("[DAISUKE] [UPDATER] [\(source.id)] \(library.count) Titles Matching")
         for entry in library {
@@ -66,13 +66,14 @@ extension DaisukeEngine {
                 filtered = filtered?
                     .filter { !marked.contains($0.chapterId) }
             }
-            
+
             // Already Fetched on Source
             if let lastFetched, let lastFetchedUpdatedIndex = chapters?
-                .first(where: { $0.chapterId == lastFetched.chapterId})?
-                .index {
+                .first(where: { $0.chapterId == lastFetched.chapterId })?
+                .index
+            {
                 filtered = filtered?
-                    .filter({ $0.index < lastFetchedUpdatedIndex })
+                    .filter { $0.index < lastFetchedUpdatedIndex }
             }
             let updates = filtered?.count ?? 0
             // No Updates Return 0
@@ -84,10 +85,10 @@ extension DaisukeEngine {
             try! realm.safeWrite {
                 entry.lastUpdated = chapters?.sorted(by: { $0.date > $1.date }).first?.date ?? Date()
                 entry.updateCount += updates
-                
+
                 // Update Chapters
                 let stored = chapters?
-                    .map({ $0.toStoredChapter(withSource: source)})
+                    .map { $0.toStoredChapter(withSource: source) }
                 if let stored {
                     realm.add(stored, update: .modified)
                 }

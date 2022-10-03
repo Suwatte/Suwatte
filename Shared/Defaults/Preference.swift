@@ -19,6 +19,7 @@ final class Preferences {
     init(userDefaults: UserDefaults) {
         self.userDefaults = userDefaults
     }
+
     @UserDefault(STTKeys.incognito)
     var incognitoMode: Bool = false
     // Page Level
@@ -85,10 +86,10 @@ final class Preferences {
 
     @UserDefault(STTKeys.NovelFont)
     var novelFont = "Avenir-Regular"
-    
+
     @UserDefault(STTKeys.NonSelectiveSync)
     var nonSelectiveSync = false
-    
+
     @UserDefault(STTKeys.SelectiveUpdates)
     var selectiveUpdates = false
 }

@@ -11,7 +11,6 @@ struct LogsView: View {
     @ObservedObject var logger = Logger.shared
     @State var presenting = false
     var body: some View {
-        
         List {
             ForEach(logger.logs, id: \.message.hashValue) { log in
                 HStack {

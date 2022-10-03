@@ -60,6 +60,7 @@ class HorizontalContentSizePreservingFlowLayout: UICollectionViewFlowLayout {
         return layoutAttributes
     }
 }
+
 class NovelOffsetPreservingLayout: UICollectionViewFlowLayout {
     var isInsertingCellsToTop: Bool = false {
         didSet {
@@ -86,7 +87,6 @@ class NovelOffsetPreservingLayout: UICollectionViewFlowLayout {
             isInsertingCellsToTop = false
         }
     }
-
 }
 
 class VerticalContentOffsetPreservingLayout: UICollectionViewFlowLayout {

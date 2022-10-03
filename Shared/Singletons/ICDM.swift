@@ -152,7 +152,7 @@ extension ICDM {
             .where { $0.status == .cancelled }
         cancelledTasks.append(contentsOf: targets.map { $0._id })
         clean()
-        
+
         Logger.shared.log("[ICDM] Deleting \(targets.count) Objects")
         try! realm.safeWrite {
             realm.delete(targets)
@@ -278,8 +278,7 @@ extension ICDM {
             if !data.text.isEmpty {
                 setText(for: generateID(of: ids), with: data.text)
                 await didFinishTasksAtHead(of: ids, with: .completed)
-            }
-            else if !data.urls.isEmpty {
+            } else if !data.urls.isEmpty {
                 // Handle URL List
                 let completion = try await downloadImages(of: ids, with: data.urls)
                 if completion {
@@ -300,16 +299,17 @@ extension ICDM {
             return
         }
     }
-    
-    private func setText(for id: String, with data: String){
+
+    private func setText(for id: String, with data: String) {
         let realm = try! Realm()
-        
+
         guard let obj = realm.objects(ICDMDownloadObject.self)
             .where({ $0._id == id })
-            .first else {
+            .first
+        else {
             return
         }
-        
+
         try! realm.safeWrite {
             obj.textData = data
         }
@@ -418,19 +418,19 @@ extension ICDM {
     func getCompletedDownload(for id: String) throws -> DownloadedChapter? {
         let realm = try Realm()
         let obj = realm.objects(ICDMDownloadObject.self)
-            .where({ $0._id == id })
-            .where({ $0.status == .completed })
+            .where { $0._id == id }
+            .where { $0.status == .completed }
             .first
-        
+
         guard let obj = obj else {
             return nil
         }
-        
+
         // Text
         if let text = obj.textData {
             return .init(text: text)
         }
-        
+
         // Images
         let directory = ICDM.shared.directory.appendingPathComponent(id)
         if directory.exists {
@@ -440,9 +440,8 @@ extension ICDM {
             return .init(urls: urls)
         }
         return nil
-        
     }
-    
+
     struct DownloadedChapter {
         var text: String?
         var urls: [URL]?
@@ -456,5 +455,3 @@ extension URL {
         return lastPathComponent.replacingOccurrences(of: ".\(fileExt)", with: "")
     }
 }
-
-

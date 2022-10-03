@@ -61,7 +61,7 @@ struct InstalledRunnersView: View {
             if path.startAccessingSecurityScopedResource() {
                 Task {
                     do {
-                        try await DaisukeEngine.shared.importRunner(from:path)
+                        try await DaisukeEngine.shared.importRunner(from: path)
                         await MainActor.run {
                             ToastManager.shared.info("Added!")
                         }
@@ -71,10 +71,8 @@ struct InstalledRunnersView: View {
                         }
                     }
                     path.stopAccessingSecurityScopedResource()
-
                 }
             }
-
         }
     }
 

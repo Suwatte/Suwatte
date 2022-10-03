@@ -30,7 +30,7 @@ extension ProfileView {
                          }) },
                          { _ in
                              ProfileView.Skeleton()
-                                .navigationTitle(viewModel.content.title)
+                                 .navigationTitle(viewModel.content.title)
                                  .fullScreenCover(item: $viewModel.selection, onDismiss: {
                                      Task {
                                          viewModel.getMarkers()
@@ -78,7 +78,6 @@ extension ProfileView {
         var PLACEHOLDER: some View {
             ProgressView()
         }
-
     }
 
     struct SyncView: View {

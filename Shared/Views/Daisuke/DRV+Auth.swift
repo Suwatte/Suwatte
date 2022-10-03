@@ -5,11 +5,11 @@
 //  Created by Mantton on 2022-08-11.
 //
 
+import Alamofire
 import RealmSwift
 import SwiftUI
 import UIKit
 import WebKit
-import Alamofire
 
 extension DaisukeContentSourceView {
     struct AuthSection: View {
@@ -309,7 +309,7 @@ extension DaisukeContentSourceView {
                     Text("Are you sure you want to sync your \(source.name) library?")
                 })
             }
-            
+
             Section {
                 Button("Sign Out", role: .destructive) {
                     Task {
@@ -318,13 +318,11 @@ extension DaisukeContentSourceView {
                                 return
                             }
                             switch authMethod {
-                                case .username_pw, .email_pw, .oauth:
-                                    try await source.handleUserSignOut()
-                                case .web:
-                                    presentWebView.toggle()
-                                    
+                            case .username_pw, .email_pw, .oauth:
+                                try await source.handleUserSignOut()
+                            case .web:
+                                presentWebView.toggle()
                             }
-                           
 
                         } catch {
                             ToastManager.shared.error(error)
@@ -334,7 +332,6 @@ extension DaisukeContentSourceView {
                                 shouldRefresh.toggle()
                             })
                         }
-                        
                     }
                 }
             }
@@ -353,6 +350,7 @@ extension DaisukeContentSourceView {
 }
 
 // MARK: WebView
+
 struct WebAuthWebView: UIViewControllerRepresentable {
     var source: DSK.ContentSource
     func makeUIViewController(context _: Context) -> some Controller {
@@ -363,7 +361,6 @@ struct WebAuthWebView: UIViewControllerRepresentable {
 
     func updateUIViewController(_: UIViewControllerType, context _: Context) {}
 }
-
 
 extension WebAuthWebView {
     class Controller: UIViewController, WKUIDelegate {
@@ -394,8 +391,8 @@ extension WebAuthWebView {
             }
         }
     }
-
 }
+
 extension WebAuthWebView.Controller: WKNavigationDelegate {
     func webView(_: WKWebView, decidePolicyFor _: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
         decisionHandler(.allow)
@@ -403,8 +400,8 @@ extension WebAuthWebView.Controller: WKNavigationDelegate {
 
     func webView(_ webView: WKWebView, didFinish _: WKNavigation!) {
         let cookieStore = webView.configuration.websiteDataStore.httpCookieStore
-        cookieStore.getAllCookies {[weak self] cookies in
-            
+        cookieStore.getAllCookies { [weak self] cookies in
+
             cookies.forEach { cookie in
                 AF.session.configuration.httpCookieStorage?.setCookie(cookie)
                 Task { @MainActor in
@@ -418,4 +415,3 @@ extension WebAuthWebView.Controller: WKNavigationDelegate {
         }
     }
 }
-

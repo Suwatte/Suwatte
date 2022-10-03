@@ -147,7 +147,6 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
     }
 }
 
-
 struct LinkedUpdatesView: View {
     @EnvironmentObject var model: ProfileView.ViewModel
     @State var selection: HighlightIndentier?
@@ -170,13 +169,12 @@ struct LinkedUpdatesView: View {
                 ColoredBadge(color: .blue, bodySize: 13, internalSize: 8)
             }
             .frame(height: 20)
-                
         }
         .opacity(data.isEmpty ? 0 : 1)
         .modifier(InteractableContainer(selection: $selection))
     }
-    
+
     func filtered() -> [HighlightIndentier] {
-        model.linkedUpdates.filter({ DaisukeEngine.shared.getSource(with: $0.sourceId) != nil })
+        model.linkedUpdates.filter { DaisukeEngine.shared.getSource(with: $0.sourceId) != nil }
     }
 }

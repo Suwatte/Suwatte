@@ -7,10 +7,8 @@
 
 import Foundation
 
-
 extension DSKCommon {
-    
-    struct JSCommon : Codable {
-        var version : String
+    struct JSCommon: Codable {
+        var version: String
     }
 }

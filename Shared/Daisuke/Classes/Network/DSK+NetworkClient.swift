@@ -120,7 +120,7 @@ extension DaisukeEngine.NetworkClient {
         intercepter.handler = requestInterceptHandler
 
         if let cookies = request.cookies {
-            let mapped = cookies.map(\.httpCookie).compactMap({ $0 })
+            let mapped = cookies.map(\.httpCookie).compactMap { $0 }
             mapped.forEach { cookie in
                 self.session.sessionConfiguration.httpCookieStorage?.setCookie(cookie)
             }

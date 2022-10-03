@@ -320,7 +320,6 @@ extension ReaderView.ViewModel {
         // Update Entry Last Read
         let id = ContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId).id
         DataManager.shared.updateLastRead(forId: id)
-
     }
 
     private func handleTransition(transition: ReaderView.Transition) {
@@ -359,19 +358,20 @@ extension ReaderView.ViewModel {
         if !canMark(sourceId: lastChapter.chapter.sourceId) {
             return
         }
-        
+
         // Mark As Completed
         DataManager.shared.setProgress(chapter: lastChapter.chapter)
 
         // Anilist Sync
         handleTrackerSync(number: lastChapter.chapter.number,
                           volume: lastChapter.chapter.volume)
-        
+
         // Source Sync
         handleSourceSync(contentId: lastChapter.chapter.contentId,
                          sourceId: lastChapter.chapter.sourceId,
                          chapterId: lastChapter.chapter.chapterId)
     }
+
     private func getStoredTrackerInfo() -> StoredTrackerInfo? {
         let id = ContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId).id
         return DataManager.shared.getTrackerInfo(id)
@@ -379,9 +379,8 @@ extension ReaderView.ViewModel {
 
     private func handleTrackerSync(number: Double, volume: Double?) {
         let chapterNumber = Int(number)
-        let chapterVolume = volume.map({ Int($0) })
-        
-        
+        let chapterVolume = volume.map { Int($0) }
+
         // Ids
         // Anilist
         let alId = content?.trackerInfo["al"] ?? getStoredTrackerInfo()?.al
@@ -393,6 +392,7 @@ extension ReaderView.ViewModel {
             }
         }
     }
+
     private func handleSourceSync(contentId: String, sourceId: String, chapterId: String) {
         // Services
         let source = DaisukeEngine.shared.getSource(with: sourceId)
@@ -415,15 +415,14 @@ extension STTHelpers {
         let media = try await Anilist.shared.getProfile(mediaID)
 
         var entry = media.mediaListEntry
-        
-        if entry == nil && Preferences.standard.nonSelectiveSync {
+
+        if entry == nil, Preferences.standard.nonSelectiveSync {
             entry = try await Anilist.shared.beginTracking(id: mediaID)
         }
-        
+
         guard let mediaListEntry = entry else {
             return
         }
-        
 
         // Progress is above current point
         if mediaListEntry.progress > progress {

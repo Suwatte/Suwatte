@@ -143,12 +143,11 @@ extension ExploreView.HighlightTile {
                     Text(subtitle + "This is a test")
                         .font(.headline)
                         .fontWeight(.light)
-
                 }
 
                 if let updates = entry.updates {
                     let date = updates.date?.timeAgo()
-                    Text("\(updates.label)\(date.map({ " • \($0)" }) ?? "")")
+                    Text("\(updates.label)\(date.map { " • \($0)" } ?? "")")
                         .font(.headline)
                         .fontWeight(.light)
                     if let badge = updates.count {
@@ -176,15 +175,15 @@ extension ExploreView.HighlightTile {
         private var foreGroundColor: Color {
             endColor.isDark ? .white : .black
         }
+
         @StateObject private var loader = FetchImage()
         var urls: [URL] {
             let strs = Set([entry.cover] + (entry.additionalCovers ?? []))
-            return strs.compactMap({ URL(string: $0) })
+            return strs.compactMap { URL(string: $0) }
         }
 
         var body: some View {
             ZStack(alignment: .bottom) {
-                
                 Group {
                     if let view = loader.view {
                         GeometryReader { proxy in
@@ -192,9 +191,8 @@ extension ExploreView.HighlightTile {
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .frame(height: proxy.size.width * 1.5, alignment: .center)
-
                         }
-                        
+
                     } else {
                         Color.gray.opacity(0.25)
                             .shimmering()
@@ -241,10 +239,10 @@ extension ExploreView.HighlightTile {
             }
             .animation(.default, value: currentImageIndex)
             .animation(.default, value: endColor)
-            .onChange(of: currentImageIndex, perform: { newValue in
+            .onChange(of: currentImageIndex, perform: { _ in
                 Task {
                     guard let url = urls.get(index: currentImageIndex) else { return }
-                    await load(url:url)
+                    await load(url: url)
                 }
             })
             .cornerRadius(7)
@@ -257,14 +255,14 @@ extension ExploreView.HighlightTile {
                 prefetcher.stopPrefetching(with: urls)
             })
         }
-        
+
         func load(url: URL?) async {
             guard let url else { return }
             let req = try? await source.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
             loader.animation = .easeOut(duration: 0.25)
             loader.load(req ?? url)
         }
-        
+
         func didAppear() {
             // Update Loader
             loader.onSuccess = { response in
@@ -272,12 +270,12 @@ extension ExploreView.HighlightTile {
                     endColor = Color(color)
                 }
             }
-            
+
             // Load First Image
             Task {
-                await load(url:urls.first)
+                await load(url: urls.first)
             }
-            
+
             if urls.count == 1 {
                 return
             }
@@ -291,7 +289,6 @@ extension ExploreView.HighlightTile {
                     }
                 }
             }
-            
         }
     }
 }

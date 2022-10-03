@@ -10,7 +10,7 @@ import SwiftUI
 struct TrackersView: View {
     @Preference(\.nonSelectiveSync) var nonSelectiveSync
     @State var presentAlert = false
-    
+
     var body: some View {
         List {
             Section {
@@ -22,26 +22,23 @@ struct TrackersView: View {
                     MSLabelView(title: "MyAnimeList", imageName: "mal")
                 }
             }
-            
+
             Section {
                 Toggle(isOn: $nonSelectiveSync) {
                     Text("Non-Selective Sync \(Image(systemName: "info.circle"))")
                         .onTapGesture {
-                        presentAlert.toggle()
-                    }
+                            presentAlert.toggle()
+                        }
                 }
-                
+
             } header: {
                 Text("Settings")
             }
             .alert("Non-Selective Sync", isPresented: $presentAlert) {
-                Button("OK", role: .cancel){}
+                Button("OK", role: .cancel) {}
             } message: {
                 Text("Forces Suwatte to track regardless of library status. This will automatically begin tracking previously untracked titles.")
-                    
             }
-
-
         }
         .navigationTitle("Tracking")
     }

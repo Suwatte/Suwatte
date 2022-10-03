@@ -339,23 +339,22 @@ extension CTR {
         snapshot.appendSections([id])
         reorderSections()
     }
-    
+
     func reorderSections() {
         // Move Tags to Top, Latests to Bottom
         if snapshot.sectionIdentifiers.isEmpty { return }
         let ids = snapshot.sectionIdentifiers
         for id in ids {
             // Move Tags to Top
-            if id == TAG_SECTION_ID && id != ids.first {
-                snapshot.moveSection(id, beforeSection: ids.first! )
+            if id == TAG_SECTION_ID, id != ids.first {
+                snapshot.moveSection(id, beforeSection: ids.first!)
             }
-            
+
             // Move Update List Style Collections to bottom
-            if let style = cache[id]?.style, style == .UPDATE_LIST && id != ids.last {
+            if let style = cache[id]?.style, style == .UPDATE_LIST, id != ids.last {
                 snapshot.moveSection(id, afterSection: ids.last!)
             }
         }
-        
     }
 
     func removeSection(id: String) {
@@ -625,8 +624,8 @@ extension CTR {
                     Group {
                         if let view = loader.view {
                             view
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
                         } else {
                             Color.clear
                         }
@@ -661,10 +660,8 @@ extension CTR {
                     let req = try? await source.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
                     loader.load(req ?? url)
                 }
-                
             }
         }
-        
 
         var request: DSKCommon.SearchRequest {
             .init(query: nil, page: 1, includedTags: [tag.id], excludedTags: [], sort: nil)

@@ -61,8 +61,6 @@ extension DaisukeEngine {
     }
 
     func injectCommonLibraries(_ context: JSContext) {
-        
-
         do {
             let content = try String(contentsOf: commons, encoding: .utf8)
             _ = context.evaluateScript(content)

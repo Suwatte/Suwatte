@@ -54,7 +54,7 @@ import UIKit
                 let enumeration: NSArray = [placeholder]
                 albumChangeRequest.addAssets(enumeration)
 
-            }, completionHandler: {_,_ in
+            }, completionHandler: { _, _ in
                 ToastManager.shared.display(.info("Saved Image"))
             })
         }

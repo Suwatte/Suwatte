@@ -12,10 +12,11 @@ extension ProfileView.Skeleton {
     struct Summary: View {
         @State var expand = false
         @EnvironmentObject var model: ProfileView.ViewModel
-        
+
         var entry: DSKCommon.Content {
             model.content
         }
+
         var summary: String? {
             entry.summary
         }
@@ -51,9 +52,9 @@ extension ProfileView.Skeleton {
                     PropertyTagsView(property: core, source: model.source)
                 }
             }
-
         }
     }
+
     struct PropertyTagsView: View {
         var property: DSKCommon.Property
         var source: DaisukeEngine.ContentSource
@@ -62,7 +63,6 @@ extension ProfileView.Skeleton {
                 NavigationLink(destination: ExploreView.SearchView(model: .init(request: generateSearchRequest(tagId: tag.id), source: source), tagLabel: tag.label)) {
                     Text(tag.label)
                         .modifier(ProfileTagStyle())
-                        
                 }
                 .buttonStyle(.plain)
             }
@@ -73,7 +73,6 @@ extension ProfileView.Skeleton {
         }
     }
 }
-
 
 struct ProfileTagStyle: ViewModifier {
     func body(content: Content) -> some View {

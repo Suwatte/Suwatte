@@ -13,6 +13,7 @@ final class DaisukeEngine: ObservableObject {
     // MARK: Singleton
 
     static let shared = DaisukeEngine()
+
     // MARK: Virtual Machine
 
     private let vm: JSVirtualMachine
@@ -24,9 +25,8 @@ final class DaisukeEngine: ObservableObject {
         .default
         .documentDirectory
         .appendingPathComponent("DaisukeRunners", isDirectory: true)
-    
-    
-    internal var commons : URL {
+
+    internal var commons: URL {
         directory
             .appendingPathComponent("common.js")
     }
@@ -53,7 +53,6 @@ final class DaisukeEngine: ObservableObject {
             }
             ToastManager.shared.loading = false
         }
-        
     }
 }
 
@@ -89,7 +88,7 @@ extension DaisukeEngine {
             .contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
             .filter { $0.isFileURL }
 
-        guard let urls = urls?.filter({ $0.lastPathComponent.contains(".stt")}) else {
+        guard let urls = urls?.filter({ $0.lastPathComponent.contains(".stt") }) else {
             return
         }
         for url in urls {
@@ -100,7 +99,6 @@ extension DaisukeEngine {
             } catch {
                 ToastManager.shared.error(error)
             }
-            
         }
     }
 
@@ -250,14 +248,12 @@ extension DaisukeEngine {
 //    }
 }
 
-
 // MARK: CommonLibrary
 
 extension DaisukeEngine {
-    
     func getDependencies() async throws {
         if commons.exists { return }
-        
+
         await MainActor.run(body: {
             ToastManager.shared.loading = true
         })
@@ -266,7 +262,7 @@ extension DaisukeEngine {
             ToastManager.shared.info("Updated Commons")
         })
     }
-    
+
     private func getCommons() async throws {
         let base = URL(string: "https://suwatte.github.io/Common")!
         var url = base.appendingPathComponent("versioning.json")
@@ -276,15 +272,15 @@ extension DaisukeEngine {
             .validate()
             .serializingDecodable(DSKCommon.JSCommon.self)
             .value
-        
+
         let saved = UserDefaults.standard.string(forKey: STTKeys.JSCommonsVersion)
         let shouldRedownload = saved == nil || [ComparisonResult.orderedDescending].contains(data.version.compare(saved!)) || !commons.exists
-        
+
         if !shouldRedownload {
             return
         }
         print("Refetching Commons")
-        
+
         url = base.appendingPathComponent("lib.js")
         let req = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 10)
 

@@ -7,9 +7,7 @@
 
 import Foundation
 
-
 extension DSK.ContentSource {
-    
     func getSourceActions() async throws -> [DSKCommon.ActionGroup]? {
         let method = "getSourceActions"
         if !methodExists(method: method) {
@@ -17,7 +15,7 @@ extension DSK.ContentSource {
         }
         return try await callMethodReturningDecodable(method: method, arguments: [], resolvesTo: [DSKCommon.ActionGroup].self)
     }
-    
+
     func didTriggerAction(key: String) async throws {
         try await callOptionalVoidMethod(method: "didTriggerAction", arguments: [key])
     }

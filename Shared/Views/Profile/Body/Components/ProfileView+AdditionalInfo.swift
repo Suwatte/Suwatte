@@ -14,6 +14,7 @@ extension ProfileView.Skeleton {
         var entry: DSKCommon.Content {
             model.content
         }
+
         var body: some View {
             VStack(alignment: .leading) {
                 AdditionalProperties
@@ -25,7 +26,7 @@ extension ProfileView.Skeleton {
 
         @ViewBuilder
         var AdditionalProperties: some View {
-            if let props = entry.properties ,props.count > 1 {
+            if let props = entry.properties, props.count > 1 {
                 ForEach(props[1...], id: \.label) { property in
 
                     VStack(alignment: .leading, spacing: 3) {
@@ -49,7 +50,6 @@ extension ProfileView.Skeleton {
                         }
                     }
                     .padding(.vertical, 2.5)
-                    
                 }
             }
         }

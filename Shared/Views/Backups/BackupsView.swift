@@ -108,7 +108,6 @@ extension BackupsView {
             Logger.shared.error("[Backup] [Save New] \(error.localizedDescription)")
             ToastManager.shared.error(error)
         }
-        
     }
 
     func handleShareURL(url: URL) {

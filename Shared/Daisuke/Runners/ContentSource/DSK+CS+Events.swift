@@ -39,7 +39,7 @@ extension DaisukeEngine.ContentSource {
             ToastManager.shared.display(.error(nil, "[\(id)] [onChaptersMarked] \(error.localizedDescription)"))
         }
     }
-    
+
     func onChapterRead(contentId: String, chapterId: String) async {
         do {
             try await callOptionalVoidMethod(method: "onChapterRead", arguments: [contentId, chapterId])
@@ -58,13 +58,12 @@ extension DaisukeEngine.ContentSource {
 }
 
 extension DaisukeEngine.ContentSource {
-    func willRequestImage(request : DaisukeEngine.NetworkClient.Request) async throws -> DaisukeEngine.NetworkClient.Request? {
-        
+    func willRequestImage(request: DaisukeEngine.NetworkClient.Request) async throws -> DaisukeEngine.NetworkClient.Request? {
         guard methodExists(method: "willRequestImage") else {
             return nil
         }
         let dict = try request.asDictionary()
-        
+
         return try await callMethodReturningDecodable(method: "willRequestImage", arguments: [dict], resolvesTo: DaisukeEngine.NetworkClient.Request.self)
     }
 
