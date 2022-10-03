@@ -77,6 +77,9 @@ extension ProfileView.ViewModel {
             }
 
         } catch {
+            Task {
+                await loadChapters()
+            }
             await MainActor.run(body: {
                 if loadableContent.LOADED {
                     ToastManager.shared.error("Failed to Update Profile")
@@ -85,6 +88,7 @@ extension ProfileView.ViewModel {
                     loadableContent = .failed(error)
                 }
                 working = false
+
             })
         }
     }
@@ -122,6 +126,9 @@ extension ProfileView.ViewModel {
                 await didLoadChapters()
 
             } catch {
+                Task { @MainActor in
+                    setChaptersFromDB()
+                }
                 Logger.shared.error(error.localizedDescription)
                 await MainActor.run(body: {
                     if chapters.LOADED {
@@ -133,10 +140,6 @@ extension ProfileView.ViewModel {
                     working = false
                     ToastManager.shared.error(error)
                 })
-
-                Task {
-                    setChaptersFromDB()
-                }
             }
         }
     }
@@ -161,7 +164,23 @@ extension ProfileView.ViewModel {
         }
     }
 
-    func setChaptersFromDB() {}
+    func setChaptersFromDB() {
+        let realm = try! Realm()
+        let storedChapters = realm
+            .objects(StoredChapter.self)
+            .where { $0.contentId == entry.contentId }
+            .where { $0.sourceId == source.id }
+            .sorted(by: \.index, ascending: true)
+            .map { $0 } as [StoredChapter]
+
+        print("LOADING FROM DB", storedChapters.count)
+        if storedChapters.isEmpty { return }
+
+        chapters = .loaded(storedChapters)
+        Task {
+            await getMarkers()
+        }
+    }
 
     @MainActor
     func getMarkers() {
