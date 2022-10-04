@@ -46,6 +46,7 @@ extension DaisukeEngine {
                     } catch {
                         reject?.call(withArguments: [error])
                     }
+                    session.session.configuration.timeoutIntervalForResource = 30
                 }
             }
         }
@@ -111,20 +112,13 @@ extension DaisukeEngine {
 
 extension DaisukeEngine.NetworkClient {
     func makeRequest(with request: DSKCommon.Request) async throws -> Response {
-        if let cookies = request.cookies {
-            let mapped = cookies.map(\.httpCookie).compactMap { $0 }
-            mapped.forEach { cookie in
-                self.session.sessionConfiguration.httpCookieStorage?.setCookie(cookie)
-            }
-        }
-
         let request = try await handleRequestIntercept(request: request)
         let urlRequest = try request.toURLRequest()
         let afResponse = await session.request(urlRequest)
             .validate()
             .serializingString()
             .response
-
+        session.session.configuration.timeoutIntervalForResource = request.timeout ?? 30
         guard let httpResponse = afResponse.response else {
             throw DaisukeEngine.Errors.NamedError(name: "Network Client", message: "Recieved Empty Response")
         }

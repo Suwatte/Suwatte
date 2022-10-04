@@ -26,13 +26,10 @@ extension DSKCommon {
 
     struct Cookie: Codable, Parsable, Hashable {
         var name: String
-        var domain: String
         var value: String
-        var path: String?
-        var expires: Date?
 
-        var httpCookie: HTTPCookie? {
-            .init(properties: [.name: name, .domain: domain, .value: value, .path: path ?? "/", .expires: expires as Any])
+        func toHTTPCookie(with domain: String) -> HTTPCookie? {
+            .init(properties: [.name: name, .domain: domain, .value: value, .path: "/"])
         }
     }
 
@@ -75,7 +72,7 @@ extension DSKCommon.Request {
 
 extension DSKCommon.Request {
     func toURLRequest() throws -> URLRequest {
-        guard let url = URL(string: url) else {
+        guard let url = URL(string: url), let host = url.host else {
             throw DSK.Errors.NetworkErrorInvalidRequestURL
         }
 
@@ -106,7 +103,7 @@ extension DSKCommon.Request {
         // Cookies
         if let cookies {
             let jar = HTTPCookieStorage.shared
-            cookies.compactMap(\.httpCookie).forEach {
+            cookies.compactMap({ $0.toHTTPCookie(with: host )}).forEach {
                 jar.setCookie($0)
             }
         }

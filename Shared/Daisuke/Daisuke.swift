@@ -144,6 +144,7 @@ extension DaisukeEngine {
     }
 
     private func addRunner(runner: DaisukeRunnerProtocol) throws {
+        runners.removeValue(forKey: runner.id)
         runners.updateValue(runner, forKey: runner.id)
         if let runner = runner as? ContentSource {
             Task {
