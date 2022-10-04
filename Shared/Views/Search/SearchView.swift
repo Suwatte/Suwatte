@@ -150,11 +150,13 @@ struct SearchView: View {
                         VStack(alignment: .leading) {
                             Text(source?.name ?? "Source Not Found")
                                 .font(.headline.weight(.semibold))
-                            Text(data.totalResultCount.description + " Results")
-                                .font(.subheadline.weight(.light))
+                            if let count = data.totalResultCount {
+                                Text(count.description + " Results")
+                                    .font(.subheadline.weight(.light))
+                            }
                         }
                         Spacer()
-                        if data.results.count < data.totalResultCount, let source = source {
+                        if data.results.count < data.totalResultCount ?? 0, let source = source {
                             NavigationLink {
                                 ExploreView.SearchView(model: .init(request: .init(query: model.query), source: source))
                             } label: {
