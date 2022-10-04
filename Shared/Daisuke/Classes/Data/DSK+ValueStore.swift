@@ -23,19 +23,26 @@ import JavaScriptCore
     func _remove(key: JSValue) -> JSValue
 }
 
-extension DaisukeEngine {
-    @objc class ValueStore: JSObject, DaisukeValueStoreProtocol {
-        func getContainerId() throws -> String {
-            guard let runner = this?.value.context.daisukeRunner() else {
-                throw Errors.RunnerNotFoundOnContainedObject
-            }
+protocol DaisukeContext : JSObject, JSObjectProtocol {
+   
+}
 
-            guard let id = runner.forProperty("info")?.forProperty("id")?.toString() else {
-                throw Errors.UnableToFetchRunnerIDInContainedObject
-            }
-
-            return id
+extension DaisukeContext {
+    func getContainerId() throws -> String {
+        guard let runner = this?.value.context.daisukeRunner() else {
+            throw DaisukeEngine.Errors.RunnerNotFoundOnContainedObject
         }
+
+        guard let id = runner.forProperty("info")?.forProperty("id")?.toString() else {
+            throw DaisukeEngine.Errors.UnableToFetchRunnerIDInContainedObject
+        }
+
+        return id
+    }
+}
+extension DaisukeEngine {
+    @objc class ValueStore: JSObject, DaisukeValueStoreProtocol, DaisukeContext {
+        
 
         func get(key: String) throws -> String {
             let value = DataManager.shared.getStoreValue(for: try getContainerId(), key: key)

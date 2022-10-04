@@ -102,6 +102,14 @@ extension DSKCommon.Request {
                 request.httpBody = try JSONEncoder().encode(body)
             }
         }
+        
+        // Cookies
+        if let cookies {
+            let jar = HTTPCookieStorage.shared
+            cookies.compactMap(\.httpCookie).forEach {
+                jar.setCookie($0)
+            }
+        }
 
         return request
     }
