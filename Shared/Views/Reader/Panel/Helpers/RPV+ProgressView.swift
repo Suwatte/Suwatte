@@ -27,10 +27,7 @@ extension ReaderView {
             if val < oldProgress || val > 1 {
                 return
             }
-            withAnimation {
-                progress = CGFloat(val)
-            }
-
+            progress = CGFloat(val)
             oldProgress = val
         }
 
