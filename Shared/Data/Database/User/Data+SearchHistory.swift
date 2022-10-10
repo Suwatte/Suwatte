@@ -19,6 +19,10 @@ final class SearchHistory: Object, ObjectKeyIdentifiable, Codable {
 
 extension DataManager {
     func saveSearch(_ text: String, sourceId: String?) {
+        
+        let incognito = Preferences.standard.incognitoMode
+        if incognito { return }
+        
         let realm = try! Realm()
 
         try! realm.safeWrite {
@@ -32,6 +36,10 @@ extension DataManager {
     }
 
     func saveSearch(_ included: [String], _ excluded: [String], _ sourceId: String, _ filters: [DaisukeEngine.Structs.Filter]) {
+        
+        let incognito = Preferences.standard.incognitoMode
+        if incognito { return }
+        
         let tags = filters.flatMap { $0.property.tags }
         let includedLabels = tags.filter { included.contains($0.id) }.map { $0.label }
         let excludedLabels = tags.filter { excluded.contains($0.id) }.map { $0.label }
