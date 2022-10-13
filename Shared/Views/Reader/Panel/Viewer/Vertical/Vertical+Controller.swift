@@ -292,7 +292,7 @@ extension VerticalController {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCell.identifier, for: indexPath) as! ImageCell
 
             cell.page = data
-            cell.zoomDelegate = self
+//            cell.zoomDelegate = self
             cell.resizeDelegate = self
             cell.indexPath = indexPath
             cell.setupViews()
@@ -579,34 +579,34 @@ extension VerticalController: UICollectionViewDataSourcePrefetching {
 
 // MARK: Zooming
 
-extension VerticalController: ZoomingViewController, ZoomableHostDelegate, ZoomHandlerDelegate {
-    func cellTappedAt(point: CGPoint, frame: CGRect, path: IndexPath) {
-        guard let cell = collectionView.cellForItem(at: path) as? ImageCell else {
-            return
-        }
-        selectedIndexPath = path
-        let page = VerticalZoomableView()
-        page.image = cell.imageView.image
-        page.location = point
-        page.rect = frame
-        page.hostDelegate = self
-        model.IN_ZOOM_VIEW = true
-
-        navigationController?.pushViewController(page, animated: true)
-    }
-
-    func zoomingBackgroundView(for _: ZoomTransitioningDelegate) -> UIView? {
-        return nil
-    }
-
-    func zoomingImageView(for _: ZoomTransitioningDelegate) -> UIImageView? {
-        guard let indexPath = selectedIndexPath, let cell = collectionView.cellForItem(at: indexPath) as? ImageCell else {
-            return nil
-        }
-
-        return cell.imageView
-    }
-}
+//extension VerticalController: ZoomingViewController, ZoomableHostDelegate, ZoomHandlerDelegate {
+//    func cellTappedAt(point: CGPoint, frame: CGRect, path: IndexPath) {
+//        guard let cell = collectionView.cellForItem(at: path) as? ImageCell else {
+//            return
+//        }
+//        selectedIndexPath = path
+//        let page = VerticalZoomableView()
+//        page.image = cell.imageView.image
+//        page.location = point
+//        page.rect = frame
+//        page.hostDelegate = self
+//        model.IN_ZOOM_VIEW = true
+//
+//        navigationController?.pushViewController(page, animated: true)
+//    }
+//
+//    func zoomingBackgroundView(for _: ZoomTransitioningDelegate) -> UIView? {
+//        return nil
+//    }
+//
+//    func zoomingImageView(for _: ZoomTransitioningDelegate) -> UIImageView? {
+//        guard let indexPath = selectedIndexPath, let cell = collectionView.cellForItem(at: indexPath) as? ImageCell else {
+//            return nil
+//        }
+//
+//        return cell.imageView
+//    }
+//}
 
 extension UICollectionView {
     var widestCellWidth: CGFloat {
