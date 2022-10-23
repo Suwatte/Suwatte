@@ -99,4 +99,5 @@ enum STTKeys {
 
     static var SelectiveUpdates = "APP.selective_updates"
     static var JSCommonsVersion = "APP.js_common_version"
+    static var AppAccentColor = "APP.accent_color"
 }

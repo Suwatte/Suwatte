@@ -5,7 +5,6 @@
 //  Created by Mantton on 2022-02-28.
 //
 
-import AlertToast
 import SwiftUI
 
 struct ContentView: View {

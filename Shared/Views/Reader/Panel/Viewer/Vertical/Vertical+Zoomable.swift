@@ -6,10 +6,11 @@
 //
 
 import UIKit
-
+import AsyncDisplayKit
 @objc
 protocol ZoomingViewController {
-    func zoomingImageView(for transition: ZoomTransitioningDelegate) -> UIImageView?
+    func zoomingImageView(for transition: ZoomTransitioningDelegate) -> UIView?
+    func zoomingImage(for transition: ZoomTransitioningDelegate) -> UIImage?
     func zoomingBackgroundView(for transition: ZoomTransitioningDelegate) -> UIView?
 }
 
@@ -61,13 +62,15 @@ extension ZoomTransitioningDelegate: UIViewControllerAnimatedTransitioning {
         let maybeBackgroundImageView = (backgroundViewController as? ZoomingViewController)?.zoomingImageView(for: self)
         let maybeForegroundImageView = (foregroundViewController as? ZoomingViewController)?.zoomingImageView(for: self)
 
+        let image = (backgroundViewController as? ZoomingViewController)?.zoomingImage(for: self)
         assert(maybeBackgroundImageView != nil, "Cannot find imageView in backgroundVC")
         assert(maybeForegroundImageView != nil, "Cannot find imageView in foregroundVC")
+        assert(image != nil, "Image Not Found in backgroundVC")
 
         let backgroundImageView = maybeBackgroundImageView!
         let foregroundImageView = maybeForegroundImageView!
 
-        let imageViewSnapshot = UIImageView(image: backgroundImageView.image)
+        let imageViewSnapshot = UIImageView(image: image!)
 
         backgroundImageView.isHidden = true
         foregroundImageView.isHidden = true
@@ -135,14 +138,15 @@ class VerticalZoomableView: UIViewController, VerticalImageScrollDelegate {
 
     func didEndZooming(_ scale: CGFloat, _ points: (inWindow: CGPoint?, inView: CGPoint?)? = nil, _ view: UIView?) {
         if scale > imageScrollView.minimumZoomScale { return }
-        if let pointInView = points?.inView, let path = hostDelegate?.selectedIndexPath, let cellFrame = hostDelegate?.collectionView.layoutAttributesForItem(at: path)?.frame, let targetView = view {
+
+        if let pointInView = points?.inView, let path = hostDelegate?.selectedIndexPath, let cellFrame = hostDelegate?.collectionNode.collectionViewLayout.layoutAttributesForItem(at: path)?.frame, let targetView = view {
             let shouldCenter = targetView.frame.height < UIScreen.main.bounds.height
             if shouldCenter {
-                hostDelegate?.collectionView.scrollToItem(at: path, at: .centeredVertically, animated: false)
+                hostDelegate?.collectionNode.scrollToItem(at: path, at: .centeredVertically, animated: false)
             } else {
                 let convertedPoint = pointInView.convert(from: targetView.bounds, to: targetView.frame)
-                let offset = convertedPoint.y + cellFrame.minY - (hostDelegate?.collectionView.frame.midY ?? 0)
-                hostDelegate?.collectionView.contentOffset.y = offset
+                let offset = convertedPoint.y + cellFrame.minY - (hostDelegate?.collectionNode.frame.midY ?? 0)
+                hostDelegate?.collectionNode.contentOffset.y = offset
             }
         }
         navigationController?.popViewController(animated: true)
@@ -167,12 +171,16 @@ class VerticalZoomableView: UIViewController, VerticalImageScrollDelegate {
 }
 
 extension VerticalZoomableView: ZoomingViewController {
-    func zoomingBackgroundView(for _: ZoomTransitioningDelegate) -> UIView? {
-        return nil
+    func zoomingImage(for transition: ZoomTransitioningDelegate) -> UIImage? {
+        image
     }
-
-    func zoomingImageView(for _: ZoomTransitioningDelegate) -> UIImageView? {
-        return imageScrollView.zoomView
+    
+    func zoomingImageView(for transition: ZoomTransitioningDelegate) -> UIView? {
+        imageScrollView.zoomView
+    }
+    
+    func zoomingBackgroundView(for _: ZoomTransitioningDelegate) -> UIView? {
+        nil
     }
 }
 

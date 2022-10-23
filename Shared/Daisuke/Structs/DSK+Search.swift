@@ -29,6 +29,6 @@ extension DaisukeEngine.Structs {
         var results: [Highlight]
         var page: Int
         var isLastPage: Bool
-        var totalResultCount: Int
+        var totalResultCount: Int?
     }
 }

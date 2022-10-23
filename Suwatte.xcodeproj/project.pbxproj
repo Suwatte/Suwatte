@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C3423ED4E5A2EFB664586F1B /* Pods_Suwatte__iOS_.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C120369C705B6397F32D3640 /* Pods_Suwatte__iOS_.framework */; };
 		DF03F72928454E7A00602E59 /* Novel+Paged+Representable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF03F72828454E7A00602E59 /* Novel+Paged+Representable.swift */; };
 		DF03F72B28454E9800602E59 /* Novel+Paged+Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF03F72A28454E9800602E59 /* Novel+Paged+Controller.swift */; };
 		DF03F72D28454FD600602E59 /* Novel+Paged+ContentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF03F72C28454FD600602E59 /* Novel+Paged+ContentCell.swift */; };
@@ -111,7 +112,6 @@
 		DF6C25CD282DC110002BE1AA /* STT+Conditional.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6C25CC282DC110002BE1AA /* STT+Conditional.swift */; };
 		DF72E48F281269A900E40E52 /* SauceNao.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF72E48E281269A900E40E52 /* SauceNao.swift */; };
 		DF72E492281322A000E40E52 /* ImageSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF72E491281322A000E40E52 /* ImageSearchView.swift */; };
-		DF79D266280F42780052470D /* Vertical+ImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF79D265280F42780052470D /* Vertical+ImageCell.swift */; };
 		DF79D268281092870052470D /* Shimmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF79D267281092870052470D /* Shimmer.swift */; };
 		DF79D26A2810AA0D0052470D /* Paged+Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF79D2692810AA0D0052470D /* Paged+Controller.swift */; };
 		DF79D26C2810AE960052470D /* RPV+Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF79D26B2810AE960052470D /* RPV+Protocols.swift */; };
@@ -257,6 +257,7 @@
 		DF9BD6552891E6B2006628D0 /* DSK+CS+Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BD6542891E6B2006628D0 /* DSK+CS+Search.swift */; };
 		DF9BD6582892413E006628D0 /* DSK+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BD6572892413E006628D0 /* DSK+URL.swift */; };
 		DF9BD65A28924559006628D0 /* DSK+LibraryUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BD65928924559006628D0 /* DSK+LibraryUpdate.swift */; };
+		DFA6264C28ED1EA500914B1C /* Vertical+ASController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA6264B28ED1EA500914B1C /* Vertical+ASController.swift */; };
 		DFAC77942814D1BA00AF6394 /* AnilistView+DirectoryView+FilterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAC77932814D1BA00AF6394 /* AnilistView+DirectoryView+FilterSheet.swift */; };
 		DFAC77962815B3DA00AF6394 /* AL+Genre.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAC77952815B3DA00AF6394 /* AL+Genre.swift */; };
 		DFAC77982815D48D00AF6394 /* STTHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAC77972815D48D00AF6394 /* STTHelper.swift */; };
@@ -287,16 +288,27 @@
 		DFC9B0F7280A67A400C675EF /* Vertical+Zoomable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC9B0F6280A67A400C675EF /* Vertical+Zoomable.swift */; };
 		DFCE6EB6280148E4002E220C /* ReaderView+ChapterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFCE6EB5280148E4002E220C /* ReaderView+ChapterSheet.swift */; };
 		DFCE6EB828014F8D002E220C /* ReaderCustomOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFCE6EB728014F8D002E220C /* ReaderCustomOverlay.swift */; };
+		DFD1F9AD28F7AF3D000766C1 /* Vertical+Scroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD1F9AC28F7AF3D000766C1 /* Vertical+Scroll.swift */; };
+		DFD1F9AF28F7AF4E000766C1 /* Vertical+Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD1F9AE28F7AF4E000766C1 /* Vertical+Navigation.swift */; };
+		DFD1F9B128F7B037000766C1 /* Vertical+Zoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD1F9B028F7B036000766C1 /* Vertical+Zoom.swift */; };
+		DFD1F9B328F7B065000766C1 /* Vertical+ContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD1F9B228F7B065000766C1 /* Vertical+ContextMenu.swift */; };
+		DFD1F9B528F7B076000766C1 /* Vertical+Prefetching.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD1F9B428F7B076000766C1 /* Vertical+Prefetching.swift */; };
+		DFD1F9B728F7B097000766C1 /* Vertical+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD1F9B628F7B097000766C1 /* Vertical+Combine.swift */; };
+		DFD1F9BA28F7B0C2000766C1 /* Vertical+ImageNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD1F9B928F7B0C2000766C1 /* Vertical+ImageNode.swift */; };
+		DFD1F9BC28F7B0D0000766C1 /* Vertical+TransitionNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD1F9BB28F7B0D0000766C1 /* Vertical+TransitionNode.swift */; };
+		DFD1F9BE28F7B191000766C1 /* Vertical+ProgressNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD1F9BD28F7B191000766C1 /* Vertical+ProgressNode.swift */; };
 		DFF1043E28A9963D00E2C3A4 /* AnyCodable in Frameworks */ = {isa = PBXBuildFile; productRef = DFF1043D28A9963D00E2C3A4 /* AnyCodable */; };
 		DFF1044028A9A6B800E2C3A4 /* DSK+Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF1043F28A9A6B800E2C3A4 /* DSK+Networking.swift */; };
 		DFF1044228A9A89700E2C3A4 /* STT+JSValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF1044128A9A89700E2C3A4 /* STT+JSValue.swift */; };
 		DFF1044528A9C72600E2C3A4 /* DSK+Console.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF1044428A9C72600E2C3A4 /* DSK+Console.swift */; };
 		DFF363262863E4AF006D02C5 /* MigrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF363252863E4AF006D02C5 /* MigrationView.swift */; };
 		DFFC1EBE280636130069AA0E /* Vertical+Representable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFC1EBD280636120069AA0E /* Vertical+Representable.swift */; };
-		DFFC1EC0280695550069AA0E /* Vertical+Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFC1EBF280695550069AA0E /* Vertical+Controller.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4B9078FD307212D843E59BA5 /* Pods-Suwatte (iOS).debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Suwatte (iOS).debug.xcconfig"; path = "Target Support Files/Pods-Suwatte (iOS)/Pods-Suwatte (iOS).debug.xcconfig"; sourceTree = "<group>"; };
+		C120369C705B6397F32D3640 /* Pods_Suwatte__iOS_.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Suwatte__iOS_.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2C64E4EA8CA62D2029277CC /* Pods-Suwatte (iOS).release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Suwatte (iOS).release.xcconfig"; path = "Target Support Files/Pods-Suwatte (iOS)/Pods-Suwatte (iOS).release.xcconfig"; sourceTree = "<group>"; };
 		DF03F72828454E7A00602E59 /* Novel+Paged+Representable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Novel+Paged+Representable.swift"; sourceTree = "<group>"; };
 		DF03F72A28454E9800602E59 /* Novel+Paged+Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Novel+Paged+Controller.swift"; sourceTree = "<group>"; };
 		DF03F72C28454FD600602E59 /* Novel+Paged+ContentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Novel+Paged+ContentCell.swift"; sourceTree = "<group>"; };
@@ -391,7 +403,6 @@
 		DF6C25CC282DC110002BE1AA /* STT+Conditional.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+Conditional.swift"; sourceTree = "<group>"; };
 		DF72E48E281269A900E40E52 /* SauceNao.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SauceNao.swift; sourceTree = "<group>"; };
 		DF72E491281322A000E40E52 /* ImageSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSearchView.swift; sourceTree = "<group>"; };
-		DF79D265280F42780052470D /* Vertical+ImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+ImageCell.swift"; sourceTree = "<group>"; };
 		DF79D267281092870052470D /* Shimmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shimmer.swift; sourceTree = "<group>"; };
 		DF79D2692810AA0D0052470D /* Paged+Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Paged+Controller.swift"; sourceTree = "<group>"; };
 		DF79D26B2810AE960052470D /* RPV+Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RPV+Protocols.swift"; sourceTree = "<group>"; };
@@ -538,6 +549,7 @@
 		DF9BD6542891E6B2006628D0 /* DSK+CS+Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+CS+Search.swift"; sourceTree = "<group>"; };
 		DF9BD6572892413E006628D0 /* DSK+URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+URL.swift"; sourceTree = "<group>"; };
 		DF9BD65928924559006628D0 /* DSK+LibraryUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+LibraryUpdate.swift"; sourceTree = "<group>"; };
+		DFA6264B28ED1EA500914B1C /* Vertical+ASController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+ASController.swift"; sourceTree = "<group>"; };
 		DFAC77932814D1BA00AF6394 /* AnilistView+DirectoryView+FilterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnilistView+DirectoryView+FilterSheet.swift"; sourceTree = "<group>"; };
 		DFAC77952815B3DA00AF6394 /* AL+Genre.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AL+Genre.swift"; sourceTree = "<group>"; };
 		DFAC77972815D48D00AF6394 /* STTHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STTHelper.swift; sourceTree = "<group>"; };
@@ -564,12 +576,20 @@
 		DFCE6EAF280108EA002E220C /* Suwatte.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Suwatte.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DFCE6EB5280148E4002E220C /* ReaderView+ChapterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReaderView+ChapterSheet.swift"; sourceTree = "<group>"; };
 		DFCE6EB728014F8D002E220C /* ReaderCustomOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderCustomOverlay.swift; sourceTree = "<group>"; };
+		DFD1F9AC28F7AF3D000766C1 /* Vertical+Scroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+Scroll.swift"; sourceTree = "<group>"; };
+		DFD1F9AE28F7AF4E000766C1 /* Vertical+Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+Navigation.swift"; sourceTree = "<group>"; };
+		DFD1F9B028F7B036000766C1 /* Vertical+Zoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+Zoom.swift"; sourceTree = "<group>"; };
+		DFD1F9B228F7B065000766C1 /* Vertical+ContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+ContextMenu.swift"; sourceTree = "<group>"; };
+		DFD1F9B428F7B076000766C1 /* Vertical+Prefetching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+Prefetching.swift"; sourceTree = "<group>"; };
+		DFD1F9B628F7B097000766C1 /* Vertical+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+Combine.swift"; sourceTree = "<group>"; };
+		DFD1F9B928F7B0C2000766C1 /* Vertical+ImageNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+ImageNode.swift"; sourceTree = "<group>"; };
+		DFD1F9BB28F7B0D0000766C1 /* Vertical+TransitionNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+TransitionNode.swift"; sourceTree = "<group>"; };
+		DFD1F9BD28F7B191000766C1 /* Vertical+ProgressNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+ProgressNode.swift"; sourceTree = "<group>"; };
 		DFF1043F28A9A6B800E2C3A4 /* DSK+Networking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Networking.swift"; sourceTree = "<group>"; };
 		DFF1044128A9A89700E2C3A4 /* STT+JSValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+JSValue.swift"; sourceTree = "<group>"; };
 		DFF1044428A9C72600E2C3A4 /* DSK+Console.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Console.swift"; sourceTree = "<group>"; };
 		DFF363252863E4AF006D02C5 /* MigrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationView.swift; sourceTree = "<group>"; };
 		DFFC1EBD280636120069AA0E /* Vertical+Representable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+Representable.swift"; sourceTree = "<group>"; };
-		DFFC1EBF280695550069AA0E /* Vertical+Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+Controller.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -593,12 +613,30 @@
 				DF0D96062824892C00E592D9 /* Realm in Frameworks */,
 				DFF1043E28A9963D00E2C3A4 /* AnyCodable in Frameworks */,
 				DF59C97D285004860027F19D /* ZIPFoundation in Frameworks */,
+				C3423ED4E5A2EFB664586F1B /* Pods_Suwatte__iOS_.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		507945510A6FB586593003D5 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4B9078FD307212D843E59BA5 /* Pods-Suwatte (iOS).debug.xcconfig */,
+				D2C64E4EA8CA62D2029277CC /* Pods-Suwatte (iOS).release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		7660DF769E63B9C1CCADAEB4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C120369C705B6397F32D3640 /* Pods_Suwatte__iOS_.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		DF03F72628454E4B00602E59 /* Viewers */ = {
 			isa = PBXGroup;
 			children = (
@@ -756,6 +794,8 @@
 				DF83DD3F282321690021575B /* Packages */,
 				DF8D09DF2800EE47003E4C3E /* Shared */,
 				DFCE6EAF280108EA002E220C /* Suwatte.app */,
+				507945510A6FB586593003D5 /* Pods */,
+				7660DF769E63B9C1CCADAEB4 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1744,6 +1784,31 @@
 			path = Chapters;
 			sourceTree = "<group>";
 		};
+		DFD1F9AB28F7AF28000766C1 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				DFD1F9B828F7B0B6000766C1 /* Cells */,
+				DFA6264B28ED1EA500914B1C /* Vertical+ASController.swift */,
+				DFD1F9AC28F7AF3D000766C1 /* Vertical+Scroll.swift */,
+				DFD1F9AE28F7AF4E000766C1 /* Vertical+Navigation.swift */,
+				DFD1F9B028F7B036000766C1 /* Vertical+Zoom.swift */,
+				DFD1F9B228F7B065000766C1 /* Vertical+ContextMenu.swift */,
+				DFD1F9B428F7B076000766C1 /* Vertical+Prefetching.swift */,
+				DFD1F9B628F7B097000766C1 /* Vertical+Combine.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		DFD1F9B828F7B0B6000766C1 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				DFD1F9B928F7B0C2000766C1 /* Vertical+ImageNode.swift */,
+				DFD1F9BB28F7B0D0000766C1 /* Vertical+TransitionNode.swift */,
+				DFD1F9BD28F7B191000766C1 /* Vertical+ProgressNode.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
 		DFF1044328A9C71900E2C3A4 /* Console */ = {
 			isa = PBXGroup;
 			children = (
@@ -1765,10 +1830,9 @@
 		DFFC1EBA280635D60069AA0E /* Vertical */ = {
 			isa = PBXGroup;
 			children = (
+				DFD1F9AB28F7AF28000766C1 /* Controller */,
 				DF8D0A3C2800EE47003E4C3E /* Zoomable */,
 				DFFC1EBD280636120069AA0E /* Vertical+Representable.swift */,
-				DFFC1EBF280695550069AA0E /* Vertical+Controller.swift */,
-				DF79D265280F42780052470D /* Vertical+ImageCell.swift */,
 				DFC9B0F6280A67A400C675EF /* Vertical+Zoomable.swift */,
 			);
 			path = Vertical;
@@ -1781,9 +1845,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DF2DA71D27CD82450046FE20 /* Build configuration list for PBXNativeTarget "Suwatte (iOS)" */;
 			buildPhases = (
+				A8FB08FBBCE6A29258707CA7 /* [CP] Check Pods Manifest.lock */,
 				DF2DA70827CD82450046FE20 /* Sources */,
 				DF2DA70927CD82450046FE20 /* Frameworks */,
 				DF2DA70A27CD82450046FE20 /* Resources */,
+				A57CBAA4DB04228A2BAA6D10 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1873,12 +1939,55 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		A57CBAA4DB04228A2BAA6D10 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Suwatte (iOS)/Pods-Suwatte (iOS)-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Suwatte (iOS)/Pods-Suwatte (iOS)-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Suwatte (iOS)/Pods-Suwatte (iOS)-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A8FB08FBBCE6A29258707CA7 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Suwatte (iOS)-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		DF2DA70827CD82450046FE20 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				DF8D0B7A2800EE48003E4C3E /* LibraryGrid+ViewModel.swift in Sources */,
+				DFD1F9BA28F7B0C2000766C1 /* Vertical+ImageNode.swift in Sources */,
 				DF8D0B992800EE48003E4C3E /* ProfileView+AdditionalInfo.swift in Sources */,
 				DF8D0BB32800EE48003E4C3E /* DefaultHighlightTile.swift in Sources */,
 				DF59C98B285054C20027F19D /* LCM+Zip.swift in Sources */,
@@ -1902,6 +2011,7 @@
 				DF8D0B3B2800EE47003E4C3E /* Constants.swift in Sources */,
 				DF8D0B892800EE48003E4C3E /* ExploreView.swift in Sources */,
 				DF03F7352846F75F00602E59 /* Novel+MenuOverlay.swift in Sources */,
+				DFD1F9B128F7B037000766C1 /* Vertical+Zoom.swift in Sources */,
 				DF32646528029BA80066EB08 /* Data+CustomThumbnail.swift in Sources */,
 				DF8D0B402800EE47003E4C3E /* DataManager.swift in Sources */,
 				DF9BD6532891E602006628D0 /* DSK+CS+Explore.swift in Sources */,
@@ -1945,10 +2055,11 @@
 				DFAEE12E28B8587A00B11484 /* ArchivedImageDataLoader.swift in Sources */,
 				DFF363262863E4AF006D02C5 /* MigrationView.swift in Sources */,
 				DF79D273281100EB0052470D /* ReaderNavigationOverlay.swift in Sources */,
+				DFD1F9BC28F7B0D0000766C1 /* Vertical+TransitionNode.swift in Sources */,
 				DF8D0B382800EE47003E4C3E /* STT+Array.swift in Sources */,
 				DF8D0BAF2800EE48003E4C3E /* BadgeModifier.swift in Sources */,
 				DF59C98D2850558C0027F19D /* LCM+Rar.swift in Sources */,
-				DFFC1EC0280695550069AA0E /* Vertical+Controller.swift in Sources */,
+				DFD1F9AF28F7AF4E000766C1 /* Vertical+Navigation.swift in Sources */,
 				DF326461280256760066EB08 /* ProfileView+RelatedContent.swift in Sources */,
 				DF68249A28A58A2D00AB30A1 /* DSK+CS+Trackers.swift in Sources */,
 				DFC39E9528A093D700450EC4 /* RunnerListsView.swift in Sources */,
@@ -1971,6 +2082,8 @@
 				DF8D0B212800EE47003E4C3E /* STTNotifier.swift in Sources */,
 				DFF1044028A9A6B800E2C3A4 /* DSK+Networking.swift in Sources */,
 				DF515FF928E2A8DC002B6D60 /* DSK+CS+Action.swift in Sources */,
+				DFA6264C28ED1EA500914B1C /* Vertical+ASController.swift in Sources */,
+				DFD1F9BE28F7B191000766C1 /* Vertical+ProgressNode.swift in Sources */,
 				DF8D0B662800EE47003E4C3E /* ReaderNavigation.swift in Sources */,
 				DF6824A328A5ECEB00AB30A1 /* DSK+CS+Authentication.swift in Sources */,
 				DF8D0B632800EE47003E4C3E /* VerticalImage+Zoomable.swift in Sources */,
@@ -1983,6 +2096,7 @@
 				DFAC77962815B3DA00AF6394 /* AL+Genre.swift in Sources */,
 				DF6C25CD282DC110002BE1AA /* STT+Conditional.swift in Sources */,
 				DF8D0B2B2800EE47003E4C3E /* Loadable.swift in Sources */,
+				DFD1F9B328F7B065000766C1 /* Vertical+ContextMenu.swift in Sources */,
 				DF8D0B2F2800EE47003E4C3E /* STT+ContentStatus.swift in Sources */,
 				DF8D0BB62800EE48003E4C3E /* ProgressCircleView.swift in Sources */,
 				DF8D0B722800EE48003E4C3E /* ReadLaterView.swift in Sources */,
@@ -2012,6 +2126,7 @@
 				DF6B5764288F7031007C6B78 /* DSK+ContentSource.swift in Sources */,
 				DF30193928BFCBD00024AA8B /* ZoomingScrollView.swift in Sources */,
 				DF8D0B4B2800EE47003E4C3E /* Data+LibraryEntry.swift in Sources */,
+				DFD1F9AD28F7AF3D000766C1 /* Vertical+Scroll.swift in Sources */,
 				DF8D0B9C2800EE48003E4C3E /* ProfileView+Skeleton.swift in Sources */,
 				DF8D0B712800EE48003E4C3E /* ManageCollectionsView.swift in Sources */,
 				DF8D0B9E2800EE48003E4C3E /* FullChapterList+OptionsSheet.swift in Sources */,
@@ -2020,6 +2135,7 @@
 				DF8D0B4F2800EE47003E4C3E /* Data+Bookmark.swift in Sources */,
 				DF248F1F28138CD800818300 /* AL+Request.swift in Sources */,
 				DF248F2B2813B24F00818300 /* BarChartView.swift in Sources */,
+				DFD1F9B728F7B097000766C1 /* Vertical+Combine.swift in Sources */,
 				DF9BD6552891E6B2006628D0 /* DSK+CS+Search.swift in Sources */,
 				DFC9B0F7280A67A400C675EF /* Vertical+Zoomable.swift in Sources */,
 				DF8D0B5F2800EE47003E4C3E /* Reader+TransitionView.swift in Sources */,
@@ -2099,7 +2215,6 @@
 				DF8D0B2C2800EE47003E4C3E /* STTPhotoAlbum.swift in Sources */,
 				DF8D0B9D2800EE48003E4C3E /* ProfileView+Loadable.swift in Sources */,
 				DF248F292813941100818300 /* Anilist+GatewayView.swift in Sources */,
-				DF79D266280F42780052470D /* Vertical+ImageCell.swift in Sources */,
 				DF8D0BAE2800EE48003E4C3E /* InteractableContent.swift in Sources */,
 				DF8D0B222800EE47003E4C3E /* STTScheduler.swift in Sources */,
 				DF6A8971288B71E30045529D /* History+External.swift in Sources */,
@@ -2140,6 +2255,7 @@
 				DF8D0B9B2800EE48003E4C3E /* ProfileView+InfoSection.swift in Sources */,
 				DF8D0B922800EE48003E4C3E /* SearchView.swift in Sources */,
 				DF9BD64A2891D837006628D0 /* DSK+Chapter.swift in Sources */,
+				DFD1F9B528F7B076000766C1 /* Vertical+Prefetching.swift in Sources */,
 				DF67EB9128E4CB6500076FF5 /* ToastManager.swift in Sources */,
 				DF8D0B962800EE48003E4C3E /* ProfileView+Covers.swift in Sources */,
 				DF1FD5C8284B49EA00A67F0E /* DoublePaged+ReaderPageView.swift in Sources */,
@@ -2267,9 +2383,11 @@
 		};
 		DF2DA71E27CD82450046FE20 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4B9078FD307212D843E59BA5 /* Pods-Suwatte (iOS).debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -2280,8 +2398,8 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Suwatte;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = NO;
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "Verify Ownership";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This is needed to save images to your library.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Verify Biometrics to Protect Library";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This is required to save images to your device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -2309,9 +2427,11 @@
 		};
 		DF2DA71F27CD82450046FE20 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D2C64E4EA8CA62D2029277CC /* Pods-Suwatte (iOS).release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -2322,8 +2442,8 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Suwatte;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = NO;
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "Verify Ownership";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This is needed to save images to your library.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Verify Biometrics to Protect Library";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This is required to save images to your device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

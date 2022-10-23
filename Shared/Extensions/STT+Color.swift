@@ -140,3 +140,8 @@ extension UIColor {
         return UIColor(red: redValue, green: greenValue, blue: blueValue, alpha: alphaValue)
     }
 }
+
+
+extension Color {
+    static let sttDefault: Color = .init(hex: "#6A5ACD")
+}

@@ -53,12 +53,17 @@ extension ReaderView {
                 if let error = model.error {
                     ErrorView(error: error, action: model.action!)
                 } else {
-                    Circle()
-                        .trim(from: 0, to: model.progress)
-                        .stroke(color, style: .init(lineWidth: width, lineCap: .round))
-                        .rotationEffect(.degrees(-90))
-                        .background(Circle().stroke(color.opacity(0.2), style: .init(lineWidth: width, lineCap: .round)))
-                        .frame(width: 40, height: 40, alignment: .center)
+                    if model.progress == 0 {
+                        ProgressView()
+                    } else {
+                        Circle()
+                            .trim(from: 0, to: model.progress)
+                            .stroke(color, style: .init(lineWidth: width, lineCap: .round))
+                            .rotationEffect(.degrees(-90))
+                            .background(Circle().stroke(color.opacity(0.2), style: .init(lineWidth: width, lineCap: .round)))
+                            .frame(width: 40, height: 40, alignment: .center)
+                    }
+                    
                 }
             }
         }

@@ -11,6 +11,7 @@ import SwiftUI
 struct SuwatteApp: App {
     @UIApplicationDelegateAdaptor(STTAppDelegate.self) var AppDelegate
     @StateObject var navModel = NavigationModel.shared
+    @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
     var body: some Scene {
         WindowGroup {
             ContentView()
@@ -25,7 +26,10 @@ struct SuwatteApp: App {
                     }
                 }
                 .environmentObject(navModel)
+                .accentColor(accentColor)
+                .tint(accentColor)
         }
+        
     }
 }
 

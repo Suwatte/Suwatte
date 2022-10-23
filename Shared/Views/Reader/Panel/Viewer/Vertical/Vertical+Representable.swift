@@ -13,8 +13,7 @@ struct VerticalViewer: UIViewControllerRepresentable {
     @EnvironmentObject var model: ReaderView.ViewModel
 
     func makeUIViewController(context _: Context) -> some UIViewController {
-        let controller = VerticalController(collectionViewLayout: UICollectionViewFlowLayout())
-        controller.model = model
+        let controller = AsyncController(model: model)
         return UINavigationController(rootViewController: controller)
     }
 
