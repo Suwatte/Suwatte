@@ -112,7 +112,6 @@
 		DF6C25CD282DC110002BE1AA /* STT+Conditional.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6C25CC282DC110002BE1AA /* STT+Conditional.swift */; };
 		DF72E48F281269A900E40E52 /* SauceNao.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF72E48E281269A900E40E52 /* SauceNao.swift */; };
 		DF72E492281322A000E40E52 /* ImageSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF72E491281322A000E40E52 /* ImageSearchView.swift */; };
-		DF79D266280F42780052470D /* Vertical+ImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF79D265280F42780052470D /* Vertical+ImageCell.swift */; };
 		DF79D268281092870052470D /* Shimmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF79D267281092870052470D /* Shimmer.swift */; };
 		DF79D26A2810AA0D0052470D /* Paged+Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF79D2692810AA0D0052470D /* Paged+Controller.swift */; };
 		DF79D26C2810AE960052470D /* RPV+Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF79D26B2810AE960052470D /* RPV+Protocols.swift */; };
@@ -304,7 +303,6 @@
 		DFF1044528A9C72600E2C3A4 /* DSK+Console.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF1044428A9C72600E2C3A4 /* DSK+Console.swift */; };
 		DFF363262863E4AF006D02C5 /* MigrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF363252863E4AF006D02C5 /* MigrationView.swift */; };
 		DFFC1EBE280636130069AA0E /* Vertical+Representable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFC1EBD280636120069AA0E /* Vertical+Representable.swift */; };
-		DFFC1EC0280695550069AA0E /* Vertical+Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFC1EBF280695550069AA0E /* Vertical+Controller.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -405,7 +403,6 @@
 		DF6C25CC282DC110002BE1AA /* STT+Conditional.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+Conditional.swift"; sourceTree = "<group>"; };
 		DF72E48E281269A900E40E52 /* SauceNao.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SauceNao.swift; sourceTree = "<group>"; };
 		DF72E491281322A000E40E52 /* ImageSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSearchView.swift; sourceTree = "<group>"; };
-		DF79D265280F42780052470D /* Vertical+ImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+ImageCell.swift"; sourceTree = "<group>"; };
 		DF79D267281092870052470D /* Shimmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shimmer.swift; sourceTree = "<group>"; };
 		DF79D2692810AA0D0052470D /* Paged+Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Paged+Controller.swift"; sourceTree = "<group>"; };
 		DF79D26B2810AE960052470D /* RPV+Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RPV+Protocols.swift"; sourceTree = "<group>"; };
@@ -593,7 +590,6 @@
 		DFF1044428A9C72600E2C3A4 /* DSK+Console.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Console.swift"; sourceTree = "<group>"; };
 		DFF363252863E4AF006D02C5 /* MigrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationView.swift; sourceTree = "<group>"; };
 		DFFC1EBD280636120069AA0E /* Vertical+Representable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+Representable.swift"; sourceTree = "<group>"; };
-		DFFC1EBF280695550069AA0E /* Vertical+Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+Controller.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1837,8 +1833,6 @@
 				DFD1F9AB28F7AF28000766C1 /* Controller */,
 				DF8D0A3C2800EE47003E4C3E /* Zoomable */,
 				DFFC1EBD280636120069AA0E /* Vertical+Representable.swift */,
-				DFFC1EBF280695550069AA0E /* Vertical+Controller.swift */,
-				DF79D265280F42780052470D /* Vertical+ImageCell.swift */,
 				DFC9B0F6280A67A400C675EF /* Vertical+Zoomable.swift */,
 			);
 			path = Vertical;
@@ -2065,7 +2059,6 @@
 				DF8D0B382800EE47003E4C3E /* STT+Array.swift in Sources */,
 				DF8D0BAF2800EE48003E4C3E /* BadgeModifier.swift in Sources */,
 				DF59C98D2850558C0027F19D /* LCM+Rar.swift in Sources */,
-				DFFC1EC0280695550069AA0E /* Vertical+Controller.swift in Sources */,
 				DFD1F9AF28F7AF4E000766C1 /* Vertical+Navigation.swift in Sources */,
 				DF326461280256760066EB08 /* ProfileView+RelatedContent.swift in Sources */,
 				DF68249A28A58A2D00AB30A1 /* DSK+CS+Trackers.swift in Sources */,
@@ -2222,7 +2215,6 @@
 				DF8D0B2C2800EE47003E4C3E /* STTPhotoAlbum.swift in Sources */,
 				DF8D0B9D2800EE48003E4C3E /* ProfileView+Loadable.swift in Sources */,
 				DF248F292813941100818300 /* Anilist+GatewayView.swift in Sources */,
-				DF79D266280F42780052470D /* Vertical+ImageCell.swift in Sources */,
 				DF8D0BAE2800EE48003E4C3E /* InteractableContent.swift in Sources */,
 				DF8D0B222800EE47003E4C3E /* STTScheduler.swift in Sources */,
 				DF6A8971288B71E30045529D /* History+External.swift in Sources */,
@@ -2395,6 +2387,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -2405,8 +2398,8 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Suwatte;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = NO;
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "Verify Ownership";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This is needed to save images to your library.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Verify Biometrics to Protect Library";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This is required to save images to your device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -2438,6 +2431,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -2448,8 +2442,8 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Suwatte;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = NO;
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "Verify Ownership";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This is needed to save images to your library.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Verify Biometrics to Protect Library";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This is required to save images to your device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Flight-School/AnyCodable",
       "state" : {
-        "revision" : "56901f2af3625b38924d488b612e95fe8846ee9b",
-        "version" : "0.6.6"
+        "revision" : "862808b2070cd908cb04f9aafe7de83d35f81b05",
+        "version" : "0.6.7"
       }
     },
     {
@@ -105,7 +105,7 @@
       "location" : "https://github.com/kean/Nuke",
       "state" : {
         "branch" : "master",
-        "revision" : "0d8a0dc3cca7432a6772ec546a7e5e1b20103bda"
+        "revision" : "792ad1f4452a026af9f747658e86c28ae33fb9bd"
       }
     },
     {
@@ -132,7 +132,7 @@
       "location" : "https://github.com/realm/realm-swift.git",
       "state" : {
         "branch" : "master",
-        "revision" : "43e48fca1d3028ca97755bbdc5a766032d5f277c"
+        "revision" : "a3bfcd60c5179d9a46e5658555deab1dee0a341b"
       }
     },
     {
