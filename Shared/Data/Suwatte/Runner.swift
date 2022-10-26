@@ -135,9 +135,9 @@ extension DataManager {
     
     func getHostedRunners() -> Results<StoredRunnerObject> {
         let realm = try! Realm()
-        
         return realm
             .objects(StoredRunnerObject.self)
-            .where({ $0.hosted == true })
+            .where({ $0.hosted == true && $0.listURL != nil })
+
     }
 }

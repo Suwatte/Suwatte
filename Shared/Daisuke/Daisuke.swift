@@ -32,9 +32,7 @@ final class DaisukeEngine: ObservableObject {
     }
 
     // MARK: Runners
-
-    @Published var runners: [String: DaisukeRunnerProtocol] = [:]
-    @Published var hostedRunners: [HostedContentSource] = []
+    @Published var sources: [String: DaisukeContentSource] = [:]
 
     init() {
         // Start Virtual Machine
@@ -95,15 +93,19 @@ extension DaisukeEngine {
         for url in urls {
             do {
                 let runner = try startRunner(at: url)
-                try addRunner(runner: runner)
-                Logger.shared.log("\(STT_EV) Started \(runner.info.name)")
+                try addSource(runner: runner)
+                Logger.shared.log("\(STT_EV) Started \(runner.name)")
             } catch {
                 ToastManager.shared.error(error)
             }
         }
     }
+    
+    private func startHostedRunners() {
+        
+    }
 
-    private func startRunner(at path: URL) throws -> DaisukeRunnerProtocol {
+    private func startRunner(at path: URL) throws -> DaisukeContentSource {
         let context = newJSContext()
         let content = try String(contentsOfFile: path.relativePath, encoding: String.Encoding.utf8)
 
@@ -113,40 +115,31 @@ extension DaisukeEngine {
         _ = context.evaluateScript("const DAISUKE_RUNNER = new STTPackage.Target();")
         let runnerClass = context.daisukeRunner()
 
-        guard let runnerClass = runnerClass, runnerClass.isObject,
-              let type = RunnerType(rawValue: Int(runnerClass.forProperty("type").toInt32()))
-        else {
+        guard let runnerClass = runnerClass, runnerClass.isObject else {
             throw Errors.RunnerClassInitFailed
         }
+        
 
-        // Start & Return Runner
-        switch type {
-        case .CONTENT_SOURCE:
-            let source = try LocalContentSource(runnerClass: runnerClass)
-            if let url = DataManager.shared.getRunnerInfomation(id: source.id)?.listURL {
-                let val = url + "/assets"
-                _ = context.evaluateScript("ASSETS_DIRECTORY = '\(val)';")
-            }
-            return source
-
-        case .SERVICE: break
+        let source = try LocalContentSource(runnerClass: runnerClass)
+        if let url = DataManager.shared.getRunnerInfomation(id: source.id)?.listURL {
+            let val = url + "/assets"
+            _ = context.evaluateScript("ASSETS_DIRECTORY = '\(val)';")
         }
-
-        throw Errors.MethodNotImplemented
+        return source
     }
 
-    private func validateRunnerVersion(runner: DaisukeRunnerProtocol) throws {
+    private func validateRunnerVersion(runner: DaisukeContentSource) throws {
         // Validate that the incoming runner has a higher version
-        let current = runners[runner.info.id]
+        let current = sources[runner.id]
 
-        if let current = current, current.info.version > runner.info.version {
+        if let current = current, current.version > runner.version {
             throw Errors.NamedError(name: "DAISUKE", message: "Current Installed Version is Higher")
         }
     }
 
-    private func addRunner(runner: DaisukeRunnerProtocol) throws {
-        runners.removeValue(forKey: runner.info.id)
-        runners.updateValue(runner, forKey: runner.info.id)
+    private func addSource(runner: DaisukeContentSource) throws {
+        sources.removeValue(forKey: runner.id)
+        sources.updateValue(runner, forKey: runner.id)
         if let runner = runner as? LocalContentSource {
             Task {
                 try? await runner.registerDefaultPrefs()
@@ -156,7 +149,7 @@ extension DaisukeEngine {
     }
 
     func removeRunner(id: String) throws {
-        runners.removeValue(forKey: id)
+        sources.removeValue(forKey: id)
         let path = directory.appendingPathComponent("\(id).stt")
         try FileManager.default.removeItem(at: path)
 
@@ -194,9 +187,9 @@ extension DaisukeEngine {
     private func handleFileRunnerImport(from url: URL) throws {
         let runner = try startRunner(at: url)
         try validateRunnerVersion(runner: runner)
-        let validRunnerPath = directory.appendingPathComponent("\(runner.info.id).stt")
+        let validRunnerPath = directory.appendingPathComponent("\(runner.id).stt")
         let _ = try FileManager.default.replaceItemAt(validRunnerPath, withItemAt: url)
-        try addRunner(runner: runner)
+        try addSource(runner: runner)
     }
 
     private func handleNetworkRunnerImport(from url: URL) async throws {
@@ -216,11 +209,11 @@ extension DaisukeEngine {
         let runner = try startRunner(at: downloadURL)
 
         try validateRunnerVersion(runner: runner)
-        let validRunnerPath = directory.appendingPathComponent("\(runner.info.id).stt")
+        let validRunnerPath = directory.appendingPathComponent("\(runner.id).stt")
         let _ = try FileManager.default.replaceItemAt(validRunnerPath, withItemAt: downloadURL)
         try? FileManager.default.removeItem(at: downloadURL)
         try await MainActor.run(body: {
-            try addRunner(runner: runner)
+            try addSource(runner: runner)
         })
     }
 }
@@ -233,27 +226,18 @@ extension JSContext {
 
 //// MARK: Fetch
 extension DaisukeEngine {
-    func getRunner(with id: String) -> DaisukeRunnerProtocol? {
-        runners[id]
-    }
 
     func getSource(with id: String) ->  DaisukeContentSource? {
-        (runners[id] as? LocalContentSource) ?? hostedRunners.first(where: { $0.id == id })
+       sources[id]
     }
     
     func getJSSource(with id: String) -> LocalContentSource? {
-        runners[id] as? LocalContentSource
+        sources[id] as? LocalContentSource
     }
 
     func getSources() -> [DaisukeContentSource] {
-        var out: [DaisukeContentSource] = runners.values.compactMap { $0 as? LocalContentSource }
-        out += hostedRunners
-        return out
+        sources.values.map({ $0 })
     }
-
-//    func getService(with id: String) -> Service? {
-//        services.first(where: { $0.id == id })
-//    }
 }
 
 // MARK: CommonLibrary

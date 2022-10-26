@@ -241,12 +241,12 @@ extension RunnerListsView.RunnerListInfo {
                     return .appOutDated
                 }
             }
-            guard let installed = engine.getRunner(with: runner.id) else {
+            guard let installed = engine.getSource(with: runner.id) else {
                 return .notInstalled
             }
-            if installed.info.version > runner.version {
+            if installed.version > runner.version {
                 return .sourceOutdated
-            } else if installed.info.version == runner.version {
+            } else if installed.version == runner.version {
                 return .installed
             } else {
                 return .outdated
