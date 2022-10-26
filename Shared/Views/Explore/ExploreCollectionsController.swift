@@ -12,7 +12,7 @@ import SwiftUI
 import UIKit
 
 final class ExploreCollectionsController: UICollectionViewController {
-    var source: DSK.LocalContentSource!
+    var source: DaisukeContentSource!
     typealias Snapshot = NSDiffableDataSourceSnapshot<String, SectionObject>
     typealias DataSource = UICollectionViewDiffableDataSource<String, SectionObject>
     var cache: [String: DSKCommon.CollectionExcerpt] = [:]
@@ -586,7 +586,7 @@ extension CTR {
     struct HeaderView: View {
         var excerpt: DSKCommon.CollectionExcerpt
         var request: DSKCommon.SearchRequest?
-        @EnvironmentObject var source: DSK.LocalContentSource
+        @EnvironmentObject var source: DaisukeContentSource
         var body: some View {
             HStack(alignment: .bottom) {
                 VStack(alignment: .leading) {
@@ -615,7 +615,7 @@ extension CTR {
     struct TagTile: View {
         var tag: DSKCommon.Tag
         @State var color: Color = .fadedPrimary
-        @EnvironmentObject var source: DSK.LocalContentSource
+        @EnvironmentObject var source: DaisukeContentSource
         @StateObject private var loader = FetchImage()
 
         var body: some View {
@@ -657,7 +657,7 @@ extension CTR {
                     }
                 }
                 if let str = tag.imageUrl, let url = URL(string: str) {
-                    let req = try? await source.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
+                    let req = try? await (source as? DSK.LocalContentSource)?.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
                     loader.load(req ?? url)
                 }
             }
@@ -669,7 +669,7 @@ extension CTR {
     }
 
     struct AllTagsView: View {
-        @EnvironmentObject var source: DSK.LocalContentSource
+        @EnvironmentObject var source: DaisukeContentSource
         var body: some View {
             NavigationLink(destination: ExploreView.AllTagsView().environmentObject(source)) {
                 Text("View All \n\(Image(systemName: "arrow.right.circle"))")

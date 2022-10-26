@@ -32,6 +32,7 @@ struct ExploreView: View {
         }
         .navigationTitle(source.name)
         .environmentObject(model)
+        .environmentObject(source)
         .modifier(InteractableContainer(selection: $model.selection))
     }
 }
