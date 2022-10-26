@@ -171,7 +171,7 @@ extension RunnerListsView.RunnerListInfo {
                     Task { @MainActor in
                         isLoading = true
                         if (list.hosted ?? false ) {
-                            engine.saveHostedRunner(list: list, runner: runner)
+                            engine.saveHostedRunner(list: listURL, runner: runner)
                         } else {
                             await saveExternalRunnerList()
                         }
@@ -360,11 +360,6 @@ extension DaisukeEngine {
                 realm.add(obj, update: .modified)
             }
         })
-    }
-    
-    //
-    func saveHostedRunner(list: RunnerList, runner: Runner) {
-        
     }
 }
 

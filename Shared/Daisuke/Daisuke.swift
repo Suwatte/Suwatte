@@ -8,6 +8,7 @@
 import Alamofire
 import Foundation
 import JavaScriptCore
+import RealmSwift
 
 final class DaisukeEngine: ObservableObject {
     // MARK: Singleton
@@ -99,10 +100,28 @@ extension DaisukeEngine {
                 ToastManager.shared.error(error)
             }
         }
+        
+        startHostedRunners()
     }
     
     private func startHostedRunners() {
         
+        let hostedRunners = DataManager.shared.getHostedRunners()
+        
+        for runner in hostedRunners {
+            do {
+                guard let str = runner.info, let data = str.data(using: .utf8), let strUrl = runner.listURL, let url = URL(string: strUrl) else {
+                    ToastManager.shared.error(DSK.Errors.NamedError(name: "StartUp Error", message: "Invalid Source Info"))
+                    return
+                }
+                let info = try DaisukeEngine.decode(data: data, to: ContentSourceInfo.self)
+                let source = HostedContentSource(host: url, info: info)
+                try addSource(runner: source)
+                
+            } catch {
+                ToastManager.shared.error(error)
+            }
+        }
     }
 
     private func startRunner(at path: URL) throws -> DaisukeContentSource {
@@ -215,6 +234,34 @@ extension DaisukeEngine {
         try await MainActor.run(body: {
             try addSource(runner: runner)
         })
+    }
+    
+    func saveHostedRunner(list: String, runner: Runner) {
+        let realm = try! Realm()
+        
+        do {
+            let data = try DaisukeEngine.encode(value: runner)
+            let str = String(decoding: data, as: UTF8.self)
+            
+            let obj = StoredRunnerObject()
+            obj.id = runner.id
+            obj.hosted = true
+            obj.listURL = list
+            obj.info = str
+            obj.name = runner.name
+            obj.thumbnail = runner.thumbnail
+            
+            try! realm.safeWrite {
+                realm.add(obj, update: .modified)
+            }
+            
+            let source = HostedContentSource(host: URL(string: list)!, info: .init(id: runner.id, name: runner.name, version: runner.version, website: runner.website ?? "", supportedLanguages: runner.supportedLanguages ?? [], hasExplorePage: runner.hasExplorePage ?? false))
+            try addSource(runner: source)
+            
+        } catch {
+            ToastManager.shared.error(error)
+        }
+        
     }
 }
 

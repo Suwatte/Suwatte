@@ -17,7 +17,7 @@ struct ExploreView: View {
     @StateObject var model = ViewModel()
     var body: some View {
         Group {
-            if source.sourceInfo.hasExplorePage {
+            if source.sourceInfo.hasExplorePage ?? false {
                 ExploreCollectioViewRepresentable()
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {

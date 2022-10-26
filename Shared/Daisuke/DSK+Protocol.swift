@@ -44,7 +44,7 @@ protocol DSKCSBase {
     var version: Double { get }
     var id: String { get }
 }
-struct ContentSourceInfo: DaisukeRunnerInfoProtocol {
+struct ContentSourceInfo: DaisukeRunnerInfoProtocol, Codable {
     var id: String
     var name: String
     var version: Double
@@ -55,7 +55,7 @@ struct ContentSourceInfo: DaisukeRunnerInfoProtocol {
     var supportedLanguages: [String]
     var VXI: String?
 
-    var hasExplorePage: Bool
+    var hasExplorePage: Bool?
     var thumbnail: String?
 
     var authMethod: DSKCommon.AuthMethod?

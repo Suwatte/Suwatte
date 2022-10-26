@@ -24,6 +24,7 @@ struct Runner: Codable, Hashable {
     var website: String?
     var supportedLanguages: [String]?
     var primarilyAdultContent: Bool?
+    var hasExplorePage: Bool?
     var path: String
     var thumbnail: String?
 
@@ -62,13 +63,12 @@ final class StoredRunnerObject: Object, Identifiable {
     @Persisted var order: Int
     @Persisted var dateAdded: Date = Date()
     @Persisted var hosted: Bool = false
-//    @Persisted var version: Double
+    @Persisted var info: String?
 
     func thumb() -> URL? {
         guard let thumbnail = thumbnail else {
             return nil
         }
-
         // Thumbnail is URL
         if let url = URL(string: thumbnail), url.isHTTP {
             return url
@@ -137,7 +137,7 @@ extension DataManager {
         let realm = try! Realm()
         return realm
             .objects(StoredRunnerObject.self)
-            .where({ $0.hosted == true && $0.listURL != nil })
+            .where({ $0.hosted == true && $0.listURL != nil && $0.info != nil })
 
     }
 }
