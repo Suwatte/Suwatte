@@ -57,12 +57,12 @@ final class StoredChapter: Object, ObjectKeyIdentifiable {
 }
 
 extension DaisukeEngine.Structs.Chapter {
-    func toStoredChapter(withSource source: DaisukeEngine.ContentSource) -> StoredChapter {
+    func toStoredChapter(withSource sourceId: String) -> StoredChapter {
         let chapter = StoredChapter()
 
-        chapter._id = "\(source.id)||\(contentId)||\(chapterId)"
+        chapter._id = "\(sourceId)||\(contentId)||\(chapterId)"
 
-        chapter.sourceId = source.id
+        chapter.sourceId = sourceId
         chapter.contentId = contentId
         chapter.chapterId = chapterId
 

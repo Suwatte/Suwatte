@@ -22,7 +22,7 @@ extension ExploreView.SearchView {
         @ObservedResults(LibraryEntry.self) var library
         @ObservedResults(ReadLater.self) var forLaterLibrary
         @EnvironmentObject var model: ViewModel
-        @EnvironmentObject var source: DaisukeEngine.ContentSource
+        @EnvironmentObject var source: DaisukeContentSource
 
         @AppStorage(STTKeys.TileStyle) var style = TileStyle.COMPACT
         @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2

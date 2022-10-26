@@ -16,7 +16,7 @@ struct AddContentLink: View {
     @Environment(\.presentationMode) var presentationMode
     var body: some View {
         List {
-            ForEach(model.sources.filter { $0.id != content.sourceId }) { source in
+            ForEach(model.sources.filter { $0.id != content.sourceId }, id: \.id) { source in
                 SourceCell(source: source)
                     .listRowInsets(.init(top: 5, leading: 0, bottom: 20, trailing: 0))
                     .listRowSeparator(.hidden)
@@ -41,7 +41,7 @@ struct AddContentLink: View {
     }
 
     @ViewBuilder
-    func SourceCell(source: DSK.ContentSource) -> some View {
+    func SourceCell(source: DaisukeContentSource) -> some View {
         let id = source.id
         let data = model.results[id] ?? .loading
         Section {

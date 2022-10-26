@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension DSK.ContentSource {
+extension DSK.LocalContentSource {
     func getSourceActions() async throws -> [DSKCommon.ActionGroup]? {
         let method = "getSourceActions"
         if !methodExists(method: method) {

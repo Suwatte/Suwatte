@@ -101,7 +101,7 @@
 		DF6B5754288F42D6007C6B78 /* Daisuke.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6B5753288F42D6007C6B78 /* Daisuke.swift */; };
 		DF6B5759288F453D007C6B78 /* DSK+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6B5758288F453D007C6B78 /* DSK+Error.swift */; };
 		DF6B5762288F6894007C6B78 /* DSK+Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6B5761288F6893007C6B78 /* DSK+Protocol.swift */; };
-		DF6B5764288F7031007C6B78 /* DSK+ContentSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6B5763288F7031007C6B78 /* DSK+ContentSource.swift */; };
+		DF6B5764288F7031007C6B78 /* DSK+LocalContentSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6B5763288F7031007C6B78 /* DSK+LocalContentSource.swift */; };
 		DF6B5767288F7CB2007C6B78 /* DSK+ValueStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6B5766288F7CB2007C6B78 /* DSK+ValueStore.swift */; };
 		DF6B5769288F7CC7007C6B78 /* DSK+Inject.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6B5768288F7CC7007C6B78 /* DSK+Inject.swift */; };
 		DF6B576B288F9640007C6B78 /* DSK+KeyChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6B576A288F9640007C6B78 /* DSK+KeyChain.swift */; };
@@ -302,6 +302,7 @@
 		DFF1044228A9A89700E2C3A4 /* STT+JSValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF1044128A9A89700E2C3A4 /* STT+JSValue.swift */; };
 		DFF1044528A9C72600E2C3A4 /* DSK+Console.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF1044428A9C72600E2C3A4 /* DSK+Console.swift */; };
 		DFF363262863E4AF006D02C5 /* MigrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF363252863E4AF006D02C5 /* MigrationView.swift */; };
+		DFF814032907013100C8C1A5 /* DSK+HostedContentSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF814022907013100C8C1A5 /* DSK+HostedContentSource.swift */; };
 		DFFC1EBE280636130069AA0E /* Vertical+Representable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFC1EBD280636120069AA0E /* Vertical+Representable.swift */; };
 /* End PBXBuildFile section */
 
@@ -392,7 +393,7 @@
 		DF6B5753288F42D6007C6B78 /* Daisuke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Daisuke.swift; sourceTree = "<group>"; };
 		DF6B5758288F453D007C6B78 /* DSK+Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Error.swift"; sourceTree = "<group>"; };
 		DF6B5761288F6893007C6B78 /* DSK+Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Protocol.swift"; sourceTree = "<group>"; };
-		DF6B5763288F7031007C6B78 /* DSK+ContentSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+ContentSource.swift"; sourceTree = "<group>"; };
+		DF6B5763288F7031007C6B78 /* DSK+LocalContentSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+LocalContentSource.swift"; sourceTree = "<group>"; };
 		DF6B5766288F7CB2007C6B78 /* DSK+ValueStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+ValueStore.swift"; sourceTree = "<group>"; };
 		DF6B5768288F7CC7007C6B78 /* DSK+Inject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Inject.swift"; sourceTree = "<group>"; };
 		DF6B576A288F9640007C6B78 /* DSK+KeyChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+KeyChain.swift"; sourceTree = "<group>"; };
@@ -589,6 +590,7 @@
 		DFF1044128A9A89700E2C3A4 /* STT+JSValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+JSValue.swift"; sourceTree = "<group>"; };
 		DFF1044428A9C72600E2C3A4 /* DSK+Console.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Console.swift"; sourceTree = "<group>"; };
 		DFF363252863E4AF006D02C5 /* MigrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationView.swift; sourceTree = "<group>"; };
+		DFF814022907013100C8C1A5 /* DSK+HostedContentSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+HostedContentSource.swift"; sourceTree = "<group>"; };
 		DFFC1EBD280636120069AA0E /* Vertical+Representable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+Representable.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -910,7 +912,8 @@
 		DF6B5760288F686E007C6B78 /* Runners */ = {
 			isa = PBXGroup;
 			children = (
-				DF9BD64F2891E51F006628D0 /* ContentSource */,
+				DFF814012907012000C8C1A5 /* HostedContentSource */,
+				DF9BD64F2891E51F006628D0 /* LocalContentSource */,
 			);
 			path = Runners;
 			sourceTree = "<group>";
@@ -1682,10 +1685,10 @@
 			path = Structs;
 			sourceTree = "<group>";
 		};
-		DF9BD64F2891E51F006628D0 /* ContentSource */ = {
+		DF9BD64F2891E51F006628D0 /* LocalContentSource */ = {
 			isa = PBXGroup;
 			children = (
-				DF6B5763288F7031007C6B78 /* DSK+ContentSource.swift */,
+				DF6B5763288F7031007C6B78 /* DSK+LocalContentSource.swift */,
 				DF68249728A588E900AB30A1 /* DSK+CS+Events.swift */,
 				DF9BD6502891E5E3006628D0 /* DSK+CS+Content.swift */,
 				DF9BD6522891E602006628D0 /* DSK+CS+Explore.swift */,
@@ -1696,7 +1699,7 @@
 				DF23393628ABFA1400F89FD0 /* DSK+CS+Sync.swift */,
 				DF515FF828E2A8DC002B6D60 /* DSK+CS+Action.swift */,
 			);
-			path = ContentSource;
+			path = LocalContentSource;
 			sourceTree = "<group>";
 		};
 		DF9BD65628924100006628D0 /* EventHandlers */ = {
@@ -1825,6 +1828,14 @@
 				DF67EB9E28E8FC4C00076FF5 /* ManualDestinationSelectionView.swift */,
 			);
 			path = Migrate;
+			sourceTree = "<group>";
+		};
+		DFF814012907012000C8C1A5 /* HostedContentSource */ = {
+			isa = PBXGroup;
+			children = (
+				DFF814022907013100C8C1A5 /* DSK+HostedContentSource.swift */,
+			);
+			path = HostedContentSource;
 			sourceTree = "<group>";
 		};
 		DFFC1EBA280635D60069AA0E /* Vertical */ = {
@@ -2123,7 +2134,7 @@
 				DF8D0B372800EE47003E4C3E /* STT+Kingfisher.swift in Sources */,
 				DF8D0B532800EE47003E4C3E /* Backup.swift in Sources */,
 				DF68249C28A5CF6D00AB30A1 /* DSK+Preferences.swift in Sources */,
-				DF6B5764288F7031007C6B78 /* DSK+ContentSource.swift in Sources */,
+				DF6B5764288F7031007C6B78 /* DSK+LocalContentSource.swift in Sources */,
 				DF30193928BFCBD00024AA8B /* ZoomingScrollView.swift in Sources */,
 				DF8D0B4B2800EE47003E4C3E /* Data+LibraryEntry.swift in Sources */,
 				DFD1F9AD28F7AF3D000766C1 /* Vertical+Scroll.swift in Sources */,
@@ -2250,6 +2261,7 @@
 				DF9BD6512891E5E3006628D0 /* DSK+CS+Content.swift in Sources */,
 				DF67EB8828E3674900076FF5 /* LG+MoveFlag.swift in Sources */,
 				DF8D0B952800EE48003E4C3E /* ProfileView+LibrarySheet.swift in Sources */,
+				DFF814032907013100C8C1A5 /* DSK+HostedContentSource.swift in Sources */,
 				DF8D0B412800EE47003E4C3E /* Data+StoredChapterData.swift in Sources */,
 				DF248F0828137F7A00818300 /* TrackersView.swift in Sources */,
 				DF8D0B9B2800EE48003E4C3E /* ProfileView+InfoSection.swift in Sources */,

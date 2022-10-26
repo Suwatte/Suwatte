@@ -16,7 +16,7 @@ extension ExploreView.SearchView {
         @Published var presentFilters = false
         @Published var callFromHistory = false
 
-        var source: DaisukeEngine.ContentSource
+        var source: DaisukeContentSource
 
         private var cancellables = Set<AnyCancellable>()
 
@@ -37,7 +37,7 @@ extension ExploreView.SearchView {
 
         @Published var paginationStatus = PaginationStatus.IDLE
 
-        init(request: DaisukeEngine.Structs.SearchRequest, source: DaisukeEngine.ContentSource) {
+        init(request: DaisukeEngine.Structs.SearchRequest, source: DaisukeContentSource) {
             self.request = request
             self.source = source
             Task {
@@ -52,10 +52,6 @@ extension ExploreView.SearchView {
                 })
             }
 
-            source.objectWillChange.sink { [weak self] _ in
-                self?.objectWillChange.send()
-            }
-            .store(in: &cancellables)
         }
 
         func softReset() {

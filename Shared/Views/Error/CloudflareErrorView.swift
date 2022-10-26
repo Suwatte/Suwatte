@@ -85,7 +85,7 @@ extension CloudFlareErrorView {
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
             Task { @MainActor in
-                guard let source = DaisukeEngine.shared.getSource(with: sourceID) else {
+                guard let source = DaisukeEngine.shared.getJSSource(with: sourceID) else {
                     return
                 }
                 guard let dsk = try? await source.willAttemptCloudflareVerification() else {

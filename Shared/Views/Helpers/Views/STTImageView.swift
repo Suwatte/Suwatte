@@ -46,7 +46,7 @@ struct STTImageView: View {
             return
         }
         Task {
-            let source = DaisukeEngine.shared.getSource(with: identifier.sourceId)
+            let source = DaisukeEngine.shared.getJSSource(with: identifier.sourceId)
             let req = try? await source?.willRequestImage(request: .init(url: imageURL.absoluteString))?.toURLRequest()
             loader.load(req ?? imageURL)
         }
@@ -100,7 +100,7 @@ struct BaseImageView: View {
             return
         }
         Task {
-            if let sourceId = sourceId, let source = DaisukeEngine.shared.getSource(with: sourceId) {
+            if let sourceId = sourceId, let source = DaisukeEngine.shared.getJSSource(with: sourceId) {
                 let req = try? await source.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
                 loader.load(req ?? url)
                 return
@@ -117,7 +117,7 @@ class AsyncImageModifier: AsyncImageDownloadRequestModifier {
 
     let sourceId: String?
     func modified(for request: URLRequest, reportModified: @escaping (URLRequest?) -> Void) {
-        guard let sourceId, let source = DaisukeEngine.shared.getSource(with: sourceId) else {
+        guard let sourceId, let source = DaisukeEngine.shared.getJSSource(with: sourceId) else {
             reportModified(request)
             return
         }

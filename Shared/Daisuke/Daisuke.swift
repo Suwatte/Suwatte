@@ -34,6 +34,7 @@ final class DaisukeEngine: ObservableObject {
     // MARK: Runners
 
     @Published var runners: [String: DaisukeRunnerProtocol] = [:]
+    @Published var hostedRunners: [HostedContentSource] = []
 
     init() {
         // Start Virtual Machine
@@ -95,7 +96,7 @@ extension DaisukeEngine {
             do {
                 let runner = try startRunner(at: url)
                 try addRunner(runner: runner)
-                Logger.shared.log("\(STT_EV) Started \(runner.name)")
+                Logger.shared.log("\(STT_EV) Started \(runner.info.name)")
             } catch {
                 ToastManager.shared.error(error)
             }
@@ -121,7 +122,7 @@ extension DaisukeEngine {
         // Start & Return Runner
         switch type {
         case .CONTENT_SOURCE:
-            let source = try ContentSource(runnerClass: runnerClass)
+            let source = try LocalContentSource(runnerClass: runnerClass)
             if let url = DataManager.shared.getRunnerInfomation(id: source.id)?.listURL {
                 let val = url + "/assets"
                 _ = context.evaluateScript("ASSETS_DIRECTORY = '\(val)';")
@@ -136,7 +137,7 @@ extension DaisukeEngine {
 
     private func validateRunnerVersion(runner: DaisukeRunnerProtocol) throws {
         // Validate that the incoming runner has a higher version
-        let current = runners[runner.id]
+        let current = runners[runner.info.id]
 
         if let current = current, current.info.version > runner.info.version {
             throw Errors.NamedError(name: "DAISUKE", message: "Current Installed Version is Higher")
@@ -144,9 +145,9 @@ extension DaisukeEngine {
     }
 
     private func addRunner(runner: DaisukeRunnerProtocol) throws {
-        runners.removeValue(forKey: runner.id)
-        runners.updateValue(runner, forKey: runner.id)
-        if let runner = runner as? ContentSource {
+        runners.removeValue(forKey: runner.info.id)
+        runners.updateValue(runner, forKey: runner.info.id)
+        if let runner = runner as? LocalContentSource {
             Task {
                 try? await runner.registerDefaultPrefs()
                 await runner.onSourceLoaded()
@@ -193,7 +194,7 @@ extension DaisukeEngine {
     private func handleFileRunnerImport(from url: URL) throws {
         let runner = try startRunner(at: url)
         try validateRunnerVersion(runner: runner)
-        let validRunnerPath = directory.appendingPathComponent("\(runner.id).stt")
+        let validRunnerPath = directory.appendingPathComponent("\(runner.info.id).stt")
         let _ = try FileManager.default.replaceItemAt(validRunnerPath, withItemAt: url)
         try addRunner(runner: runner)
     }
@@ -215,7 +216,7 @@ extension DaisukeEngine {
         let runner = try startRunner(at: downloadURL)
 
         try validateRunnerVersion(runner: runner)
-        let validRunnerPath = directory.appendingPathComponent("\(runner.id).stt")
+        let validRunnerPath = directory.appendingPathComponent("\(runner.info.id).stt")
         let _ = try FileManager.default.replaceItemAt(validRunnerPath, withItemAt: downloadURL)
         try? FileManager.default.removeItem(at: downloadURL)
         try await MainActor.run(body: {
@@ -236,12 +237,18 @@ extension DaisukeEngine {
         runners[id]
     }
 
-    func getSource(with id: String) -> ContentSource? {
-        runners[id] as? ContentSource
+    func getSource(with id: String) ->  DaisukeContentSource? {
+        (runners[id] as? LocalContentSource) ?? hostedRunners.first(where: { $0.id == id })
+    }
+    
+    func getJSSource(with id: String) -> LocalContentSource? {
+        runners[id] as? LocalContentSource
     }
 
-    func getSources() -> [ContentSource] {
-        runners.values.compactMap { $0 as? ContentSource }
+    func getSources() -> [DaisukeContentSource] {
+        var out: [DaisukeContentSource] = runners.values.compactMap { $0 as? LocalContentSource }
+        out += hostedRunners
+        return out
     }
 
 //    func getService(with id: String) -> Service? {
@@ -262,6 +269,7 @@ extension DaisukeEngine {
         await MainActor.run(body: {
             ToastManager.shared.info("Updated Commons")
         })
+        
     }
 
     private func getCommons() async throws {

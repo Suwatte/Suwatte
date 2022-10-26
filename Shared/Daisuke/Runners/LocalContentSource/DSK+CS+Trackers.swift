@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension DaisukeEngine.ContentSource {
+extension DaisukeEngine.LocalContentSource {
 //    func matchToTracker(info _: DaisukeEngine.Structs.Content.TrackerInfo) async throws -> [DaisukeEngine.Structs.Highlight] {
 //        throw DaisukeEngine.Errors.MethodNotImplemented
 //    }

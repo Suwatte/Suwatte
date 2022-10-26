@@ -16,7 +16,7 @@ extension DaisukeContentSourceView {
         var authMethod: DSKCommon.AuthMethod
         var canSync: Bool
         @State var loadable = Loadable<DSKCommon.User?>.idle
-        @EnvironmentObject var source: DaisukeEngine.ContentSource
+        @EnvironmentObject var source: DaisukeEngine.LocalContentSource
         @State var presentBasicAuthSheet = false
         @State var presentWebView = false
         @State var shouldRefresh = false
@@ -127,7 +127,7 @@ extension DaisukeContentSourceView {
         @State var password: String = ""
         @State var loginStatus: Loadable<Bool> = .idle
         @Environment(\.presentationMode) var presentationMode
-        @EnvironmentObject var source: DaisukeEngine.ContentSource
+        @EnvironmentObject var source: DaisukeEngine.LocalContentSource
 
         var body: some View {
             VStack {
@@ -252,7 +252,7 @@ extension DaisukeContentSourceView {
 
 extension DaisukeContentSourceView {
     struct AuthenticatedUserView: View {
-        @EnvironmentObject var source: DaisukeEngine.ContentSource
+        @EnvironmentObject var source: DaisukeEngine.LocalContentSource
         @Binding var shouldRefresh: Bool
         var canSync: Bool
         var user: DSKCommon.User
@@ -314,7 +314,7 @@ extension DaisukeContentSourceView {
                 Button("Sign Out", role: .destructive) {
                     Task {
                         do {
-                            guard let info = (source.info as? DSK.ContentSource.ContentSourceInfo), let authMethod = info.authMethod, authMethod == .web else {
+                            guard let info = (source.info as? ContentSourceInfo), let authMethod = info.authMethod, authMethod == .web else {
                                 return
                             }
                             switch authMethod {
@@ -352,7 +352,7 @@ extension DaisukeContentSourceView {
 // MARK: WebView
 
 struct WebAuthWebView: UIViewControllerRepresentable {
-    var source: DSK.ContentSource
+    var source: DSK.LocalContentSource
     func makeUIViewController(context _: Context) -> some Controller {
         let view = Controller()
         view.source = source
@@ -365,7 +365,7 @@ struct WebAuthWebView: UIViewControllerRepresentable {
 extension WebAuthWebView {
     class Controller: UIViewController, WKUIDelegate {
         var webView: WKWebView!
-        var source: DSK.ContentSource!
+        var source: DSK.LocalContentSource!
 
         override func viewDidLoad() {
             super.viewDidLoad()

@@ -167,7 +167,7 @@ extension ExploreView.HighlightTile {
 
     struct GALLERY: View {
         var entry: DaisukeEngine.Structs.Highlight
-        @EnvironmentObject var source: DSK.ContentSource
+        @EnvironmentObject var source: DSK.LocalContentSource
         @State private var endColor = Color.black
         @State private var timer: Timer?
         @State private var currentImageIndex = 0

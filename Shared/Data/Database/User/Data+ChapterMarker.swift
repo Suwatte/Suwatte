@@ -73,7 +73,7 @@ extension DataManager {
     private func notifySourceOfMarkState(chapters: [StoredChapter], completed: Bool) {
         let grouped = Dictionary(grouping: chapters, by: { $0.sourceId })
         for (key, value) in grouped {
-            let source = DaisukeEngine.shared.getSource(with: key)
+            let source = DaisukeEngine.shared.getJSSource(with: key)
             let groupedByContent = Dictionary(grouping: value, by: { $0.contentId })
 
             for (k, v) in groupedByContent {

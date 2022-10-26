@@ -395,7 +395,7 @@ extension ReaderView.ViewModel {
 
     private func handleSourceSync(contentId: String, sourceId: String, chapterId: String) {
         // Services
-        let source = DaisukeEngine.shared.getSource(with: sourceId)
+        let source = DaisukeEngine.shared.getJSSource(with: sourceId)
         Task {
             await source?.onChapterRead(contentId: contentId, chapterId: chapterId)
         }

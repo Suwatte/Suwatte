@@ -51,7 +51,7 @@ struct SearchView: View {
         .init(rawValue: UserDefaults.standard.string(forKey: STTKeys.SourcesHiddenFromGlobalSearch) ?? "") ?? []
     }
 
-    var sources: [DaisukeEngine.ContentSource] {
+    var sources: [DaisukeContentSource] {
         return DaisukeEngine.shared.getSources().filter { !disabledSourceIds.contains($0.id) }
     }
 
@@ -242,7 +242,7 @@ struct SearchView: View {
 
 extension SearchView {
     struct Cell: View {
-        var source: DaisukeEngine.ContentSource
+        var source: DaisukeEngine.LocalContentSource
         var request: DaisukeEngine.Structs.SearchRequest
         var body: some View {
             Text(source.name)
@@ -260,7 +260,7 @@ extension SearchView {
             .init(rawValue: UserDefaults.standard.string(forKey: STTKeys.SourcesHiddenFromGlobalSearch) ?? "") ?? []
         }
 
-        var sources: [DaisukeEngine.ContentSource] {
+        var sources: [DaisukeContentSource] {
             DaisukeEngine.shared.getSources().filter { !disabledSourceIds.contains($0.id) }
         }
 

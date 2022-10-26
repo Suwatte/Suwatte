@@ -12,7 +12,7 @@ import SwiftUI
 import UIKit
 
 final class ExploreCollectionsController: UICollectionViewController {
-    var source: DSK.ContentSource!
+    var source: DSK.LocalContentSource!
     typealias Snapshot = NSDiffableDataSourceSnapshot<String, SectionObject>
     typealias DataSource = UICollectionViewDiffableDataSource<String, SectionObject>
     var cache: [String: DSKCommon.CollectionExcerpt] = [:]
@@ -586,7 +586,7 @@ extension CTR {
     struct HeaderView: View {
         var excerpt: DSKCommon.CollectionExcerpt
         var request: DSKCommon.SearchRequest?
-        @EnvironmentObject var source: DSK.ContentSource
+        @EnvironmentObject var source: DSK.LocalContentSource
         var body: some View {
             HStack(alignment: .bottom) {
                 VStack(alignment: .leading) {
@@ -615,7 +615,7 @@ extension CTR {
     struct TagTile: View {
         var tag: DSKCommon.Tag
         @State var color: Color = .fadedPrimary
-        @EnvironmentObject var source: DSK.ContentSource
+        @EnvironmentObject var source: DSK.LocalContentSource
         @StateObject private var loader = FetchImage()
 
         var body: some View {
@@ -669,7 +669,7 @@ extension CTR {
     }
 
     struct AllTagsView: View {
-        @EnvironmentObject var source: DSK.ContentSource
+        @EnvironmentObject var source: DSK.LocalContentSource
         var body: some View {
             NavigationLink(destination: ExploreView.AllTagsView().environmentObject(source)) {
                 Text("View All \n\(Image(systemName: "arrow.right.circle"))")

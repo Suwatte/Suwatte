@@ -302,7 +302,7 @@ extension NovelReaderView.ViewModel {
         }
 
         // Services
-        let source = DaisukeEngine.shared.getSource(with: lastChapter.chapter.sourceId)
+        let source = DaisukeEngine.shared.getJSSource(with: lastChapter.chapter.sourceId)
         let contentId = lastChapter.chapter.contentId
         let chapterId = lastChapter.chapter.chapterId
         Task {

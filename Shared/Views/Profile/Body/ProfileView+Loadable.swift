@@ -55,10 +55,10 @@ extension ProfileView {
 
                          .toolbar {
                              ToolbarItemGroup(placement: .navigationBarTrailing) {
-                                 if viewModel.source.sourceInfo.canSync {
-                                     SyncView()
-                                         .transition(.opacity)
-                                 }
+//                                 if (viewModel.source as? DSK.LocalContentSource)?.sourceInfo.canSync ?? false {
+//                                     SyncView()
+//                                         .transition(.opacity)
+//                                 }
 
                                  if viewModel.working {
                                      Circle()
@@ -71,7 +71,7 @@ extension ProfileView {
 
                          .animation(.default)
                          .environmentObject(viewModel)
-                         .environmentObject(viewModel.source)
+//                         .environmentObject(viewModel.source)
         }
 
         @ViewBuilder

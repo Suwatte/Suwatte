@@ -21,12 +21,12 @@ extension Task where Success == Never, Failure == Never {
 extension ProfileView {
     final class ViewModel: ObservableObject {
         @Published var entry: DaisukeEngine.Structs.Highlight
-        var source: DaisukeEngine.ContentSource
+        var source: DaisukeContentSource
 
         @Published var content: DSKCommon.Content = .placeholder
         @Published var loadableContent: Loadable<Bool> = .idle
         var storedContent: StoredContent {
-            try! content.toStoredContent(withSource: source)
+            try! content.toStoredContent(withSource: source.id)
         }
 
         @Published var chapters: Loadable<[StoredChapter]> = .idle
@@ -47,7 +47,7 @@ extension ProfileView {
         @Published var threadSafeChapters: [DSKCommon.Chapter]?
         var notificationToken: NotificationToken?
         var syncTask: Task<Void, Error>?
-        init(_ entry: DaisukeEngine.Structs.Highlight, _ source: DaisukeEngine.ContentSource) {
+        init(_ entry: DaisukeEngine.Structs.Highlight, _ source: DaisukeContentSource) {
             self.entry = entry
             self.source = source
         }
@@ -72,7 +72,7 @@ extension ProfileView.ViewModel {
             Task {
                 await self.loadChapters(parsed.chapters)
             }
-            if let stored = try? parsed.toStoredContent(withSource: source) {
+            if let stored = try? parsed.toStoredContent(withSource: source.id) {
                 DataManager.shared.storeContent(stored)
             }
 
@@ -101,13 +101,13 @@ extension ProfileView.ViewModel {
             threadSafeChapters = parsedChapters
         })
         if let chapters = parsedChapters {
-            let unmanaged = chapters.map { $0.toStoredChapter(withSource: source) }
+            let unmanaged = chapters.map { $0.toStoredChapter(withSource: source.id) }
             await MainActor.run(body: {
                 threadSafeChapters = chapters
                 self.chapters = .loaded(unmanaged)
                 working = false
             })
-            let stored = chapters.map { $0.toStoredChapter(withSource: source) }
+            let stored = chapters.map { $0.toStoredChapter(withSource: source.id) }
             DataManager.shared.storeChapters(stored)
             await didLoadChapters()
 
@@ -115,13 +115,13 @@ extension ProfileView.ViewModel {
             do {
                 let parsedChapters = try await source.getContentChapters(contentId: entry.id)
 
-                let unmanaged = parsedChapters.map { $0.toStoredChapter(withSource: source) }
+                let unmanaged = parsedChapters.map { $0.toStoredChapter(withSource: source.id) }
                 await MainActor.run(body: {
                     threadSafeChapters = parsedChapters
                     self.chapters = .loaded(unmanaged)
                     working = false
                 })
-                let stored = parsedChapters.map { $0.toStoredChapter(withSource: source) }
+                let stored = parsedChapters.map { $0.toStoredChapter(withSource: source.id) }
                 DataManager.shared.storeChapters(stored)
                 await didLoadChapters()
 
@@ -331,7 +331,7 @@ extension ProfileView.ViewModel {
         if let entry = entry {
             let progress = entry.progress
             let targets = chapters.filter { $0.number <= Double(progress) }
-            DataManager.shared.bulkMarkChapter(chapters: targets.map { $0.toStoredChapter(withSource: source) })
+            DataManager.shared.bulkMarkChapter(chapters: targets.map { $0.toStoredChapter(withSource: source.id) })
 
             let chapter = DataManager.shared.getHighestMarked(id: .init(contentId: sttIdentifier().contentId, sourceId: sttIdentifier().sourceId))
             if let chapter = chapter, Double(progress) < chapter.number {
@@ -359,6 +359,7 @@ extension ProfileView.ViewModel {
     }
 
     private func handleReadMarkers() async throws {
+        guard let source = source as? DSK.LocalContentSource else { return }
         // Check if Syncable
         if !source.sourceInfo.canSync { return }
         let user = try? await source.getAuthenticatedUser()
@@ -380,7 +381,7 @@ extension ProfileView.ViewModel {
         // Save New Chapters
         let targets = chapters
             .filter { readChapterIds.contains($0.chapterId) }
-            .map { $0.toStoredChapter(withSource: source) }
+            .map { $0.toStoredChapter(withSource: source.id) }
 
         // Mark Chapters As Read
         DataManager.shared.bulkMarkChapter(chapters: targets, completed: true)

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ExploreCollectioViewRepresentable: UIViewControllerRepresentable {
-    @EnvironmentObject var source: DSK.ContentSource
+    @EnvironmentObject var source: DSK.LocalContentSource
     @EnvironmentObject var model: ExploreView.ViewModel
     @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
     func makeUIViewController(context _: Context) -> some ExploreCollectionsController {

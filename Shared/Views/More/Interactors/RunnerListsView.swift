@@ -15,15 +15,25 @@ import SwiftUI
 struct RunnerListsView: View {
     @State var presentAlert = false
     @ObservedResults(StoredRunnerList.self) var runnerLists
+    @AppStorage(STTKeys.AppAccentColor) var color: Color = .sttDefault
     var body: some View {
         List {
+            
             ForEach(runnerLists) { list in
                 NavigationLink {
                     RunnerListInfo(listURL: list.url)
                         .navigationTitle(list.listName ?? list.url)
                         .navigationBarTitleDisplayMode(.inline)
                 } label: {
-                    Text(list.listName ?? list.url)
+                    HStack {
+                        Text(list.listName ?? list.url)
+                        Spacer()
+                        if list.hosted {
+                            Image(systemName: "globe")
+                                .foregroundColor(color)
+                        }
+                    }
+                    
                 }
             }
             .onDelete(perform: $runnerLists.remove(atOffsets:))
@@ -136,7 +146,7 @@ extension RunnerListsView {
         var body: some View {
             List {
                 ForEach(list.runners, id: \.self) { runner in
-                    RunnerListInfo.RunnerListCell(listURL: listURL, runner: runner)
+                    RunnerListInfo.RunnerListCell(listURL: listURL, list: list, runner: runner)
                         .frame(height: 75)
                 }
             }
@@ -149,6 +159,7 @@ extension RunnerListsView.RunnerListInfo {
         @State var isLoading = false
         @ObservedObject var engine = DaisukeEngine.shared
         var listURL: String
+        var list: RunnerList
         var runner: Runner
         var body: some View {
             let runnerState = getRunnerState(runner: runner)
@@ -159,19 +170,11 @@ extension RunnerListsView.RunnerListInfo {
                 Button {
                     Task { @MainActor in
                         isLoading = true
-                        let base = URL(string: listURL)!
-
-                        let url = base
-                            .appendingPathComponent("runners")
-                            .appendingPathComponent("\(runner.path).stt")
-                        do {
-                            try await DaisukeEngine.shared.importRunner(from: url)
-                            DataManager.shared.saveRunnerInfomation(runner: runner, at: base)
-                            ToastManager.shared.info("\(runner.name) Loaded!")
-                        } catch {
-                            ToastManager.shared.display(.error(error))
+                        if (list.hosted ?? false ) {
+                            engine.saveHostedRunner(list: list, runner: runner)
+                        } else {
+                            await saveExternalRunnerList()
                         }
-
                         isLoading = false
                     }
                 } label: {
@@ -215,7 +218,22 @@ extension RunnerListsView.RunnerListInfo {
                 self == .appOutDated || self == .sourceOutdated
             }
         }
+        
+        func saveExternalRunnerList() async {
+            let base = URL(string: listURL)!
 
+            let url = base
+                .appendingPathComponent("runners")
+                .appendingPathComponent("\(runner.path).stt")
+            do {
+                try await DaisukeEngine.shared.importRunner(from: url)
+                DataManager.shared.saveRunnerInfomation(runner: runner, at: base)
+                ToastManager.shared.info("\(runner.name) Loaded!")
+            } catch {
+                ToastManager.shared.display(.error(error))
+            }
+
+        }
         func getRunnerState(runner: Runner) -> RunnerState {
             if let minVer = runner.minSupportedAppVersion, let appVersion = Bundle.main.releaseVersionNumber {
                 let result = minVer.compare(appVersion)
@@ -337,10 +355,16 @@ extension DaisukeEngine {
             let obj = StoredRunnerList()
             obj.listName = runnerList.listName
             obj.url = base.absoluteString
+            obj.hosted = runnerList.hosted ?? false
             try! realm.safeWrite {
                 realm.add(obj, update: .modified)
             }
         })
+    }
+    
+    //
+    func saveHostedRunner(list: RunnerList, runner: Runner) {
+        
     }
 }
 

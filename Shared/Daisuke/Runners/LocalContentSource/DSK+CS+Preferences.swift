@@ -9,7 +9,7 @@ import Foundation
 
 typealias DSK = DaisukeEngine
 typealias DSKCommon = DSK.Structs
-extension DSK.ContentSource {
+extension DSK.LocalContentSource {
     func getUserPreferences() async throws -> [DSKCommon.PreferenceGroup]? {
         let methodName = "getUserPreferences"
         if !methodExists(method: methodName) {

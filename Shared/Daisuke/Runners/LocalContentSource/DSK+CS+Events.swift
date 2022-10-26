@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension DaisukeEngine.ContentSource {
+extension DaisukeEngine.LocalContentSource {
     func onSourceLoaded() async {
         do {
             try await callOptionalVoidMethod(method: "onSourceLoaded", arguments: [])
@@ -57,7 +57,7 @@ extension DaisukeEngine.ContentSource {
     }
 }
 
-extension DaisukeEngine.ContentSource {
+extension DaisukeEngine.LocalContentSource {
     func willRequestImage(request: DaisukeEngine.NetworkClient.Request) async throws -> DaisukeEngine.NetworkClient.Request? {
         guard methodExists(method: "willRequestImage") else {
             return nil

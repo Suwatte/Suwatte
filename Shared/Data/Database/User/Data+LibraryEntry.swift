@@ -72,7 +72,7 @@ extension DataManager {
             object.flag = flag
         }
 
-        guard let id = object.content?.contentId, let sourceId = object.content?.sourceId, let source = DaisukeEngine.shared.getSource(with: sourceId) else {
+        guard let id = object.content?.contentId, let sourceId = object.content?.sourceId, let source = DaisukeEngine.shared.getJSSource(with: sourceId) else {
             return
         }
         Task {
@@ -95,7 +95,7 @@ extension DataManager {
 
         let sourceIds = Set(targets.compactMap { $0.content?.sourceId })
         for id in sourceIds {
-            guard let source = DaisukeEngine.shared.getSource(with: id) else {
+            guard let source = DaisukeEngine.shared.getJSSource(with: id) else {
                 return
             }
 
@@ -114,7 +114,7 @@ extension DataManager {
         let realm = try! Realm()
 
         let ids = content.ContentIdentifier
-        let source = DaisukeEngine.shared.getSource(with: content.sourceId)
+        let source = DaisukeEngine.shared.getJSSource(with: content.sourceId)
         if let target = realm.objects(LibraryEntry.self).first(where: { $0._id == content._id }) {
             // Run Removal Event
             Task {
@@ -197,7 +197,7 @@ extension DataManager {
         let grouped = Dictionary(grouping: ids, by: { $0.sourceId })
 
         for (key, value) in grouped {
-            let source = DaisukeEngine.shared.getSource(with: key)
+            let source = DaisukeEngine.shared.getJSSource(with: key)
             Task {
                 await source?.onContentsRemovedFromLibrary(ids: value.map { $0.contentId })
             }

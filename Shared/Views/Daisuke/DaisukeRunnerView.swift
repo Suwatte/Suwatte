@@ -9,14 +9,14 @@ import Kingfisher
 import SwiftUI
 
 struct DaisukeContentSourceView: View {
-    @ObservedObject var source: DaisukeEngine.ContentSource
+    @ObservedObject var source: DaisukeEngine.LocalContentSource
     @AppStorage(STTKeys.SourcesDisabledFromHistory) var sourcesDisabledFromHistory: [String] = []
     @AppStorage(STTKeys.SourcesHiddenFromGlobalSearch) var sourcesHiddenFromGlobalSearch: [String] = []
     var body: some View {
         List {
             HeaderSection
             InfoSection
-            if let info = (source.info as? DSK.ContentSource.ContentSourceInfo), let authMethod = info.authMethod {
+            if let info = (source.info as? ContentSourceInfo), let authMethod = info.authMethod {
                 AuthSection(authMethod: authMethod, canSync: info.canSync)
             }
 
@@ -64,7 +64,7 @@ struct DaisukeContentSourceView: View {
     }
 
     @ViewBuilder
-    func SourceInfo(source: DSK.ContentSource) -> some View {
+    func SourceInfo(source: DSK.LocalContentSource) -> some View {
         let info = source.info
 
         Section {}

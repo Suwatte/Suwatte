@@ -44,7 +44,7 @@ struct BrowseView: View {
     var InstalledSourcesSection: some View {
         let sources = daisuke.getSources().sorted(by: { getSaved($0.id)?.order ?? 0 < getSaved($1.id)?.order ?? 0})
         Section {
-            ForEach(sources) { source in
+            ForEach(sources, id: \.id) { source in
                 NavigationLink {
                     ExploreView()
                         .environmentObject(source)

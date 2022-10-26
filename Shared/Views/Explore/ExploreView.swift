@@ -13,7 +13,7 @@ import SwiftUI
 import UIKit
 
 struct ExploreView: View {
-    @EnvironmentObject var source: DaisukeEngine.ContentSource
+    @EnvironmentObject var source: DaisukeContentSource
     @StateObject var model = ViewModel()
     var body: some View {
         Group {

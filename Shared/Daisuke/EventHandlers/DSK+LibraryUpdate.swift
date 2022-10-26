@@ -27,7 +27,7 @@ extension DaisukeEngine {
     }
 
     @MainActor
-    private func fetchUpdatesForSource(source: ContentSource) async throws -> Int {
+    private func fetchUpdatesForSource(source: DaisukeContentSource) async throws -> Int {
         let realm = try! Realm(queue: nil)
 
         let date = UserDefaults.standard.object(forKey: STTKeys.LastFetchedUpdates) as! Date
@@ -54,7 +54,7 @@ extension DaisukeEngine {
 
             // Fetch Chapters
             let chapters = try? await source.getContentChapters(contentId: contentId)
-            let marked = try? await source.getReadChapterMarkers(for: contentId)
+            let marked = try? await (source as? DSK.LocalContentSource)?.getReadChapterMarkers(for: contentId)
             let lastFetched = DataManager.shared.getLatestStoredChapter(source.id, contentId)
             // Calculate Update Count
             var filtered = chapters?
@@ -88,7 +88,7 @@ extension DaisukeEngine {
 
                 // Update Chapters
                 let stored = chapters?
-                    .map { $0.toStoredChapter(withSource: source) }
+                    .map { $0.toStoredChapter(withSource: source.id) }
                 if let stored {
                     realm.add(stored, update: .modified)
                 }
