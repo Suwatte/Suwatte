@@ -11,28 +11,32 @@ import SwiftUI
 extension ProfileView {
     struct Skeleton: View {
         @EnvironmentObject var viewModel: ProfileView.ViewModel
-        @Environment(\.colorScheme) var colorScheme
-
-        var safariHex: Color {
-            colorScheme == .dark ? .init(hex: "6A5ACD") : .init(hex: "473C8A")
-        }
+        @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
 
         var body: some View {
             Main
                 .fullScreenCover(isPresented: $viewModel.presentCollectionsSheet, content: {
                     ProfileView.Sheets.LibrarySheet(storedContent: viewModel.storedContent)
+                        .tint(accentColor)
+                        .accentColor(accentColor)
                 })
                 .fullScreenCover(isPresented: $viewModel.presentTrackersSheet, content: {
                     ProfileView.Sheets.TrackersSheet()
+                        .tint(accentColor)
+                        .accentColor(accentColor)
                 })
                 .fullScreenCover(isPresented: $viewModel.presentBookmarksSheet, content: {
                     BookmarksView()
+                        .tint(accentColor)
+                        .accentColor(accentColor)
                 })
                 .fullScreenCover(isPresented: $viewModel.presentManageContentLinks, content: {
                     NavigationView {
                         ManageContentLinks(content: viewModel.storedContent)
                             .closeButton()
                     }
+                    .tint(accentColor)
+                    .accentColor(accentColor)
                 })
                 .fullScreenCover(isPresented: $viewModel.presentMigrationView, content: {
                     NavigationView {
@@ -47,7 +51,7 @@ extension ProfileView {
                             barCollapsingEnabled: true
                         )
                     )
-                    .preferredControlAccentColor(safariHex)
+                    .preferredControlAccentColor(accentColor)
                     .dismissButtonStyle(.close)
                 }
                 .transition(.opacity)

@@ -14,6 +14,7 @@ extension ReaderView {
         @Environment(\.colorScheme) var colorScheme
         @Preference(\.readingLeftToRight) var readingLeftToRight
         @Preference(\.isReadingVertically) var isVertical
+        @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
 
         var edges = KEY_WINDOW?.safeAreaInsets
 
@@ -46,6 +47,8 @@ extension ReaderView {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .statusBar(hidden: !model.menuControl.menu)
             .animation(.default, value: model.activeChapter)
+            .accentColor(accentColor)
+            .tint(accentColor)
         }
 
         // MARK: Chapter Title Display

@@ -20,6 +20,8 @@ extension DaisukeContentSourceView {
         @State var presentBasicAuthSheet = false
         @State var presentWebView = false
         @State var shouldRefresh = false
+        @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
+
         var body: some View {
             LoadableView(loadable: loadable) {
                 ProgressView()
@@ -56,6 +58,8 @@ extension DaisukeContentSourceView {
                     SignInSheet(usesEmail: authMethod == .email_pw)
                         .navigationTitle("Sign In")
                         .closeButton()
+                        .tint(accentColor)
+                        .accentColor(accentColor)
                 }
             }
             .fullScreenCover(isPresented: $presentWebView, onDismiss: {
@@ -66,6 +70,8 @@ extension DaisukeContentSourceView {
                         .navigationBarTitle("WebView Auth", displayMode: .inline)
                         .closeButton(title: "Done")
                         .toast()
+                        .tint(accentColor)
+                        .accentColor(accentColor)
                 }
             })
             .animation(.default, value: loadable)

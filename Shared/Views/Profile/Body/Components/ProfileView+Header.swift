@@ -14,6 +14,7 @@ extension Skeleton {
     struct Header: View {
         @EnvironmentObject var model: ProfileView.ViewModel
         @State var presentThumbnails = false
+        @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
 
         var entry: DSKCommon.Content {
             model.content
@@ -71,6 +72,8 @@ extension Skeleton.Header {
             }
             .fullScreenCover(isPresented: $presentThumbnails) {
                 ProfileView.CoversSheet(covers: entry.covers)
+                    .accentColor(accentColor)
+                    .tint(accentColor)
             }
     }
 }

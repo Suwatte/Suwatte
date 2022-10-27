@@ -73,6 +73,8 @@ extension ProfileView.Skeleton {
 
     struct AdditionalCoversView: View {
         @EnvironmentObject var model: ProfileView.ViewModel
+        @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
+
         @State var presentCovers = false
         var body: some View {
             if !model.content.covers.isEmpty {
@@ -98,6 +100,8 @@ extension ProfileView.Skeleton {
                 }
                 .fullScreenCover(isPresented: $presentCovers) {
                     ProfileView.CoversSheet(covers: model.content.covers)
+                        .accentColor(accentColor)
+                        .tint(accentColor)
                 }
             }
         }
