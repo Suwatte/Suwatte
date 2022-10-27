@@ -10,7 +10,7 @@ import AsyncDisplayKit
 import Kingfisher
 import SwiftUI
 
-fileprivate typealias Controller = VerticalViewer.AsyncController
+fileprivate typealias Controller = VerticalViewer.Controller
 
 
 extension IndexPath {

@@ -10,14 +10,14 @@ import AsyncDisplayKit
 import Kingfisher
 import SwiftUI
 
-fileprivate typealias Controller = VerticalViewer.AsyncController
+fileprivate typealias Controller = VerticalViewer.Controller
 
 
 extension Controller {
     class TransitionNode: ASCellNode {
         var transition: ReaderView.Transition
         let display = ASDisplayNode()
-        weak var delegate: VerticalViewer.AsyncController?
+        weak var delegate: VerticalViewer.Controller?
         
         init(transition: ReaderView.Transition) {
             self.transition = transition

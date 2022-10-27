@@ -7,7 +7,7 @@
 
 import UIKit
 import SwiftUI
-fileprivate typealias Controller = VerticalViewer.AsyncController
+fileprivate typealias Controller = VerticalViewer.Controller
 
 extension Controller : UIScrollViewDelegate {
     

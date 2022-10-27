@@ -12,7 +12,7 @@ import Kingfisher
 import Combine
 
 extension VerticalViewer {
-    class AsyncController: ASDKViewController<ASCollectionNode> {
+    class Controller: ASDKViewController<ASCollectionNode> {
         internal let model: ReaderView.ViewModel
         private let zoomTransitionDelegate = ZoomTransitioningDelegate()
         var subscriptions = Set<AnyCancellable>()
@@ -123,7 +123,7 @@ extension VerticalViewer {
     
 }
 
-fileprivate typealias Controller = VerticalViewer.AsyncController
+fileprivate typealias Controller = VerticalViewer.Controller
 
 // MARK: Collection DataSource
 extension Controller: ASCollectionDataSource {
@@ -171,7 +171,7 @@ extension Controller: ASCollectionDelegate {
 fileprivate class EmptyNode: ASCellNode {}
 
 
-extension VerticalViewer.AsyncController {
+extension VerticalViewer.Controller {
     @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
         guard let sender = sender else {
             return

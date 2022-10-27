@@ -9,7 +9,7 @@ import UIKit
 import AsyncDisplayKit
 import Kingfisher
 
-fileprivate typealias Controller = VerticalViewer.AsyncController
+fileprivate typealias Controller = VerticalViewer.Controller
 extension Controller {
     class ImageNode: ASCellNode {
         let imageNode = ASImageNode()
@@ -18,7 +18,7 @@ extension Controller {
         let page: ReaderView.Page
         var downloadTask: DownloadTask?
         var ratio: CGFloat? = nil
-        weak var delegate: VerticalViewer.AsyncController?
+        weak var delegate: VerticalViewer.Controller?
         var savedOffset: CGFloat? = nil
         var working = false
         lazy var zoomingTap: UITapGestureRecognizer = {
