@@ -29,7 +29,9 @@ extension Controller {
         
         // MARK: Scrub End
         model.scrubEndPublisher.sink { [weak self] in
-            self?.onScrollStop()
+            Task { @MainActor in
+                self?.onScrollStop()
+            }
         }
         .store(in: &subscriptions)
         
@@ -47,7 +49,6 @@ extension Controller {
                 
                 CATransaction.begin()
                 CATransaction.setDisableActions(true)
-
                 collectionNode.performBatchUpdates({
                     let set = IndexSet(integer: section)
                     collectionNode.insertSections(set)
@@ -63,9 +64,11 @@ extension Controller {
         
         // MARK: Slider
         model.$slider.sink { [weak self] slider in
-            if slider.isScrubbing {
-                let position = CGPoint(x: 0, y: slider.current)
-                self?.collectionNode.setContentOffset(position, animated: false)
+            Task { @MainActor in
+                if slider.isScrubbing {
+                    let position = CGPoint(x: 0, y: slider.current)
+                    self?.collectionNode.setContentOffset(position, animated: false)
+                }
             }
         }
         .store(in: &subscriptions)
@@ -97,7 +100,9 @@ extension Controller {
                 changedKeyPath == \Preferences.forceTransitions ||
                 changedKeyPath == \Preferences.imageInteractions
             }.sink { [weak self] _ in
-                self?.collectionNode.reloadData()
+                Task { @MainActor in
+                    self?.collectionNode.reloadData()
+                }
             }.store(in: &subscriptions)
     }
 }

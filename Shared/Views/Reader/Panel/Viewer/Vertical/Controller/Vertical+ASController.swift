@@ -20,7 +20,12 @@ extension VerticalViewer {
         var initialOffset: (Int, CGFloat?)? = nil
         // MARK: Init
         init(model: ReaderView.ViewModel) {
-            let node = ASCollectionNode(collectionViewLayout: .init())
+            let layout = VerticalContentOffsetPreservingLayout()
+            layout.scrollDirection = .vertical
+            layout.minimumLineSpacing = 0
+            layout.minimumInteritemSpacing = 0
+            layout.sectionInset = UIEdgeInsets.zero
+            let node = ASCollectionNode(collectionViewLayout: layout)
             self.model = model
             super.init(node: node)
         }
@@ -42,7 +47,7 @@ extension VerticalViewer {
             collectionNode.backgroundColor = .clear
             collectionNode.insetsLayoutMarginsFromSafeArea = false
             collectionNode.alpha = 0
-            setLayout()
+            collectionNode.automaticallyManagesSubnodes = true
             listen()
             navigationController?.delegate = zoomTransitionDelegate
             navigationController?.isNavigationBarHidden = true
@@ -98,8 +103,6 @@ extension VerticalViewer {
             }
         }
         
-    
-        
         var collectionNode : ASCollectionNode {
             return node
         }
@@ -107,17 +110,6 @@ extension VerticalViewer {
         var contentSize: CGSize {
             collectionNode.collectionViewLayout.collectionViewContentSize
         }
-        
-        fileprivate func setLayout() {
-            let layout = VerticalContentOffsetPreservingLayout()
-            layout.scrollDirection = .vertical
-            layout.minimumLineSpacing = 0
-            layout.minimumInteritemSpacing = 0
-            layout.sectionInset = UIEdgeInsets.zero
-            layout.estimatedItemSize = .zero
-            collectionNode.collectionViewLayout = layout
-        }
-        
         
     }
     

@@ -104,14 +104,6 @@ extension ReaderView {
 }
 
 extension ReaderView.ViewModel {
-    var tap: some Gesture {
-        DragGesture(minimumDistance: 0)
-            .onEnded { [unowned self] in
-                if !activeChapter.data.LOADED { menuControl.toggleMenu() }
-                else { handleNavigation($0.location) }
-            }
-    }
-
     var bgTap: some Gesture {
         TapGesture(count: 1)
             .onEnded { _ in
@@ -119,8 +111,4 @@ extension ReaderView.ViewModel {
             }
     }
 
-    var ignore: some Gesture {
-        TapGesture(count: 2)
-            .onEnded { _ in self.menuControl.hideMenu() }
-    }
 }

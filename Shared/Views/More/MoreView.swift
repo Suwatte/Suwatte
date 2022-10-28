@@ -109,6 +109,7 @@ struct MoreView: View {
             Button {
                 KingfisherManager.shared.cache.clearCache()
                 ImagePipeline.shared.configuration.dataCache?.removeAll()
+                ToastManager.shared.info("Image Cache Cleared!")
             } label: {
                 HStack {
                     Text("Clear Image Cache")

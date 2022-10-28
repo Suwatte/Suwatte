@@ -50,7 +50,7 @@ extension Controller {
         
         
         func setImage() {
-            guard ratio == nil, !working else { return }
+            guard ratio == nil, !working, image == nil else { return }
             
             if let savedOffset {
                 transitionLayout(with: .init(min: .zero, max: .init(width: view.frame.width, height: savedOffset * 2)), animated: true, shouldMeasureAsync: false)
@@ -115,6 +115,35 @@ extension Controller {
             layout.isInsertingCellsToTop = Y < manager.contentOffset.y
             
         }
+        
+        var image: UIImage? = nil
+        
+        func displayImage() {
+            guard let image else {
+                setImage()
+                return
+            }
+            imageNode.image = image
+            imageNode.shouldAnimateSizeChanges = false
+            let size = image.size.scaledTo(UIScreen.main.bounds.size)
+            self.frame = .init(origin: .init(x: 0, y: 0), size: size)
+            ratio = size.height / size.width
+            
+            if Task.isCancelled {
+                return
+            }
+            transitionLayout(with: .init(min: .zero, max: size), animated: true, shouldMeasureAsync: false)
+            Task { @MainActor in
+                imageNode.isUserInteractionEnabled = true
+                imageNode.view.addGestureRecognizer(menuTap)
+                imageNode.view.addGestureRecognizer(zoomingTap)
+                if let delegate, contextMenuEnabled {
+                    imageNode.view.addInteraction(UIContextMenuInteraction(delegate: delegate))
+                }
+            }
+            
+            
+        }
         func onImageProvided(_ result: Result<RetrieveImageResult, KingfisherError>) {
             switch result {
                 case let .success(imageResult):
@@ -122,23 +151,9 @@ extension Controller {
                         return
                     }
                     
-                    imageNode.image = imageResult.image
-                    imageNode.shouldAnimateSizeChanges = false
-                    let size = imageResult.image.size.scaledTo(UIScreen.main.bounds.size)
-                    self.frame = .init(origin: .init(x: 0, y: 0), size: size)
-                    ratio = size.height / size.width
-                    
-                    if Task.isCancelled {
-                        return
-                    }
-                    transitionLayout(with: .init(min: .zero, max: size), animated: true, shouldMeasureAsync: false)
-                    Task { @MainActor in
-                        imageNode.isUserInteractionEnabled = true
-                        imageNode.view.addGestureRecognizer(menuTap)
-                        imageNode.view.addGestureRecognizer(zoomingTap)
-                        if let delegate, contextMenuEnabled {
-                            imageNode.view.addInteraction(UIContextMenuInteraction(delegate: delegate))
-                        }
+                    self.image = imageResult.image
+                    if isNodeLoaded {
+                        displayImage()
                     }
                     
                 case let .failure(error):
@@ -157,7 +172,8 @@ extension Controller {
                 let imagePlace = ASRatioLayoutSpec(ratio: ratio, child: imageNode)
                 return imagePlace
             } else {
-                return ASRatioLayoutSpec(ratio: 1.5, child: progressNode)
+                let ratio = 1 / UIScreen.main.bounds.size.ratio
+                return ASRatioLayoutSpec(ratio: ratio, child: progressNode)
             }
             
         }
@@ -213,6 +229,7 @@ extension Controller.ImageNode {
     
     override func didEnterDisplayState() {
         super.didEnterDisplayState()
+        displayImage()
     }
     
     override func didEnterPreloadState() {
@@ -225,6 +242,7 @@ extension Controller.ImageNode {
         Task { @MainActor in
             delegate?.handleChapterPreload(at:indexPath)
         }
+        displayImage()
     }
     
     override func didExitVisibleState() {

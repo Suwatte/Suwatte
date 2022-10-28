@@ -179,6 +179,7 @@ extension ReaderView {
             content?.title ?? contentTitle ?? ""
         }
         
+        @MainActor
         func handleNavigation(_ point: CGPoint) {
             if !UserDefaults.standard.bool(forKey: STTKeys.TapSidesToNavigate) || IN_ZOOM_VIEW {
                 Task { @MainActor in
@@ -204,21 +205,13 @@ extension ReaderView {
             
             switch action {
                 case .MENU:
-                    Task { @MainActor in
-                        
-                        menuControl.toggleMenu()
-                    }
+                    menuControl.toggleMenu()
                 case .LEFT:
-                    Task { @MainActor in
-                        
-                        menuControl.hideMenu()
-                    }
+                    menuControl.hideMenu()
                     navigationPublisher.send(action)
                 case .RIGHT:
-                    Task { @MainActor in
-                        
-                        menuControl.hideMenu()
-                    }
+                    
+                    menuControl.hideMenu()
                     navigationPublisher.send(action)
             }
             
