@@ -12,7 +12,7 @@ import UIKit
 
 extension NovelReaderView {
     final class ViewModel: ObservableObject {
-        var chapterList: [StoredChapter]
+        var chapterList: [ThreadSafeChapter]
 
         @Published var readerChapterList: [ReaderView.ReaderChapter] = []
         @Published var activeChapter: ReaderView.ReaderChapter
@@ -35,16 +35,17 @@ extension NovelReaderView {
         init(chapterList: [StoredChapter], openTo chapter: StoredChapter) {
             // Sort Chapter List by either sourceIndex or chapter number
             let sourceIndexAcc = chapterList.map { $0.index }.reduce(0, +)
-            self.chapterList = sourceIndexAcc > 0 ? chapterList.sorted(by: { $0.index > $1.index }) : chapterList.sorted(by: { $0.number > $1.number })
+            self.chapterList = (sourceIndexAcc > 0 ? chapterList.sorted(by: { $0.index > $1.index }) : chapterList.sorted(by: { $0.number > $1.number }))
+                .map({ $0.toThreadSafe() })
 
-            activeChapter = .init(chapter: chapter)
+            activeChapter = .init(chapter: chapter.toThreadSafe())
             activeChapter.requestedPageIndex = -1
             readerChapterList.append(activeChapter)
             listen()
         }
 
         @MainActor
-        func loadChapter(_ chapter: StoredChapter, asNextChapter: Bool = true) async {
+        func loadChapter(_ chapter: ThreadSafeChapter, asNextChapter: Bool = true) async {
             let alreadyInList = readerChapterList.contains(where: { $0.chapter._id == chapter._id })
             let readerChapter: ReaderView.ReaderChapter?
 
@@ -204,7 +205,7 @@ extension NovelReaderView.ViewModel {
         }.store(in: &subscriptions)
     }
 
-    func getChapterIndex(_ chapter: StoredChapter) -> Int {
+    func getChapterIndex(_ chapter: ThreadSafeChapter) -> Int {
         chapterList.firstIndex(where: { $0 == chapter })!
     }
 

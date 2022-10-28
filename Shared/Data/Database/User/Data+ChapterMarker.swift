@@ -108,7 +108,7 @@ extension DataManager {
         }
         let total = !isNovel ? chapter.pages?.count ?? 0 : chapter.data.value?.pages.count ?? 0
         let marker = ChapterMarker()
-        marker.chapter = chapter.chapter
+        marker.chapter = chapter.chapter.toStored()
         marker.dateRead = Date()
         marker.lastPageRead = last
         marker.totalPageCount = total
@@ -120,6 +120,10 @@ extension DataManager {
         }
     }
 
+    
+    func setProgress(chapter: ThreadSafeChapter, completed: Bool = true){
+        setProgress(chapter: chapter.toStored(), completed: completed)
+    }
     func setProgress(chapter: StoredChapter, completed: Bool = true) {
         let realm = try! Realm()
 
