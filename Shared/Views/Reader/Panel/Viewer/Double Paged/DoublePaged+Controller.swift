@@ -294,13 +294,15 @@ extension Controller: UIContextMenuInteractionDelegate {
             if chapter.chapterType == .LOCAL {
                 return menu
             }
+            
+            let c = chapter.toStored()
             // Bookmark Actions
-            let isBookmarked = DataManager.shared.isBookmarked(chapter: chapter, page: page)
+            let isBookmarked = DataManager.shared.isBookmarked(chapter: c, page: page)
             let bkTitle = isBookmarked ? "Remove Bookmark" : "Bookmark Panel"
             let bkSysImage = isBookmarked ? "bookmark.slash" : "bookmark"
 
             let bookmarkAction = UIAction(title: bkTitle, image: UIImage(systemName: bkSysImage), attributes: isBookmarked ? [.destructive] : []) { _ in
-                DataManager.shared.toggleBookmark(chapter: chapter, page: page)
+                DataManager.shared.toggleBookmark(chapter: c, page: page)
             }
 
             menu = menu.replacingChildren([photoMenu, bookmarkAction])

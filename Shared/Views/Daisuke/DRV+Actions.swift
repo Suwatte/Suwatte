@@ -9,7 +9,7 @@ import SwiftUI
 
 extension DaisukeContentSourceView {
     struct ActionsView: View {
-        @EnvironmentObject var source: DSK.ContentSource
+        @EnvironmentObject var source: DSK.LocalContentSource
         @State var loadable: Loadable<[DSKCommon.ActionGroup]?> = .idle
         var body: some View {
             LoadableView(loadable: loadable) {

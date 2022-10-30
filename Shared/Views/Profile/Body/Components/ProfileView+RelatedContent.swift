@@ -17,7 +17,7 @@ extension ProfileView.Skeleton {
         @ObservedResults(ReadLater.self) var readLater
         @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
         var collections: [DaisukeEngine.Structs.HighlightCollection]
-        @EnvironmentObject var source: DaisukeEngine.ContentSource
+        @EnvironmentObject var source: DaisukeContentSource
         var body: some View {
             ASCollectionView(sections: SECTIONS)
                 .layout { _ in

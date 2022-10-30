@@ -14,6 +14,7 @@ struct CloudFlareErrorView: View {
     var sourceID: String
     var action: () -> Void
     @State var showSheet: Bool = false
+    @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
 
     var body: some View {
         VStack {
@@ -50,6 +51,8 @@ struct CloudFlareErrorView: View {
                 CloudFlareWebView(sourceID: sourceID)
                     .navigationBarTitle("Cloudflare Resolve", displayMode: .inline)
                     .closeButton()
+                    .tint(accentColor)
+                    .accentColor(accentColor)
             }
         }
     }
@@ -85,7 +88,7 @@ extension CloudFlareErrorView {
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
             Task { @MainActor in
-                guard let source = DaisukeEngine.shared.getSource(with: sourceID) else {
+                guard let source = DaisukeEngine.shared.getJSSource(with: sourceID) else {
                     return
                 }
                 guard let dsk = try? await source.willAttemptCloudflareVerification() else {

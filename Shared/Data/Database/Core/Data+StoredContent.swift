@@ -75,10 +75,10 @@ extension ContentStatus: PersistableEnum, Codable {}
 extension ReadingMode: PersistableEnum, Codable {}
 
 extension DaisukeEngine.Structs.Content {
-    func toStoredContent(withSource source: DaisukeEngine.ContentSource) throws -> StoredContent {
+    func toStoredContent(withSource source: String) throws -> StoredContent {
         let data = try DaisukeEngine.encode(value: self)
         let stored = try DaisukeEngine.decode(data: data, to: StoredContent.self)
-        stored.sourceId = source.id
+        stored.sourceId = source
         return stored
     }
 }
@@ -118,7 +118,7 @@ extension DataManager {
         }
 
         let data = try? await source.getContent(id: contentId)
-        guard let stored = try? data?.toStoredContent(withSource: source) else {
+        guard let stored = try? data?.toStoredContent(withSource: sourceId) else {
             return
         }
         storeContent(stored)

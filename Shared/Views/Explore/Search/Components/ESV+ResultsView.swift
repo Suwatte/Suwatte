@@ -22,7 +22,7 @@ extension ExploreView.SearchView {
         @ObservedResults(LibraryEntry.self) var library
         @ObservedResults(ReadLater.self) var forLaterLibrary
         @EnvironmentObject var model: ViewModel
-        @EnvironmentObject var source: DaisukeEngine.ContentSource
+        @EnvironmentObject var source: DaisukeContentSource
 
         @AppStorage(STTKeys.TileStyle) var style = TileStyle.COMPACT
         @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
@@ -54,7 +54,13 @@ extension ExploreView.SearchView {
                     }
                 }
                 .sectionHeader {
-                    Header
+                    Group {
+                        if model.resultCount != nil || !model.sorters.isEmpty {
+                            Header
+                        } else { EmptyView() }
+                    }
+                    
+                    
                 }
                 .sectionFooter {
                     PaginationView
@@ -66,7 +72,7 @@ extension ExploreView.SearchView {
             }, configureCustomLayout: { layout in
                 layout.itemsPerRow = itemsPerRow
                 layout.itemStyle = style
-                layout.headerReferenceSize = .init(width: layout.collectionView?.bounds.width ?? 0, height: 30)
+                layout.headerReferenceSize = .init(width: layout.collectionView?.bounds.width ?? 0, height: model.sorters.isEmpty ? 0 : 30)
 
                 var height = 35
                 switch model.paginationStatus {

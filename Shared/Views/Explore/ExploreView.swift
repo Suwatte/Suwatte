@@ -13,11 +13,11 @@ import SwiftUI
 import UIKit
 
 struct ExploreView: View {
-    @EnvironmentObject var source: DaisukeEngine.ContentSource
+    @EnvironmentObject var source: DaisukeContentSource
     @StateObject var model = ViewModel()
     var body: some View {
         Group {
-            if source.sourceInfo.hasExplorePage {
+            if source.sourceInfo.hasExplorePage ?? false {
                 ExploreCollectioViewRepresentable()
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
@@ -32,6 +32,7 @@ struct ExploreView: View {
         }
         .navigationTitle(source.name)
         .environmentObject(model)
+        .environmentObject(source)
         .modifier(InteractableContainer(selection: $model.selection))
     }
 }

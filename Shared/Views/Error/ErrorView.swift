@@ -52,9 +52,6 @@ struct ErrorView: View {
             }
             .buttonStyle(.plain)
         }
-        .onAppear {
-            Logger.shared.error("[ErrorView] \(getMessage(for: error))")
-        }
     }
 
     func getMessage(for error: Error) -> String {

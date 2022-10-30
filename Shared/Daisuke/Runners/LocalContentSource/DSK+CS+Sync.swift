@@ -8,7 +8,7 @@
 import Foundation
 import RealmSwift
 
-extension DSK.ContentSource {
+extension DSK.LocalContentSource {
     func getReadChapterMarkers(for id: String) async throws -> [String] {
         try await withCheckedThrowingContinuation { handler in
             let methodName = "getReadChapterMarkers"
@@ -32,7 +32,7 @@ extension DSK.ContentSource {
 
 // MARK: Sync
 
-extension DSK.ContentSource {
+extension DSK.LocalContentSource {
     func syncUserLibrary() async throws {
         let method = "syncUserLibrary"
         if !methodExists(method: method) {

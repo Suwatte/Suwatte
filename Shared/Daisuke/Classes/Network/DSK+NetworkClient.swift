@@ -42,12 +42,11 @@ extension DaisukeEngine {
                         let request = try Request(value: request)
                         let response = try await self.makeRequest(with: request)
                         let dict = try response.asDictionary()
-
-                        // TODO: Intercept Response
                         resolve?.call(withArguments: [dict])
                     } catch {
                         reject?.call(withArguments: [error])
                     }
+                    session.session.configuration.timeoutIntervalForResource = 30
                 }
             }
         }
@@ -71,8 +70,6 @@ extension DaisukeEngine {
                         }
                         let response = try await self.makeRequest(with: request)
                         let dict = try response.asDictionary()
-
-                        // TODO: Intercept Response
                         resolve?.call(withArguments: [dict])
                     } catch {
                         reject?.call(withArguments: [error])
@@ -115,34 +112,25 @@ extension DaisukeEngine {
 
 extension DaisukeEngine.NetworkClient {
     func makeRequest(with request: DSKCommon.Request) async throws -> Response {
-        // Init Interceptor
-        let intercepter = NetworkRequstIntercepter()
-        intercepter.handler = requestInterceptHandler
-
-        if let cookies = request.cookies {
-            let mapped = cookies.map(\.httpCookie).compactMap { $0 }
-            mapped.forEach { cookie in
-                self.session.sessionConfiguration.httpCookieStorage?.setCookie(cookie)
-            }
-        }
-
+        let request = try await handleRequestIntercept(request: request)
         let urlRequest = try request.toURLRequest()
-
-        let afResponse = await session.request(urlRequest, interceptor: intercepter)
+        let afResponse = await session.request(urlRequest)
             .validate()
             .serializingString()
             .response
-
-        guard let httpResponse = afResponse.response, let httpRequest = afResponse.request else {
+        session.session.configuration.timeoutIntervalForResource = request.timeout ?? 30
+        guard let httpResponse = afResponse.response else {
             throw DaisukeEngine.Errors.NamedError(name: "Network Client", message: "Recieved Empty Response")
         }
-        let request = try httpRequest.toDaisukeNetworkRequest()
+        
+        
         let data = try afResponse.result.get()
-        let response = Response(data: data,
+        var response = Response(data: data,
                                 status: httpResponse.statusCode,
                                 headers: httpResponse.headers.dictionary,
                                 request: request)
-
+        
+        response = try await handleResponseIntercept(response: response)
         return response
     }
 }
@@ -160,14 +148,29 @@ extension URLRequest {
         let headers = self.headers.dictionary
         var body: [String: AnyCodable]?
         if let data = httpBody {
-            body = try? JSONDecoder().decode(DSKCommon.CodableDict.self, from: data)
-        }
-        var params: [String: AnyCodable]?
+            let isURLEncoded = self.headers["content-type"]?.contains("x-www-form-urlencoded") ?? false
+            
+            if isURLEncoded {
+                let query = String(data: data, encoding: .utf8) ?? ""
+                let url = URL(string: "https://suwatte.com/?\(query)")
+                if let url = url, let components = URLComponents(string: url.absoluteString) {
+                    body = parseQueryParam(components: components)
+                }
+            } else {
+                body = try? JSONDecoder().decode(DSKCommon.CodableDict.self, from: data)
 
+            }
+        }
+        let params = parseQueryParam(components: components)
+        let request = DSKCommon.Request(url: baseURL, method: method, params: params, body: body, headers: headers, cookies: nil, timeout: timeoutInterval, maxRetries: nil)
+        return request
+    }
+    
+    func parseQueryParam(components: URLComponents) -> [String: AnyCodable] {
+        let out: [String: AnyCodable] = [:]
         if let items = components.queryItems {
             var out: [String: AnyCodable] = [:]
             let dict = Dictionary(grouping: items, by: { $0.name })
-
             dict.forEach { key, values in
                 if values.isEmpty {
                     return
@@ -181,36 +184,44 @@ extension URLRequest {
                 let properKey = key.replacingOccurrences(of: "[]", with: "")
                 out[properKey] = AnyCodable(values.compactMap { $0.value })
             }
-            params = out
         }
-        let request = DSKCommon.Request(url: baseURL, method: method, params: params, body: body, headers: headers, cookies: nil, timeout: timeoutInterval, maxRetries: nil)
-        return request
+        
+        return out
     }
+    
 }
 
 extension DaisukeEngine.NetworkClient {
-    class NetworkRequstIntercepter: RequestInterceptor {
-        var handler: JSValue?
-        func adapt(_ urlRequest: URLRequest, using _: RequestAdapterState, completion: @escaping (Result<URLRequest, Error>) -> Void) {
-            guard let handler = handler else {
-                completion(.success(urlRequest))
-                return
-            }
-
-            do {
-                let request = try urlRequest.toDaisukeNetworkRequest()
-                let dict = try request.asDictionary()
-                handler.daisukeCall(arguments: [dict]) { value in
-                    let request = try Request(value: value)
-                    let urlRequest = try request.toURLRequest()
-                    completion(.success(urlRequest))
-                } onFailure: { error in
-                    completion(.failure(error))
-                }
-            } catch {
-                completion(.failure(error))
-            }
+    func handleRequestIntercept(request: Request) async throws -> Request {
+        let handler = requestInterceptHandler
+        guard let handler = handler else {
+            return request
         }
+        let dict = try! request.asDictionary()
+        return try await withCheckedThrowingContinuation({ continuation in
+            handler.daisukeCall(arguments: [dict]) { value in
+                let request = try Request(value: value)
+                continuation.resume(returning: request)
+            } onFailure: { error in
+                continuation.resume(throwing: error)
+            }
+        })
+    }
+    
+    func handleResponseIntercept(response: Response) async throws -> Response {
+        let handler = responseInterceptHandler
+        guard let handler = handler else {
+            return response
+        }
+        let dict = try! response.asDictionary()
+        return try await withCheckedThrowingContinuation({ continuation in
+            handler.daisukeCall(arguments: [dict]) { value in
+                let response = try Response(value: value)
+                continuation.resume(returning: response)
+            } onFailure: { error in
+                continuation.resume(throwing: error)
+            }
+        })
     }
 }
 

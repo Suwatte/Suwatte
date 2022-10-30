@@ -167,7 +167,7 @@ extension ExploreView.HighlightTile {
 
     struct GALLERY: View {
         var entry: DaisukeEngine.Structs.Highlight
-        @EnvironmentObject var source: DSK.ContentSource
+        @EnvironmentObject var source: DaisukeContentSource
         @State private var endColor = Color.black
         @State private var timer: Timer?
         @State private var currentImageIndex = 0
@@ -258,7 +258,7 @@ extension ExploreView.HighlightTile {
 
         func load(url: URL?) async {
             guard let url else { return }
-            let req = try? await source.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
+            let req = try? await (source as? DSK.LocalContentSource)?.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
             loader.animation = .easeOut(duration: 0.25)
             loader.load(req ?? url)
         }

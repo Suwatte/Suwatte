@@ -215,7 +215,7 @@ class VerticalImageCell: UICollectionViewCell {
             downloadTask?.cancel()
             return
         }
-        progressModel.setProgress(CGFloat(recieved) / CGFloat(total))
+//        progressModel.setProgress(CGFloat(recieved) / CGFloat(total))
     }
 
     func handleImageFailure(_ error: Error) {

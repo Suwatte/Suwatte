@@ -17,9 +17,13 @@ struct InstalledRunnersView: View {
         let sources = engine.getSources().sorted(by: { getSaved($0.id)?.order ?? 0 < getSaved($1.id)?.order ?? 0})
         List {
             Section {
-                ForEach(sources) { source in
+                ForEach(sources, id: \.id) { source in
                     NavigationLink {
-                        DaisukeContentSourceView(source: source)
+                        if let source = source as? DSK.LocalContentSource {
+                            DaisukeContentSourceView(source: source)
+                        } else {
+                            Text("Hosted Source Menu")
+                        }
                     } label: {
                         HStack(spacing: 15) {
                             STTThumbView(url: getSaved(source.id)?.thumb())

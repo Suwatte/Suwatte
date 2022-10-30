@@ -148,8 +148,8 @@ extension ReaderView {
         }
 
         struct BaseTransitionView: View {
-            var destination: StoredChapter
-            var from: StoredChapter
+            var destination: ThreadSafeChapter
+            var from: ThreadSafeChapter
             var type: Transition.TransitionType
             @EnvironmentObject var model: ReaderView.ViewModel
             var body: some View {

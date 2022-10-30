@@ -6,13 +6,14 @@
 //
 
 import UIKit
+import AsyncDisplayKit
 
 protocol ZoomHandlerDelegate: UIViewController {
     func cellTappedAt(point: CGPoint, frame: CGRect, path: IndexPath)
 }
 
-protocol ZoomableHostDelegate: UIViewController {
-    var collectionView: UICollectionView! { get set }
+protocol ZoomableHostDelegate: NSObject {
+    var collectionNode: ASCollectionNode { get }
     var selectedIndexPath: IndexPath! { get set }
 }
 

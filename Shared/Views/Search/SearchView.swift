@@ -51,7 +51,7 @@ struct SearchView: View {
         .init(rawValue: UserDefaults.standard.string(forKey: STTKeys.SourcesHiddenFromGlobalSearch) ?? "") ?? []
     }
 
-    var sources: [DaisukeEngine.ContentSource] {
+    var sources: [DaisukeContentSource] {
         return DaisukeEngine.shared.getSources().filter { !disabledSourceIds.contains($0.id) }
     }
 
@@ -150,11 +150,13 @@ struct SearchView: View {
                         VStack(alignment: .leading) {
                             Text(source?.name ?? "Source Not Found")
                                 .font(.headline.weight(.semibold))
-                            Text(data.totalResultCount.description + " Results")
-                                .font(.subheadline.weight(.light))
+                            if let count = data.totalResultCount {
+                                Text(count.description + " Results")
+                                    .font(.subheadline.weight(.light))
+                            }
                         }
                         Spacer()
-                        if data.results.count < data.totalResultCount, let source = source {
+                        if data.results.count < data.totalResultCount ?? 0, let source = source {
                             NavigationLink {
                                 ExploreView.SearchView(model: .init(request: .init(query: model.query), source: source))
                             } label: {
@@ -240,7 +242,7 @@ struct SearchView: View {
 
 extension SearchView {
     struct Cell: View {
-        var source: DaisukeEngine.ContentSource
+        var source: DaisukeEngine.LocalContentSource
         var request: DaisukeEngine.Structs.SearchRequest
         var body: some View {
             Text(source.name)
@@ -258,7 +260,7 @@ extension SearchView {
             .init(rawValue: UserDefaults.standard.string(forKey: STTKeys.SourcesHiddenFromGlobalSearch) ?? "") ?? []
         }
 
-        var sources: [DaisukeEngine.ContentSource] {
+        var sources: [DaisukeContentSource] {
             DaisukeEngine.shared.getSources().filter { !disabledSourceIds.contains($0.id) }
         }
 

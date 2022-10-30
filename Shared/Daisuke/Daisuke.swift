@@ -8,6 +8,7 @@
 import Alamofire
 import Foundation
 import JavaScriptCore
+import RealmSwift
 
 final class DaisukeEngine: ObservableObject {
     // MARK: Singleton
@@ -32,8 +33,7 @@ final class DaisukeEngine: ObservableObject {
     }
 
     // MARK: Runners
-
-    @Published var runners: [String: DaisukeRunnerProtocol] = [:]
+    @Published var sources: [String: DaisukeContentSource] = [:]
 
     init() {
         // Start Virtual Machine
@@ -94,15 +94,37 @@ extension DaisukeEngine {
         for url in urls {
             do {
                 let runner = try startRunner(at: url)
-                try addRunner(runner: runner)
+                try addSource(runner: runner)
                 Logger.shared.log("\(STT_EV) Started \(runner.name)")
+            } catch {
+                ToastManager.shared.error(error)
+            }
+        }
+        
+        startHostedRunners()
+    }
+    
+    private func startHostedRunners() {
+        
+        let hostedRunners = DataManager.shared.getHostedRunners()
+        
+        for runner in hostedRunners {
+            do {
+                guard let str = runner.info, let data = str.data(using: .utf8), let strUrl = runner.listURL, let url = URL(string: strUrl) else {
+                    ToastManager.shared.error(DSK.Errors.NamedError(name: "StartUp Error", message: "Invalid Source Info"))
+                    return
+                }
+                let info = try DaisukeEngine.decode(data: data, to: ContentSourceInfo.self)
+                let source = HostedContentSource(host: url, info: info)
+                try addSource(runner: source)
+                
             } catch {
                 ToastManager.shared.error(error)
             }
         }
     }
 
-    private func startRunner(at path: URL) throws -> DaisukeRunnerProtocol {
+    private func startRunner(at path: URL) throws -> DaisukeContentSource {
         let context = newJSContext()
         let content = try String(contentsOfFile: path.relativePath, encoding: String.Encoding.utf8)
 
@@ -112,40 +134,32 @@ extension DaisukeEngine {
         _ = context.evaluateScript("const DAISUKE_RUNNER = new STTPackage.Target();")
         let runnerClass = context.daisukeRunner()
 
-        guard let runnerClass = runnerClass, runnerClass.isObject,
-              let type = RunnerType(rawValue: Int(runnerClass.forProperty("type").toInt32()))
-        else {
+        guard let runnerClass = runnerClass, runnerClass.isObject else {
             throw Errors.RunnerClassInitFailed
         }
+        
 
-        // Start & Return Runner
-        switch type {
-        case .CONTENT_SOURCE:
-            let source = try ContentSource(runnerClass: runnerClass)
-            if let url = DataManager.shared.getRunnerInfomation(id: source.id)?.listURL {
-                let val = url + "/assets"
-                _ = context.evaluateScript("ASSETS_DIRECTORY = '\(val)';")
-            }
-            return source
-
-        case .SERVICE: break
+        let source = try LocalContentSource(runnerClass: runnerClass)
+        if let url = DataManager.shared.getRunnerInfomation(id: source.id)?.listURL {
+            let val = url + "/assets"
+            _ = context.evaluateScript("ASSETS_DIRECTORY = '\(val)';")
         }
-
-        throw Errors.MethodNotImplemented
+        return source
     }
 
-    private func validateRunnerVersion(runner: DaisukeRunnerProtocol) throws {
+    private func validateRunnerVersion(runner: DaisukeContentSource) throws {
         // Validate that the incoming runner has a higher version
-        let current = runners[runner.id]
+        let current = sources[runner.id]
 
-        if let current = current, current.info.version > runner.info.version {
+        if let current = current, current.version > runner.version {
             throw Errors.NamedError(name: "DAISUKE", message: "Current Installed Version is Higher")
         }
     }
 
-    private func addRunner(runner: DaisukeRunnerProtocol) throws {
-        runners.updateValue(runner, forKey: runner.id)
-        if let runner = runner as? ContentSource {
+    private func addSource(runner: DaisukeContentSource) throws {
+        sources.removeValue(forKey: runner.id)
+        sources.updateValue(runner, forKey: runner.id)
+        if let runner = runner as? LocalContentSource {
             Task {
                 try? await runner.registerDefaultPrefs()
                 await runner.onSourceLoaded()
@@ -154,11 +168,10 @@ extension DaisukeEngine {
     }
 
     func removeRunner(id: String) throws {
-        runners.removeValue(forKey: id)
+        sources.removeValue(forKey: id)
+        DataManager.shared.removeRunnerInformation(id: id)
         let path = directory.appendingPathComponent("\(id).stt")
         try FileManager.default.removeItem(at: path)
-
-        DataManager.shared.removeRunnerInformation(id: id)
     }
 }
 
@@ -194,7 +207,7 @@ extension DaisukeEngine {
         try validateRunnerVersion(runner: runner)
         let validRunnerPath = directory.appendingPathComponent("\(runner.id).stt")
         let _ = try FileManager.default.replaceItemAt(validRunnerPath, withItemAt: url)
-        try addRunner(runner: runner)
+        try addSource(runner: runner)
     }
 
     private func handleNetworkRunnerImport(from url: URL) async throws {
@@ -218,8 +231,36 @@ extension DaisukeEngine {
         let _ = try FileManager.default.replaceItemAt(validRunnerPath, withItemAt: downloadURL)
         try? FileManager.default.removeItem(at: downloadURL)
         try await MainActor.run(body: {
-            try addRunner(runner: runner)
+            try addSource(runner: runner)
         })
+    }
+    
+    func saveHostedRunner(list: String, runner: Runner) {
+        let realm = try! Realm()
+        
+        do {
+            let data = try DaisukeEngine.encode(value: runner)
+            let str = String(decoding: data, as: UTF8.self)
+            
+            let obj = StoredRunnerObject()
+            obj.id = runner.id
+            obj.hosted = true
+            obj.listURL = list
+            obj.info = str
+            obj.name = runner.name
+            obj.thumbnail = runner.thumbnail
+            
+            try! realm.safeWrite {
+                realm.add(obj, update: .modified)
+            }
+            
+            let source = HostedContentSource(host: URL(string: list)!, info: .init(id: runner.id, name: runner.name, version: runner.version, website: runner.website ?? "", supportedLanguages: runner.supportedLanguages ?? [], hasExplorePage: runner.hasExplorePage ?? false))
+            try addSource(runner: source)
+            
+        } catch {
+            ToastManager.shared.error(error)
+        }
+        
     }
 }
 
@@ -231,21 +272,18 @@ extension JSContext {
 
 //// MARK: Fetch
 extension DaisukeEngine {
-    func getRunner(with id: String) -> DaisukeRunnerProtocol? {
-        runners[id]
+
+    func getSource(with id: String) ->  DaisukeContentSource? {
+       sources[id]
+    }
+    
+    func getJSSource(with id: String) -> LocalContentSource? {
+        sources[id] as? LocalContentSource
     }
 
-    func getSource(with id: String) -> ContentSource? {
-        runners[id] as? ContentSource
+    func getSources() -> [DaisukeContentSource] {
+        sources.values.map({ $0 })
     }
-
-    func getSources() -> [ContentSource] {
-        runners.values.compactMap { $0 as? ContentSource }
-    }
-
-//    func getService(with id: String) -> Service? {
-//        services.first(where: { $0.id == id })
-//    }
 }
 
 // MARK: CommonLibrary
@@ -261,6 +299,7 @@ extension DaisukeEngine {
         await MainActor.run(body: {
             ToastManager.shared.info("Updated Commons")
         })
+        
     }
 
     private func getCommons() async throws {

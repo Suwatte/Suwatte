@@ -14,11 +14,16 @@ struct AppearanceView: View {
     @AppStorage(STTKeys.incognito) var incognitoMode = false
     @AppStorage(STTKeys.GridItemsPerRow_P) var IPRP = 2
     @AppStorage(STTKeys.GridItemsPerRow_LS) var IPRLS = 6
-
+    @AppStorage(STTKeys.AppAccentColor) var appAccentColor: Color = .sttDefault
     @Preference(\.selectiveUpdates) var selectiveUpdates
     let options = AppTabs.defaultSettings
     var body: some View {
         List {
+            Section {
+                ColorPicker("Accent Color", selection: $appAccentColor)
+            } header: {
+                Text("Colors")
+            }
             Section {
                 Stepper(value: $IPRP, in: 2 ... 10) {
                     FieldLabel(primary: "Potrait", secondary: IPRP.description)

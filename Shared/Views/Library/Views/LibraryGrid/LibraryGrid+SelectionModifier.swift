@@ -21,18 +21,26 @@ extension LibraryView.LibraryGrid {
         @State var selectionOption: SelectionOption?
         @State var confirmRemoval = false
         @EnvironmentObject var model: ViewModel
+        @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
+
         func body(content: Content) -> some View {
             content
                 .fullScreenCover(item: $selectionOption, onDismiss: { model.selectedIndexes.removeAll() }) { option in
-                    switch option {
-                    case .collections: MoveCollectionsView(entries: entries)
-                    case .flags: MoveReadingFlag(entries: entries)
-                    case .migrate:
-                        NavigationView {
-                            MigrationView(contents: selectedEntries.compactMap(\.content))
+                    Group {
+                        switch option {
+                        case .collections: MoveCollectionsView(entries: entries)
+                        case .flags: MoveReadingFlag(entries: entries)
+                        case .migrate:
+                            NavigationView {
+                                MigrationView(contents: selectedEntries.compactMap(\.content))
+                            }
+                            .navigationViewStyle(.stack)
                         }
-                        .navigationViewStyle(.stack)
                     }
+                    .accentColor(accentColor)
+                    .tint(accentColor)
+                    
+                    
                 }
                 .alert("Remove From Library", isPresented: $confirmRemoval, actions: {
                     Button("Proceed", role: .destructive) {

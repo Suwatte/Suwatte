@@ -35,7 +35,7 @@ class STTHelpers {
         }
     }
 
-    static func getInitialPosition(for chapter: StoredChapter, limit: Int) -> (Int, CGFloat?) {
+    static func getInitialPosition(for chapter: ThreadSafeChapter, limit: Int) -> (Int, CGFloat?) {
         guard let marker = DataManager.shared.getChapterMarker(forId: chapter._id) else {
             return (0, nil)
         }
@@ -50,8 +50,7 @@ class STTHelpers {
         return (marker.lastPageRead - 1, nil)
     }
 
-    @MainActor
-    static func getChapterData(_ chapter: StoredChapter) async -> Loadable<StoredChapterData> {
+    static func getChapterData(_ chapter: ThreadSafeChapter) async -> Loadable<StoredChapterData> {
         switch chapter.chapterType {
         case .LOCAL:
             let bookId = Int64(chapter.contentId)
@@ -63,7 +62,7 @@ class STTHelpers {
             do {
                 let arr = try LocalContentManager.shared.getImagePaths(for: book.url)
                 let obj = StoredChapterData()
-                obj.chapter = chapter
+                obj.chapter = chapter.toStored()
                 obj.archivePaths = arr
                 return .loaded(obj)
             } catch {
@@ -75,7 +74,7 @@ class STTHelpers {
                 let download = try ICDM.shared.getCompletedDownload(for: chapter._id)
                 if let download = download {
                     let obj = StoredChapterData()
-                    obj.chapter = chapter
+                    obj.chapter = chapter.toStored()
                     obj.text = download.text
                     if let urls = download.urls {
                         obj.urls = urls
@@ -96,7 +95,7 @@ class STTHelpers {
             }
             do {
                 let data = try await source.getChapterData(contentId: chapter.contentId, chapterId: chapter.chapterId)
-                let stored = data.toStored(withStoredChapter: chapter)
+                let stored = data.toStored(withStoredChapter: chapter.toStored())
                 DataManager.shared.saveChapterData(data: stored)
                 return .loaded(stored)
             } catch {
@@ -105,7 +104,7 @@ class STTHelpers {
         case .OPDS:
             do {
                 let obj = StoredChapterData()
-                obj.chapter = chapter
+                obj.chapter = chapter.toStored()
                 let baseLink = chapter.contentId
                 let pageCount = chapter.chapterId.split(separator: "|").first
 

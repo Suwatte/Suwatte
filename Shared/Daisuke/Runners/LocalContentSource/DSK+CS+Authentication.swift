@@ -26,7 +26,7 @@ extension DSKCommon {
 
 // MARK: Get Auth Method
 
-extension DSK.ContentSource {
+extension DSK.LocalContentSource {
     func getAuthenticatedUser() async throws -> DSKCommon.User? {
         try await withCheckedThrowingContinuation { handler in
             let method = "getAuthenticatedUser"
@@ -54,13 +54,13 @@ extension DSK.ContentSource {
     }
 }
 
-extension DSK.ContentSource {
+extension DSK.LocalContentSource {
     func handleUserSignOut() async throws {
         try await callOptionalVoidMethod(method: "handleUserSignOut", arguments: [])
     }
 }
 
-extension DSK.ContentSource {
+extension DSK.LocalContentSource {
     func handleBasicAuth(id: String, password: String) async throws {
         if !methodExists(method: "handleBasicAuth") {
             throw DSK.Errors.NamedError(name: "Implementation Error", message: "Source Author has not implemented the required handleBasicAuth Method. Please reach out to the maintainer")
@@ -71,7 +71,7 @@ extension DSK.ContentSource {
 
 // MARK: Web
 
-extension DSK.ContentSource {
+extension DSK.LocalContentSource {
     func willRequestWebViewAuth() async throws -> DSKCommon.Request {
         let method = "willRequestWebViewAuth"
         if !methodExists(method: method) {

@@ -11,6 +11,7 @@ import RealmSwift
 struct RunnerList: Codable, Hashable {
     var listName: String?
     var runners: [Runner]
+    var hosted: Bool?
 }
 
 struct Runner: Codable, Hashable {
@@ -23,6 +24,7 @@ struct Runner: Codable, Hashable {
     var website: String?
     var supportedLanguages: [String]?
     var primarilyAdultContent: Bool?
+    var hasExplorePage: Bool?
     var path: String
     var thumbnail: String?
 
@@ -50,6 +52,7 @@ struct Runner: Codable, Hashable {
 final class StoredRunnerList: Object, ObjectKeyIdentifiable {
     @Persisted var listName: String?
     @Persisted(primaryKey: true) var url: String
+    @Persisted var hosted: Bool = false
 }
 
 final class StoredRunnerObject: Object, Identifiable {
@@ -59,12 +62,13 @@ final class StoredRunnerObject: Object, Identifiable {
     @Persisted var thumbnail: String?
     @Persisted var order: Int
     @Persisted var dateAdded: Date = Date()
+    @Persisted var hosted: Bool = false
+    @Persisted var info: String?
 
     func thumb() -> URL? {
         guard let thumbnail = thumbnail else {
             return nil
         }
-
         // Thumbnail is URL
         if let url = URL(string: thumbnail), url.isHTTP {
             return url
@@ -87,12 +91,13 @@ extension DataManager {
         let obj = StoredRunnerList()
         obj.listName = data.listName
         obj.url = url.absoluteString
+        obj.hosted = data.hosted ?? false
         try! realm.safeWrite {
             realm.add(obj, update: .modified)
         }
     }
 
-    func saveRunnerInfomation(runner: Runner, at url: URL) {
+    func saveRunnerInfomation(runner: Runner, at url: URL, hosted: Bool = false) {
         let realm = try! Realm()
         let obj = StoredRunnerObject()
 
@@ -100,6 +105,7 @@ extension DataManager {
         obj.listURL = url.absoluteString
         obj.name = runner.name
         obj.thumbnail = runner.thumbnail
+        obj.hosted = hosted
         obj.order = realm.objects(StoredRunnerObject.self).count
         try! realm.safeWrite {
             realm.add(obj, update: .modified)
@@ -125,5 +131,13 @@ extension DataManager {
         try! realm.safeWrite {
             realm.delete(targets)
         }
+    }
+    
+    func getHostedRunners() -> Results<StoredRunnerObject> {
+        let realm = try! Realm()
+        return realm
+            .objects(StoredRunnerObject.self)
+            .where({ $0.hosted == true && $0.listURL != nil && $0.info != nil })
+
     }
 }

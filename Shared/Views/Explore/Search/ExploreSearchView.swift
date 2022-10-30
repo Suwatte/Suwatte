@@ -14,6 +14,7 @@ extension ExploreView {
         @State var initialized = false
         @State var firstCall = false
         @State var presentSearchHistory = false
+        @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
 
         var body: some View {
             LoadableView(loadable: model.result) {
@@ -33,12 +34,16 @@ extension ExploreView {
 
             .fullScreenCover(isPresented: $model.presentFilters, onDismiss: defaultCall) {
                 FilterSheet()
+                    .tint(accentColor)
+                    .accentColor(accentColor)
             }
 
             // MARK: History Sheet
 
             .sheet(isPresented: $presentSearchHistory, onDismiss: defaultCall) {
                 HistoryView()
+                    .tint(accentColor)
+                    .accentColor(accentColor)
             }
             .onAppear(perform: {
                 if let query = model.request.query, !model.result.LOADED {
@@ -78,7 +83,7 @@ extension ExploreView {
             if let tagLabel = tagLabel {
                 return "\(tagLabel) Titles"
             } else {
-                if model.source.sourceInfo.hasExplorePage {
+                if let source = model.source as? DSK.LocalContentSource, (source.sourceInfo.hasExplorePage ?? false) {
                     return "Search"
                 } else {
                     return "Directory"

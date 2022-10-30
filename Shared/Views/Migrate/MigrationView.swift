@@ -16,7 +16,7 @@ struct MigrationView: View {
     @State var operationState = OperationState.idle
     @State var operations: [String: ItemState] = [:]
     @State var operationsTask: Task<Void, Never>?
-    @State var preferredDestinations: [DSK.ContentSource] = []
+    @State var preferredDestinations: [DaisukeContentSource] = []
     @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
     @Environment(\.presentationMode) var presentationMode
     @State var presentAlert = false
@@ -185,7 +185,7 @@ extension MigrationView {
     var PreferredDestinationsView: some View {
         List {
             Section {
-                ForEach(preferredDestinations) { source in
+                ForEach(preferredDestinations, id: \.id) { source in
                     Text(source.name)
                         .onTapGesture {
                             preferredDestinations.removeAll(where: { $0.id == source.id })
@@ -197,7 +197,7 @@ extension MigrationView {
             }
 
             Section {
-                ForEach(getAvailableSources()) { source in
+                ForEach(getAvailableSources(), id: \.id) { source in
                     Text(source.name)
                         .onTapGesture {
                             preferredDestinations.append(source)
@@ -212,7 +212,7 @@ extension MigrationView {
         .environment(\.editMode, .constant(.active))
     }
 
-    private func getAvailableSources() -> [DSK.ContentSource] {
+    private func getAvailableSources() -> [DaisukeContentSource] {
         let allSources = DSK.shared.getSources()
         return allSources
             .filter { !preferredDestinations.contains($0) }
@@ -223,11 +223,6 @@ extension MigrationView {
     }
 }
 
-extension DSK.ContentSource: Equatable {
-    static func == (lhs: DSK.ContentSource, rhs: DSK.ContentSource) -> Bool {
-        return lhs.id == rhs.id
-    }
-}
 
 // MARK: Functions
 
@@ -384,7 +379,7 @@ extension MigrationView {
     }
 
     private typealias ReturnValue = (HighlightIndentier, Double)
-    private func handleSourcesSearch(id: String, query: String, chapter: Double?, sources: [DSK.ContentSource]) async -> (String, ItemState) {
+    private func handleSourcesSearch(id: String, query: String, chapter: Double?, sources: [DaisukeContentSource]) async -> (String, ItemState) {
         await withTaskGroup(of: ReturnValue?.self, body: { group in
 
             for source in sources {
@@ -429,7 +424,7 @@ extension MigrationView {
         })
     }
 
-    private func searchSource(query: String, chapter: Double?, source: DSK.ContentSource) async -> ReturnValue? {
+    private func searchSource(query: String, chapter: Double?, source: DaisukeContentSource) async -> ReturnValue? {
         let data = try? await source.getSearchResults(query: .init(query: query))
         let result = data?.results.first
 
@@ -451,7 +446,7 @@ extension MigrationView {
         return (identifier, target.number)
     }
 
-    private func getChapters(for source: DSK.ContentSource, id: String) async -> [DSKCommon.Chapter] {
+    private func getChapters(for source: DaisukeContentSource, id: String) async -> [DSKCommon.Chapter] {
         (try? await source.getContentChapters(contentId: id)) ?? []
     }
 }

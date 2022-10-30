@@ -93,7 +93,7 @@ extension ReaderView {
     // MARK: Reader Chapter
 
     class ReaderChapter: Equatable, ObservableObject {
-        var chapter: StoredChapter
+        var chapter: ThreadSafeChapter
         @Published var data = Loadable<StoredChapterData>.idle {
             didSet {
                 guard let chapterData = data.value else {
@@ -143,7 +143,7 @@ extension ReaderView {
 
         var requestedPageIndex = 0 // Current Page
         var requestedPageOffset: CGFloat? // offset for current page
-        init(chapter: StoredChapter) {
+        init(chapter: ThreadSafeChapter) {
             self.chapter = chapter
         }
 
@@ -192,15 +192,15 @@ extension ReaderView {
     // MARK: ReaderTransition
 
     struct Transition: Hashable {
-        var from: StoredChapter
-        var to: StoredChapter?
+        var from: ThreadSafeChapter
+        var to: ThreadSafeChapter?
         var type: TransitionType
 
         enum TransitionType {
             case NEXT, PREV
         }
 
-        init(from: StoredChapter, to: StoredChapter?, type: TransitionType) {
+        init(from: ThreadSafeChapter, to: ThreadSafeChapter?, type: TransitionType) {
             self.from = from
             self.to = to
             self.type = type

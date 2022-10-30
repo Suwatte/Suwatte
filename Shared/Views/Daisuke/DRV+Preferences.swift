@@ -9,7 +9,7 @@ import SwiftUI
 
 extension DaisukeContentSourceView {
     struct PreferencesView: View {
-        @EnvironmentObject var source: DaisukeEngine.ContentSource
+        @EnvironmentObject var source: DaisukeEngine.LocalContentSource
         @State var loadable = Loadable<[DSKCommon.PreferenceGroup]?>.idle
         var body: some View {
             LoadableView(loadable: loadable) {
@@ -64,7 +64,7 @@ extension DaisukeContentSourceView.PreferencesView {
 }
 
 struct ContentSourceSettingsView: View {
-    @EnvironmentObject var source: DSK.ContentSource
+    @EnvironmentObject var source: DSK.LocalContentSource
     var preferences: [DSKCommon.PreferenceGroup]
     var body: some View {
         Form {

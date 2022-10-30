@@ -8,6 +8,53 @@
 import Foundation
 import RealmSwift
 
+
+struct ThreadSafeChapter: Hashable {
+    var _id: String
+    var sourceId: String
+    var chapterId: String
+    var contentId: String
+    var index: Int
+    var number: Double
+    var volume: Double?
+    var title: String?
+    var language: String?
+    var date: Date
+    var webUrl: String?
+    
+    func toStored() -> StoredChapter {
+        let obj = StoredChapter()
+        obj._id = _id
+        obj.sourceId = sourceId
+        obj.contentId = contentId
+        obj.chapterId = chapterId
+        obj.index = index
+        obj.number = number
+        obj.volume = volume
+        obj.title = title
+        obj.language = language
+        obj.date = date
+        obj.webUrl = webUrl
+        
+        return obj
+    }
+    
+    var chapterType: ReaderView.ReaderChapter.ChapterType {
+        if sourceId == STTHelpers.LOCAL_CONTENT_ID { return .LOCAL }
+        else if sourceId.contains(STTHelpers.OPDS_CONTENT_ID) { return .OPDS }
+        else { return .EXTERNAL }
+    }
+    
+    var displayName: String {
+        var str = ""
+        if let volume = volume, volume != 0 {
+            str += "Volume \(volume.clean)"
+        }
+        str += " Chapter \(number.clean)"
+        return str.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+}
 final class StoredChapter: Object, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) var _id: String
 
@@ -54,15 +101,19 @@ final class StoredChapter: Object, ObjectKeyIdentifiable {
         else if sourceId.contains(STTHelpers.OPDS_CONTENT_ID) { return .OPDS }
         else { return .EXTERNAL }
     }
+    
+    func toThreadSafe() -> ThreadSafeChapter {
+        .init(_id: _id, sourceId: sourceId, chapterId: chapterId, contentId: contentId, index: index, number: number, date: date)
+    }
 }
 
 extension DaisukeEngine.Structs.Chapter {
-    func toStoredChapter(withSource source: DaisukeEngine.ContentSource) -> StoredChapter {
+    func toStoredChapter(withSource sourceId: String) -> StoredChapter {
         let chapter = StoredChapter()
 
-        chapter._id = "\(source.id)||\(contentId)||\(chapterId)"
+        chapter._id = "\(sourceId)||\(contentId)||\(chapterId)"
 
-        chapter.sourceId = source.id
+        chapter.sourceId = sourceId
         chapter.contentId = contentId
         chapter.chapterId = chapterId
 
