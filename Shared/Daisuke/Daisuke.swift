@@ -169,10 +169,9 @@ extension DaisukeEngine {
 
     func removeRunner(id: String) throws {
         sources.removeValue(forKey: id)
+        DataManager.shared.removeRunnerInformation(id: id)
         let path = directory.appendingPathComponent("\(id).stt")
         try FileManager.default.removeItem(at: path)
-
-        DataManager.shared.removeRunnerInformation(id: id)
     }
 }
 
