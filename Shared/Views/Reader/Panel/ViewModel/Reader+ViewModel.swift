@@ -11,11 +11,18 @@ import SwiftUI
 extension ReaderView {
     final class ViewModel: ObservableObject {
         @Published var updater = false
-        
+        private var cancellables = Set<AnyCancellable>()
         // Core
         var sections: [[AnyHashable]] = []
         var readerChapterList: [ReaderChapter] = []
-        @Published var activeChapter: ReaderChapter
+        @Published var activeChapter: ReaderChapter {
+            didSet {
+                $activeChapter.sink {[weak self] _ in
+                    self?.objectWillChange.send()
+                }
+                .store(in: &cancellables)
+            }
+        }
         var chapterList: [ThreadSafeChapter]
         @Published var contentTitle: String?
         

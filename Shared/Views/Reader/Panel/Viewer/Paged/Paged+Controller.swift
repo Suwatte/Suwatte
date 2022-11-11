@@ -50,9 +50,14 @@ extension PagedController {
         guard let rChapter = model.readerChapterList.first else {
             return
         }
+        
+        if model.sections.isEmpty {
+            collectionView.isHidden = false
+            return
+        }
         let requestedIndex = rChapter.requestedPageIndex
         rChapter.requestedPageOffset = nil
-        let openingIndex = model.sections[0].firstIndex(where: { ($0 as? ReaderView.Page)?.index == requestedIndex }) ?? requestedIndex
+        let openingIndex = model.sections.first?.firstIndex(where: { ($0 as? ReaderView.Page)?.index == requestedIndex }) ?? requestedIndex
         let path: IndexPath = .init(item: openingIndex, section: 0)
         collectionView.scrollToItem(at: path, at: .centeredHorizontally, animated: false)
         let point = collectionView.layoutAttributesForItem(at: path)?.frame.midX ?? 0

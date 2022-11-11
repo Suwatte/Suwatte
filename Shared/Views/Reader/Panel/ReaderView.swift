@@ -18,11 +18,17 @@ struct ReaderView: View {
     @Preference(\.isDoublePagedEnabled) var isDoublePagedEnabled
     var body: some View {
         LoadableView(loadable: model.activeChapter.data, {
-            ProgressView()
+            VStack(alignment: .center) {
+                ProgressView()
+                Text("Fetching Images...")
+                    .font(.footnote)
+                    .fontWeight(.light)
+            }
                 .task {
                     let chapter = model.activeChapter.chapter
                     await model.loadChapter(chapter, asNextChapter: true)
                 }
+                .transition(.opacity)
         }, {
             ProgressView()
         }, { error in
@@ -58,6 +64,9 @@ struct ReaderView: View {
                     .closeButton()
             }
         }
+        .animation(.default, value: isVertical)
+        .animation(.default, value: isDoublePagedEnabled)
+        .animation(.default, value: model.activeChapter.data)
         .environmentObject(model)
         .onChange(of: model.slider.isScrubbing) { val in
 
@@ -90,13 +99,27 @@ struct ReaderView: View {
 extension ReaderView {
     var GATEWAY: some View {
         Group {
-            if isVertical {
-                VerticalViewer()
-            } else {
-                if !isDoublePagedEnabled {
-                    PagedViewer()
+            if model.sections.isEmpty {
+                VStack(alignment: .center) {
+                    ProgressView()
+                    Text("Preparing Reader...")
+                        .font(.footnote)
+                        .fontWeight(.light)
+                }
+                .transition(.opacity)
+            }
+            else {
+                if isVertical {
+                    VerticalViewer()
+                        .transition(.opacity)
                 } else {
-                    DoublePagedViewer()
+                    if !isDoublePagedEnabled {
+                        PagedViewer()
+                            .transition(.opacity)
+                    } else {
+                        DoublePagedViewer()
+                            .transition(.opacity)
+                    }
                 }
             }
         }
