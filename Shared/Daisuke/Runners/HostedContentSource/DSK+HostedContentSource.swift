@@ -95,7 +95,7 @@ extension DaisukeEngine {
                 throw DSK.Errors.NetworkErrorInvalidRequestURL
             }
             let body: Parameters = ["query": try query.asDictionary()]
-            let task = AF.request(url, method: .post, parameters: body, encoding: URLEncoding.httpBody)
+            let task = AF.request(url, method: .post, parameters: body, encoding: JSONEncoding.default)
                 .validate()
                 .serializingDecodable(DSKCommon.PagedResult.self, decoder: decoder)
 
