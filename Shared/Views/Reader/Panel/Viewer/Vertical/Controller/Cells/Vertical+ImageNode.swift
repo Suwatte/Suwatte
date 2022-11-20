@@ -239,6 +239,7 @@ extension Controller.ImageNode {
     
     override func didEnterVisibleState() {
         super.didEnterVisibleState()
+
         Task { @MainActor in
             delegate?.handleChapterPreload(at:indexPath)
         }
@@ -248,6 +249,12 @@ extension Controller.ImageNode {
     override func didExitVisibleState() {
         super.didExitVisibleState()
         downloadTask?.cancel()
+        imageNode.view.removeGestureRecognizer(menuTap)
+        imageNode.view.removeGestureRecognizer(zoomingTap)
+        imageNode.image = nil
+        image = nil
+        ratio = nil
+        KingfisherManager.shared.cache.memoryStorage.remove(forKey: page.CELL_KEY)
     }
     
 }

@@ -7,6 +7,7 @@
 
 import Combine
 import SwiftUI
+import Kingfisher
 
 extension ReaderView {
     final class ViewModel: ObservableObject {
@@ -17,8 +18,10 @@ extension ReaderView {
         var readerChapterList: [ReaderChapter] = []
         @Published var activeChapter: ReaderChapter {
             didSet {
-                $activeChapter.sink {[weak self] _ in
-                    self?.objectWillChange.send()
+                $activeChapter.sink { _ in
+                    Task { @MainActor [weak self] in
+                        self?.objectWillChange.send()
+                    }
                 }
                 .store(in: &cancellables)
             }
@@ -364,8 +367,16 @@ extension ReaderView.ViewModel {
     
     private func onChapterChanged(chapter: ReaderView.ReaderChapter) {
         let lastChapter = activeChapter
-        activeChapter = chapter
+        Task { @MainActor in
+            activeChapter = chapter
+        }
         
+        Task {
+            lastChapter.pages?.map(\.CELL_KEY).forEach({
+                KingfisherManager.shared.cache.memoryStorage.remove(forKey: $0)
+            })
+        }
+
         if incognitoMode || activeChapter.chapter.chapterType == .OPDS { return }
         
         // Moving to Previous Chapter, Do Not Mark as Completed

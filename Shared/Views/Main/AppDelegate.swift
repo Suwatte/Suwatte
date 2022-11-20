@@ -13,10 +13,10 @@ import UIKit
 class STTAppDelegate: NSObject, UIApplicationDelegate {
     func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         // KF Cache
-//        let cache = ImageCache.default
-//        cache.memoryStorage.config.totalCostLimit = 500 * 1024 * 1024
-//        cache.memoryStorage.config.countLimit = 150
-//        cache.diskStorage.config.sizeLimit = 1000 * 1024 * 1024
+        let cache = ImageCache.default
+        cache.memoryStorage.config.totalCostLimit = 500 * 1024 * 1024 // 500 MB
+        cache.memoryStorage.config.countLimit = 15 // 15
+        cache.diskStorage.config.sizeLimit = 1000 * 1024 * 1024 // 1GB
 
         let kingfisherManagerSession = KingfisherManager.shared.downloader.sessionConfiguration
         kingfisherManagerSession.httpCookieStorage = HTTPCookieStorage.shared
