@@ -173,7 +173,6 @@ extension ProfileView.ViewModel {
             .sorted(by: \.index, ascending: true)
             .map { $0 } as [StoredChapter]
 
-        print("LOADING FROM DB", storedChapters.count)
         if storedChapters.isEmpty { return }
 
         chapters = .loaded(storedChapters)
@@ -302,7 +301,6 @@ extension ProfileView.ViewModel {
         do {
             try await handleReadMarkers()
         } catch {
-            print("sync error")
             Logger.shared.error("[ProfileView] [Sync] - \(error.localizedDescription)")
             await MainActor.run(body: {
                 syncState = .failure

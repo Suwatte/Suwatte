@@ -171,7 +171,6 @@ extension FilterSheet {
                 exclude = nil
             }
 
-//            print(include, exclude, "\n")
         }
 
         func reset() {

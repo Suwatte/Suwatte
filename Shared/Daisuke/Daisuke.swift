@@ -318,7 +318,6 @@ extension DaisukeEngine {
         if !shouldRedownload {
             return
         }
-        print("Refetching Commons")
 
         url = base.appendingPathComponent("lib.js")
         let req = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 10)
