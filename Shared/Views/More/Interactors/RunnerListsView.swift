@@ -113,6 +113,9 @@ extension RunnerListsView {
                         await load()
                     }
                 }
+                .onAppear {
+                    print(error)
+                }
             } _: { value in
                 InternalListInfoView(list: value, listURL: listURL)
             }
@@ -258,7 +261,6 @@ extension RunnerListsView.RunnerListInfo {
                 STTThumbView(url: runner.getThumbURL(in: listURL))
                     .frame(width: 44, height: 44)
                     .cornerRadius(7)
-
                 VStack(alignment: .leading, spacing: 5) {
                     Text(runner.name)
                         .fontWeight(.semibold)
@@ -274,7 +276,7 @@ extension RunnerListsView.RunnerListInfo {
                         }
                     }
                     .font(.footnote.weight(.light))
-                    Text(runner.type.description)
+                    Text("Content Source")
                         .font(.footnote.weight(.ultraLight))
                 }
             }

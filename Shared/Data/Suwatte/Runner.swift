@@ -20,7 +20,6 @@ struct Runner: Codable, Hashable {
     var version: Double
     var authors: [String]?
     var minSupportedAppVersion: String?
-    var type: DaisukeEngine.RunnerType
     var website: String?
     var supportedLanguages: [String]?
     var primarilyAdultContent: Bool?
