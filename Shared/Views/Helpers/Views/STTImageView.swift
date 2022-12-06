@@ -14,6 +14,7 @@ import SwiftUI
 struct STTImageView: View {
     var url: URL?
     var identifier: ContentIdentifier
+    var mode: SwiftUI.ContentMode = .fill
     @ObservedResults(CustomThumbnail.self) var thumbnails
     @StateObject private var loader = FetchImage()
 
@@ -24,7 +25,7 @@ struct STTImageView: View {
                 if let view = loader.view {
                     view
                         .resizable()
-                        .aspectRatio(contentMode: .fill)
+                        .aspectRatio(contentMode: mode)
                 } else {
                     Color.gray.opacity(0.25)
                         .shimmering()
@@ -66,8 +67,8 @@ struct STTImageView: View {
 
 struct BaseImageView: View {
     var url: URL?
-    var mode: ImageResizingMode = .aspectFill
     var sourceId: String?
+    var mode: SwiftUI.ContentMode = .fill
     @StateObject private var loader = FetchImage()
 
     var body: some View {
@@ -77,7 +78,7 @@ struct BaseImageView: View {
                 if let view = loader.view {
                     view
                         .resizable()
-                        .aspectRatio(contentMode: .fill)
+                        .aspectRatio(contentMode: mode)
                 } else {
                     Color.gray.opacity(0.25)
                         .shimmering()

@@ -15,6 +15,7 @@ extension AnilistView {
         var entry: Anilist.SearchResult
 
         var onStatusUpdated: (_ id: Int, _ status: Anilist.MediaListStatus) -> Void
+        @State var presentGlobalSearch = false
         @State var loadable = Loadable<Anilist.Media>.idle
         @State var scoreFormat: Anilist.MediaListOptions.ScoreFormat?
         @ObservedObject var anilistModel = Anilist.shared
@@ -33,13 +34,24 @@ extension AnilistView {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
+                        Button {
+                            presentGlobalSearch.toggle()
+                        } label: {
+                            Label("Find on Source", systemImage: "magnifyingglass")
+                        }
+
                         Link(destination: entry.webUrl ?? STTHost.notFound) {
                             Label("Share", systemImage: "square.and.arrow.up")
                         }
+                        
+
                     } label: {
                         Image(systemName: "ellipsis")
                     }
                 }
+            }
+            .hiddenNav(presenting: $presentGlobalSearch) {
+                SearchView(initialQuery: entry.title.userPreferred)
             }
         }
 
@@ -133,10 +145,14 @@ extension AnilistView.ProfileView.DataView {
     var HeaderView: some View {
         VStack(alignment: .leading) {
             ZStack(alignment: .leading) {
-                BaseImageView(url: URL(string: data.bannerImage ?? ""))
+                KFImage(URL(string: data.bannerImage ?? ""))
+                    .resizable()
+                    .scaledToFill()
+                    .clipped(antialiased: true)
                     .blur(radius: 2.5)
-                    .frame(height: 220, alignment: .center)
-                    .clipped()
+                    .offset(y: -3)
+                    .frame(width: UIScreen.main.bounds.width, height: 220,  alignment: .center)
+                    
 
                 LinearGradient(colors: [.clear, Color(uiColor: UIColor.systemBackground)], startPoint: .top, endPoint: .bottom)
                     .offset(x: 0, y: 3)

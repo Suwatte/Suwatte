@@ -18,7 +18,7 @@ extension ProfileView {
             NavigationView {
                 TabView {
                     ForEach(covers, id: \.self) { cover in
-                        BaseImageView(url: URL(string: cover), mode: .aspectFit, sourceId: model.source.id)
+                        BaseImageView(url: URL(string: cover), sourceId: model.source.id, mode: .fit)
                             .contextMenu {
                                 Button {
                                     handleSaveEvent(for: cover)

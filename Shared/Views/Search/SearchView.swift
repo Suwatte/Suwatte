@@ -11,7 +11,8 @@ import SwiftUI
 
 struct SearchView: View {
     typealias Highlight = DaisukeEngine.Structs.Highlight
-
+    @State private var initial = true
+    var initialQuery = ""
     @StateObject var model = ViewModel()
 
     @ObservedResults(LibraryEntry.self) var library
@@ -42,6 +43,12 @@ struct SearchView: View {
         }
         .onSubmit(of: .search) {
             DataManager.shared.saveSearch(model.query, sourceId: nil)
+        }
+        .onAppear {
+            if initialQuery.isEmpty || !initial { return }
+            model.query = initialQuery
+            model.makeRequests()
+            initial.toggle()
         }
         .animation(.default, value: model.results)
         .animation(.default, value: model.query)
