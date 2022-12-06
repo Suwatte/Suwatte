@@ -21,6 +21,7 @@ extension Controller {
         weak var delegate: VerticalViewer.Controller?
         var savedOffset: CGFloat? = nil
         var working = false
+        var isZoomed = false
         lazy var zoomingTap: UITapGestureRecognizer = {
             let zoomingTap = UITapGestureRecognizer(target: self, action: #selector(handleZoomingTap(_:)))
             zoomingTap.numberOfTapsRequired = 2
@@ -224,6 +225,7 @@ extension Controller.ImageNode {
     @objc func handleZoomingTap(_ sender: UITapGestureRecognizer) {
         let location = sender.location(in: sender.view)
         guard let indexPath else { return }
+        isZoomed = true
         delegate?.cellTappedAt(point: location, frame: sender.view!.frame, path: indexPath)
     }
     
@@ -239,7 +241,7 @@ extension Controller.ImageNode {
     
     override func didEnterVisibleState() {
         super.didEnterVisibleState()
-
+        isZoomed = false
         Task { @MainActor in
             delegate?.handleChapterPreload(at:indexPath)
         }
@@ -248,6 +250,7 @@ extension Controller.ImageNode {
     
     override func didExitVisibleState() {
         super.didExitVisibleState()
+        if isZoomed { return }
         downloadTask?.cancel()
         imageNode.view.removeGestureRecognizer(menuTap)
         imageNode.view.removeGestureRecognizer(zoomingTap)
