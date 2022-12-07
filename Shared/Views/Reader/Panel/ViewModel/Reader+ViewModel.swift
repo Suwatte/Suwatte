@@ -418,7 +418,6 @@ extension ReaderView.ViewModel {
         // Ids
         // Anilist
         let alId = content?.trackerInfo["al"] ?? getStoredTrackerInfo()?.al ?? (getLinkedTrackerInfo()?["al"] ?? nil) // ???
-        print(alId)
         Task {
             do {
                 try await STTHelpers.syncToAnilist(mediaID: alId, progress: chapterNumber, progressVolume: chapterVolume)

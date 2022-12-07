@@ -448,6 +448,7 @@ extension PagedController: UIContextMenuInteractionDelegate {
             // Save to Photos
             let saveToAlbum = UIAction(title: "Save Panel", image: UIImage(systemName: "square.and.arrow.down")) { _ in
                 STTPhotoAlbum.shared.save(image)
+                ToastManager.shared.info("Panel Saved!")
             }
 
             // Share Photo
@@ -475,6 +476,7 @@ extension PagedController: UIContextMenuInteractionDelegate {
 
             let bookmarkAction = UIAction(title: bkTitle, image: UIImage(systemName: bkSysImage), attributes: isBookmarked ? [.destructive] : []) { _ in
                 DataManager.shared.toggleBookmark(chapter: chapter.toStored(), page: page)
+                ToastManager.shared.info("Bookmark \(isBookmarked ? "Removed" : "Added")!")
             }
 
             menu = menu.replacingChildren([photoMenu, bookmarkAction])
