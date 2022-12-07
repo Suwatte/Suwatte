@@ -34,7 +34,7 @@ struct STTImageView: View {
             .task {
                 load(size)
             }
-            .frame(height: proxy.size.width * 1.5, alignment: .center)
+            .frame(width: proxy.size.width, height: proxy.size.width * 1.5, alignment: .center)
             .background(Color.gray.opacity(0.25))
         }
     }
@@ -87,7 +87,7 @@ struct BaseImageView: View {
             .task {
                 load(size)
             }
-            .frame(height: proxy.size.width * 1.5, alignment: .center)
+            .frame(width: proxy.size.width, height: proxy.size.width * 1.5, alignment: .center)
             .background(Color.gray.opacity(0.25))
         }
     }
