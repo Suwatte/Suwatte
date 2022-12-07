@@ -12,6 +12,7 @@ import SwiftUI
 struct MoreView: View {
     @Preference(\.incognitoMode) var incognitoMode
     @State var cacheSize = Loadable<UInt>.idle
+    @State var showEasterEgg = false
     var body: some View {
         NavigationView {
             List {
@@ -43,13 +44,19 @@ struct MoreView: View {
         Section {
             Text("App Version")
                 .badge(Bundle.main.releaseVersionNumber)
+                .onTapGesture(count: 2) {
+                    withAnimation {
+                        showEasterEgg.toggle()
+                    }
+                }
             Text("Daisuke Version")
                 .badge(STT_BRIDGE_VERSION)
-            Text("MS Version")
-                .badge("2.0.0")
-                .onTapGesture(count: 2) {
-                    ToastManager.shared.display(.info("In Our Hears Forever"))
-                }
+            if showEasterEgg {
+                Text("MangaSoup Version")
+                    .badge("2.0.0")
+            }
+            
+                
 
         } header: {
             Text("Info")

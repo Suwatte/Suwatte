@@ -18,7 +18,11 @@ extension ProfileView {
             NavigationView {
                 TabView {
                     ForEach(covers, id: \.self) { cover in
-                        BaseImageView(url: URL(string: cover), mode: .aspectFit, sourceId: model.source.id)
+                        KFImage(URL(string: cover))
+                            .resizable()
+                            .requestModifier(AsyncImageModifier(sourceId: model.source.id))
+                            .scaledToFit()
+                            .cornerRadius(5)
                             .contextMenu {
                                 Button {
                                     handleSaveEvent(for: cover)
@@ -26,9 +30,9 @@ extension ProfileView {
                                     Label("Save Image", systemImage: "square.and.arrow.down")
                                 }
                             }
-                            .cornerRadius(5)
                             .padding()
                             .tag(cover)
+                            
                     }
                 }
 
@@ -53,6 +57,7 @@ extension ProfileView {
                     ToastManager.shared.display(.error(error))
                 case let .success(KIR):
                     STTPhotoAlbum.shared.save(KIR.image)
+                    ToastManager.shared.info("Cover Saved!")
                 }
             }
         }

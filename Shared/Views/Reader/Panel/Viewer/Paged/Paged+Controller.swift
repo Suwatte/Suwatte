@@ -348,7 +348,6 @@ extension PagedController {
         // Update Offset
         if !model.slider.isScrubbing {
             model.slider.setCurrent(collectionView.contentOffset.x)
-            model.menuControl.hideMenu()
         }
     }
 
@@ -405,7 +404,8 @@ extension PagedController {
 
     func onScrollStop() {
         isScrolling = false
-
+        
+        model.menuControl.hideMenu()
         // Handle Load Prev
         if collectionView.contentOffset.x <= 0 {
             model.loadPreviousChapter()
@@ -448,6 +448,7 @@ extension PagedController: UIContextMenuInteractionDelegate {
             // Save to Photos
             let saveToAlbum = UIAction(title: "Save Panel", image: UIImage(systemName: "square.and.arrow.down")) { _ in
                 STTPhotoAlbum.shared.save(image)
+                ToastManager.shared.info("Panel Saved!")
             }
 
             // Share Photo
@@ -475,6 +476,7 @@ extension PagedController: UIContextMenuInteractionDelegate {
 
             let bookmarkAction = UIAction(title: bkTitle, image: UIImage(systemName: bkSysImage), attributes: isBookmarked ? [.destructive] : []) { _ in
                 DataManager.shared.toggleBookmark(chapter: chapter.toStored(), page: page)
+                ToastManager.shared.info("Bookmark \(isBookmarked ? "Removed" : "Added")!")
             }
 
             menu = menu.replacingChildren([photoMenu, bookmarkAction])

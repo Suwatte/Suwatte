@@ -30,7 +30,7 @@ struct BookmarksView: View {
 
                         // TODO: Make this lazy
                         HStack {
-                            BaseImageView(url: URL(string: imageUrl ?? ""), mode: .aspectFit)
+                            BaseImageView(url: URL(string: imageUrl ?? ""), mode: .fit)
                                 .frame(width: 120, height: 120 * 1.5, alignment: .center)
                                 .cornerRadius(7)
 

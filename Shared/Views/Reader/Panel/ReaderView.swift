@@ -93,6 +93,7 @@ struct ReaderView: View {
                 model.showNavOverlay = false
             }
         }
+        .toast()
     }
 }
 

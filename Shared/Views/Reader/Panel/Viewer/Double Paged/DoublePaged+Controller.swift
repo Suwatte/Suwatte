@@ -274,6 +274,7 @@ extension Controller: UIContextMenuInteractionDelegate {
             // Save to Photos
             let saveToAlbum = UIAction(title: "Save Panel", image: UIImage(systemName: "square.and.arrow.down")) { _ in
                 STTPhotoAlbum.shared.save(image)
+                ToastManager.shared.info("Panel Saved!")
             }
 
             // Share Photo
@@ -303,6 +304,7 @@ extension Controller: UIContextMenuInteractionDelegate {
 
             let bookmarkAction = UIAction(title: bkTitle, image: UIImage(systemName: bkSysImage), attributes: isBookmarked ? [.destructive] : []) { _ in
                 DataManager.shared.toggleBookmark(chapter: c, page: page)
+                ToastManager.shared.info("Bookmark \(isBookmarked ? "Removed" : "Added")!")
             }
 
             menu = menu.replacingChildren([photoMenu, bookmarkAction])
@@ -521,7 +523,6 @@ extension Controller {
     func onUserDidScroll(to offset: CGFloat) {
         // Update Offset
         if !model.slider.isScrubbing {
-            model.menuControl.hideMenu()
             model.slider.setCurrent(offset)
         }
     }
@@ -546,6 +547,8 @@ extension Controller {
     }
 
     func onScrollStop() {
+        model.menuControl.hideMenu()
+
         // Handle Load Prev
         if collectionView.contentOffset.x <= 0 {
             model.loadPreviousChapter()

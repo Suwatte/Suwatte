@@ -26,7 +26,7 @@ class STTScheduler {
     func scheduleLibraryUpdate() {
         let request = BGProcessingTaskRequest(identifier: update_task)
         request.requiresNetworkConnectivity = true
-        request.requiresExternalPower = true
+        request.requiresExternalPower = false
 
         do {
             try BGTaskScheduler.shared.submit(request)
@@ -39,10 +39,11 @@ class STTScheduler {
         Logger.shared.log("[STTScheduler] [\(update_task)] Task Called")
 
         let now = Date()
-        let oneHour = TimeInterval(1 * 60 * 60)
+        let interval = STTUpdateInterval.init(rawValue:  UserDefaults.standard.integer(forKey: STTKeys.UpdateInterval)) ?? .oneHour
+        let timeInterval = TimeInterval(interval.interval)
         let lastChecked = UserDefaults.standard.object(forKey: STTKeys.LastFetchedUpdates) as? Date ?? .distantPast
 
-        guard now > (lastChecked + oneHour) else {
+        guard now > (lastChecked + timeInterval) else {
             Logger.shared.log("[STTScheduler] [\(update_task)] Update Interval not met, Exiting...")
             task.setTaskCompleted(success: true)
             return

@@ -406,13 +406,18 @@ extension ReaderView.ViewModel {
         return DataManager.shared.getTrackerInfo(id)
     }
     
+    private func getLinkedTrackerInfo() -> [String: String?]? {
+        let identifier = ContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId)
+        return try? DataManager.shared.getPossibleTrackerInfo(for: identifier.id)
+    }
+    
     private func handleTrackerSync(number: Double, volume: Double?) {
         let chapterNumber = Int(number)
         let chapterVolume = volume.map { Int($0) }
         
         // Ids
         // Anilist
-        let alId = content?.trackerInfo["al"] ?? getStoredTrackerInfo()?.al
+        let alId = content?.trackerInfo["al"] ?? getStoredTrackerInfo()?.al ?? (getLinkedTrackerInfo()?["al"] ?? nil) // ???
         Task {
             do {
                 try await STTHelpers.syncToAnilist(mediaID: alId, progress: chapterNumber, progressVolume: chapterVolume)

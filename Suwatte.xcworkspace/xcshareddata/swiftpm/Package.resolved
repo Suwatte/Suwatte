@@ -64,6 +64,15 @@
       }
     },
     {
+      "identity" : "flagkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/madebybowtie/FlagKit.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "f12111d91902d23fd1d9cc7ad9198030b049795d"
+      }
+    },
+    {
       "identity" : "fuzi",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/cezheng/Fuzi.git",
@@ -95,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher.git",
       "state" : {
-        "revision" : "44e891bdb61426a95e31492a67c7c0dfad1f87c5",
-        "version" : "7.4.1"
+        "revision" : "017f94ccfdacabb1ae7f45b75b4217b24c06e6ac",
+        "version" : "7.4.0"
       }
     },
     {
@@ -140,8 +149,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/stephencelis/SQLite.swift.git",
       "state" : {
-        "revision" : "7a2e3cd27de56f6d396e84f63beefd0267b55ccb",
-        "version" : "0.14.1"
+        "revision" : "4d543d811ee644fa4cc4bfa0be996b4dd6ba0f54",
+        "version" : "0.13.3"
       }
     },
     {

@@ -15,10 +15,12 @@ struct AppearanceView: View {
     @AppStorage(STTKeys.GridItemsPerRow_P) var IPRP = 2
     @AppStorage(STTKeys.GridItemsPerRow_LS) var IPRLS = 6
     @AppStorage(STTKeys.AppAccentColor) var appAccentColor: Color = .sttDefault
+    @AppStorage(STTKeys.HideNSFWRunners) var hideNSFWRunners = false
+    @AppStorage(STTKeys.UpdateInterval) var updateInterval : STTUpdateInterval = .oneHour
     @Preference(\.selectiveUpdates) var selectiveUpdates
     let options = AppTabs.defaultSettings
     var body: some View {
-        List {
+        Form {
             Section {
                 ColorPicker("Accent Color", selection: $appAccentColor)
             } header: {
@@ -82,10 +84,27 @@ struct AppearanceView: View {
             }
 
             Section {
+                Picker("Update Interval", selection: $updateInterval) {
+                    ForEach(STTUpdateInterval.allCases, id: \.rawValue) {
+                        Text($0.label)
+                            .tag($0)
+                    }
+                }
                 Toggle("Selective Updates", isOn: $selectiveUpdates)
+                
+            } header: {
+                Text("Updates")
             } footer: {
-                Text("When enabled Suwatte will only fetch updates for titles flagged as 'Reading'.")
+                Text("Only fetch updates for titles flagged as 'Reading'.")
             }
+            
+            Section {
+                Toggle("Hide NSFW Sources", isOn: $hideNSFWRunners)
+            } header: {
+                Text("Runners")
+            }
+            
+            
         }
         .buttonStyle(.plain)
         .navigationTitle("Appearance & Behaviours")
@@ -129,5 +148,62 @@ struct LibraryAuthenticationToggleView: View {
         }
 
         return .init(get: getter, set: setter)
+    }
+}
+
+
+enum STTUpdateInterval : Int, CaseIterable {
+    case oneHour, twoHours, sixHours, twelveHours
+    case oneDay, oneWeek, twoWeeks, oneMonth
+}
+
+
+extension STTUpdateInterval {
+    
+
+    var label: String {
+        switch self {
+            case .oneHour:
+                return "1 Hour"
+            case .twoHours:
+                return "2 Hours"
+            case .sixHours:
+                return "6 Hours"
+            case .twelveHours:
+                return "12 Hours"
+            case .oneDay:
+                return "1 Day"
+            case .oneWeek:
+                return "1 Week"
+            case .twoWeeks:
+                return "2 Weeks"
+            case .oneMonth:
+                return "1 Month"
+        }
+    }
+}
+
+
+extension STTUpdateInterval {
+    
+    var interval: Double  {
+        switch self {
+            case .oneHour:
+                return 3600
+            case .twoHours:
+                return 3600 * 2
+            case .sixHours:
+                return 3600 * 6
+            case .twelveHours:
+                return 3600 * 12
+            case .oneDay:
+                return 3600 * 24
+            case .oneWeek:
+                return 3600 * 24 * 7
+            case .twoWeeks:
+                return 3600 * 24 * 7 * 2
+            case .oneMonth:
+                return 3600 * 24 * 7 * 4
+        }
     }
 }

@@ -13,24 +13,6 @@ extension String {
         let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         return String((0 ..< length).map { _ in letters.randomElement()! })
     }
-
-    // Reference: https://stackoverflow.com/a/60413173
-    static func getFlag(from countryCode: String) -> String {
-        let code = countryCode.lowercased()
-        if code == "multi" {
-            return code.uppercased()
-        }
-        if code == "unknown" {
-            return "⁉️"
-        }
-        return countryCode
-            .uppercased()
-            .unicodeScalars
-            .map { 127_397 + $0.value }
-            .compactMap(UnicodeScalar.init)
-            .map(String.init)
-            .joined()
-    }
 }
 
 extension String: Identifiable {
