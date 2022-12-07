@@ -104,5 +104,9 @@ extension Controller {
         if !model.slider.isScrubbing, model.menuControl.menu {
             model.menuControl.hideMenu()
         }
+        
+        if model.slider.isScrubbing {
+            calculateCurrentChapterScrollRange()
+        }
     }
 }
