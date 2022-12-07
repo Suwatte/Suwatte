@@ -348,7 +348,6 @@ extension PagedController {
         // Update Offset
         if !model.slider.isScrubbing {
             model.slider.setCurrent(collectionView.contentOffset.x)
-            model.menuControl.hideMenu()
         }
     }
 
@@ -405,7 +404,8 @@ extension PagedController {
 
     func onScrollStop() {
         isScrolling = false
-
+        
+        model.menuControl.hideMenu()
         // Handle Load Prev
         if collectionView.contentOffset.x <= 0 {
             model.loadPreviousChapter()

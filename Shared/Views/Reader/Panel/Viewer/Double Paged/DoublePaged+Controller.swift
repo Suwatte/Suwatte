@@ -523,7 +523,6 @@ extension Controller {
     func onUserDidScroll(to offset: CGFloat) {
         // Update Offset
         if !model.slider.isScrubbing {
-            model.menuControl.hideMenu()
             model.slider.setCurrent(offset)
         }
     }
@@ -548,6 +547,8 @@ extension Controller {
     }
 
     func onScrollStop() {
+        model.menuControl.hideMenu()
+
         // Handle Load Prev
         if collectionView.contentOffset.x <= 0 {
             model.loadPreviousChapter()

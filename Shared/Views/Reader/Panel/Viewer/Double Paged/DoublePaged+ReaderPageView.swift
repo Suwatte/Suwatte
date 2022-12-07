@@ -91,7 +91,6 @@ extension DoublePagedViewer {
 
         var heightContraint: NSLayoutConstraint?
         func updateHeightConstraint(size: CGSize) {
-            print(frame.size)
             let ratio = size.width / size.height
             var height = size.height / size.width * frame.width
             height = min(height, frame.height)
