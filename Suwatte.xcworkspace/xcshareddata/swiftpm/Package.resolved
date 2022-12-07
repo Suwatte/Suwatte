@@ -64,6 +64,15 @@
       }
     },
     {
+      "identity" : "flagkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/madebybowtie/FlagKit.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "f12111d91902d23fd1d9cc7ad9198030b049795d"
+      }
+    },
+    {
       "identity" : "fuzi",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/cezheng/Fuzi.git",

@@ -100,4 +100,7 @@ enum STTKeys {
     static var SelectiveUpdates = "APP.selective_updates"
     static var JSCommonsVersion = "APP.js_common_version"
     static var AppAccentColor = "APP.accent_color"
+    
+    static var HideNSFWRunners = "APP.hide_nsfw_runners"
+    static var UpdateInterval = "APP.update_interval"
 }

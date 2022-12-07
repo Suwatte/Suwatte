@@ -6,11 +6,9 @@
 //
 
 import Alamofire
-import Kingfisher
-import Nuke
-import NukeUI
 import RealmSwift
 import SwiftUI
+import FlagKit
 
 struct RunnerListsView: View {
     @State var presentAlert = false
@@ -99,6 +97,7 @@ extension RunnerListsView {
     struct RunnerListInfo: View {
         var listURL: String
         @State var loadable: Loadable<RunnerList> = .idle
+        @State var text: String = ""
         var body: some View {
             LoadableView(loadable: loadable) {
                 ProgressView()
@@ -117,12 +116,14 @@ extension RunnerListsView {
                     print(error)
                 }
             } _: { value in
-                InternalListInfoView(list: value, listURL: listURL)
+                InternalListInfoView(list: value, listURL: listURL, text: $text)
             }
             .animation(.default, value: loadable)
             .refreshable {
                 loadable = .idle
             }
+            .searchable(text: $text, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search...")
+
         }
 
         @MainActor
@@ -146,13 +147,109 @@ extension RunnerListsView {
     struct InternalListInfoView: View {
         var list: RunnerList
         var listURL: String
+        @Binding var text: String
+        @AppStorage(STTKeys.HideNSFWRunners) var hideNSFW = true
+        @State var presentFilterSheet = false
+        @State var selectedLanguages = Set<String>()
+        @State var langSearchText = ""
         var body: some View {
             List {
-                ForEach(list.runners, id: \.self) { runner in
+                ForEach(filteredRunners, id: \.self) { runner in
                     RunnerListInfo.RunnerListCell(listURL: listURL, list: list, runner: runner)
                         .frame(height: 75)
                 }
             }
+            .animation(.default, value: text)
+            .toolbar(content: {
+                ToolbarItem {
+                    Button {
+                        presentFilterSheet.toggle()
+                    } label: {
+                        Image(systemName: "line.3.horizontal.decrease")
+                    }
+                    
+                }
+            })
+            .sheet(isPresented: $presentFilterSheet) {
+                
+                NavigationView {
+                    
+                    List {
+                        if !flaggedLanguages.isEmpty {
+                            Section {
+                                ForEach(flaggedLanguages.sorted(by: { Locale.current.localizedString(forIdentifier: $0) ?? "" <  Locale.current.localizedString(forIdentifier: $1) ?? ""})) {
+                                    Cell(lang: $0)
+                                }
+                            }
+                        }
+                        
+                        if !unflaggedLanguages.isEmpty {
+                            Section {
+                                ForEach(unflaggedLanguages.sorted(by: { Locale.current.localizedString(forIdentifier: $0) ?? "" <  Locale.current.localizedString(forIdentifier: $1) ?? ""})) {
+                                    Cell(lang: $0)
+                                }
+                            }
+                        }
+                        
+                        
+                    }
+                    .animation(.default, value: langSearchText)
+                    .animation(.default, value: selectedLanguages)
+                    .navigationTitle("Languages")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .searchable(text: $langSearchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search")
+                    .closeButton()
+                }
+                
+            }
+        }
+        
+        func Cell(lang: String ) -> some View {
+            Button {
+                if selectedLanguages.contains(lang) {
+                    selectedLanguages.remove(lang)
+                } else { selectedLanguages.insert(lang) }
+            } label: {
+                HStack {
+                    LanguageCellView(language: lang)
+                    Spacer()
+                    Image(systemName: "checkmark")
+                        .opacity(selectedLanguages.contains(lang) ? 1 : 0)
+                    
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        }
+        var languages: [String] {
+            let langs = Set(list.runners.flatMap({ $0.supportedLanguages ?? [] }))
+            return Array(langs).filter({ langSearchText.isEmpty || $0.lowercased().contains(langSearchText.lowercased()) })
+        }
+        
+        var flaggedLanguages: [String] {
+            languages.filter({ Locale(identifier: $0).regionCode != nil })
+        }
+        
+        var unflaggedLanguages: [String] {
+            languages.filter({ Locale(identifier: $0).regionCode == nil })
+        }
+        var filteredRunners: [Runner] {
+            var base = list.runners
+            
+            if !text.isEmpty {
+                let t = text.lowercased()
+                base = base.filter({ $0.name.lowercased().contains(t) })
+            }
+            
+            if hideNSFW {
+                base = base.filter({ !($0.primarilyAdultContent ?? false) })
+            }
+            
+            if !selectedLanguages.isEmpty {
+                base = base.filter({ !Set($0.supportedLanguages ?? []).intersection(selectedLanguages).isEmpty })
+            }
+            
+            return base
         }
     }
 }
@@ -231,7 +328,7 @@ extension RunnerListsView.RunnerListInfo {
             do {
                 try await DaisukeEngine.shared.importRunner(from: url)
                 DataManager.shared.saveRunnerInfomation(runner: runner, at: base)
-                ToastManager.shared.info("\(runner.name) Loaded!")
+                ToastManager.shared.info("\(runner.name) Saved!")
             } catch {
                 ToastManager.shared.display(.error(error))
             }

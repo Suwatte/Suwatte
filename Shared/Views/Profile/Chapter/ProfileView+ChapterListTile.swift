@@ -7,7 +7,7 @@
 
 import RealmSwift
 import SwiftUI
-
+import FlagKit
 struct ChapterListTile: View {
     var chapter: StoredChapter
     var isCompleted: Bool
@@ -27,7 +27,29 @@ struct ChapterListTile: View {
             }
 
             HStack {
-                Text(String.getFlag(from: chapter.language ?? "unknown"))
+                if let language = chapter.language {
+                    if let regionCode = Locale(identifier: language).regionCode, let flag = Flag(countryCode: regionCode) {
+                        Image(uiImage: flag.image(style: .none))
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 15, height: 10.7)
+                    }
+                    else if let text = Locale.current.localizedString(forLanguageCode: language) {
+                        Text(text)
+                    }
+                    else {
+                        Text("Unknown: \(language)")
+                            .italic()
+                    }
+                }
+                else {
+                    Text("🏴‍☠️ Unknown")
+                }
+                
+                if chapter.language != nil && !chapter.providers.isEmpty {
+                    Divider()
+                }
+
                 ScanlatorView()
                 Spacer()
                 Text(chapter.date.timeAgoGrouped())

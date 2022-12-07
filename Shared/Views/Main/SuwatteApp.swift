@@ -17,7 +17,7 @@ struct SuwatteApp: App {
             ContentView()
                 .onOpenURL(perform: handleURL(_:))
                 .onAppear {
-                    //                    DownloadManager.shared.reloadTasks()
+                    ICDM.shared.runTasks()
                 }
                 .sheet(item: $navModel.identifier) { ids in
                     NavigationView {
