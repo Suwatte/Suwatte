@@ -26,7 +26,7 @@ class STTScheduler {
     func scheduleLibraryUpdate() {
         let request = BGProcessingTaskRequest(identifier: update_task)
         request.requiresNetworkConnectivity = true
-        request.requiresExternalPower = true
+        request.requiresExternalPower = false
 
         do {
             try BGTaskScheduler.shared.submit(request)
