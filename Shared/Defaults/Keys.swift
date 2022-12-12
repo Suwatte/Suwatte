@@ -103,4 +103,6 @@ enum STTKeys {
     
     static var HideNSFWRunners = "APP.hide_nsfw_runners"
     static var UpdateInterval = "APP.update_interval"
+    
+    static var LastAutoBackup = "APP.last_auto_backup"
 }

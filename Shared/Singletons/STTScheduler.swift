@@ -14,12 +14,18 @@ import UserNotifications
 class STTScheduler {
     static var shared = STTScheduler()
 
-    var update_task = "com.suwatte.fetch_updates"
+    let update_task = "com.suwatte.fetch_updates"
+    let backup_task = "com.suwatte.auto_backup"
 
     func registerTasks() {
         BGTaskScheduler.shared.register(forTaskWithIdentifier: update_task, using: nil) { task in
             self.handleLibraryUpdate(task: task as! BGProcessingTask)
         }
+        
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: backup_task, using: nil) { task in
+            self.handleBackUpTask(task: task as! BGProcessingTask)
+        }
+        
         Logger.shared.log("[STTScheduler] Background Tasks Registered")
     }
 
@@ -33,6 +39,39 @@ class STTScheduler {
         } catch {
             Logger.shared.error("[STTScheduler] [\(update_task)] Failed To Schedule : \(error)")
         }
+    }
+    
+    func handleBackUpTask(task: BGProcessingTask) {
+        Logger.shared.log("[STTScheduler] [\(backup_task)] Task Called")
+        task.expirationHandler = { [weak self] in
+            Logger.shared.log("[STTScheduler] [\(self?.backup_task ?? #function)] Expiration Handler Triggered. Exiting...")
+            task.setTaskCompleted(success: false)
+        }
+        
+        let lastChecked = UserDefaults.standard.object(forKey: STTKeys.LastFetchedUpdates) as? Date ?? .distantPast
+        let monthAgo = Calendar.current.date(
+            byAdding: .month,
+            value: -1,
+            to: Date()
+        )! // One Month Back
+        
+        if monthAgo < lastChecked {
+            task.setTaskCompleted(success: true)
+            return
+        }
+        
+        do {
+            try BackupManager.shared.save(name: "AUTO_BACKUP")
+            Logger.shared.log("[STTScheduler] [\(backup_task)] AutoBackup Created")
+            UserDefaults.standard.set(Date(), forKey: STTKeys.LastAutoBackup)
+            task.setTaskCompleted(success: true)
+        } catch {
+            Logger.shared.log("[STTScheduler] [\(backup_task)] Failed to create automatic backup \(error.localizedDescription)")
+            task.setTaskCompleted(success: false)
+        }
+        
+        return
+        
     }
 
     func handleLibraryUpdate(task: BGProcessingTask) {
