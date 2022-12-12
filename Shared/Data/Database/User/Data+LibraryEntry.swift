@@ -58,6 +58,7 @@ final class LibraryEntry: Object, ObjectKeyIdentifiable {
     // Collections
     @Persisted var collections = List<String>()
     @Persisted var flag = LibraryFlag.unknown
+    @Persisted var linkedHasUpdates = false
 }
 
 extension DataManager {

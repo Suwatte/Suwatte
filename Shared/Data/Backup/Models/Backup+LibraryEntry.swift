@@ -10,7 +10,7 @@ import RealmSwift
 
 extension LibraryEntry: Codable {
     enum CodingKeys: String, CodingKey {
-        case id, content, updateCount, lastUpdated, lastOpened, dateAdded, lastRead, collections, flag
+        case id, content, updateCount, lastUpdated, lastOpened, dateAdded, lastRead, collections, flag, linkedHasUpdates
     }
 
     convenience init(from decoder: Decoder) throws {
@@ -26,6 +26,7 @@ extension LibraryEntry: Codable {
         collections = try container.decode(List<String>.self, forKey: .collections)
         lastOpened = try container.decode(Date.self, forKey: .lastOpened)
         flag = try container.decode(LibraryFlag.self, forKey: .flag)
+        linkedHasUpdates = try container.decodeIfPresent(Bool.self, forKey: .linkedHasUpdates) ?? false
     }
 
     func encode(to encoder: Encoder) throws {
@@ -40,6 +41,7 @@ extension LibraryEntry: Codable {
         try container.encode(collections, forKey: .collections)
         try container.encode(flag, forKey: .flag)
         try container.encode(lastOpened, forKey: .lastOpened)
+        try container.encode(linkedHasUpdates, forKey: .linkedHasUpdates)
     }
 }
 

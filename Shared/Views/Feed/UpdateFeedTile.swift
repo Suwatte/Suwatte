@@ -22,6 +22,11 @@ extension UpdateFeedView {
                     Text("\(entry.updateCount) \(CHAPTER_LABEL)")
                         .font(.callout)
                         .foregroundColor(.gray)
+                    if entry.linkedHasUpdates {
+                        Text("Updates Available on Linked Content")
+                            .font(.callout)
+                            .foregroundColor(.green)
+                    }
                     Spacer()
                     Text("Last Updated: \(entry.lastUpdated.timeAgo())")
                         .font(.callout)

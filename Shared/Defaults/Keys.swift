@@ -105,4 +105,6 @@ enum STTKeys {
     static var UpdateInterval = "APP.update_interval"
     
     static var LastAutoBackup = "APP.last_auto_backup"
+    
+    static var CheckLinkedOnUpdateCheck = "APP.check_linked_on_update_check"
 }

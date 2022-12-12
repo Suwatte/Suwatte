@@ -17,6 +17,7 @@ struct AppearanceView: View {
     @AppStorage(STTKeys.AppAccentColor) var appAccentColor: Color = .sttDefault
     @AppStorage(STTKeys.HideNSFWRunners) var hideNSFWRunners = false
     @AppStorage(STTKeys.UpdateInterval) var updateInterval : STTUpdateInterval = .oneHour
+    @AppStorage(STTKeys.CheckLinkedOnUpdateCheck) var checkLinkedOnUpdate = false
     @Preference(\.selectiveUpdates) var selectiveUpdates
     let options = AppTabs.defaultSettings
     var body: some View {
@@ -90,6 +91,7 @@ struct AppearanceView: View {
                             .tag($0)
                     }
                 }
+                Toggle("Check Linked Titles During Update Checks", isOn: $checkLinkedOnUpdate)
                 Toggle("Selective Updates", isOn: $selectiveUpdates)
                 
             } header: {
