@@ -40,7 +40,7 @@ let STTUserDefaults: [String: Any] = [
     STTKeys.HideNSFWRunners: true
 ]
 
-let SCHEMA_VERSION = 13
+let SCHEMA_VERSION = 1
 let STT_BRIDGE_VERSION = "1.2.3"
 
 let KEY_WINDOW = UIApplication

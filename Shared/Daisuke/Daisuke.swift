@@ -24,8 +24,8 @@ final class DaisukeEngine: ObservableObject {
 
     private let directory = FileManager
         .default
-        .documentDirectory
-        .appendingPathComponent("DaisukeRunners", isDirectory: true)
+        .applicationSupport
+        .appendingPathComponent("Daisuke", isDirectory: true)
 
     internal var commons: URL {
         directory
