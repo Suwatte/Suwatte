@@ -145,8 +145,11 @@ struct MoreView: View {
     var GeneralSection: some View {
         Section {
             Toggle("Incognito Mode", isOn: $incognitoMode)
-            NavigationLink("Appearance & Behaviours") {
+            NavigationLink("Appearance") {
                 AppearanceView()
+            }
+            NavigationLink("Behaviours") {
+                BehavioursView()
             }
             NavigationLink("Progress Trackers") {
                 TrackersView()

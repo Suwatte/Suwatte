@@ -68,6 +68,8 @@ extension ReaderView {
                     }
                     Image(systemName: "chevron.down").imageScale(.medium)
                 }
+                .contentShape(Rectangle())
+                .padding(.trailing, 7)
             }
             .buttonStyle(.plain)
         }

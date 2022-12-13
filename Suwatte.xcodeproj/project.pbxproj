@@ -266,6 +266,7 @@
 		DFAC779B28161A4F00AF6394 /* AnilistView+ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAC779A28161A4F00AF6394 /* AnilistView+ProfileView.swift */; };
 		DFAC779E28165FA400AF6394 /* AL+Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAC779D28165FA400AF6394 /* AL+Data.swift */; };
 		DFAC77A02817AD5200AF6394 /* AL+MediaFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAC779F2817AD5100AF6394 /* AL+MediaFunctions.swift */; };
+		DFADE94D29493E930011CCE1 /* BehavioursView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFADE94C29493E930011CCE1 /* BehavioursView.swift */; };
 		DFAEE12528B839E500B11484 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = DFAEE12428B839E500B11484 /* Nuke */; };
 		DFAEE12728B839E500B11484 /* NukeExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = DFAEE12628B839E500B11484 /* NukeExtensions */; };
 		DFAEE12928B839E500B11484 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = DFAEE12828B839E500B11484 /* NukeUI */; };
@@ -560,6 +561,7 @@
 		DFAC779A28161A4F00AF6394 /* AnilistView+ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnilistView+ProfileView.swift"; sourceTree = "<group>"; };
 		DFAC779D28165FA400AF6394 /* AL+Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AL+Data.swift"; sourceTree = "<group>"; };
 		DFAC779F2817AD5100AF6394 /* AL+MediaFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AL+MediaFunctions.swift"; sourceTree = "<group>"; };
+		DFADE94C29493E930011CCE1 /* BehavioursView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BehavioursView.swift; sourceTree = "<group>"; };
 		DFAEE12B28B8550E00B11484 /* RawImageDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawImageDataLoader.swift; sourceTree = "<group>"; };
 		DFAEE12D28B8587A00B11484 /* ArchivedImageDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedImageDataLoader.swift; sourceTree = "<group>"; };
 		DFAEE12F28B9D0A200B11484 /* ExploreCollectionsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreCollectionsController.swift; sourceTree = "<group>"; };
@@ -1406,17 +1408,10 @@
 		DF8D0A682800EE47003E4C3E /* General */ = {
 			isa = PBXGroup;
 			children = (
-				DF8D0A692800EE47003E4C3E /* Appearance */,
+				DF8D0A6A2800EE47003E4C3E /* AppearanceView.swift */,
+				DFADE94C29493E930011CCE1 /* BehavioursView.swift */,
 			);
 			path = General;
-			sourceTree = "<group>";
-		};
-		DF8D0A692800EE47003E4C3E /* Appearance */ = {
-			isa = PBXGroup;
-			children = (
-				DF8D0A6A2800EE47003E4C3E /* AppearanceView.swift */,
-			);
-			path = Appearance;
 			sourceTree = "<group>";
 		};
 		DF8D0A6B2800EE47003E4C3E /* Interactors */ = {
@@ -2101,6 +2096,7 @@
 				DFF1044028A9A6B800E2C3A4 /* DSK+Networking.swift in Sources */,
 				DF515FF928E2A8DC002B6D60 /* DSK+CS+Action.swift in Sources */,
 				DFA6264C28ED1EA500914B1C /* Vertical+ASController.swift in Sources */,
+				DFADE94D29493E930011CCE1 /* BehavioursView.swift in Sources */,
 				DFD1F9BE28F7B191000766C1 /* Vertical+ProgressNode.swift in Sources */,
 				DF8D0B662800EE47003E4C3E /* ReaderNavigation.swift in Sources */,
 				DF6824A328A5ECEB00AB30A1 /* DSK+CS+Authentication.swift in Sources */,
