@@ -30,7 +30,7 @@ struct ContentView: View {
         .onChange(of: scenePhase) { phase in
             switch phase {
             case .background:
-                STTScheduler.shared.scheduleLibraryUpdate()
+                STTScheduler.shared.scheduleAll()
             default: break
             }
         }

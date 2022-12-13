@@ -29,7 +29,22 @@ class STTScheduler {
         Logger.shared.log("[STTScheduler] Background Tasks Registered")
     }
 
+    func scheduleAll() {
+        scheduleLibraryUpdate()
+        scheduleBackUp()
+    }
     func scheduleLibraryUpdate() {
+        let request = BGProcessingTaskRequest(identifier: backup_task)
+        request.requiresNetworkConnectivity = false
+        request.requiresExternalPower = false
+
+        do {
+            try BGTaskScheduler.shared.submit(request)
+        } catch {
+            Logger.shared.error("[STTScheduler] [\(backup_task)] Failed To Schedule : \(error)")
+        }
+    }
+    func scheduleBackUp() {
         let request = BGProcessingTaskRequest(identifier: update_task)
         request.requiresNetworkConnectivity = true
         request.requiresExternalPower = false
