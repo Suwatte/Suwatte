@@ -36,6 +36,9 @@ enum STTKeys {
 
     static var BackgroundColor = "READER.bg_color"
     static var UseSystemBG = "READER.use_sys_bg"
+    static var ReaderFilterBlendMode = "READER.filter_blend_mode"
+    static var ReaderGrayScale = "READER.grayscale"
+    static var ReaderColorInvert = "Reader.color_invert"
 
     static var CropWhiteSpaces = "READER.crop_ws"
     static var DownsampleImages = "READER.downsample_images"

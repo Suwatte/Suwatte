@@ -97,7 +97,7 @@ class VerticalContentOffsetPreservingLayout: UICollectionViewFlowLayout {
         self.scrollDirection = .vertical
         self.minimumLineSpacing = 0
         self.minimumInteritemSpacing = 0
-        self.minimumLineSpacing = 0
+        self.minimumLineSpacing = Preferences.standard.VerticalPagePadding ? 10 : 0
         self.sectionInset = UIEdgeInsets.zero
     }
     
