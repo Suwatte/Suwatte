@@ -99,10 +99,9 @@ class ReaderPageView: UIView {
     var widthConstraint: NSLayoutConstraint?
     func updateHeightConstraint(size: CGSize) {
         let ratio = size.width / size.height
-        var height = size.height / size.width * frame.width
+        var height = (size.height / size.width) * frame.width
         height = min(height, scrollView.bounds.height)
         let width = height * ratio
-
         heightContraint?.constant = height
         heightContraint?.isActive = false
         heightContraint = nil

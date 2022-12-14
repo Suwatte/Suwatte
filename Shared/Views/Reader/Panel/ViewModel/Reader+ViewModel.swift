@@ -37,6 +37,7 @@ extension ReaderView {
         @Published var showNavOverlay = false
         
         var chapterCache: [String: ReaderChapter] = [:]
+        var chapterSectinoCache: [String: Int] = [:]
         var scrollTask: Task<Void, Never>?
         // Combine
         let reloadSectionPublisher = PassthroughSubject<Int, Never>()
@@ -96,6 +97,35 @@ extension ReaderView {
                 return
             }
             
+            let section = buildSection(chapter: chapter, pages: pages)
+            
+            // Set Opening Page
+            if readerChapterList.count == 1, readerChapter.requestedPageIndex == -1 {
+                let values = STTHelpers.getInitialPosition(for: readerChapter.chapter, limit: pages.count)
+                readerChapter.requestedPageIndex = values.0
+                readerChapter.requestedPageOffset = values.1
+            }
+            // Add to model section
+            if asNextChapter {
+                sections.append(section)
+                chapterSectinoCache[readerChapter.chapter._id] = sections.count - 1
+            } else {
+                chapterSectinoCache.forEach({ k, v in chapterSectinoCache.updateValue(v + 1, forKey: k) })
+                sections.insert(section, at: 0)
+            }
+            
+            if readerChapterList.count == 1 {
+                reloadPublisher.send()
+            } else {
+                insertPublisher.send(asNextChapter ? sections.count - 1 : 0)
+            }
+            
+            if pages.isEmpty {
+                loadNextChapter()
+            }
+        }
+        
+        func buildSection(chapter: ThreadSafeChapter, pages: [ReaderView.Page]) -> [AnyHashable] {
             let chapterIndex = chapterList.firstIndex(where: { $0 == chapter })! // Should never fail
             
             // Prepare Chapter
@@ -118,28 +148,7 @@ extension ReaderView {
             
             chapterObjects.append(transition)
             
-            // Set Opening Page
-            if readerChapterList.count == 1, readerChapter.requestedPageIndex == -1 {
-                let values = STTHelpers.getInitialPosition(for: readerChapter.chapter, limit: pages.count)
-                readerChapter.requestedPageIndex = values.0
-                readerChapter.requestedPageOffset = values.1
-            }
-            // Add to model section
-            if asNextChapter {
-                sections.append(chapterObjects)
-            } else {
-                sections.insert(chapterObjects, at: 0)
-            }
-            
-            if readerChapterList.count == 1 {
-                reloadPublisher.send()
-            } else {
-                insertPublisher.send(asNextChapter ? sections.count - 1 : 0)
-            }
-            
-            if pages.isEmpty {
-                loadNextChapter()
-            }
+            return chapterObjects
         }
         
         func getChapterIndex(_ chapter: ThreadSafeChapter) -> Int {

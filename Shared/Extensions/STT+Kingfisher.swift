@@ -12,7 +12,8 @@ import UIKit
 struct WhiteSpaceProcessor: ImageProcessor {
     // `identifier` should be the same for processors with the same properties/functionality
     // It will be used when storing and retrieving the image to/from cache.
-    let identifier = "com.suwatte.wsp"
+    
+    let identifier: String = Bundle.main.bundleIdentifier! + ".image_processor.whitespace"
 
     // Convert input data/image to target image and return it.
     func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
@@ -26,7 +27,7 @@ struct WhiteSpaceProcessor: ImageProcessor {
 }
 
 struct STTCallbackProcessor: ImageProcessor {
-    let identifier: String = "com.suwatte.cbp"
+    let identifier: String = Bundle.main.bundleIdentifier! + ".image_processor.callback"
     let action: (KFCrossPlatformImage) -> Void
     func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
         switch item {
@@ -41,7 +42,7 @@ struct STTCallbackProcessor: ImageProcessor {
 }
 
 struct STTDownsamplerProcessor: ImageProcessor {
-    let identifier = "com.suwatte.dsp"
+    let identifier: String = Bundle.main.bundleIdentifier! + ".image_processor.downsample"
 
     // Convert input data/image to target image and return it.
     func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
