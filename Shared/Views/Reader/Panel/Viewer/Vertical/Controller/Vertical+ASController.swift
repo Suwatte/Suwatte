@@ -21,10 +21,6 @@ extension VerticalViewer {
         // MARK: Init
         init(model: ReaderView.ViewModel) {
             let layout = VerticalContentOffsetPreservingLayout()
-            layout.scrollDirection = .vertical
-            layout.minimumLineSpacing = 0
-            layout.minimumInteritemSpacing = 0
-            layout.sectionInset = UIEdgeInsets.zero
             let node = ASCollectionNode(collectionViewLayout: layout)
             self.model = model
             super.init(node: node)

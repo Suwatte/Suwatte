@@ -483,10 +483,9 @@ extension ReaderView.ViewModel {
                 preferences.readingLeftToRight = true
             case .VERTICAL:
                 preferences.isReadingVertically = true
-                preferences.addImagePadding = false
             case .VERTICAL_SEPARATED:
                 preferences.isReadingVertically = true
-                preferences.addImagePadding = false
+                preferences.VerticalPagePadding = true
             default: break
         }
     }

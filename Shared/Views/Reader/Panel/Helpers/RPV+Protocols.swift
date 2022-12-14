@@ -91,6 +91,19 @@ class NovelOffsetPreservingLayout: UICollectionViewFlowLayout {
 }
 
 class VerticalContentOffsetPreservingLayout: UICollectionViewFlowLayout {
+    
+    override init() {
+        super.init()
+        self.scrollDirection = .vertical
+        self.minimumLineSpacing = 0
+        self.minimumInteritemSpacing = 0
+        self.minimumLineSpacing = 0
+        self.sectionInset = UIEdgeInsets.zero
+    }
+    
+    required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
     var isInsertingCellsToTop: Bool = false {
         didSet {
             if isInsertingCellsToTop {

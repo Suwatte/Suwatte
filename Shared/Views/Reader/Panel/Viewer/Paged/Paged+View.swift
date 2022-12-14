@@ -65,8 +65,7 @@ class ReaderPageView: UIView {
             .preferencesChangedSubject
             .filter { changedKeyPath in
                 changedKeyPath == \Preferences.downsampleImages ||
-                    changedKeyPath == \Preferences.cropWhiteSpaces ||
-                    changedKeyPath == \Preferences.addImagePadding
+                    changedKeyPath == \Preferences.cropWhiteSpaces
             }.sink { [unowned self] _ in
                 imageView.image = nil
                 setImage()

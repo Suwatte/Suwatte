@@ -31,7 +31,7 @@ enum STTKeys {
     static var IsDoublePagedEnabled = "READER.paged_double"
     static var PagedDirection = "READER.paged_h_direction"
 
-    static var PagePadding = "READER.page_padding"
+    static var VerticalPagePadding = "READER.vertical_page_padding"
     static var ForceTransition = "READER.force_transitions"
 
     static var BackgroundColor = "READER.bg_color"

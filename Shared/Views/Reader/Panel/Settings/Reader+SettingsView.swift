@@ -28,6 +28,7 @@ extension ReaderView {
         @Preference(\.isReadingVertically) var isVertical
         @Preference(\.isDoublePagedEnabled) var isDoublePaged
         @Preference(\.invertTapSidesToNavigate) var invertTapSidesToNavigate
+        @Preference(\.VerticalPagePadding) var verticalPagePadding
         var body: some View {
             List {
                 // Reading Mode
@@ -56,9 +57,12 @@ extension ReaderView {
                     } header: {
                         Text("Reading Direction")
                     }
+                } else {
+                    Section {
+                        Toggle("Page Padding", isOn: $verticalPagePadding)
+                    }
                 }
-                // Purposefully empty
-                Section {}
+
 
                 Section {
                     Toggle("Tap Sides To Navigate", isOn: $tapToNavigate)
@@ -97,13 +101,6 @@ extension ReaderView {
                         Text("Removes excess white border surrounding panels.")
                     }
                 }
-
-                // Transitions
-//                Section {
-//                    Toggle("Always Show Transition Page", isOn: $forceTransitions)
-//                } header: {
-//                    Text("Transitions")
-//                }
 
                 // Background
                 Section {

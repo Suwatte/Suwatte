@@ -32,8 +32,8 @@ final class Preferences {
     @UserDefault(STTKeys.ImageInteractions)
     var imageInteractions: Bool = false
 
-    @UserDefault(STTKeys.PagePadding)
-    var addImagePadding: Bool = false
+    @UserDefault(STTKeys.VerticalPagePadding)
+    var VerticalPagePadding: Bool = false
 
     // Reader Level
     @UserDefault(STTKeys.IsReadingVertically)
