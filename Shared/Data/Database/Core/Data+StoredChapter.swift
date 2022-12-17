@@ -103,7 +103,7 @@ final class StoredChapter: Object, ObjectKeyIdentifiable {
     }
     
     func toThreadSafe() -> ThreadSafeChapter {
-        .init(_id: _id, sourceId: sourceId, chapterId: chapterId, contentId: contentId, index: index, number: number, date: date)
+        .init(_id: _id, sourceId: sourceId, chapterId: chapterId, contentId: contentId, index: index, number: number, language: language, date: date, webUrl: webUrl)
     }
 }
 

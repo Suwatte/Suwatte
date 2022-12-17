@@ -16,7 +16,7 @@ import Unrar
 typealias ICDM = InteractorContentDownloader
 final class InteractorContentDownloader: ObservableObject {
     static let shared = InteractorContentDownloader()
-    let directory = FileManager.default.documentDirectory.appendingPathComponent("ICDM", isDirectory: true)
+    let directory = FileManager.default.applicationSupport.appendingPathComponent("Downloads", isDirectory: true)
     var tempDir: URL {
         directory.appendingPathComponent("__temp__")
     }

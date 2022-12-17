@@ -14,7 +14,7 @@ final class LocalContentManager: ObservableObject {
 
     private var observer: DispatchSourceFileSystemObject?
     static var shared = LocalContentManager()
-    let directory = FileManager.default.documentDirectory.appendingPathComponent("LocalContent", isDirectory: true)
+    let directory = FileManager.default.documentDirectory.appendingPathComponent("UserContent", isDirectory: true)
     internal let zipClient = ZipClient()
     internal let rarClient = RarClient()
     init() {

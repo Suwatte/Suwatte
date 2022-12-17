@@ -44,6 +44,8 @@ struct ReaderView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         .overlay(model.showNavOverlay && tapSidesToNavigate && displayNavOverlay ? ReaderNavigationOverlay() : nil)
         .overlay(overlayEnabled ? ReaderCustomOverlay() : nil)
+        .modifier(UseGrayScaleModifier())
+        .modifier(UseColorInvertModifier())
         .overlay(model.menuControl.menu ? ReaderMenuOverlay() : nil)
         .statusBar(hidden: !model.menuControl.menu)
         .animation(.default, value: model.menuControl.menu)
@@ -134,5 +136,28 @@ extension ReaderView.ViewModel {
                 self.menuControl.toggleMenu()
             }
     }
+}
 
+extension ReaderView {
+    struct UseColorInvertModifier: ViewModifier {
+        @AppStorage(STTKeys.ReaderColorInvert) var useColorInvert = false
+
+        func body(content: Content) -> some View {
+            if useColorInvert {
+                content
+                    .colorInvert()
+            } else {
+                content
+            }
+        }
+    }
+    
+    struct UseGrayScaleModifier: ViewModifier {
+        @AppStorage(STTKeys.ReaderGrayScale) var useGrayscale = false
+
+        func body(content: Content) -> some View {
+            content
+                .grayscale(useGrayscale ? 1 : 0)
+        }
+    }
 }

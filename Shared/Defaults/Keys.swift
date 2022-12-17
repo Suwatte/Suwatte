@@ -31,11 +31,14 @@ enum STTKeys {
     static var IsDoublePagedEnabled = "READER.paged_double"
     static var PagedDirection = "READER.paged_h_direction"
 
-    static var PagePadding = "READER.page_padding"
+    static var VerticalPagePadding = "READER.vertical_page_padding"
     static var ForceTransition = "READER.force_transitions"
 
     static var BackgroundColor = "READER.bg_color"
     static var UseSystemBG = "READER.use_sys_bg"
+    static var ReaderFilterBlendMode = "READER.filter_blend_mode"
+    static var ReaderGrayScale = "READER.grayscale"
+    static var ReaderColorInvert = "Reader.color_invert"
 
     static var CropWhiteSpaces = "READER.crop_ws"
     static var DownsampleImages = "READER.downsample_images"
@@ -103,4 +106,8 @@ enum STTKeys {
     
     static var HideNSFWRunners = "APP.hide_nsfw_runners"
     static var UpdateInterval = "APP.update_interval"
+    
+    static var LastAutoBackup = "APP.last_auto_backup"
+    
+    static var CheckLinkedOnUpdateCheck = "APP.check_linked_on_update_check"
 }

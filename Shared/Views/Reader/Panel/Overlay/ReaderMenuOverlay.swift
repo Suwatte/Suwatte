@@ -68,6 +68,8 @@ extension ReaderView {
                     }
                     Image(systemName: "chevron.down").imageScale(.medium)
                 }
+                .contentShape(Rectangle())
+                .padding(.trailing, 7)
             }
             .buttonStyle(.plain)
         }
@@ -255,7 +257,7 @@ extension ReaderView.ReaderMenuOverlay {
                 .buttonStyle(.plain)
                 .rotationEffect(.degrees(readingLeftToRight ? 0 : 180), anchor: .center)
 
-                if let index = model.activeChapter.requestedPageIndex, let pageCount = model.activeChapter.pages?.count {
+                if let index = model.activeChapter.requestedPageIndex, let pageCount = model.activeChapter.pages?.last?.number {
                     Text("Page \(model.scrubbingPageNumber != nil ? model.scrubbingPageNumber! : index + 1) of \(pageCount)")
                         .font(.footnote)
                         .fontWeight(.bold)

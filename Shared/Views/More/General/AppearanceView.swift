@@ -9,16 +9,11 @@ import SwiftUI
 
 struct AppearanceView: View {
     @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.COMPACT
-    @AppStorage(STTKeys.IntialTabIndex) var InitialSelection = 3
-    @AppStorage(STTKeys.OpenAllTitlesOnAppear) var openAllOnAppear = false
     @AppStorage(STTKeys.incognito) var incognitoMode = false
     @AppStorage(STTKeys.GridItemsPerRow_P) var IPRP = 2
     @AppStorage(STTKeys.GridItemsPerRow_LS) var IPRLS = 6
     @AppStorage(STTKeys.AppAccentColor) var appAccentColor: Color = .sttDefault
-    @AppStorage(STTKeys.HideNSFWRunners) var hideNSFWRunners = false
-    @AppStorage(STTKeys.UpdateInterval) var updateInterval : STTUpdateInterval = .oneHour
-    @Preference(\.selectiveUpdates) var selectiveUpdates
-    let options = AppTabs.defaultSettings
+
     var body: some View {
         Form {
             Section {
@@ -56,59 +51,11 @@ struct AppearanceView: View {
                 Text("Tiles")
             }
 
-            // Initial Tab
-            Section {
-                NavigationLink {
-                    List {
-                        ForEach(Array(zip(options.indices, options)), id: \.0) { index, option in
-                            SelectionLabel(label: option.label(), isSelected: index == InitialSelection, action: { InitialSelection = index })
-                        }
-                    }
-                    .buttonStyle(.plain)
-                    .navigationTitle("Opening Tab")
-                } label: {
-                    STTLabelView(title: "Opening Tab", label: options[InitialSelection].label())
-                }
-
-            } header: {
-                Text("Tab")
-            }
-            .buttonStyle(.plain)
-
-            // Open All Titles On Libary Appear
-            Section {
-                Toggle("Open Default Collection", isOn: $openAllOnAppear)
-                LibraryAuthenticationToggleView()
-            } header: {
-                Text("Library")
-            }
-
-            Section {
-                Picker("Update Interval", selection: $updateInterval) {
-                    ForEach(STTUpdateInterval.allCases, id: \.rawValue) {
-                        Text($0.label)
-                            .tag($0)
-                    }
-                }
-                Toggle("Selective Updates", isOn: $selectiveUpdates)
-                
-            } header: {
-                Text("Updates")
-            } footer: {
-                Text("Only fetch updates for titles flagged as 'Reading'.")
-            }
-            
-            Section {
-                Toggle("Hide NSFW Sources", isOn: $hideNSFWRunners)
-            } header: {
-                Text("Runners")
-            }
             
             
         }
         .buttonStyle(.plain)
-        .navigationTitle("Appearance & Behaviours")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Appearance")
     }
 }
 

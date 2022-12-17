@@ -57,15 +57,13 @@ extension DoublePagedViewer {
             Preferences
                 .standard
                 .preferencesChangedSubject
-                .filter { changedKeyPath in
-                    changedKeyPath == \Preferences.downsampleImages ||
-                        changedKeyPath == \Preferences.cropWhiteSpaces ||
-                        changedKeyPath == \Preferences.addImagePadding
-                }.sink { [weak self] _ in
+                .filter { $0 == \Preferences.downsampleImages || $0 == \Preferences.cropWhiteSpaces }
+                .sink { [weak self] _ in
                     self?.imageView.image = nil
                     self?.cancelTasks()
                     self?.setImage()
-                }.store(in: &subscriptions)
+                }
+                .store(in: &subscriptions)
         }
 
         func activateConstraints() {

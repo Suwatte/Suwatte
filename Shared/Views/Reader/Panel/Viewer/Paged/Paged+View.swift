@@ -65,8 +65,7 @@ class ReaderPageView: UIView {
             .preferencesChangedSubject
             .filter { changedKeyPath in
                 changedKeyPath == \Preferences.downsampleImages ||
-                    changedKeyPath == \Preferences.cropWhiteSpaces ||
-                    changedKeyPath == \Preferences.addImagePadding
+                    changedKeyPath == \Preferences.cropWhiteSpaces
             }.sink { [unowned self] _ in
                 imageView.image = nil
                 setImage()
@@ -100,10 +99,9 @@ class ReaderPageView: UIView {
     var widthConstraint: NSLayoutConstraint?
     func updateHeightConstraint(size: CGSize) {
         let ratio = size.width / size.height
-        var height = size.height / size.width * frame.width
+        var height = (size.height / size.width) * frame.width
         height = min(height, scrollView.bounds.height)
         let width = height * ratio
-
         heightContraint?.constant = height
         heightContraint?.isActive = false
         heightContraint = nil

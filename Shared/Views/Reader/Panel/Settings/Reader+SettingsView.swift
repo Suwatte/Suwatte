@@ -17,6 +17,9 @@ extension ReaderView {
         @AppStorage(STTKeys.UseSystemBG) var useSystemBG = true
         @AppStorage(STTKeys.PagedNavigator) var pagedNavigator = ReaderNavigation.Modes.standard
         @AppStorage(STTKeys.VerticalNavigator) var verticalNavigator = ReaderNavigation.Modes.lNav
+        @AppStorage(STTKeys.ReaderFilterBlendMode) var readerBlendMode = ReaderBlendMode.normal
+        @AppStorage(STTKeys.ReaderGrayScale) var useGrayscale = false
+        @AppStorage(STTKeys.ReaderColorInvert) var useColorInvert = false
 
         // Preference Publisher
         @Preference(\.readingLeftToRight) var readingLeftToRight
@@ -28,6 +31,7 @@ extension ReaderView {
         @Preference(\.isReadingVertically) var isVertical
         @Preference(\.isDoublePagedEnabled) var isDoublePaged
         @Preference(\.invertTapSidesToNavigate) var invertTapSidesToNavigate
+        @Preference(\.VerticalPagePadding) var verticalPagePadding
         var body: some View {
             List {
                 // Reading Mode
@@ -56,9 +60,12 @@ extension ReaderView {
                     } header: {
                         Text("Reading Direction")
                     }
+                } else {
+                    Section {
+                        Toggle("Page Padding", isOn: $verticalPagePadding)
+                    }
                 }
-                // Purposefully empty
-                Section {}
+
 
                 Section {
                     Toggle("Tap Sides To Navigate", isOn: $tapToNavigate)
@@ -98,13 +105,6 @@ extension ReaderView {
                     }
                 }
 
-                // Transitions
-//                Section {
-//                    Toggle("Always Show Transition Page", isOn: $forceTransitions)
-//                } header: {
-//                    Text("Transitions")
-//                }
-
                 // Background
                 Section {
                     Toggle("Use System Background", isOn: $useSystemBG)
@@ -119,18 +119,56 @@ extension ReaderView {
                 // Overlay
                 Section {
                     Toggle("Custom Overlay", isOn: $enableOverlay)
-
                     if enableOverlay {
-                        ColorPicker("Overlay Color & Opacity", selection: $overlayColor)
+                        ColorPicker("Color & Opacity", selection: $overlayColor)
+                        Picker("Blend Mode", selection: $readerBlendMode) {
+                            ForEach(ReaderBlendMode.allCases, id: \.rawValue) {
+                                Text($0.description)
+                                    .tag($0)
+                            }
+                        }
                     }
+                    
                 } header: {
                     Text("Overlay")
+                }
+                Section {
+                    Toggle("Grayscale", isOn: $useGrayscale)
+                    Toggle("Color Invert", isOn: $useColorInvert)
+                } header: {
+                    Text("Filters")
                 }
             }
             .animation(.default, value: enableOverlay)
             .animation(.default, value: useSystemBG)
             .animation(.default, value: tapToNavigate)
             .animation(.default, value: isVertical)
+        }
+    }
+}
+
+enum ReaderBlendMode : Int, CaseIterable {
+    case normal, screen, multiply
+    
+    var description : String {
+        switch self {
+            case .multiply:
+                return "Multiply"
+            case .normal:
+                return "Normal"
+            case .screen:
+                return "Screen"
+        }
+    }
+    
+    var blendMode: BlendMode {
+        switch self {
+            case .normal:
+                return .normal
+            case .screen:
+                return .screen
+            case .multiply:
+                return .multiply
         }
     }
 }

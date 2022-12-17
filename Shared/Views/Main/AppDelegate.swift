@@ -39,16 +39,12 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
         }
 
         // Realm
-        let config = Realm.Configuration(schemaVersion: UInt64(SCHEMA_VERSION),
-                                         migrationBlock: { migration, oldSchemaVersion in
-                                             if oldSchemaVersion < 3 {
-                                                 migration.renameProperty(onType: ChapterMarker.className(), from: "total", to: "totalPageCount")
-                                                 migration.renameProperty(onType: ChapterMarker.className(), from: "last", to: "lastPageRead")
-                                             }
-                                             if oldSchemaVersion < 4 {
-                                                 migration.renameProperty(onType: StoredChapter.className(), from: "sourceIndex", to: "index")
-                                             }
-                                         })
+        var config = Realm.Configuration(schemaVersion: UInt64(SCHEMA_VERSION))
+        let directory = FileManager.default.applicationSupport.appendingPathComponent("Database", isDirectory: true)
+        if !directory.exists {
+            directory.createDirectory()
+        }
+        config.fileURL = directory.appendingPathComponent("suwatte_db.realm")
         Realm.Configuration.defaultConfiguration = config
 
         return true

@@ -10,12 +10,10 @@ import SwiftUI
 
 class Logger: ObservableObject {
     @Published var logs: [Entry] = []
-    let directory = FileManager.default.documentDirectory.appendingPathComponent("logs", isDirectory: true)
     static let shared = Logger()
-    init() { directory.createDirectory() }
 
     var file: URL {
-        directory.appendingPathComponent("logs.txt", isDirectory: false)
+        FileManager.default.documentDirectory.appendingPathComponent("application_logs.txt", isDirectory: false)
     }
 
     func clearSession() {

@@ -96,14 +96,25 @@ extension Controller {
         // MARK: Preference Publisher
         
         Preferences.standard.preferencesChangedSubject
-            .filter { changedKeyPath in
-                changedKeyPath == \Preferences.forceTransitions ||
-                changedKeyPath == \Preferences.imageInteractions
-            }.sink { [weak self] _ in
+            .filter { $0 == \Preferences.forceTransitions || $0 == \Preferences.imageInteractions }
+            .sink { [weak self] _ in
                 Task { @MainActor in
                     self?.collectionNode.reloadData()
                 }
-            }.store(in: &subscriptions)
+            }
+            .store(in: &subscriptions)
+        
+        Preferences.standard.preferencesChangedSubject
+            .filter { $0 == \Preferences.VerticalPagePadding }
+            .sink { [weak self] _ in
+                Task { @MainActor in
+                    let enabled = Preferences.standard.VerticalPagePadding
+                    guard let layout = self?.collectionNode.collectionViewLayout as? UICollectionViewFlowLayout else { return }
+                    layout.minimumLineSpacing = enabled ? 10 : 0
+                    self?.collectionNode.collectionViewLayout.invalidateLayout()
+                }
+            }
+            .store(in: &subscriptions)
     }
 }
 
