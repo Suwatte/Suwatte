@@ -258,6 +258,8 @@ extension Controller.ImageNode {
         image = nil
         ratio = nil
         KingfisherManager.shared.cache.memoryStorage.remove(forKey: page.CELL_KEY)
+        imageNode.alpha = 0
+        progressNode.alpha = 1
     }
     
 }
