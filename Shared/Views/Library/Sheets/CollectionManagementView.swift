@@ -15,12 +15,18 @@ struct CollectionManagementView: View {
 
     var body: some View {
         List {
-            TextField("Collection Name", text: $collectionName)
+            HStack {
+                Text("Name: ")
+                    .fontWeight(.light)
+                    .foregroundColor(.gray)
+                TextField("Collection Name", text: $collectionName)
+            }
+            
             Toggle("Enable Smart Filters", isOn: $enableFilters)
 
             if let filter = collection.filter, enableFilters {
                 FilterSections(collectionId: collection._id, sourceSelections: filter.sources.toArray(), flagSelections: filter.readingFlags.toArray(), contentSelections: filter.contentType.toArray(), titleContains: filter.textContains.toArray(), tagContains: filter.tagContains.toArray(), contentStatuses: filter.statuses.toArray())
-                    .transition(.opacity)
+                    .transition(.slide)
                     .animation(.default)
             }
         }
@@ -29,7 +35,7 @@ struct CollectionManagementView: View {
             saveName(collectionName)
         }
 
-        .onChange(of: enableFilters, perform: handleToggleFilterEnabled(_:))
+        .onChange(of: enableFilters, perform: handleToggleFilterEnabled)
         .animation(.default)
         .navigationTitle("Manage \(collection.name)")
         .navigationBarTitleDisplayMode(.inline)
@@ -324,7 +330,9 @@ extension CollectionManagementView {
 
         try! realm.safeWrite {
             if value {
-                collection?.filter = LibraryCollectionFilter()
+                if collection?.filter == nil {
+                    collection?.filter = LibraryCollectionFilter()
+                }
             } else {
                 collection?.filter = nil
             }
