@@ -16,12 +16,9 @@ struct SuwatteApp: App {
         WindowGroup {
             ContentView()
                 .onOpenURL(perform: handleURL(_:))
-                .onAppear {
-                    ICDM.shared.runTasks()
-                }
                 .sheet(item: $navModel.identifier) { ids in
                     NavigationView {
-                        ProfileView(entry: .init(contentId: ids.contentId, cover: STTHost.coverNotFound.absoluteString, title: ""), sourceId: ids.sourceId)
+                        ProfileView(entry: .init(contentId: ids.contentId, cover: STTHost.coverNotFound.absoluteString, title: "Loading"), sourceId: ids.sourceId)
                             .closeButton()
                     }
                 }

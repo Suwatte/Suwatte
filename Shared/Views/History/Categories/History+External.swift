@@ -17,16 +17,13 @@ extension HistoryView {
             ScrollView {
                 LazyVStack {
                     ForEach(markers) { marker in
-                        Tile(marker: marker)
+                        Tile(marker: marker, selection: $selection)
                             .modifier(HistoryView.ContextMenuModifier(marker: marker))
                             .padding(.vertical, 5)
                             .animation(.default, value: markers.contains(marker))
                             .id(marker.id)
                             .transition(HistoryView.transition)
-                            .onTapGesture {
-                                let chapter = marker.chapter!
-                                selection = (chapter.sourceId, DSKCommon.Highlight.withId(id: chapter.contentId))
-                            }
+                            
                     }
                 }
                 .padding()
@@ -60,11 +57,16 @@ extension HistoryView.ExternalView {
     struct Tile: View {
         var marker: ChapterMarker
         var size = 140.0
+        @Binding var selection: HighlightIndentier?
 
         var body: some View {
             if let entry = entry {
                 ContentFound(entry)
                     .modifier(HistoryView.StyleModifier())
+                    .onTapGesture {
+                        let chapter = marker.chapter!
+                        selection = (chapter.sourceId, .init(contentId: chapter.contentId, cover: entry.cover, title: entry.title))
+                    }
             }
         }
 
