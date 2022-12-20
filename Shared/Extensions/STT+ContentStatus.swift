@@ -11,7 +11,7 @@ extension ContentStatus {
     var description: String {
         switch self {
         case .UNKNOWN:
-            return "Uknown"
+            return "Unknown"
         case .ONGOING:
             return "Ongoing"
         case .COMPLETED:

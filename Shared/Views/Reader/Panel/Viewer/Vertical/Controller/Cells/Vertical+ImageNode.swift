@@ -242,10 +242,11 @@ extension Controller.ImageNode {
     override func didEnterVisibleState() {
         super.didEnterVisibleState()
         isZoomed = false
-        Task { @MainActor in
-            delegate?.handleChapterPreload(at:indexPath)
-        }
         displayImage()
+        Task {
+            await delegate?.handleChapterPreload(at:indexPath)
+        }
+        
     }
     
     override func didExitVisibleState() {
@@ -258,6 +259,8 @@ extension Controller.ImageNode {
         image = nil
         ratio = nil
         KingfisherManager.shared.cache.memoryStorage.remove(forKey: page.CELL_KEY)
+        imageNode.alpha = 0
+        progressNode.alpha = 1
     }
     
 }

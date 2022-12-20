@@ -22,7 +22,7 @@ extension LibraryView.LibraryGrid {
 
                     Section {
                         if let collection = collection?.thaw() {
-                            NavigationLink("Collection Settinngs") {
+                            NavigationLink("Collection Settings") {
                                 CollectionManagementView(collection: collection, collectionName: collection.name)
                             }
                         }
