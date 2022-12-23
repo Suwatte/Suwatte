@@ -58,6 +58,13 @@
 		DF47DDDC28B5542D00D779E5 /* AV+EntryEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF47DDDB28B5542D00D779E5 /* AV+EntryEditor.swift */; };
 		DF47DDDE28B55BA600D779E5 /* AdaptiveSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF47DDDD28B55BA500D779E5 /* AdaptiveSheet.swift */; };
 		DF47DDE128B5608D00D779E5 /* PartialSheet in Frameworks */ = {isa = PBXBuildFile; productRef = DF47DDE028B5608D00D779E5 /* PartialSheet */; };
+		DF482EF0295554B9002D3308 /* VerticalPaged+Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF482EEF295554B9002D3308 /* VerticalPaged+Controller.swift */; };
+		DF482EF2295554E8002D3308 /* VerticalPaged+Representable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF482EF1295554E8002D3308 /* VerticalPaged+Representable.swift */; };
+		DF482EF429555708002D3308 /* VerticalPaged+Scroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF482EF329555708002D3308 /* VerticalPaged+Scroll.swift */; };
+		DF482EF629555730002D3308 /* VerticalPaged+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF482EF529555730002D3308 /* VerticalPaged+Combine.swift */; };
+		DF482EF829555A43002D3308 /* VerticalPaged+ContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF482EF729555A43002D3308 /* VerticalPaged+ContextMenu.swift */; };
+		DF482EFA29555C5B002D3308 /* VerticalPaged+Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF482EF929555C5B002D3308 /* VerticalPaged+Cell.swift */; };
+		DF482EFF29556E2B002D3308 /* VerticalPaged+ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF482EFE29556E2B002D3308 /* VerticalPaged+ImageView.swift */; };
 		DF515FF728E2A779002B6D60 /* DSK+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF515FF628E2A779002B6D60 /* DSK+Actions.swift */; };
 		DF515FF928E2A8DC002B6D60 /* DSK+CS+Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF515FF828E2A8DC002B6D60 /* DSK+CS+Action.swift */; };
 		DF515FFB28E2A9E5002B6D60 /* DRV+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF515FFA28E2A9E5002B6D60 /* DRV+Actions.swift */; };
@@ -356,6 +363,13 @@
 		DF32646A2802A6C70066EB08 /* STTImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STTImageView.swift; sourceTree = "<group>"; };
 		DF47DDDB28B5542D00D779E5 /* AV+EntryEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AV+EntryEditor.swift"; sourceTree = "<group>"; };
 		DF47DDDD28B55BA500D779E5 /* AdaptiveSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveSheet.swift; sourceTree = "<group>"; };
+		DF482EEF295554B9002D3308 /* VerticalPaged+Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VerticalPaged+Controller.swift"; sourceTree = "<group>"; };
+		DF482EF1295554E8002D3308 /* VerticalPaged+Representable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VerticalPaged+Representable.swift"; sourceTree = "<group>"; };
+		DF482EF329555708002D3308 /* VerticalPaged+Scroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VerticalPaged+Scroll.swift"; sourceTree = "<group>"; };
+		DF482EF529555730002D3308 /* VerticalPaged+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VerticalPaged+Combine.swift"; sourceTree = "<group>"; };
+		DF482EF729555A43002D3308 /* VerticalPaged+ContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VerticalPaged+ContextMenu.swift"; sourceTree = "<group>"; };
+		DF482EF929555C5B002D3308 /* VerticalPaged+Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VerticalPaged+Cell.swift"; sourceTree = "<group>"; };
+		DF482EFE29556E2B002D3308 /* VerticalPaged+ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VerticalPaged+ImageView.swift"; sourceTree = "<group>"; };
 		DF515FF628E2A779002B6D60 /* DSK+Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Actions.swift"; sourceTree = "<group>"; };
 		DF515FF828E2A8DC002B6D60 /* DSK+CS+Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+CS+Action.swift"; sourceTree = "<group>"; };
 		DF515FFA28E2A9E5002B6D60 /* DRV+Actions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DRV+Actions.swift"; sourceTree = "<group>"; };
@@ -813,6 +827,20 @@
 				DF30193828BFCBD00024AA8B /* ZoomingScrollView.swift */,
 			);
 			path = Zooming;
+			sourceTree = "<group>";
+		};
+		DF482EEE29555492002D3308 /* Vertical Paged */ = {
+			isa = PBXGroup;
+			children = (
+				DF482EEF295554B9002D3308 /* VerticalPaged+Controller.swift */,
+				DF482EF1295554E8002D3308 /* VerticalPaged+Representable.swift */,
+				DF482EF329555708002D3308 /* VerticalPaged+Scroll.swift */,
+				DF482EF529555730002D3308 /* VerticalPaged+Combine.swift */,
+				DF482EF729555A43002D3308 /* VerticalPaged+ContextMenu.swift */,
+				DF482EF929555C5B002D3308 /* VerticalPaged+Cell.swift */,
+				DF482EFE29556E2B002D3308 /* VerticalPaged+ImageView.swift */,
+			);
+			path = "Vertical Paged";
 			sourceTree = "<group>";
 		};
 		DF59C97E28500E080027F19D /* Local */ = {
@@ -1289,6 +1317,7 @@
 		DF8D0A432800EE47003E4C3E /* Viewer */ = {
 			isa = PBXGroup;
 			children = (
+				DF482EEE29555492002D3308 /* Vertical Paged */,
 				DF1FD5C0284B30A200A67F0E /* Double Paged */,
 				DFFC1EBA280635D60069AA0E /* Vertical */,
 				DF8D0A442800EE47003E4C3E /* Paged */,
@@ -2029,6 +2058,7 @@
 				DF8D0B402800EE47003E4C3E /* DataManager.swift in Sources */,
 				DF9BD6532891E602006628D0 /* DSK+CS+Explore.swift in Sources */,
 				DF8D0B832800EE48003E4C3E /* Explore+AllTags.swift in Sources */,
+				DF482EF629555730002D3308 /* VerticalPaged+Combine.swift in Sources */,
 				DF8D0B732800EE48003E4C3E /* LibraryView.swift in Sources */,
 				DF8D0B322800EE47003E4C3E /* STT+Filemanager.swift in Sources */,
 				DF03F72B28454E9800602E59 /* Novel+Paged+Controller.swift in Sources */,
@@ -2054,6 +2084,7 @@
 				DF9BD64C2891DE47006628D0 /* DSK+Search.swift in Sources */,
 				DF47DDDE28B55BA600D779E5 /* AdaptiveSheet.swift in Sources */,
 				DF8D0B5A2800EE47003E4C3E /* ChapterDownload.swift in Sources */,
+				DF482EF2295554E8002D3308 /* VerticalPaged+Representable.swift in Sources */,
 				DF7B188A2830B4B1006A54C9 /* ReaderGateWay.swift in Sources */,
 				DF8D0B6A2800EE48003E4C3E /* ReaderMenuOverlay.swift in Sources */,
 				DF8D0B422800EE47003E4C3E /* Data+StoredProperty.swift in Sources */,
@@ -2089,6 +2120,7 @@
 				DF6B8CA428629CCE00DD079D /* Data+ContentLink.swift in Sources */,
 				DF8D0B752800EE48003E4C3E /* LibraryGrid+OptionsSheet.swift in Sources */,
 				DF47DDDC28B5542D00D779E5 /* AV+EntryEditor.swift in Sources */,
+				DF482EFA29555C5B002D3308 /* VerticalPaged+Cell.swift in Sources */,
 				DF8D0B5E2800EE47003E4C3E /* Reader+TransitionCell.swift in Sources */,
 				DF8D0B352800EE47003E4C3E /* STT+Double.swift in Sources */,
 				DF8D0BA62800EE48003E4C3E /* BrowseView.swift in Sources */,
@@ -2118,6 +2150,7 @@
 				DF8D0B552800EE47003E4C3E /* Backup+Chapter.swift in Sources */,
 				DF8D0B562800EE47003E4C3E /* Backup+Content.swift in Sources */,
 				DF6B5762288F6894007C6B78 /* DSK+Protocol.swift in Sources */,
+				DF482EF429555708002D3308 /* VerticalPaged+Scroll.swift in Sources */,
 				DF6B8CA62862A11600DD079D /* PV+ContentLink.swift in Sources */,
 				DF6824A728A5FD8000AB30A1 /* DRV+Auth.swift in Sources */,
 				DF8D0B232800EE47003E4C3E /* Queue.swift in Sources */,
@@ -2202,6 +2235,7 @@
 				DF8D0BB82800EE48003E4C3E /* SelectionLabel.swift in Sources */,
 				DF1FD5C2284B31AB00A67F0E /* DoublePaged+Representable.swift in Sources */,
 				DF8D0BA22800EE48003E4C3E /* UpdateFeedTile.swift in Sources */,
+				DF482EF829555A43002D3308 /* VerticalPaged+ContextMenu.swift in Sources */,
 				DF8D0B772800EE48003E4C3E /* Library+CollectionView.swift in Sources */,
 				DF248F132813861200818300 /* Anilist.swift in Sources */,
 				DF8D0B592800EE47003E4C3E /* Backup+ChapterMarker.swift in Sources */,
@@ -2244,12 +2278,14 @@
 				DF8D0B672800EE48003E4C3E /* Paged+ImageCell.swift in Sources */,
 				DFB47EF72880C1FB0040A1BD /* STT+OPDS.swift in Sources */,
 				DFF1044528A9C72600E2C3A4 /* DSK+Console.swift in Sources */,
+				DF482EFF29556E2B002D3308 /* VerticalPaged+ImageView.swift in Sources */,
 				DF8D0B8F2800EE48003E4C3E /* ESV+ResultsView.swift in Sources */,
 				DF8D0BA72800EE48003E4C3E /* AppDelegate.swift in Sources */,
 				DF8D0B602800EE47003E4C3E /* Paged+View.swift in Sources */,
 				DF03F7322845C2E000602E59 /* Novel+SettingsView.swift in Sources */,
 				DF6A8973288B71F90045529D /* History+OPDS.swift in Sources */,
 				DF03F72D28454FD600602E59 /* Novel+Paged+ContentCell.swift in Sources */,
+				DF482EF0295554B9002D3308 /* VerticalPaged+Controller.swift in Sources */,
 				DF8D0B4D2800EE47003E4C3E /* Data+ChapterMarker.swift in Sources */,
 				DF248F22281393A400818300 /* AnilistView.swift in Sources */,
 				DF67EB9928E7B07700076FF5 /* AddContentLink.swift in Sources */,
@@ -2428,7 +2464,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.4.1;
+				MARKETING_VERSION = 4.4.2;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ceres.suwatte;
 				PRODUCT_NAME = Suwatte;
@@ -2472,7 +2508,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.4.1;
+				MARKETING_VERSION = 4.4.2;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ceres.suwatte;
