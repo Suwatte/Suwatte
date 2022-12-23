@@ -495,6 +495,9 @@ extension ReaderView.ViewModel {
             case .VERTICAL_SEPARATED:
                 preferences.isReadingVertically = true
                 preferences.VerticalPagePadding = true
+            case .PAGED_VERTICAL:
+                preferences.isReadingVertically = false
+                preferences.isPagingVertically = true
             default: break
         }
     }

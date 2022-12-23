@@ -66,10 +66,13 @@ class ReaderPageView: UIView {
             .filter { changedKeyPath in
                 changedKeyPath == \Preferences.downsampleImages ||
                     changedKeyPath == \Preferences.cropWhiteSpaces
-            }.sink { [unowned self] _ in
+            }
+            .sink { [unowned self] _ in
                 imageView.image = nil
                 setImage()
-            }.store(in: &subscriptions)
+            }
+            .store(in: &subscriptions)
+        
     }
 
     func activateConstraints() {

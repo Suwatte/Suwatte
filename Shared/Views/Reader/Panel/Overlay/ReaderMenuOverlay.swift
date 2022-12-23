@@ -14,34 +14,30 @@ extension ReaderView {
         @Environment(\.colorScheme) var colorScheme
         @Preference(\.readingLeftToRight) var readingLeftToRight
         @Preference(\.isReadingVertically) var isVertical
+        @Preference(\.isPagingVertically) var isPagingVertically
         @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
 
         var edges = KEY_WINDOW?.safeAreaInsets
-
-        // Child Sizes
-        @State var footerSize = CGSize(width: 0, height: 0)
-        @State var headerSize = CGSize(width: 0, height: 300)
         var body: some View {
             ZStack(alignment: Alignment(horizontal: .trailing, vertical: .top)) {
                 VStack {
                     MainOverlay
-                        .modifier(ViewSizeReader(size: $headerSize))
                         .ignoresSafeArea()
                     Spacer()
 
                     if !isVertical {
                         PagedSlider()
-                            .modifier(ViewSizeReader(size: $footerSize))
                             .background(gradient().rotationEffect(.degrees(180)))
                     }
                 }
                 .ignoresSafeArea()
 
-                if isVertical {
-                    WebtoonSlider(headerHeight: headerSize.height)
-                        .alignmentGuide(.top, computeValue: { d in
-                            d[.top] - headerSize.height + 45
-                        })
+                if isVertical || isPagingVertically {
+                    VStack {
+                        Spacer()
+                        WebtoonSlider()
+                        Spacer()
+                    }
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -174,7 +170,6 @@ extension ReaderView {
 extension ReaderView.ReaderMenuOverlay {
     struct WebtoonSlider: View {
         @EnvironmentObject var model: ReaderView.ViewModel
-        var headerHeight: CGFloat
         var body: some View {
             VStack(alignment: .center) {
                 PrevButton()
@@ -240,6 +235,8 @@ extension ReaderView.ReaderMenuOverlay {
     struct PagedSlider: View {
         @EnvironmentObject var model: ReaderView.ViewModel
         @AppStorage(STTKeys.PagedDirection) var readingLeftToRight = true
+        @Preference(\.isPagingVertically) var isPagingVertically
+
         var edges = KEY_WINDOW?.safeAreaInsets
 
         var READY: Bool {
@@ -256,6 +253,7 @@ extension ReaderView.ReaderMenuOverlay {
                 }
                 .buttonStyle(.plain)
                 .rotationEffect(.degrees(readingLeftToRight ? 0 : 180), anchor: .center)
+                .opacity(isPagingVertically ? 0 : 1)
 
                 if let index = model.activeChapter.requestedPageIndex, let pageCount = model.activeChapter.pages?.last?.number {
                     Text("Page \(model.scrubbingPageNumber != nil ? model.scrubbingPageNumber! : index + 1) of \(pageCount)")

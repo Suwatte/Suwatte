@@ -16,6 +16,7 @@ struct ReaderView: View {
     @Preference(\.displayNavOverlay) var displayNavOverlay
     @Preference(\.tapSidesToNavigate) var tapSidesToNavigate
     @Preference(\.isDoublePagedEnabled) var isDoublePagedEnabled
+    @Preference(\.isPagingVertically) var isPagingVertically
     var body: some View {
         LoadableView(loadable: model.activeChapter.data, {
             VStack(alignment: .center) {
@@ -24,11 +25,11 @@ struct ReaderView: View {
                     .font(.footnote)
                     .fontWeight(.light)
             }
-                .task {
-                    let chapter = model.activeChapter.chapter
-                    await model.loadChapter(chapter, asNextChapter: true)
-                }
-                .transition(.opacity)
+            .task {
+                let chapter = model.activeChapter.chapter
+                await model.loadChapter(chapter, asNextChapter: true)
+            }
+            .transition(.opacity)
         }, {
             ProgressView()
         }, { error in
@@ -71,7 +72,7 @@ struct ReaderView: View {
         .animation(.default, value: model.activeChapter.data)
         .environmentObject(model)
         .onChange(of: model.slider.isScrubbing) { val in
-
+            
             if val == false {
                 model.scrubEndPublisher.send()
             }
@@ -90,7 +91,7 @@ struct ReaderView: View {
         .onChange(of: model.showNavOverlay) { val in
             if !val
             { return }
-
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 model.showNavOverlay = false
             }
@@ -116,13 +117,19 @@ extension ReaderView {
                     VerticalViewer()
                         .transition(.opacity)
                 } else {
-                    if !isDoublePagedEnabled {
-                        PagedViewer()
+                    if isPagingVertically {
+                        VerticalPager()
                             .transition(.opacity)
                     } else {
-                        DoublePagedViewer()
-                            .transition(.opacity)
+                        if !isDoublePagedEnabled {
+                            PagedViewer()
+                                .transition(.opacity)
+                        } else {
+                            DoublePagedViewer()
+                                .transition(.opacity)
+                        }
                     }
+                    
                 }
             }
         }
@@ -141,7 +148,7 @@ extension ReaderView.ViewModel {
 extension ReaderView {
     struct UseColorInvertModifier: ViewModifier {
         @AppStorage(STTKeys.ReaderColorInvert) var useColorInvert = false
-
+        
         func body(content: Content) -> some View {
             if useColorInvert {
                 content
@@ -154,7 +161,7 @@ extension ReaderView {
     
     struct UseGrayScaleModifier: ViewModifier {
         @AppStorage(STTKeys.ReaderGrayScale) var useGrayscale = false
-
+        
         func body(content: Content) -> some View {
             content
                 .grayscale(useGrayscale ? 1 : 0)

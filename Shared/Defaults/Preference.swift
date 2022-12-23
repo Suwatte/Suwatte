@@ -38,6 +38,9 @@ final class Preferences {
     // Reader Level
     @UserDefault(STTKeys.IsReadingVertically)
     var isReadingVertically: Bool = false
+    
+    @UserDefault(STTKeys.VerticalPagerEnabled)
+    var isPagingVertically: Bool = false
 
     @UserDefault(STTKeys.IsDoublePagedEnabled)
     var isDoublePagedEnabled: Bool = false

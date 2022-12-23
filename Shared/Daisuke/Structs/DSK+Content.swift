@@ -25,7 +25,8 @@ enum ReadingMode: Int, CaseIterable, Hashable {
          VERTICAL,
          VERTICAL_SEPARATED, // Vertical with Slight Gap Between Pages
          NOVEL, // Opens In Novel Reader
-         WEB // Opens using the chapters WebUrl
+         WEB, // Opens using the chapters WebUrl
+         PAGED_VERTICAL // A Vertical Pager
 
     var isPanelMode: Bool {
         switch self {

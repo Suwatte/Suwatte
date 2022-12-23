@@ -20,7 +20,7 @@ extension ReaderView {
         @AppStorage(STTKeys.ReaderFilterBlendMode) var readerBlendMode = ReaderBlendMode.normal
         @AppStorage(STTKeys.ReaderGrayScale) var useGrayscale = false
         @AppStorage(STTKeys.ReaderColorInvert) var useColorInvert = false
-
+        @Preference(\.isPagingVertically) var isPagingVertically
         // Preference Publisher
         @Preference(\.readingLeftToRight) var readingLeftToRight
         @Preference(\.forceTransitions) var forceTransitions
@@ -42,58 +42,73 @@ extension ReaderView {
                         Text("Vertical").tag(true)
                     }
                     .pickerStyle(.segmented)
-
+                    
                 } header: {
                     Text("Reading Mode")
                 }
-
+                
                 // Reading Direction
                 if !isVertical {
                     Section {
-                        Picker("Reading Direction", selection: $readingLeftToRight) {
-                            Text("Left To Right (Comic)")
-                                .tag(true)
-                            Text("Right to Left (Manga)")
+                        Picker("Paging Direction", selection: $isPagingVertically) {
+                            Text("Horizontal")
                                 .tag(false)
-                        }.pickerStyle(.segmented)
-                        Toggle("Double Paged", isOn: $isDoublePaged)
+                            Text("Vertical")
+                                .tag(true)
+                        }
+                        .pickerStyle(.segmented)
                     } header: {
-                        Text("Reading Direction")
+                        Text("Paging Direction")
                     }
+                    if !isPagingVertically {
+                        Section {
+                            Picker("Reading Direction", selection: $readingLeftToRight) {
+                                Text("Left To Right (Comic)")
+                                    .tag(true)
+                                Text("Right to Left (Manga)")
+                                    .tag(false)
+                            }
+                            .pickerStyle(.segmented)
+                            Toggle("Double Paged", isOn: $isDoublePaged)
+                        } header: {
+                            Text("Reading Direction")
+                        }
+                    }
+                    
                 } else {
                     Section {
                         Toggle("Page Padding", isOn: $verticalPagePadding)
                     }
                 }
-
-
+                
+                
                 Section {
                     Toggle("Tap Sides To Navigate", isOn: $tapToNavigate)
-
+                    
                     if tapToNavigate {
                         Toggle("Invert Navigation Regions", isOn: $invertTapSidesToNavigate)
-
+                        
                         Toggle("Display Guide", isOn: $displayNavOverlay)
-
+                        
                         Picker("Navigation Layout", selection: isVertical ? $verticalNavigator : $pagedNavigator) {
                             ForEach(ReaderNavigation.Modes.allCases) { entry in
-
+                                
                                 Text(entry.mode.title)
                                     .tag(entry)
                             }
                         }
                         .pickerStyle(.segmented)
                     }
-
+                    
                 } header: {
                     Text("Navigation")
                 }
-
+                
                 // Images
                 Section {
                     Toggle("Image Context Actions", isOn: $imageInteractions)
                     Toggle("Downsample Images", isOn: $downsampleImages)
-
+                    
                     if !isVertical {
                         Toggle("Crop Whitespace", isOn: $cropWhiteSpaces)
                     }
@@ -104,18 +119,18 @@ extension ReaderView {
                         Text("Removes excess white border surrounding panels.")
                     }
                 }
-
+                
                 // Background
                 Section {
                     Toggle("Use System Background", isOn: $useSystemBG)
-
+                    
                     if !useSystemBG {
                         ColorPicker("Background Color", selection: $backgroundColor)
                     }
                 } header: {
                     Text("Background")
                 }
-
+                
                 // Overlay
                 Section {
                     Toggle("Custom Overlay", isOn: $enableOverlay)
@@ -143,6 +158,7 @@ extension ReaderView {
             .animation(.default, value: useSystemBG)
             .animation(.default, value: tapToNavigate)
             .animation(.default, value: isVertical)
+            .animation(.default, value: isPagingVertically)
         }
     }
 }

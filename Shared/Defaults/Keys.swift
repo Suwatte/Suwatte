@@ -28,6 +28,7 @@ enum STTKeys {
 
     // Content Specific
     static var IsReadingVertically = "READER.reading_mode_vertical"
+    static let VerticalPagerEnabled = "READER.pager.vertical_enabled"
     static var IsDoublePagedEnabled = "READER.paged_double"
     static var PagedDirection = "READER.paged_h_direction"
 
