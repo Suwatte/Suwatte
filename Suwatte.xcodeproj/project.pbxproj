@@ -17,7 +17,6 @@
 		DF03F73A2846FAB800602E59 /* ReaderButtonModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF03F7392846FAB800602E59 /* ReaderButtonModifier.swift */; };
 		DF03F73D28482AC500602E59 /* Novel+ChapterList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF03F73C28482AC400602E59 /* Novel+ChapterList.swift */; };
 		DF0D96062824892C00E592D9 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = DF0D96052824892C00E592D9 /* Realm */; };
-		DF0D96082824892C00E592D9 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DF0D96072824892C00E592D9 /* RealmSwift */; };
 		DF13892228BDCAEF0035BDBB /* STT+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF13892128BDCAEF0035BDBB /* STT+URL.swift */; };
 		DF13892428BE9E7E0035BDBB /* Explore+Tile.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF13892328BE9E7E0035BDBB /* Explore+Tile.swift */; };
 		DF13892628BE9F400035BDBB /* Explore+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF13892528BE9F400035BDBB /* Explore+Layout.swift */; };
@@ -65,6 +64,7 @@
 		DF482EF829555A43002D3308 /* VerticalPaged+ContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF482EF729555A43002D3308 /* VerticalPaged+ContextMenu.swift */; };
 		DF482EFA29555C5B002D3308 /* VerticalPaged+Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF482EF929555C5B002D3308 /* VerticalPaged+Cell.swift */; };
 		DF482EFF29556E2B002D3308 /* VerticalPaged+ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF482EFE29556E2B002D3308 /* VerticalPaged+ImageView.swift */; };
+		DF482F012955A56F002D3308 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DF482F002955A56F002D3308 /* RealmSwift */; };
 		DF515FF728E2A779002B6D60 /* DSK+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF515FF628E2A779002B6D60 /* DSK+Actions.swift */; };
 		DF515FF928E2A8DC002B6D60 /* DSK+CS+Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF515FF828E2A8DC002B6D60 /* DSK+CS+Action.swift */; };
 		DF515FFB28E2A9E5002B6D60 /* DRV+Actions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF515FFA28E2A9E5002B6D60 /* DRV+Actions.swift */; };
@@ -621,7 +621,6 @@
 				DF47DDE128B5608D00D779E5 /* PartialSheet in Frameworks */,
 				DF59C988285054670027F19D /* Unrar in Frameworks */,
 				DF248F0C2813844C00818300 /* KeychainSwift in Frameworks */,
-				DF0D96082824892C00E592D9 /* RealmSwift in Frameworks */,
 				DF2DA77327CF11C50046FE20 /* Alamofire in Frameworks */,
 				DFAEE12728B839E500B11484 /* NukeExtensions in Frameworks */,
 				DFB47EF12880C0B30040A1BD /* R2Shared in Frameworks */,
@@ -631,6 +630,7 @@
 				DFAEE12528B839E500B11484 /* Nuke in Frameworks */,
 				DF52FBBA28947031008FAD3A /* ASCollectionView in Frameworks */,
 				DFAEE12928B839E500B11484 /* NukeUI in Frameworks */,
+				DF482F012955A56F002D3308 /* RealmSwift in Frameworks */,
 				DF2DA72527CD83440046FE20 /* Kingfisher in Frameworks */,
 				DF0D96062824892C00E592D9 /* Realm in Frameworks */,
 				DFF1043E28A9963D00E2C3A4 /* AnyCodable in Frameworks */,
@@ -1901,7 +1901,6 @@
 				DF2DA77227CF11C50046FE20 /* Alamofire */,
 				DF248F0B2813844C00818300 /* KeychainSwift */,
 				DF0D96052824892C00E592D9 /* Realm */,
-				DF0D96072824892C00E592D9 /* RealmSwift */,
 				DF59C97C285004860027F19D /* ZIPFoundation */,
 				DF59C987285054670027F19D /* Unrar */,
 				DF36E6CF285D08D700FB8B67 /* BetterSafariView */,
@@ -1914,6 +1913,7 @@
 				DFAEE12628B839E500B11484 /* NukeExtensions */,
 				DFAEE12828B839E500B11484 /* NukeUI */,
 				DF730CD229411F1B00C62C71 /* FlagKit */,
+				DF482F002955A56F002D3308 /* RealmSwift */,
 			);
 			productName = "Suwatte (iOS)";
 			productReference = DFCE6EAF280108EA002E220C /* Suwatte.app */;
@@ -2551,7 +2551,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-swift.git";
 			requirement = {
-				branch = master;
+				branch = dp/remove_warning_swiftui_property_wrappers;
 				kind = branch;
 			};
 		};
@@ -2667,11 +2667,6 @@
 			package = DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = Realm;
 		};
-		DF0D96072824892C00E592D9 /* RealmSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = RealmSwift;
-		};
 		DF248F0B2813844C00818300 /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift" */;
@@ -2696,6 +2691,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DF47DDDF28B5608C00D779E5 /* XCRemoteSwiftPackageReference "PartialSheet" */;
 			productName = PartialSheet;
+		};
+		DF482F002955A56F002D3308 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
 		};
 		DF52FBB928947031008FAD3A /* ASCollectionView */ = {
 			isa = XCSwiftPackageProductDependency;

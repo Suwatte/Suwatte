@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift.git",
       "state" : {
-        "branch" : "master",
-        "revision" : "b002cf50fbc21b6f52f3b4e74b15edc4007d5cbc"
+        "branch" : "dp/remove_warning_swiftui_property_wrappers",
+        "revision" : "4e9d33555456c227308ccba87eb2f99c1d136fb0"
       }
     },
     {
