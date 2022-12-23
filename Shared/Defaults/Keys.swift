@@ -31,7 +31,8 @@ enum STTKeys {
     static let VerticalPagerEnabled = "READER.pager.vertical_enabled"
     static var IsDoublePagedEnabled = "READER.paged_double"
     static var PagedDirection = "READER.paged_h_direction"
-
+    static let VerticalAutoScroll = "READER.vertical_auto_scroll"
+    static let VerticalAutoScrollSpeed = "READER.vertical_auto_scroll_speed"
     static var VerticalPagePadding = "READER.vertical_page_padding"
     static var ForceTransition = "READER.force_transitions"
 

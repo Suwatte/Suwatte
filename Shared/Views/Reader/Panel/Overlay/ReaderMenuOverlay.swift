@@ -16,7 +16,7 @@ extension ReaderView {
         @Preference(\.isReadingVertically) var isVertical
         @Preference(\.isPagingVertically) var isPagingVertically
         @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
-
+        
         var edges = KEY_WINDOW?.safeAreaInsets
         var body: some View {
             ZStack(alignment: Alignment(horizontal: .trailing, vertical: .top)) {
@@ -24,14 +24,14 @@ extension ReaderView {
                     MainOverlay
                         .ignoresSafeArea()
                     Spacer()
-
+                    
                     if !isVertical {
                         PagedSlider()
                             .background(gradient().rotationEffect(.degrees(180)))
                     }
                 }
                 .ignoresSafeArea()
-
+                
                 if isVertical || isPagingVertically {
                     VStack {
                         Spacer()
@@ -46,32 +46,32 @@ extension ReaderView {
             .accentColor(accentColor)
             .tint(accentColor)
         }
-
+        
         // MARK: Chapter Title Display
-
+        
         @ViewBuilder
         var ActiveChapterTitleView: some View {
             Button {
                 model.menuControl.toggleChapterList()
             }
-                label: {
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text(model.activeChapter.chapter.displayName)
-                            .font(.headline)
-                        Text(model.activeChapter.chapter.title ?? model.activeChapter.chapter.displayName)
-                            .font(.subheadline)
-                    }
-                    Image(systemName: "chevron.down").imageScale(.medium)
+        label: {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(model.activeChapter.chapter.displayName)
+                        .font(.headline)
+                    Text(model.activeChapter.chapter.title ?? model.activeChapter.chapter.displayName)
+                        .font(.subheadline)
                 }
-                .contentShape(Rectangle())
-                .padding(.trailing, 7)
+                Image(systemName: "chevron.down").imageScale(.medium)
             }
-            .buttonStyle(.plain)
+            .contentShape(Rectangle())
+            .padding(.trailing, 7)
         }
-
+        .buttonStyle(.plain)
+        }
+        
         // MARK: CORE Overlay
-
+        
         var MainOverlay: some View {
             VStack {
                 VStack(alignment: .leading, spacing: 5) {
@@ -83,7 +83,7 @@ extension ReaderView {
                     HStack {
                         ActiveChapterTitleView
                         Spacer()
-//                        QuickActionsButton
+                        //                        QuickActionsButton
                     }
                     .padding(.bottom, 65)
                 }
@@ -92,9 +92,9 @@ extension ReaderView {
                 .background(gradient())
             }
         }
-
+        
         // MARK: Quick Actions View
-
+        
         var QuickActionsButton: some View {
             HStack(spacing: 17) {
                 Button {
@@ -110,13 +110,13 @@ extension ReaderView {
                 //                })
             }
         }
-
+        
         // MARK: Gradient Overlay
-
+        
         var defaultFGColor: Color {
             colorScheme == .dark ? .white : .black
         }
-
+        
         var grad: Gradient {
             let color: Color = colorScheme == .dark ? .black : .white
             //
@@ -124,10 +124,10 @@ extension ReaderView {
                 .init(color: color, location: 0.0),
                 .init(color: color.opacity(0.75), location: 0.75),
                 .init(color: color.opacity(0.0), location: 1.0),
-
+                
             ])
         }
-
+        
         func gradient() -> some View {
             LinearGradient(gradient: grad, startPoint: .top, endPoint: .bottom)
                 .onTapGesture {
@@ -136,13 +136,13 @@ extension ReaderView {
                     }
                 }
         }
-
+        
         // MARK: Header Buttons
-
+        
         var HeaderButtons: some View {
             HStack {
                 Button {
-//                    presentationMode.wrappedValue.dismiss()
+                    //                    presentationMode.wrappedValue.dismiss()
                     if var topController = KEY_WINDOW?.rootViewController {
                         while let presentedViewController = topController.presentedViewController {
                             topController = presentedViewController
@@ -180,13 +180,13 @@ extension ReaderView.ReaderMenuOverlay {
             }
             .padding()
         }
-
+        
         var OverlaySlider: some View {
             ZStack(alignment: Alignment(horizontal: .center, vertical: .center)) {
                 RoundedRectangle(cornerRadius: 100)
                     .foregroundColor(.sttGray)
                     .frame(width: 25)
-
+                
                 if model.slider.max > model.slider.min {
                     ReaderView.Sliders.VerticalSlider(value: $model.slider.current, isScrolling: $model.slider.isScrubbing, range: model.slider.min ... model.slider.max)
                         .padding(.vertical, 6)
@@ -200,49 +200,49 @@ extension ReaderView.ReaderMenuOverlay {
 extension ReaderView.ReaderMenuOverlay {
     struct NextButton: View {
         @EnvironmentObject var model: ReaderView.ViewModel
-
+        
         var body: some View {
             Button(action: { if model.NextChapter != nil { model.resetToChapter(model.NextChapter!) } },
                    label: {
-                       Text("\(Image(systemName: "chevron.right"))")
-                           .fontWeight(.semibold)
-                           .modifier(ReaderButtonModifier())
-                           .background(Color.sttGray)
-                           .clipShape(Circle())
-                           .foregroundColor(.gray)
-                   })
-                   .disabled(model.NextChapter == nil)
+                Text("\(Image(systemName: "chevron.right"))")
+                    .fontWeight(.semibold)
+                    .modifier(ReaderButtonModifier())
+                    .background(Color.sttGray)
+                    .clipShape(Circle())
+                    .foregroundColor(.gray)
+            })
+            .disabled(model.NextChapter == nil)
         }
     }
-
+    
     struct PrevButton: View {
         @EnvironmentObject var model: ReaderView.ViewModel
-
+        
         var body: some View {
             Button(action: { if model.PreviousChapter != nil { model.resetToChapter(model.PreviousChapter!) } },
                    label: {
-                       Text("\(Image(systemName: "chevron.left"))")
-                           .fontWeight(.bold)
-                           .modifier(ReaderButtonModifier())
-                           .background(Color.sttGray)
-                           .clipShape(Circle())
-                           .foregroundColor(.gray)
-                   })
-                   .disabled(model.PreviousChapter == nil)
+                Text("\(Image(systemName: "chevron.left"))")
+                    .fontWeight(.bold)
+                    .modifier(ReaderButtonModifier())
+                    .background(Color.sttGray)
+                    .clipShape(Circle())
+                    .foregroundColor(.gray)
+            })
+            .disabled(model.PreviousChapter == nil)
         }
     }
-
+    
     struct PagedSlider: View {
         @EnvironmentObject var model: ReaderView.ViewModel
         @AppStorage(STTKeys.PagedDirection) var readingLeftToRight = true
         @Preference(\.isPagingVertically) var isPagingVertically
-
+        
         var edges = KEY_WINDOW?.safeAreaInsets
-
+        
         var READY: Bool {
             model.activeChapter.data.LOADED && !(model.activeChapter.pages?.isEmpty ?? false)
         }
-
+        
         var body: some View {
             VStack {
                 HStack {
@@ -254,7 +254,7 @@ extension ReaderView.ReaderMenuOverlay {
                 .buttonStyle(.plain)
                 .rotationEffect(.degrees(readingLeftToRight ? 0 : 180), anchor: .center)
                 .opacity(isPagingVertically ? 0 : 1)
-
+                
                 if let index = model.activeChapter.requestedPageIndex, let pageCount = model.activeChapter.pages?.last?.number {
                     Text("Page \(model.scrubbingPageNumber != nil ? model.scrubbingPageNumber! : index + 1) of \(pageCount)")
                         .font(.footnote)
@@ -266,16 +266,16 @@ extension ReaderView.ReaderMenuOverlay {
             }
             .padding()
         }
-
+        
         // MARK: Horizontal Slider
-
+        
         @ViewBuilder
         var OverlaySlider: some View {
             ZStack(alignment: Alignment(horizontal: .center, vertical: .center)) {
                 RoundedRectangle(cornerRadius: 100)
                     .foregroundColor(.sttGray)
                     .frame(height: 25)
-
+                
                 if model.slider.min < model.slider.max {
                     ReaderView.Sliders.HorizontalSlider(value: $model.slider.current, isScrolling: $model.slider.isScrubbing, range: model.slider.min ... model.slider.max)
                         .padding(.horizontal, 7)
@@ -288,6 +288,34 @@ extension ReaderView.ReaderMenuOverlay {
                     Text("-")
                 }
             }
+        }
+    }
+}
+
+
+extension ReaderView {
+    
+    struct AutoScrollOverlay : View {
+        @EnvironmentObject var model: ReaderView.ViewModel
+        var edges = KEY_WINDOW?.safeAreaInsets
+
+        var body: some View {
+            ZStack {
+                Button {
+                    model.verticalTimerPublisher.send()
+                } label: {
+                    Image(systemName: model.autoplayEnabled ?  "pause.circle" : "play.circle")
+                        .resizable()
+                        .modifier(ReaderButtonModifier())
+                        .background(Color.sttGray)
+                        .clipShape(Circle())
+                        .foregroundColor(.gray)
+                }
+                .padding(.bottom, 7 +  (edges?.bottom ?? 0))
+                .padding(.horizontal)
+                .opacity(0.85)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
         }
     }
 }

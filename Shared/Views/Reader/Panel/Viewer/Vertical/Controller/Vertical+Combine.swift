@@ -115,6 +115,45 @@ extension Controller {
                 }
             }
             .store(in: &subscriptions)
+        
+        model
+            .verticalTimerPublisher
+            .sink {[unowned self] in
+                
+                if timer != nil {
+                    cancelAutoScroll()
+                } else {
+                    timer = Timer.scheduledTimer(timeInterval: 1.01, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
+                    model.autoplayEnabled = true
+                }
+            }
+            .store(in: &subscriptions)
+    }
+}
+
+extension Controller {
+    @objc func timerAction() {
+        DispatchQueue.main.async {
+            let amount = UIScreen.main.bounds.height / Preferences.standard.verticalAutoScrollSpeed
+            let offset = min(self.collectionNode.contentOffset.y + amount, self.contentSize.height - UIScreen.main.bounds.height)
+
+            UIView.animate(withDuration: 1.0, delay: 0, options: [.curveLinear, .allowUserInteraction]) {
+                self.collectionNode.contentOffset.y = offset
+            } completion: { c in
+                if !c { return }
+                if self.contentSize.height - self.collectionNode.contentOffset.y - UIScreen.main.bounds.height > amount  { return }
+                self.cancelAutoScroll()
+            }
+        }
+    }
+    
+    func cancelAutoScroll() {
+        if timer != nil {
+            timer?.invalidate()
+            timer = nil
+            model.autoplayEnabled = false
+            model.scrubEndPublisher.send()
+        }
     }
 }
 

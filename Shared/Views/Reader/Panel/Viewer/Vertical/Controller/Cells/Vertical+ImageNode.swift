@@ -213,6 +213,8 @@ extension Controller.ImageNode {
     
    
     @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
+        delegate?.cancelAutoScroll()
+
         guard let sender = sender else {
             return
         }
@@ -223,6 +225,7 @@ extension Controller.ImageNode {
         }
     }
     @objc func handleZoomingTap(_ sender: UITapGestureRecognizer) {
+        delegate?.cancelAutoScroll()
         let location = sender.location(in: sender.view)
         guard let indexPath else { return }
         isZoomed = true

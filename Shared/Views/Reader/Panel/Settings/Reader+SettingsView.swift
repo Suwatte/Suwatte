@@ -20,8 +20,10 @@ extension ReaderView {
         @AppStorage(STTKeys.ReaderFilterBlendMode) var readerBlendMode = ReaderBlendMode.normal
         @AppStorage(STTKeys.ReaderGrayScale) var useGrayscale = false
         @AppStorage(STTKeys.ReaderColorInvert) var useColorInvert = false
+        @AppStorage(STTKeys.VerticalAutoScroll) var verticalAutoScroll = false
         @Preference(\.isPagingVertically) var isPagingVertically
         // Preference Publisher
+        @Preference(\.verticalAutoScrollSpeed) var autoScrollSpeed
         @Preference(\.readingLeftToRight) var readingLeftToRight
         @Preference(\.forceTransitions) var forceTransitions
         @Preference(\.imageInteractions) var imageInteractions
@@ -32,8 +34,10 @@ extension ReaderView {
         @Preference(\.isDoublePagedEnabled) var isDoublePaged
         @Preference(\.invertTapSidesToNavigate) var invertTapSidesToNavigate
         @Preference(\.VerticalPagePadding) var verticalPagePadding
+        private let range: ClosedRange<Double> = 5...30
+
         var body: some View {
-            List {
+            Form {
                 // Reading Mode
                 Section {
                     // Viewer
@@ -78,6 +82,39 @@ extension ReaderView {
                 } else {
                     Section {
                         Toggle("Page Padding", isOn: $verticalPagePadding)
+                    }
+                    
+                    Section {
+                        Toggle("AutoScroll", isOn: $verticalAutoScroll)
+                        if verticalAutoScroll {
+                            let bridge = Binding<Double>(get: {
+                                   return range.upperBound - autoScrollSpeed + range.lowerBound
+                                 }, set: {
+                                     autoScrollSpeed = range.upperBound - $0 + range.lowerBound
+                                 })
+                            VStack(alignment: .leading) {
+                                Text("Scroll Speed")
+                                HStack {
+                                    Image(systemName: "tortoise")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 25)
+                                        .foregroundColor(.gray)
+
+                                    Slider(value: bridge, in: range)
+                                    Image(systemName: "hare")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 25)
+                                        .foregroundColor(.gray)
+                                }
+                            }
+                            
+                        }
+                    } footer: {
+                        if verticalAutoScroll {
+                            Text("Will scroll through one screens height in roughly \(autoScrollSpeed.clean) seconds.")
+                        }
                     }
                 }
                 
@@ -159,6 +196,7 @@ extension ReaderView {
             .animation(.default, value: tapToNavigate)
             .animation(.default, value: isVertical)
             .animation(.default, value: isPagingVertically)
+            .animation(.default, value: verticalAutoScroll)
         }
     }
 }

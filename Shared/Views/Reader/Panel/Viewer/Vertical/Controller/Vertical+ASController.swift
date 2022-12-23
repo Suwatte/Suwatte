@@ -18,6 +18,7 @@ extension VerticalViewer {
         var subscriptions = Set<AnyCancellable>()
         var selectedIndexPath: IndexPath!
         var initialOffset: (Int, CGFloat?)? = nil
+        var timer: Timer?
         // MARK: Init
         init(model: ReaderView.ViewModel) {
             let layout = VerticalContentOffsetPreservingLayout()
@@ -51,6 +52,9 @@ extension VerticalViewer {
             collectionNode.isPagingEnabled = false
             collectionNode.showsVerticalScrollIndicator = false
             collectionNode.showsHorizontalScrollIndicator = false
+            let notificationCenter = NotificationCenter.default
+            notificationCenter.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.willResignActiveNotification, object: nil)
+
             
 
             let tapGR = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
@@ -60,6 +64,10 @@ extension VerticalViewer {
             self.collectionNode.view.addGestureRecognizer(doubleTapGR)
             self.collectionNode.view.addGestureRecognizer(tapGR)
             collectionNode.view.contentInsetAdjustmentBehavior = .never
+        }
+        
+        @objc func appMovedToBackground() {
+            cancelAutoScroll()
         }
         
         // MARK: View DidAppear
@@ -161,6 +169,7 @@ fileprivate class EmptyNode: ASCellNode {}
 
 extension VerticalViewer.Controller {
     @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
+        cancelAutoScroll()
         guard let sender = sender else {
             return
         }

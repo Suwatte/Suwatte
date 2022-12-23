@@ -35,6 +35,7 @@ extension ReaderView {
         @Published var IN_ZOOM_VIEW = false
         @Published var scrubbingPageNumber: Int?
         @Published var showNavOverlay = false
+        @Published var autoplayEnabled = false
         
         var chapterCache: [String: ReaderChapter] = [:]
         var chapterSectinoCache: [String: Int] = [:]
@@ -45,6 +46,7 @@ extension ReaderView {
         let insertPublisher = PassthroughSubject<Int, Never>()
         let reloadPublisher = PassthroughSubject<Void, Never>()
         let scrubEndPublisher = PassthroughSubject<Void, Never>()
+        let verticalTimerPublisher = PassthroughSubject<Void, Never>()
         init(chapterList: [StoredChapter], openTo chapter: StoredChapter, title: String? = nil, pageIndex: Int? = nil, readingMode: ReadingMode) {
             // Sort Chapter List by either sourceIndex or chapter number
             let sourceIndexAcc = chapterList.map { $0.index }.reduce(0, +)

@@ -95,6 +95,9 @@ final class Preferences {
 
     @UserDefault(STTKeys.SelectiveUpdates)
     var selectiveUpdates = false
+    
+    @UserDefault(STTKeys.VerticalAutoScrollSpeed)
+    var verticalAutoScrollSpeed: Double = 16
 }
 
 @propertyWrapper

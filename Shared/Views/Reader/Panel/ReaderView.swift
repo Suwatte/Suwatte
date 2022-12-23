@@ -12,6 +12,8 @@ struct ReaderView: View {
     @AppStorage(STTKeys.EnableOverlay) var overlayEnabled = false
     @AppStorage(STTKeys.BackgroundColor) var backgroundColor = Color.primary
     @AppStorage(STTKeys.UseSystemBG) var useSystemBG = true
+    @AppStorage(STTKeys.VerticalAutoScroll) var verticalAutoScroll = false
+
     @Preference(\.isReadingVertically) var isVertical
     @Preference(\.displayNavOverlay) var displayNavOverlay
     @Preference(\.tapSidesToNavigate) var tapSidesToNavigate
@@ -48,6 +50,7 @@ struct ReaderView: View {
         .modifier(UseGrayScaleModifier())
         .modifier(UseColorInvertModifier())
         .overlay(model.menuControl.menu ? ReaderMenuOverlay() : nil)
+        .overlay(isVertical && verticalAutoScroll ? AutoScrollOverlay() : nil)
         .statusBar(hidden: !model.menuControl.menu)
         .animation(.default, value: model.menuControl.menu)
         .animation(.default, value: model.showNavOverlay)
