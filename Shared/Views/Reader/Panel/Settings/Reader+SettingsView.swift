@@ -82,6 +82,8 @@ extension ReaderView {
                 } else {
                     Section {
                         Toggle("Page Padding", isOn: $verticalPagePadding)
+                    } header: {
+                        Text("Padding")
                     }
 
                     Section {
@@ -110,6 +112,8 @@ extension ReaderView {
                                 }
                             }
                         }
+                    } header: {
+                        Text("AutoScroll")
                     } footer: {
                         if verticalAutoScroll {
                             Text("Will scroll through one screens height in roughly \(autoScrollSpeed.clean) seconds.")
