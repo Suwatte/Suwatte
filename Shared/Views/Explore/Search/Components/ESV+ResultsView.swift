@@ -59,8 +59,6 @@ extension ExploreView.SearchView {
                             Header
                         } else { EmptyView() }
                     }
-                    
-                    
                 }
                 .sectionFooter {
                     PaginationView

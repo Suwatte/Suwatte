@@ -8,7 +8,8 @@
 import UIKit
 
 // MARK: Context Menu Delegate
-extension VerticalPager.Controller : UIContextMenuInteractionDelegate {
+
+extension VerticalPager.Controller: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction,
                                 configurationForMenuAtLocation _: CGPoint) -> UIContextMenuConfiguration?
     {

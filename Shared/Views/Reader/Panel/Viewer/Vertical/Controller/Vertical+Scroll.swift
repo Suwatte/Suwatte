@@ -5,42 +5,40 @@
 //  Created by Mantton on 2022-10-12.
 //
 
-import UIKit
 import SwiftUI
-fileprivate typealias Controller = VerticalViewer.Controller
+import UIKit
+private typealias Controller = VerticalViewer.Controller
 
-extension Controller : UIScrollViewDelegate {
-    
-    
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+extension Controller: UIScrollViewDelegate {
+    func scrollViewDidEndDecelerating(_: UIScrollView) {
         onScrollStop()
     }
-    
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+
+    func scrollViewDidEndDragging(_: UIScrollView, willDecelerate decelerate: Bool) {
         if decelerate {
             return
         }
         onScrollStop()
     }
-    
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+
+    func scrollViewDidEndScrollingAnimation(_: UIScrollView) {
         onScrollStop()
     }
-    
+
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         onUserDidScroll(to: scrollView.contentOffset.y)
     }
-    
 }
-
 
 extension Controller {
     var currentPoint: CGPoint {
         .init(x: collectionNode.frame.midX, y: collectionNode.contentOffset.y + collectionNode.frame.midY)
     }
+
     var currentPath: IndexPath? {
         collectionNode.indexPathForItem(at: currentPoint)
     }
+
     func onScrollStop() {
         model.slider.setCurrent(collectionNode.contentOffset.y)
 //        isScrolling = false
@@ -66,7 +64,7 @@ extension Controller {
 
         model.didScrollTo(path: path)
     }
-    
+
     func calculateCurrentChapterScrollRange() {
         var sectionMinOffset: CGFloat = .zero
         var sectionMaxOffset: CGFloat = .zero
@@ -97,14 +95,13 @@ extension Controller {
             model.slider.setRange(sectionMinOffset, sectionMaxOffset)
         }
     }
-    
-    
+
     func onUserDidScroll(to _: CGFloat) {
         // Update Offset
         if !model.slider.isScrubbing, model.menuControl.menu {
             model.menuControl.hideMenu()
         }
-        
+
         if model.slider.isScrubbing {
             calculateCurrentChapterScrollRange()
         }

@@ -295,7 +295,7 @@ extension Controller: UIContextMenuInteractionDelegate {
             if chapter.chapterType == .LOCAL {
                 return menu
             }
-            
+
             let c = chapter.toStored()
             // Bookmark Actions
             let isBookmarked = DataManager.shared.isBookmarked(chapter: c, page: page)

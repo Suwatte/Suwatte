@@ -14,7 +14,7 @@ extension ExploreView {
         @State var initialized = false
         @State var firstCall = false
         @State var presentSearchHistory = false
-        @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
+        @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
         var body: some View {
             LoadableView(loadable: model.result) {
@@ -83,7 +83,7 @@ extension ExploreView {
             if let tagLabel = tagLabel {
                 return "\(tagLabel) Titles"
             } else {
-                if let source = model.source as? DSK.LocalContentSource, (source.sourceInfo.hasExplorePage ?? false) {
+                if let source = model.source as? DSK.LocalContentSource, source.sourceInfo.hasExplorePage ?? false {
                     return "Search"
                 } else {
                     return "Directory"

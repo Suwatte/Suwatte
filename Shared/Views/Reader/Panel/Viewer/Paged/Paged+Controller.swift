@@ -50,7 +50,7 @@ extension PagedController {
         guard let rChapter = model.readerChapterList.first else {
             return
         }
-        
+
         if model.sections.isEmpty {
             collectionView.isHidden = false
             return
@@ -404,7 +404,7 @@ extension PagedController {
 
     func onScrollStop() {
         isScrolling = false
-        
+
         model.menuControl.hideMenu()
         // Handle Load Prev
         if collectionView.contentOffset.x <= 0 {

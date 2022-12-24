@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 
-
 typealias JSON = [String: Any]
 
 enum STTHost {
@@ -37,7 +36,7 @@ let STTUserDefaults: [String: Any] = [
     STTKeys.TimeoutDuration: LocalAuthManager.TimeoutDuration.immediately.rawValue,
     STTKeys.LibrarySections: LibraryView.LibrarySectionOrder.allCases.map { $0.rawValue },
     STTKeys.UpdateInterval: STTUpdateInterval.oneHour.rawValue, // 1 Hour,
-    STTKeys.HideNSFWRunners: true
+    STTKeys.HideNSFWRunners: true,
 ]
 
 let SCHEMA_VERSION = 1

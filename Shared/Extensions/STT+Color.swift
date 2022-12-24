@@ -141,7 +141,6 @@ extension UIColor {
     }
 }
 
-
 extension Color {
     static let sttDefault: Color = .init(hex: "#6A5ACD")
 }

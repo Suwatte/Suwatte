@@ -60,7 +60,7 @@ final class StoredRunnerObject: Object, Identifiable {
     @Persisted var name: String
     @Persisted var thumbnail: String?
     @Persisted var order: Int
-    @Persisted var dateAdded: Date = Date()
+    @Persisted var dateAdded: Date = .init()
     @Persisted var hosted: Bool = false
     @Persisted var info: String?
 
@@ -131,12 +131,11 @@ extension DataManager {
             realm.delete(targets)
         }
     }
-    
+
     func getHostedRunners() -> Results<StoredRunnerObject> {
         let realm = try! Realm()
         return realm
             .objects(StoredRunnerObject.self)
-            .where({ $0.hosted == true && $0.listURL != nil && $0.info != nil })
-
+            .where { $0.hosted == true && $0.listURL != nil && $0.info != nil }
     }
 }

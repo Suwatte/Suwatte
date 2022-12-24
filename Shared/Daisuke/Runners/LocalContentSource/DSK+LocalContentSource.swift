@@ -20,18 +20,17 @@ extension DaisukeEngine {
             guard let dictionary = runnerClass.forProperty("info") else {
                 throw Errors.RunnerInfoInitFailed
             }
-            
+
             // TODO: WTF IS THIS???
             let i = try ContentSourceInfo(value: dictionary)
-            self.info = i
+            info = i
             super.init(info: i)
         }
-        
-        
+
         override func getContent(id: String) async throws -> DaisukeEngine.Structs.Content {
             try await callMethodReturningObject(method: "getContent", arguments: [id], resolvesTo: DaisukeEngine.Structs.Content.self)
         }
-        
+
         override func getContentChapters(contentId: String) async throws -> [DaisukeEngine.Structs.Chapter] {
             try await callMethodReturningDecodable(method: "getChapters", arguments: [contentId], resolvesTo: [DaisukeEngine.Structs.Chapter].self)
         }
@@ -65,7 +64,7 @@ extension DaisukeEngine {
                 }
             }
         }
-        
+
         override func getSourceTags() async throws -> [DaisukeEngine.Structs.Property] {
             try await callMethodReturningDecodable(method: "getSourceTags", arguments: [], resolvesTo: [DaisukeEngine.Structs.Property].self)
         }
@@ -76,7 +75,7 @@ extension DaisukeEngine {
 
             return try await callMethodReturningDecodable(method: method, arguments: [], resolvesTo: [DaisukeEngine.Structs.Tag].self)
         }
-        
+
         typealias CollectionExcerpt = DSKCommon.CollectionExcerpt
 
         override func createExplorePageCollections() async throws -> [CollectionExcerpt] {
@@ -87,7 +86,7 @@ extension DaisukeEngine {
             let excerpt = try excerpt.asDictionary()
             return try await callMethodReturningDecodable(method: "resolveExploreCollection", arguments: [excerpt], resolvesTo: DSKCommon.ExploreCollection.self)
         }
-        
+
         override func getSearchResults(query: DaisukeEngine.Structs.SearchRequest) async throws -> DaisukeEngine.Structs.PagedResult {
             let queryValue = JSValue(object: try query.asDictionary(), in: runnerClass.context)
             guard let queryValue = queryValue else {

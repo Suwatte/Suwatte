@@ -5,8 +5,8 @@
 //  Created by Mantton on 2022-04-20.
 //
 
-import UIKit
 import AsyncDisplayKit
+import UIKit
 
 protocol ZoomHandlerDelegate: UIViewController {
     func cellTappedAt(point: CGPoint, frame: CGRect, path: IndexPath)
@@ -91,19 +91,20 @@ class NovelOffsetPreservingLayout: UICollectionViewFlowLayout {
 }
 
 class VerticalContentOffsetPreservingLayout: UICollectionViewFlowLayout {
-    
     override init() {
         super.init()
-        self.scrollDirection = .vertical
-        self.minimumLineSpacing = 0
-        self.minimumInteritemSpacing = 0
-        self.minimumLineSpacing = Preferences.standard.VerticalPagePadding ? 10 : 0
-        self.sectionInset = UIEdgeInsets.zero
+        scrollDirection = .vertical
+        minimumLineSpacing = 0
+        minimumInteritemSpacing = 0
+        minimumLineSpacing = Preferences.standard.VerticalPagePadding ? 10 : 0
+        sectionInset = UIEdgeInsets.zero
     }
-    
-    required init?(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     var isInsertingCellsToTop: Bool = false {
         didSet {
             if isInsertingCellsToTop {

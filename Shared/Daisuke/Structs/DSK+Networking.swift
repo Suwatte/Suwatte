@@ -99,11 +99,11 @@ extension DSKCommon.Request {
                 request.httpBody = try JSONEncoder().encode(body)
             }
         }
-        
+
         // Cookies
         if let cookies {
             let jar = HTTPCookieStorage.shared
-            cookies.compactMap({ $0.toHTTPCookie(with: host )}).forEach {
+            cookies.compactMap { $0.toHTTPCookie(with: host) }.forEach {
                 jar.setCookie($0)
             }
         }

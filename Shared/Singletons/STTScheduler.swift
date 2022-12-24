@@ -21,11 +21,11 @@ class STTScheduler {
         BGTaskScheduler.shared.register(forTaskWithIdentifier: update_task, using: nil) { task in
             self.handleLibraryUpdate(task: task as! BGProcessingTask)
         }
-        
+
         BGTaskScheduler.shared.register(forTaskWithIdentifier: backup_task, using: nil) { task in
             self.handleBackUpTask(task: task as! BGProcessingTask)
         }
-        
+
         Logger.shared.log("[STTScheduler] Background Tasks Registered")
     }
 
@@ -33,6 +33,7 @@ class STTScheduler {
         scheduleLibraryUpdate()
         scheduleBackUp()
     }
+
     func scheduleLibraryUpdate() {
         let request = BGProcessingTaskRequest(identifier: backup_task)
         request.requiresNetworkConnectivity = false
@@ -44,6 +45,7 @@ class STTScheduler {
             Logger.shared.error("[STTScheduler] [\(backup_task)] Failed To Schedule : \(error)")
         }
     }
+
     func scheduleBackUp() {
         let request = BGProcessingTaskRequest(identifier: update_task)
         request.requiresNetworkConnectivity = true
@@ -55,26 +57,26 @@ class STTScheduler {
             Logger.shared.error("[STTScheduler] [\(update_task)] Failed To Schedule : \(error)")
         }
     }
-    
+
     func handleBackUpTask(task: BGProcessingTask) {
         Logger.shared.log("[STTScheduler] [\(backup_task)] Task Called")
         task.expirationHandler = { [weak self] in
             Logger.shared.log("[STTScheduler] [\(self?.backup_task ?? #function)] Expiration Handler Triggered. Exiting...")
             task.setTaskCompleted(success: false)
         }
-        
+
         let lastChecked = UserDefaults.standard.object(forKey: STTKeys.LastFetchedUpdates) as? Date ?? .distantPast
         let monthAgo = Calendar.current.date(
             byAdding: .month,
             value: -1,
             to: Date()
         )! // One Month Back
-        
+
         if monthAgo < lastChecked {
             task.setTaskCompleted(success: true)
             return
         }
-        
+
         do {
             try BackupManager.shared.save(name: "AUTO_BACKUP")
             Logger.shared.log("[STTScheduler] [\(backup_task)] AutoBackup Created")
@@ -84,16 +86,13 @@ class STTScheduler {
             Logger.shared.log("[STTScheduler] [\(backup_task)] Failed to create automatic backup \(error.localizedDescription)")
             task.setTaskCompleted(success: false)
         }
-        
-        return
-        
     }
 
     func handleLibraryUpdate(task: BGProcessingTask) {
         Logger.shared.log("[STTScheduler] [\(update_task)] Task Called")
 
         let now = Date()
-        let interval = STTUpdateInterval.init(rawValue:  UserDefaults.standard.integer(forKey: STTKeys.UpdateInterval)) ?? .oneHour
+        let interval = STTUpdateInterval(rawValue: UserDefaults.standard.integer(forKey: STTKeys.UpdateInterval)) ?? .oneHour
         let timeInterval = TimeInterval(interval.interval)
         let lastChecked = UserDefaults.standard.object(forKey: STTKeys.LastFetchedUpdates) as? Date ?? .distantPast
 

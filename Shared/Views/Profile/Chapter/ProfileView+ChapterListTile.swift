@@ -5,9 +5,9 @@
 //  Created by Mantton on 2022-03-18.
 //
 
+import FlagKit
 import RealmSwift
 import SwiftUI
-import FlagKit
 struct ChapterListTile: View {
     var chapter: StoredChapter
     var isCompleted: Bool
@@ -33,19 +33,16 @@ struct ChapterListTile: View {
                             .resizable()
                             .scaledToFit()
                             .frame(width: 15, height: 10.7)
-                    }
-                    else if let text = Locale.current.localizedString(forLanguageCode: language) {
+                    } else if let text = Locale.current.localizedString(forLanguageCode: language) {
                         Text(text)
-                    }
-                    else {
+                    } else {
                         Text("Unknown: \(language)")
                             .italic()
                     }
-                }
-                else {
+                } else {
                     Text("🏴‍☠️ Unknown")
                 }
-                
+
                 if chapter.language != nil && !chapter.providers.isEmpty {
                     Divider()
                 }

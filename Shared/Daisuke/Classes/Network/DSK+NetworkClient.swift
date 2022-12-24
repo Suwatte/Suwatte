@@ -122,14 +122,13 @@ extension DaisukeEngine.NetworkClient {
         guard let httpResponse = afResponse.response else {
             throw DaisukeEngine.Errors.NamedError(name: "Network Client", message: "Recieved Empty Response")
         }
-        
-        
+
         let data = try afResponse.result.get()
         var response = Response(data: data,
                                 status: httpResponse.statusCode,
                                 headers: httpResponse.headers.dictionary,
                                 request: request)
-        
+
         response = try await handleResponseIntercept(response: response)
         return response
     }
@@ -149,7 +148,7 @@ extension URLRequest {
         var body: [String: AnyCodable]?
         if let data = httpBody {
             let isURLEncoded = self.headers["content-type"]?.contains("x-www-form-urlencoded") ?? false
-            
+
             if isURLEncoded {
                 let query = String(data: data, encoding: .utf8) ?? ""
                 let url = URL(string: "https://suwatte.com/?\(query)")
@@ -158,14 +157,13 @@ extension URLRequest {
                 }
             } else {
                 body = try? JSONDecoder().decode(DSKCommon.CodableDict.self, from: data)
-
             }
         }
         let params = parseQueryParam(components: components)
         let request = DSKCommon.Request(url: baseURL, method: method, params: params, body: body, headers: headers, cookies: nil, timeout: timeoutInterval, maxRetries: nil)
         return request
     }
-    
+
     func parseQueryParam(components: URLComponents) -> [String: AnyCodable] {
         let out: [String: AnyCodable] = [:]
         if let items = components.queryItems {
@@ -185,10 +183,9 @@ extension URLRequest {
                 out[properKey] = AnyCodable(values.compactMap { $0.value })
             }
         }
-        
+
         return out
     }
-    
 }
 
 extension DaisukeEngine.NetworkClient {
@@ -198,30 +195,30 @@ extension DaisukeEngine.NetworkClient {
             return request
         }
         let dict = try! request.asDictionary()
-        return try await withCheckedThrowingContinuation({ continuation in
+        return try await withCheckedThrowingContinuation { continuation in
             handler.daisukeCall(arguments: [dict]) { value in
                 let request = try Request(value: value)
                 continuation.resume(returning: request)
             } onFailure: { error in
                 continuation.resume(throwing: error)
             }
-        })
+        }
     }
-    
+
     func handleResponseIntercept(response: Response) async throws -> Response {
         let handler = responseInterceptHandler
         guard let handler = handler else {
             return response
         }
         let dict = try! response.asDictionary()
-        return try await withCheckedThrowingContinuation({ continuation in
+        return try await withCheckedThrowingContinuation { continuation in
             handler.daisukeCall(arguments: [dict]) { value in
                 let response = try Response(value: value)
                 continuation.resume(returning: response)
             } onFailure: { error in
                 continuation.resume(throwing: error)
             }
-        })
+        }
     }
 }
 

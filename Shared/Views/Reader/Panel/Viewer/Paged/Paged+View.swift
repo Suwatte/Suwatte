@@ -72,7 +72,6 @@ class ReaderPageView: UIView {
                 setImage()
             }
             .store(in: &subscriptions)
-        
     }
 
     func activateConstraints() {

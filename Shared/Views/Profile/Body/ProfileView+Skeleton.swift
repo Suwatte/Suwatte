@@ -11,7 +11,7 @@ import SwiftUI
 extension ProfileView {
     struct Skeleton: View {
         @EnvironmentObject var viewModel: ProfileView.ViewModel
-        @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
+        @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
         var body: some View {
             Main

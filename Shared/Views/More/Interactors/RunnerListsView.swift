@@ -6,9 +6,9 @@
 //
 
 import Alamofire
+import FlagKit
 import RealmSwift
 import SwiftUI
-import FlagKit
 
 struct RunnerListsView: View {
     @State var presentAlert = false
@@ -16,7 +16,6 @@ struct RunnerListsView: View {
     @AppStorage(STTKeys.AppAccentColor) var color: Color = .sttDefault
     var body: some View {
         List {
-            
             ForEach(runnerLists) { list in
                 NavigationLink {
                     RunnerListInfo(listURL: list.url)
@@ -31,7 +30,6 @@ struct RunnerListsView: View {
                                 .foregroundColor(color)
                         }
                     }
-                    
                 }
             }
             .onDelete(perform: $runnerLists.remove(atOffsets:))
@@ -123,7 +121,6 @@ extension RunnerListsView {
                 loadable = .idle
             }
             .searchable(text: $text, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search...")
-
         }
 
         @MainActor
@@ -167,31 +164,26 @@ extension RunnerListsView {
                     } label: {
                         Image(systemName: "line.3.horizontal.decrease")
                     }
-                    
                 }
             })
             .sheet(isPresented: $presentFilterSheet) {
-                
                 NavigationView {
-                    
                     List {
                         if !flaggedLanguages.isEmpty {
                             Section {
-                                ForEach(flaggedLanguages.sorted(by: { Locale.current.localizedString(forIdentifier: $0) ?? "" <  Locale.current.localizedString(forIdentifier: $1) ?? ""})) {
+                                ForEach(flaggedLanguages.sorted(by: { Locale.current.localizedString(forIdentifier: $0) ?? "" < Locale.current.localizedString(forIdentifier: $1) ?? "" })) {
                                     Cell(lang: $0)
                                 }
                             }
                         }
-                        
+
                         if !unflaggedLanguages.isEmpty {
                             Section {
-                                ForEach(unflaggedLanguages.sorted(by: { Locale.current.localizedString(forIdentifier: $0) ?? "" <  Locale.current.localizedString(forIdentifier: $1) ?? ""})) {
+                                ForEach(unflaggedLanguages.sorted(by: { Locale.current.localizedString(forIdentifier: $0) ?? "" < Locale.current.localizedString(forIdentifier: $1) ?? "" })) {
                                     Cell(lang: $0)
                                 }
                             }
                         }
-                        
-                        
                     }
                     .animation(.default, value: langSearchText)
                     .animation(.default, value: selectedLanguages)
@@ -200,11 +192,10 @@ extension RunnerListsView {
                     .searchable(text: $langSearchText, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search")
                     .closeButton()
                 }
-                
             }
         }
-        
-        func Cell(lang: String ) -> some View {
+
+        func Cell(lang: String) -> some View {
             Button {
                 if selectedLanguages.contains(lang) {
                     selectedLanguages.remove(lang)
@@ -215,40 +206,41 @@ extension RunnerListsView {
                     Spacer()
                     Image(systemName: "checkmark")
                         .opacity(selectedLanguages.contains(lang) ? 1 : 0)
-                    
                 }
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
         }
+
         var languages: [String] {
-            let langs = Set(list.runners.flatMap({ $0.supportedLanguages ?? [] }))
-            return Array(langs).filter({ langSearchText.isEmpty || $0.lowercased().contains(langSearchText.lowercased()) })
+            let langs = Set(list.runners.flatMap { $0.supportedLanguages ?? [] })
+            return Array(langs).filter { langSearchText.isEmpty || $0.lowercased().contains(langSearchText.lowercased()) }
         }
-        
+
         var flaggedLanguages: [String] {
-            languages.filter({ Locale(identifier: $0).regionCode != nil })
+            languages.filter { Locale(identifier: $0).regionCode != nil }
         }
-        
+
         var unflaggedLanguages: [String] {
-            languages.filter({ Locale(identifier: $0).regionCode == nil })
+            languages.filter { Locale(identifier: $0).regionCode == nil }
         }
+
         var filteredRunners: [Runner] {
             var base = list.runners
-            
+
             if !text.isEmpty {
                 let t = text.lowercased()
-                base = base.filter({ $0.name.lowercased().contains(t) })
+                base = base.filter { $0.name.lowercased().contains(t) }
             }
-            
+
             if hideNSFW {
-                base = base.filter({ !($0.primarilyAdultContent ?? false) })
+                base = base.filter { !($0.primarilyAdultContent ?? false) }
             }
-            
+
             if !selectedLanguages.isEmpty {
-                base = base.filter({ !Set($0.supportedLanguages ?? []).intersection(selectedLanguages).isEmpty })
+                base = base.filter { !Set($0.supportedLanguages ?? []).intersection(selectedLanguages).isEmpty }
             }
-            
+
             return base
         }
     }
@@ -270,7 +262,7 @@ extension RunnerListsView.RunnerListInfo {
                 Button {
                     Task { @MainActor in
                         isLoading = true
-                        if (list.hosted ?? false ) {
+                        if list.hosted ?? false {
                             engine.saveHostedRunner(list: listURL, runner: runner)
                         } else {
                             await saveExternalRunnerList()
@@ -318,7 +310,7 @@ extension RunnerListsView.RunnerListInfo {
                 self == .appOutDated || self == .sourceOutdated
             }
         }
-        
+
         func saveExternalRunnerList() async {
             let base = URL(string: listURL)!
 
@@ -332,8 +324,8 @@ extension RunnerListsView.RunnerListInfo {
             } catch {
                 ToastManager.shared.display(.error(error))
             }
-
         }
+
         func getRunnerState(runner: Runner) -> RunnerState {
             if let minVer = runner.minSupportedAppVersion, let appVersion = Bundle.main.releaseVersionNumber {
                 let result = minVer.compare(appVersion)
@@ -462,10 +454,8 @@ extension DaisukeEngine {
     }
 }
 
-
 extension URL {
-    
     var runnersListURL: URL {
-        self.appendingPathComponent("runners.json")
+        appendingPathComponent("runners.json")
     }
 }

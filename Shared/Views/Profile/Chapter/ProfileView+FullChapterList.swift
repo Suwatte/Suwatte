@@ -330,29 +330,30 @@ extension ChapterList {
 }
 
 extension ChapterList {
-    
     func selectAbove() {
         if selections.isEmpty { return }
-        
+
         let chapters = model.chapters.value
         let target = selections.first
-        
+
         guard let target, let chapters, let idx = chapters.firstIndex(of: target) else { return }
-        
-        let sub = chapters[0...idx]
+
+        let sub = chapters[0 ... idx]
         selections.formUnion(sub)
     }
+
     func selectBelow() {
         if selections.isEmpty { return }
-        
+
         let chapters = model.chapters.value
         let target = selections.first
-        
+
         guard let target, let chapters, let idx = chapters.firstIndex(of: target) else { return }
-        
+
         let sub = chapters[idx...]
         selections.formUnion(sub)
     }
+
     func selectAll() {
         selections = Set(model.chapters.value ?? [])
     }

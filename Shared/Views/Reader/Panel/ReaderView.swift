@@ -75,7 +75,7 @@ struct ReaderView: View {
         .animation(.default, value: model.activeChapter.data)
         .environmentObject(model)
         .onChange(of: model.slider.isScrubbing) { val in
-            
+
             if val == false {
                 model.scrubEndPublisher.send()
             }
@@ -94,7 +94,7 @@ struct ReaderView: View {
         .onChange(of: model.showNavOverlay) { val in
             if !val
             { return }
-            
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 model.showNavOverlay = false
             }
@@ -114,8 +114,7 @@ extension ReaderView {
                         .fontWeight(.light)
                 }
                 .transition(.opacity)
-            }
-            else {
+            } else {
                 if isVertical {
                     VerticalViewer()
                         .transition(.opacity)
@@ -132,7 +131,6 @@ extension ReaderView {
                                 .transition(.opacity)
                         }
                     }
-                    
                 }
             }
         }
@@ -151,7 +149,7 @@ extension ReaderView.ViewModel {
 extension ReaderView {
     struct UseColorInvertModifier: ViewModifier {
         @AppStorage(STTKeys.ReaderColorInvert) var useColorInvert = false
-        
+
         func body(content: Content) -> some View {
             if useColorInvert {
                 content
@@ -161,10 +159,10 @@ extension ReaderView {
             }
         }
     }
-    
+
     struct UseGrayScaleModifier: ViewModifier {
         @AppStorage(STTKeys.ReaderGrayScale) var useGrayscale = false
-        
+
         func body(content: Content) -> some View {
             content
                 .grayscale(useGrayscale ? 1 : 0)

@@ -8,6 +8,4 @@
 import Foundation
 import JavaScriptCore
 
-extension DaisukeEngine.LocalContentSource {
-   
-}
+extension DaisukeEngine.LocalContentSource {}

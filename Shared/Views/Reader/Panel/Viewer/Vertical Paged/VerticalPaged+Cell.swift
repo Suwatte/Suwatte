@@ -5,8 +5,8 @@
 //  Created by Mantton on 2022-12-22.
 //
 
-import UIKit
 import Combine
+import UIKit
 extension VerticalPager.Controller {
     class ImageCell: UICollectionViewCell {
         static var identifier: String = "VerticalPagerCell"
@@ -46,7 +46,7 @@ extension VerticalPager.Controller {
             pageView.page = page
             pageView.setupViews()
             subscribe()
-            
+
             pageView.translatesAutoresizingMaskIntoConstraints = false
             addSubview(pageView)
 
@@ -61,7 +61,7 @@ extension VerticalPager.Controller {
         func setImage() {
             pageView?.setImage()
         }
-        
+
         func subscribe() {
             Preferences
                 .standard

@@ -5,8 +5,8 @@
 //  Created by Mantton on 2022-04-15.
 //
 
-import UIKit
 import AsyncDisplayKit
+import UIKit
 @objc
 protocol ZoomingViewController {
     func zoomingImageView(for transition: ZoomTransitioningDelegate) -> UIView?
@@ -171,14 +171,14 @@ class VerticalZoomableView: UIViewController, VerticalImageScrollDelegate {
 }
 
 extension VerticalZoomableView: ZoomingViewController {
-    func zoomingImage(for transition: ZoomTransitioningDelegate) -> UIImage? {
+    func zoomingImage(for _: ZoomTransitioningDelegate) -> UIImage? {
         image
     }
-    
-    func zoomingImageView(for transition: ZoomTransitioningDelegate) -> UIView? {
+
+    func zoomingImageView(for _: ZoomTransitioningDelegate) -> UIView? {
         imageScrollView.zoomView
     }
-    
+
     func zoomingBackgroundView(for _: ZoomTransitioningDelegate) -> UIView? {
         nil
     }

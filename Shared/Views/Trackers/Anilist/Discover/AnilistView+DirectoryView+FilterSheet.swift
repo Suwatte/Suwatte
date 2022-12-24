@@ -170,7 +170,6 @@ extension FilterSheet {
             if exclude != nil, exclude!.isEmpty {
                 exclude = nil
             }
-
         }
 
         func reset() {

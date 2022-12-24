@@ -38,7 +38,7 @@ final class Preferences {
     // Reader Level
     @UserDefault(STTKeys.IsReadingVertically)
     var isReadingVertically: Bool = false
-    
+
     @UserDefault(STTKeys.VerticalPagerEnabled)
     var isPagingVertically: Bool = false
 
@@ -95,7 +95,7 @@ final class Preferences {
 
     @UserDefault(STTKeys.SelectiveUpdates)
     var selectiveUpdates = false
-    
+
     @UserDefault(STTKeys.VerticalAutoScrollSpeed)
     var verticalAutoScrollSpeed: Double = 16
 }

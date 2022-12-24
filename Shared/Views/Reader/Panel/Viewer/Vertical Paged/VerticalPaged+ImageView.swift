@@ -9,9 +9,8 @@ import Kingfisher
 import SwiftUI
 import UIKit
 
-
 extension VerticalPager.Controller.ImageCell {
-    class ContentView : UIView {
+    class ContentView: UIView {
         let imageView = UIImageView()
         var scrollView: ZoomingScrollView!
         var page: ReaderView.Page!
@@ -19,7 +18,7 @@ extension VerticalPager.Controller.ImageCell {
         var downloadTask: DownloadTask?
         var progressView: UIView!
         var progressModel = ReaderView.ProgressObject()
-        
+
         var downSampleImage: Bool {
             UserDefaults.standard.bool(forKey: STTKeys.DownsampleImages)
         }
@@ -27,7 +26,7 @@ extension VerticalPager.Controller.ImageCell {
         var cropWhiteSpaces: Bool {
             UserDefaults.standard.bool(forKey: STTKeys.CropWhiteSpaces)
         }
-        
+
         init() {
             super.init(frame: UIScreen.main.bounds)
         }
@@ -202,5 +201,4 @@ extension VerticalPager.Controller.ImageCell {
             progressModel.setProgress(CGFloat(recieved) / CGFloat(total))
         }
     }
-
 }

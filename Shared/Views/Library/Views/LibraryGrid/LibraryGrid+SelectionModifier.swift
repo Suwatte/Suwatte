@@ -21,7 +21,7 @@ extension LibraryView.LibraryGrid {
         @State var selectionOption: SelectionOption?
         @State var confirmRemoval = false
         @EnvironmentObject var model: ViewModel
-        @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
+        @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
         func body(content: Content) -> some View {
             content
@@ -39,8 +39,6 @@ extension LibraryView.LibraryGrid {
                     }
                     .accentColor(accentColor)
                     .tint(accentColor)
-                    
-                    
                 }
                 .alert("Remove From Library", isPresented: $confirmRemoval, actions: {
                     Button("Proceed", role: .destructive) {

@@ -56,13 +56,11 @@ struct InteractableContainer: ViewModifier {
     }
 }
 
-
-struct V1<A: View>: ViewModifier  {
+struct V1<A: View>: ViewModifier {
     typealias V = A
     @Binding var isActive: Bool
     var child: () -> A
     func body(content: Content) -> some View {
-        
         content
             .background(
                 NavigationLink(isActive: $isActive, destination: {
@@ -73,7 +71,6 @@ struct V1<A: View>: ViewModifier  {
             )
     }
 }
-
 
 extension View {
     func hiddenNav<T: View>(presenting: Binding<Bool>, _ view: @escaping () -> T) -> some View {

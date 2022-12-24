@@ -14,7 +14,7 @@ struct CloudFlareErrorView: View {
     var sourceID: String
     var action: () -> Void
     @State var showSheet: Bool = false
-    @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
+    @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
     var body: some View {
         VStack {

@@ -9,12 +9,12 @@ import SwiftUI
 
 struct BehavioursView: View {
     @AppStorage(STTKeys.HideNSFWRunners) var hideNSFWRunners = false
-    @AppStorage(STTKeys.UpdateInterval) var updateInterval : STTUpdateInterval = .oneHour
+    @AppStorage(STTKeys.UpdateInterval) var updateInterval: STTUpdateInterval = .oneHour
     @AppStorage(STTKeys.CheckLinkedOnUpdateCheck) var checkLinkedOnUpdate = false
     @Preference(\.selectiveUpdates) var selectiveUpdates
     @AppStorage(STTKeys.IntialTabIndex) var InitialSelection = 3
     @AppStorage(STTKeys.OpenAllTitlesOnAppear) var openAllOnAppear = false
-    
+
     @State private var presentAlert = false
     let options = AppTabs.defaultSettings
     var body: some View {
@@ -32,12 +32,12 @@ struct BehavioursView: View {
                 } label: {
                     STTLabelView(title: "Opening Tab", label: options[InitialSelection].label())
                 }
-                
+
             } header: {
                 Text("Tab")
             }
             .buttonStyle(.plain)
-            
+
             // Open All Titles On Libary Appear
             Section {
                 Toggle("Open Default Collection", isOn: $openAllOnAppear)
@@ -45,7 +45,7 @@ struct BehavioursView: View {
             } header: {
                 Text("Library")
             }
-            
+
             Section {
                 Picker("Minimum Update Interval", selection: $updateInterval) {
                     ForEach(STTUpdateInterval.allCases, id: \.rawValue) {
@@ -75,7 +75,5 @@ struct BehavioursView: View {
         } message: {
             Text("Suwatte will only fetch updates for titles flagged as 'Reading'.")
         }
-        
     }
 }
-

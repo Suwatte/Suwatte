@@ -210,7 +210,7 @@ class VerticalImageCell: UICollectionViewCell {
         }
     }
 
-    func handleProgressBlock(_ recieved: Int64, _ total: Int64, _ source: Kingfisher.Source) {
+    func handleProgressBlock(_: Int64, _: Int64, _ source: Kingfisher.Source) {
         if source.cacheKey != page.CELL_KEY {
             downloadTask?.cancel()
             return

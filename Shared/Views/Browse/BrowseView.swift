@@ -42,7 +42,7 @@ struct BrowseView: View {
 
     @ViewBuilder
     var InstalledSourcesSection: some View {
-        let sources = daisuke.getSources().sorted(by: { getSaved($0.id)?.order ?? 0 < getSaved($1.id)?.order ?? 0})
+        let sources = daisuke.getSources().sorted(by: { getSaved($0.id)?.order ?? 0 < getSaved($1.id)?.order ?? 0 })
         Section {
             ForEach(sources, id: \.id) { source in
                 NavigationLink {

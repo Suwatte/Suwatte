@@ -14,7 +14,7 @@ struct ReaderGateWay: View {
     var openTo: StoredChapter
     var pageIndex: Int?
     var title: String?
-    @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
+    @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
     var body: some View {
         Group {

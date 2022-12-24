@@ -12,7 +12,7 @@ import UIKit
 struct WhiteSpaceProcessor: ImageProcessor {
     // `identifier` should be the same for processors with the same properties/functionality
     // It will be used when storing and retrieving the image to/from cache.
-    
+
     let identifier: String = Bundle.main.bundleIdentifier! + ".image_processor.whitespace"
 
     // Convert input data/image to target image and return it.

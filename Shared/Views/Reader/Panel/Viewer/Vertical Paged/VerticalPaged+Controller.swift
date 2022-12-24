@@ -5,19 +5,19 @@
 //  Created by Mantton on 2022-12-22.
 //
 
-import Foundation
-import UIKit
 import Combine
+import Foundation
 import Kingfisher
+import UIKit
 
 extension VerticalPager {
-    
     final class Controller: UICollectionViewController {
         var model: ReaderView.ViewModel!
         var subscriptions = Set<AnyCancellable>()
         var currentPath: IndexPath? {
             collectionView.indexPathForItem(at: collectionView.currentPoint)
         }
+
         var isScrolling: Bool = false
 
         var enableInteractions: Bool = Preferences.standard.imageInteractions
@@ -28,12 +28,11 @@ extension VerticalPager {
     }
 }
 
-
-
-fileprivate typealias Controller = VerticalPager.Controller
-fileprivate typealias ImageCell = Controller.ImageCell
+private typealias Controller = VerticalPager.Controller
+private typealias ImageCell = Controller.ImageCell
 
 // MARK: DataSource
+
 extension Controller {
     override func numberOfSections(in _: UICollectionView) -> Int {
         model.sections.count
@@ -45,13 +44,15 @@ extension Controller {
 }
 
 // MARK: Cell Sizing
-extension Controller : UICollectionViewDelegateFlowLayout {
+
+extension Controller: UICollectionViewDelegateFlowLayout {
     func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
         return UIScreen.main.bounds.size
     }
 }
 
 // MARK: Set Up
+
 extension Controller {
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,7 +66,7 @@ extension Controller {
         guard let rChapter = model.readerChapterList.first else {
             return
         }
-        
+
         if model.sections.isEmpty {
             collectionView.isHidden = false
             return
@@ -133,8 +134,8 @@ extension Controller {
 }
 
 // MARK: Prefetching
-extension Controller : UICollectionViewDataSourcePrefetching {
-    
+
+extension Controller: UICollectionViewDataSourcePrefetching {
     func collectionView(_: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         let urls = indexPaths.compactMap { path -> URL? in
             guard let page = self.model.sections[path.section][path.item] as? ReaderView.Page, let url = page.hostedURL, !page.isLocal else {
@@ -147,8 +148,8 @@ extension Controller : UICollectionViewDataSourcePrefetching {
     }
 }
 
-
 // MARK: CollectionView Will & Did
+
 extension Controller {
     override func collectionView(_: UICollectionView, willDisplay _: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         handleChapterPreload(at: indexPath)
@@ -164,6 +165,7 @@ extension Controller {
 }
 
 // MARK: Chapter Preloading
+
 extension Controller {
     func handleChapterPreload(at path: IndexPath) {
         guard let currentPath = currentPath, currentPath.section == path.section else {
@@ -179,11 +181,9 @@ extension Controller {
     }
 }
 
-
 // MARK: Cell For Item At
 
 extension Controller {
-
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         // Cell Logic
         let data = model.getObject(atPath: indexPath)
@@ -192,7 +192,7 @@ extension Controller {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCell.identifier, for: indexPath) as! ImageCell
             cell.initializePage(page: data)
             cell.backgroundColor = .clear
-            
+
             if enableInteractions {
                 cell.pageView?.imageView.addInteraction(UIContextMenuInteraction(delegate: self))
             }
@@ -208,13 +208,14 @@ extension Controller {
 }
 
 // MARK: Layout & Transitions
+
 extension Controller {
     override func viewDidLayoutSubviews() {
         if !isScrolling {
             super.viewDidLayoutSubviews()
         }
     }
-    
+
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         let lastPath = currentPath
         coordinator.animate(alongsideTransition: { _ in

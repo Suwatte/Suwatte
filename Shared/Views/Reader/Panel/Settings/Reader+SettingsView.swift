@@ -34,7 +34,7 @@ extension ReaderView {
         @Preference(\.isDoublePagedEnabled) var isDoublePaged
         @Preference(\.invertTapSidesToNavigate) var invertTapSidesToNavigate
         @Preference(\.VerticalPagePadding) var verticalPagePadding
-        private let range: ClosedRange<Double> = 5...30
+        private let range: ClosedRange<Double> = 5 ... 30
 
         var body: some View {
             Form {
@@ -46,11 +46,11 @@ extension ReaderView {
                         Text("Vertical").tag(true)
                     }
                     .pickerStyle(.segmented)
-                    
+
                 } header: {
                     Text("Reading Mode")
                 }
-                
+
                 // Reading Direction
                 if !isVertical {
                     Section {
@@ -78,20 +78,20 @@ extension ReaderView {
                             Text("Reading Direction")
                         }
                     }
-                    
+
                 } else {
                     Section {
                         Toggle("Page Padding", isOn: $verticalPagePadding)
                     }
-                    
+
                     Section {
                         Toggle("AutoScroll", isOn: $verticalAutoScroll)
                         if verticalAutoScroll {
                             let bridge = Binding<Double>(get: {
-                                   return range.upperBound - autoScrollSpeed + range.lowerBound
-                                 }, set: {
-                                     autoScrollSpeed = range.upperBound - $0 + range.lowerBound
-                                 })
+                                range.upperBound - autoScrollSpeed + range.lowerBound
+                            }, set: {
+                                autoScrollSpeed = range.upperBound - $0 + range.lowerBound
+                            })
                             VStack(alignment: .leading) {
                                 Text("Scroll Speed")
                                 HStack {
@@ -109,7 +109,6 @@ extension ReaderView {
                                         .foregroundColor(.gray)
                                 }
                             }
-                            
                         }
                     } footer: {
                         if verticalAutoScroll {
@@ -117,35 +116,34 @@ extension ReaderView {
                         }
                     }
                 }
-                
-                
+
                 Section {
                     Toggle("Tap Sides To Navigate", isOn: $tapToNavigate)
-                    
+
                     if tapToNavigate {
                         Toggle("Invert Navigation Regions", isOn: $invertTapSidesToNavigate)
-                        
+
                         Toggle("Display Guide", isOn: $displayNavOverlay)
-                        
+
                         Picker("Navigation Layout", selection: isVertical ? $verticalNavigator : $pagedNavigator) {
                             ForEach(ReaderNavigation.Modes.allCases) { entry in
-                                
+
                                 Text(entry.mode.title)
                                     .tag(entry)
                             }
                         }
                         .pickerStyle(.segmented)
                     }
-                    
+
                 } header: {
                     Text("Navigation")
                 }
-                
+
                 // Images
                 Section {
                     Toggle("Image Context Actions", isOn: $imageInteractions)
                     Toggle("Downsample Images", isOn: $downsampleImages)
-                    
+
                     if !isVertical {
                         Toggle("Crop Whitespace", isOn: $cropWhiteSpaces)
                     }
@@ -156,18 +154,18 @@ extension ReaderView {
                         Text("Removes excess white border surrounding panels.")
                     }
                 }
-                
+
                 // Background
                 Section {
                     Toggle("Use System Background", isOn: $useSystemBG)
-                    
+
                     if !useSystemBG {
                         ColorPicker("Background Color", selection: $backgroundColor)
                     }
                 } header: {
                     Text("Background")
                 }
-                
+
                 // Overlay
                 Section {
                     Toggle("Custom Overlay", isOn: $enableOverlay)
@@ -180,7 +178,7 @@ extension ReaderView {
                             }
                         }
                     }
-                    
+
                 } header: {
                     Text("Overlay")
                 }
@@ -201,28 +199,28 @@ extension ReaderView {
     }
 }
 
-enum ReaderBlendMode : Int, CaseIterable {
+enum ReaderBlendMode: Int, CaseIterable {
     case normal, screen, multiply
-    
-    var description : String {
+
+    var description: String {
         switch self {
-            case .multiply:
-                return "Multiply"
-            case .normal:
-                return "Normal"
-            case .screen:
-                return "Screen"
+        case .multiply:
+            return "Multiply"
+        case .normal:
+            return "Normal"
+        case .screen:
+            return "Screen"
         }
     }
-    
+
     var blendMode: BlendMode {
         switch self {
-            case .normal:
-                return .normal
-            case .screen:
-                return .screen
-            case .multiply:
-                return .multiply
+        case .normal:
+            return .normal
+        case .screen:
+            return .screen
+        case .multiply:
+            return .multiply
         }
     }
 }

@@ -8,12 +8,12 @@
 import Combine
 import UIKit
 
-
 // MARK: Subscriptions
 
 extension VerticalPager.Controller {
     func listen() {
         // MARK: Reload
+
         model.reloadPublisher.sink { [weak self] in
             DispatchQueue.main.async {
                 self?.collectionView.reloadData()
@@ -23,6 +23,7 @@ extension VerticalPager.Controller {
         }.store(in: &subscriptions)
 
         // MARK: Insert
+
         model.insertPublisher.sink { [unowned self] section in
 
             Task { @MainActor in
@@ -50,6 +51,7 @@ extension VerticalPager.Controller {
         }.store(in: &subscriptions)
 
         // MARK: Slider
+
         model.$slider.sink { [unowned self] slider in
             if slider.isScrubbing {
                 let position = CGPoint(x: 0, y: slider.current)
@@ -64,12 +66,13 @@ extension VerticalPager.Controller {
         .store(in: &subscriptions)
 
         // MARK: Navigation Publisher
+
         model.navigationPublisher.sink { [unowned self] action in
             let isPreviousTap = action == .LEFT
             let height = collectionView.frame.height
             let offset = isPreviousTap ? collectionView.currentPoint.y - height : collectionView.currentPoint.y + height
 
-            let path = collectionView.indexPathForItem(at: .init(x:0 , y: offset))
+            let path = collectionView.indexPathForItem(at: .init(x: 0, y: offset))
 
             if let path = path {
                 collectionView.scrollToItem(at: path, at: .centeredVertically, animated: true)
@@ -78,6 +81,7 @@ extension VerticalPager.Controller {
         .store(in: &subscriptions)
 
         // MARK: Did End Scrubbing
+
         model.scrubEndPublisher.sink { [weak self] in
             guard let currentPath = self?.currentPath else {
                 return
@@ -85,7 +89,7 @@ extension VerticalPager.Controller {
             self?.collectionView.scrollToItem(at: currentPath, at: .centeredVertically, animated: true)
         }
         .store(in: &subscriptions)
-        
+
         Preferences.standard.preferencesChangedSubject
             .filter { $0 == \Preferences.imageInteractions }
             .sink { [unowned self] _ in

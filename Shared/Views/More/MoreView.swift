@@ -55,8 +55,6 @@ struct MoreView: View {
                 Text("MangaSoup Version")
                     .badge("2.0.0")
             }
-            
-                
 
         } header: {
             Text("Info")

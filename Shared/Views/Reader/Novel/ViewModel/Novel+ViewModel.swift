@@ -36,7 +36,7 @@ extension NovelReaderView {
             // Sort Chapter List by either sourceIndex or chapter number
             let sourceIndexAcc = chapterList.map { $0.index }.reduce(0, +)
             self.chapterList = (sourceIndexAcc > 0 ? chapterList.sorted(by: { $0.index > $1.index }) : chapterList.sorted(by: { $0.number > $1.number }))
-                .map({ $0.toThreadSafe() })
+                .map { $0.toThreadSafe() }
 
             activeChapter = .init(chapter: chapter.toThreadSafe())
             activeChapter.requestedPageIndex = -1

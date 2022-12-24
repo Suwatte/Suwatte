@@ -20,7 +20,7 @@ extension DaisukeContentSourceView {
         @State var presentBasicAuthSheet = false
         @State var presentWebView = false
         @State var shouldRefresh = false
-        @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
+        @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
         var body: some View {
             LoadableView(loadable: loadable) {

@@ -50,9 +50,6 @@ struct AppearanceView: View {
             } header: {
                 Text("Tiles")
             }
-
-            
-            
         }
         .buttonStyle(.plain)
         .navigationTitle("Appearance")
@@ -98,59 +95,53 @@ struct LibraryAuthenticationToggleView: View {
     }
 }
 
-
-enum STTUpdateInterval : Int, CaseIterable {
+enum STTUpdateInterval: Int, CaseIterable {
     case oneHour, twoHours, sixHours, twelveHours
     case oneDay, oneWeek, twoWeeks, oneMonth
 }
 
-
 extension STTUpdateInterval {
-    
-
     var label: String {
         switch self {
-            case .oneHour:
-                return "1 Hour"
-            case .twoHours:
-                return "2 Hours"
-            case .sixHours:
-                return "6 Hours"
-            case .twelveHours:
-                return "12 Hours"
-            case .oneDay:
-                return "1 Day"
-            case .oneWeek:
-                return "1 Week"
-            case .twoWeeks:
-                return "2 Weeks"
-            case .oneMonth:
-                return "1 Month"
+        case .oneHour:
+            return "1 Hour"
+        case .twoHours:
+            return "2 Hours"
+        case .sixHours:
+            return "6 Hours"
+        case .twelveHours:
+            return "12 Hours"
+        case .oneDay:
+            return "1 Day"
+        case .oneWeek:
+            return "1 Week"
+        case .twoWeeks:
+            return "2 Weeks"
+        case .oneMonth:
+            return "1 Month"
         }
     }
 }
 
-
 extension STTUpdateInterval {
-    
-    var interval: Double  {
+    var interval: Double {
         switch self {
-            case .oneHour:
-                return 3600
-            case .twoHours:
-                return 3600 * 2
-            case .sixHours:
-                return 3600 * 6
-            case .twelveHours:
-                return 3600 * 12
-            case .oneDay:
-                return 3600 * 24
-            case .oneWeek:
-                return 3600 * 24 * 7
-            case .twoWeeks:
-                return 3600 * 24 * 7 * 2
-            case .oneMonth:
-                return 3600 * 24 * 7 * 4
+        case .oneHour:
+            return 3600
+        case .twoHours:
+            return 3600 * 2
+        case .sixHours:
+            return 3600 * 6
+        case .twelveHours:
+            return 3600 * 12
+        case .oneDay:
+            return 3600 * 24
+        case .oneWeek:
+            return 3600 * 24 * 7
+        case .twoWeeks:
+            return 3600 * 24 * 7 * 2
+        case .oneMonth:
+            return 3600 * 24 * 7 * 4
         }
     }
 }

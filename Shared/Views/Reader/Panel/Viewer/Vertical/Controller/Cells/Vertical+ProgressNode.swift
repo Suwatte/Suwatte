@@ -5,15 +5,14 @@
 //  Created by Mantton on 2022-10-12.
 //
 
-import UIKit
 import AsyncDisplayKit
 import Kingfisher
 import SwiftUI
+import UIKit
 
-fileprivate typealias Controller = VerticalViewer.Controller
+private typealias Controller = VerticalViewer.Controller
 
 extension Controller {
-    
     class ProgressNode: ASCellNode {
         var model: ReaderView.ProgressObject
         init(model: ReaderView.ProgressObject) {
@@ -24,5 +23,4 @@ extension Controller {
             }
         }
     }
-
 }

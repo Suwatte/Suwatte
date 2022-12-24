@@ -657,7 +657,7 @@ extension CTR {
                     }
                 }
                 if let str = tag.imageUrl, let url = URL(string: str) {
-                    let req = try? await (source as? DSK.LocalContentSource)?.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
+                    let req = try? await(source as? DSK.LocalContentSource)?.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
                     loader.load(req ?? url)
                 }
             }

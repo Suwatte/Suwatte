@@ -120,10 +120,10 @@ extension DataManager {
         }
     }
 
-    
-    func setProgress(chapter: ThreadSafeChapter, completed: Bool = true){
+    func setProgress(chapter: ThreadSafeChapter, completed: Bool = true) {
         setProgress(chapter: chapter.toStored(), completed: completed)
     }
+
     func setProgress(chapter: StoredChapter, completed: Bool = true) {
         let realm = try! Realm()
 

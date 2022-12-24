@@ -14,7 +14,7 @@ struct InstalledRunnersView: View {
     @State var showAddSheet = false
     @Environment(\.editMode) var editMode
     var body: some View {
-        let sources = engine.getSources().sorted(by: { getSaved($0.id)?.order ?? 0 < getSaved($1.id)?.order ?? 0})
+        let sources = engine.getSources().sorted(by: { getSaved($0.id)?.order ?? 0 < getSaved($1.id)?.order ?? 0 })
         List {
             Section {
                 ForEach(sources, id: \.id) { source in
@@ -52,7 +52,6 @@ struct InstalledRunnersView: View {
         }
         .navigationTitle("Installed Runners")
         .toolbar {
-            
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 Button { showAddSheet.toggle() } label: {
                     Label("Add Runner", systemImage: "plus")
@@ -90,7 +89,7 @@ struct InstalledRunnersView: View {
             .where { $0.id == id }
             .first
     }
-    
+
     func move(from source: IndexSet, to destination: Int) {
         var arr = Array(savedRunners)
         arr.move(fromOffsets: source, toOffset: destination)
@@ -98,10 +97,8 @@ struct InstalledRunnersView: View {
     }
 }
 
-
-extension DataManager {
-    
-    fileprivate func reorderRunners(_ arr: [StoredRunnerObject]) {
+private extension DataManager {
+    func reorderRunners(_ arr: [StoredRunnerObject]) {
         let realm = try! Realm()
 
         try! realm.safeWrite {
@@ -111,6 +108,5 @@ extension DataManager {
                 }
             }
         }
-        
     }
 }

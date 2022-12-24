@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import UIKit
 import SwiftUI
+import UIKit
 
 extension VerticalPager.Controller {
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -55,7 +55,6 @@ extension VerticalPager.Controller {
     }
 }
 
-
 // MARK: Did Stop Scrolling
 
 extension VerticalPager.Controller {
@@ -76,7 +75,7 @@ extension VerticalPager.Controller {
 
     func onScrollStop() {
         isScrolling = false
-        
+
         model.menuControl.hideMenu()
         // Handle Load Prev
         if collectionView.contentOffset.y <= 0 {

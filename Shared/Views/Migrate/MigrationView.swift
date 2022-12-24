@@ -223,7 +223,6 @@ extension MigrationView {
     }
 }
 
-
 // MARK: Functions
 
 extension MigrationView {

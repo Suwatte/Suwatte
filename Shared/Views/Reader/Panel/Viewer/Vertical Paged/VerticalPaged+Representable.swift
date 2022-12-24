@@ -6,9 +6,8 @@
 //
 
 import Foundation
-import UIKit
 import SwiftUI
-
+import UIKit
 
 struct VerticalPager: UIViewControllerRepresentable {
     @EnvironmentObject var model: ReaderView.ViewModel

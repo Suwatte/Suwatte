@@ -91,7 +91,7 @@ struct DaisukeContentSourceView: View {
             if source.sourceInfo.supportedLanguages.count > 1 {
                 NavigationLink {
                     List {
-                        ForEach(source.sourceInfo.supportedLanguages.sorted(by: { Locale.current.localizedString(forIdentifier: $0) ?? "" <  Locale.current.localizedString(forIdentifier: $1) ?? ""})) {
+                        ForEach(source.sourceInfo.supportedLanguages.sorted(by: { Locale.current.localizedString(forIdentifier: $0) ?? "" < Locale.current.localizedString(forIdentifier: $1) ?? "" })) {
                             LanguageCellView(language: $0)
                         }
                     }
@@ -106,9 +106,7 @@ struct DaisukeContentSourceView: View {
                     LanguageCellView(language: source.sourceInfo.supportedLanguages.first ?? "Unknown")
                         .foregroundColor(.sttGray)
                 }
-                
             }
-            
 
             Link(destination: URL(string: source.sourceInfo.website) ?? STTHost.notFound) {
                 HStack {
@@ -122,6 +120,6 @@ struct DaisukeContentSourceView: View {
     }
 
     var flag: String {
-        "" 
+        ""
     }
 }
