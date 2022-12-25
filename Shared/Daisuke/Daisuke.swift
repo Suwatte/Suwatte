@@ -210,7 +210,7 @@ extension DaisukeEngine {
     }
 
     private func handleNetworkRunnerImport(from url: URL) async throws {
-        let req = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 10)
+        let req = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
         let path = url.lastPathComponent
         let tempLocation = directory
             .appendingPathComponent("__temp__")
@@ -252,8 +252,10 @@ extension DaisukeEngine {
             try! realm.safeWrite {
                 realm.add(obj, update: .modified)
             }
-
-            let source = HostedContentSource(host: URL(string: list)!, info: .init(id: runner.id, name: runner.name, version: runner.version, website: runner.website ?? "", supportedLanguages: runner.supportedLanguages ?? [], hasExplorePage: runner.hasExplorePage ?? false))
+            
+            
+            let info = ContentSourceInfo(id: runner.id, name: runner.name, version: runner.version, website: runner.website, supportedLanguages: runner.supportedLanguages)
+            let source = HostedContentSource(host: URL(string: list)!, info: info)
             try addSource(runner: source)
 
         } catch {

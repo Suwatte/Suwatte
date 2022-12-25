@@ -18,34 +18,14 @@ struct Runner: Codable, Hashable {
     var id: String
     var name: String
     var version: Double
-    var authors: [String]?
-    var minSupportedAppVersion: String?
-    var website: String?
-    var supportedLanguages: [String]?
-    var primarilyAdultContent: Bool?
-    var hasExplorePage: Bool?
+    var website: String
+    var supportedLanguages: [String]
     var path: String
+    
+    var authors: [String]?
     var thumbnail: String?
-
-    func getThumbURL(in list: String) -> URL? {
-        guard let thumbnail = thumbnail else {
-            return nil
-        }
-
-        // Thumbnail is URL
-        if let url = URL(string: thumbnail), url.isHTTP {
-            return url
-        }
-
-        // Thumbnail is Asset Object
-        guard let url = URL(string: list) else {
-            return nil
-        }
-
-        return url
-            .appendingPathComponent("assets")
-            .appendingPathComponent(thumbnail)
-    }
+    var nsfw: Bool?
+    var minSupportedAppVersion: String?
 }
 
 final class StoredRunnerList: Object, ObjectKeyIdentifiable {
@@ -63,25 +43,6 @@ final class StoredRunnerObject: Object, Identifiable {
     @Persisted var dateAdded: Date = .init()
     @Persisted var hosted: Bool = false
     @Persisted var info: String?
-
-    func thumb() -> URL? {
-        guard let thumbnail = thumbnail else {
-            return nil
-        }
-        // Thumbnail is URL
-        if let url = URL(string: thumbnail), url.isHTTP {
-            return url
-        }
-
-        // Thumbnail is Asset Object
-        guard let url = URL(string: listURL ?? "") else {
-            return nil
-        }
-
-        return url
-            .appendingPathComponent("assets")
-            .appendingPathComponent(thumbnail)
-    }
 }
 
 extension DataManager {
@@ -100,17 +61,24 @@ extension DataManager {
         let realm = try! Realm()
         let obj = StoredRunnerObject()
 
+        
         obj.id = runner.id
         obj.listURL = url.absoluteString
         obj.name = runner.name
-        obj.thumbnail = runner.thumbnail
         obj.hosted = hosted
-        obj.order = realm.objects(StoredRunnerObject.self).count
+        obj.order = getRunnerInfomation(id: runner.id)?.order ?? realm.objects(StoredRunnerObject.self).count + 1
+        
+        if let thumbnail = runner.thumbnail {
+            obj.thumbnail = url
+                .appendingPathComponent("assets")
+                .appendingPathComponent(thumbnail)
+                .absoluteString
+        }
+            
         try! realm.safeWrite {
             realm.add(obj, update: .modified)
         }
     }
-
     func getRunnerInfomation(id: String) -> StoredRunnerObject? {
         let realm = try! Realm()
 

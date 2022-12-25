@@ -16,10 +16,7 @@ struct DaisukeContentSourceView: View {
         List {
             HeaderSection
             InfoSection
-            if let info = (source.info as? ContentSourceInfo), let authMethod = info.authMethod {
-                AuthSection(authMethod: authMethod, canSync: info.canSync)
-            }
-
+            AuthSection()
             Section {
                 NavigationLink("Preferences") {
                     PreferencesView()
@@ -88,10 +85,10 @@ struct DaisukeContentSourceView: View {
 
     var InfoSection: some View {
         Section {
-            if source.sourceInfo.supportedLanguages.count > 1 {
+            if source.info.supportedLanguages.count > 1 {
                 NavigationLink {
                     List {
-                        ForEach(source.sourceInfo.supportedLanguages.sorted(by: { Locale.current.localizedString(forIdentifier: $0) ?? "" < Locale.current.localizedString(forIdentifier: $1) ?? "" })) {
+                        ForEach(source.info.supportedLanguages.sorted(by: { Locale.current.localizedString(forIdentifier: $0) ?? "" < Locale.current.localizedString(forIdentifier: $1) ?? "" })) {
                             LanguageCellView(language: $0)
                         }
                     }
@@ -103,12 +100,12 @@ struct DaisukeContentSourceView: View {
                 HStack {
                     Text("Supported Language")
                     Spacer()
-                    LanguageCellView(language: source.sourceInfo.supportedLanguages.first ?? "Unknown")
+                    LanguageCellView(language: source.info.supportedLanguages.first ?? "Unknown")
                         .foregroundColor(.sttGray)
                 }
             }
 
-            Link(destination: URL(string: source.sourceInfo.website) ?? STTHost.notFound) {
+            Link(destination: URL(string: source.info.website) ?? STTHost.notFound) {
                 HStack {
                     Text("Visit Website")
                     Spacer()

@@ -213,7 +213,7 @@ extension RunnerListsView {
         }
 
         var languages: [String] {
-            let langs = Set(list.runners.flatMap { $0.supportedLanguages ?? [] })
+            let langs = Set(list.runners.flatMap { $0.supportedLanguages })
             return Array(langs).filter { langSearchText.isEmpty || $0.lowercased().contains(langSearchText.lowercased()) }
         }
 
@@ -234,11 +234,11 @@ extension RunnerListsView {
             }
 
             if hideNSFW {
-                base = base.filter { !($0.primarilyAdultContent ?? false) }
+                base = base.filter { !($0.nsfw ?? false) }
             }
 
             if !selectedLanguages.isEmpty {
-                base = base.filter { !Set($0.supportedLanguages ?? []).intersection(selectedLanguages).isEmpty }
+                base = base.filter { !Set($0.supportedLanguages).intersection(selectedLanguages).isEmpty }
             }
 
             return base
@@ -347,7 +347,7 @@ extension RunnerListsView.RunnerListInfo {
 
         func RunnerHeader(runner: Runner) -> some View {
             HStack {
-                STTThumbView(url: runner.getThumbURL(in: listURL))
+                STTThumbView(url: runner.thumbnail.flatMap({ URL(string: listURL)!.appendingPathComponent("assets").appendingPathComponent($0) }))
                     .frame(width: 44, height: 44)
                     .cornerRadius(7)
                 VStack(alignment: .leading, spacing: 5) {
@@ -356,7 +356,7 @@ extension RunnerListsView.RunnerListInfo {
                     HStack {
                         Text("v\(runner.version.description)")
 
-                        if runner.primarilyAdultContent ?? false {
+                        if runner.nsfw ?? false {
                             Text("18+")
                                 .bold()
                                 .padding(.all, 2)

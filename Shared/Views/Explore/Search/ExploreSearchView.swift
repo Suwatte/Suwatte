@@ -83,7 +83,7 @@ extension ExploreView {
             if let tagLabel = tagLabel {
                 return "\(tagLabel) Titles"
             } else {
-                if let source = model.source as? DSK.LocalContentSource, source.sourceInfo.hasExplorePage ?? false {
+                if let source = model.source as? DSK.LocalContentSource, source.hasExplorePage {
                     return "Search"
                 } else {
                     return "Directory"

@@ -10,7 +10,7 @@ import Foundation
 
 extension DaisukeEngine {
     final class HostedContentSource: DaisukeContentSource {
-        var host: URL
+        private let host: URL
         required init(host: URL, info: ContentSourceInfo) {
             self.host = host
             let dateFormatter = DateFormatter()
@@ -23,7 +23,7 @@ extension DaisukeEngine {
         let decoder: JSONDecoder
 
         override func getContent(id: String) async throws -> DaisukeEngine.Structs.Content {
-            let url = URL(string: "/source/\(sourceInfo.id)/content/\(id)", relativeTo: host)
+            let url = URL(string: "/source/\(id)/content/\(id)", relativeTo: host)
 
             guard let url = url else {
                 throw DSK.Errors.NetworkErrorInvalidRequestURL
@@ -36,7 +36,7 @@ extension DaisukeEngine {
         }
 
         override func getContentChapters(contentId: String) async throws -> [DaisukeEngine.Structs.Chapter] {
-            let url = URL(string: "/source/\(sourceInfo.id)/content/\(contentId)/chapters", relativeTo: host)
+            let url = URL(string: "/source/\(id)/content/\(contentId)/chapters", relativeTo: host)
 
             guard let url = url else {
                 throw DSK.Errors.NetworkErrorInvalidRequestURL
@@ -49,7 +49,7 @@ extension DaisukeEngine {
         }
 
         override func getChapterData(contentId: String, chapterId: String) async throws -> DaisukeEngine.Structs.ChapterData {
-            let url = URL(string: "/source/\(sourceInfo.id)/content/\(contentId)/chapters/\(chapterId)", relativeTo: host)
+            let url = URL(string: "/source/\(id)/content/\(contentId)/chapters/\(chapterId)", relativeTo: host)
 
             guard let url = url else {
                 throw DSK.Errors.NetworkErrorInvalidRequestURL
@@ -82,7 +82,7 @@ extension DaisukeEngine {
         }
 
         override func getSearchResults(query: DaisukeEngine.Structs.SearchRequest) async throws -> DaisukeEngine.Structs.PagedResult {
-            let url = URL(string: "/source/\(sourceInfo.id)/search", relativeTo: host)
+            let url = URL(string: "/source/\(id)/search", relativeTo: host)
 
             guard let url = url else {
                 throw DSK.Errors.NetworkErrorInvalidRequestURL
@@ -96,7 +96,7 @@ extension DaisukeEngine {
         }
 
         override func getSearchFilters() async throws -> [DaisukeEngine.Structs.Filter] {
-            let url = URL(string: "/source/\(sourceInfo.id)/filters", relativeTo: host)
+            let url = URL(string: "/source/\(id)/filters", relativeTo: host)
 
             guard let url = url else {
                 throw DSK.Errors.NetworkErrorInvalidRequestURL
@@ -109,7 +109,7 @@ extension DaisukeEngine {
         }
 
         override func getSearchSortOptions() async throws -> [DaisukeEngine.Structs.SortOption] {
-            let url = URL(string: "/source/\(sourceInfo.id)/sorters", relativeTo: host)
+            let url = URL(string: "/source/\(id)/sorters", relativeTo: host)
 
             guard let url = url else {
                 throw DSK.Errors.NetworkErrorInvalidRequestURL

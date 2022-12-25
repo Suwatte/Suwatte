@@ -12,16 +12,6 @@ protocol DaisukeInterface: Codable, Hashable, Identifiable {}
 
 protocol DaisukeRunnerProtocol {
     var runnerClass: JSValue { get }
-    var info: DaisukeRunnerInfoProtocol { get }
-    var runnerType: DaisukeEngine.RunnerType { get }
-}
-
-protocol DaisukeRunnerInfoProtocol: Parsable {
-    var id: String { get }
-    var name: String { get }
-    var version: Double { get }
-    var authors: [String]? { get }
-    var minSupportedAppVersion: String? { get }
 }
 
 extension DaisukeEngine {
@@ -45,41 +35,30 @@ protocol DSKCSBase {
     var id: String { get }
 }
 
-struct ContentSourceInfo: DaisukeRunnerInfoProtocol, Codable {
+struct ContentSourceInfo: Codable, Parsable {
     var id: String
     var name: String
     var version: Double
     var authors: [String]?
-
     var minSupportedAppVersion: String?
     var website: String
     var supportedLanguages: [String]
-    var VXI: String?
-
-    var hasExplorePage: Bool?
     var thumbnail: String?
-
-    var authMethod: DSKCommon.AuthMethod?
-    var contentSync: Bool?
-
-    var canSync: Bool {
-        authMethod != nil && contentSync != nil && contentSync!
-    }
 }
 
 class DaisukeContentSource: DSKCSBase, ObservableObject, Identifiable, Equatable {
-    var sourceInfo: ContentSourceInfo
+    var info: ContentSourceInfo
 
     var id: String {
-        sourceInfo.id
+        info.id
     }
 
     var name: String {
-        sourceInfo.name
+        info.name
     }
 
     var version: Double {
-        sourceInfo.version
+        info.version
     }
 
     static func == (lhs: DaisukeContentSource, rhs: DaisukeContentSource) -> Bool {
@@ -87,7 +66,7 @@ class DaisukeContentSource: DSKCSBase, ObservableObject, Identifiable, Equatable
     }
 
     init(info: ContentSourceInfo) {
-        sourceInfo = info
+        self.info = info
     }
 
     func getContent(id _: String) async throws -> DaisukeEngine.Structs.Content {

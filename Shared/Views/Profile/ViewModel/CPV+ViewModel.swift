@@ -359,7 +359,7 @@ extension ProfileView.ViewModel {
     private func handleReadMarkers() async throws {
         guard let source = source as? DSK.LocalContentSource else { return }
         // Check if Syncable
-        if !source.sourceInfo.canSync { return }
+        if !source.canSyncUserLibrary { return }
         let user = try? await source.getAuthenticatedUser()
 
         guard let _ = user else { return }

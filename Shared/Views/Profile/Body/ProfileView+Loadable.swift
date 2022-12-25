@@ -55,7 +55,7 @@ extension ProfileView {
 
                          .toolbar {
                              ToolbarItemGroup(placement: .navigationBarTrailing) {
-                                 if (viewModel.source as? DSK.LocalContentSource)?.sourceInfo.canSync ?? false {
+                                 if (viewModel.source as? DSK.LocalContentSource)?.canSyncUserLibrary ?? false {
                                      SyncView()
                                          .transition(.opacity)
                                  }

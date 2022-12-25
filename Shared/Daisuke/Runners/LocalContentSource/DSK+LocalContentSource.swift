@@ -11,20 +11,25 @@ import JavaScriptCore
 
 extension DaisukeEngine {
     final class LocalContentSource: DaisukeContentSource, DaisukeRunnerProtocol {
-        var info: DaisukeRunnerInfoProtocol
+        
+        @Published var user: DSKCommon.User?
+        @Published var authMethod: DSKCommon.AuthMethod?
+        
         internal var runnerClass: JSValue
-        var runnerType: DaisukeEngine.RunnerType = .CONTENT_SOURCE
         required init(runnerClass: JSValue) throws {
             self.runnerClass = runnerClass
-
             guard let dictionary = runnerClass.forProperty("info") else {
                 throw Errors.RunnerInfoInitFailed
             }
-
-            // TODO: WTF IS THIS???
-            let i = try ContentSourceInfo(value: dictionary)
-            info = i
-            super.init(info: i)
+            super.init(info: try ContentSourceInfo(value: dictionary))
+            setupAuthentication()
+        }
+        
+        private func setupAuthentication() {
+            Task {
+                self.user = try? await getAuthenticatedUser()
+                self.authMethod = try? await getAuthenticationMethod()
+            }
         }
 
         override func getContent(id: String) async throws -> DaisukeEngine.Structs.Content {
@@ -200,5 +205,16 @@ extension DaisukeEngine.LocalContentSource {
             DataManager.shared.setStoreValue(for: id, key: pref.key, value: pref.defaultValue)
         }
         Logger.shared.log("[\(id)] Registered Default Preferences")
+    }
+}
+
+
+extension DaisukeEngine.LocalContentSource {
+    var canSyncUserLibrary: Bool {
+        methodExists(method: "syncUserLibrary")
+    }
+    
+    var hasExplorePage: Bool {
+        methodExists(method: "createExploreCollections")
     }
 }

@@ -35,5 +35,6 @@ struct ContentView: View {
             }
         }
         .environmentObject(toaster)
+        .environmentObject(DaisukeEngine.shared)
     }
 }

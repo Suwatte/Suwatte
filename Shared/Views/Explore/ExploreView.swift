@@ -17,7 +17,7 @@ struct ExploreView: View {
     @StateObject var model = ViewModel()
     var body: some View {
         Group {
-            if source.sourceInfo.hasExplorePage ?? false {
+            if hasExplorePage {
                 ExploreCollectioViewRepresentable()
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
@@ -34,6 +34,13 @@ struct ExploreView: View {
         .environmentObject(model)
         .environmentObject(source)
         .modifier(InteractableContainer(selection: $model.selection))
+    }
+    
+    var hasExplorePage: Bool {
+        if let source = source as? DaisukeEngine.LocalContentSource {
+            return source.hasExplorePage
+        }
+        return false
     }
 }
 
