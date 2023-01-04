@@ -67,6 +67,7 @@ extension VerticalViewer {
             collectionNode.view.addGestureRecognizer(doubleTapGR)
             collectionNode.view.addGestureRecognizer(tapGR)
             collectionNode.view.contentInsetAdjustmentBehavior = .never
+            collectionNode.view.scrollsToTop = false
         }
 
         @objc func appMovedToBackground() {
