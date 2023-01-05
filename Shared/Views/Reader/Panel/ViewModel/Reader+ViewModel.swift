@@ -344,10 +344,6 @@ extension ReaderView.ViewModel {
         if let chapter = chapterCache[page.chapterId], canMark(sourceId: chapter.chapter.sourceId) {
             DataManager.shared.setProgress(from: chapter)
         }
-
-        // Update Entry Last Read
-        let id = ContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId).id
-        DataManager.shared.updateLastRead(forId: id)
     }
 
     private func handleTransition(transition: ReaderView.Transition) {
@@ -397,8 +393,9 @@ extension ReaderView.ViewModel {
             return
         }
 
-        // Mark As Completed
-        DataManager.shared.setProgress(chapter: lastChapter.chapter)
+        // Mark As Completed & Update Unread Count
+        DataManager.shared.setProgress(chapter: lastChapter.chapter, completed: true)
+        DataManager.shared.updateUnreadCount(for: .init(contentId: lastChapter.chapter.contentId, sourceId: lastChapter.chapter.sourceId))
 
         // Anilist Sync
         handleTrackerSync(number: lastChapter.chapter.number,

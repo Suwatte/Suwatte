@@ -63,8 +63,8 @@ enum STTKeys {
     static var TimeoutDuration = "LOCAL_AUTH.timeout"
 
     static var ShowOnlyDownloadedTitles = "LIBRARY.download_only"
-    static var ShowUpdateBadges = "LIBRARY.update_badges"
-
+    static let LibraryShowBadges = "LIBRARY.badges"
+    static let LibraryBadgeType = "LIBRARY.badge_type"
     static var ShowNavigationOverlay = "READER.display_overlay"
 
     static var anilistAccessToken = "ANILIST.ACCESS_TOKEN"

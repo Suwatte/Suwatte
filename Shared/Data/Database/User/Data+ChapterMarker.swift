@@ -66,7 +66,11 @@ extension DataManager {
                 realm.create(ChapterMarker.self, value: object, update: .modified)
             }
         }
-
+        
+        let identifiers = chapters
+            .map({ ContentIdentifier(contentId: $0.contentId, sourceId: $0.sourceId) })
+            .distinct()
+        identifiers.forEach { updateUnreadCount(for: $0, realm) }
         notifySourceOfMarkState(chapters: chapters, completed: completed)
     }
 
@@ -141,6 +145,7 @@ extension DataManager {
                 if completed {
                     target.totalPageCount = 0
                     target.lastPageRead = 0
+                    target.lastPageOffset = nil
                 }
                 realm.add(target, update: .modified)
             }

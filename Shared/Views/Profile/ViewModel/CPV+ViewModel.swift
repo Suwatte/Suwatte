@@ -155,6 +155,7 @@ extension ProfileView.ViewModel {
             try await Task.sleep(seconds: 0.5)
             await handleSync()
             try await handleAnilistSync()
+            DataManager.shared.updateUnreadCount(for: sttIdentifier())
         }
         Task {
             DataManager.shared.clearUpdates(id: sttIdentifier().id)

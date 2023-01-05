@@ -59,6 +59,8 @@ final class LibraryEntry: Object, ObjectKeyIdentifiable {
     @Persisted var collections = List<String>()
     @Persisted var flag = LibraryFlag.unknown
     @Persisted var linkedHasUpdates = false
+    
+    @Persisted var unreadCount: Int
 }
 
 extension DataManager {
@@ -129,12 +131,14 @@ extension DataManager {
         }
 
         // Add To library
+        let unread = getUnreadCount(for: .init(contentId: content.contentId, sourceId: content.sourceId), realm)
         try! realm.safeWrite {
             let obj = LibraryEntry()
             obj.content = content
             // Update Dates
             obj.lastRead = Date()
             obj.lastOpened = Date()
+            obj.unreadCount = unread
             realm.add(obj, update: .modified)
         }
 
@@ -251,6 +255,44 @@ extension DataManager {
 
         let date = UserDefaults.standard.object(forKey: STTKeys.LastFetchedUpdates) as! Date
         // Filter out titles that may have been recently added
-        return realm.objects(LibraryEntry.self).filter { $0.dateAdded < date && $0.content?.sourceId == sourceId && $0.content?.status == .ONGOING }
+        return realm.objects(LibraryEntry.self)
+            .filter { $0.dateAdded < date && $0.content?.sourceId == sourceId && $0.content?.status == .ONGOING }
+    }
+    
+    func getUnreadCount(for id: ContentIdentifier, _ realm: Realm? = nil) -> Int {
+        let realm = try! realm ?? Realm()
+        // Get Read Count
+        let read = realm
+            .objects(ChapterMarker.self)
+            .where({ $0.chapter.contentId == id.contentId })
+            .where({ $0.chapter.sourceId == id.sourceId })
+            .where({ $0.completed == true })
+            .distinct(by: [\.chapter?.number])
+            .count
+        // Get Total Chapter Count
+        let total = realm
+            .objects(StoredChapter.self)
+            .where({ $0.contentId == id.contentId })
+            .where({ $0.sourceId == id.sourceId })
+            .distinct(by: [\.number])
+            .count
+        return total - read
+    }
+    
+    func updateUnreadCount(for id: ContentIdentifier, _ realm: Realm? = nil) {
+        let realm = try! realm ?? Realm()
+        
+        let target = realm
+            .objects(LibraryEntry.self)
+            .where({ $0.content.contentId == id.contentId })
+            .where({ $0.content.sourceId == id.sourceId })
+            .first
+        
+        guard let target else { return }
+        
+        let count = getUnreadCount(for: id, realm)
+        try! realm.safeWrite {
+            target.unreadCount = count
+        }
     }
 }

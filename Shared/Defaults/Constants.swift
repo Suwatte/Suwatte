@@ -25,7 +25,6 @@ let STTUserDefaults: [String: Any] = [
     STTKeys.ForceTransition: true,
     STTKeys.TapSidesToNavigate: true,
     STTKeys.ImageInteractions: true,
-    STTKeys.ShowUpdateBadges: true,
     STTKeys.ShowOnlyDownloadedTitles: false,
     STTKeys.LastFetchedUpdates: Date.distantPast,
     STTKeys.TileStyle: TileStyle.SEPARATED.rawValue,
@@ -40,8 +39,8 @@ let STTUserDefaults: [String: Any] = [
     STTKeys.DefaultUserAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0"
 ]
 
-let SCHEMA_VERSION = 1
-let STT_BRIDGE_VERSION = "1.2.3"
+let SCHEMA_VERSION = 2
+let STT_BRIDGE_VERSION = "1.2.4"
 
 let KEY_WINDOW = UIApplication
     .shared

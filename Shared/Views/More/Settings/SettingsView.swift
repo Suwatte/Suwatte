@@ -154,20 +154,18 @@ extension SettingsView {
     }
 }
 
-extension SettingsView {
-    enum SkipCondition:  Int, CaseIterable, Identifiable {
-        case INVALID_FLAG, NO_MARKERS, HAS_UNREAD
-        
-        var description: String {
-            switch self {
-                case .HAS_UNREAD: return "Has Unread Chapters"
-                case .INVALID_FLAG: return "Flag Not Set to 'Reading'"
-                case .NO_MARKERS: return "Not Started"
-            }
+enum SkipCondition:  Int, CaseIterable, Identifiable {
+    case INVALID_FLAG, NO_MARKERS, HAS_UNREAD
+    
+    var description: String {
+        switch self {
+            case .HAS_UNREAD: return "Has Unread Chapters"
+            case .INVALID_FLAG: return "Flag Not Set to 'Reading'"
+            case .NO_MARKERS: return "Not Started"
         }
-        
-        var id: Int {
-            rawValue
-        }
+    }
+    
+    var id: Int {
+        rawValue
     }
 }
