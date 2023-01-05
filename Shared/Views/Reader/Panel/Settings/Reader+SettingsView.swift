@@ -34,7 +34,7 @@ extension ReaderView {
         @Preference(\.isDoublePagedEnabled) var isDoublePaged
         @Preference(\.invertTapSidesToNavigate) var invertTapSidesToNavigate
         @Preference(\.VerticalPagePadding) var verticalPagePadding
-        private let range: ClosedRange<Double> = 5 ... 30
+        private let range: ClosedRange<Double> = 2.5 ... 30
 
         var body: some View {
             Form {

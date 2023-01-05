@@ -53,6 +53,7 @@ extension VerticalViewer {
             listen()
             navigationController?.delegate = zoomTransitionDelegate
             navigationController?.isNavigationBarHidden = true
+            navigationController?.isToolbarHidden = true
 
             collectionNode.isPagingEnabled = false
             collectionNode.showsVerticalScrollIndicator = false

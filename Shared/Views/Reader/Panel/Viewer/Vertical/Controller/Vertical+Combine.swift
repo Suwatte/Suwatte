@@ -127,7 +127,7 @@ extension Controller {
                 if timer != nil {
                     cancelAutoScroll()
                 } else {
-                    timer = Timer.scheduledTimer(timeInterval: 1.01, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
+                    timer = Timer.scheduledTimer(timeInterval: 0.15, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
                     model.autoplayEnabled = true
                 }
             }
@@ -138,10 +138,10 @@ extension Controller {
 extension Controller {
     @objc func timerAction() {
         DispatchQueue.main.async {
-            let amount = UIScreen.main.bounds.height / Preferences.standard.verticalAutoScrollSpeed
+            let amount = (UIScreen.main.bounds.height / Preferences.standard.verticalAutoScrollSpeed) * 0.15
             let offset = min(self.collectionNode.contentOffset.y + amount, self.contentSize.height - UIScreen.main.bounds.height)
 
-            UIView.animate(withDuration: 1.0, delay: 0, options: [.curveLinear, .allowUserInteraction]) {
+            UIView.animate(withDuration: 0.151, delay: 0, options: [.curveLinear, .allowUserInteraction]) {
                 self.collectionNode.contentOffset.y = offset
             } completion: { c in
                 if !c { return }
