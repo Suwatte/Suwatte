@@ -6,7 +6,6 @@
 //
 
 import Kingfisher
-import Nuke
 import SwiftUI
 
 // MARK: Protocols

@@ -27,13 +27,17 @@ import WebKit
 
 extension DaisukeEngine {
     @objc class NetworkClient: JSObject, DaisukeNetworkClientProtocol {
-        var session: Alamofire.Session = .default
-
+        lazy var session: Alamofire.Session = {
+            let configuration = URLSessionConfiguration.af.default
+            configuration.headers.add(.userAgent(Preferences.standard.userAgent))
+            return .init(configuration: configuration)
+        }()
         typealias Request = DSKCommon.Request
         typealias Response = DSKCommon.Response
         typealias RequestConfig = DSKCommon.RequestConfig
         var requestInterceptHandler: JSValue?
         var responseInterceptHandler: JSValue?
+        
 
         func _request(_ request: JSValue) -> JSValue {
             .init(newPromiseIn: request.context) { [self] resolve, reject in

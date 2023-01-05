@@ -107,11 +107,15 @@ struct MultiSelectionView<A: RandomAccessCollection, Content: View>: View where 
 
                         if selected.contains(where: { $0.id == selectable.id }) {
                             Image(systemName: "checkmark").foregroundColor(.accentColor)
+                                .transition(.opacity)
                         }
                     }
-                }.tag(selectable.id)
+                    .contentShape(Rectangle())
+                }
+                .tag(selectable.id)
             }
         }
+        .animation(.default, value: selected)
     }
 
     private func toggleSelection(selectable: A.Element) {

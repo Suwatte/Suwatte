@@ -98,6 +98,9 @@ final class Preferences {
 
     @UserDefault(STTKeys.VerticalAutoScrollSpeed)
     var verticalAutoScrollSpeed: Double = 16
+    
+    @UserDefault(STTKeys.DefaultUserAgent)
+    var userAgent = "Suwatte iOS Client V\(Bundle.main.releaseVersionNumberPretty)"
 }
 
 @propertyWrapper

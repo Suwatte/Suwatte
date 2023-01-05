@@ -79,7 +79,7 @@ extension CloudFlareErrorView {
             let webConfiguration = WKWebViewConfiguration()
 
             webView = WKWebView(frame: view.bounds, configuration: webConfiguration)
-            webView.customUserAgent = STT_USER_AGENT
+            webView.customUserAgent = Preferences.standard.userAgent
             webView.uiDelegate = self
             webView.navigationDelegate = self
             view.addSubview(webView)

@@ -80,7 +80,7 @@ extension DaisukeEngine {
             let checkLinked = UserDefaults.standard.bool(forKey: STTKeys.CheckLinkedOnUpdateCheck)
             var linkedHasUpdate = false
             if checkLinked {
-                var lowerChapterLimit = filtered?.sorted(by: { $0.number < $1.number }).last?.number ?? lastFetched?.number
+                let lowerChapterLimit = filtered?.sorted(by: { $0.number < $1.number }).last?.number ?? lastFetched?.number
                 linkedHasUpdate = await linkedHasUpdates(id: entry._id, lowerChapterLimit: lowerChapterLimit)
                 if linkedHasUpdate, updates == 0 { updates += 1 }
             }

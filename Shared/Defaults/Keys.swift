@@ -112,4 +112,8 @@ enum STTKeys {
     static var LastAutoBackup = "APP.last_auto_backup"
 
     static var CheckLinkedOnUpdateCheck = "APP.check_linked_on_update_check"
+    static let BlurWhenAppSwiching = "APP.blur_while_switching"
+    static let DefaultUserAgent = "UserAgent"
+    static let UpdateContentData = "APP.update_content_data"
+    static let UpdateSkipConditions = "APP.update_skip_conditions"
 }
