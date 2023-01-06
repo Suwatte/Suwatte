@@ -23,6 +23,9 @@
 		DF13892828BEA0450035BDBB /* Explore+Representable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF13892728BEA0450035BDBB /* Explore+Representable.swift */; };
 		DF15F590296621C30085DB1F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF15F58F296621C30085DB1F /* SettingsView.swift */; };
 		DF15F59229677DEF0085DB1F /* FCS+Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF15F59129677DEF0085DB1F /* FCS+Options.swift */; };
+		DF15F5952967D3DD0085DB1F /* UIHostingConfigurationBackport in Frameworks */ = {isa = PBXBuildFile; productRef = DF15F5942967D3DD0085DB1F /* UIHostingConfigurationBackport */; };
+		DF15F5982967D4E80085DB1F /* SwiftUIBackports in Frameworks */ = {isa = PBXBuildFile; productRef = DF15F5972967D4E80085DB1F /* SwiftUIBackports */; };
+		DF15F59B2967DF790085DB1F /* SkeletonView in Frameworks */ = {isa = PBXBuildFile; productRef = DF15F59A2967DF790085DB1F /* SkeletonView */; };
 		DF1FD5C2284B31AB00A67F0E /* DoublePaged+Representable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1FD5C1284B31AB00A67F0E /* DoublePaged+Representable.swift */; };
 		DF1FD5C4284B31BC00A67F0E /* DoublePaged+Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1FD5C3284B31BC00A67F0E /* DoublePaged+Controller.swift */; };
 		DF1FD5C6284B408900A67F0E /* DoublePaged+StackedImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1FD5C5284B408900A67F0E /* DoublePaged+StackedImageCell.swift */; };
@@ -618,6 +621,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DF15F5982967D4E80085DB1F /* SwiftUIBackports in Frameworks */,
+				DF15F59B2967DF790085DB1F /* SkeletonView in Frameworks */,
 				DF47DDE128B5608D00D779E5 /* PartialSheet in Frameworks */,
 				DF59C988285054670027F19D /* Unrar in Frameworks */,
 				DF248F0C2813844C00818300 /* KeychainSwift in Frameworks */,
@@ -626,6 +631,7 @@
 				DFB47EF12880C0B30040A1BD /* R2Shared in Frameworks */,
 				DFB47EF32880C0B30040A1BD /* ReadiumOPDS in Frameworks */,
 				DF36E6D0285D08D700FB8B67 /* BetterSafariView in Frameworks */,
+				DF15F5952967D3DD0085DB1F /* UIHostingConfigurationBackport in Frameworks */,
 				DF730CD329411F1B00C62C71 /* FlagKit in Frameworks */,
 				DFAEE12528B839E500B11484 /* Nuke in Frameworks */,
 				DF52FBBA28947031008FAD3A /* ASCollectionView in Frameworks */,
@@ -1922,6 +1928,9 @@
 				DFAEE12828B839E500B11484 /* NukeUI */,
 				DF730CD229411F1B00C62C71 /* FlagKit */,
 				DF482F002955A56F002D3308 /* RealmSwift */,
+				DF15F5942967D3DD0085DB1F /* UIHostingConfigurationBackport */,
+				DF15F5972967D4E80085DB1F /* SwiftUIBackports */,
+				DF15F59A2967DF790085DB1F /* SkeletonView */,
 			);
 			productName = "Suwatte (iOS)";
 			productReference = DFCE6EAF280108EA002E220C /* Suwatte.app */;
@@ -1966,6 +1975,9 @@
 				DF47DDDF28B5608C00D779E5 /* XCRemoteSwiftPackageReference "PartialSheet" */,
 				DFAEE12328B839E500B11484 /* XCRemoteSwiftPackageReference "Nuke" */,
 				DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit" */,
+				DF15F5932967D3DD0085DB1F /* XCRemoteSwiftPackageReference "UIHostingConfigurationBackport" */,
+				DF15F5962967D4E70085DB1F /* XCRemoteSwiftPackageReference "SwiftUIBackports" */,
+				DF15F5992967DF780085DB1F /* XCRemoteSwiftPackageReference "SkeletonView" */,
 			);
 			productRefGroup = DF2DA6FF27CD82430046FE20;
 			projectDirPath = "";
@@ -2565,6 +2577,30 @@
 				kind = branch;
 			};
 		};
+		DF15F5932967D3DD0085DB1F /* XCRemoteSwiftPackageReference "UIHostingConfigurationBackport" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/woxtu/UIHostingConfigurationBackport.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.0;
+			};
+		};
+		DF15F5962967D4E70085DB1F /* XCRemoteSwiftPackageReference "SwiftUIBackports" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/shaps80/SwiftUIBackports";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		DF15F5992967DF780085DB1F /* XCRemoteSwiftPackageReference "SkeletonView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Juanpe/SkeletonView";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
@@ -2676,6 +2712,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = Realm;
+		};
+		DF15F5942967D3DD0085DB1F /* UIHostingConfigurationBackport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF15F5932967D3DD0085DB1F /* XCRemoteSwiftPackageReference "UIHostingConfigurationBackport" */;
+			productName = UIHostingConfigurationBackport;
+		};
+		DF15F5972967D4E80085DB1F /* SwiftUIBackports */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF15F5962967D4E70085DB1F /* XCRemoteSwiftPackageReference "SwiftUIBackports" */;
+			productName = SwiftUIBackports;
+		};
+		DF15F59A2967DF790085DB1F /* SkeletonView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF15F5992967DF780085DB1F /* XCRemoteSwiftPackageReference "SkeletonView" */;
+			productName = SkeletonView;
 		};
 		DF248F0B2813844C00818300 /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;

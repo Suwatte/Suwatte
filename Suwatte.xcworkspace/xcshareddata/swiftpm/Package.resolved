@@ -145,6 +145,15 @@
       }
     },
     {
+      "identity" : "skeletonview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Juanpe/SkeletonView",
+      "state" : {
+        "revision" : "739a4f5d78731bebc48811c75fa9e1f4c4cef23e",
+        "version" : "1.30.4"
+      }
+    },
+    {
       "identity" : "sqlite.swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/stephencelis/SQLite.swift.git",
@@ -169,6 +178,24 @@
       "state" : {
         "revision" : "6778575285177365cbad3e5b8a72f2a20583cfec",
         "version" : "2.4.3"
+      }
+    },
+    {
+      "identity" : "swiftuibackports",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/shaps80/SwiftUIBackports",
+      "state" : {
+        "branch" : "main",
+        "revision" : "e539750cf1befdc022d9d6e0c241407717786333"
+      }
+    },
+    {
+      "identity" : "uihostingconfigurationbackport",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/woxtu/UIHostingConfigurationBackport.git",
+      "state" : {
+        "revision" : "6091f2d38faa4b24fc2ca0389c651e2f666624a3",
+        "version" : "0.1.0"
       }
     },
     {

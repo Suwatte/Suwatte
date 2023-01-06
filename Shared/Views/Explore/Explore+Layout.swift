@@ -25,9 +25,8 @@ extension ExploreCollectionsController {
 
         let section = NSCollectionLayoutSection(group: itemsGroup)
         section.interGroupSpacing = 0
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 7, leading: 20, bottom: 5, trailing: 20)
         section.orthogonalScrollingBehavior = .none
-        //        section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
         section.boundarySupplementaryItems = [.init(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(50)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)]
         return section
     }
@@ -52,10 +51,8 @@ extension ExploreCollectionsController {
 
         let section = NSCollectionLayoutSection(group: itemsGroup)
         section.interGroupSpacing = 10
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 7, leading: 20, bottom: 5, trailing: 20)
         section.orthogonalScrollingBehavior = .groupPaging
-        section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
-
         let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(50)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
         section.boundarySupplementaryItems = [supp]
         return section
@@ -79,10 +76,8 @@ extension ExploreCollectionsController {
         //            itemsGroup.interItemSpacing = .fixed(10)
         let section = NSCollectionLayoutSection(group: itemsGroup)
         section.interGroupSpacing = 7
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 7, leading: 20, bottom: 5, trailing: 20)
         section.orthogonalScrollingBehavior = .continuous
-        section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
-
         let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(50)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
         section.boundarySupplementaryItems = [supp]
 
@@ -108,9 +103,8 @@ extension ExploreCollectionsController {
         itemsGroup.edgeSpacing = .init(leading: .none, top: .none, trailing: .none, bottom: .fixed(10))
         let section = NSCollectionLayoutSection(group: itemsGroup)
         section.interGroupSpacing = 7
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 7, leading: 20, bottom: 5, trailing: 20)
         section.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
-        section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
         let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(50)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
         section.boundarySupplementaryItems = [supp]
         return section
@@ -136,9 +130,8 @@ extension ExploreCollectionsController {
 
         let section = NSCollectionLayoutSection(group: itemsGroup)
         section.interGroupSpacing = 10
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 7, leading: 20, bottom: 5, trailing: 20)
         section.orthogonalScrollingBehavior = .none
-        section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
         let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(50)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
         section.boundarySupplementaryItems = [supp]
         return section
@@ -163,9 +156,8 @@ extension ExploreCollectionsController {
         itemsGroup.interItemSpacing = .fixed(10)
         let section = NSCollectionLayoutSection(group: itemsGroup)
         section.interGroupSpacing = 10
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 7, leading: 20, bottom: 5, trailing: 20)
         section.orthogonalScrollingBehavior = .groupPaging
-        section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
         let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(50)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
         section.boundarySupplementaryItems = [supp]
         return section
