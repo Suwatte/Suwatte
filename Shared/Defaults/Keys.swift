@@ -116,4 +116,6 @@ enum STTKeys {
     static let DefaultUserAgent = "UserAgent"
     static let UpdateContentData = "APP.update_content_data"
     static let UpdateSkipConditions = "APP.update_skip_conditions"
+    static let FilteredProviders = "CONTENT.filtered_providers"
+    static let FilteredLanguages = "CONTENT.filtered_langauges"
 }
