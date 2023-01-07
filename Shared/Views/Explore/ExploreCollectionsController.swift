@@ -21,12 +21,7 @@ final class ExploreCollectionsController: UICollectionViewController {
     var snapshot = Snapshot()
     var model: ExploreView.ViewModel!
     var TAG_SECTION_ID = UUID().uuidString
-    var libraryResultNotificationToken: NotificationToken?
-    var readLaterResultNoticationToken: NotificationToken?
     let refreshControl = UIRefreshControl()
-    var deletedRLIds: [String] = []
-    var library: Results<LibraryEntry>?
-    var savedForLater: Results<ReadLater>?
     var tasks = [Task<Void, Never>?]()
     
     
@@ -42,10 +37,6 @@ final class ExploreCollectionsController: UICollectionViewController {
             task?.cancel()
         }
         tasks.removeAll()
-        libraryResultNotificationToken?.invalidate()
-        readLaterResultNoticationToken?.invalidate()
-        library = nil
-        savedForLater = nil
         if let tileStyleObserver = tileStyleObserver {
             NotificationCenter.default.removeObserver(tileStyleObserver)
         }
@@ -55,112 +46,6 @@ final class ExploreCollectionsController: UICollectionViewController {
     
     deinit {
         Logger.shared.debug("ExploreViewController Deallocated")
-    }
-    
-    func listenToQueries() {
-        let realm = try! Realm()
-        
-        // Library
-        library = realm
-            .objects(LibraryEntry.self)
-            .where { $0.content.sourceId == self.source.id }
-        
-        libraryResultNotificationToken = library?.observe { change in
-            switch change {
-                case let .initial(results):
-                    let ids = results
-                        .compactMap { $0.content?.contentId }
-                    let toUpdate = self
-                        .snapshot
-                        .itemIdentifiers
-                        .filter { object in
-                            let tile = object as? DSKCommon.Highlight
-                            guard let tile = tile else {
-                                return false
-                            }
-                            
-                            return ids.contains(tile.id)
-                        }
-                    self.snapshot.reconfigureItems(toUpdate)
-                    self.DATA_SOURCE.apply(self.snapshot, animatingDifferences: false, completion: nil)
-                    self.deletedRLIds.removeAll()
-                    
-                case .update(let results, deletions: _, insertions: let insertions, modifications: let modificaitons):
-                    var updatedIds = insertions.compactMap { results[$0].content?.contentId }
-                    updatedIds.append(contentsOf: modificaitons.compactMap { results[$0].content?.contentId })
-                    let toUpdate = self
-                        .snapshot
-                        .itemIdentifiers
-                        .filter { object in
-                            let tile = object as? DSKCommon.Highlight
-                            guard let tile = tile else {
-                                return false
-                            }
-                            
-                            return updatedIds.contains(tile.id)
-                        }
-                    self.snapshot.reconfigureItems(toUpdate)
-                    self.DATA_SOURCE.apply(self.snapshot, animatingDifferences: false, completion: nil)
-                    self.deletedRLIds.removeAll()
-                    
-                default: break
-            }
-        }
-        // Saved For Later
-        savedForLater = realm
-            .objects(ReadLater.self)
-            .where { $0.content.sourceId == self.source.id }
-        
-        readLaterResultNoticationToken = savedForLater?.observe { change in
-            switch change {
-                case let .initial(results):
-                    let ids = results
-                        .compactMap { $0.content?.contentId }
-                    let toUpdate = self
-                        .snapshot
-                        .itemIdentifiers
-                        .filter { object in
-                            let tile = object as? DSKCommon.Highlight
-                            guard let tile = tile else {
-                                return false
-                            }
-                            
-                            return ids.contains(tile.id)
-                        }
-                    self.snapshot.reconfigureItems(toUpdate)
-                    self.DATA_SOURCE.apply(self.snapshot, animatingDifferences: false, completion: nil)
-                    self.deletedRLIds.removeAll()
-                case .update(let results, deletions: _, insertions: let insertions, modifications: let modificaitons):
-                    var updatedIds = insertions.compactMap { results[$0].content?.contentId }
-                    updatedIds.append(contentsOf: self.deletedRLIds)
-                    updatedIds.append(contentsOf: modificaitons.compactMap { results[$0].content?.contentId })
-                    let toUpdate = self
-                        .snapshot
-                        .itemIdentifiers
-                        .filter { object in
-                            let tile = object as? DSKCommon.Highlight
-                            guard let tile = tile else {
-                                return false
-                            }
-                            
-                            return updatedIds.contains(tile.id)
-                        }
-                    self.snapshot.reconfigureItems(toUpdate)
-                    self.DATA_SOURCE.apply(self.snapshot, animatingDifferences: false, completion: nil)
-                    self.deletedRLIds.removeAll()
-                default: break
-            }
-        }
-    }
-    
-    func inLibrary(_ entry: DSKCommon.Highlight) -> Bool {
-        library?
-            .contains(where: { $0.content?.sourceId == source.id && $0.content?.contentId == entry.id }) ?? false
-    }
-    
-    func savedForLater(_ entry: DSKCommon.Highlight) -> Bool {
-        savedForLater?
-            .contains(where: { $0.content?.sourceId == source.id && $0.content?.contentId == entry.id }) ?? false
     }
     
     // MARK: DataSource
@@ -187,8 +72,6 @@ final class ExploreCollectionsController: UICollectionViewController {
             }
             // Content Cell
             if let data = item as? DSKCommon.Highlight {
-                let isInLibrary = inLibrary(data)
-                let isSavedForLater = savedForLater(data)
                 let sourceId = source.id
                 let excerpt = snapshot.sectionIdentifiers.get(index: indexPath.section) as? CollectionExcerpt
                 guard let excerpt else { fatalError("excerpt not found") }
@@ -198,34 +81,7 @@ final class ExploreCollectionsController: UICollectionViewController {
                 cell.backgroundColor = .clear
                 cell.contentConfiguration = nil
                 cell.contentConfiguration = UIHostingConfigurationBackport {
-                    ZStack(alignment: .topTrailing) {
-                        ExploreView.HighlightTile(entry: data, style: style, sourceId: sourceId)
-                            .onTapGesture(perform: { [weak self] in
-                                self?.model.selection = (sourceId, data)
-                            })
-                            .buttonStyle(NeutralButtonStyle())
-                            .contextMenu {
-                                Button { [weak self] in
-                                    if isSavedForLater {
-                                        self?.deletedRLIds.append(data.id)
-                                        DataManager.shared.removeFromReadLater(sourceId, content: data.id)
-                                    } else {
-                                        DataManager.shared.addToReadLater(sourceId, data.id)
-                                    }
-                                } label: {
-                                    Label(isSavedForLater ? "Remove from Read Later" : "Add to Read Later", systemImage: isSavedForLater ? "bookmark.slash" : "bookmark")
-                                }
-                            }
-                        
-                        if isInLibrary || isSavedForLater {
-                            ColoredBadge(color: isInLibrary ? .accentColor : .yellow)
-                                .transition(.opacity)
-                        }
-                    }
-                    .shimmering(active: shouldShowPlaceholder)
-                    .conditional(shouldShowPlaceholder) { view in
-                        view.redacted(reason: .placeholder)
-                    }
+                    ContentCell(data: data, style: style, sourceId: sourceId, placeholder: shouldShowPlaceholder)
                 }
                 return cell
             }
@@ -297,7 +153,6 @@ extension CTR {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        listenToQueries()
         if snapshot.sectionIdentifiers.isEmpty {
             loadTags()
             handleCollections()
@@ -401,7 +256,7 @@ extension CTR {
                 snapshot.deleteItems(toBeDeleted)
                 snapshot.appendItems(items, toSection: excerpt)
                 loadingCache[collection] = false
-
+                
                 await MainActor.run(body: { [DATA_SOURCE, snapshot] in
                     DATA_SOURCE.apply(snapshot)
                 })
@@ -509,6 +364,67 @@ extension CTR {
         var description: String
     }
     
+    struct ContentCell: View {
+        var data: DSKCommon.Highlight
+        var style: DSKCommon.CollectionStyle
+        var sourceId: String
+        var placeholder: Bool
+        @EnvironmentObject var model: ExploreView.ViewModel
+        @StateObject var manager = LocalAuthManager.shared
+        @ObservedResults(ReadLater.self) var savedForLater
+        @ObservedResults(LibraryEntry.self) var library
+
+        @Preference(\.protectContent) var protectContent
+        var body: some View {
+            ZStack(alignment: .topTrailing) {
+                ExploreView.HighlightTile(entry: data, style: style, sourceId: sourceId)
+                    .onTapGesture(perform: {
+                        model.selection = (sourceId, data)
+                    })
+                    .buttonStyle(NeutralButtonStyle())
+                    .contextMenu {
+                        Button {
+                            if readLater {
+                                DataManager.shared.removeFromReadLater(sourceId, content: data.id)
+                            } else {
+                                DataManager.shared.addToReadLater(sourceId, data.id)
+                            }
+                        } label: {
+                            Label(readLater ? "Remove from Read Later" : "Add to Read Later", systemImage: readLater ? "bookmark.slash" : "bookmark")
+                        }
+                    }
+                
+                if (inLibrary || readLater) && !shouldHide {
+                    ColoredBadge(color: inLibrary ? .accentColor : .yellow)
+                        .transition(.opacity)
+                }
+            }
+            .shimmering(active: placeholder)
+            .conditional(placeholder) { view in
+                view.redacted(reason: .placeholder)
+            }
+            
+            
+        }
+        var shouldHide: Bool {
+            protectContent && manager.isExpired
+        }
+        
+        var readLater: Bool {
+            !savedForLater
+                .where({ $0.content.sourceId == sourceId })
+                .where({ $0.content.contentId == data.contentId })
+                .isEmpty
+        }
+        
+        var inLibrary: Bool {
+            !library
+                .where({ $0.content.sourceId == sourceId })
+                .where({ $0.content.contentId == data.id })
+                .isEmpty
+        }
+    }
+    
     struct TagHeaderView: View {
         @AppStorage(STTKeys.AppAccentColor) var color = Color.sttDefault
         @EnvironmentObject var source: DaisukeContentSource
@@ -596,6 +512,7 @@ extension CTR {
             }
             .buttonStyle(NeutralButtonStyle())
             .task {
+                if loader.view != nil { return }
                 loader.animation = .default
                 loader.onSuccess = { result in
                     if let avgColor = result.image.averageColor {
