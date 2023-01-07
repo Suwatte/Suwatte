@@ -26,6 +26,7 @@
 		DF15F5952967D3DD0085DB1F /* UIHostingConfigurationBackport in Frameworks */ = {isa = PBXBuildFile; productRef = DF15F5942967D3DD0085DB1F /* UIHostingConfigurationBackport */; };
 		DF15F5982967D4E80085DB1F /* SwiftUIBackports in Frameworks */ = {isa = PBXBuildFile; productRef = DF15F5972967D4E80085DB1F /* SwiftUIBackports */; };
 		DF15F59B2967DF790085DB1F /* SkeletonView in Frameworks */ = {isa = PBXBuildFile; productRef = DF15F59A2967DF790085DB1F /* SkeletonView */; };
+		DF15F59D2969377C0085DB1F /* LCV+Download.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF15F59C2969377C0085DB1F /* LCV+Download.swift */; };
 		DF1FD5C2284B31AB00A67F0E /* DoublePaged+Representable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1FD5C1284B31AB00A67F0E /* DoublePaged+Representable.swift */; };
 		DF1FD5C4284B31BC00A67F0E /* DoublePaged+Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1FD5C3284B31BC00A67F0E /* DoublePaged+Controller.swift */; };
 		DF1FD5C6284B408900A67F0E /* DoublePaged+StackedImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1FD5C5284B408900A67F0E /* DoublePaged+StackedImageCell.swift */; };
@@ -337,6 +338,7 @@
 		DF13892728BEA0450035BDBB /* Explore+Representable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Explore+Representable.swift"; sourceTree = "<group>"; };
 		DF15F58F296621C30085DB1F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		DF15F59129677DEF0085DB1F /* FCS+Options.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FCS+Options.swift"; sourceTree = "<group>"; };
+		DF15F59C2969377C0085DB1F /* LCV+Download.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LCV+Download.swift"; sourceTree = "<group>"; };
 		DF1FD5C1284B31AB00A67F0E /* DoublePaged+Representable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DoublePaged+Representable.swift"; sourceTree = "<group>"; };
 		DF1FD5C3284B31BC00A67F0E /* DoublePaged+Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DoublePaged+Controller.swift"; sourceTree = "<group>"; };
 		DF1FD5C5284B408900A67F0E /* DoublePaged+StackedImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DoublePaged+StackedImageCell.swift"; sourceTree = "<group>"; };
@@ -864,6 +866,7 @@
 				DF59C98E28505C9F0027F19D /* LCV+Grid.swift */,
 				DFBD202828553C1B0042B4A6 /* LCV+FilterSheet.swift */,
 				DF52FBC6289C7EBA008FAD3A /* LCV+SettingsSheet.swift */,
+				DF15F59C2969377C0085DB1F /* LCV+Download.swift */,
 			);
 			path = Local;
 			sourceTree = "<group>";
@@ -2138,6 +2141,7 @@
 				DF83DD432823377C0021575B /* AnilistView+LinkerView.swift in Sources */,
 				DF6B5759288F453D007C6B78 /* DSK+Error.swift in Sources */,
 				DF6B8CA428629CCE00DD079D /* Data+ContentLink.swift in Sources */,
+				DF15F59D2969377C0085DB1F /* LCV+Download.swift in Sources */,
 				DF8D0B752800EE48003E4C3E /* LibraryGrid+OptionsSheet.swift in Sources */,
 				DF47DDDC28B5542D00D779E5 /* AV+EntryEditor.swift in Sources */,
 				DF482EFA29555C5B002D3308 /* VerticalPaged+Cell.swift in Sources */,

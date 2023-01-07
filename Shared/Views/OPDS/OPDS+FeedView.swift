@@ -10,6 +10,7 @@ import Kingfisher
 import R2Shared
 import ReadiumOPDS
 import SwiftUI
+import SwiftUIBackports
 
 extension OPDSView {
     struct LoadableFeedView: View {
@@ -137,7 +138,8 @@ extension Target {
         var itemsPerRow: Int {
             isPotrait ? PortraitPerRow : LSPerRow
         }
-
+        @State var selected: Publication?
+        @State var binded: StoredChapter?
         @State var chapter: StoredChapter?
         var body: some View {
             ASCollectionView(section: AS_SECTION)
@@ -154,24 +156,30 @@ extension Target {
                     if newOrientation.isFlat { return }
                     isPotrait = newOrientation.isPortrait
                 }
+                .sheet(item: $selected) { publication in
+                    OptionsSheet(publication: publication, chapter: $binded)
+                        .backport
+                        .presentationDetents([.medium])
+                }
+                .onChange(of: binded, perform: { newValue in
+                    selected = nil
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.150) {
+                        chapter = binded
+                    }
+                })
                 .fullScreenCover(item: $chapter) { chapter in
                     ReaderGateWay(readingMode: .PAGED_COMIC, chapterList: [chapter], openTo: chapter, title: chapter.title)
                 }
+                .animation(.default, value: chapter)
+                .animation(.default, value: binded)
+
+
         }
 
         var AS_SECTION: ASSection<Int> {
             return ASSection(id: 0, data: feed.publications) { publication, _ in
                 Button {
-                    // TODO: Check if downloaded, if so use download object instead
-                    if publication.isStreamable {
-                        do {
-                            chapter = try publication.toStoredChapter()
-                        } catch {
-                            ToastManager.shared.display(.error(error))
-                        }
-                    } else {
-                        // Open Download Dialog
-                    }
+                   selected = publication
                 } label: {
                     Tile(publication: publication)
                 }
@@ -189,6 +197,7 @@ extension Target {
         var tileStyle = TileStyle.SEPARATED
         @EnvironmentObject var client: OPDSClient
         @StateObject private var image = FetchImage()
+        @AppStorage(STTKeys.AppAccentColor) var color: Color = .sttDefault
         var request: URLRequest? {
             var headers = HTTPHeaders()
 
@@ -203,13 +212,23 @@ extension Target {
                 let imageWidth = proxy.size.width
                 let imageHeight = imageWidth * 1.5
                 VStack(alignment: .leading, spacing: 5) {
-                    image.view?
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .clipped()
-                        .frame(width: imageWidth, height: imageHeight)
-                        .background(Color.fadedPrimary)
-                        .cornerRadius(7)
+                    Group {
+                        if let view = image.view {
+                            view
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .clipped()
+                                .transition(.opacity)
+                        } else {
+                            Color.gray.opacity(0.25)
+                                .shimmering()
+                                .transition(.opacity)
+
+                        }
+                    }
+                    .frame(width: imageWidth, height: imageHeight)
+                    .background(Color.fadedPrimary)
+                    .cornerRadius(7)
 
                     VStack(alignment: .leading, spacing: 1.5) {
                         Text(STTHelpers.getComicTitle(from: publication.metadata.title))
@@ -220,18 +239,22 @@ extension Target {
                         HStack {
                             if publication.isStreamable {
                                 Image(systemName: "dot.radiowaves.up.forward")
-                                Spacer()
+                                    .foregroundColor(color)
+                                    .font(.footnote.weight(.bold))
+                                    .shimmering()
                             }
 
                             if let pages = publication.streamLink?.properties["count"] as? String ?? publication.metadata.numberOfPages?.description {
                                 Text(pages + " Pages")
+                                    .font(.footnote.weight(.thin))
+
                             }
                         }
-                        .font(.footnote.weight(.thin))
                     }
 
                     .frame(alignment: .topLeading)
                 }
+                
             }
             .onAppear {
                 if let request = request {
@@ -239,6 +262,7 @@ extension Target {
                 }
             }
             .onDisappear { image.reset() }
+            .animation(.default, value: image.view)
         }
     }
 }
@@ -277,5 +301,49 @@ extension Publication: Identifiable {
         chapter._id = UUID().uuidString
         chapter.title = metadata.title
         return chapter
+    }
+}
+
+
+extension Target.PublicationSection {
+    
+    struct OptionsSheet: View {
+        let publication: Publication
+        @Binding var chapter: StoredChapter?
+        @Environment(\.presentationMode) var presentationMode
+        @AppStorage(STTKeys.AppAccentColor) var color: Color = .sttDefault
+        @StateObject var manager: LocalContentManager = .shared
+        var body: some View {
+            NavigationView {
+                VStack {
+                    Button("Download") {
+                        
+                    }
+                    .padding(.all)
+                    .background(color)
+                    .cornerRadius(5)
+                    Button {
+                        do {
+                            chapter = try publication.toStoredChapter()
+                        } catch {
+                            ToastManager.shared.error(error)
+                        }
+                    } label: {
+                        Text("Stream")
+                            .padding(.all)
+                            .background(color)
+                            .cornerRadius(5)
+                    }
+                    .disabled(!publication.isStreamable)
+                    .buttonStyle(.plain)
+                }
+                .navigationTitle("Options")
+                .navigationBarTitleDisplayMode(.inline)
+                .closeButton(title: "Close")
+            }
+            .navigationViewStyle(.stack)
+            .animation(.default, value: chapter)
+            
+        }
     }
 }
