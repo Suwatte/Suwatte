@@ -15,8 +15,8 @@ import SkeletonView
 
 final class ExploreCollectionsController: UICollectionViewController {
     var source: DaisukeContentSource!
-    typealias Snapshot = NSDiffableDataSourceSnapshot<AnyHashable, AnyHashable>
-    typealias DataSource = UICollectionViewDiffableDataSource<AnyHashable, AnyHashable>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<AnyHashable, ContentData>
+    typealias DataSource = UICollectionViewDiffableDataSource<AnyHashable, ContentData>
     typealias CollectionExcerpt = DSKCommon.CollectionExcerpt
     var snapshot = Snapshot()
     var model: ExploreView.ViewModel!
@@ -58,7 +58,7 @@ final class ExploreCollectionsController: UICollectionViewController {
     private lazy var DATA_SOURCE: DataSource  = {
         let dataSource = DataSource(collectionView: collectionView) { [unowned self] collectionView, indexPath, item in
             // Error Cell
-            if let data = item as? Err {
+            if let data = item.content as? Err {
                 let excerpt = snapshot.sectionIdentifiers.get(index: indexPath.section) as? CollectionExcerpt
                 guard let excerpt else { fatalError("excerpt not found") }
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "errorCell", for: indexPath)
@@ -71,7 +71,7 @@ final class ExploreCollectionsController: UICollectionViewController {
                 return cell
             }
             // Content Cell
-            if let data = item as? DSKCommon.Highlight {
+            if let data = item.content as? DSKCommon.Highlight {
                 let sourceId = source.id
                 let excerpt = snapshot.sectionIdentifiers.get(index: indexPath.section) as? CollectionExcerpt
                 guard let excerpt else { fatalError("excerpt not found") }
@@ -86,7 +86,7 @@ final class ExploreCollectionsController: UICollectionViewController {
                 return cell
             }
             // Tag Cell
-            if let data = item as? DSKCommon.Tag {
+            if let data = item.content as? DSKCommon.Tag {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "tagCell", for: indexPath)
                 cell.contentConfiguration = nil
                 cell.contentConfiguration = UIHostingConfigurationBackport {
@@ -182,10 +182,10 @@ extension CTR {
             do {
                 let data = try await source.getExplorePageTags()
                 if let data {
-                    snapshot.appendItems(data, toSection: TAG_SECTION_ID)
+                    snapshot.appendItems(data.map({ .init(section: TAG_SECTION_ID, content: $0) }), toSection: TAG_SECTION_ID)
                 }
             } catch {
-                snapshot.appendItems([Err(description: error.localizedDescription)], toSection: TAG_SECTION_ID)
+                snapshot.appendItems([.init(section: TAG_SECTION_ID, content: Err(description: error.localizedDescription))], toSection: TAG_SECTION_ID)
             }
             await MainActor.run(body: {
                 DATA_SOURCE.apply(snapshot)
@@ -232,7 +232,7 @@ extension CTR {
         let toBeDeleted = snapshot.itemIdentifiers(inSection: collection)
         snapshot.deleteItems(toBeDeleted)
         loadingCache[collection] = true
-        snapshot.appendItems(DSKCommon.Highlight.placeholders(), toSection: collection)
+        snapshot.appendItems(DSKCommon.Highlight.placeholders().map({ .init(section: collection, content: $0) }), toSection: collection)
         await MainActor.run(body: { [DATA_SOURCE, snapshot] in
             DATA_SOURCE.apply(snapshot)
         })
@@ -254,7 +254,7 @@ extension CTR {
                 updateSectionExcerpt(with: excerpt)
                 let toBeDeleted = snapshot.itemIdentifiers(inSection: excerpt)
                 snapshot.deleteItems(toBeDeleted)
-                snapshot.appendItems(items, toSection: excerpt)
+                snapshot.appendItems(items.map({ .init(section: excerpt, content: $0) }), toSection: excerpt)
                 loadingCache[collection] = false
                 
                 await MainActor.run(body: { [DATA_SOURCE, snapshot] in
@@ -267,7 +267,7 @@ extension CTR {
             // Add Placeholder Item
             let toBeDeleted = snapshot.itemIdentifiers(inSection: collection)
             snapshot.deleteItems(toBeDeleted)
-            snapshot.appendItems([Err(description: error.localizedDescription)], toSection: collection)
+            snapshot.appendItems([.init(section: collection, content: Err(description: error.localizedDescription))], toSection: collection)
             
             await MainActor.run(body: { [DATA_SOURCE, snapshot] in
                 DATA_SOURCE.apply(snapshot)
@@ -364,6 +364,10 @@ extension CTR {
         var description: String
     }
     
+    struct ContentData: Hashable {
+        var section: AnyHashable
+        var content: AnyHashable
+    }
     struct ContentCell: View {
         var data: DSKCommon.Highlight
         var style: DSKCommon.CollectionStyle
