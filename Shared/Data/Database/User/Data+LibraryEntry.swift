@@ -296,3 +296,25 @@ extension DataManager {
         }
     }
 }
+
+
+extension DataManager {
+    
+    func contentInLibrary(s: String, c: String, realm: Realm? = nil) -> Bool {
+        let realm = try! realm ?? Realm()
+        
+        return !realm
+            .objects(LibraryEntry.self)
+            .where({ $0.content.contentId == c && $0.content.sourceId == s })
+            .isEmpty
+    }
+    
+    func contentSavedForLater(s: String, c: String, realm: Realm? = nil) -> Bool {
+        let realm = try! realm ?? Realm()
+        
+        return !realm
+            .objects(ReadLater.self)
+            .where({ $0.content.contentId == c && $0.content.sourceId == s })
+            .isEmpty
+    }
+}

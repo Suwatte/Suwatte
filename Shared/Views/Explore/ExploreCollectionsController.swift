@@ -37,12 +37,8 @@ final class ExploreCollectionsController: UICollectionViewController {
             task?.cancel()
         }
         tasks.removeAll()
-        if let tileStyleObserver = tileStyleObserver {
-            NotificationCenter.default.removeObserver(tileStyleObserver)
-        }
     }
     
-    var tileStyleObserver: NSObjectProtocol?
     
     deinit {
         Logger.shared.debug("ExploreViewController Deallocated")
@@ -80,8 +76,10 @@ final class ExploreCollectionsController: UICollectionViewController {
                 let shouldShowPlaceholder = self.loadingCache[excerpt] ?? false
                 cell.backgroundColor = .clear
                 cell.contentConfiguration = nil
+                let inLibrary = DataManager.shared.contentInLibrary(s: sourceId, c: data.contentId)
+                let readLater = DataManager.shared.contentSavedForLater(s: sourceId, c: data.contentId)
                 cell.contentConfiguration = UIHostingConfigurationBackport {
-                    ContentCell(data: data, style: style, sourceId: sourceId, placeholder: shouldShowPlaceholder)
+                    ContentCell(data: data, style: style, sourceId: sourceId, placeholder: shouldShowPlaceholder, inLibrary: inLibrary, readLater: readLater)
                 }
                 return cell
             }
@@ -188,6 +186,7 @@ extension CTR {
                 snapshot.appendItems([.init(section: TAG_SECTION_ID, content: Err(description: error.localizedDescription))], toSection: TAG_SECTION_ID)
             }
             await MainActor.run(body: {
+                loadingCache.removeValue(forKey:TAG_SECTION_ID)
                 DATA_SOURCE.apply(snapshot)
             })
         }
@@ -212,7 +211,7 @@ extension CTR {
             snapshot.appendSections([collection])
             return
         }
-        if current == collection {
+        if current.hashValue == collection.hashValue {
             return
         }
         snapshot.insertSections([collection], beforeSection: current)
@@ -256,8 +255,8 @@ extension CTR {
                 snapshot.deleteItems(toBeDeleted)
                 snapshot.appendItems(items.map({ .init(section: excerpt, content: $0) }), toSection: excerpt)
                 loadingCache[collection] = false
-                
-                await MainActor.run(body: { [DATA_SOURCE, snapshot] in
+                try Task.checkCancellation()
+                await MainActor.run(body: { [unowned self] in
                     DATA_SOURCE.apply(snapshot)
                 })
             }
@@ -337,6 +336,10 @@ extension CTR {
                 return NormalLayout()
             }
             
+            if snapshot.itemIdentifiers(inSection: section).first?.content is Err {
+                return ErrorLayout()
+            }
+            
             if let section = section as? String, section == TAG_SECTION_ID {
                 return TagsLayout()
             }
@@ -375,29 +378,32 @@ extension CTR {
         var placeholder: Bool
         @EnvironmentObject var model: ExploreView.ViewModel
         @StateObject var manager = LocalAuthManager.shared
-        @ObservedResults(ReadLater.self) var savedForLater
-        @ObservedResults(LibraryEntry.self) var library
-
+        @State var inLibrary: Bool
+        @State var readLater: Bool
         @Preference(\.protectContent) var protectContent
         var body: some View {
             ZStack(alignment: .topTrailing) {
                 ExploreView.HighlightTile(entry: data, style: style, sourceId: sourceId)
                     .onTapGesture(perform: {
+                        if placeholder { return }
                         model.selection = (sourceId, data)
                     })
                     .buttonStyle(NeutralButtonStyle())
-                    .contextMenu {
-                        Button {
-                            if readLater {
-                                DataManager.shared.removeFromReadLater(sourceId, content: data.id)
-                            } else {
-                                DataManager.shared.addToReadLater(sourceId, data.id)
+                    .conditional(!placeholder, transform: { view in
+                        view
+                            .contextMenu {
+                                Button {
+                                    if readLater {
+                                        DataManager.shared.removeFromReadLater(sourceId, content: data.id)
+                                    } else {
+                                        DataManager.shared.addToReadLater(sourceId, data.id)
+                                    }
+                                    readLater.toggle()
+                                } label: {
+                                    Label(readLater ? "Remove from Read Later" : "Add to Read Later", systemImage: readLater ? "bookmark.slash" : "bookmark")
+                                }
                             }
-                        } label: {
-                            Label(readLater ? "Remove from Read Later" : "Add to Read Later", systemImage: readLater ? "bookmark.slash" : "bookmark")
-                        }
-                    }
-                
+                    })
                 if (inLibrary || readLater) && !shouldHide {
                     ColoredBadge(color: inLibrary ? .accentColor : .yellow)
                         .transition(.opacity)
@@ -412,20 +418,6 @@ extension CTR {
         }
         var shouldHide: Bool {
             protectContent && manager.isExpired
-        }
-        
-        var readLater: Bool {
-            !savedForLater
-                .where({ $0.content.sourceId == sourceId })
-                .where({ $0.content.contentId == data.contentId })
-                .isEmpty
-        }
-        
-        var inLibrary: Bool {
-            !library
-                .where({ $0.content.sourceId == sourceId })
-                .where({ $0.content.contentId == data.id })
-                .isEmpty
         }
     }
     
