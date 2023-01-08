@@ -16,7 +16,9 @@ extension ProfileView {
             LoadableView(loadable: viewModel.loadableContent,
                          { PLACEHOLDER
                              .task {
-                                 await viewModel.loadContentFromDatabase()
+                                 Task.detached {
+                                     await viewModel.loadContentFromDatabase()
+                                 }
                              }
                          },
                          { PLACEHOLDER },

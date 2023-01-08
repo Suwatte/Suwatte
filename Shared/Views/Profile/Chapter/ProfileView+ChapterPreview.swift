@@ -127,17 +127,17 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
     }
 
     func isChapterNew(_ chapter: StoredChapter) -> Bool {
-        guard let date = model.lastReadMarker?.dateRead else {
+        guard let date = model.actionState.marker?.date else {
             return false
         }
         return chapter.date > date
     }
 
     func chapterProgress(_ chapter: StoredChapter) -> Double? {
-        guard let marker = model.lastReadMarker, marker._id == chapter._id else {
+        guard let id = model.actionState.chapter?._id , id == chapter._id else {
             return nil
         }
-        return marker.completed ? 1.0 : marker.progress
+        return model.actionState.marker?.progress
     }
 
     func getDownload(_ chapter: StoredChapter) -> ICDMDownloadObject? {
