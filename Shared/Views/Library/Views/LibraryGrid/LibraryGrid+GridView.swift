@@ -56,9 +56,10 @@ extension LibraryView.LibraryGrid {
             .layout { _ in
                 DefaultGridLayout()
             }
-            .shouldRecreateLayoutOnStateChange(true)
             .alwaysBounceVertical()
+            .shouldRecreateLayoutOnStateChange(true)
             .animateOnDataRefresh(true)
+            .ignoresSafeArea(.keyboard, edges: .all)
             .animation(.default, value: model.isSelecting)
             .animation(.default, value: model.selectedIndexes)
         }
@@ -143,7 +144,6 @@ struct NeutralButtonStyle: ButtonStyle {
 
 func DefaultGridLayout(header: NSCollectionLayoutDimension? = nil , footer: NSCollectionLayoutDimension? = nil) -> ASCollectionLayoutSection {
     .init { environment in
-        print("Called", environment.container.effectiveContentSize, environment.container.contentSize)
         let viewingPotrait = environment.container.contentSize.width < environment.container.contentSize.height
         let itemsPerRow = UserDefaults.standard.integer(forKey: viewingPotrait ? STTKeys.GridItemsPerRow_P : STTKeys.GridItemsPerRow_LS)
         let style = TileStyle(rawValue: UserDefaults.standard.integer(forKey: STTKeys.TileStyle)) ?? .COMPACT

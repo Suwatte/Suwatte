@@ -56,12 +56,14 @@ extension ExploreView.SearchView {
             .layout { _ in
                 DefaultGridLayout(header: .absolute(30), footer: .estimated(44))
             }
-            .shouldRecreateLayoutOnStateChange(true)
             .alwaysBounceVertical()
+            .shouldRecreateLayoutOnStateChange(true)
             .animateOnDataRefresh(true)
-            .shouldScrollToAvoidKeyboard(false)
-            .onChange(of: PortraitPerRow, perform: { _ in })
+            .ignoresSafeArea(.keyboard, edges: .all)
             .modifier(InteractableContainer(selection: $selection))
+            .onChange(of: style, perform: { _ in })
+            .onChange(of: PortraitPerRow, perform: { _ in })
+            .onChange(of: LSPerRow, perform: { _ in })
             .confirmationDialog("Sort", isPresented: $presentSortDialog) {
                 ForEach(model.sorters) { sorter in
                     Button(sorter.label) {
