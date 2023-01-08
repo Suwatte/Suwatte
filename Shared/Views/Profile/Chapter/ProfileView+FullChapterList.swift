@@ -52,20 +52,14 @@ struct ChapterList: View {
     @Environment(\.editMode) var editMode
     @AppStorage(STTKeys.FilteredProviders) private var filteredProviders: [String] = []
     @AppStorage(STTKeys.FilteredLanguages) private var filteredLanguages: [String] = []
-    
-    @ObservedResults(StoredChapter.self) private var storedChapters
+    @State var visibleChapters: [StoredChapter] = []
     var body: some View {
         Group {
-            if let chapters = model.chapters.value {
-                let ordered = filteredChapters(chapters)
-                ChaptersView(ordered)
-                    .fullScreenCover(item: $selection, onDismiss: handleReconnection) { chapterId in
-                        let chapter = chapters.first(where: { $0.chapterId == chapterId })!
-                        ReaderGateWay(readingMode: model.content.recommendedReadingMode ?? .PAGED_COMIC, chapterList: ordered, openTo: chapter)
-                    }
-            } else {
-                Text("No Chapters Found")
-            }
+            ChaptersView(visibleChapters)
+                .fullScreenCover(item: $selection, onDismiss: handleReconnection) { chapterId in
+                    let chapter = visibleChapters.first(where: { $0.chapterId == chapterId })!
+                    ReaderGateWay(readingMode: model.content.recommendedReadingMode ?? .PAGED_COMIC, chapterList: visibleChapters, openTo: chapter)
+                }
         }
         .sheet(isPresented: $presentOptions, content: {
             FCS_Options()
@@ -142,6 +136,24 @@ struct ChapterList: View {
                 }
             }
         }
+        .onAppear {
+            doFilter()
+        }
+        .onChange(of: sortKey) { _ in
+            doFilter()
+        }
+        .onChange(of: sortDesc) { _ in
+            doFilter()
+        }
+        .onChange(of: showOnlyDownloads) { _ in
+            doFilter()
+        }
+        .onChange(of: filteredProviders) { _ in
+            doFilter()
+        }
+        .onChange(of: filteredLanguages) { _ in
+            doFilter()
+        }
     }
     func handleReconnection() {
         model.getMarkers()
@@ -184,9 +196,15 @@ struct ChapterList: View {
 }
 
 extension ChapterList {
-    func filteredChapters(_ chapters: [StoredChapter]) -> [StoredChapter] {
+    func doFilter() {
+        DispatchQueue.global(qos: .background).async {
+            filterChapters()
+        }
+    }
+    func filterChapters() {
+        guard let chapters = model.chapters.value else { return }
         // Filter Language, Providers, Downloads
-        let base = chapters
+        var base = chapters
             .filter(filterDownloads(_:))
             .filter(filterProviders(_:))
             .filter(filterLanguages(_:))
@@ -206,19 +224,26 @@ extension ChapterList {
             }
 
             if sortDesc { sortedV = sortedV.reversed() }
-            return sortedV
+            base = sortedV
         case .date:
-            return base
+            base = base
                 .sorted(by: \.date, descending: sortDesc)
         case .source:
-            return base
+            base = base
                 .sorted(by: \.index, descending: !sortDesc) // Reverese Source Index
         }
+        
+        Task { @MainActor in
+            withAnimation {
+                visibleChapters = base
+            }
+        }
     }
+
     
     func filterDownloads(_ chapter: StoredChapter) -> Bool {
         if !showOnlyDownloads { return true }
-        return downloads.contains(where: { $0._id == chapter._id })
+        return DataManager.shared.hasDownload(id: chapter._id)
     }
     
     func filterProviders(_ chapter: StoredChapter) -> Bool {
@@ -360,7 +385,7 @@ extension ChapterList {
     func selectAbove() {
         if selections.isEmpty { return }
 
-        let chapters = filteredChapters(model.chapters.value ?? [])
+        let chapters = visibleChapters
         let target = selections.first
 
         guard let target, let idx = chapters.firstIndex(of: target) else { return }
@@ -372,7 +397,7 @@ extension ChapterList {
     func selectBelow() {
         if selections.isEmpty { return }
 
-        let chapters = filteredChapters(model.chapters.value ?? [])
+        let chapters = visibleChapters
         let target = selections.first
 
         guard let target, let idx = chapters.firstIndex(of: target) else { return }
@@ -382,7 +407,7 @@ extension ChapterList {
     }
 
     func selectAll() {
-        let cs = filteredChapters(model.chapters.value ?? [])
+        let cs = visibleChapters
         selections = Set(cs)
     }
 
@@ -393,7 +418,7 @@ extension ChapterList {
     func fillRange() {
         if selections.isEmpty { return }
 
-        let cs = filteredChapters(model.chapters.value ?? [])
+        let cs = visibleChapters
 
         var indexes = [Int]()
 
@@ -411,7 +436,7 @@ extension ChapterList {
     }
 
     func invertSelection() {
-        let cs = filteredChapters(model.chapters.value ?? [])
+        let cs = visibleChapters
         selections = Set(cs.filter { !selections.contains($0) })
     }
 
