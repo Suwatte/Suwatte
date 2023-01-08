@@ -172,7 +172,7 @@ extension DownloadsView {
 
 struct CapsuleBadge: View {
     var text: String
-
+    private let height: CGFloat = 17
     var body: some View {
         ZStack(alignment: .center) {
             Capsule()
@@ -181,14 +181,14 @@ struct CapsuleBadge: View {
                 Capsule()
                     .foregroundColor(.accentColor)
                 Text(text)
-                    .font(.caption)
+                    .font(.system(size: 10))
                     .fontWeight(.bold)
                     .foregroundColor(.white)
                     .padding(.all, 1)
             }
             .padding(.all, 3)
         }
-        .frame(width: 33, height: 20, alignment: .leading)
+        .frame(width: height * 2 , height: height, alignment: .leading)
         .offset(x: 8, y: -8)
     }
 }

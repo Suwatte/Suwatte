@@ -17,7 +17,6 @@ extension LibraryView.LibraryGrid {
         @EnvironmentObject var model: LibraryView.LibraryGrid.ViewModel
         @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
         @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
-        @State private var isPotrait = KEY_WINDOW?.windowScene?.interfaceOrientation == .portrait
 
         var body: some View {
             ASCollectionView(editMode: model.isSelecting) {
@@ -54,25 +53,14 @@ extension LibraryView.LibraryGrid {
                     EmptyView()
                 })
             }
-            .layout(createCustomLayout: {
-                SuwatteDefaultGridLayout(itemsPerRow: itemsPerRow, style: style)
-            }, configureCustomLayout: { layout in
-                layout.itemsPerRow = itemsPerRow
-                layout.itemStyle = style
-            })
+            .layout { _ in
+                DefaultGridLayout()
+            }
+            .shouldRecreateLayoutOnStateChange(true)
             .alwaysBounceVertical()
             .animateOnDataRefresh(true)
-            .onRotate { newOrientation in
-
-                if newOrientation.isFlat { return }
-                isPotrait = newOrientation.isPortrait
-            }
             .animation(.default, value: model.isSelecting)
             .animation(.default, value: model.selectedIndexes)
-        }
-
-        var itemsPerRow: Int {
-            isPotrait ? PortraitPerRow : LSPerRow
         }
 
         func contextMenuProvider(int _: Int, content: LibraryEntry) -> UIContextMenuConfiguration? {
@@ -139,7 +127,7 @@ extension LibraryView.LibraryGrid {
 
                     let destructiveMenu = UIMenu(title: "", options: .displayInline, children: destructiveActions)
 
-                    return UIMenu(title: "Options", image: nil, identifier: nil, options: [], children: [nonDestructiveMenu, destructiveMenu])
+                    return UIMenu(title: content.content?.title ?? "Options", image: nil, identifier: nil, options: [], children: [nonDestructiveMenu, destructiveMenu])
                 }
             return configuration
         }
@@ -153,6 +141,57 @@ struct NeutralButtonStyle: ButtonStyle {
     }
 }
 
+func DefaultGridLayout(header: NSCollectionLayoutDimension? = nil , footer: NSCollectionLayoutDimension? = nil) -> ASCollectionLayoutSection {
+    .init { environment in
+        print("Called", environment.container.effectiveContentSize, environment.container.contentSize)
+        let viewingPotrait = environment.container.contentSize.width < environment.container.contentSize.height
+        let itemsPerRow = UserDefaults.standard.integer(forKey: viewingPotrait ? STTKeys.GridItemsPerRow_P : STTKeys.GridItemsPerRow_LS)
+        let style = TileStyle(rawValue: UserDefaults.standard.integer(forKey: STTKeys.TileStyle)) ?? .COMPACT
+       
+        let SPACING: CGFloat = 10
+        let INSET: CGFloat = 16
+        let totalSpacing =  SPACING * CGFloat(itemsPerRow - 1)
+        let groupWidth = environment.container.contentSize.width - (INSET * 2) - totalSpacing
+        let estimatedItemWidth = (groupWidth / CGFloat(itemsPerRow)).rounded(.down)
+        let shouldAddTitle = style == .SEPARATED && estimatedItemWidth >= 100
+        let titleSize: CGFloat = shouldAddTitle ? 44 : 0
+        let height = (estimatedItemWidth * 1.5) + titleSize
+        
+        // Item
+        let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(
+                    widthDimension: .fractionalWidth(1 / CGFloat(itemsPerRow)),
+                    heightDimension: .absolute(height)
+                ))
+        
+        // Group / Row
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1),
+                heightDimension: .absolute(height)
+            ),
+            subitem: item,
+            count: itemsPerRow
+        )
+        group.interItemSpacing =  .fixed(SPACING)
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = .init(top: 15, leading: INSET, bottom: 10, trailing: INSET)
+        section.interGroupSpacing = SPACING
+        
+        var items: [NSCollectionLayoutBoundarySupplementaryItem] = []
+        
+        if let header {
+            let headerComponent : NSCollectionLayoutBoundarySupplementaryItem = .init(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: header), elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
+            items.append(headerComponent)
+        }
+        
+        if let footer {
+            let footerComponent : NSCollectionLayoutBoundarySupplementaryItem = .init(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: footer), elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottom)
+            items.append(footerComponent)
+        }
+        section.boundarySupplementaryItems = items
+        return section
+    }
+}
 class SuwatteDefaultGridLayout: UICollectionViewFlowLayout {
     var itemsPerRow: Int {
         didSet {
