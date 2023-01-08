@@ -114,6 +114,9 @@ extension ReaderView {
                         .fontWeight(.light)
                 }
                 .transition(.opacity)
+                .onAppear {
+                    model.updater.toggle()
+                }
             } else {
                 if isVertical {
                     VerticalViewer()

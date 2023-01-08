@@ -237,9 +237,7 @@ extension Controller.ImageNode {
         super.didEnterVisibleState()
         isZoomed = false
         displayImage()
-        Task {
-            await delegate?.handleChapterPreload(at: indexPath)
-        }
+        delegate?.handleChapterPreload(at: indexPath)
     }
 
     override func didExitVisibleState() {

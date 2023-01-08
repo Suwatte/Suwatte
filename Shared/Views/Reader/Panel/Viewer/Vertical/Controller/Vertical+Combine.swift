@@ -24,6 +24,7 @@ extension Controller {
             DispatchQueue.main.async {
                 self?.collectionNode.reloadData()
                 self?.collectionNode.scrollToItem(at: .origin, at: .top, animated: false)
+                self?.updateSliderOffset()
             }
         }.store(in: &subscriptions)
 
@@ -69,8 +70,7 @@ extension Controller {
         model.$slider.sink { [weak self] slider in
             Task { @MainActor in
                 if slider.isScrubbing {
-                    let position = CGPoint(x: 0, y: slider.current)
-                    self?.collectionNode.setContentOffset(position, animated: false)
+                    self?.moveToRelativeSliderPosition(slider.current)
                 }
             }
         }

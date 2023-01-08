@@ -69,6 +69,7 @@ extension VerticalViewer {
             collectionNode.view.addGestureRecognizer(tapGR)
             collectionNode.view.contentInsetAdjustmentBehavior = .never
             collectionNode.view.scrollsToTop = false
+            model.slider.setRange(0, 1)
         }
 
         @objc func appMovedToBackground() {
@@ -95,16 +96,13 @@ extension VerticalViewer {
             let path: IndexPath = .init(item: openingIndex, section: 0)
             collectionNode.scrollToItem(at: path, at: .top, animated: false)
 
-            let point = collectionNode
-                .collectionViewLayout
-                .layoutAttributesForItem(at: path)?.frame.minY ?? 0
-            model.slider.setCurrent(point)
-            calculateCurrentChapterScrollRange()
-
+        
             // TODO: Last Offset
             if let lastOffset = rChapter.requestedPageOffset {
                 collectionNode.contentOffset.y += lastOffset
             }
+            
+            updateSliderOffset()
 
             UIView.animate(withDuration: 0.2,
                            delay: 0.0,
@@ -189,11 +187,12 @@ extension VerticalViewer.Controller {
         guard let path, let currentPath = currentPath, currentPath.section == path.section else {
             return
         }
-
         if currentPath.item < path.item {
-            let preloadNext = model.sections[path.section].count - path.item + 1 < 5
+            let preloadNext = model.sections[path.section].count - path.item + 1 < 3
             if preloadNext, model.readerChapterList.get(index: path.section + 1) == nil {
-                model.loadNextChapter()
+                Task.detached { [weak self] in
+                    self?.model.loadNextChapter()
+                }
             }
         }
     }
