@@ -181,15 +181,16 @@ extension CTR {
         }
     }
     func loadTags() {
-        addTagSection()
         let task = Task {
             do {
                 let data = try await source.getExplorePageTags()
                 errorCache.removeValue(forKey: TAG_SECTION_ID)
                 if let data {
+                    addTagSection()
                     snapshot.appendItems(data.map({ .init(section: TAG_SECTION_ID, content: $0) }), toSection: TAG_SECTION_ID)
                 }
             } catch {
+                addTagSection()
                 snapshot.appendItems([.init(section: TAG_SECTION_ID, content: Err(description: error.localizedDescription))], toSection: TAG_SECTION_ID)
                 errorCache[TAG_SECTION_ID] = error
             }
