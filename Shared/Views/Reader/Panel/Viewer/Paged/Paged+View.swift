@@ -9,6 +9,7 @@ import Combine
 import Kingfisher
 import SwiftUI
 import UIKit
+import VisionKit
 
 class ReaderPageView: UIView {
     let imageView = UIImageView()
@@ -20,11 +21,18 @@ class ReaderPageView: UIView {
     var progressView: UIView!
     var progressModel = ReaderView.ProgressObject()
     var subscriptions = Set<AnyCancellable>()
+    var visionInteraction: UIInteraction?
 
     init() {
         super.init(frame: UIScreen.main.bounds)
         setupViews()
     }
+    lazy var visionPressGesuture: UITapGestureRecognizer = {
+        let press = UITapGestureRecognizer(target: self, action: #selector(handleVisionRequest(_:)))
+        press.numberOfTapsRequired = 2
+        press.numberOfTouchesRequired = 2
+        return press
+    }()
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
@@ -196,6 +204,7 @@ class ReaderPageView: UIView {
                                       self.imageView.image = imageResult.image
                                   }) { _ in
                     self.scrollView.addGestures()
+                                      self.addLiveTextSupport()
                 }
             }
 
@@ -220,6 +229,45 @@ extension ReaderPageView {
 
     var cropWhiteSpaces: Bool {
         UserDefaults.standard.bool(forKey: STTKeys.CropWhiteSpaces)
+    }
+}
+
+extension ReaderPageView {
+    
+    func addLiveTextSupport() {
+        
+        guard #available(iOS 16, *), ImageAnalyzer.isSupported else { return }
+        let interaction = ImageAnalysisInteraction()
+        interaction.preferredInteractionTypes = .automatic
+        interaction.allowLongPressForDataDetectorsInTextMode = true
+        visionInteraction = interaction
+        imageView.addInteraction(interaction)
+        imageView.addGestureRecognizer(visionPressGesuture)
+    }
+}
+
+// MARK: VisionKit Gestures
+extension ReaderPageView {
+    
+    @objc func handleVisionRequest(_ sender: UITapGestureRecognizer) {
+        guard #available(iOS 16, *), ImageAnalyzer.isSupported else { return }
+
+        guard let visionInteraction = visionInteraction as? ImageAnalysisInteraction else { return }
+        // Currently Display Live Text
+        if visionInteraction.analysis != nil {
+            visionInteraction.analysis = nil
+            return
+        }
+        let configuration = ImageAnalyzer.Configuration([.text, .machineReadableCode])
+        let analyzer = ImageAnalyzer()
+        let image = imageView.image
+        guard let image else { return }
+        Task {
+            let analysis = try? await analyzer.analyze(image, configuration: configuration)
+            DispatchQueue.main.async {
+                visionInteraction.analysis = analysis
+            }
+        }
     }
 }
 
