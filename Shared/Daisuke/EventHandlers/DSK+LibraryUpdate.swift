@@ -18,12 +18,24 @@ extension DaisukeEngine {
     }
 
     private func fetchLibaryUpdates() async -> Int {
-        let updateCounts = await getSources().asyncMap { source -> Int in
-            (try? await fetchUpdatesForSource(source: source)) ?? 0
-        }
+        let sources = getSources()
+        let result = await withTaskGroup(of: Int.self, body: { group in
+            
+            for source in sources {
+                group.addTask {
+                    let count = try? await self.fetchUpdatesForSource(source: source)
+                    return count ?? 0
+                }
+            }
+            
+            var total = 0
+            for await result in group {
+                total += result
+            }
+            return total
+        })
         UserDefaults.standard.set(Date(), forKey: STTKeys.LastFetchedUpdates)
-
-        return updateCounts.reduce(0, +)
+        return result
     }
 
     @MainActor
