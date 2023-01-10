@@ -119,7 +119,6 @@ extension DaisukeEngine.NetworkClient {
         let request = try await handleRequestIntercept(request: request)
         let urlRequest = try request.toURLRequest()
         let afResponse = await session.request(urlRequest)
-            .validate()
             .serializingString()
             .response
         session.session.configuration.timeoutIntervalForResource = request.timeout ?? 30
@@ -128,9 +127,20 @@ extension DaisukeEngine.NetworkClient {
         }
 
         let data = try afResponse.result.get()
+        let headers = httpResponse.headers.dictionary
+        guard (200...299).contains(httpResponse.statusCode) else {
+            let base = Alamofire.AFError.responseValidationFailed(reason: .unacceptableStatusCode(code: httpResponse.statusCode))
+            switch httpResponse.statusCode {
+                case 503, 403:
+                    guard headers["Server"] == "cloudflare" else { throw base }
+                    throw DSK.Errors.NetworkErrorCloudflareProtected
+                default:
+                    throw base
+            }
+        }
         var response = Response(data: data,
                                 status: httpResponse.statusCode,
-                                headers: httpResponse.headers.dictionary,
+                                headers: headers,
                                 request: request)
 
         response = try await handleResponseIntercept(response: response)

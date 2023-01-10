@@ -69,7 +69,7 @@ extension DaisukeEngine.Errors: LocalizedError {
         case .ObjectConversionFailed: return .init("Object Could not be converted to [String:Any]")
         case .InvalidJSONObject: return .init("Object is not valid JSON")
         case .RealmThawFailure: return .init("Failed To Thaw Realm Object")
-        case .NetworkErrorCloudflareProtected: return .init("Cloudflare Protected DataPoint")
+        case .NetworkErrorCloudflareProtected: return .init("Cloudflare Protected Resource")
         case .LocalFilePathNotFound: return .init("Path To File is Null")
         }
     }

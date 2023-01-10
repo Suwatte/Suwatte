@@ -26,6 +26,7 @@ final class ExploreCollectionsController: UICollectionViewController {
     
     
     var loadingCache: [AnyHashable: Bool] = [:]
+    var errorCache: [AnyHashable: Error] = [:]
     var tileStyle: TileStyle! {
         didSet {
             collectionView.collectionViewLayout.invalidateLayout()
@@ -55,13 +56,18 @@ final class ExploreCollectionsController: UICollectionViewController {
         let dataSource = DataSource(collectionView: collectionView) { [unowned self] collectionView, indexPath, item in
             // Error Cell
             if let data = item.content as? Err {
-                let excerpt = snapshot.sectionIdentifiers.get(index: indexPath.section) as? CollectionExcerpt
-                guard let excerpt else { fatalError("excerpt not found") }
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "errorCell", for: indexPath)
                 cell.contentConfiguration = nil
                 cell.contentConfiguration = UIHostingConfigurationBackport {
-                    ErrorView(error: DSK.Errors.NamedError(name: "Error", message: data.description)) { [weak self] in
-                        self?.reloadSingleSection(excerpt: excerpt)
+                    let error = errorCache[item.section] ?? DSK.Errors.NamedError(name: "Error", message: data.description)
+                    ErrorView(error: error, sourceID: source.id) { [weak self] in
+                        if case DSK.Errors.NetworkErrorCloudflareProtected = error {
+                            self?.reloadAllSections()
+                        } else if let excerpt = item.section as? CollectionExcerpt {
+                            self?.reloadSingleSection(excerpt: excerpt)
+                        } else {
+                            self?.loadTags()
+                        }
                     }
                 }
                 return cell
@@ -179,11 +185,13 @@ extension CTR {
         let task = Task {
             do {
                 let data = try await source.getExplorePageTags()
+                errorCache.removeValue(forKey: TAG_SECTION_ID)
                 if let data {
                     snapshot.appendItems(data.map({ .init(section: TAG_SECTION_ID, content: $0) }), toSection: TAG_SECTION_ID)
                 }
             } catch {
                 snapshot.appendItems([.init(section: TAG_SECTION_ID, content: Err(description: error.localizedDescription))], toSection: TAG_SECTION_ID)
+                errorCache[TAG_SECTION_ID] = error
             }
             await MainActor.run(body: {
                 loadingCache.removeValue(forKey:TAG_SECTION_ID)
@@ -237,6 +245,7 @@ extension CTR {
         })
         do {
             let data = try await source.resolveExplorePageCollection(collection)
+            errorCache.removeValue(forKey: collection)
             try Task.checkCancellation()
             let excerpt = getExcerpt(id: id)
             if var excerpt = excerpt {
@@ -263,6 +272,7 @@ extension CTR {
         } catch {
             // Handle Error
             Logger.shared.error("[ExploreViewController] \(error)", .init(function: #function))
+            errorCache.updateValue(error, forKey: collection)
             // Add Placeholder Item
             let toBeDeleted = snapshot.itemIdentifiers(inSection: collection)
             snapshot.deleteItems(toBeDeleted)
