@@ -92,7 +92,14 @@ extension ReaderView {
 
             // Load Chapter Data
             readerChapter.data = .loading
-            readerChapter.data = await STTHelpers.getChapterData(chapter)
+            let cData = await STTHelpers.getChapterData(chapter)
+            switch cData {
+                case .loaded(let t):
+                    readerChapter.data = .loaded(t.toReadableChapterData())
+                case .failed(let error):
+                    readerChapter.data = .failed(error)
+                default: break
+            }
             notifyOfChange()
 
             // Get Images
@@ -122,7 +129,8 @@ extension ReaderView {
             } else {
                 insertPublisher.send(asNextChapter ? sections.count - 1 : 0)
             }
-
+            
+            notifyOfChange()
             if pages.isEmpty {
                 loadNextChapter()
             }

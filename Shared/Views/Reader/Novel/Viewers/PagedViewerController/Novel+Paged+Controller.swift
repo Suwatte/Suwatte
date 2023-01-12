@@ -28,10 +28,13 @@ extension NovelReaderView.PagedViewer {
             }
             let requestedIndex = rChapter.requestedPageIndex
             rChapter.requestedPageOffset = nil
-            let openingIndex = model.sections.first?.lastIndex(where: { $0.lastPageIndex <= requestedIndex }) ?? 0
-//            collectionView.scrollToItem(at: .init(item: openingIndex, section: 0), at: .centeredHorizontally, animated: false)
+            var openingIndex = min(requestedIndex, model.getPageCount())
+            openingIndex = max(requestedIndex, 0)
+            collectionView.scrollToItem(at: .init(item: openingIndex, section: 0), at: .centeredHorizontally, animated: false)
             calculateCurrentChapterScrollRange()
-            model.currentSectionPageNumber = openingIndex + 1
+            Task { @MainActor in
+                model.currentSectionPageNumber = openingIndex + 1
+            }
             collectionView.isHidden = false
         }
     }

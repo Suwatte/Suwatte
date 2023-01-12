@@ -23,7 +23,7 @@ extension NovelReaderView {
             .init(name: "Apple SD Gothic Neo", id: "AppleSDGothicNeo-Regular"),
             .init(name: "Arial", id: "ArialMT"),
             .init(name: "Arial Hebrew", id: "ArialHebrew"),
-            .init(name: "Avenir", id: "Avenir-Regular"),
+            .init(name: "Avenir", id: "AvenirNextCondensed-Regular"),
             .init(name: "Baskerville", id: "Baskerville"),
             .init(name: "Charter", id: "Charter"),
             .init(name: "Cochin", id: "Cochin"),

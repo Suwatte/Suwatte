@@ -90,10 +90,28 @@ extension ReaderView {
     }
 
     // MARK: Reader Chapter
+    struct ChapterData: Hashable {
+        var id: String
+        var contentId: String
+        var sourceId: String
+        var chapterId: String
+        
+        var pages: [DSKCommon.ChapterPage]
+        var text: String?
+
+        var imageURLs: [String] {
+            pages.compactMap { $0.url }
+        }
+        var rawDatas: [String] {
+            pages.compactMap { $0.raw?.toBase64() }
+        }
+        var urls: [URL] = []
+        var archivePaths: [String] = []
+    }
 
     class ReaderChapter: Equatable, ObservableObject {
         var chapter: ThreadSafeChapter
-        @Published var data = Loadable<StoredChapterData>.idle {
+        @Published var data = Loadable<ChapterData>.idle {
             didSet {
                 guard let chapterData = data.value else {
                     pages = nil
@@ -244,5 +262,19 @@ extension ReaderView.Page {
         }
 
         return nil
+    }
+}
+
+
+extension StoredChapterData {
+    func toReadableChapterData() -> ReaderView.ChapterData {
+        .init(id: _id, contentId: chapter?.contentId ?? "",
+              sourceId: chapter?.sourceId ?? "",
+              chapterId: chapter?.chapterId ?? "",
+              pages: pages.map({ .init(url: $0.url, raw: $0.raw)}),
+              text: text,
+              urls: urls,
+              archivePaths: archivePaths
+        )
     }
 }

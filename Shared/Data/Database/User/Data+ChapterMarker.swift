@@ -102,7 +102,7 @@ extension DataManager {
             .chapter
     }
 
-    func setProgress(from chapter: ReaderView.ReaderChapter, isNovel: Bool = false) {
+    func setProgress(from chapter: ReaderView.ReaderChapter) {
         let realm = try! Realm()
 
         let last = chapter.requestedPageIndex + 1
@@ -110,7 +110,7 @@ extension DataManager {
         if let offset = chapter.requestedPageOffset {
             lastOffset = Double(offset)
         }
-        let total = !isNovel ? chapter.pages?.count ?? 0 : chapter.data.value?.pages.count ?? 0
+        let total = chapter.pages?.count ?? 0
         let marker = ChapterMarker()
         marker.chapter = chapter.chapter.toStored()
         marker.dateRead = Date()
@@ -119,6 +119,22 @@ extension DataManager {
         marker.completed = false
         marker.lastPageOffset = lastOffset
 
+        try! realm.safeWrite {
+            realm.add(marker, update: .all)
+        }
+    }
+    
+    func setNovelProgress(from chapter: ReaderView.ReaderChapter, pageCount: Int) {
+        let realm = try! Realm()
+        
+        let last = chapter.requestedPageIndex + 1
+        let total = chapter.pages?.count
+        let marker = ChapterMarker()
+        marker.chapter = chapter.chapter.toStored()
+        marker.dateRead = Date()
+        marker.lastPageRead = last
+        marker.totalPageCount = pageCount
+        marker.completed = last == total
         try! realm.safeWrite {
             realm.add(marker, update: .all)
         }

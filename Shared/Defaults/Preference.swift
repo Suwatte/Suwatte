@@ -88,7 +88,7 @@ final class Preferences {
     var novelUseDoublePaged = false
 
     @UserDefault(STTKeys.NovelFont)
-    var novelFont = "Avenir-Regular"
+    var novelFont = "AvenirNextCondensed-Regular"
 
     @UserDefault(STTKeys.NonSelectiveSync)
     var nonSelectiveSync = false

@@ -14,10 +14,11 @@ extension NovelReaderView {
     final class ViewModel: ObservableObject {
         var chapterList: [ThreadSafeChapter]
 
-        @Published var readerChapterList: [ReaderView.ReaderChapter] = []
+        var readerChapterList: [ReaderView.ReaderChapter] = []
         @Published var activeChapter: ReaderView.ReaderChapter
         @Published var updater = false
-        @Published var sections: [[NovelPage]] = []
+        var sections: [[NovelPage]] = []
+        var counts: [String: Int] = [:]
         @Published var menuControl: ReaderView.MenuControl = .init()
         @Published var slider: ReaderView.SliderControl = .init()
         @Published var toast = ToastManager()
@@ -44,7 +45,6 @@ extension NovelReaderView {
             listen()
         }
 
-        @MainActor
         func loadChapter(_ chapter: ThreadSafeChapter, asNextChapter: Bool = true) async {
             let alreadyInList = readerChapterList.contains(where: { $0.chapter._id == chapter._id })
             let readerChapter: ReaderView.ReaderChapter?
@@ -69,14 +69,23 @@ extension NovelReaderView {
 
             // Load Chapter Data
             readerChapter.data = .loading
-            readerChapter.data = await STTHelpers.getChapterData(chapter)
-            notifyOfChange()
+            let cData = await STTHelpers.getChapterData(chapter)
+            switch cData {
+                case .loaded(let t):
+                    readerChapter.data = .loaded(t.toReadableChapterData())
+                case .failed(let error):
+                    readerChapter.data = .failed(error)
+                default: break
+            }
+//            notifyOfChange()
 
             guard let data = readerChapter.data.value else {
                 return
             }
 
-            let newPages = generateViews(for: data)
+            let newPages = await Task { @MainActor in
+                return generateViews(for: data, title: chapter.displayName)
+            }.value
 
             if asNextChapter {
                 sections.append(newPages)
@@ -84,35 +93,42 @@ extension NovelReaderView {
                 sections.insert(newPages, at: 0)
             }
 
+            // Set Opening Page
+            if readerChapterList.count == 1, readerChapter.requestedPageIndex == -1 {
+                let values = STTHelpers.getInitialPosition(for: readerChapter.chapter, limit: getPageCount())
+                readerChapter.requestedPageIndex = values.0
+                readerChapter.requestedPageOffset = values.1
+            }
+            
             if readerChapterList.count == 1 {
                 reloadPublisher.send()
             } else {
                 insertPublisher.send(asNextChapter ? sections.count - 1 : 0)
             }
-
-            // Set Opening Page
-            if readerChapterList.count == 1, readerChapter.requestedPageIndex == -1 {
-                let values = STTHelpers.getInitialPosition(for: readerChapter.chapter, limit: data.pages.count)
-                readerChapter.requestedPageIndex = values.0
-                readerChapter.requestedPageOffset = values.1
-            }
-
+            
+            notifyOfChange()
             if newPages.isEmpty {
                 loadNextChapter()
             }
         }
 
         func notifyOfChange() {
-            updater.toggle()
+            Task { @MainActor in
+                updater.toggle()
+            }
+        }
+        
+        func getPageCount() -> Int {
+            counts[activeChapter.chapter._id] ?? 0
         }
     }
 }
 
 extension NovelReaderView.ViewModel {
-    func generateViews(for chapter: StoredChapterData) -> [NovelPage] {
+    func generateViews(for chapter: ReaderView.ChapterData, title: String) -> [NovelPage] {
         var pages = [NovelPage]()
         let text = chapter.text ?? "No Text Returned from Source"
-        let joined = "\(chapter.chapter?.displayName ?? "")\n\n" + text + "\n"
+        let joined = "\(title )\n\n" + text + "\n"
         var textStorage: NSTextStorage?
         let data = Data(joined.utf8)
         if let attributedString = try? NSAttributedString(data: data,
@@ -149,18 +165,18 @@ extension NovelReaderView.ViewModel {
 
             let font = Preferences.standard.novelFont
             let size = CGFloat(Preferences.standard.novelFontSize)
-            textView.font = UIFont(name: font, size: size)
+            textView.font = UIFont(name: font, size: size) ?? UIFont(name: "Georgia", size: size)
             // get the last Glyph rendered into the current textContainer
             let range = textLayout.glyphRange(for: textContainer)
             lastRenderedGlyph = NSMaxRange(range)
 
             textView.backgroundColor = .clear
 
-            let lowerBound = joined.index(joined.startIndex, offsetBy: range.lowerBound)
-            let upperBound = joined.index(joined.startIndex, offsetBy: range.upperBound)
-//            let pagedText = joined[lowerBound ..< upperBound]
-
-            let prevLastIndex = pages.last?.lastPageIndex ?? 0
+//            let lowerBound = joined.index(joined.startIndex, offsetBy: range.lowerBound)
+//            let upperBound = joined.index(joined.startIndex, offsetBy: range.upperBound)
+////            let pagedText = joined[lowerBound ..< upperBound]
+//
+//            let prevLastIndex = pages.last?.lastPageIndex ?? 0
 
 //            let unusedPages = chapter.pages[prevLastIndex...]
             let lastIndex = 0
@@ -169,6 +185,7 @@ extension NovelReaderView.ViewModel {
         // Update Last Page To Match the Last Page Index
         let lastIndex = pages.count - 1
         pages[lastIndex] = .init(view: pages[lastIndex].view, lastPageIndex: chapter.pages.count - 1)
+        counts[chapter.id] = pages.count
         return pages
     }
 
@@ -181,24 +198,28 @@ extension NovelReaderView.ViewModel {
         sections.removeAll()
         readerChapterList.removeAll()
         readerChapterList.append(current)
-
         guard let data = current.data.value else {
             return
         }
-        let newPages = generateViews(for: data)
-        sections.append(newPages)
-        reloadPublisher.send()
+        Task { @MainActor in
+            let newPages = generateViews(for: data, title: current.chapter.displayName)
+            sections.append(newPages)
+            reloadPublisher.send()
+        }
     }
 
     func listen() {
-        //        let targets: [PartialKeyPath<Preferences>] = [\.novelBGColor, \.novelFontSize, \.novelFontColor, \.novelUseVertical, \.novelOrientationLock, \.novelUseSystemColor, \.novelUseDoublePaged]
-//        Preferences.standard.preferencesChangedSubject
-//            .filter { [\Preferences.novelBGColor, \Preferences.novelFontSize, \Preferences.novelFontColor, \Preferences.novelUseVertical, \Preferences.novelOrientationLock, \Preferences.novelUseDoublePaged, \Preferences.novelUseSystemColor, \Preferences.novelFont].contains($0)
-//            }
-//            .sink { [weak self] _ in
-//                self?.updatedPreferences()
-//            }
-//            .store(in: &subscriptions)
+        let targets = [\Preferences.novelBGColor, \.novelFontSize, \.novelFontColor, \.novelUseVertical, \.novelOrientationLock, \.novelUseSystemColor, \.novelUseDoublePaged]
+        
+        Preferences.standard.preferencesChangedSubject
+            .filter { path in
+                guard let path = path as? PartialKeyPath<Preferences> else { return false }
+                return targets.contains(path)
+            }
+            .sink { [weak self] _ in
+                self?.updatedPreferences()
+            }
+            .store(in: &subscriptions)
 
         toast.objectWillChange.sink { [weak self] _ in
             self?.objectWillChange.send()
@@ -232,23 +253,16 @@ extension NovelReaderView.ViewModel {
 extension NovelReaderView.ViewModel {
     func didScrollTo(path: IndexPath) {
         currentSectionPageNumber = path.item + 1
-
-        // Get Page
-        let page = sections[path.section][path.item]
-
         let chapter = readerChapterList.get(index: path.section)
-
         guard let chapter = chapter else {
             return
         }
-
-        let index = page.lastPageIndex
-
+        let index = path.item
         if chapter !== activeChapter {
+            DataManager.shared.setNovelProgress(from: chapter, pageCount: getPageCount())
             onChapterChanged(chapter: chapter)
             return
         }
-
         // On Same Page, Do Nothing
         if index == activeChapter.requestedPageIndex { return }
 
@@ -265,7 +279,7 @@ extension NovelReaderView.ViewModel {
         if incognitoMode { return }
 
         // Save Progress
-        DataManager.shared.setProgress(from: chapter, isNovel: true)
+        DataManager.shared.setNovelProgress(from: chapter, pageCount: getPageCount())
 
         // Update Entry Last Read
         if let content = content {
