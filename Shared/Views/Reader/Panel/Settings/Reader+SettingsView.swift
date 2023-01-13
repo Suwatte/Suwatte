@@ -147,13 +147,13 @@ extension ReaderView {
                 // Images
                 Section {
                     Toggle("Image Context Actions", isOn: $imageInteractions)
-                    Toggle("Downsample Images", isOn: $downsampleImages)
                     Picker("Scale Type", selection: $imageScaleType) {
                         ForEach(ImageScaleOption.allCases, id: \.rawValue) {
                             Text($0.description)
                                 .tag($0)
                         }
                     }
+                    Toggle("Downsample Images", isOn: $downsampleImages)
                     if !isVertical {
                         Toggle("Crop Whitespace", isOn: $cropWhiteSpaces)
                     }

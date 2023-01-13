@@ -151,7 +151,13 @@ class ReaderPageView: UIView {
         let ratio = size.ratio
         
         if ratio < 1 {
-            activateFitWidthConstraint(size)
+            let multiplier = size.height / size.width
+            let height = bounds.width * multiplier
+            if height < bounds.height {
+                activateFitHeightConstraint(size)
+            } else {
+                activateFitWidthConstraint(size)
+            }
         } else if ratio > 1 {
             activateFitHeightConstraint(size)
         } else {
@@ -215,7 +221,7 @@ class ReaderPageView: UIView {
 
         // Initialize Resize Processor
         if cropWhiteSpaces || downSampleImage || page.isLocal {
-            processor = ResizingImageProcessor(referenceSize: UIScreen.main.bounds.size, mode: .aspectFit)
+            processor = ResizingImageProcessor(referenceSize: UIScreen.main.bounds.size, mode: .aspectFill)
         }
 
         // Append WhiteSpace Processor
