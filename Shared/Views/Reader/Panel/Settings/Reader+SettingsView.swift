@@ -34,6 +34,7 @@ extension ReaderView {
         @Preference(\.isDoublePagedEnabled) var isDoublePaged
         @Preference(\.invertTapSidesToNavigate) var invertTapSidesToNavigate
         @Preference(\.VerticalPagePadding) var verticalPagePadding
+        @Preference(\.imageScaleType) var imageScaleType
         private let range: ClosedRange<Double> = 2.5 ... 30
 
         var body: some View {
@@ -147,7 +148,12 @@ extension ReaderView {
                 Section {
                     Toggle("Image Context Actions", isOn: $imageInteractions)
                     Toggle("Downsample Images", isOn: $downsampleImages)
-
+                    Picker("Scale Type", selection: $imageScaleType) {
+                        ForEach(ImageScaleOption.allCases, id: \.rawValue) {
+                            Text($0.description)
+                                .tag($0)
+                        }
+                    }
                     if !isVertical {
                         Toggle("Crop Whitespace", isOn: $cropWhiteSpaces)
                     }

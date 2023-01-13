@@ -79,6 +79,7 @@
 		DF52FBBE289487C6008FAD3A /* STTGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF52FBBD289487C6008FAD3A /* STTGridView.swift */; };
 		DF52FBC22896F762008FAD3A /* CollectionManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF52FBC12896F761008FAD3A /* CollectionManagementView.swift */; };
 		DF52FBC7289C7EBB008FAD3A /* LCV+SettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF52FBC6289C7EBA008FAD3A /* LCV+SettingsSheet.swift */; };
+		DF553CC4297119AD004C3428 /* UserDefaultSerializable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF553CC3297119AD004C3428 /* UserDefaultSerializable.swift */; };
 		DF59C97D285004860027F19D /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = DF59C97C285004860027F19D /* ZIPFoundation */; };
 		DF59C98028500E200027F19D /* LocalFileModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59C97F28500E200027F19D /* LocalFileModifier.swift */; };
 		DF59C9822850126D0027F19D /* LocalContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59C9812850126D0027F19D /* LocalContentView.swift */; };
@@ -384,6 +385,7 @@
 		DF52FBBD289487C6008FAD3A /* STTGridView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = STTGridView.swift; sourceTree = "<group>"; };
 		DF52FBC12896F761008FAD3A /* CollectionManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionManagementView.swift; sourceTree = "<group>"; };
 		DF52FBC6289C7EBA008FAD3A /* LCV+SettingsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LCV+SettingsSheet.swift"; sourceTree = "<group>"; };
+		DF553CC3297119AD004C3428 /* UserDefaultSerializable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultSerializable.swift; sourceTree = "<group>"; };
 		DF59C97F28500E200027F19D /* LocalFileModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalFileModifier.swift; sourceTree = "<group>"; };
 		DF59C9812850126D0027F19D /* LocalContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalContentView.swift; sourceTree = "<group>"; };
 		DF59C98428501BE50027F19D /* LocalContentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalContentManager.swift; sourceTree = "<group>"; };
@@ -1135,6 +1137,7 @@
 				DF8D0A032800EE47003E4C3E /* Constants.swift */,
 				DF8D0A042800EE47003E4C3E /* Keys.swift */,
 				DF8D0A052800EE47003E4C3E /* Preference.swift */,
+				DF553CC3297119AD004C3428 /* UserDefaultSerializable.swift */,
 			);
 			path = Defaults;
 			sourceTree = "<group>";
@@ -2326,6 +2329,7 @@
 				DF67EB8828E3674900076FF5 /* LG+MoveFlag.swift in Sources */,
 				DF8D0B952800EE48003E4C3E /* ProfileView+LibrarySheet.swift in Sources */,
 				DFF814032907013100C8C1A5 /* DSK+HostedContentSource.swift in Sources */,
+				DF553CC4297119AD004C3428 /* UserDefaultSerializable.swift in Sources */,
 				DF8D0B412800EE47003E4C3E /* Data+StoredChapterData.swift in Sources */,
 				DF248F0828137F7A00818300 /* TrackersView.swift in Sources */,
 				DF8D0B9B2800EE48003E4C3E /* ProfileView+InfoSection.swift in Sources */,

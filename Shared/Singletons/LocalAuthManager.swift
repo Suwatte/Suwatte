@@ -37,7 +37,7 @@ final class LocalAuthManager: ObservableObject {
         return interval >= Double(Timeout.durationInSeconds)
     }
 
-    enum TimeoutDuration: Int, CaseIterable {
+    enum TimeoutDuration: Int, CaseIterable, UserDefaultsSerializable {
         case immediately, afer5, after15, after30, after1h, after2h, after5h, after12h, after1d
 
         var description: String {

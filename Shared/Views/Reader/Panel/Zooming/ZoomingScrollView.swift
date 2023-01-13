@@ -18,24 +18,56 @@ class ZoomingScrollView: UIScrollView, UIScrollViewDelegate {
     }
 
     // A Wrapper matching the frame of the screen
-    var wrapper: UIView?
+    var wrapper: UIView!
 
     lazy var zoomingTap: UITapGestureRecognizer = {
         let zoomingTap = UITapGestureRecognizer(target: self, action: #selector(handleZoomingTap(_:)))
         zoomingTap.numberOfTapsRequired = 2
-
         return zoomingTap
     }()
-
-    func didAddTarget(view: UIView) {
+    
+    func setup() {
         delegate = self
         showsHorizontalScrollIndicator = false
         showsVerticalScrollIndicator = false
+        contentInsetAdjustmentBehavior = .never
         minimumZoomScale = 1
         maximumZoomScale = 2
-        wrapper = UIView(frame: frame)
-        wrapper?.addSubview(view)
-        addSubview(wrapper!)
+        bounces = false
+        wrapper = UIView(frame: .zero)
+        wrapper.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(wrapper)
+    }
+
+    func didAddTarget(view: UIView) {
+        wrapper.addSubview(view)
+    }
+    
+    
+    var postImageSetConstraints: [NSLayoutConstraint] = []
+    func didUpdateSize(size: CGSize){
+        guard let target else { return }
+        postImageSetConstraints.append(contentsOf: [
+            wrapper.widthAnchor.constraint(equalToConstant: size.width),
+            wrapper.heightAnchor.constraint(equalToConstant: size.height),
+            target.centerXAnchor.constraint(equalTo: wrapper.centerXAnchor),
+            target.centerYAnchor.constraint(equalTo: wrapper.centerYAnchor)
+        ])
+        
+        if size.width <= frame.width {
+            postImageSetConstraints.append(
+                wrapper.centerXAnchor.constraint(equalTo: centerXAnchor)
+            )
+        }
+        
+        if size.height <= frame.height {
+            postImageSetConstraints.append(
+                wrapper.centerYAnchor.constraint(equalTo: centerYAnchor)
+            )
+        }
+        
+        NSLayoutConstraint.activate(postImageSetConstraints)
+        contentSize = size
     }
 
     func viewForZooming(in _: UIScrollView) -> UIView? {
@@ -77,24 +109,23 @@ extension ZoomingScrollView {
     }
 
     func addGestures() {
-        wrapper?.addGestureRecognizer(zoomingTap)
-        wrapper?.isUserInteractionEnabled = true
+        wrapper.addGestureRecognizer(zoomingTap)
+        wrapper.isUserInteractionEnabled = true
         target?.isUserInteractionEnabled = true
     }
 
     func removeGestures() {
-        wrapper?.removeGestureRecognizer(zoomingTap)
-        wrapper?.isUserInteractionEnabled = false
+        wrapper.removeGestureRecognizer(zoomingTap)
+        wrapper.isUserInteractionEnabled = false
         target?.isUserInteractionEnabled = false
         target?.interactions.removeAll()
-        wrapper?.interactions.removeAll()
+        wrapper.interactions.removeAll()
     }
 
     func reset() {
         removeGestures()
         target?.removeFromSuperview()
         target = nil
-        wrapper?.removeFromSuperview()
-        wrapper = nil
+        wrapper.removeFromSuperview()
     }
 }

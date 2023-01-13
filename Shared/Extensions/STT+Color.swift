@@ -104,7 +104,7 @@ extension Color {
 }
 
 // Reference: https://stackoverflow.com/a/73185092
-extension Color: RawRepresentable {
+extension Color: RawRepresentable, UserDefaultsSerializable {
     public init?(rawValue: String) {
         guard let data = Data(base64Encoded: rawValue) else {
             self = .black

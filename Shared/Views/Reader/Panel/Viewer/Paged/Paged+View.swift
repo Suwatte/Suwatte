@@ -48,9 +48,9 @@ class ReaderPageView: UIView {
         scrollView = ZoomingScrollView(frame: UIScreen.main.bounds)
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(scrollView)
-
+        scrollView.setup()
         imageView.frame = UIScreen.main.bounds
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.target = imageView
 
@@ -75,28 +75,30 @@ class ReaderPageView: UIView {
                 changedKeyPath == \Preferences.downsampleImages ||
                     changedKeyPath == \Preferences.cropWhiteSpaces
             }
-            .sink { [unowned self] _ in
-                imageView.image = nil
-                setImage()
+            .sink { [weak self] _ in
+                self?.imageView.image = nil
+                self?.setImage()
+            }
+            .store(in: &subscriptions)
+        
+        Preferences
+            .standard
+            .preferencesChangedSubject
+            .filter({ $0 == \Preferences.imageScaleType })
+            .sink { [weak self] _ in
+                guard let size = self?.imageView.image?.size else { return }
+                self?.updateHeightConstraint(size: size)
             }
             .store(in: &subscriptions)
     }
 
     func activateConstraints() {
-        heightContraint = imageView.heightAnchor.constraint(equalToConstant: 0)
-        widthConstraint = imageView.widthAnchor.constraint(equalToConstant: 0)
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: topAnchor),
             scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
             scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
             scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
-
-            heightContraint!,
-            widthConstraint!,
-
-            imageView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
-            imageView.centerYAnchor.constraint(equalTo: scrollView.centerYAnchor),
-
+            
             progressView.widthAnchor.constraint(equalTo: widthAnchor),
             progressView.heightAnchor.constraint(equalTo: heightAnchor),
             progressView.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -107,26 +109,78 @@ class ReaderPageView: UIView {
 
     var heightContraint: NSLayoutConstraint?
     var widthConstraint: NSLayoutConstraint?
-    func updateHeightConstraint(size: CGSize) {
-        let ratio = size.width / size.height
-        var height = (size.height / size.width) * frame.width
-        height = min(height, scrollView.bounds.height)
-        let width = height * ratio
-        heightContraint?.constant = height
+    
+    func resetConstraints() {
         heightContraint?.isActive = false
-        heightContraint = nil
-        heightContraint = imageView.heightAnchor.constraint(equalToConstant: height)
-        heightContraint?.priority = .required
-        heightContraint?.isActive = true
-
-        widthConstraint?.constant = width
         widthConstraint?.isActive = false
+        
+        heightContraint = nil
         widthConstraint = nil
+        
+        
+        NSLayoutConstraint.deactivate(scrollView.postImageSetConstraints)
+        scrollView.postImageSetConstraints.removeAll()
+    }
+    
+    func activateFitScreenConstraint(_ size: CGSize) {
+        let height = min((size.height / size.width) * frame.width, bounds.height)
+        let width = height * size.ratio
         widthConstraint = imageView.widthAnchor.constraint(equalToConstant: width)
-        widthConstraint?.isActive = true
-        widthConstraint?.priority = .required
+        heightContraint = imageView.heightAnchor.constraint(equalToConstant: height)
+        scrollView.didUpdateSize(size: .init(width: width, height: height))
+    }
+    
+    func activateFitWidthConstraint(_ size: CGSize) {
+        let multiplier = size.height / size.width
+        let height = bounds.width * multiplier
+        widthConstraint = imageView.widthAnchor.constraint(equalTo: widthAnchor)
+        heightContraint = imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: multiplier)
+        scrollView.didUpdateSize(size: .init(width: bounds.width, height: height))
 
-        scrollView.contentSize = imageView.bounds.size
+    }
+    
+    func activateFitHeightConstraint(_ size: CGSize) {
+        let multiplier = size.width / size.height
+        let width = bounds.height * multiplier
+        heightContraint = imageView.heightAnchor.constraint(equalTo: heightAnchor)
+        widthConstraint = imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: multiplier)
+        scrollView.didUpdateSize(size: .init(width: width, height: bounds.height))
+    }
+    
+    func activateStretchConstraint(_ size: CGSize) {
+        let ratio = size.ratio
+        
+        if ratio < 1 {
+            activateFitWidthConstraint(size)
+        } else if ratio > 1 {
+            activateFitHeightConstraint(size)
+        } else {
+            activateFitScreenConstraint(size)
+        }
+    }
+    func updateHeightConstraint(size: CGSize) {
+        
+        // Reset
+        resetConstraints()
+        
+        // Define Constraints
+        switch Preferences.standard.imageScaleType {
+            case .screen:
+                activateFitScreenConstraint(size)
+            case .height:
+                activateFitHeightConstraint(size)
+            case .width:
+                activateFitWidthConstraint(size)
+            case .stretch:
+                activateStretchConstraint(size)
+        }
+        // Activate
+        heightContraint?.isActive = true
+        widthConstraint?.isActive = true
+        
+        // Set Priority
+        heightContraint?.priority = .required
+        widthConstraint?.priority = .required
     }
 
     func reload() {
@@ -192,7 +246,7 @@ class ReaderPageView: UIView {
             if progressModel.progress != 1 {
                 progressModel.setProgress(CGFloat(1))
             }
-
+                
             updateHeightConstraint(size: imageResult.image.size)
 
             DispatchQueue.main.async {
@@ -201,6 +255,7 @@ class ReaderPageView: UIView {
                                   duration: 0.20,
                                   options: [.transitionCrossDissolve, .allowUserInteraction],
                                   animations: {
+                                        self.progressView.alpha = 0
                                       self.imageView.image = imageResult.image
                                   }) { _ in
                     self.scrollView.addGestures()
@@ -274,5 +329,24 @@ extension ReaderPageView {
 extension CGSize {
     var ratio: CGFloat {
         width / height
+    }
+}
+
+
+enum ImageScaleOption: Int, CaseIterable, UserDefaultsSerializable {
+    case screen, height, width, stretch
+    
+    
+    var description: String {
+        switch self {
+            case .screen:
+                return "Fit Screen"
+            case .height:
+                return "Fit Height"
+            case .width:
+                return "Fit Width"
+            case .stretch:
+                return "Stretch"
+        }
     }
 }

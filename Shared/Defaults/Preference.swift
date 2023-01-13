@@ -101,10 +101,13 @@ final class Preferences {
     
     @UserDefault(STTKeys.DefaultUserAgent)
     var userAgent = "Suwatte iOS Client V\(Bundle.main.releaseVersionNumberPretty)"
+    
+    @UserDefault(STTKeys.ImageScaleType)
+    var imageScaleType = ImageScaleOption.screen
 }
 
 @propertyWrapper
-struct UserDefault<Value> {
+struct UserDefault<Value : UserDefaultsSerializable> {
     let key: String
     let defaultValue: Value
 
@@ -127,12 +130,13 @@ struct UserDefault<Value> {
             let container = instance.userDefaults
             let key = instance[keyPath: storageKeyPath].key
             let defaultValue = instance[keyPath: storageKeyPath].defaultValue
-            return container.object(forKey: key) as? Value ?? defaultValue
+            let stored = container.object(forKey: key) as? Value.StoredValue
+            return stored.map({ Value(storedValue: $0) }) ?? defaultValue
         }
         set {
             let container = instance.userDefaults
             let key = instance[keyPath: storageKeyPath].key
-            container.set(newValue, forKey: key)
+            container.set(newValue.storedValue, forKey: key)
             instance.preferencesChangedSubject.send(wrappedKeyPath)
         }
     }
