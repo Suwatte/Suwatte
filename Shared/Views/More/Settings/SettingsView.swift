@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import RealmSwift
 
 struct SettingsView: View {
     var body: some View {
         Form {
             MiscSection()
+            LibrarySection()
             UpdatesSection()
             PrivacySection()
             NetworkSection()
@@ -96,6 +98,8 @@ extension SettingsView {
                 // Check Linked
                 Toggle("Check Linked Titles", isOn: $checkLinkedOnUpdate)
                 Toggle("Update Title Information", isOn: $updateContent)
+            } header : {
+                Text("Updates")
             }
             
         }
@@ -167,5 +171,55 @@ enum SkipCondition:  Int, CaseIterable, Identifiable {
     
     var id: Int {
         rawValue
+    }
+}
+
+
+extension SettingsView {
+    
+    struct LibrarySection : View {
+        @AppStorage(STTKeys.AlwaysAskForLibraryConfig) private var alwaysAsk = true
+        @ObservedResults(LibraryCollection.self, sortDescriptor: .init(keyPath: "order", ascending: true)) private var collections
+        @AppStorage(STTKeys.DefaultCollection) var defaultCollection: String = ""
+        @AppStorage(STTKeys.DefaultReadingFlag) var defaultFlag = LibraryFlag.unknown
+        var body: some View {
+            Section {
+                Toggle("Always Prompt", isOn: $alwaysAsk)
+                
+                if !alwaysAsk {
+                    Picker("Default Collection", selection: .init($defaultCollection, deselectTo: "")) {
+                        Text("None")
+                            .tag("")
+                        ForEach(collections) {
+                            Text($0.name)
+                                .tag($0._id)
+                        }
+                    }
+                    .transition(.slide)
+
+                }
+                
+                if !alwaysAsk {
+                    Picker("Default Reading Flag", selection: $defaultFlag) {
+                        ForEach(LibraryFlag.allCases) {
+                            Text($0.description)
+                                .tag($0)
+                        }
+                    }
+                    .transition(.slide)
+                }
+            } header: {
+                Text("Library")
+            }
+            .animation(.default, value: alwaysAsk)
+        }
+    }
+}
+
+public extension Binding where Value: Equatable {
+    init(_ source: Binding<Value>, deselectTo value: Value) {
+        self.init(get: { source.wrappedValue },
+                  set: { source.wrappedValue = $0 == source.wrappedValue ? value : $0 }
+        )
     }
 }

@@ -122,4 +122,8 @@ enum STTKeys {
     static let ImageScaleType = "READER.image_scale"
     
     static let ReaderType = "READER.type"
+    
+    static let AlwaysAskForLibraryConfig = "APP.library_always_asks"
+    static let DefaultCollection = "LIBRARY.default_collection"
+    static let DefaultReadingFlag = "LIBRARY.default_reading_flag"
 }

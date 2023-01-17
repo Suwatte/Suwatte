@@ -37,7 +37,7 @@ struct TrackersView: View {
             .alert("Non-Selective Sync", isPresented: $presentAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text("Forces Suwatte to track regardless of library status. This will automatically begin tracking previously untracked titles.")
+                Text("Suwatte Will Begin Tracking Previously Untracked Titles Automatically")
             }
         }
         .navigationTitle("Tracking")

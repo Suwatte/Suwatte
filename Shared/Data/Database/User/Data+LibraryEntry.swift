@@ -192,6 +192,20 @@ extension DataManager {
             }
         }
     }
+    
+    func toggleCollection(for entry: String, withId cid: String) {
+        let realm = try! Realm()
+
+        guard let entry = realm.objects(LibraryEntry.self).where({ $0._id == entry }).first else { return }
+
+        try! realm.safeWrite {
+            if entry.collections.contains(cid) {
+                entry.collections.remove(at: entry.collections.firstIndex(of: cid)!)
+            } else {
+                entry.collections.append(cid)
+            }
+        }
+    }
 
     func batchRemoveFromLibrary(with ids: Set<String>) {
         let realm = try! Realm()
