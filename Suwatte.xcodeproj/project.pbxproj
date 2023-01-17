@@ -2621,7 +2621,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-swift.git";
 			requirement = {
-				branch = dp/remove_warning_swiftui_property_wrappers;
+				branch = master;
 				kind = branch;
 			};
 		};

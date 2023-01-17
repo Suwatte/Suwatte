@@ -134,46 +134,55 @@ extension Target {
 
         @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
         @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
-        @State var selected: Publication?
-        @State var binded: StoredChapter?
+        @StateObject var manager: LocalContentManager = .shared
         @State var chapter: StoredChapter?
+        @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
         var body: some View {
             ASCollectionView(section: AS_SECTION)
-
                 .layout { _ in
                     DefaultGridLayout(75)
                 }
                 .alwaysBounceVertical()
                 .shouldRecreateLayoutOnStateChange(true)
                 .animateOnDataRefresh(true)
-                .sheet(item: $selected) { publication in
-                    OptionsSheet(publication: publication, chapter: $binded)
-                        .backport
-                        .presentationDetents([.medium])
-                }
-                .onChange(of: binded, perform: { newValue in
-                    selected = nil
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.150) {
-                        chapter = binded
-                    }
-                })
                 .fullScreenCover(item: $chapter) { chapter in
                     ReaderGateWay(readingMode: .PAGED_COMIC, chapterList: [chapter], openTo: chapter, title: chapter.title)
                 }
                 .animation(.default, value: chapter)
-                .animation(.default, value: binded)
-
-
         }
 
         var AS_SECTION: ASSection<Int> {
             return ASSection(id: 0, data: feed.publications) { publication, _ in
-                Button {
-                   selected = publication
-                } label: {
-                    Tile(publication: publication)
+                ZStack(alignment: .topTrailing) {
+                    Tile(publication: publication, chapter: $chapter)
+                    if let url = publication.acquisitionLink.flatMap({ URL(string: $0) }) {
+                        if let download = manager.downloads.first(where: { $0.url == url }) {
+                            TileOverlay(download: download)
+                        } else if LocalContentManager.shared.hasFile(fileName: url.lastPathComponent) {
+                            ColoredBadge(color: accentColor)
+                        }
+                    }
                 }
-                .buttonStyle(NeutralButtonStyle())
+            }
+        }
+        
+        struct TileOverlay: View {
+            @ObservedObject var download: LocalContentManager.DownloadObject
+            var body: some View {
+                ZStack(alignment: .topTrailing) {
+                    Group {
+                        switch download.status {
+                            case .failing:
+                                ColoredBadge(color: .red)
+                            case .active:
+                                ColoredBadge(color: .green)
+                            case .queued:
+                                ColoredBadge(color: .gray)
+                            default:
+                                EmptyView()
+                        }
+                    }
+                }
             }
         }
     }
@@ -188,9 +197,12 @@ extension Target {
         @EnvironmentObject var client: OPDSClient
         @StateObject private var image = FetchImage()
         @AppStorage(STTKeys.AppAccentColor) var color: Color = .sttDefault
+        @State var presentDialog = false
+        @State var presentAlert = false
+        @Binding var chapter: StoredChapter?
+        
         var request: URLRequest? {
             var headers = HTTPHeaders()
-
             if let auth = client.authHeader {
                 headers.add(name: "Authorization", value: auth)
             }
@@ -253,6 +265,58 @@ extension Target {
             }
             .onDisappear { image.reset() }
             .animation(.default, value: image.view)
+            .onTapGesture {
+                presentDialog.toggle()
+            }
+            .alert("Info", isPresented: $presentAlert, actions: {
+                Button("OK", role: .cancel) {}
+            }, message: {
+                Text(PublicationDescription)
+            })
+            
+            .confirmationDialog("Actions", isPresented: $presentDialog) {
+                if publication.isStreamable {
+                    Button("Info") {
+                        presentAlert.toggle()
+                    }
+                    
+                    if let link = publication.acquisitionLink.flatMap({ URL(string: $0) }) {
+                        if LocalContentManager.shared.hasFile(fileName: link.lastPathComponent) {
+                            Button("Read") {
+                                let path = LocalContentManager.shared.directory.appendingPathComponent(link.lastPathComponent)
+                                let book = LocalContentManager.shared.idHash.values.first(where: { $0.url == path })
+                                guard let book else {
+                                    ToastManager.shared.info("Book Not Found")
+                                    return
+                                }
+                                chapter = LocalContentManager.shared.generateStored(for: book)
+                            }
+                        } else {
+                            Button("Download") {
+                                let download = LocalContentManager.DownloadObject(url: link, title: publication.metadata.title, cover: publication.thumbnailURL ?? "")
+                                download.opdsClient = client
+                                LocalContentManager.shared.addToQueue(download)
+                            }
+                        }
+                    }
+                    if publication.isStreamable && !publication.isProtected {
+                        Button("Stream") {
+                            do {
+                                chapter = try publication.toStoredChapter()
+                            } catch {
+                                ToastManager.shared.error(error)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        var PublicationDescription: String {
+            let title = publication.metadata.title
+            let other = publication.metadata.description ?? ""
+            
+            return "\(title)\n\(other)"
         }
     }
 }
@@ -294,46 +358,3 @@ extension Publication: Identifiable {
     }
 }
 
-
-extension Target.PublicationSection {
-    
-    struct OptionsSheet: View {
-        let publication: Publication
-        @Binding var chapter: StoredChapter?
-        @Environment(\.presentationMode) var presentationMode
-        @AppStorage(STTKeys.AppAccentColor) var color: Color = .sttDefault
-        @StateObject var manager: LocalContentManager = .shared
-        var body: some View {
-            NavigationView {
-                VStack {
-                    Button("Download") {
-                        
-                    }
-                    .padding(.all)
-                    .background(color)
-                    .cornerRadius(5)
-                    Button {
-                        do {
-                            chapter = try publication.toStoredChapter()
-                        } catch {
-                            ToastManager.shared.error(error)
-                        }
-                    } label: {
-                        Text("Stream")
-                            .padding(.all)
-                            .background(color)
-                            .cornerRadius(5)
-                    }
-                    .disabled(!publication.isStreamable)
-                    .buttonStyle(.plain)
-                }
-                .navigationTitle("Options")
-                .navigationBarTitleDisplayMode(.inline)
-                .closeButton(title: "Close")
-            }
-            .navigationViewStyle(.stack)
-            .animation(.default, value: chapter)
-            
-        }
-    }
-}
