@@ -16,30 +16,20 @@ struct DownloadsView: View {
     @State var text = ""
     @AppStorage(STTKeys.DownloadsSortLibrary) var sortOption: SortOption = .downloadCount
     @State var isDescending = true
-
     @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
     @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
-    @State private var isPotrait = KEY_WINDOW?.windowScene?.interfaceOrientation == .portrait
     @AppStorage(STTKeys.TileStyle) var style = TileStyle.COMPACT
-    var itemsPerRow: Int {
-        isPotrait ? PortraitPerRow : LSPerRow
-    }
-
     var body: some View {
         ASCollectionView(section: AS_SECTION)
-            .layout(createCustomLayout: {
-                SuwatteDefaultGridLayout(itemsPerRow: itemsPerRow, style: style)
-            }, configureCustomLayout: { layout in
-                layout.itemsPerRow = itemsPerRow
-                layout.itemStyle = style
-            })
-            .alwaysBounceVertical()
-            .animateOnDataRefresh(true)
-            .onRotate { newOrientation in
-
-                if newOrientation.isFlat { return }
-                isPotrait = newOrientation.isPortrait
+            .layout {
+                DefaultGridLayout()
             }
+            .layout { _ in
+                DefaultGridLayout()
+            }
+            .alwaysBounceVertical()
+            .shouldRecreateLayoutOnStateChange(true)
+            .animateOnDataRefresh(true)
             .navigationTitle("Downloads")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

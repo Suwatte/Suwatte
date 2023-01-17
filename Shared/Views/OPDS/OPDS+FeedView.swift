@@ -134,28 +134,18 @@ extension Target {
 
         @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
         @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
-        @State private var isPotrait = KEY_WINDOW?.windowScene?.interfaceOrientation == .portrait
-        var itemsPerRow: Int {
-            isPotrait ? PortraitPerRow : LSPerRow
-        }
         @State var selected: Publication?
         @State var binded: StoredChapter?
         @State var chapter: StoredChapter?
         var body: some View {
             ASCollectionView(section: AS_SECTION)
 
-                .layout(createCustomLayout: {
-                    SuwatteDefaultGridLayout(itemsPerRow: itemsPerRow, style: .SEPARATED)
-                }, configureCustomLayout: { layout in
-                    layout.itemsPerRow = itemsPerRow
-                    layout.titleSize = 75.0
-                })
-                .alwaysBounceVertical()
-                .animateOnDataRefresh(true)
-                .onRotate { newOrientation in
-                    if newOrientation.isFlat { return }
-                    isPotrait = newOrientation.isPortrait
+                .layout { _ in
+                    DefaultGridLayout(75)
                 }
+                .alwaysBounceVertical()
+                .shouldRecreateLayoutOnStateChange(true)
+                .animateOnDataRefresh(true)
                 .sheet(item: $selected) { publication in
                     OptionsSheet(publication: publication, chapter: $binded)
                         .backport

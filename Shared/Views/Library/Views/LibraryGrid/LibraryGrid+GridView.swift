@@ -142,7 +142,7 @@ struct NeutralButtonStyle: ButtonStyle {
     }
 }
 
-func DefaultGridLayout(header: NSCollectionLayoutDimension? = nil , footer: NSCollectionLayoutDimension? = nil) -> ASCollectionLayoutSection {
+func DefaultGridLayout(header: NSCollectionLayoutDimension? = nil , footer: NSCollectionLayoutDimension? = nil, _ titleSize: CGFloat? = nil) -> ASCollectionLayoutSection {
     .init { environment in
         let viewingPotrait = environment.container.contentSize.width < environment.container.contentSize.height
         let itemsPerRow = UserDefaults.standard.integer(forKey: viewingPotrait ? STTKeys.GridItemsPerRow_P : STTKeys.GridItemsPerRow_LS)
@@ -153,8 +153,8 @@ func DefaultGridLayout(header: NSCollectionLayoutDimension? = nil , footer: NSCo
         let totalSpacing =  SPACING * CGFloat(itemsPerRow - 1)
         let groupWidth = environment.container.contentSize.width - (INSET * 2) - totalSpacing
         let estimatedItemWidth = (groupWidth / CGFloat(itemsPerRow)).rounded(.down)
-        let shouldAddTitle = style == .SEPARATED && estimatedItemWidth >= 100
-        let titleSize: CGFloat = shouldAddTitle ? 44 : 0
+        let shouldAddTitle = style == .SEPARATED && estimatedItemWidth >= 100 || titleSize != nil
+        let titleSize: CGFloat = shouldAddTitle ? titleSize ?? 44 : 0
         let height = (estimatedItemWidth * 1.5) + titleSize
         
         // Item
