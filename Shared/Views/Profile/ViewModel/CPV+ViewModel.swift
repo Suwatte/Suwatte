@@ -333,7 +333,7 @@ extension ProfileView.ViewModel {
         }
     }
 
-    private func handleAnilistSync() async throws {
+    func handleAnilistSync() async throws {
         guard let chapters = threadSafeChapters else {
             return
         }

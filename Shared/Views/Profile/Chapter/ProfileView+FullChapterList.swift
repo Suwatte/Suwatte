@@ -183,8 +183,18 @@ struct ChapterList: View {
                     .contextMenu {
                         Button {
                             DataManager.shared.bulkMarkChapter(chapters: [chapter], completed: !completed)
+                            didMark()
                         } label: {
                             Label(completed ? "Mark as Unread" : "Mark as Read", systemImage: completed ? "eye.slash.circle" : "eye.circle")
+                        }
+                        Menu("Mark Below") {
+                            Button { mark(chapter: chapter, read: true, above: false) } label: {
+                                Label("As Read", systemImage: "eye.circle")
+                            }
+                            
+                            Button { mark(chapter: chapter, read: false, above: false) } label :{
+                                Label("As Unread", systemImage: "eye.slash.circle")
+                            }
                         }
                         DownloadView(download, chapter)
                         ProviderView(chapter)
@@ -382,6 +392,21 @@ extension ChapterList {
 }
 
 extension ChapterList {
+    func mark(chapter: StoredChapter, read: Bool, above: Bool) {
+        selections.removeAll()
+        selections.insert(chapter)
+        if above {
+            selectAbove()
+        } else {
+            selectBelow()
+        }
+        selections.remove(chapter)
+        if read {
+            markAsRead()
+        } else {
+            markAsUnread()
+        }
+    }
     func selectAbove() {
         if selections.isEmpty { return }
 
@@ -443,6 +468,7 @@ extension ChapterList {
     func markAsRead() {
         DataManager.shared.bulkMarkChapter(chapters: Array(selections))
         deselectAll()
+        didMark()
     }
 
     func markAsUnread() {
@@ -470,5 +496,11 @@ extension ChapterList {
             DataManager.shared.resetChapterData(forId: $0._id)
         }
         deselectAll()
+    }
+    
+    func didMark() {
+        Task.detached {
+            try? await model.handleAnilistSync()
+        }
     }
 }
