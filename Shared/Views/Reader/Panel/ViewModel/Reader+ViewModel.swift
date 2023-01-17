@@ -528,31 +528,40 @@ extension ReaderView.ViewModel {
     }
     func updateViewerMode(with mode: ReadingMode) {
         guard !updateWithUserSetMode() else { return }
-        print("Using Incoming Mode Default", mode)
+        let defaults = UserDefaults(suiteName: contentIdentifier.id)
         let preferences = Preferences.standard
         switch mode {
             case .PAGED_MANGA:
                 preferences.isReadingVertically = false
                 preferences.readingLeftToRight = false
                 preferences.isPagingVertically = false
+                defaults?.set(PanelReadingModes.PAGED_MANGA.rawValue, forKey: STTKeys.ReaderType)
             case .PAGED_COMIC:
                 preferences.isReadingVertically = false
                 preferences.readingLeftToRight = true
                 preferences.isPagingVertically = false
+                defaults?.set(PanelReadingModes.PAGED_COMIC.rawValue, forKey: STTKeys.ReaderType)
+
 
             case .VERTICAL:
                 preferences.isReadingVertically = true
                 preferences.isPagingVertically = false
                 preferences.VerticalPagePadding = false
+                defaults?.set(PanelReadingModes.VERTICAL.rawValue, forKey: STTKeys.ReaderType)
+
 
             case .VERTICAL_SEPARATED:
                 preferences.isReadingVertically = true
                 preferences.VerticalPagePadding = true
                 preferences.isPagingVertically = false
+                defaults?.set(PanelReadingModes.VERTICAL_SEPARATED.rawValue, forKey: STTKeys.ReaderType)
+
 
             case .PAGED_VERTICAL:
                 preferences.isReadingVertically = false
                 preferences.isPagingVertically = true
+                defaults?.set(PanelReadingModes.PAGED_VERTICAL.rawValue, forKey: STTKeys.ReaderType)
+
         default: break
         }
     }
