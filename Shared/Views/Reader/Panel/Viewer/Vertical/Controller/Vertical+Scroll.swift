@@ -101,7 +101,7 @@ extension Controller {
         let section = model.sections[path.section]
 
         // Get Min
-        if let minIndex = section.firstIndex(where: { $0 is ReaderView.Page }) {
+        if let minIndex = section.firstIndex(where: { $0 is ReaderPage }) {
             let attributes = collectionNode.collectionViewLayout.layoutAttributesForItem(at: .init(item: minIndex, section: path.section))
 
             if let attributes = attributes {

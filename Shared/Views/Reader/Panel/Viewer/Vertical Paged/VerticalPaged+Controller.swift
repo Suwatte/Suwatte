@@ -11,7 +11,7 @@ import Kingfisher
 import UIKit
 
 extension VerticalPager {
-    final class Controller: UICollectionViewController {
+    final class Controller: UICollectionViewController, PagerDelegate {
         var model: ReaderView.ViewModel!
         var subscriptions = Set<AnyCancellable>()
         var currentPath: IndexPath? {
@@ -29,7 +29,7 @@ extension VerticalPager {
 }
 
 private typealias Controller = VerticalPager.Controller
-private typealias ImageCell = Controller.ImageCell
+private typealias ImageCell = PagedViewer.ImageCell
 
 // MARK: DataSource
 
@@ -73,7 +73,7 @@ extension Controller {
         }
         let requestedIndex = rChapter.requestedPageIndex
         rChapter.requestedPageOffset = nil
-        let openingIndex = model.sections.first?.firstIndex(where: { ($0 as? ReaderView.Page)?.index == requestedIndex }) ?? requestedIndex
+        let openingIndex = model.sections.first?.firstIndex(where: { ($0 as? ReaderPage)?.page.index == requestedIndex }) ?? requestedIndex
         let path: IndexPath = .init(item: openingIndex, section: 0)
         collectionView.scrollToItem(at: path, at: .centeredVertically, animated: false)
         let point = collectionView.layoutAttributesForItem(at: path)?.frame.midY ?? 0
@@ -138,7 +138,7 @@ extension Controller {
 extension Controller: UICollectionViewDataSourcePrefetching {
     func collectionView(_: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         let urls = indexPaths.compactMap { path -> URL? in
-            guard let page = self.model.sections[path.section][path.item] as? ReaderView.Page, let url = page.hostedURL, !page.isLocal else {
+            guard let page = self.model.sections[path.section][path.item] as? ReaderPage, let url = page.page.hostedURL, !page.page.isLocal else {
                 return nil
             }
 
@@ -159,8 +159,7 @@ extension Controller {
         guard let cell = cell as? ImageCell else {
             return
         }
-        cell.pageView?.imageView.kf.cancelDownloadTask()
-        cell.pageView?.downloadTask?.cancel()
+        cell.cancelTasks()
     }
 }
 
@@ -188,15 +187,10 @@ extension Controller {
         // Cell Logic
         let data = model.getObject(atPath: indexPath)
 
-        if let data = data as? ReaderView.Page {
+        if let data = data as? ReaderPage {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCell.identifier, for: indexPath) as! ImageCell
-            cell.initializePage(page: data)
-            cell.backgroundColor = .clear
-
-            if enableInteractions {
-                cell.pageView?.imageView.addInteraction(UIContextMenuInteraction(delegate: self))
-            }
-            cell.pageView?.setImage()
+            cell.set(page: data, delegate: self) // SetUp
+            cell.setImage() // Set Image
             return cell
         }
 

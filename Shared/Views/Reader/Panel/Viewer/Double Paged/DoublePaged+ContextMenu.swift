@@ -1,15 +1,14 @@
 //
-//  VerticalPaged+ContextMenu.swift
+//  DoublePaged+ContextMenu.swift
 //  Suwatte (iOS)
 //
-//  Created by Mantton on 2022-12-22.
+//  Created by Mantton on 2023-01-15.
 //
 
 import UIKit
 
-// MARK: Context Menu Delegate
 
-extension VerticalPager.Controller: UIContextMenuInteractionDelegate {
+extension DoublePagedViewer.Controller: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction,
                                 configurationForMenuAtLocation _: CGPoint) -> UIContextMenuConfiguration?
     {
@@ -68,3 +67,4 @@ extension VerticalPager.Controller: UIContextMenuInteractionDelegate {
         })
     }
 }
+

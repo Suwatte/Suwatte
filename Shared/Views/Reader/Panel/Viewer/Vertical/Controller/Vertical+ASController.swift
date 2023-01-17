@@ -79,7 +79,7 @@ extension VerticalViewer {
         // MARK: View DidAppear
 
         override func viewDidAppear(_ animated: Bool) {
-            super.viewWillAppear(animated)
+            super.viewDidAppear(animated)
 
             if model.IN_ZOOM_VIEW {
                 model.IN_ZOOM_VIEW = false
@@ -92,7 +92,7 @@ extension VerticalViewer {
             let requestedIndex = rChapter.requestedPageIndex
             let openingIndex = model
                 .sections[0]
-                .firstIndex(where: { ($0 as? ReaderView.Page)?.index == requestedIndex }) ?? requestedIndex
+                .firstIndex(where: { ($0 as? ReaderPage)?.page.index == requestedIndex }) ?? requestedIndex
             let path: IndexPath = .init(item: openingIndex, section: 0)
             collectionNode.scrollToItem(at: path, at: .top, animated: false)
 
@@ -141,9 +141,9 @@ extension Controller: ASCollectionDelegate {
     func collectionNode(_: ASCollectionNode, nodeBlockForItemAt indexPath: IndexPath) -> ASCellNodeBlock {
         let data = model.getObject(atPath: indexPath)
 
-        if let data = data as? ReaderView.Page {
+        if let data = data as? ReaderPage {
             return {
-                let node = Controller.ImageNode(page: data)
+                let node = Controller.ImageNode(page: data.page)
                 node.delegate = self
                 if let target = self.initialOffset, indexPath.section == 0, indexPath.item == target.0, let offset = target.1 {
                     node.savedOffset = offset

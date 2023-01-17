@@ -104,6 +104,9 @@ final class Preferences {
     
     @UserDefault(STTKeys.ImageScaleType)
     var imageScaleType = ImageScaleOption.screen
+    
+    @UserDefault(STTKeys.AppAccentColor)
+    var accentColor = Color.sttDefault
 }
 
 @propertyWrapper

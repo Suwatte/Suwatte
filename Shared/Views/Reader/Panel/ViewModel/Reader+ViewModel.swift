@@ -14,7 +14,7 @@ extension ReaderView {
         @Published var updater = false
         private var cancellables = Set<AnyCancellable>()
         // Core
-        var sections: [[AnyHashable]] = []
+        var sections: [[AnyObject]] = []
         var readerChapterList: [ReaderChapter] = []
         @Published var activeChapter: ReaderChapter {
             didSet {
@@ -39,7 +39,7 @@ extension ReaderView {
         @Published var autoplayEnabled = false
 
         var chapterCache: [String: ReaderChapter] = [:]
-        var chapterSectinoCache: [String: Int] = [:]
+        var chapterSectionCache: [String: Int] = [:]
         var scrollTask: Task<Void, Never>?
         // Combine
         let reloadSectionPublisher = PassthroughSubject<Int, Never>()
@@ -118,9 +118,10 @@ extension ReaderView {
             // Add to model section
             if asNextChapter {
                 sections.append(section)
-                chapterSectinoCache[readerChapter.chapter._id] = sections.count - 1
+                chapterSectionCache[readerChapter.chapter._id] = sections.count - 1
             } else {
-                chapterSectinoCache.forEach { k, v in chapterSectinoCache.updateValue(v + 1, forKey: k) }
+                chapterSectionCache.forEach { k, v in chapterSectionCache.updateValue(v + 1, forKey: k) }
+                chapterSectionCache[readerChapter.chapter._id] = 0
                 sections.insert(section, at: 0)
             }
 
@@ -136,11 +137,11 @@ extension ReaderView {
             }
         }
 
-        func buildSection(chapter: ThreadSafeChapter, pages: [ReaderView.Page]) -> [AnyHashable] {
+        func buildSection(chapter: ThreadSafeChapter, pages: [ReaderPage]) -> [AnyObject] {
             let chapterIndex = chapterList.firstIndex(where: { $0 == chapter })! // Should never fail
 
             // Prepare Chapter
-            var chapterObjects: [AnyHashable] = []
+            var chapterObjects: [AnyObject] = []
 
             // Add Previous Transition for first chapter
             if chapterIndex == 0 {
@@ -176,7 +177,7 @@ extension ReaderView {
             }
         }
 
-        func getObject(atPath path: IndexPath) -> AnyHashable {
+        func getObject(atPath path: IndexPath) -> AnyObject {
             sections[path.section][path.item]
         }
 
@@ -299,20 +300,20 @@ extension ReaderView.ViewModel {
 }
 
 extension ReaderView.ViewModel {
-    func didScrollTo(path: IndexPath) {
+    func didScrollTo(path: IndexPath) {        
         scrollTask?.cancel()
         scrollTask = nil
         scrollTask = Task {
             // Get Page
-            let page = sections[path.section][path.item]
+            let item = sections[path.section][path.item]
 
-            guard let page = page as? ReaderView.Page else {
-                if let transition = page as? ReaderView.Transition {
+            guard let readerPage = item as? ReaderPage else {
+                if let transition = item as? ReaderView.Transition {
                     handleTransition(transition: transition)
                 }
                 return
             }
-
+            let page = readerPage.page
             if page.chapterId != activeChapter.chapter._id, let chapter = chapterCache[page.chapterId] {
                 onChapterChanged(chapter: chapter)
                 return
@@ -385,7 +386,7 @@ extension ReaderView.ViewModel {
         }
 
         Task {
-            lastChapter.pages?.map(\.CELL_KEY).forEach {
+            lastChapter.pages?.map(\.page.CELL_KEY).forEach {
                 KingfisherManager.shared.cache.memoryStorage.remove(forKey: $0)
             }
         }

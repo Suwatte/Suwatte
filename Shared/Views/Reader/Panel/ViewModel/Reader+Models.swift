@@ -126,7 +126,7 @@ extension ReaderView {
                     let arr = zip(paths.indices, paths)
                     let file = chapter.contentId
                     pages = arr.map {
-                        Page(index: $0, chapterId: chapterId, contentId: chapter.contentId, sourceId: chapter.sourceId, archivePath: $1, archiveFile: file)
+                        .init(page: Page(index: $0, chapterId: chapterId, contentId: chapter.contentId, sourceId: chapter.sourceId, archivePath: $1, archiveFile: file))
                     }
                 }
                 // Downloaded
@@ -134,7 +134,7 @@ extension ReaderView {
                     let urls = chapterData.urls
                     let arr = zip(urls.indices, urls)
                     pages = arr.map {
-                        Page(index: $0, chapterId: chapterId, contentId: chapter.contentId, sourceId: chapter.sourceId, downloadURL: $1)
+                        .init(page: Page(index: $0, chapterId: chapterId, contentId: chapter.contentId, sourceId: chapter.sourceId, downloadURL: $1))
                     }
                 }
 
@@ -143,7 +143,7 @@ extension ReaderView {
                     let raws = chapterData.rawDatas
                     let arr = zip(raws.indices, raws)
                     pages = arr.map {
-                        Page(index: $0, chapterId: chapterId, contentId: chapter.contentId, sourceId: chapter.sourceId, rawData: $1)
+                        .init(page: Page(index: $0, chapterId: chapterId, contentId: chapter.contentId, sourceId: chapter.sourceId, rawData: $1))
                     }
                 }
                 // URL
@@ -152,7 +152,7 @@ extension ReaderView {
                     let arr = zip(images.indices, images)
 
                     pages = arr.map {
-                        Page(index: $0, chapterId: chapterId, contentId: chapter.contentId, sourceId: chapter.sourceId, hostedURL: $1)
+                        .init(page: Page(index: $0, chapterId: chapterId, contentId: chapter.contentId, sourceId: chapter.sourceId, hostedURL: $1))
                     }
                 }
             }
@@ -168,16 +168,17 @@ extension ReaderView {
             return lhs.chapter.chapterId == rhs.chapter.chapterId
         }
 
-        var pages: [Page]?
+        @Published var pages: [ReaderPage]?
 
         enum ChapterType {
             case EXTERNAL, LOCAL, OPDS
         }
     }
 
-    // MARK: Reader Page
-
+    
     struct Page: Hashable {
+        
+        
         var index: Int
         var isLocal: Bool {
             archivePath != nil || downloadURL != nil
@@ -208,7 +209,7 @@ extension ReaderView {
 
     // MARK: ReaderTransition
 
-    struct Transition: Hashable {
+    class Transition: Equatable {
         var from: ThreadSafeChapter
         var to: ThreadSafeChapter?
         var type: TransitionType

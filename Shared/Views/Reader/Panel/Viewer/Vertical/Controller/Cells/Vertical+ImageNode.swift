@@ -38,7 +38,7 @@ extension Controller {
 
         init(page: ReaderView.Page) {
             self.page = page
-            progressNode = ProgressNode(model: progressModel)
+            progressNode = ProgressNode()
             super.init()
             shouldAnimateSizeChanges = false
             automaticallyManagesSubnodes = true
@@ -126,7 +126,6 @@ extension Controller {
             let size = image.size.scaledTo(UIScreen.main.bounds.size)
             frame = .init(origin: .init(x: 0, y: 0), size: size)
             ratio = size.height / size.width
-
             if Task.isCancelled {
                 return
             }
@@ -174,12 +173,13 @@ extension Controller {
             }
         }
 
-        func handleProgressBlock(_: Int64, _: Int64, _ source: Kingfisher.Source) {
+        func handleProgressBlock(_ received: Int64, _ total: Int64, _ source: Kingfisher.Source) {
             if source.cacheKey != page.CELL_KEY {
                 downloadTask?.cancel()
                 return
             }
-            //        progressModel.setProgress(CGFloat(recieved) / CGFloat(total))
+            let progress = Double(received) / Double(total)
+            (progressNode.view as? CircularProgressBar)?.setProgress(to: progress, withAnimation: false)
         }
 
         func handleImageFailure(_ error: Error) {

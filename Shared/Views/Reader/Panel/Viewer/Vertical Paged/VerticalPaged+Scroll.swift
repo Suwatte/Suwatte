@@ -33,7 +33,7 @@ extension VerticalPager.Controller {
         let section = model.sections[path.section]
 
         // Get Min
-        if let minIndex = section.firstIndex(where: { $0 is ReaderView.Page }) {
+        if let minIndex = section.firstIndex(where: { $0 is ReaderPage }) {
             let attributes = collectionView.layoutAttributesForItem(at: .init(item: minIndex, section: path.section))
 
             if let attributes = attributes {
@@ -42,11 +42,10 @@ extension VerticalPager.Controller {
         }
 
         // Get Max
-        if let maxIndex = section.lastIndex(where: { $0 is ReaderView.Page }) {
-            let attributes = collectionView.layoutAttributesForItem(at: .init(item: maxIndex, section: path.section))
-            if let attributes = attributes {
-                sectionMaxOffset = attributes.frame.maxY - collectionView.frame.height
-            }
+        let maxIndex = max(section.endIndex - 2, 0)
+        let attributes = collectionView.layoutAttributesForItem(at: .init(item: maxIndex, section: path.section))
+        if let attributes = attributes {
+            sectionMaxOffset = attributes.frame.minY
         }
 
         withAnimation {

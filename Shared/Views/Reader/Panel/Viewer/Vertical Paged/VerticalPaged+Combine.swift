@@ -56,8 +56,8 @@ extension VerticalPager.Controller {
             if slider.isScrubbing {
                 let position = CGPoint(x: 0, y: slider.current)
 
-                if let path = collectionView.indexPathForItem(at: position), let item = model.sections[path.section][path.item] as? ReaderView.Page {
-                    model.scrubbingPageNumber = item.index + 1
+                if let path = collectionView.indexPathForItem(at: position), let item = model.sections[path.section][path.item] as? ReaderPage {
+                    model.scrubbingPageNumber = item.page.index + 1
                 }
 
                 collectionView.setContentOffset(position, animated: false)

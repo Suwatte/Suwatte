@@ -132,6 +132,8 @@ extension ReaderView {
                         } else {
                             DoublePagedViewer()
                                 .transition(.opacity)
+//                            PagedViewer()
+//                                .transition(.opacity)
                         }
                     }
                 }

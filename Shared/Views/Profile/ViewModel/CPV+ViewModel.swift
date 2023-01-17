@@ -200,11 +200,12 @@ extension ProfileView.ViewModel {
         if storedChapters.isEmpty { return }
 
         chapters = .loaded(storedChapters)
-        Task {
+        Task { @MainActor in 
             getMarkers()
         }
     }
 
+    
     func getMarkers() {
         let id = entry.id
         let sourceId = source.id
