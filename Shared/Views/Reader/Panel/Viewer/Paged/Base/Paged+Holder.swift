@@ -19,6 +19,32 @@ enum PageState {
     case loading, error, set
 }
 
+extension CGSize {
+    var ratio: CGFloat {
+        width / height
+    }
+}
+
+
+enum ImageScaleOption: Int, CaseIterable, UserDefaultsSerializable {
+    case screen, height, width, stretch
+    
+    
+    var description: String {
+        switch self {
+            case .screen:
+                return "Fit Screen"
+            case .height:
+                return "Fit Height"
+            case .width:
+                return "Fit Width"
+            case .stretch:
+                return "Stretch"
+        }
+    }
+}
+
+
 class PagedDisplayHolder : UIView {
     
     // Core Properties
