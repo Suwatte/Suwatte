@@ -14,7 +14,7 @@ extension UICollectionView {
 }
 
 extension PagedViewer {
-    final class PagedController: UICollectionViewController {
+    final class PagedController: UICollectionViewController, PagerDelegate {        
         var model: ReaderView.ViewModel!
         var subscriptions = Set<AnyCancellable>()
         var currentPath: IndexPath? {
@@ -23,7 +23,7 @@ extension PagedViewer {
 
         var isScrolling: Bool = false
         var enableInteractions: Bool = Preferences.standard.imageInteractions
-
+        var lastPathBeforeRotation: IndexPath?
         deinit {
             Logger.shared.debug("Paged Controller Deallocated")
         }
@@ -50,19 +50,19 @@ extension PagedController {
         guard let rChapter = model.readerChapterList.first else {
             return
         }
-        
+
         if model.sections.isEmpty {
             collectionView.isHidden = false
             return
         }
         let requestedIndex = rChapter.requestedPageIndex
         rChapter.requestedPageOffset = nil
-        let openingIndex = model.sections.first?.firstIndex(where: { ($0 as? ReaderView.Page)?.index == requestedIndex }) ?? requestedIndex
+        let openingIndex = model.sections.first?.firstIndex(where: { ($0 as? ReaderPage)?.page.index == requestedIndex }) ?? requestedIndex
         let path: IndexPath = .init(item: openingIndex, section: 0)
         collectionView.scrollToItem(at: path, at: .centeredHorizontally, animated: false)
-        let point = collectionView.layoutAttributesForItem(at: path)?.frame.midX ?? 0
-        model.slider.setCurrent(point)
+        let point = collectionView.layoutAttributesForItem(at: path)?.frame.maxX ?? 0
         DispatchQueue.main.async {
+            self.model.slider.setCurrent(point)
             self.calculateCurrentChapterScrollRange()
         }
         collectionView.isHidden = false
@@ -135,14 +135,12 @@ extension PagedController {
         model.insertPublisher.sink { [unowned self] section in
 
             Task { @MainActor in
-
                 // Next Chapter Logic
                 let data = model.sections[section]
                 let paths = data.indices.map { IndexPath(item: $0, section: section) }
 
                 let layout = collectionView.collectionViewLayout as? HorizontalContentSizePreservingFlowLayout
                 layout?.isInsertingCellsToTop = section == 0 && model.sections.count != 0
-
                 CATransaction.begin()
                 CATransaction.setDisableActions(true)
                 collectionView.performBatchUpdates({
@@ -164,8 +162,8 @@ extension PagedController {
             if slider.isScrubbing {
                 let position = CGPoint(x: slider.current, y: 0)
 
-                if let path = collectionView.indexPathForItem(at: position), let item = model.sections[path.section][path.item] as? ReaderView.Page {
-                    model.scrubbingPageNumber = item.index + 1
+                if let path = collectionView.indexPathForItem(at: position), let item = model.sections[path.section][path.item] as? ReaderPage {
+                    model.scrubbingPageNumber = item.page.index + 1
                 }
 
                 collectionView.setContentOffset(position, animated: false)
@@ -273,17 +271,10 @@ extension PagedController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         // Cell Logic
         let data = model.getObject(atPath: indexPath)
-
-        if let data = data as? ReaderView.Page {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCell.identifier, for: indexPath) as! ImageCell
-            cell.initializePage(page: data)
-            cell.backgroundColor = .clear
-//            // Enable Interactions
-            if enableInteractions {
-                cell.pageView?.imageView.addInteraction(UIContextMenuInteraction(delegate: self))
-            }
-//
-            cell.pageView?.setImage()
+        if let data = data as? ReaderPage {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCell.identifier, for: indexPath) as! ImageCell // Dequeue
+            cell.set(page: data, delegate: self) // SetUp
+            cell.setImage() // Set Image
             return cell
         }
 
@@ -300,13 +291,12 @@ extension PagedController {
     override func collectionView(_: UICollectionView, willDisplay _: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         handleChapterPreload(at: indexPath)
     }
-
+    
     override func collectionView(_: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt _: IndexPath) {
         guard let cell = cell as? ImageCell else {
             return
         }
-        cell.pageView?.imageView.kf.cancelDownloadTask()
-        cell.pageView?.downloadTask?.cancel()
+        cell.cancelTasks()
     }
 }
 
@@ -321,7 +311,9 @@ extension PagedController {
         if currentPath.item < path.item {
             let preloadNext = model.sections[path.section].count - path.item + 1 < 5
             if preloadNext, model.readerChapterList.get(index: path.section + 1) == nil {
-                model.loadNextChapter()
+                Task.detached { [weak self] in
+                    await self?.model.loadNextChapter()
+                }
             }
         }
     }
@@ -330,8 +322,8 @@ extension PagedController {
 // MARK: Cell Sizing
 
 extension PagedController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
-        return UIScreen.main.bounds.size
+    func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
+        return collectionView.bounds.size
     }
 }
 
@@ -347,7 +339,9 @@ extension PagedController {
     func onUserDidScroll(to _: CGFloat) {
         // Update Offset
         if !model.slider.isScrubbing {
-            model.slider.setCurrent(collectionView.contentOffset.x)
+            Task { @MainActor in
+                model.slider.setCurrent(collectionView.contentOffset.x)
+            }
         }
     }
 
@@ -362,7 +356,7 @@ extension PagedController {
         let section = model.sections[path.section]
 
         // Get Min
-        if let minIndex = section.firstIndex(where: { $0 is ReaderView.Page }) {
+        if let minIndex = section.firstIndex(where: { $0 is ReaderPage }) {
             let attributes = collectionView.layoutAttributesForItem(at: .init(item: minIndex, section: path.section))
 
             if let attributes = attributes {
@@ -371,13 +365,11 @@ extension PagedController {
         }
 
         // Get Max
-        if let maxIndex = section.lastIndex(where: { $0 is ReaderView.Page }) {
-            let attributes = collectionView.layoutAttributesForItem(at: .init(item: maxIndex, section: path.section))
-            if let attributes = attributes {
-                sectionMaxOffset = attributes.frame.maxX - collectionView.frame.width
-            }
+        let maxIndex = max(section.endIndex - 2, 0)
+        let attributes = collectionView.layoutAttributesForItem(at: .init(item: maxIndex, section: path.section))
+        if let attributes = attributes {
+            sectionMaxOffset = attributes.frame.minX
         }
-
         withAnimation {
             model.slider.setRange(sectionMinOffset, sectionMaxOffset)
         }
@@ -389,6 +381,7 @@ extension PagedController {
 extension PagedController {
     override func scrollViewDidEndDecelerating(_: UIScrollView) {
         onScrollStop()
+        lastPathBeforeRotation = currentPath
     }
 
     override func scrollViewDidEndDragging(_: UIScrollView, willDecelerate decelerate: Bool) {
@@ -404,7 +397,7 @@ extension PagedController {
 
     func onScrollStop() {
         isScrolling = false
-        
+
         model.menuControl.hideMenu()
         // Handle Load Prev
         if collectionView.contentOffset.x <= 0 {
@@ -433,7 +426,7 @@ extension PagedController: UIContextMenuInteractionDelegate {
         let indexPath = collectionView.indexPathForItem(at: point)
 
         // Validate Is Image
-        guard let indexPath = indexPath, model.sections[indexPath.section][indexPath.item] is ReaderView.Page else {
+        guard let indexPath = indexPath, model.sections[indexPath.section][indexPath.item] is ReaderPage else {
             return nil
         }
 
@@ -491,20 +484,10 @@ import Kingfisher
 extension PagedController: UICollectionViewDataSourcePrefetching {
     func collectionView(_: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         let urls = indexPaths.compactMap { path -> URL? in
-            guard let page = self.model.sections[path.section][path.item] as? ReaderView.Page, let url = page.hostedURL, !page.isLocal else {
+            guard let page = self.model.sections[path.section][path.item] as? ReaderPage, let url = page.page.hostedURL, !page.page.isLocal else {
                 return nil
             }
 
-            return URL(string: url)
-        }
-        ImagePrefetcher(urls: urls).start()
-    }
-
-    func prefetch(pages: [ReaderView.Page]) {
-        let urls = pages.compactMap { page -> URL? in
-            guard let url = page.hostedURL else {
-                return nil
-            }
             return URL(string: url)
         }
         ImagePrefetcher(urls: urls).start()
@@ -513,20 +496,7 @@ extension PagedController: UICollectionViewDataSourcePrefetching {
 
 extension PagedController {
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        let lastPath = currentPath
-
-//
-        coordinator.animate(alongsideTransition: { _ in
-            self.collectionView.collectionViewLayout.invalidateLayout()
-            self.collectionView.layoutIfNeeded()
-        }, completion: { _ in
-            guard let lastPath = lastPath, let attributes = self.collectionView.layoutAttributesForItem(at: lastPath) else {
-                return
-            }
-            DispatchQueue.main.async {
-                self.collectionView.setContentOffset(.init(x: attributes.frame.origin.x, y: 0), animated: true)
-            }
-        })
+        self.collectionView.collectionViewLayout.invalidateLayout()
         super.viewWillTransition(to: size, with: coordinator)
     }
 }

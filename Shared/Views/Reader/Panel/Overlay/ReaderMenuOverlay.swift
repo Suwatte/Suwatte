@@ -14,34 +14,30 @@ extension ReaderView {
         @Environment(\.colorScheme) var colorScheme
         @Preference(\.readingLeftToRight) var readingLeftToRight
         @Preference(\.isReadingVertically) var isVertical
-        @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
+        @Preference(\.isPagingVertically) var isPagingVertically
+        @AppStorage(STTKeys.AppAccentColor, store: .standard) var accentColor: Color = .sttDefault
 
         var edges = KEY_WINDOW?.safeAreaInsets
-
-        // Child Sizes
-        @State var footerSize = CGSize(width: 0, height: 0)
-        @State var headerSize = CGSize(width: 0, height: 300)
         var body: some View {
             ZStack(alignment: Alignment(horizontal: .trailing, vertical: .top)) {
                 VStack {
                     MainOverlay
-                        .modifier(ViewSizeReader(size: $headerSize))
                         .ignoresSafeArea()
                     Spacer()
 
                     if !isVertical {
                         PagedSlider()
-                            .modifier(ViewSizeReader(size: $footerSize))
                             .background(gradient().rotationEffect(.degrees(180)))
                     }
                 }
                 .ignoresSafeArea()
 
-                if isVertical {
-                    WebtoonSlider(headerHeight: headerSize.height)
-                        .alignmentGuide(.top, computeValue: { d in
-                            d[.top] - headerSize.height + 45
-                        })
+                if isVertical || isPagingVertically {
+                    VStack {
+                        Spacer()
+                        WebtoonSlider()
+                        Spacer()
+                    }
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -58,7 +54,7 @@ extension ReaderView {
             Button {
                 model.menuControl.toggleChapterList()
             }
-                label: {
+        label: {
                 HStack {
                     VStack(alignment: .leading) {
                         Text(model.activeChapter.chapter.displayName)
@@ -87,7 +83,7 @@ extension ReaderView {
                     HStack {
                         ActiveChapterTitleView
                         Spacer()
-//                        QuickActionsButton
+                        //                        QuickActionsButton
                     }
                     .padding(.bottom, 65)
                 }
@@ -146,7 +142,7 @@ extension ReaderView {
         var HeaderButtons: some View {
             HStack {
                 Button {
-//                    presentationMode.wrappedValue.dismiss()
+                    //                    presentationMode.wrappedValue.dismiss()
                     if var topController = KEY_WINDOW?.rootViewController {
                         while let presentedViewController = topController.presentedViewController {
                             topController = presentedViewController
@@ -174,7 +170,6 @@ extension ReaderView {
 extension ReaderView.ReaderMenuOverlay {
     struct WebtoonSlider: View {
         @EnvironmentObject var model: ReaderView.ViewModel
-        var headerHeight: CGFloat
         var body: some View {
             VStack(alignment: .center) {
                 PrevButton()
@@ -239,7 +234,9 @@ extension ReaderView.ReaderMenuOverlay {
 
     struct PagedSlider: View {
         @EnvironmentObject var model: ReaderView.ViewModel
-        @AppStorage(STTKeys.PagedDirection) var readingLeftToRight = true
+        @Preference(\.readingLeftToRight) var readingLeftToRight
+        @Preference(\.isPagingVertically) var isPagingVertically
+
         var edges = KEY_WINDOW?.safeAreaInsets
 
         var READY: Bool {
@@ -256,8 +253,9 @@ extension ReaderView.ReaderMenuOverlay {
                 }
                 .buttonStyle(.plain)
                 .rotationEffect(.degrees(readingLeftToRight ? 0 : 180), anchor: .center)
+                .opacity(isPagingVertically ? 0 : 1)
 
-                if let index = model.activeChapter.requestedPageIndex, let pageCount = model.activeChapter.pages?.last?.number {
+                if let index = model.activeChapter.requestedPageIndex, let pageCount = model.activeChapter.pages?.last?.page.number {
                     Text("Page \(model.scrubbingPageNumber != nil ? model.scrubbingPageNumber! : index + 1) of \(pageCount)")
                         .font(.footnote)
                         .fontWeight(.bold)
@@ -290,6 +288,32 @@ extension ReaderView.ReaderMenuOverlay {
                     Text("-")
                 }
             }
+        }
+    }
+}
+
+extension ReaderView {
+    struct AutoScrollOverlay: View {
+        @EnvironmentObject var model: ReaderView.ViewModel
+        var edges = KEY_WINDOW?.safeAreaInsets
+
+        var body: some View {
+            ZStack {
+                Button {
+                    model.verticalTimerPublisher.send()
+                } label: {
+                    Image(systemName: model.autoplayEnabled ? "pause.circle" : "play.circle")
+                        .resizable()
+                        .modifier(ReaderButtonModifier())
+                        .background(Color.sttGray)
+                        .clipShape(Circle())
+                        .foregroundColor(.gray)
+                }
+                .padding(.bottom, 7 + (edges?.bottom ?? 0))
+                .padding(.horizontal)
+                .opacity(0.85)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
         }
     }
 }

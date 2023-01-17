@@ -124,6 +124,7 @@ extension CGSize {
 }
 
 // MARK: Splitting
+
 // Reference: https://stackoverflow.com/a/33091111
 extension UIImage {
     func leftHalf() -> UIImage {
@@ -133,8 +134,8 @@ extension UIImage {
         let rect = CGRect(origin: .zero, size: .init(width: scaledWidth / 2, height: scaledHeight))
         return cgImage?.cropping(to: rect)?.image ?? self
     }
+
     func rightHalf() -> UIImage {
-        
         let scaledWidth = size.width * scale
         let scaledHeight = size.height * scale
         let origin = CGPoint(x: scaledWidth - (scaledWidth / 2), y: .zero)

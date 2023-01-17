@@ -19,13 +19,14 @@ enum ContentStatus: Int, CaseIterable, Hashable {
     case UNKNOWN, ONGOING, COMPLETED, CANCELLED, HIATUS
 }
 
-enum ReadingMode: Int, CaseIterable, Hashable {
+enum ReadingMode: Int, CaseIterable, Hashable, UserDefaultsSerializable {
     case PAGED_MANGA, // Page 2 <---- Page 1
          PAGED_COMIC, // Page 1 ----> Page 2
          VERTICAL,
          VERTICAL_SEPARATED, // Vertical with Slight Gap Between Pages
          NOVEL, // Opens In Novel Reader
-         WEB // Opens using the chapters WebUrl
+         WEB, // Opens using the chapters WebUrl
+         PAGED_VERTICAL // A Vertical Pager
 
     var isPanelMode: Bool {
         switch self {
@@ -35,6 +36,14 @@ enum ReadingMode: Int, CaseIterable, Hashable {
             return true
         }
     }
+}
+
+enum PanelReadingModes: Int, CaseIterable, Hashable, UserDefaultsSerializable {
+    case PAGED_MANGA, // Page 2 <---- Page 1
+         PAGED_COMIC, // Page 1 ----> Page 2
+         VERTICAL,
+         VERTICAL_SEPARATED, // Vertical with Slight Gap Between Pages
+         PAGED_VERTICAL // A Vertical Pager
 }
 
 extension DaisukeEngine.Structs {
@@ -113,7 +122,12 @@ extension DaisukeEngine.Structs {
 extension DaisukeEngine.Structs.Highlight {
     static func placeholders() -> [Self] {
         (0 ... 30).map { _ in
-            Self(contentId: String.random(), cover: String.random(), title: String.random())
+                .init(contentId: .random(length: 10),
+                      cover: .random(),
+                      title: .random(length: 20),
+                      tags: (0...5)
+                    .map({ "\(String.random(length: 10))\($0)"})
+                      , stats: .init(Stats(views: 100, follows: 100000, rating: 10)))
         }
     }
 

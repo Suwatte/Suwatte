@@ -51,7 +51,6 @@ extension ExploreView.SearchView {
                     }
                 })
             }
-
         }
 
         func softReset() {

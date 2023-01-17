@@ -8,8 +8,17 @@
 import Foundation
 
 extension DaisukeEngine.Structs {
-    enum CollectionStyle: Int, Codable {
+    enum CollectionStyle: Int, Codable, CaseIterable {
         case NORMAL, INFO, GALLERY, UPDATE_LIST
+        
+        var description: String {
+            switch self {
+                case .NORMAL: return "Normal"
+                case .INFO: return "Info"
+                case .GALLERY: return "Gallery"
+                case .UPDATE_LIST: return "Update"
+            }
+        }
     }
 
     struct HighlightCollection: Parsable, Identifiable, Hashable {

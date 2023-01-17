@@ -32,7 +32,6 @@ extension ProfileView {
                             }
                             .padding()
                             .tag(cover)
-                            
                     }
                 }
 

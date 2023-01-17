@@ -9,13 +9,18 @@ import SwiftUI
 
 struct ReaderView: View {
     @StateObject var model: ViewModel
-    @AppStorage(STTKeys.EnableOverlay) var overlayEnabled = false
-    @AppStorage(STTKeys.BackgroundColor) var backgroundColor = Color.primary
-    @AppStorage(STTKeys.UseSystemBG) var useSystemBG = true
+    @AppStorage(STTKeys.EnableOverlay, store: .standard) var overlayEnabled = false
+    @AppStorage(STTKeys.BackgroundColor, store: .standard) var backgroundColor = Color.primary
+    @AppStorage(STTKeys.UseSystemBG, store: .standard) var useSystemBG = true
+    @AppStorage(STTKeys.VerticalAutoScroll, store: .standard) var verticalAutoScroll = false
+
+    @AppStorage(STTKeys.ReaderType) var readerType = PanelReadingModes.PAGED_COMIC
+    
     @Preference(\.isReadingVertically) var isVertical
     @Preference(\.displayNavOverlay) var displayNavOverlay
     @Preference(\.tapSidesToNavigate) var tapSidesToNavigate
     @Preference(\.isDoublePagedEnabled) var isDoublePagedEnabled
+    @Preference(\.isPagingVertically) var isPagingVertically
     var body: some View {
         LoadableView(loadable: model.activeChapter.data, {
             VStack(alignment: .center) {
@@ -24,11 +29,11 @@ struct ReaderView: View {
                     .font(.footnote)
                     .fontWeight(.light)
             }
-                .task {
-                    let chapter = model.activeChapter.chapter
-                    await model.loadChapter(chapter, asNextChapter: true)
-                }
-                .transition(.opacity)
+            .task {
+                let chapter = model.activeChapter.chapter
+                await model.loadChapter(chapter, asNextChapter: true)
+            }
+            .transition(.opacity)
         }, {
             ProgressView()
         }, { error in
@@ -47,6 +52,7 @@ struct ReaderView: View {
         .modifier(UseGrayScaleModifier())
         .modifier(UseColorInvertModifier())
         .overlay(model.menuControl.menu ? ReaderMenuOverlay() : nil)
+        .overlay(isVertical && verticalAutoScroll ? AutoScrollOverlay() : nil)
         .statusBar(hidden: !model.menuControl.menu)
         .animation(.default, value: model.menuControl.menu)
         .animation(.default, value: model.showNavOverlay)
@@ -56,6 +62,7 @@ struct ReaderView: View {
                     .navigationTitle("Settings")
                     .navigationBarTitleDisplayMode(.inline)
                     .closeButton()
+                    .defaultAppStorage(.standard)
             }
         }
         .sheet(isPresented: $model.menuControl.chapterList) {
@@ -110,18 +117,25 @@ extension ReaderView {
                         .fontWeight(.light)
                 }
                 .transition(.opacity)
-            }
-            else {
+                .onAppear {
+                    model.updater.toggle()
+                }
+            } else {
                 if isVertical {
                     VerticalViewer()
                         .transition(.opacity)
                 } else {
-                    if !isDoublePagedEnabled {
-                        PagedViewer()
+                    if isPagingVertically {
+                        VerticalPager()
                             .transition(.opacity)
                     } else {
-                        DoublePagedViewer()
-                            .transition(.opacity)
+                        if !isDoublePagedEnabled {
+                            PagedViewer()
+                                .transition(.opacity)
+                        } else {
+                            DoublePagedViewer()
+                                .transition(.opacity)
+                        }
                     }
                 }
             }
@@ -151,7 +165,7 @@ extension ReaderView {
             }
         }
     }
-    
+
     struct UseGrayScaleModifier: ViewModifier {
         @AppStorage(STTKeys.ReaderGrayScale) var useGrayscale = false
 

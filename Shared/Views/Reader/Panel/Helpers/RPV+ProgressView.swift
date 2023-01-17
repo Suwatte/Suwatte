@@ -60,7 +60,6 @@ extension ReaderView {
                             .background(Circle().stroke(color.opacity(0.2), style: .init(lineWidth: width, lineCap: .round)))
                             .frame(width: 40, height: 40, alignment: .center)
                     }
-                    
                 }
             }
         }

@@ -14,7 +14,7 @@ struct CloudFlareErrorView: View {
     var sourceID: String
     var action: () -> Void
     @State var showSheet: Bool = false
-    @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
+    @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
     var body: some View {
         VStack {
@@ -79,7 +79,7 @@ extension CloudFlareErrorView {
             let webConfiguration = WKWebViewConfiguration()
 
             webView = WKWebView(frame: view.bounds, configuration: webConfiguration)
-            webView.customUserAgent = STT_USER_AGENT
+            webView.customUserAgent = Preferences.standard.userAgent
             webView.uiDelegate = self
             webView.navigationDelegate = self
             view.addSubview(webView)
@@ -91,12 +91,12 @@ extension CloudFlareErrorView {
                 guard let source = DaisukeEngine.shared.getJSSource(with: sourceID) else {
                     return
                 }
-                guard let dsk = try? await source.willAttemptCloudflareVerification() else {
-                    return
+                if let dskRequest = try? await source.willAttemptCloudflareVerification(),let request = try? dskRequest.toURLRequest() {
+                    let _ = self.webView.load(request)
+                } else if let url = URL(string: source.info.website) {
+                    let request = URLRequest(url: url)
+                    let _ = self.webView.load(request)
                 }
-
-                let request = try dsk.toURLRequest()
-                let _ = self.webView.load(request)
             }
         }
     }

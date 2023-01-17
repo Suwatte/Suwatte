@@ -28,9 +28,11 @@ enum STTKeys {
 
     // Content Specific
     static var IsReadingVertically = "READER.reading_mode_vertical"
+    static let VerticalPagerEnabled = "READER.pager.vertical_enabled"
     static var IsDoublePagedEnabled = "READER.paged_double"
     static var PagedDirection = "READER.paged_h_direction"
-
+    static let VerticalAutoScroll = "READER.vertical_auto_scroll"
+    static let VerticalAutoScrollSpeed = "READER.vertical_auto_scroll_speed"
     static var VerticalPagePadding = "READER.vertical_page_padding"
     static var ForceTransition = "READER.force_transitions"
 
@@ -61,8 +63,8 @@ enum STTKeys {
     static var TimeoutDuration = "LOCAL_AUTH.timeout"
 
     static var ShowOnlyDownloadedTitles = "LIBRARY.download_only"
-    static var ShowUpdateBadges = "LIBRARY.update_badges"
-
+    static let LibraryShowBadges = "LIBRARY.badges"
+    static let LibraryBadgeType = "LIBRARY.badge_type"
     static var ShowNavigationOverlay = "READER.display_overlay"
 
     static var anilistAccessToken = "ANILIST.ACCESS_TOKEN"
@@ -103,11 +105,25 @@ enum STTKeys {
     static var SelectiveUpdates = "APP.selective_updates"
     static var JSCommonsVersion = "APP.js_common_version"
     static var AppAccentColor = "APP.accent_color"
-    
+
     static var HideNSFWRunners = "APP.hide_nsfw_runners"
     static var UpdateInterval = "APP.update_interval"
-    
+
     static var LastAutoBackup = "APP.last_auto_backup"
-    
+
     static var CheckLinkedOnUpdateCheck = "APP.check_linked_on_update_check"
+    static let BlurWhenAppSwiching = "APP.blur_while_switching"
+    static let DefaultUserAgent = "UserAgent"
+    static let UpdateContentData = "APP.update_content_data"
+    static let UpdateSkipConditions = "APP.update_skip_conditions"
+    static let FilteredProviders = "CONTENT.filtered_providers"
+    static let FilteredLanguages = "CONTENT.filtered_langauges"
+    
+    static let ImageScaleType = "READER.image_scale"
+    
+    static let ReaderType = "READER.type"
+    
+    static let AlwaysAskForLibraryConfig = "APP.library_always_asks"
+    static let DefaultCollection = "LIBRARY.default_collection"
+    static let DefaultReadingFlag = "LIBRARY.default_reading_flag"
 }

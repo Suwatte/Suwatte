@@ -14,7 +14,7 @@ extension Skeleton {
     struct Header: View {
         @EnvironmentObject var model: ProfileView.ViewModel
         @State var presentThumbnails = false
-        @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
+        @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
         var entry: DSKCommon.Content {
             model.content
@@ -104,7 +104,9 @@ private extension Skeleton {
         @ObservedResults(LibraryEntry.self) var libraryEntries
         @State var presentSafariView = false
         @EnvironmentObject var model: ProfileView.ViewModel
-
+        @AppStorage(STTKeys.AlwaysAskForLibraryConfig) var promptForConfig = true
+        @AppStorage(STTKeys.DefaultCollection) var defaultCollection: String = ""
+        @AppStorage(STTKeys.DefaultReadingFlag) var defaultFlag = LibraryFlag.unknown
         var body: some View {
             HStack(alignment: .center, spacing: 30) {
                 ForEach(actions, id: \.option) { action in
@@ -115,7 +117,19 @@ private extension Skeleton {
                             if !EntryInLibrary {
                                 DataManager.shared.toggleLibraryState(for: model.storedContent)
                             }
-                            model.presentCollectionsSheet.toggle()
+                            if promptForConfig || EntryInLibrary {
+                                model.presentCollectionsSheet.toggle()
+                            } else {
+                                if !defaultCollection.isEmpty {
+                                    DataManager.shared.toggleCollection(for: model.contentIdentifier, withId: defaultCollection)
+                                }
+                                
+                                if defaultFlag != .unknown {
+                                    var s = Set<String>()
+                                    s.insert(model.contentIdentifier)
+                                    DataManager.shared.bulkSetReadingFlag(for: s, to: defaultFlag)
+                                }
+                            }
                         case .TRACKERS: model.presentTrackersSheet.toggle()
                         case .WEBVIEW: model.presentSafariView.toggle()
                         case .BOOKMARKS: model.presentBookmarksSheet.toggle()

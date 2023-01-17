@@ -75,40 +75,37 @@ extension DataManager {
 
         return entries
     }
-    
+
     func getPossibleTrackerInfo(for id: String) throws -> [String: String?]? {
         let linked = getLinkedContent(for: id)
-        
+
         // Search Embeded Linked Content First for Tracker Info
         let linkedEmbeddedFound = linked.first(where: { !$0.trackerInfo.values.isEmpty })?.trackerInfo
-        
+
         if let linkedEmbeddedFound {
             return try linkedEmbeddedFound.asDictionary() as? [String: String]
         }
-        
+
         // Check For Stored Tracker Links
-        
+
         let ids = linked.map(\._id)
-        
+
         let realm = try! Realm()
-        
+
         let match = realm
             .objects(TrackerLink.self)
             .where { $0._id.in(ids) }
             .first?
             .trackerInfo
-        
-        
-        
+
         guard let match else { return nil }
-        
+
         return [
             "al": match.al,
             "mal": match.mal,
             "kt": match.kt,
-            "mu": match.mu
+            "mu": match.mu,
         ]
-        
     }
 }
 

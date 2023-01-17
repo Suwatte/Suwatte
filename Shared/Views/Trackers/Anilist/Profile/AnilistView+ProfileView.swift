@@ -43,7 +43,6 @@ extension AnilistView {
                         Link(destination: entry.webUrl ?? STTHost.notFound) {
                             Label("Share", systemImage: "square.and.arrow.up")
                         }
-                        
 
                     } label: {
                         Image(systemName: "ellipsis")
@@ -151,8 +150,7 @@ extension AnilistView.ProfileView.DataView {
                     .clipped(antialiased: true)
                     .blur(radius: 2.5)
                     .offset(y: -3)
-                    .frame(width: UIScreen.main.bounds.width, height: 220,  alignment: .center)
-                    
+                    .frame(width: UIScreen.main.bounds.width, height: 220, alignment: .center)
 
                 LinearGradient(colors: [.clear, Color(uiColor: UIColor.systemBackground)], startPoint: .top, endPoint: .bottom)
                     .offset(x: 0, y: 3)

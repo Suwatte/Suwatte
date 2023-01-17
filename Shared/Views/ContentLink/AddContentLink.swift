@@ -54,7 +54,7 @@ struct AddContentLink: View {
             } _: { error in
                 HStack {
                     Spacer()
-                    ErrorView(error: error, action: { model.loadForSource(id: id) }, sourceID: id)
+                    ErrorView(error: error, sourceID: id, action: { model.loadForSource(id: id) })
                     Spacer()
                 }
             } _: { value in

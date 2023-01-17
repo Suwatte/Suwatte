@@ -14,19 +14,22 @@ struct OpenLocalModifier: ViewModifier {
     let types: [UTType] = [.init(filenameExtension: "cbz")!, .init(filenameExtension: "cbr")!]
     func body(content: Content) -> some View {
         content
-            .fileImporter(isPresented: $isPresenting, allowedContentTypes: types) { result in
+            .fileImporter(isPresented: $isPresenting, allowedContentTypes: types, allowsMultipleSelection: true) { result in
                 switch result {
                 case let .failure(error):
                     ToastManager.shared.error(error)
-                case let .success(url):
-                    if url.startAccessingSecurityScopedResource() {
-                        do {
-                            try LocalContentManager.shared.importFile(at: url)
-                        } catch {
-                            ToastManager.shared.error(error)
+                case let .success(urls):
+                    for url in urls {
+                        if url.startAccessingSecurityScopedResource() {
+                            do {
+                                try LocalContentManager.shared.importFile(at: url)
+                            } catch {
+                                ToastManager.shared.error(error)
+                            }
                         }
+                        url.stopAccessingSecurityScopedResource()
                     }
-                    url.stopAccessingSecurityScopedResource()
+                    
                 }
             }
     }

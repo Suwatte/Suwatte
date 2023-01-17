@@ -66,7 +66,11 @@ extension DataManager {
                 realm.create(ChapterMarker.self, value: object, update: .modified)
             }
         }
-
+        
+        let identifiers = chapters
+            .map({ ContentIdentifier(contentId: $0.contentId, sourceId: $0.sourceId) })
+            .distinct()
+        identifiers.forEach { updateUnreadCount(for: $0, realm) }
         notifySourceOfMarkState(chapters: chapters, completed: completed)
     }
 
@@ -98,7 +102,7 @@ extension DataManager {
             .chapter
     }
 
-    func setProgress(from chapter: ReaderView.ReaderChapter, isNovel: Bool = false) {
+    func setProgress(from chapter: ReaderView.ReaderChapter) {
         let realm = try! Realm()
 
         let last = chapter.requestedPageIndex + 1
@@ -106,7 +110,7 @@ extension DataManager {
         if let offset = chapter.requestedPageOffset {
             lastOffset = Double(offset)
         }
-        let total = !isNovel ? chapter.pages?.count ?? 0 : chapter.data.value?.pages.count ?? 0
+        let total = chapter.pages?.count ?? 0
         let marker = ChapterMarker()
         marker.chapter = chapter.chapter.toStored()
         marker.dateRead = Date()
@@ -119,11 +123,27 @@ extension DataManager {
             realm.add(marker, update: .all)
         }
     }
-
     
-    func setProgress(chapter: ThreadSafeChapter, completed: Bool = true){
+    func setNovelProgress(from chapter: ReaderView.ReaderChapter, pageCount: Int) {
+        let realm = try! Realm()
+        
+        let last = chapter.requestedPageIndex + 1
+        let total = chapter.pages?.count
+        let marker = ChapterMarker()
+        marker.chapter = chapter.chapter.toStored()
+        marker.dateRead = Date()
+        marker.lastPageRead = last
+        marker.totalPageCount = pageCount
+        marker.completed = last == total
+        try! realm.safeWrite {
+            realm.add(marker, update: .all)
+        }
+    }
+
+    func setProgress(chapter: ThreadSafeChapter, completed: Bool = true) {
         setProgress(chapter: chapter.toStored(), completed: completed)
     }
+
     func setProgress(chapter: StoredChapter, completed: Bool = true) {
         let realm = try! Realm()
 
@@ -141,6 +161,7 @@ extension DataManager {
                 if completed {
                     target.totalPageCount = 0
                     target.lastPageRead = 0
+                    target.lastPageOffset = nil
                 }
                 realm.add(target, update: .modified)
             }

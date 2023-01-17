@@ -39,6 +39,9 @@ final class Preferences {
     @UserDefault(STTKeys.IsReadingVertically)
     var isReadingVertically: Bool = false
 
+    @UserDefault(STTKeys.VerticalPagerEnabled)
+    var isPagingVertically: Bool = false
+
     @UserDefault(STTKeys.IsDoublePagedEnabled)
     var isDoublePagedEnabled: Bool = false
 
@@ -85,17 +88,32 @@ final class Preferences {
     var novelUseDoublePaged = false
 
     @UserDefault(STTKeys.NovelFont)
-    var novelFont = "Avenir-Regular"
+    var novelFont = "AvenirNextCondensed-Regular"
 
     @UserDefault(STTKeys.NonSelectiveSync)
     var nonSelectiveSync = false
 
     @UserDefault(STTKeys.SelectiveUpdates)
     var selectiveUpdates = false
+
+    @UserDefault(STTKeys.VerticalAutoScrollSpeed)
+    var verticalAutoScrollSpeed: Double = 16
+    
+    @UserDefault(STTKeys.DefaultUserAgent)
+    var userAgent = "Suwatte iOS Client V\(Bundle.main.releaseVersionNumberPretty)"
+    
+    @UserDefault(STTKeys.ImageScaleType)
+    var imageScaleType = ImageScaleOption.screen
+    
+    @UserDefault(STTKeys.AppAccentColor)
+    var accentColor = Color.sttDefault
+    
+    @UserDefault(STTKeys.ReaderType)
+    var readerType = ReadingMode.PAGED_COMIC
 }
 
 @propertyWrapper
-struct UserDefault<Value> {
+struct UserDefault<Value : UserDefaultsSerializable> {
     let key: String
     let defaultValue: Value
 
@@ -118,12 +136,13 @@ struct UserDefault<Value> {
             let container = instance.userDefaults
             let key = instance[keyPath: storageKeyPath].key
             let defaultValue = instance[keyPath: storageKeyPath].defaultValue
-            return container.object(forKey: key) as? Value ?? defaultValue
+            let stored = container.object(forKey: key) as? Value.StoredValue
+            return stored.map({ Value(storedValue: $0) }) ?? defaultValue
         }
         set {
             let container = instance.userDefaults
             let key = instance[keyPath: storageKeyPath].key
-            container.set(newValue, forKey: key)
+            container.set(newValue.storedValue, forKey: key)
             instance.preferencesChangedSubject.send(wrappedKeyPath)
         }
     }

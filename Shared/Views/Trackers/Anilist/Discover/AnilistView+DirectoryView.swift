@@ -20,12 +20,6 @@ extension AnilistView {
         @AppStorage(STTKeys.TileStyle) var style = TileStyle.COMPACT
         @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
         @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
-        var itemsPerRow: Int {
-            isPotrait ? PortraitPerRow : LSPerRow
-        }
-
-        @State private var isPotrait = KEY_WINDOW?.windowScene?.interfaceOrientation == .portrait
-
         func loadData() {
             Task {
                 if model.response != .idle {
@@ -71,10 +65,7 @@ extension AnilistView {
                 handleDidRecieveQuery(val)
             }
             .onChange(of: isDesc, perform: handleDidOrderChange(_:))
-            .onRotate { newOrientation in
-                if newOrientation.isFlat { return }
-                isPotrait = newOrientation.isPortrait
-            }
+
             .navigationBarTitleDisplayMode(.inline)
         }
 
@@ -83,35 +74,38 @@ extension AnilistView {
                 ASCollectionViewSection(id: 1, data: values, onCellEvent: onCellEvent(_:)) { data, _ in
                     Tile(data: data)
                 }
+                .cacheCells()
                 .sectionHeader {
                     Header
-                        .padding(.vertical)
                 }
                 .sectionFooter {
                     PaginationView
                 }
             }
+
+            .layout { _ in
+                DefaultGridLayout(header: .absolute(30), footer: .estimated(44))
+            }
+            .alwaysBounceVertical()
+            .shouldRecreateLayoutOnStateChange(true)
+            .animateOnDataRefresh(true)
             .onPullToRefresh { endRefreshing in
                 Task { @MainActor in
                     await model.make()
                     endRefreshing()
                 }
             }
-            .layout(createCustomLayout: {
-                SuwatteDefaultGridLayout(itemsPerRow: itemsPerRow, style: style)
-            }, configureCustomLayout: { layout in
-                layout.itemsPerRow = itemsPerRow
-                layout.itemStyle = style
-                layout.headerReferenceSize = .init(width: layout.collectionView?.bounds.width ?? 0, height: 44)
-
-                var height = 35
-                switch model.paginationStatus {
-                case .ERROR: height = 400
-                default: break
+            .confirmationDialog("Sort", isPresented: $presentSortDialog) {
+                ForEach(SortOptions, id: \.rawValue) { sorter in
+                    Button(sorter.description) {
+                        Task {
+                            model.request.sort = [sorter]
+                            await model.make()
+                        }
+                    }
+                    .buttonStyle(.plain)
                 }
-                layout.footerReferenceSize = .init(width: layout.collectionView?.bounds.width ?? 0, height: CGFloat(height))
-            })
-            .alwaysBounceVertical()
+            }
         }
 
         func onCellEvent(_ event: CellEvent<Anilist.SearchResult>) {
@@ -187,18 +181,6 @@ extension AnilistView.DirectoryView {
         }
         .font(.subheadline.weight(.light))
         .foregroundColor(Color.primary.opacity(0.7))
-        .padding(.horizontal)
-        .confirmationDialog("Sort", isPresented: $presentSortDialog) {
-            ForEach(SortOptions, id: \.rawValue) { sorter in
-                Button(sorter.description) {
-                    Task {
-                        model.request.sort = [sorter]
-                        await model.make()
-                    }
-                }
-                .buttonStyle(.plain)
-            }
-        }
     }
 
     var SortOptions: [Anilist.MediaSort] {

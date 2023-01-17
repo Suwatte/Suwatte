@@ -9,118 +9,105 @@ import ASCollectionView
 import Kingfisher
 import RealmSwift
 import SwiftUI
+import SwiftUIBackports
 
 extension ExploreView.SearchView {
     struct ResultsView: View {
         typealias Highlight = DaisukeEngine.Structs.Highlight
         var entries: [Highlight]
         @State var presentSortDialog = false
-        var itemsPerRow: Int {
-            isPotrait ? PortraitPerRow : LSPerRow
-        }
-
-        @ObservedResults(LibraryEntry.self) var library
-        @ObservedResults(ReadLater.self) var forLaterLibrary
         @EnvironmentObject var model: ViewModel
         @EnvironmentObject var source: DaisukeContentSource
 
         @AppStorage(STTKeys.TileStyle) var style = TileStyle.COMPACT
         @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
         @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
-
-        @State private var isPotrait = KEY_WINDOW?.windowScene?.interfaceOrientation == .portrait
         @State var selection: HighlightIndentier?
         var body: some View {
             ASCollectionView {
                 ASCollectionViewSection(id: 0,
-                                        data: entries,
-                                        contextMenuProvider: contextMenuProvider) { data, state in
-                    let isInLibrary = inLibrary(data)
-                    let isSavedForLater = savedForLater(data)
+                                        data: entries) { data, state in
+                    let isInLibrary = DataManager.shared.contentInLibrary(s: source.id, c: data.contentId)
+                    let isSavedForLater = DataManager.shared.contentSavedForLater(s: source.id, c: data.contentId)
 
-                    ZStack(alignment: .topTrailing) {
-                        DefaultTile(entry: data)
-                        if isInLibrary || isSavedForLater {
-                            ColoredBadge(color: isInLibrary ? .accentColor : .yellow)
-                        }
-                    }
-                    .onTapGesture(perform: {
-                        selection = (source.id, data)
-                    })
-                    .task {
-                        if state.isLastInSection {
-                            await model.paginate()
-                        }
+                    ContentCell(data: data, inLibrary: isInLibrary, readLater: isSavedForLater)
+                        .onTapGesture(perform: {
+                            selection = (source.id, data)
+                        })
+                        .task {
+                            if state.isLastInSection {
+                                await model.paginate()
+                            }
                     }
                 }
+                .cacheCells()
                 .sectionHeader {
                     Group {
                         if model.resultCount != nil || !model.sorters.isEmpty {
                             Header
                         } else { EmptyView() }
                     }
-                    
-                    
                 }
                 .sectionFooter {
                     PaginationView
                 }
             }
-
-            .layout(createCustomLayout: {
-                SuwatteDefaultGridLayout(itemsPerRow: itemsPerRow, style: style)
-            }, configureCustomLayout: { layout in
-                layout.itemsPerRow = itemsPerRow
-                layout.itemStyle = style
-                layout.headerReferenceSize = .init(width: layout.collectionView?.bounds.width ?? 0, height: model.sorters.isEmpty ? 0 : 30)
-
-                var height = 35
-                switch model.paginationStatus {
-                case .ERROR: height = 400
-                default: break
-                }
-                layout.footerReferenceSize = .init(width: layout.collectionView?.bounds.width ?? 0, height: CGFloat(height))
-            })
-            .alwaysBounceVertical()
-            .onRotate { newOrientation in
-                if newOrientation.isFlat { return }
-                isPotrait = newOrientation.isPortrait
+            
+            .layout { _ in
+                DefaultGridLayout(header: .absolute(30), footer: .estimated(44))
             }
-            .animation(.default, value: library)
-            .animation(.default, value: forLaterLibrary)
+            .alwaysBounceVertical()
+            .shouldRecreateLayoutOnStateChange(true)
+            .animateOnDataRefresh(true)
+            .ignoresSafeArea(.keyboard, edges: .all)
             .modifier(InteractableContainer(selection: $selection))
+            .onChange(of: style, perform: { _ in })
+            .onChange(of: PortraitPerRow, perform: { _ in })
+            .onChange(of: LSPerRow, perform: { _ in })
+            .confirmationDialog("Sort", isPresented: $presentSortDialog) {
+                ForEach(model.sorters) { sorter in
+                    Button(sorter.label) {
+                        withAnimation {
+                            model.request.sort = sorter
+                            model.request.page = 1
+                            Task {
+                                await model.makeRequest()
+                            }
+                        }
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
         }
     }
 }
 
 extension ExploreView.SearchView.ResultsView {
-    func contextMenuProvider(int _: Int, content: Highlight) -> UIContextMenuConfiguration? {
-        let configuration = UIContextMenuConfiguration(identifier: nil, previewProvider: nil)
-            { _ -> UIMenu? in
-
-                let inLater = savedForLater(content)
-                let action = UIAction(title: inLater ? "Remove from Read Later" : "Add to Read Later", image: UIImage(systemName: inLater ? "bookmark.slash" : "bookmark")) {
-                    _ in
-                    if inLater {
-                        DataManager.shared.removeFromReadLater(source.id, content: content.id)
-                    } else {
-                        DataManager.shared.addToReadLater(source.id, content.id)
-                    }
+    struct ContentCell: View {
+        @EnvironmentObject var source: DaisukeContentSource
+        let data: DSKCommon.Highlight
+        @State var inLibrary: Bool
+        @State var readLater: Bool
+        var body: some View {
+            ZStack(alignment: .topTrailing) {
+                DefaultTile(entry: data)
+                if inLibrary || readLater {
+                    ColoredBadge(color: inLibrary ? .accentColor : .yellow)
                 }
-
-                return .init(title: "", children: [action])
             }
-        return configuration
-    }
-
-    func inLibrary(_ entry: Highlight) -> Bool {
-        library
-            .contains(where: { $0.content?.sourceId == source.id && $0.content?.contentId == entry.id })
-    }
-
-    func savedForLater(_ entry: Highlight) -> Bool {
-        forLaterLibrary
-            .contains(where: { $0.content?.sourceId == source.id && $0.content?.contentId == entry.id })
+            .contextMenu {
+                Button {
+                    if readLater {
+                        DataManager.shared.removeFromReadLater(source.id, content: data.contentId)
+                    } else {
+                        DataManager.shared.addToReadLater(source.id, data.contentId)
+                    }
+                    readLater.toggle()
+                } label: {
+                    Label( readLater ? "Remove from Read Later" : "Add to Read Later", systemImage: readLater ? "bookmark.slash" : "bookmark")
+                }
+            }
+        }
     }
 }
 
@@ -140,8 +127,7 @@ extension ExploreView.SearchView.ResultsView {
             Spacer()
             Button {
                 presentSortDialog.toggle()
-            }
-        label: {
+            } label: {
                 HStack {
                     Text(SORT_TITLE)
                     Image(systemName: "chevron.down")
@@ -152,21 +138,6 @@ extension ExploreView.SearchView.ResultsView {
         }
         .font(.subheadline.weight(.light))
         .foregroundColor(Color.primary.opacity(0.7))
-        .padding(.horizontal)
-        .confirmationDialog("Sort", isPresented: $presentSortDialog) {
-            ForEach(model.sorters) { sorter in
-                Button(sorter.label) {
-                    withAnimation {
-                        model.request.sort = sorter
-                        model.request.page = 1
-                        Task {
-                            await model.makeRequest()
-                        }
-                    }
-                }
-                .buttonStyle(.plain)
-            }
-        }
     }
 
     @ViewBuilder
@@ -179,6 +150,7 @@ extension ExploreView.SearchView.ResultsView {
             .fontWeight(.semibold)
             .multilineTextAlignment(.center)
             .foregroundColor(.gray)
+            .padding(.all)
         case let .ERROR(error):
             ErrorView(error: error) {
                 Task {

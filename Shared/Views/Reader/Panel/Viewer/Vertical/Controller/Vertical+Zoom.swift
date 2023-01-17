@@ -5,18 +5,14 @@
 //  Created by Mantton on 2022-10-12.
 //
 
-import UIKit
 import AsyncDisplayKit
 import Kingfisher
 import SwiftUI
+import UIKit
 
-fileprivate typealias Controller = VerticalViewer.Controller
+private typealias Controller = VerticalViewer.Controller
 
 extension Controller: ZoomingViewController, ZoomableHostDelegate, ZoomHandlerDelegate {
-
-    
-
-
     func cellTappedAt(point: CGPoint, frame: CGRect, path: IndexPath) {
         guard let node = collectionNode.nodeForItem(at: path) as? Controller.ImageNode, let image = node.imageNode.image else {
             return
@@ -35,20 +31,20 @@ extension Controller: ZoomingViewController, ZoomableHostDelegate, ZoomHandlerDe
     func zoomingBackgroundView(for _: ZoomTransitioningDelegate) -> UIView? {
         return nil
     }
-    
-    func zoomingImageView(for transition: ZoomTransitioningDelegate) -> UIView? {
+
+    func zoomingImageView(for _: ZoomTransitioningDelegate) -> UIView? {
         guard let path = selectedIndexPath, let node = collectionNode.nodeForItem(at: path) as? Controller.ImageNode else {
             return nil
         }
-        
+
         return node.view
     }
-    
-    func zoomingImage(for transition: ZoomTransitioningDelegate) -> UIImage? {
+
+    func zoomingImage(for _: ZoomTransitioningDelegate) -> UIImage? {
         guard let path = selectedIndexPath, let node = collectionNode.nodeForItem(at: path) as? Controller.ImageNode else {
             return nil
         }
-        
+
         return node.imageNode.image
     }
 }

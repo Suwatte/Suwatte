@@ -73,7 +73,7 @@ extension ProfileView.Skeleton {
 
     struct AdditionalCoversView: View {
         @EnvironmentObject var model: ProfileView.ViewModel
-        @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
+        @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
         @State var presentCovers = false
         var body: some View {

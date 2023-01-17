@@ -10,7 +10,7 @@ import RealmSwift
 import SwiftUI
 
 struct BrowseView: View {
-    @ObservedObject var daisuke = DaisukeEngine.shared
+    @EnvironmentObject var daisuke : DaisukeEngine
     @ObservedResults(StoredRunnerObject.self, sortDescriptor: .init(keyPath: "order")) var savedRunners
     @State var presentImporter = false
     var body: some View {
@@ -42,7 +42,7 @@ struct BrowseView: View {
 
     @ViewBuilder
     var InstalledSourcesSection: some View {
-        let sources = daisuke.getSources().sorted(by: { getSaved($0.id)?.order ?? 0 < getSaved($1.id)?.order ?? 0})
+        let sources = daisuke.getSources().sorted(by: { getSaved($0.id)?.order ?? 0 < getSaved($1.id)?.order ?? 0 })
         Section {
             ForEach(sources, id: \.id) { source in
                 NavigationLink {
@@ -51,7 +51,7 @@ struct BrowseView: View {
                 } label: {
                     let saved = getSaved(source.id)
                     HStack(spacing: 15) {
-                        STTThumbView(url: saved?.thumb())
+                        STTThumbView(url: saved?.thumbnail.flatMap({ URL(string: $0) }))
                             .frame(width: 32.0, height: 32.0)
                             .cornerRadius(5)
                         Text(source.name)

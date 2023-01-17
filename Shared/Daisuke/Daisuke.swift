@@ -33,6 +33,7 @@ final class DaisukeEngine: ObservableObject {
     }
 
     // MARK: Runners
+
     @Published var sources: [String: DaisukeContentSource] = [:]
 
     init() {
@@ -100,14 +101,13 @@ extension DaisukeEngine {
                 ToastManager.shared.error(error)
             }
         }
-        
+
         startHostedRunners()
     }
-    
+
     private func startHostedRunners() {
-        
         let hostedRunners = DataManager.shared.getHostedRunners()
-        
+
         for runner in hostedRunners {
             do {
                 guard let str = runner.info, let data = str.data(using: .utf8), let strUrl = runner.listURL, let url = URL(string: strUrl) else {
@@ -117,7 +117,7 @@ extension DaisukeEngine {
                 let info = try DaisukeEngine.decode(data: data, to: ContentSourceInfo.self)
                 let source = HostedContentSource(host: url, info: info)
                 try addSource(runner: source)
-                
+
             } catch {
                 ToastManager.shared.error(error)
             }
@@ -137,7 +137,6 @@ extension DaisukeEngine {
         guard let runnerClass = runnerClass, runnerClass.isObject else {
             throw Errors.RunnerClassInitFailed
         }
-        
 
         let source = try LocalContentSource(runnerClass: runnerClass)
         if let url = DataManager.shared.getRunnerInfomation(id: source.id)?.listURL {
@@ -211,7 +210,7 @@ extension DaisukeEngine {
     }
 
     private func handleNetworkRunnerImport(from url: URL) async throws {
-        let req = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 10)
+        let req = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
         let path = url.lastPathComponent
         let tempLocation = directory
             .appendingPathComponent("__temp__")
@@ -234,14 +233,14 @@ extension DaisukeEngine {
             try addSource(runner: runner)
         })
     }
-    
+
     func saveHostedRunner(list: String, runner: Runner) {
         let realm = try! Realm()
-        
+
         do {
             let data = try DaisukeEngine.encode(value: runner)
             let str = String(decoding: data, as: UTF8.self)
-            
+
             let obj = StoredRunnerObject()
             obj.id = runner.id
             obj.hosted = true
@@ -249,18 +248,19 @@ extension DaisukeEngine {
             obj.info = str
             obj.name = runner.name
             obj.thumbnail = runner.thumbnail
-            
+
             try! realm.safeWrite {
                 realm.add(obj, update: .modified)
             }
             
-            let source = HostedContentSource(host: URL(string: list)!, info: .init(id: runner.id, name: runner.name, version: runner.version, website: runner.website ?? "", supportedLanguages: runner.supportedLanguages ?? [], hasExplorePage: runner.hasExplorePage ?? false))
-            try addSource(runner: source)
             
+            let info = ContentSourceInfo(id: runner.id, name: runner.name, version: runner.version, website: runner.website, supportedLanguages: runner.supportedLanguages)
+            let source = HostedContentSource(host: URL(string: list)!, info: info)
+            try addSource(runner: source)
+
         } catch {
             ToastManager.shared.error(error)
         }
-        
     }
 }
 
@@ -272,17 +272,16 @@ extension JSContext {
 
 //// MARK: Fetch
 extension DaisukeEngine {
-
-    func getSource(with id: String) ->  DaisukeContentSource? {
-       sources[id]
+    func getSource(with id: String) -> DaisukeContentSource? {
+        sources[id]
     }
-    
+
     func getJSSource(with id: String) -> LocalContentSource? {
         sources[id] as? LocalContentSource
     }
 
     func getSources() -> [DaisukeContentSource] {
-        sources.values.map({ $0 })
+        sources.values.map { $0 }
     }
 }
 
@@ -299,7 +298,6 @@ extension DaisukeEngine {
         await MainActor.run(body: {
             ToastManager.shared.info("Updated Commons")
         })
-        
     }
 
     private func getCommons() async throws {

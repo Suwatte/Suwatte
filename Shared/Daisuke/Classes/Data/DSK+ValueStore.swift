@@ -23,9 +23,7 @@ import JavaScriptCore
     func _remove(key: JSValue) -> JSValue
 }
 
-protocol DaisukeContext : JSObject, JSObjectProtocol {
-   
-}
+protocol DaisukeContext: JSObject, JSObjectProtocol {}
 
 extension DaisukeContext {
     func getContainerId() throws -> String {
@@ -40,10 +38,9 @@ extension DaisukeContext {
         return id
     }
 }
+
 extension DaisukeEngine {
     @objc class ValueStore: JSObject, DaisukeValueStoreProtocol, DaisukeContext {
-        
-
         func get(key: String) throws -> String {
             let value = DataManager.shared.getStoreValue(for: try getContainerId(), key: key)
 

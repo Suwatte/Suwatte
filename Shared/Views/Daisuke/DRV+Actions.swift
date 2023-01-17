@@ -20,11 +20,11 @@ extension DaisukeContentSourceView {
             } _: {
                 ProgressView()
             } _: { error in
-                ErrorView(error: error, action: {
+                ErrorView(error: error, sourceID: source.id, action: {
                     Task {
                         await load()
                     }
-                }, sourceID: source.id)
+                })
             } _: { value in
                 if let value {
                     Loaded(data: value)

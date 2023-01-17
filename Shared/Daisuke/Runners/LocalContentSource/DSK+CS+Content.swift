@@ -9,12 +9,8 @@ import Foundation
 
 // MARK: Get Content
 
-extension DaisukeEngine.LocalContentSource {
-    
-}
+extension DaisukeEngine.LocalContentSource {}
 
 // MARK: Chapters
 
-extension DaisukeEngine.LocalContentSource {
-    
-}
+extension DaisukeEngine.LocalContentSource {}

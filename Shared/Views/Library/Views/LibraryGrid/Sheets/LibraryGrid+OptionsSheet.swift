@@ -6,17 +6,35 @@
 //
 
 import SwiftUI
-
+enum LibraryBadge: Int, CaseIterable {
+    case unread, update
+    
+    var description: String {
+        switch self {
+            case .unread: return "Unread Count"
+            case .update: return "Update Count"
+        }
+    }
+}
 extension LibraryView.LibraryGrid {
     struct OptionsSheet: View {
-        @AppStorage(STTKeys.ShowUpdateBadges) var showUpdateBadges = true
+        @AppStorage(STTKeys.LibraryShowBadges) var showBadges = true
+        @AppStorage(STTKeys.LibraryBadgeType) var badgeType: LibraryBadge = .update
         @AppStorage(STTKeys.ShowOnlyDownloadedTitles) var showDownloadsOnly = false
         var collection: LibraryCollection?
         var body: some View {
             NavigationView {
                 List {
                     Section {
-                        Toggle("Show Update Badges", isOn: $showUpdateBadges)
+                        Toggle("Show Badges", isOn: $showBadges)
+                        if showBadges {
+                            Picker("Badge Type", selection: $badgeType) {
+                                ForEach(LibraryBadge.allCases, id: \.rawValue) {
+                                    Text($0.description)
+                                        .tag($0)
+                                }
+                            }
+                        }
                         Toggle("Show Only Downloaded Titles", isOn: $showDownloadsOnly)
                     }
 
@@ -32,10 +50,13 @@ extension LibraryView.LibraryGrid {
                         }
                     }
                 }
-                .navigationTitle("More")
+                .navigationTitle("Settings")
                 .navigationBarTitleDisplayMode(.inline)
+                .animation(.default, value: showBadges)
                 .closeButton()
             }
         }
+        
+       
     }
 }

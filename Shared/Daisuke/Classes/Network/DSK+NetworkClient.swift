@@ -27,13 +27,17 @@ import WebKit
 
 extension DaisukeEngine {
     @objc class NetworkClient: JSObject, DaisukeNetworkClientProtocol {
-        var session: Alamofire.Session = .default
-
+        lazy var session: Alamofire.Session = {
+            let configuration = URLSessionConfiguration.af.default
+            configuration.headers.add(.userAgent(Preferences.standard.userAgent))
+            return .init(configuration: configuration)
+        }()
         typealias Request = DSKCommon.Request
         typealias Response = DSKCommon.Response
         typealias RequestConfig = DSKCommon.RequestConfig
         var requestInterceptHandler: JSValue?
         var responseInterceptHandler: JSValue?
+        
 
         func _request(_ request: JSValue) -> JSValue {
             .init(newPromiseIn: request.context) { [self] resolve, reject in
@@ -115,21 +119,30 @@ extension DaisukeEngine.NetworkClient {
         let request = try await handleRequestIntercept(request: request)
         let urlRequest = try request.toURLRequest()
         let afResponse = await session.request(urlRequest)
-            .validate()
             .serializingString()
             .response
         session.session.configuration.timeoutIntervalForResource = request.timeout ?? 30
         guard let httpResponse = afResponse.response else {
             throw DaisukeEngine.Errors.NamedError(name: "Network Client", message: "Recieved Empty Response")
         }
-        
-        
+
         let data = try afResponse.result.get()
+        let headers = httpResponse.headers.dictionary
+        guard (200...299).contains(httpResponse.statusCode) else {
+            let base = Alamofire.AFError.responseValidationFailed(reason: .unacceptableStatusCode(code: httpResponse.statusCode))
+            switch httpResponse.statusCode {
+                case 503, 403:
+                    guard headers["Server"] == "cloudflare" else { throw base }
+                    throw DSK.Errors.NetworkErrorCloudflareProtected
+                default:
+                    throw base
+            }
+        }
         var response = Response(data: data,
                                 status: httpResponse.statusCode,
-                                headers: httpResponse.headers.dictionary,
+                                headers: headers,
                                 request: request)
-        
+
         response = try await handleResponseIntercept(response: response)
         return response
     }
@@ -149,7 +162,7 @@ extension URLRequest {
         var body: [String: AnyCodable]?
         if let data = httpBody {
             let isURLEncoded = self.headers["content-type"]?.contains("x-www-form-urlencoded") ?? false
-            
+
             if isURLEncoded {
                 let query = String(data: data, encoding: .utf8) ?? ""
                 let url = URL(string: "https://suwatte.com/?\(query)")
@@ -158,14 +171,13 @@ extension URLRequest {
                 }
             } else {
                 body = try? JSONDecoder().decode(DSKCommon.CodableDict.self, from: data)
-
             }
         }
         let params = parseQueryParam(components: components)
         let request = DSKCommon.Request(url: baseURL, method: method, params: params, body: body, headers: headers, cookies: nil, timeout: timeoutInterval, maxRetries: nil)
         return request
     }
-    
+
     func parseQueryParam(components: URLComponents) -> [String: AnyCodable] {
         let out: [String: AnyCodable] = [:]
         if let items = components.queryItems {
@@ -185,10 +197,9 @@ extension URLRequest {
                 out[properKey] = AnyCodable(values.compactMap { $0.value })
             }
         }
-        
+
         return out
     }
-    
 }
 
 extension DaisukeEngine.NetworkClient {
@@ -198,30 +209,30 @@ extension DaisukeEngine.NetworkClient {
             return request
         }
         let dict = try! request.asDictionary()
-        return try await withCheckedThrowingContinuation({ continuation in
+        return try await withCheckedThrowingContinuation { continuation in
             handler.daisukeCall(arguments: [dict]) { value in
                 let request = try Request(value: value)
                 continuation.resume(returning: request)
             } onFailure: { error in
                 continuation.resume(throwing: error)
             }
-        })
+        }
     }
-    
+
     func handleResponseIntercept(response: Response) async throws -> Response {
         let handler = responseInterceptHandler
         guard let handler = handler else {
             return response
         }
         let dict = try! response.asDictionary()
-        return try await withCheckedThrowingContinuation({ continuation in
+        return try await withCheckedThrowingContinuation { continuation in
             handler.daisukeCall(arguments: [dict]) { value in
                 let response = try Response(value: value)
                 continuation.resume(returning: response)
             } onFailure: { error in
                 continuation.resume(throwing: error)
             }
-        })
+        }
     }
 }
 

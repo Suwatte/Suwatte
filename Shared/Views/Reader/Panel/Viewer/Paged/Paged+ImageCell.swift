@@ -11,7 +11,7 @@ extension PagedViewer {
     class ImageCell: UICollectionViewCell {
         static var identifier: String = "PagedViewerCell"
 
-        var pageView: ReaderPageView?
+        var pageView: PagedDisplayHolder?
 
         override init(frame: CGRect) {
             super.init(frame: frame)
@@ -23,40 +23,50 @@ extension PagedViewer {
         }
 
         override func prepareForReuse() {
-            pageView?.imageView.kf.cancelDownloadTask()
-            pageView?.downloadTask?.cancel()
-            pageView?.imageView.image = nil
-            pageView?.imageView.interactions.removeAll()
-            pageView?.imageView.removeFromSuperview()
-            pageView?.subscriptions.removeAll()
-            pageView?.scrollView.reset()
+            pageView?.reset()
             pageView?.removeFromSuperview()
             pageView = nil
+            NSLayoutConstraint.deactivate(pageViewContraints)
+            pageViewContraints.removeAll()
             super.prepareForReuse()
         }
-
-        func initializePage(page: ReaderView.Page) {
-            pageView = ReaderPageView()
-
-            guard let pageView = pageView else {
-                return
-            }
-
-            pageView.backgroundColor = .clear
-            pageView.page = page
+        
+        func set(page: ReaderPage, delegate: PagerDelegate) {
+            // Initialize
+            pageView = PagedDisplayHolder()
+            pageView?.page = page
+            pageView?.delegate = delegate
+            guard let pageView else { fatalError("Holder Cannot Be Nil") }
             pageView.translatesAutoresizingMaskIntoConstraints = false
             addSubview(pageView)
+            pageView.setup()
 
-            NSLayoutConstraint.activate([
-                pageView.topAnchor.constraint(equalTo: topAnchor),
-                pageView.bottomAnchor.constraint(equalTo: bottomAnchor),
-                pageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                pageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            ])
+            // Add Context Menu Interaction
+            if Preferences.standard.imageInteractions {
+                pageView.addImageInteraction(UIContextMenuInteraction(delegate: delegate))
+            }
+            
+            
+            // AutoLayout
+            pageViewContraints = [
+                pageView.widthAnchor.constraint(equalTo: widthAnchor),
+                pageView.heightAnchor.constraint(equalTo: heightAnchor),
+                pageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+                pageView.centerXAnchor.constraint(equalTo: centerXAnchor)
+            ]
+            NSLayoutConstraint.activate(pageViewContraints)
+            pageView.subscribe()
         }
+        
+        var pageViewContraints : [NSLayoutConstraint] = []
 
         func setImage() {
-            pageView?.setImage()
+            pageView?.load()
+        }
+        
+        
+        func cancelTasks() {
+            pageView?.cancel()
         }
 
         override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {

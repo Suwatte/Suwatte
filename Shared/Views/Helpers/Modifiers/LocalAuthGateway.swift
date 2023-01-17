@@ -24,6 +24,8 @@ struct LocalAuthGateway: ViewModifier {
             .onAppear {
                 manager.verify()
             }
+            .animation(.default, value: shouldHide)
+            .animation(.default, value: manager.isExpired)
     }
 
     var shouldHide: Bool {

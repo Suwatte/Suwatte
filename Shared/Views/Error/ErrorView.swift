@@ -10,10 +10,10 @@ import SwiftUI
 
 struct ErrorView: View {
     var error: Error
-    var action: () -> Void
     var sourceID: String?
+    var action: () -> Void
     var body: some View {
-        VStack {
+        Group {
             if case DaisukeEngine.Errors.NetworkErrorCloudflareProtected = error, let sourceID = sourceID {
                 CloudFlareErrorView(sourceID: sourceID, action: action)
             } else {

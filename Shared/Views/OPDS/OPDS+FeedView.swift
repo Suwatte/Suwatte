@@ -10,6 +10,7 @@ import Kingfisher
 import R2Shared
 import ReadiumOPDS
 import SwiftUI
+import SwiftUIBackports
 
 extension OPDSView {
     struct LoadableFeedView: View {
@@ -133,49 +134,55 @@ extension Target {
 
         @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
         @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
-        @State private var isPotrait = KEY_WINDOW?.windowScene?.interfaceOrientation == .portrait
-        var itemsPerRow: Int {
-            isPotrait ? PortraitPerRow : LSPerRow
-        }
-
+        @StateObject var manager: LocalContentManager = .shared
         @State var chapter: StoredChapter?
+        @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
         var body: some View {
             ASCollectionView(section: AS_SECTION)
-
-                .layout(createCustomLayout: {
-                    SuwatteDefaultGridLayout(itemsPerRow: itemsPerRow, style: .SEPARATED)
-                }, configureCustomLayout: { layout in
-                    layout.itemsPerRow = itemsPerRow
-                    layout.titleSize = 75.0
-                })
-                .alwaysBounceVertical()
-                .animateOnDataRefresh(true)
-                .onRotate { newOrientation in
-                    if newOrientation.isFlat { return }
-                    isPotrait = newOrientation.isPortrait
+                .layout { _ in
+                    DefaultGridLayout(75)
                 }
+                .alwaysBounceVertical()
+                .shouldRecreateLayoutOnStateChange(true)
+                .animateOnDataRefresh(true)
                 .fullScreenCover(item: $chapter) { chapter in
                     ReaderGateWay(readingMode: .PAGED_COMIC, chapterList: [chapter], openTo: chapter, title: chapter.title)
                 }
+                .animation(.default, value: chapter)
         }
 
         var AS_SECTION: ASSection<Int> {
             return ASSection(id: 0, data: feed.publications) { publication, _ in
-                Button {
-                    // TODO: Check if downloaded, if so use download object instead
-                    if publication.isStreamable {
-                        do {
-                            chapter = try publication.toStoredChapter()
-                        } catch {
-                            ToastManager.shared.display(.error(error))
+                ZStack(alignment: .topTrailing) {
+                    Tile(publication: publication, chapter: $chapter)
+                    if let url = publication.acquisitionLink.flatMap({ URL(string: $0) }) {
+                        if let download = manager.downloads.first(where: { $0.url == url }) {
+                            TileOverlay(download: download)
+                        } else if LocalContentManager.shared.hasFile(fileName: url.lastPathComponent) {
+                            ColoredBadge(color: accentColor)
                         }
-                    } else {
-                        // Open Download Dialog
                     }
-                } label: {
-                    Tile(publication: publication)
                 }
-                .buttonStyle(NeutralButtonStyle())
+            }
+        }
+        
+        struct TileOverlay: View {
+            @ObservedObject var download: LocalContentManager.DownloadObject
+            var body: some View {
+                ZStack(alignment: .topTrailing) {
+                    Group {
+                        switch download.status {
+                            case .failing:
+                                ColoredBadge(color: .red)
+                            case .active:
+                                ColoredBadge(color: .green)
+                            case .queued:
+                                ColoredBadge(color: .gray)
+                            default:
+                                EmptyView()
+                        }
+                    }
+                }
             }
         }
     }
@@ -189,9 +196,13 @@ extension Target {
         var tileStyle = TileStyle.SEPARATED
         @EnvironmentObject var client: OPDSClient
         @StateObject private var image = FetchImage()
+        @AppStorage(STTKeys.AppAccentColor) var color: Color = .sttDefault
+        @State var presentDialog = false
+        @State var presentAlert = false
+        @Binding var chapter: StoredChapter?
+        
         var request: URLRequest? {
             var headers = HTTPHeaders()
-
             if let auth = client.authHeader {
                 headers.add(name: "Authorization", value: auth)
             }
@@ -203,13 +214,23 @@ extension Target {
                 let imageWidth = proxy.size.width
                 let imageHeight = imageWidth * 1.5
                 VStack(alignment: .leading, spacing: 5) {
-                    image.view?
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .clipped()
-                        .frame(width: imageWidth, height: imageHeight)
-                        .background(Color.fadedPrimary)
-                        .cornerRadius(7)
+                    Group {
+                        if let view = image.view {
+                            view
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .clipped()
+                                .transition(.opacity)
+                        } else {
+                            Color.gray.opacity(0.25)
+                                .shimmering()
+                                .transition(.opacity)
+
+                        }
+                    }
+                    .frame(width: imageWidth, height: imageHeight)
+                    .background(Color.fadedPrimary)
+                    .cornerRadius(7)
 
                     VStack(alignment: .leading, spacing: 1.5) {
                         Text(STTHelpers.getComicTitle(from: publication.metadata.title))
@@ -220,18 +241,22 @@ extension Target {
                         HStack {
                             if publication.isStreamable {
                                 Image(systemName: "dot.radiowaves.up.forward")
-                                Spacer()
+                                    .foregroundColor(color)
+                                    .font(.footnote.weight(.bold))
+                                    .shimmering()
                             }
 
                             if let pages = publication.streamLink?.properties["count"] as? String ?? publication.metadata.numberOfPages?.description {
                                 Text(pages + " Pages")
+                                    .font(.footnote.weight(.thin))
+
                             }
                         }
-                        .font(.footnote.weight(.thin))
                     }
 
                     .frame(alignment: .topLeading)
                 }
+                
             }
             .onAppear {
                 if let request = request {
@@ -239,6 +264,59 @@ extension Target {
                 }
             }
             .onDisappear { image.reset() }
+            .animation(.default, value: image.view)
+            .onTapGesture {
+                presentDialog.toggle()
+            }
+            .alert("Info", isPresented: $presentAlert, actions: {
+                Button("OK", role: .cancel) {}
+            }, message: {
+                Text(PublicationDescription)
+            })
+            
+            .confirmationDialog("Actions", isPresented: $presentDialog) {
+                if publication.isStreamable {
+                    Button("Info") {
+                        presentAlert.toggle()
+                    }
+                    
+                    if let link = publication.acquisitionLink.flatMap({ URL(string: $0) }) {
+                        if LocalContentManager.shared.hasFile(fileName: link.lastPathComponent) {
+                            Button("Read") {
+                                let path = LocalContentManager.shared.directory.appendingPathComponent(link.lastPathComponent)
+                                let book = LocalContentManager.shared.idHash.values.first(where: { $0.url == path })
+                                guard let book else {
+                                    ToastManager.shared.info("Book Not Found")
+                                    return
+                                }
+                                chapter = LocalContentManager.shared.generateStored(for: book)
+                            }
+                        } else {
+                            Button("Download") {
+                                let download = LocalContentManager.DownloadObject(url: link, title: publication.metadata.title, cover: publication.thumbnailURL ?? "")
+                                download.opdsClient = client
+                                LocalContentManager.shared.addToQueue(download)
+                            }
+                        }
+                    }
+                    if publication.isStreamable && !publication.isProtected {
+                        Button("Stream") {
+                            do {
+                                chapter = try publication.toStoredChapter()
+                            } catch {
+                                ToastManager.shared.error(error)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        var PublicationDescription: String {
+            let title = publication.metadata.title
+            let other = publication.metadata.description ?? ""
+            
+            return "\(title)\n\(other)"
         }
     }
 }
@@ -279,3 +357,4 @@ extension Publication: Identifiable {
         return chapter
     }
 }
+

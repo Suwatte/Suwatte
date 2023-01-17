@@ -13,58 +13,28 @@ import WebKit
 
 extension DaisukeContentSourceView {
     struct AuthSection: View {
-        var authMethod: DSKCommon.AuthMethod
-        var canSync: Bool
-        @State var loadable = Loadable<DSKCommon.User?>.idle
         @EnvironmentObject var source: DaisukeEngine.LocalContentSource
         @State var presentBasicAuthSheet = false
         @State var presentWebView = false
-        @State var shouldRefresh = false
-        @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
-
+        @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
         var body: some View {
-            LoadableView(loadable: loadable) {
-                ProgressView()
-                    .task {
-                        await load()
-                    }
-            } _: {
-                ProgressView()
-            } _: { error in
-                HStack {
-                    Spacer()
-                    ErrorView(error: error) {
-                        Task {
-                            await load()
-                        }
-                    }
-                    Spacer()
-                }
-                Section {
-                    Button("Sign Out in WebView", role: .destructive) {
-                        presentWebView.toggle()
-                    }
-                }
-
-            } _: { value in
-                if let user = value {
+            Group {
+                if let user = source.user {
                     LoadedUserView(user: user)
                 } else {
                     LoadedNoUserView()
                 }
             }
-            .sheet(isPresented: $presentBasicAuthSheet, onDismiss: { shouldRefresh.toggle() }) {
+            .sheet(isPresented: $presentBasicAuthSheet) {
                 NavigationView {
-                    SignInSheet(usesEmail: authMethod == .email_pw)
+                    SignInSheet(usesEmail: source.authMethod == .email_pw)
                         .navigationTitle("Sign In")
                         .closeButton()
                         .tint(accentColor)
                         .accentColor(accentColor)
                 }
             }
-            .fullScreenCover(isPresented: $presentWebView, onDismiss: {
-                shouldRefresh = true
-            }, content: {
+            .fullScreenCover(isPresented: $presentWebView) {
                 NavigationView {
                     WebAuthWebView(source: source)
                         .navigationBarTitle("WebView Auth", displayMode: .inline)
@@ -73,54 +43,34 @@ extension DaisukeContentSourceView {
                         .tint(accentColor)
                         .accentColor(accentColor)
                 }
-            })
-            .animation(.default, value: loadable)
-            .onChange(of: shouldRefresh) { _ in
-                if shouldRefresh {
-                    loadable = .idle
-                }
             }
+            .animation(.default, value: source.user)
         }
-
-        func load() async {
-            shouldRefresh = false
-            await MainActor.run(body: {
-                loadable = .loading
-            })
-            do {
-                let data = try await source.getAuthenticatedUser()
-                await MainActor.run(body: {
-                    loadable = .loaded(data)
-                })
-            } catch {
-                await MainActor.run(body: {
-                    loadable = .failed(error)
-                })
-            }
+        @ViewBuilder
+        func LoadedUserView(user: DSKCommon.User) -> some View {
+            AuthenticatedUserView(user: user, presentWebView: $presentWebView)
         }
 
         @ViewBuilder
-        func LoadedUserView(user: DSKCommon.User) -> some View {
-            AuthenticatedUserView(shouldRefresh: $shouldRefresh, canSync: canSync, user: user, presentWebView: $presentWebView)
-        }
-
         func LoadedNoUserView() -> some View {
-            Section {
-                Button {
-                    switch authMethod {
-                    case .email_pw, .username_pw:
-                        presentBasicAuthSheet.toggle()
-                    case .oauth:
-                        break
-                    case .web:
-                        presentWebView.toggle()
+            if let authMethod = source.authMethod {
+                Section {
+                    Button {
+                        switch authMethod {
+                        case .email_pw, .username_pw:
+                            presentBasicAuthSheet.toggle()
+                        case .oauth:
+                            break
+                        case .web:
+                            presentWebView.toggle()
+                        }
+                    } label: {
+                        Label("Sign In", systemImage: "person.fill.viewfinder")
                     }
-                } label: {
-                    Label("Sign In", systemImage: "person.fill.viewfinder")
+                    .buttonStyle(.plain)
+                } header: {
+                    Text("Authentication")
                 }
-                .buttonStyle(.plain)
-            } header: {
-                Text("Authentication")
             }
         }
     }
@@ -247,6 +197,7 @@ extension DaisukeContentSourceView {
             Task { @MainActor in
                 do {
                     try await source.handleBasicAuth(id: username, password: password)
+                    source.user = try await source.getAuthenticatedUser()
                     presentationMode.wrappedValue.dismiss()
                 } catch {
                     self.loginStatus = .failed(error)
@@ -259,8 +210,6 @@ extension DaisukeContentSourceView {
 extension DaisukeContentSourceView {
     struct AuthenticatedUserView: View {
         @EnvironmentObject var source: DaisukeEngine.LocalContentSource
-        @Binding var shouldRefresh: Bool
-        var canSync: Bool
         var user: DSKCommon.User
         @State var presentShouldSync = false
         @Binding var presentWebView: Bool
@@ -286,7 +235,7 @@ extension DaisukeContentSourceView {
                     Text("Info")
                 }
             }
-            if canSync {
+            if source.canSyncUserLibrary {
                 Section {
                     Button {
                         presentShouldSync.toggle()
@@ -320,7 +269,7 @@ extension DaisukeContentSourceView {
                 Button("Sign Out", role: .destructive) {
                     Task {
                         do {
-                            guard let info = (source.info as? ContentSourceInfo), let authMethod = info.authMethod, authMethod == .web else {
+                            guard let authMethod = source.authMethod else {
                                 return
                             }
                             switch authMethod {
@@ -329,14 +278,9 @@ extension DaisukeContentSourceView {
                             case .web:
                                 presentWebView.toggle()
                             }
-
+                            try await source.user = source.getAuthenticatedUser()
                         } catch {
                             ToastManager.shared.error(error)
-                        }
-                        if !presentWebView {
-                            await MainActor.run(body: {
-                                shouldRefresh.toggle()
-                            })
                         }
                     }
                 }
@@ -378,7 +322,7 @@ extension WebAuthWebView {
             let webConfiguration = WKWebViewConfiguration()
 
             webView = WKWebView(frame: view.bounds, configuration: webConfiguration)
-            webView.customUserAgent = STT_USER_AGENT
+            webView.customUserAgent = Preferences.standard.userAgent
             webView.uiDelegate = self
             webView.navigationDelegate = self
             view.addSubview(webView)

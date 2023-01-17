@@ -15,8 +15,7 @@ struct NovelReaderView: View {
 
     var body: some View {
         LoadableView(loadMain, model.activeChapter.data) { _ in
-
-            PagedViewer()
+            Gateway
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         .overlay {
@@ -56,6 +55,27 @@ struct NovelReaderView: View {
     }
 }
 
+extension NovelReaderView {
+    var Gateway: some View {
+        Group {
+            if model.sections.isEmpty {
+                VStack(alignment: .center) {
+                    ProgressView()
+                    Text("Preparing Reader...")
+                        .font(.footnote)
+                        .fontWeight(.light)
+                }
+                .transition(.opacity)
+                .onAppear {
+                    model.notifyOfChange()
+                }
+            } else {
+                PagedViewer()
+                    .transition(.opacity)
+            }
+        }
+    }
+}
 extension NovelReaderView.ViewModel {
     var tap: some Gesture {
         DragGesture(minimumDistance: 0)

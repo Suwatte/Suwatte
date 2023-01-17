@@ -41,7 +41,6 @@ extension ProfileView {
         @Published var presentManageContentLinks = false
         @Published var presentMigrationView = false
         @Published var syncState = SyncState.idle
-        @Published var lastReadMarker: ChapterMarker?
         @Published var actionState: ActionState = .init(state: .none)
         @Published var linkedUpdates: [HighlightIndentier] = []
         @Published var threadSafeChapters: [DSKCommon.Chapter]?
@@ -54,7 +53,8 @@ extension ProfileView {
 
         @Published var selection: String?
         deinit {
-            self.notificationToken?.invalidate()
+            notificationToken?.invalidate()
+            print("Deallocated Profile ViewModel")
         }
     }
 }
@@ -64,82 +64,100 @@ extension ProfileView.ViewModel {
         do {
             // Fetch From JS
             let parsed = try await source.getContent(id: entry.id)
-            Task { @MainActor in
-                self.content = parsed
-                self.loadableContent = .loaded(true)
-                self.working = false
+            await MainActor.run { [weak self] in
+                self?.content = parsed
+                self?.loadableContent = .loaded(true)
+                self?.working = false
             }
-            Task {
+            try Task.checkCancellation()
+            try await Task.sleep(seconds: 0.1)
+            
+            // Load Chapters
+            Task.detached {
                 await self.loadChapters(parsed.chapters)
             }
-            if let stored = try? parsed.toStoredContent(withSource: source.id) {
-                DataManager.shared.storeContent(stored)
+            
+            // Save to Realm
+            Task.detached { [weak self] in
+                if let source = self?.source, let stored = try? parsed.toStoredContent(withSource: source.id) {
+                    DataManager.shared.storeContent(stored)
+                }
             }
-
         } catch {
-            Task {
-                await loadChapters()
+            Task.detached { [weak self] in
+                await self?.loadChapters()
             }
-            await MainActor.run(body: {
-                if loadableContent.LOADED {
+            
+            Task { @MainActor [weak self] in
+                if self?.loadableContent.LOADED ?? false {
                     ToastManager.shared.error("Failed to Update Profile")
                     Logger.shared.error("[ProfileView] \(error.localizedDescription)", .init(function: #function))
                 } else {
-                    loadableContent = .failed(error)
+                    self?.loadableContent = .failed(error)
                 }
-                working = false
-
-            })
+                self?.working = false
+            }
         }
     }
 
     func loadChapters(_ parsedChapters: [DSKCommon.Chapter]? = nil) async {
-        await MainActor.run(body: {
-            working = true
-        })
-        await MainActor.run(body: {
-            threadSafeChapters = parsedChapters
-        })
+        await MainActor.run { [weak self] in
+            self?.working = true
+            self?.threadSafeChapters = parsedChapters
+        }
+        
         if let chapters = parsedChapters {
             let unmanaged = chapters.map { $0.toStoredChapter(withSource: source.id) }
-            await MainActor.run(body: {
-                threadSafeChapters = chapters
-                self.chapters = .loaded(unmanaged)
-                working = false
-            })
-            let stored = chapters.map { $0.toStoredChapter(withSource: source.id) }
-            DataManager.shared.storeChapters(stored)
-            await didLoadChapters()
-
+            await MainActor.run { [weak self] in
+                self?.threadSafeChapters = chapters
+                self?.chapters = .loaded(unmanaged)
+                self?.working = false
+            }
+            // Store To Realm
+            let sourceId = source.id
+            Task.detached {
+                let stored = chapters.map { $0.toStoredChapter(withSource: sourceId) }
+                DataManager.shared.storeChapters(stored)
+            }
+            // Post Chapter Load Actions
+            Task.detached { [weak self] in
+                await self?.didLoadChapters()
+            }
         } else {
             do {
                 let parsedChapters = try await source.getContentChapters(contentId: entry.id)
-
                 let unmanaged = parsedChapters.map { $0.toStoredChapter(withSource: source.id) }
-                await MainActor.run(body: {
-                    threadSafeChapters = parsedChapters
-                    self.chapters = .loaded(unmanaged)
-                    working = false
-                })
-                let stored = parsedChapters.map { $0.toStoredChapter(withSource: source.id) }
-                DataManager.shared.storeChapters(stored)
-                await didLoadChapters()
-
+                await MainActor.run { [weak self] in
+                    self?.threadSafeChapters = parsedChapters
+                    self?.chapters = .loaded(unmanaged)
+                    self?.working = false
+                }
+                // Store To Realm
+                let sourceId = source.id
+                Task.detached {
+                    let stored = parsedChapters.map { $0.toStoredChapter(withSource: sourceId) }
+                    DataManager.shared.storeChapters(stored)
+                }
+                // Post Chapter Load Actions
+                Task.detached { [weak self] in
+                    await self?.didLoadChapters()
+                }
             } catch {
-                Task { @MainActor in
-                    setChaptersFromDB()
+                Task { @MainActor [weak self] in
+                    self?.setChaptersFromDB()
                 }
                 Logger.shared.error(error.localizedDescription)
-                await MainActor.run(body: {
-                    if chapters.LOADED {
+                ToastManager.shared.error(error)
+                Task { @MainActor [weak self] in
+                    if self?.chapters.LOADED ?? false {
                         ToastManager.shared.error("Failed to Fetch Chapters")
                         return
                     } else {
-                        chapters = .failed(error)
+                        self?.chapters = .failed(error)
                     }
-                    working = false
-                    ToastManager.shared.error(error)
-                })
+                    self?.working = false
+                }
+
             }
         }
     }
@@ -148,19 +166,25 @@ extension ProfileView.ViewModel {
         notificationToken?.invalidate()
         notificationToken = nil
     }
+    var contentIdentifier: String {
+        sttIdentifier().id
+    }
 
     func didLoadChapters() async {
-        Task {
-            await getMarkers()
-            try await Task.sleep(seconds: 0.5)
-            await handleSync()
-            try await handleAnilistSync()
+        let id = sttIdentifier()
+        await MainActor.run { [weak self] in
+            self?.getMarkers()
         }
-        Task {
-            DataManager.shared.clearUpdates(id: sttIdentifier().id)
+        Task.detached { [weak self] in
+            await self?.handleSync()
+            try? await self?.handleAnilistSync()
+            DataManager.shared.updateUnreadCount(for: id)
         }
-        Task {
-            await checkLinkedForUpdates()
+        Task.detached {
+            DataManager.shared.clearUpdates(id: id.id)
+        }
+        Task.detached { [weak self] in
+            await self?.checkLinkedForUpdates()
         }
     }
 
@@ -176,36 +200,36 @@ extension ProfileView.ViewModel {
         if storedChapters.isEmpty { return }
 
         chapters = .loaded(storedChapters)
-        Task {
-            await getMarkers()
+        Task { @MainActor in 
+            getMarkers()
         }
     }
 
-    @MainActor
+    
     func getMarkers() {
+        let id = entry.id
+        let sourceId = source.id
         let realm = try! Realm()
-
         notificationToken = realm
             .objects(ChapterMarker.self)
-            .where { $0.chapter.contentId == entry.id }
-            .where { $0.chapter.sourceId == source.id }
+            .where { $0.chapter.contentId == id }
+            .where { $0.chapter.sourceId == sourceId }
             .where { $0.dateRead != nil }
             .sorted(by: \.dateRead, ascending: false)
-            .observe { collection in
+            .observe { [weak self] collection in
                 switch collection {
                 case let .initial(results):
-                    self.lastReadMarker = results.first
+                        self?.calculateActionState(results.first)
                 case let .update(results, _, _, _):
-                    self.lastReadMarker = results.first
+                        self?.calculateActionState(results.first)
                 case let .error(error):
                     ToastManager.shared.error(error)
                 }
-
-                self.calculateActionState()
             }
+        
     }
 
-    func calculateActionState() {
+    func calculateActionState(_ marker: ChapterMarker?) {
         guard let chapters = chapters.value else {
             actionState = .init(state: .none)
             return
@@ -213,11 +237,11 @@ extension ProfileView.ViewModel {
         guard content.contentId == entry.contentId else {
             return
         }
-        guard let marker = lastReadMarker, let chapter = marker.chapter else {
+        guard let marker, let chapter = marker.chapter?.toThreadSafe() else {
             // Marker DNE, user has not started reading
             if let chapter = chapters.last {
                 // Chapter not found in chapter list, return first chapter
-                actionState = .init(state: .start, chapter: chapter, marker: nil)
+                actionState = .init(state: .start, chapter: chapter.toThreadSafe(), marker: nil)
                 return
             }
             actionState = .init(state: .none)
@@ -226,7 +250,7 @@ extension ProfileView.ViewModel {
 
         if !marker.completed {
             // Marker Exists, series has not been complted, resume
-            actionState = .init(state: .resume, chapter: marker.chapter, marker: (marker.progress, marker.dateRead))
+            actionState = .init(state: .resume, chapter: marker.chapter?.toThreadSafe(), marker: (marker.progress, marker.dateRead))
             return
         }
 
@@ -236,7 +260,7 @@ extension ProfileView.ViewModel {
         guard var index = chapters.firstIndex(where: { $0.chapterId == chapter.chapterId }) else {
             if let chapter = chapters.last {
                 // Chapter not found in chapter list, return first chapter
-                actionState = .init(state: .start, chapter: chapter, marker: nil)
+                actionState = .init(state: .start, chapter: chapter.toThreadSafe(), marker: nil)
                 return
             }
             actionState = .init(state: .none)
@@ -248,16 +272,16 @@ extension ProfileView.ViewModel {
         // marker is nil to avoid progress display
         if index == 0 {
             if content.status == .COMPLETED, let chapter = chapters.last {
-                actionState = .init(state: .restart, chapter: chapter, marker: nil)
+                actionState = .init(state: .restart, chapter: chapter.toThreadSafe(), marker: nil)
                 return
             }
-            actionState = .init(state: .reRead, chapter: marker.chapter, marker: nil)
+            actionState = .init(state: .reRead, chapter: marker.chapter?.toThreadSafe(), marker: nil)
             return
         }
 
         // index not 0, decrement, sourceIndex moves inverted
         index -= 1
-        actionState = .init(state: .upNext, chapter: chapters.get(index: index), marker: nil)
+        actionState = .init(state: .upNext, chapter: chapters.get(index: index)?.toThreadSafe(), marker: nil)
     }
 
     func loadContentFromDatabase() async {
@@ -309,7 +333,7 @@ extension ProfileView.ViewModel {
         }
     }
 
-    private func handleAnilistSync() async throws {
+    func handleAnilistSync() async throws {
         guard let chapters = threadSafeChapters else {
             return
         }
@@ -359,7 +383,7 @@ extension ProfileView.ViewModel {
     private func handleReadMarkers() async throws {
         guard let source = source as? DSK.LocalContentSource else { return }
         // Check if Syncable
-        if !source.sourceInfo.canSync { return }
+        if !source.canSyncUserLibrary { return }
         let user = try? await source.getAuthenticatedUser()
 
         guard let _ = user else { return }
@@ -413,7 +437,7 @@ extension ProfileView.ViewModel {
 extension ProfileView.ViewModel {
     struct ActionState {
         var state: ProgressState
-        var chapter: StoredChapter?
+        var chapter: ThreadSafeChapter?
         var marker: (progress: Double, date: Date?)?
     }
 
@@ -483,4 +507,40 @@ extension ProfileView.ViewModel {
             self.linkedUpdates = updates
         }
     }
+}
+
+// Reference: https://academy.realm.io/posts/realm-notifications-on-background-threads-with-swift/
+class BackgroundWorker: NSObject {
+  private var thread: Thread!
+  private var block: (()->Void)!
+
+    @objc internal func runBlock() { block() }
+
+  internal func start(_ block: @escaping () -> Void) {
+    self.block = block
+
+    let threadName = String(describing: self)
+      .components(separatedBy: .punctuationCharacters)[1]
+
+    thread = Thread { [weak self] in
+      while (self != nil && !self!.thread.isCancelled) {
+        RunLoop.current.run(
+            mode: RunLoop.Mode.default,
+          before: Date.distantFuture)
+      }
+      Thread.exit()
+    }
+    thread.name = "\(threadName)-\(UUID().uuidString)"
+    thread.start()
+
+    perform(#selector(runBlock),
+      on: thread,
+      with: nil,
+      waitUntilDone: false,
+            modes: [RunLoop.Mode.default.rawValue])
+  }
+
+  public func stop() {
+    thread.cancel()
+  }
 }

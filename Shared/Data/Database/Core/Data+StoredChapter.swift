@@ -8,7 +8,6 @@
 import Foundation
 import RealmSwift
 
-
 struct ThreadSafeChapter: Hashable {
     var _id: String
     var sourceId: String
@@ -21,7 +20,7 @@ struct ThreadSafeChapter: Hashable {
     var language: String?
     var date: Date
     var webUrl: String?
-    
+
     func toStored() -> StoredChapter {
         let obj = StoredChapter()
         obj._id = _id
@@ -35,16 +34,16 @@ struct ThreadSafeChapter: Hashable {
         obj.language = language
         obj.date = date
         obj.webUrl = webUrl
-        
+
         return obj
     }
-    
+
     var chapterType: ReaderView.ReaderChapter.ChapterType {
         if sourceId == STTHelpers.LOCAL_CONTENT_ID { return .LOCAL }
         else if sourceId.contains(STTHelpers.OPDS_CONTENT_ID) { return .OPDS }
         else { return .EXTERNAL }
     }
-    
+
     var displayName: String {
         var str = ""
         if let volume = volume, volume != 0 {
@@ -53,8 +52,8 @@ struct ThreadSafeChapter: Hashable {
         str += " Chapter \(number.clean)"
         return str.trimmingCharacters(in: .whitespacesAndNewlines)
     }
-    
 }
+
 final class StoredChapter: Object, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) var _id: String
 
@@ -101,7 +100,7 @@ final class StoredChapter: Object, ObjectKeyIdentifiable {
         else if sourceId.contains(STTHelpers.OPDS_CONTENT_ID) { return .OPDS }
         else { return .EXTERNAL }
     }
-    
+
     func toThreadSafe() -> ThreadSafeChapter {
         .init(_id: _id, sourceId: sourceId, chapterId: chapterId, contentId: contentId, index: index, number: number, language: language, date: date, webUrl: webUrl)
     }

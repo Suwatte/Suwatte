@@ -37,7 +37,11 @@ extension ProfileView.Skeleton.BottomBar {
     struct ChapterListButton: View {
         @EnvironmentObject var model: ProfileView.ViewModel
         var body: some View {
-            NavigationLink(destination: ChapterList().environmentObject(model)) {
+            NavigationLink {
+                ChapterList()
+                    .environmentObject(model)
+                    .defaultAppStorage(.init(suiteName: model.sttIdentifier().id) ?? .standard)
+            } label: {
                 Image(systemName: "list.bullet")
                     .font(Font.title3.weight(.semibold))
                     .frame(maxWidth: .infinity)
@@ -103,8 +107,8 @@ extension ProfileView.Skeleton.BottomBar {
                     // Chapter Information
                     VStack(alignment: .leading, spacing: 2) {
                         // Chapter Name
-                        if let chapterName = actionState.chapter?.chapterName {
-                            Text(chapterName)
+                        if let chapter = actionState.chapter, let name = "Chapter \(chapter.number.clean)" {
+                            Text(name)
                                 .font(.subheadline)
                                 .bold()
                         }

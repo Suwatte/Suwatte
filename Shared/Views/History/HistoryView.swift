@@ -66,7 +66,7 @@ extension HistoryView {
 
     struct ProgressIndicator: View {
         var progress: CGFloat = 0.0
-        var color: Color = .accentColor
+        @AppStorage(STTKeys.AppAccentColor) var color: Color = .sttDefault
         var width: CGFloat = 5.5
 
         var body: some View {

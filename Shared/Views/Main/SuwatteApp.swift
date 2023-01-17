@@ -11,7 +11,7 @@ import SwiftUI
 struct SuwatteApp: App {
     @UIApplicationDelegateAdaptor(STTAppDelegate.self) var AppDelegate
     @StateObject var navModel = NavigationModel.shared
-    @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
+    @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
     var body: some Scene {
         WindowGroup {
             ContentView()
@@ -26,7 +26,6 @@ struct SuwatteApp: App {
                 .accentColor(accentColor)
                 .tint(accentColor)
         }
-        
     }
 }
 
@@ -51,20 +50,20 @@ extension SuwatteApp {
             case "anilist":
                 break // TODO: Open Anilist Profile
             case "list":
-                    let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-                    guard let contentUrl = components?.queryItems?.first(where: { $0.name == "url" })?.value, let url = URL(string: contentUrl) else {
-                        ToastManager.shared.display(.error(nil, "Unable to parse URL"))
-                        break
+                let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+                guard let contentUrl = components?.queryItems?.first(where: { $0.name == "url" })?.value, let url = URL(string: contentUrl) else {
+                    ToastManager.shared.display(.error(nil, "Unable to parse URL"))
+                    break
+                }
+                Task {
+                    do {
+                        try await DaisukeEngine.shared.saveRunnerList(at: url.absoluteString)
+                        ToastManager.shared.info("Runner List Saved")
+                    } catch {
+                        ToastManager.shared.error("Failed to save Runner List: \(error.localizedDescription)")
+                        Logger.shared.error("\(error)")
                     }
-                    Task {
-                        do {
-                            try await  DaisukeEngine.shared.saveRunnerList(at: url.absoluteString)
-                            ToastManager.shared.info("Runner List Saved")
-                        } catch {
-                            ToastManager.shared.error("Failed to save Runner List: \(error.localizedDescription)")
-                            Logger.shared.error("\(error)")
-                        }
-                    }
+                }
             default: break
             }
         }

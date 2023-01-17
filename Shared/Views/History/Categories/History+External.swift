@@ -23,7 +23,6 @@ extension HistoryView {
                             .animation(.default, value: markers.contains(marker))
                             .id(marker.id)
                             .transition(HistoryView.transition)
-                            
                     }
                 }
                 .padding()

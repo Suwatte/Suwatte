@@ -258,7 +258,7 @@ extension ExploreView.HighlightTile {
 
         func load(url: URL?) async {
             guard let url else { return }
-            let req = try? await (source as? DSK.LocalContentSource)?.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
+            let req = try? await(source as? DSK.LocalContentSource)?.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
             loader.animation = .easeOut(duration: 0.25)
             loader.load(req ?? url)
         }

@@ -55,8 +55,6 @@ struct MoreView: View {
                 Text("MangaSoup Version")
                     .badge("2.0.0")
             }
-            
-                
 
         } header: {
             Text("Info")
@@ -130,32 +128,24 @@ struct MoreView: View {
         }
     }
 
-    func calculateCacheSize() {
-        KingfisherManager.shared.cache.calculateDiskStorageSize(completion: { result in
-
-            switch result {
-            case let .success(value):
-                cacheSize = .loaded(value)
-            default: break
-            }
-
-        })
-    }
-
+    
     var GeneralSection: some View {
-        Section {
-            Toggle("Incognito Mode", isOn: $incognitoMode)
-            NavigationLink("Appearance") {
-                AppearanceView()
+        Group {
+            Section {
+                Toggle("Incognito Mode", isOn: $incognitoMode)
+
+                NavigationLink("Settings") {
+                    SettingsView()
+                }
+                NavigationLink("Appearance") {
+                    AppearanceView()
+                }
+                NavigationLink("Trackers") {
+                    TrackersView()
+                }
+            } header: {
+                Text("General")
             }
-            NavigationLink("Behaviours") {
-                BehavioursView()
-            }
-            NavigationLink("Progress Trackers") {
-                TrackersView()
-            }
-        } header: {
-            Text("General")
         }
     }
 }

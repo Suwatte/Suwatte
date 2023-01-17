@@ -44,7 +44,15 @@ extension DaisukeEngine.Structs.ChapterData {
     func toStored(withStoredChapter chapter: StoredChapter) -> StoredChapterData {
         let object = StoredChapterData()
         object.chapter = chapter
-        object.pages.append(objectsIn: pages ?? [])
+        
+        if let pages {
+            for page in pages {
+                let stored = StoredChapterPage()
+                stored.url = page.url
+                stored.raw = page.raw
+                object.pages.append(stored)
+            }
+        }
         object.text = text
         return object
     }

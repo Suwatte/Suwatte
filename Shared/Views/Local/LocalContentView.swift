@@ -48,6 +48,9 @@ struct LocalContentView: View {
             .modifier(OpenLocalModifier(isPresenting: $presentImporter))
             .environmentObject(model)
             .searchable(text: $text, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Library")
+            .sheet(isPresented: $presentDownloadQueue, content: {
+                LCV_Download()
+            })
             .animation(.default, value: isSelecting)
             .animation(.default, value: model.idHash)
             .animation(.default, value: text)

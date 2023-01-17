@@ -42,7 +42,7 @@
       "location" : "https://github.com/stleamist/BetterSafariView.git",
       "state" : {
         "branch" : "main",
-        "revision" : "9c051d20dbb50fa61d014d87b4ab6c5504408a73"
+        "revision" : "dffd42bc70287e761979bc81dd278db5c80f0deb"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher.git",
       "state" : {
-        "revision" : "44e891bdb61426a95e31492a67c7c0dfad1f87c5",
-        "version" : "7.4.1"
+        "revision" : "90135885ef506506620c4911cefb55a95ca2a9a2",
+        "version" : "7.5.0"
       }
     },
     {
@@ -114,7 +114,7 @@
       "location" : "https://github.com/kean/Nuke",
       "state" : {
         "branch" : "master",
-        "revision" : "83e82ea65f7f23554f7755c4391243011fa20176"
+        "revision" : "b187456fffa045e7dfc03fec1db86164ae0c0dc1"
       }
     },
     {
@@ -141,7 +141,16 @@
       "location" : "https://github.com/realm/realm-swift.git",
       "state" : {
         "branch" : "master",
-        "revision" : "b002cf50fbc21b6f52f3b4e74b15edc4007d5cbc"
+        "revision" : "824b625945e37480299cc451591fcac3f4c839cf"
+      }
+    },
+    {
+      "identity" : "skeletonview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Juanpe/SkeletonView",
+      "state" : {
+        "revision" : "739a4f5d78731bebc48811c75fa9e1f4c4cef23e",
+        "version" : "1.30.4"
       }
     },
     {
@@ -167,8 +176,26 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/scinfu/SwiftSoup.git",
       "state" : {
-        "revision" : "6778575285177365cbad3e5b8a72f2a20583cfec",
-        "version" : "2.4.3"
+        "revision" : "f707b8680cddb96dc1855632340a572ef37bbb98",
+        "version" : "2.5.3"
+      }
+    },
+    {
+      "identity" : "swiftuibackports",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/shaps80/SwiftUIBackports",
+      "state" : {
+        "branch" : "main",
+        "revision" : "e539750cf1befdc022d9d6e0c241407717786333"
+      }
+    },
+    {
+      "identity" : "uihostingconfigurationbackport",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/woxtu/UIHostingConfigurationBackport.git",
+      "state" : {
+        "revision" : "6091f2d38faa4b24fc2ca0389c651e2f666624a3",
+        "version" : "0.1.0"
       }
     },
     {

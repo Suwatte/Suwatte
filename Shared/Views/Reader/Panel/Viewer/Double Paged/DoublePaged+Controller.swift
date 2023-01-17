@@ -2,36 +2,54 @@
 //  DoublePaged+Controller.swift
 //  Suwatte (iOS)
 //
-//  Created by Mantton on 2022-06-04.
+//  Created by Mantton on 2023-01-15.
 //
 
 import Combine
+import Foundation
 import Kingfisher
-import SwiftUI
 import UIKit
 
 extension DoublePagedViewer {
-    final class Controller: UICollectionViewController {
+    final class Controller: UICollectionViewController, PagerDelegate {
         var model: ReaderView.ViewModel!
         var subscriptions = Set<AnyCancellable>()
         var currentPath: IndexPath? {
             collectionView.indexPathForItem(at: collectionView.currentPoint)
         }
-
-        var chapterStacksCache: [Int: [StackedPage]] = [:]
-        var forcedSingles: [ReaderView.Page] = []
-
+        var isScrolling: Bool = false
+        var cache: [Int: [PageGroup]] = [:]
+        var pendingUpdates = false
         deinit {
-            Logger.shared.debug("DoublePagedController Deallocated")
+            Logger.shared.debug("Double Pager Controller Deallocated")
         }
     }
 }
 
 private typealias Controller = DoublePagedViewer.Controller
-private typealias ImageCell = PagedViewer.ImageCell
-private typealias StackedImageCell = DoublePagedViewer.StackedImageCell
+private typealias ImageCell = DoublePagedViewer.ImageCell
 
-// MARK: View Setup
+// MARK: DataSource
+extension Controller {
+    override func numberOfSections(in _: UICollectionView) -> Int {
+        model.sections.count
+    }
+    
+    override func collectionView(_: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        getStack(for: section).count
+    }
+}
+
+// MARK: Cell Sizing
+
+extension Controller: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
+        return collectionView.bounds.size
+    }
+}
+
+
+// MARK: Set Up
 
 extension Controller {
     override func viewDidLoad() {
@@ -40,31 +58,38 @@ extension Controller {
         registerCells()
         listen()
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         transformView()
+        model.slider.setRange(0, 1)
         guard let rChapter = model.readerChapterList.first else {
+            return
+        }
+        
+        if model.sections.isEmpty {
+            collectionView.isHidden = false
             return
         }
         let requestedIndex = rChapter.requestedPageIndex
         rChapter.requestedPageOffset = nil
-        let openingIndex = getStackedPages(for: 0)
-            .firstIndex(where: { $0.pages.contains(where: { ($0 as? ReaderView.Page)?.index == requestedIndex }) }) ?? 0
-        collectionView.scrollToItem(at: .init(item: openingIndex, section: 0), at: .centeredHorizontally, animated: false)
-        calculateCurrentChapterScrollRange()
+        let page = model.sections[0].get(index: requestedIndex)
+        let open = getStack(for: 0)
+            .firstIndex(where: { $0.primary === page || $0.secondary === page }) ?? 0
+        collectionView.scrollToItem(at: .init(item: open, section: 0), at: .centeredHorizontally, animated: false)
+        updateSliderOffset()
         collectionView.isHidden = false
+        collectionView.backgroundColor = .clear
     }
-
+    
     func registerCells() {
         collectionView.register(ImageCell.self, forCellWithReuseIdentifier: ImageCell.identifier)
         collectionView.register(ReaderView.TransitionCell.self, forCellWithReuseIdentifier: ReaderView.TransitionCell.identifier)
-        collectionView.register(StackedImageCell.self, forCellWithReuseIdentifier: StackedImageCell.identifier)
     }
-
+    
     func setCollectionView() {
-        collectionView.prefetchDataSource = self
         collectionView.setCollectionViewLayout(getLayout(), animated: false)
+        collectionView.prefetchDataSource = self
         collectionView.isPrefetchingEnabled = true
         collectionView.isPagingEnabled = true
         collectionView.scrollsToTop = false
@@ -72,7 +97,7 @@ extension Controller {
         collectionView.backgroundColor = .clear
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
-
+        
         let tapGR = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         let doubleTapGR = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
         doubleTapGR.numberOfTapsRequired = 2
@@ -80,33 +105,7 @@ extension Controller {
         collectionView.addGestureRecognizer(doubleTapGR)
         collectionView.addGestureRecognizer(tapGR)
     }
-
-    func getLayout() -> UICollectionViewLayout {
-        let layout = HorizontalContentSizePreservingFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 0
-        layout.minimumInteritemSpacing = 0
-        layout.sectionInset = UIEdgeInsets.zero
-        return layout
-    }
-
-    @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
-        guard let sender = sender else {
-            return
-        }
-
-        let location = sender.location(in: view)
-        model.handleNavigation(location)
-    }
-
-    @objc func handleDoubleTap(_: UITapGestureRecognizer? = nil) {
-        // Do Nothing
-    }
-}
-
-// MARK: Helpers
-
-extension Controller {
+    
     func transformView() {
         if Preferences.standard.readingLeftToRight {
             collectionView.transform = .identity
@@ -114,470 +113,81 @@ extension Controller {
             collectionView.transform = CGAffineTransform(scaleX: -1, y: 1)
         }
     }
-}
-
-// MARK: Update To Chapters Requested Index
-
-extension Controller {
-    func moveToRequestedIndex() {}
-}
-
-// MARK: Generate Double Paged
-
-extension Controller {
-    struct StackedPage: Hashable {
-        var pages: [AnyHashable]
-        var indices: [Int]
-        var locked: Bool
-    }
-
-    func getStackedPages(for section: Int) -> [StackedPage] {
-        if let pages = chapterStacksCache[section] {
-            return pages
+    @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
+        guard let sender = sender else {
+            return
         }
-        return generatePages(for: section)
+        
+        let location = sender.location(in: view)
+        model.handleNavigation(location)
     }
-
-    @discardableResult func generatePages(for section: Int) -> [StackedPage] {
-        var stacks = [StackedPage]()
-
-        let pages = model.sections[section]
-        for (index, page) in zip(pages.indices, pages) {
-            // First Page is always Single
-            if index == 0 || page is ReaderView.Transition || forcedSingles.contains(where: { (page as? ReaderView.Page) == $0 }) || (page as? ReaderView.Page)?.index == 0 {
-                stacks.append(.init(pages: [page], indices: [index], locked: true))
-                continue
-            }
-            if stacks.last != nil, stacks.last!.pages.count < 2, !stacks.last!.locked {
-                let stackIndex = stacks.endIndex - 1
-                stacks[stackIndex].pages.append(page)
-                stacks[stackIndex].indices.append(index)
-                stacks[stackIndex].locked = true
-            } else {
-                stacks.append(.init(pages: [page], indices: [index], locked: false))
-            }
-        }
-        chapterStacksCache[section] = stacks
-        return stacks
+    
+    @objc func handleDoubleTap(_: UITapGestureRecognizer? = nil) {
+        // Do Nothing
     }
-
-    func getStack(at path: IndexPath) -> StackedPage {
-        return getStackedPages(for: path.section)[path.item]
-    }
-
-    func getLastIndex(at path: IndexPath) -> Int {
-        let stack = getStack(at: path)
-        return stack.indices.max() ?? 0
+    
+    func getLayout() -> UICollectionViewLayout {
+        let layout = HorizontalContentSizePreservingFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 0
+        layout.sectionInset = UIEdgeInsets.zero
+        layout.estimatedItemSize = .zero
+        return layout
     }
 }
 
-// MARK: CollectionView Sections
+// MARK: Prefetching
 
-extension Controller {
-    override func numberOfSections(in _: UICollectionView) -> Int {
-        model.sections.count
-    }
-
-    override func collectionView(_: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return getStackedPages(for: section).count
-    }
-}
-
-// MARK: Cell Sizing
-
-extension Controller: UICollectionViewDelegateFlowLayout {
-    func collectionView(_: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt _: IndexPath) -> CGSize {
-        return UIScreen.main.bounds.size
-    }
-}
-
-// MARK: Cell For Item At
-
-extension Controller {
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        var cell = UICollectionViewCell()
-        handleChapterPreload(at: indexPath)
-        let stackedPage = getStack(at: indexPath)
-
-        if stackedPage.indices.count > 1 {
-            // Double Paged Cell
-            cell = collectionView.dequeueReusableCell(withReuseIdentifier: StackedImageCell.identifier, for: indexPath) as! StackedImageCell
-            (cell as! StackedImageCell).configure(for: stackedPage)
-
-            for pageView in (cell as! StackedImageCell).stackView?.arrangedSubviews ?? [] {
-                guard let pageView = pageView as? DoublePagedViewer.DImageView else {
-                    continue
-                }
-
-                pageView.lm = self
-
-                if UserDefaults.standard.bool(forKey: STTKeys.ImageInteractions) {
-                    pageView.imageView.addInteraction(UIContextMenuInteraction(delegate: self))
-                }
-                //
-                if !model.slider.isScrubbing {
-                    pageView.setImage()
-                }
+extension Controller: UICollectionViewDataSourcePrefetching {
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        let urls  = indexPaths.map { path -> [URL] in
+            let cell = collectionView.cellForItem(at: path) as? ImageCell
+            guard let cell else { return [] }
+            let page = cell.pageView?.page.page
+            var out: [URL] = []
+            if let page, let url = page.hostedURL.flatMap({ URL(string: $0) }), !page.isLocal {
+                out.append(url)
             }
-        } else {
-            // Single Paged Cell
-            let page = stackedPage.pages.first!
-
-            if let page = page as? ReaderView.Page {
-                // Is Image Page
-                cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCell.identifier, for: indexPath) as! ImageCell
-                (cell as! ImageCell).initializePage(page: page)
-                //            // Enable Interactions
-                if UserDefaults.standard.bool(forKey: STTKeys.ImageInteractions) {
-                    (cell as! ImageCell).pageView?.imageView.addInteraction(UIContextMenuInteraction(delegate: self))
-                }
-                //
-                if !model.slider.isScrubbing {
-                    (cell as! ImageCell).pageView?.setImage()
-                }
-
-            } else {
-                // Is Transition Page
-                cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReaderView.TransitionCell.identifier, for: indexPath) as! ReaderView.TransitionCell
-                (cell as! ReaderView.TransitionCell).configure(page as! ReaderView.Transition)
+            let second = cell.pageView?.secondPage?.page
+            if let second, let url = second.hostedURL.flatMap({ URL(string: $0) }), !second.isLocal  {
+                out.append(url)
             }
-        }
-
-        cell.backgroundColor = .clear
-
-        return cell
-    }
-}
-
-// MARK: Context Menu Delegate
-
-extension Controller: UIContextMenuInteractionDelegate {
-    func contextMenuInteraction(_ interaction: UIContextMenuInteraction,
-                                configurationForMenuAtLocation _: CGPoint) -> UIContextMenuConfiguration?
-    {
-        let point = interaction.location(in: collectionView)
-        let indexPath = collectionView.indexPathForItem(at: point)
-
-        // Validate Is Image
-        guard let indexPath = indexPath, model.sections[indexPath.section][indexPath.item] is ReaderView.Page else {
-            return nil
-        }
-
-        // Get Image
-        guard let image = (interaction.view as? UIImageView)?.image else {
-            return nil
-        }
-
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
-
-            // Image Actiosn menu
-            // Save to Photos
-            let saveToAlbum = UIAction(title: "Save Panel", image: UIImage(systemName: "square.and.arrow.down")) { _ in
-                STTPhotoAlbum.shared.save(image)
-                ToastManager.shared.info("Panel Saved!")
-            }
-
-            // Share Photo
-            let sharePhotoAction = UIAction(title: "Share Panel", image: UIImage(systemName: "square.and.arrow.up")) { _ in
-                let objectsToShare = [image]
-                let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
-                self.present(activityVC, animated: true, completion: nil)
-            }
-
-            let photoMenu = UIMenu(title: "Image", options: .displayInline, children: [saveToAlbum, sharePhotoAction])
-
-            // Toggle Bookmark
-            let chapter = self.model.activeChapter.chapter
-            let page = indexPath.item + 1
-
-            var menu = UIMenu(title: "", children: [photoMenu])
-
-            if chapter.chapterType == .LOCAL {
-                return menu
-            }
+            return out
             
-            let c = chapter.toStored()
-            // Bookmark Actions
-            let isBookmarked = DataManager.shared.isBookmarked(chapter: c, page: page)
-            let bkTitle = isBookmarked ? "Remove Bookmark" : "Bookmark Panel"
-            let bkSysImage = isBookmarked ? "bookmark.slash" : "bookmark"
-
-            let bookmarkAction = UIAction(title: bkTitle, image: UIImage(systemName: bkSysImage), attributes: isBookmarked ? [.destructive] : []) { _ in
-                DataManager.shared.toggleBookmark(chapter: c, page: page)
-                ToastManager.shared.info("Bookmark \(isBookmarked ? "Removed" : "Added")!")
-            }
-
-            menu = menu.replacingChildren([photoMenu, bookmarkAction])
-            return menu
-        })
+        }.flatMap({ $0 })
+        
+        
+        ImagePrefetcher(urls: urls).start()
     }
 }
 
-// MARK: DoublePaged Layout Manager
 
-extension Controller: DoublePagedLayoutManager {
-    func resizeToSingle(page: ReaderView.Page) {
-        // Already Resized
-        if forcedSingles.contains(where: { $0 == page }) {
-            return
-        }
-
-        forcedSingles.append(page)
-
-        guard let index = model.readerChapterList.firstIndex(where: { $0.chapter._id == page.chapterId }) else {
-            return
-        }
-
-        generatePages(for: index)
-        DispatchQueue.main.async { [unowned self] in
-            CATransaction.begin()
-            CATransaction.setDisableActions(true)
-            collectionView.performBatchUpdates({
-                self.collectionView.reloadSections([index])
-
-            }) { [unowned self] finished in
-                if finished {
-//                    if let currentPath = currentPath {
-//                        collectionView.reloadItems(at: [currentPath])
-//                    }
-                    CATransaction.commit()
-                    self.calculateCurrentChapterScrollRange()
-                }
-            }
-        }
-    }
-}
-
-// MARK: PUB_SUB
+// MARK: CollectionView Will & Did
 
 extension Controller {
-    func listen() {
-        // MARK: LTR & RTL Publisher
-
-        Preferences.standard.preferencesChangedSubject
-            .filter { \Preferences.readingLeftToRight == $0 }
-            .sink { [weak self] _ in
-                DispatchQueue.main.async {
-                    self?.transformView()
-                    self?.collectionView.collectionViewLayout.invalidateLayout()
-                    self?.calculateCurrentChapterScrollRange()
-                }
-            }
-            .store(in: &subscriptions)
-
-        // MARK: Reload Publisher
-
-        model.reloadPublisher.sink { [weak self] in
-            DispatchQueue.main.async {
-                self?.collectionView.reloadData()
-                self?.collectionView.scrollToItem(at: .init(item: 0, section: 0), at: .centeredHorizontally, animated: false)
-            }
-
-        }.store(in: &subscriptions)
-
-        // MARK: Slider Publisher
-
-        model.$slider.sink { [unowned self] slider in
-            if slider.isScrubbing {
-                let position = CGPoint(x: slider.current, y: 0)
-
-                if let path = collectionView.indexPathForItem(at: position), let item = model.sections[path.section][getLastIndex(at: path)] as? ReaderView.Page {
-                    model.scrubbingPageNumber = item.index + 1
-                }
-
-                collectionView.setContentOffset(position, animated: false)
-            }
-        }
-        .store(in: &subscriptions)
-
-        // MARK: DID END SCRUBBING PUBLISHER
-
-        model.scrubEndPublisher.sink { [unowned self] in
-            guard let currentPath = currentPath else {
-                return
-            }
-            collectionView.scrollToItem(at: currentPath, at: .centeredHorizontally, animated: true)
-        }
-        .store(in: &subscriptions)
-
-        // MARK: DID PREFERENCE CHANGE PUBLISHER
-
-        Preferences.standard.preferencesChangedSubject
-            .filter { changedKeyPath in
-                changedKeyPath == \Preferences.forceTransitions ||
-                    changedKeyPath == \Preferences.imageInteractions
-            }
-            .sink { [weak self] _ in
-                DispatchQueue.main.async {
-                    self?.collectionView.reloadData()
-                }
-            }
-            .store(in: &subscriptions)
-
-        // MARK: Navigation Publisher
-
-        model.navigationPublisher.sink { [unowned self] action in
-            let rtl = Preferences.standard.readingLeftToRight
-
-            var isPreviousTap = action == .LEFT
-            if !rtl { isPreviousTap.toggle() }
-
-            let width = collectionView.frame.width
-            let offset = isPreviousTap ? collectionView.currentPoint.x - width : collectionView.currentPoint.x + width
-
-            let path = collectionView.indexPathForItem(at: .init(x: offset, y: 0))
-
-            if let path = path {
-                collectionView.scrollToItem(at: path, at: .centeredHorizontally, animated: true)
-            }
-        }
-        .store(in: &subscriptions)
-
-        // MARK: Insert Publisher
-
-        model.insertPublisher.sink { [unowned self] section in
-
-            Task { @MainActor in
-                let topInsertion = section == 0 && model.sections.count != 0
-//                 Next Chapter Logic
-                if topInsertion {
-                    moveStackCache()
-                }
-                let data = getStackedPages(for: section)
-                let paths = data.indices.map { IndexPath(item: $0, section: section) }
-
-                let layout = collectionView.collectionViewLayout as? HorizontalContentSizePreservingFlowLayout
-
-                layout?.isInsertingCellsToTop = topInsertion
-
-                CATransaction.begin()
-                CATransaction.setDisableActions(true)
-
-                collectionView.performBatchUpdates({
-                    let set = IndexSet(integer: section)
-                    collectionView.insertSections(set)
-                    collectionView.insertItems(at: paths)
-                }) { finished in
-                    if finished {
-                        CATransaction.commit()
-                    }
-                }
-            }
-
-        }.store(in: &subscriptions)
+    override func collectionView(_: UICollectionView, willDisplay _: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        handleChapterPreload(at: indexPath)
     }
-
-    func moveStackCache() {
-        let keys = chapterStacksCache.keys.reversed()
-
-        for key in keys {
-            chapterStacksCache[key + 1] = chapterStacksCache[key]
-        }
-        chapterStacksCache.removeValue(forKey: 0)
-    }
-}
-
-// MARK: SCROLLABLE OFFSET
-
-extension Controller {
-    func calculateCurrentChapterScrollRange() {
-        var sectionMinOffset: CGFloat = .zero
-        var sectionMaxOffset: CGFloat = .zero
-        // Get Current IP
-        guard let path = collectionView.indexPathForItem(at: collectionView.currentPoint) else {
+    
+    override func collectionView(_: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt _: IndexPath) {
+        guard let cell = cell as? ImageCell else {
             return
         }
-
-        let stacks = getStackedPages(for: path.section)
-
-        // Get Min
-        if let minIndex = stacks.firstIndex(where: { model.getObject(atPath: .init(item: $0.indices.min() ?? 0, section: path.section)) is ReaderView.Page }) {
-            let attributes = collectionView.layoutAttributesForItem(at: .init(item: minIndex, section: path.section))
-
-            if let attributes = attributes {
-                sectionMinOffset = attributes.frame.minX
-            }
-        }
-
-        // Get Max
-        if let maxIndex = stacks.lastIndex(where: { model.getObject(atPath: .init(item: $0.indices.max() ?? 0, section: path.section)) is ReaderView.Page }) {
-            let attributes = collectionView.layoutAttributesForItem(at: .init(item: maxIndex, section: path.section))
-            if let attributes = attributes {
-                sectionMaxOffset = attributes.frame.maxX - collectionView.frame.width
-            }
-        }
-
-        withAnimation {
-            model.slider.setRange(sectionMinOffset, sectionMaxOffset)
-        }
+        cell.cancelTasks()
     }
 }
 
-// MARK: DID SCROLL
-
-extension Controller {
-    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        onUserDidScroll(to: scrollView.contentOffset.x)
-    }
-
-    func onUserDidScroll(to offset: CGFloat) {
-        // Update Offset
-        if !model.slider.isScrubbing {
-            model.slider.setCurrent(offset)
-        }
-    }
-}
-
-// MARK: DID STOP SCROLL
-
-extension Controller {
-    override func scrollViewDidEndDecelerating(_: UIScrollView) {
-        onScrollStop()
-    }
-
-    override func scrollViewDidEndDragging(_: UIScrollView, willDecelerate decelerate: Bool) {
-        if decelerate {
-            return
-        }
-        onScrollStop()
-    }
-
-    override func scrollViewDidEndScrollingAnimation(_: UIScrollView) {
-        onScrollStop()
-    }
-
-    func onScrollStop() {
-        model.menuControl.hideMenu()
-
-        // Handle Load Prev
-        if collectionView.contentOffset.x <= 0 {
-            model.loadPreviousChapter()
-        }
-        // Recalculate Scrollable Range
-        calculateCurrentChapterScrollRange()
-
-        // Do Scroll To
-        guard let path = currentPath else {
-            return
-        }
-        model.activeChapter.requestedPageOffset = nil
-        let lastStackIndex = getLastIndex(at: path)
-        model.didScrollTo(path: .init(item: lastStackIndex, section: path.section))
-        model.scrubbingPageNumber = nil
-    }
-}
-
-// MARK: Handle Chapter Preload
+// MARK: Chapter Preloading
 
 extension Controller {
     func handleChapterPreload(at path: IndexPath) {
         guard let currentPath = currentPath, currentPath.section == path.section else {
             return
         }
-        let currentItem = getLastIndex(at: currentPath)
-        let pathItem = getLastIndex(at: path)
-        if currentItem < pathItem {
-            let preloadNext = model.sections[path.section].count - pathItem + 1 < 5
+        
+        if currentPath.item < path.item {
+            let preloadNext = getStack(for: path.section).count - path.item  < 2
             if preloadNext, model.readerChapterList.get(index: path.section + 1) == nil {
                 model.loadNextChapter()
             }
@@ -585,61 +195,121 @@ extension Controller {
     }
 }
 
-// MARK: Will Transition To
+// MARK: Cell For Item At
 
 extension Controller {
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        // Cell Logic
+        let data = cache[indexPath.section]?[indexPath.item]
+        
+        guard let data else { fatalError("Stack Not Defined")}
+        if let transition = data.primary as? ReaderView.Transition {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReaderView.TransitionCell.identifier, for: indexPath) as! ReaderView.TransitionCell
+            cell.configure(transition)
+            cell.backgroundColor = .clear
+            return cell
+        }
+        
+        let target = data.primary as? ReaderPage
+        guard let target else { fatalError("Target Not ReaderPage") }
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCell.identifier, for: indexPath) as! ImageCell
+        cell.set(page: target,secondary: data.secondary as? ReaderPage , delegate: self) // SetUp
+        cell.setImage() // Set Image
+        return cell
+    }
+}
+
+// MARK: Layout & Transitions
+
+extension Controller {
+    override func viewDidLayoutSubviews() {
+        if !isScrolling {
+            super.viewDidLayoutSubviews()
+        }
+    }
+    
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        collectionView.collectionViewLayout.invalidateLayout()
         super.viewWillTransition(to: size, with: coordinator)
     }
 }
 
-// MARK: CollectionView Will & Did
 
 extension Controller {
-    override func collectionView(_: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt _: IndexPath) {
-        if let cell = cell as? ImageCell {
-            cell.setImage()
-        } else if let cell = cell as? StackedImageCell {
-            cell.setImages()
+    class PageGroup {
+        var primary: AnyObject
+        var secondary: AnyObject?
+        init(primary: AnyObject, secondary: AnyObject? = nil) {
+            self.primary = primary
+            self.secondary = secondary
         }
     }
-
-    override func collectionView(_: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt _: IndexPath) {
-        if let cell = cell as? ImageCell {
-            cell.pageView?.imageView.kf.cancelDownloadTask()
-            cell.pageView?.downloadTask?.cancel()
-        } else if let cell = cell as? StackedImageCell {
-            cell.cancelImages()
+    @discardableResult func generatePages(for section: Int) -> [PageGroup]  {
+        guard let pages = model.sections.get(index: section) else { return [] }
+        var stack: [PageGroup] = []
+        for page in pages {
+            let last = stack.last
+            
+            // Last Stack Has Free Postion
+            if let last, last.secondary == nil {
+                
+                // Current Item Is Transition
+                if page is ReaderView.Transition {
+                    stack.append(.init(primary: page))
+                    continue
+                }
+                
+                // - Item Is A ReaderPage
+                // Last Stack Cannot Have A Secondary Page, Append New Page
+                if last.primary is ReaderView.Transition || ((last.primary as? ReaderPage)?.isFullPage ?? false) {
+                    stack.append(.init(primary: page))
+                    continue
+                }
+                
+                // Last Stack Can Have Secondary
+                last.secondary = page
+                continue
+            }
+            // Last Stack is Full, Create New Stack
+            stack.append(.init(primary: page))
         }
+        cache[section] = stack
+        return stack
+    }
+    
+    
+    func didIsolatePage(maintain page: ReaderPage, note secondary: ReaderPage?) {
+        guard let section = model.chapterSectionCache[page.page.chapterId] else {
+            return
+        }
+        if page.didIsolate || secondary?.didIsolate ?? false {
+            return
+        }
+        page.didIsolate = true
+
+        generatePages(for: section)
+        pendingUpdates = true
+    }
+    
+    func applyPendingUpdates() {
+        guard pendingUpdates, let currentPath else { return }
+        
+        DispatchQueue.main.async {
+            self.collectionView.performBatchUpdates({
+                self.collectionView.reloadSections([currentPath.section])
+            }) {[weak self] finished in
+                self?.pendingUpdates = false
+            }
+        }
+        // TODO: Bug when navigating backward, Jumps Page Being navigated to in favour of the new page at that index
+    }
+
+    func getStack(for section: Int) -> [PageGroup] {
+        if let pages = cache[section] {
+            return pages
+        }
+        return generatePages(for: section)
     }
 }
 
-// MARK: CollectionView Prefetching
 
-extension Controller: UICollectionViewDataSourcePrefetching {
-    func collectionView(_: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        ImagePrefetcher(urls: getValidUrls(at: indexPaths)).start()
-    }
-
-    func collectionView(_: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
-        ImagePrefetcher(urls: getValidUrls(at: indexPaths)).stop()
-    }
-
-    func getValidUrls(at paths: [IndexPath]) -> [URL] {
-        let paths = paths.flatMap { path in
-            getStack(at: path).indices.map { item in
-                IndexPath(item: item, section: path.section)
-            }
-        }
-
-        let urls = paths.compactMap { path -> URL? in
-            guard let page = self.model.sections[path.section][path.item] as? ReaderView.Page, let url = page.hostedURL, !page.isLocal else {
-                return nil
-            }
-
-            return URL(string: url)
-        }
-
-        return urls
-    }
-}

@@ -16,7 +16,9 @@ extension ProfileView {
             LoadableView(loadable: viewModel.loadableContent,
                          { PLACEHOLDER
                              .task {
-                                 await viewModel.loadContentFromDatabase()
+                                 Task.detached {
+                                     await viewModel.loadContentFromDatabase()
+                                 }
                              }
                          },
                          { PLACEHOLDER },
@@ -55,7 +57,7 @@ extension ProfileView {
 
                          .toolbar {
                              ToolbarItemGroup(placement: .navigationBarTrailing) {
-                                 if (viewModel.source as? DSK.LocalContentSource)?.sourceInfo.canSync ?? false {
+                                 if (viewModel.source as? DSK.LocalContentSource)?.canSyncUserLibrary ?? false {
                                      SyncView()
                                          .transition(.opacity)
                                  }

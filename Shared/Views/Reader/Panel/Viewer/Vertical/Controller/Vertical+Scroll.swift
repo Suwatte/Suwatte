@@ -5,51 +5,68 @@
 //  Created by Mantton on 2022-10-12.
 //
 
-import UIKit
 import SwiftUI
-fileprivate typealias Controller = VerticalViewer.Controller
+import UIKit
+private typealias Controller = VerticalViewer.Controller
 
-extension Controller : UIScrollViewDelegate {
-    
-    
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+extension Controller: UIScrollViewDelegate {
+    func scrollViewDidEndDecelerating(_: UIScrollView) {
         onScrollStop()
     }
-    
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+
+    func scrollViewDidEndDragging(_: UIScrollView, willDecelerate decelerate: Bool) {
         if decelerate {
             return
         }
         onScrollStop()
     }
-    
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+
+    func scrollViewDidEndScrollingAnimation(_: UIScrollView) {
         onScrollStop()
     }
-    
+
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         onUserDidScroll(to: scrollView.contentOffset.y)
     }
-    
 }
-
 
 extension Controller {
     var currentPoint: CGPoint {
         .init(x: collectionNode.frame.midX, y: collectionNode.contentOffset.y + collectionNode.frame.midY)
     }
+
     var currentPath: IndexPath? {
         collectionNode.indexPathForItem(at: currentPoint)
     }
+    
+    func updateSliderOffset() {
+        let range = getCurrentChapterScrollRange()
+        let total = range.max - range.min
+        var current = collectionNode.contentOffset.y - range.min
+        current = max(0, current)
+        current = min(range.max, current)
+        let target =  current / total
+        Task { @MainActor in
+            model.slider.setCurrent(target)
+        }
+    }
+    
+    func moveToRelativeSliderPosition(_ value: CGFloat) {
+        let range = getCurrentChapterScrollRange()
+        let total = range.max - range.min
+        var amount = total * value
+        amount += range.min
+        let position = CGPoint(x: 0, y: amount)
+        collectionNode.setContentOffset(position, animated: false)
+    }
+
     func onScrollStop() {
-        model.slider.setCurrent(collectionNode.contentOffset.y)
-//        isScrolling = false
+        // Update Offset
+        updateSliderOffset()
         // Handle Load Prev
         if collectionNode.contentOffset.y <= 0 {
             model.loadPreviousChapter()
         }
-        // Recalculate Scrollable Range
-        calculateCurrentChapterScrollRange()
 
         // Do Scroll To
         guard let path = currentPath else {
@@ -66,19 +83,27 @@ extension Controller {
 
         model.didScrollTo(path: path)
     }
+
+    func onUserDidScroll(to _: CGFloat) {
+        // Update Offset
+        if !model.slider.isScrubbing, model.menuControl.menu {
+            model.menuControl.hideMenu()
+        }
+    }
     
-    func calculateCurrentChapterScrollRange() {
-        var sectionMinOffset: CGFloat = .zero
-        var sectionMaxOffset: CGFloat = .zero
+    func getCurrentChapterScrollRange() -> (min: CGFloat, max: CGFloat) {
         // Get Current IP
         guard let path = collectionNode.indexPathForItem(at: currentPoint) else {
-            return
+            return (min: .zero, max: .zero)
         }
+        
+        var sectionMinOffset: CGFloat = .zero
+        var sectionMaxOffset: CGFloat = .zero
 
         let section = model.sections[path.section]
 
         // Get Min
-        if let minIndex = section.firstIndex(where: { $0 is ReaderView.Page }) {
+        if let minIndex = section.firstIndex(where: { $0 is ReaderPage }) {
             let attributes = collectionNode.collectionViewLayout.layoutAttributesForItem(at: .init(item: minIndex, section: path.section))
 
             if let attributes = attributes {
@@ -86,27 +111,12 @@ extension Controller {
             }
         }
 
-        // Get Max
-        if let maxIndex = section.lastIndex(where: { $0 is ReaderView.Page }) {
-            let attributes = collectionNode.collectionViewLayout.layoutAttributesForItem(at: .init(item: maxIndex, section: path.section))
-            if let attributes = attributes {
-                sectionMaxOffset = attributes.frame.maxY - collectionNode.frame.height
-            }
+        // Get Max knowing that the last index of a section always contains a transition page
+        let maxIndex = max(section.endIndex - 2, 0)
+        let attributes = collectionNode.collectionViewLayout.layoutAttributesForItem(at: .init(item: maxIndex, section: path.section))
+        if let attributes = attributes {
+            sectionMaxOffset = attributes.frame.maxY - collectionNode.frame.height
         }
-        withAnimation {
-            model.slider.setRange(sectionMinOffset, sectionMaxOffset)
-        }
-    }
-    
-    
-    func onUserDidScroll(to _: CGFloat) {
-        // Update Offset
-        if !model.slider.isScrubbing, model.menuControl.menu {
-            model.menuControl.hideMenu()
-        }
-        
-        if model.slider.isScrubbing {
-            calculateCurrentChapterScrollRange()
-        }
+        return (min: sectionMinOffset, max: sectionMaxOffset)
     }
 }

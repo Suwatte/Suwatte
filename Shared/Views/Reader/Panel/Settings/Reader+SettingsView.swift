@@ -20,8 +20,10 @@ extension ReaderView {
         @AppStorage(STTKeys.ReaderFilterBlendMode) var readerBlendMode = ReaderBlendMode.normal
         @AppStorage(STTKeys.ReaderGrayScale) var useGrayscale = false
         @AppStorage(STTKeys.ReaderColorInvert) var useColorInvert = false
-
+        @AppStorage(STTKeys.VerticalAutoScroll) var verticalAutoScroll = false
+        @Preference(\.isPagingVertically) var isPagingVertically
         // Preference Publisher
+        @Preference(\.verticalAutoScrollSpeed) var autoScrollSpeed
         @Preference(\.readingLeftToRight) var readingLeftToRight
         @Preference(\.forceTransitions) var forceTransitions
         @Preference(\.imageInteractions) var imageInteractions
@@ -32,16 +34,18 @@ extension ReaderView {
         @Preference(\.isDoublePagedEnabled) var isDoublePaged
         @Preference(\.invertTapSidesToNavigate) var invertTapSidesToNavigate
         @Preference(\.VerticalPagePadding) var verticalPagePadding
+        @Preference(\.imageScaleType) var imageScaleType
+        private let range: ClosedRange<Double> = 2.5 ... 30
+        
+        @EnvironmentObject var model: ReaderView.ViewModel
+
         var body: some View {
-            List {
+            Form {
                 // Reading Mode
                 Section {
                     // Viewer
-                    Picker("Viewer", selection: $isVertical) {
-                        Text("Paged").tag(false)
-                        Text("Vertical").tag(true)
-                    }
-                    .pickerStyle(.segmented)
+                    ModeSelectorView()
+                        .defaultAppStorage(.init(suiteName: model.contentIdentifier.id) ?? .standard)
 
                 } header: {
                     Text("Reading Mode")
@@ -50,22 +54,45 @@ extension ReaderView {
                 // Reading Direction
                 if !isVertical {
                     Section {
-                        Picker("Reading Direction", selection: $readingLeftToRight) {
-                            Text("Left To Right (Comic)")
-                                .tag(true)
-                            Text("Right to Left (Manga)")
-                                .tag(false)
-                        }.pickerStyle(.segmented)
                         Toggle("Double Paged", isOn: $isDoublePaged)
                     } header: {
-                        Text("Reading Direction")
+                        Text("Paging Direction")
                     }
                 } else {
                     Section {
-                        Toggle("Page Padding", isOn: $verticalPagePadding)
+                        Toggle("AutoScroll", isOn: $verticalAutoScroll)
+                        if verticalAutoScroll {
+                            let bridge = Binding<Double>(get: {
+                                range.upperBound - autoScrollSpeed + range.lowerBound
+                            }, set: {
+                                autoScrollSpeed = range.upperBound - $0 + range.lowerBound
+                            })
+                            VStack(alignment: .leading) {
+                                Text("Scroll Speed")
+                                HStack {
+                                    Image(systemName: "tortoise")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 25)
+                                        .foregroundColor(.gray)
+
+                                    Slider(value: bridge, in: range)
+                                    Image(systemName: "hare")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 25)
+                                        .foregroundColor(.gray)
+                                }
+                            }
+                        }
+                    } header: {
+                        Text("AutoScroll")
+                    } footer: {
+                        if verticalAutoScroll {
+                            Text("Will scroll through one screens height in roughly \(autoScrollSpeed.clean) seconds.")
+                        }
                     }
                 }
-
 
                 Section {
                     Toggle("Tap Sides To Navigate", isOn: $tapToNavigate)
@@ -92,8 +119,16 @@ extension ReaderView {
                 // Images
                 Section {
                     Toggle("Image Context Actions", isOn: $imageInteractions)
+                    if !isVertical {
+                        Picker("Scale Type", selection: $imageScaleType) {
+                            ForEach(ImageScaleOption.allCases, id: \.rawValue) {
+                                Text($0.description)
+                                    .tag($0)
+                            }
+                        }
+                    }
+                    
                     Toggle("Downsample Images", isOn: $downsampleImages)
-
                     if !isVertical {
                         Toggle("Crop Whitespace", isOn: $cropWhiteSpaces)
                     }
@@ -128,7 +163,7 @@ extension ReaderView {
                             }
                         }
                     }
-                    
+
                 } header: {
                     Text("Overlay")
                 }
@@ -143,32 +178,71 @@ extension ReaderView {
             .animation(.default, value: useSystemBG)
             .animation(.default, value: tapToNavigate)
             .animation(.default, value: isVertical)
+            .animation(.default, value: isPagingVertically)
+            .animation(.default, value: verticalAutoScroll)
+
+        }
+    }
+    
+    struct ModeSelectorView: View {
+        @AppStorage(STTKeys.ReaderType) var mode = PanelReadingModes.PAGED_COMIC
+        @EnvironmentObject var model: ReaderView.ViewModel
+
+        var body: some View {
+            Picker("Reading Mode", selection: $mode) {
+                ForEach(PanelReadingModes.allCases, id: \.rawValue) {
+                    Text($0.description)
+                        .tag($0)
+                }
+            }
+            .onChange(of: mode, perform: { v in
+                Task { @MainActor in
+                    model.updateWithUserSetMode(v)
+                }
+            })
         }
     }
 }
 
-enum ReaderBlendMode : Int, CaseIterable {
-    case normal, screen, multiply
-    
-    var description : String {
+
+extension PanelReadingModes {
+    var description: String {
         switch self {
-            case .multiply:
-                return "Multiply"
-            case .normal:
-                return "Normal"
-            case .screen:
-                return "Screen"
+            case .PAGED_MANGA:
+                return "RTL (Manga)"
+            case .PAGED_COMIC:
+                return "LTR (Comic)"
+            case .VERTICAL:
+                return "Webtoon"
+            case .VERTICAL_SEPARATED:
+                return "Webtoon Padded"
+            case .PAGED_VERTICAL:
+                return "Paged Vertical"
         }
     }
-    
+}
+enum ReaderBlendMode: Int, CaseIterable {
+    case normal, screen, multiply
+
+    var description: String {
+        switch self {
+        case .multiply:
+            return "Multiply"
+        case .normal:
+            return "Normal"
+        case .screen:
+            return "Screen"
+        }
+    }
+
     var blendMode: BlendMode {
         switch self {
-            case .normal:
-                return .normal
-            case .screen:
-                return .screen
-            case .multiply:
-                return .multiply
+        case .normal:
+            return .normal
+        case .screen:
+            return .screen
+        case .multiply:
+            return .multiply
         }
     }
 }

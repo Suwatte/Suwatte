@@ -16,18 +16,10 @@ extension LibraryView {
         @State var option = ContentSort.dateAdded
         @State var text = ""
         typealias Highlight = DaisukeEngine.Structs.Highlight
-
-        var itemsPerRow: Int {
-            isPotrait ? PortraitPerRow : LSPerRow
-        }
-
         @ObservedResults(LibraryEntry.self) var library
-
         @AppStorage(STTKeys.TileStyle) var style = TileStyle.COMPACT
         @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
         @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
-
-        @State private var isPotrait = KEY_WINDOW?.windowScene?.interfaceOrientation == .portrait
 
         var body: some View {
             let entries = sortedEntries()
@@ -59,17 +51,12 @@ extension LibraryView {
                 }
             }
 
-            .layout(createCustomLayout: {
-                SuwatteDefaultGridLayout(itemsPerRow: itemsPerRow, style: style)
-            }, configureCustomLayout: { layout in
-                layout.itemsPerRow = itemsPerRow
-                layout.itemStyle = style
-            })
-            .alwaysBounceVertical()
-            .onRotate { newOrientation in
-                if newOrientation.isFlat { return }
-                isPotrait = newOrientation.isPortrait
+            .layout { _ in
+                DefaultGridLayout()
             }
+            .alwaysBounceVertical()
+            .shouldRecreateLayoutOnStateChange(true)
+            .animateOnDataRefresh(true)
             .animation(.default, value: library)
             .animation(.default, value: unsortedEntries)
             .navigationTitle("Saved For Later")

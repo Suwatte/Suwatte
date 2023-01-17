@@ -144,7 +144,7 @@ extension NovelReaderView.MenuOverlay {
         var edges = KEY_WINDOW?.safeAreaInsets
 
         var READY: Bool {
-            model.activeChapter.data.LOADED && !(model.sections.get(index: activeChapterIndex)?.isEmpty ?? false)
+            model.activeChapter.data.LOADED && model.getPageCount() != 0
         }
 
         var activeChapterIndex: Int {
@@ -156,14 +156,12 @@ extension NovelReaderView.MenuOverlay {
                 OverlaySlider
                     .opacity(READY ? 1 : 0)
                     .buttonStyle(.plain)
-
-                if let pageCount = model.sections.get(index: activeChapterIndex)?.count {
-                    Text("\(model.scrubbingPageNumber ?? (model.currentSectionPageNumber)) / \(pageCount)")
-                        .font(.headline)
-                        .foregroundColor(.gray)
-                        .padding(.bottom, edges?.bottom)
-                        .opacity(READY ? 1 : 0)
-                }
+                
+                Text("\(model.scrubbingPageNumber ?? (model.currentSectionPageNumber)) / \(model.getPageCount())")
+                    .font(.headline)
+                    .foregroundColor(.gray)
+                    .padding(.bottom, edges?.bottom)
+                    .opacity(READY ? 1 : 0)
             }
             .padding()
         }

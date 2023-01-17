@@ -21,7 +21,7 @@ struct CollectionManagementView: View {
                     .foregroundColor(.gray)
                 TextField("Collection Name", text: $collectionName)
             }
-            
+
             Toggle("Enable Smart Filters", isOn: $enableFilters)
 
             if let filter = collection.filter, enableFilters {

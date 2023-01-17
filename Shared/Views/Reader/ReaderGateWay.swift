@@ -14,7 +14,7 @@ struct ReaderGateWay: View {
     var openTo: StoredChapter
     var pageIndex: Int?
     var title: String?
-    @AppStorage(STTKeys.AppAccentColor) var accentColor : Color = .sttDefault
+    @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
     var body: some View {
         Group {
@@ -25,6 +25,7 @@ struct ReaderGateWay: View {
                 WebReader(chapter: openTo)
             default:
                 ReaderView(model: .init(chapterList: chapterList, openTo: openTo, title: title, pageIndex: pageIndex, readingMode: readingMode))
+                        .defaultAppStorage(.init(suiteName: openTo.ContentIdentifer) ?? .standard)
             }
         }
         .onDisappear {

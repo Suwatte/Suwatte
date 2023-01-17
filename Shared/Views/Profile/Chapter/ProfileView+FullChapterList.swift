@@ -43,24 +43,27 @@ struct ChapterList: View {
     @EnvironmentObject var model: ProfileView.ViewModel
     @State var selection: String?
     @State var selections = Set<StoredChapter>()
+    @State var presentOptions = false
     @ObservedResults(ICDMDownloadObject.self) var downloads
     @ObservedResults(ChapterMarker.self, where: { $0.chapter != nil }) var markers
-    @AppStorage(STTKeys.ChapterListSortKey) var sortKey = ChapterSortOption.number
-    @AppStorage(STTKeys.ChapterListDescending) var sortDesc = true
-    @AppStorage(STTKeys.ChapterListShowOnlyDownloaded) var showOnlyDownloads = false
+    @AppStorage(STTKeys.ChapterListSortKey, store: .standard) var sortKey = ChapterSortOption.number
+    @AppStorage(STTKeys.ChapterListDescending, store: .standard) var sortDesc = true
+    @AppStorage(STTKeys.ChapterListShowOnlyDownloaded, store: .standard) var showOnlyDownloads = false
     @Environment(\.editMode) var editMode
+    @AppStorage(STTKeys.FilteredProviders) private var filteredProviders: [String] = []
+    @AppStorage(STTKeys.FilteredLanguages) private var filteredLanguages: [String] = []
+    @State var visibleChapters: [StoredChapter] = []
     var body: some View {
         Group {
-            if let chapters = model.chapters.value {
-                ChaptersView(orderedChapters(chapters))
-                    .fullScreenCover(item: $selection, onDismiss: handleReconnection) { chapterId in
-                        let chapter = chapters.first(where: { $0.chapterId == chapterId })!
-                        ReaderGateWay(readingMode: model.content.recommendedReadingMode ?? .PAGED_COMIC, chapterList: chapters, openTo: chapter)
-                    }
-            } else {
-                Text("No Chapters Found")
-            }
+            ChaptersView(visibleChapters)
+                .fullScreenCover(item: $selection, onDismiss: handleReconnection) { chapterId in
+                    let chapter = visibleChapters.first(where: { $0.chapterId == chapterId })!
+                    ReaderGateWay(readingMode: model.content.recommendedReadingMode ?? .PAGED_COMIC, chapterList: visibleChapters, openTo: chapter)
+                }
         }
+        .sheet(isPresented: $presentOptions, content: {
+            FCS_Options()
+        })
         .onChange(of: editMode?.wrappedValue, perform: { _ in
             selections.removeAll()
         })
@@ -124,13 +127,34 @@ struct ChapterList: View {
                             }
                         }
                     }
+                    Divider()
+                    Button { presentOptions.toggle() } label: {
+                        Label("Options", systemImage: "gear")
+                    }
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }
             }
         }
+        .onAppear {
+            doFilter()
+        }
+        .onChange(of: sortKey) { _ in
+            doFilter()
+        }
+        .onChange(of: sortDesc) { _ in
+            doFilter()
+        }
+        .onChange(of: showOnlyDownloads) { _ in
+            doFilter()
+        }
+        .onChange(of: filteredProviders) { _ in
+            doFilter()
+        }
+        .onChange(of: filteredLanguages) { _ in
+            doFilter()
+        }
     }
-
     func handleReconnection() {
         model.getMarkers()
     }
@@ -159,8 +183,18 @@ struct ChapterList: View {
                     .contextMenu {
                         Button {
                             DataManager.shared.bulkMarkChapter(chapters: [chapter], completed: !completed)
+                            didMark()
                         } label: {
                             Label(completed ? "Mark as Unread" : "Mark as Read", systemImage: completed ? "eye.slash.circle" : "eye.circle")
+                        }
+                        Menu("Mark Below") {
+                            Button { mark(chapter: chapter, read: true, above: false) } label: {
+                                Label("As Read", systemImage: "eye.circle")
+                            }
+                            
+                            Button { mark(chapter: chapter, read: false, above: false) } label :{
+                                Label("As Unread", systemImage: "eye.slash.circle")
+                            }
                         }
                         DownloadView(download, chapter)
                         ProviderView(chapter)
@@ -172,10 +206,20 @@ struct ChapterList: View {
 }
 
 extension ChapterList {
-    func orderedChapters(_ chapters: [StoredChapter]) -> [StoredChapter] {
-        let base = chapters
+    func doFilter() {
+        DispatchQueue.global(qos: .background).async {
+            filterChapters()
+        }
+    }
+    func filterChapters() {
+        guard let chapters = model.chapters.value else { return }
+        // Filter Language, Providers, Downloads
+        var base = chapters
             .filter(filterDownloads(_:))
-
+            .filter(filterProviders(_:))
+            .filter(filterLanguages(_:))
+        
+        // Sort
         switch sortKey {
         case .number:
             var sortedV = base.sorted { lhs, rhs in
@@ -190,19 +234,37 @@ extension ChapterList {
             }
 
             if sortDesc { sortedV = sortedV.reversed() }
-            return sortedV
+            base = sortedV
         case .date:
-            return base
+            base = base
                 .sorted(by: \.date, descending: sortDesc)
         case .source:
-            return base
+            base = base
                 .sorted(by: \.index, descending: !sortDesc) // Reverese Source Index
+        }
+        
+        Task { @MainActor in
+            withAnimation {
+                visibleChapters = base
+            }
         }
     }
 
+    
     func filterDownloads(_ chapter: StoredChapter) -> Bool {
         if !showOnlyDownloads { return true }
-        return downloads.contains(where: { $0._id == chapter._id })
+        return DataManager.shared.hasDownload(id: chapter._id)
+    }
+    
+    func filterProviders(_ chapter: StoredChapter) -> Bool {
+        if filteredProviders.isEmpty { return true }
+        return chapter.providers.contains(where: { !filteredProviders.contains($0.id) })
+    }
+    
+    func filterLanguages(_ chapter: StoredChapter) -> Bool {
+        guard let lang = chapter.language else { return false }
+        return !filteredLanguages.contains(lang)
+        
     }
 }
 
@@ -309,17 +371,17 @@ extension ChapterList {
     }
 
     func isChapterNew(_ chapter: StoredChapter) -> Bool {
-        guard let date = model.lastReadMarker?.dateRead else {
+        guard let date = model.actionState.marker?.date else {
             return false
         }
         return chapter.date > date
     }
 
     func chapterProgress(_ chapter: StoredChapter) -> Double? {
-        guard let marker = model.lastReadMarker, marker._id == chapter._id else {
+        guard let id = model.actionState.chapter?._id, id == chapter._id else {
             return nil
         }
-        return marker.completed ? 1.0 : marker.progress
+        return model.actionState.marker?.progress
     }
 
     func getDownload(_ chapter: StoredChapter) -> ICDMDownloadObject? {
@@ -330,31 +392,48 @@ extension ChapterList {
 }
 
 extension ChapterList {
-    
+    func mark(chapter: StoredChapter, read: Bool, above: Bool) {
+        selections.removeAll()
+        selections.insert(chapter)
+        if above {
+            selectAbove()
+        } else {
+            selectBelow()
+        }
+        selections.remove(chapter)
+        if read {
+            markAsRead()
+        } else {
+            markAsUnread()
+        }
+    }
     func selectAbove() {
         if selections.isEmpty { return }
-        
-        let chapters = model.chapters.value
+
+        let chapters = visibleChapters
         let target = selections.first
-        
-        guard let target, let chapters, let idx = chapters.firstIndex(of: target) else { return }
-        
-        let sub = chapters[0...idx]
+
+        guard let target, let idx = chapters.firstIndex(of: target) else { return }
+
+        let sub = chapters[0 ... idx]
         selections.formUnion(sub)
     }
+
     func selectBelow() {
         if selections.isEmpty { return }
-        
-        let chapters = model.chapters.value
+
+        let chapters = visibleChapters
         let target = selections.first
-        
-        guard let target, let chapters, let idx = chapters.firstIndex(of: target) else { return }
-        
+
+        guard let target, let idx = chapters.firstIndex(of: target) else { return }
+
         let sub = chapters[idx...]
         selections.formUnion(sub)
     }
+
     func selectAll() {
-        selections = Set(model.chapters.value ?? [])
+        let cs = visibleChapters
+        selections = Set(cs)
     }
 
     func deselectAll() {
@@ -364,7 +443,7 @@ extension ChapterList {
     func fillRange() {
         if selections.isEmpty { return }
 
-        let cs = orderedChapters(model.chapters.value ?? [])
+        let cs = visibleChapters
 
         var indexes = [Int]()
 
@@ -382,13 +461,14 @@ extension ChapterList {
     }
 
     func invertSelection() {
-        let cs = model.chapters.value ?? []
+        let cs = visibleChapters
         selections = Set(cs.filter { !selections.contains($0) })
     }
 
     func markAsRead() {
         DataManager.shared.bulkMarkChapter(chapters: Array(selections))
         deselectAll()
+        didMark()
     }
 
     func markAsUnread() {
@@ -416,5 +496,11 @@ extension ChapterList {
             DataManager.shared.resetChapterData(forId: $0._id)
         }
         deselectAll()
+    }
+    
+    func didMark() {
+        Task.detached {
+            try? await model.handleAnilistSync()
+        }
     }
 }
