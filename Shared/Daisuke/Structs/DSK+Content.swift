@@ -19,7 +19,7 @@ enum ContentStatus: Int, CaseIterable, Hashable {
     case UNKNOWN, ONGOING, COMPLETED, CANCELLED, HIATUS
 }
 
-enum ReadingMode: Int, CaseIterable, Hashable {
+enum ReadingMode: Int, CaseIterable, Hashable, UserDefaultsSerializable {
     case PAGED_MANGA, // Page 2 <---- Page 1
          PAGED_COMIC, // Page 1 ----> Page 2
          VERTICAL,
@@ -36,6 +36,14 @@ enum ReadingMode: Int, CaseIterable, Hashable {
             return true
         }
     }
+}
+
+enum PanelReadingModes: Int, CaseIterable, Hashable, UserDefaultsSerializable {
+    case PAGED_MANGA, // Page 2 <---- Page 1
+         PAGED_COMIC, // Page 1 ----> Page 2
+         VERTICAL,
+         VERTICAL_SEPARATED, // Vertical with Slight Gap Between Pages
+         PAGED_VERTICAL // A Vertical Pager
 }
 
 extension DaisukeEngine.Structs {

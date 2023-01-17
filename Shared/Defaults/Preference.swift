@@ -107,6 +107,9 @@ final class Preferences {
     
     @UserDefault(STTKeys.AppAccentColor)
     var accentColor = Color.sttDefault
+    
+    @UserDefault(STTKeys.ReaderType)
+    var readerType = ReadingMode.PAGED_COMIC
 }
 
 @propertyWrapper

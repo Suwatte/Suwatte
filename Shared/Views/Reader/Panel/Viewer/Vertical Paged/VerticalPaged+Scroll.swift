@@ -18,7 +18,9 @@ extension VerticalPager.Controller {
     func onUserDidScroll(to _: CGFloat) {
         // Update Offset
         if !model.slider.isScrubbing {
-            model.slider.setCurrent(collectionView.contentOffset.y)
+            Task { @MainActor in
+                model.slider.setCurrent(collectionView.contentOffset.y)
+            }
         }
     }
 

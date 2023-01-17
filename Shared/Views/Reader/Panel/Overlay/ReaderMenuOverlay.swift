@@ -15,7 +15,7 @@ extension ReaderView {
         @Preference(\.readingLeftToRight) var readingLeftToRight
         @Preference(\.isReadingVertically) var isVertical
         @Preference(\.isPagingVertically) var isPagingVertically
-        @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
+        @AppStorage(STTKeys.AppAccentColor, store: .standard) var accentColor: Color = .sttDefault
 
         var edges = KEY_WINDOW?.safeAreaInsets
         var body: some View {
@@ -234,7 +234,7 @@ extension ReaderView.ReaderMenuOverlay {
 
     struct PagedSlider: View {
         @EnvironmentObject var model: ReaderView.ViewModel
-        @AppStorage(STTKeys.PagedDirection) var readingLeftToRight = true
+        @Preference(\.readingLeftToRight) var readingLeftToRight
         @Preference(\.isPagingVertically) var isPagingVertically
 
         var edges = KEY_WINDOW?.safeAreaInsets

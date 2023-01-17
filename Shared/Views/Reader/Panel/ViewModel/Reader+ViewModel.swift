@@ -487,23 +487,72 @@ extension STTHelpers {
 // MARK: Reading Mode
 
 extension ReaderView.ViewModel {
+    var contentIdentifier: ContentIdentifier {
+        ContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId)
+    }
+    @discardableResult func updateWithUserSetMode(_ value : PanelReadingModes? = nil) -> Bool {
+        let id = contentIdentifier
+        let saved = UserDefaults(suiteName: id.id)?.object(forKey: STTKeys.ReaderType) as? Int
+        
+        let userSetMode = saved.flatMap({ PanelReadingModes(rawValue: $0) }) ?? value
+        let preferences = Preferences.standard
+
+        if let userSetMode {
+            switch userSetMode {
+                case .PAGED_MANGA:
+                    preferences.isReadingVertically = false
+                    preferences.readingLeftToRight = false
+                    preferences.isPagingVertically = false
+                case .PAGED_COMIC:
+                    preferences.isReadingVertically = false
+                    preferences.readingLeftToRight = true
+                    preferences.isPagingVertically = false
+
+                case .VERTICAL:
+                    preferences.isReadingVertically = true
+                    preferences.isPagingVertically = false
+                    preferences.VerticalPagePadding = false
+
+                case .VERTICAL_SEPARATED:
+                    preferences.isReadingVertically = true
+                    preferences.VerticalPagePadding = true
+                    preferences.isPagingVertically = false
+
+                case .PAGED_VERTICAL:
+                    preferences.isReadingVertically = false
+                    preferences.isPagingVertically = true
+            }
+            return true
+        }
+        return false
+    }
     func updateViewerMode(with mode: ReadingMode) {
+        guard !updateWithUserSetMode() else { return }
+        print("Using Incoming Mode Default", mode)
         let preferences = Preferences.standard
         switch mode {
-        case .PAGED_MANGA:
-            preferences.isReadingVertically = false
-            preferences.readingLeftToRight = false
-        case .PAGED_COMIC:
-            preferences.isReadingVertically = false
-            preferences.readingLeftToRight = true
-        case .VERTICAL:
-            preferences.isReadingVertically = true
-        case .VERTICAL_SEPARATED:
-            preferences.isReadingVertically = true
-            preferences.VerticalPagePadding = true
-        case .PAGED_VERTICAL:
-            preferences.isReadingVertically = false
-            preferences.isPagingVertically = true
+            case .PAGED_MANGA:
+                preferences.isReadingVertically = false
+                preferences.readingLeftToRight = false
+                preferences.isPagingVertically = false
+            case .PAGED_COMIC:
+                preferences.isReadingVertically = false
+                preferences.readingLeftToRight = true
+                preferences.isPagingVertically = false
+
+            case .VERTICAL:
+                preferences.isReadingVertically = true
+                preferences.isPagingVertically = false
+                preferences.VerticalPagePadding = false
+
+            case .VERTICAL_SEPARATED:
+                preferences.isReadingVertically = true
+                preferences.VerticalPagePadding = true
+                preferences.isPagingVertically = false
+
+            case .PAGED_VERTICAL:
+                preferences.isReadingVertically = false
+                preferences.isPagingVertically = true
         default: break
         }
     }

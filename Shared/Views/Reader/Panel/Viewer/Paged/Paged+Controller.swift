@@ -60,9 +60,9 @@ extension PagedController {
         let openingIndex = model.sections.first?.firstIndex(where: { ($0 as? ReaderPage)?.page.index == requestedIndex }) ?? requestedIndex
         let path: IndexPath = .init(item: openingIndex, section: 0)
         collectionView.scrollToItem(at: path, at: .centeredHorizontally, animated: false)
-        let point = collectionView.layoutAttributesForItem(at: path)?.frame.midX ?? 0
-        model.slider.setCurrent(point)
+        let point = collectionView.layoutAttributesForItem(at: path)?.frame.maxX ?? 0
         DispatchQueue.main.async {
+            self.model.slider.setCurrent(point)
             self.calculateCurrentChapterScrollRange()
         }
         collectionView.isHidden = false
@@ -339,7 +339,9 @@ extension PagedController {
     func onUserDidScroll(to _: CGFloat) {
         // Update Offset
         if !model.slider.isScrubbing {
-            model.slider.setCurrent(collectionView.contentOffset.x)
+            Task { @MainActor in
+                model.slider.setCurrent(collectionView.contentOffset.x)
+            }
         }
     }
 

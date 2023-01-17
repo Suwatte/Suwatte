@@ -77,8 +77,8 @@ extension Controller {
         let path: IndexPath = .init(item: openingIndex, section: 0)
         collectionView.scrollToItem(at: path, at: .centeredVertically, animated: false)
         let point = collectionView.layoutAttributesForItem(at: path)?.frame.midY ?? 0
-        model.slider.setCurrent(point)
         DispatchQueue.main.async {
+            self.model.slider.setCurrent(point)
             self.calculateCurrentChapterScrollRange()
         }
         collectionView.isHidden = false

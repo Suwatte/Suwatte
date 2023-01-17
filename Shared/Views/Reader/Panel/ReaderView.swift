@@ -9,11 +9,13 @@ import SwiftUI
 
 struct ReaderView: View {
     @StateObject var model: ViewModel
-    @AppStorage(STTKeys.EnableOverlay) var overlayEnabled = false
-    @AppStorage(STTKeys.BackgroundColor) var backgroundColor = Color.primary
-    @AppStorage(STTKeys.UseSystemBG) var useSystemBG = true
-    @AppStorage(STTKeys.VerticalAutoScroll) var verticalAutoScroll = false
+    @AppStorage(STTKeys.EnableOverlay, store: .standard) var overlayEnabled = false
+    @AppStorage(STTKeys.BackgroundColor, store: .standard) var backgroundColor = Color.primary
+    @AppStorage(STTKeys.UseSystemBG, store: .standard) var useSystemBG = true
+    @AppStorage(STTKeys.VerticalAutoScroll, store: .standard) var verticalAutoScroll = false
 
+    @AppStorage(STTKeys.ReaderType) var readerType = PanelReadingModes.PAGED_COMIC
+    
     @Preference(\.isReadingVertically) var isVertical
     @Preference(\.displayNavOverlay) var displayNavOverlay
     @Preference(\.tapSidesToNavigate) var tapSidesToNavigate
@@ -60,6 +62,7 @@ struct ReaderView: View {
                     .navigationTitle("Settings")
                     .navigationBarTitleDisplayMode(.inline)
                     .closeButton()
+                    .defaultAppStorage(.standard)
             }
         }
         .sheet(isPresented: $model.menuControl.chapterList) {
@@ -132,8 +135,6 @@ extension ReaderView {
                         } else {
                             DoublePagedViewer()
                                 .transition(.opacity)
-//                            PagedViewer()
-//                                .transition(.opacity)
                         }
                     }
                 }

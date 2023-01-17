@@ -230,7 +230,9 @@ extension Controller {
         // Update Offset
         if !model.slider.isScrubbing {
             model.menuControl.hideMenu()
-            model.slider.setCurrent(offset)
+            Task { @MainActor in
+                model.slider.setCurrent(offset)
+            }
         }
     }
 

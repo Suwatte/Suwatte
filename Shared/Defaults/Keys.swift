@@ -120,4 +120,6 @@ enum STTKeys {
     static let FilteredLanguages = "CONTENT.filtered_langauges"
     
     static let ImageScaleType = "READER.image_scale"
+    
+    static let ReaderType = "READER.type"
 }

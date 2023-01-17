@@ -36,17 +36,16 @@ extension ReaderView {
         @Preference(\.VerticalPagePadding) var verticalPagePadding
         @Preference(\.imageScaleType) var imageScaleType
         private let range: ClosedRange<Double> = 2.5 ... 30
+        
+        @EnvironmentObject var model: ReaderView.ViewModel
 
         var body: some View {
             Form {
                 // Reading Mode
                 Section {
                     // Viewer
-                    Picker("Viewer", selection: $isVertical) {
-                        Text("Paged").tag(false)
-                        Text("Vertical").tag(true)
-                    }
-                    .pickerStyle(.segmented)
+                    ModeSelectorView()
+                        .defaultAppStorage(.init(suiteName: model.contentIdentifier.id) ?? .standard)
 
                 } header: {
                     Text("Reading Mode")
@@ -55,38 +54,11 @@ extension ReaderView {
                 // Reading Direction
                 if !isVertical {
                     Section {
-                        Picker("Paging Direction", selection: $isPagingVertically) {
-                            Text("Horizontal")
-                                .tag(false)
-                            Text("Vertical")
-                                .tag(true)
-                        }
-                        .pickerStyle(.segmented)
+                        Toggle("Double Paged", isOn: $isDoublePaged)
                     } header: {
                         Text("Paging Direction")
                     }
-                    if !isPagingVertically {
-                        Section {
-                            Picker("Reading Direction", selection: $readingLeftToRight) {
-                                Text("Left To Right (Comic)")
-                                    .tag(true)
-                                Text("Right to Left (Manga)")
-                                    .tag(false)
-                            }
-                            .pickerStyle(.segmented)
-                            Toggle("Double Paged", isOn: $isDoublePaged)
-                        } header: {
-                            Text("Reading Direction")
-                        }
-                    }
-
                 } else {
-                    Section {
-                        Toggle("Page Padding", isOn: $verticalPagePadding)
-                    } header: {
-                        Text("Padding")
-                    }
-
                     Section {
                         Toggle("AutoScroll", isOn: $verticalAutoScroll)
                         if verticalAutoScroll {
@@ -147,12 +119,15 @@ extension ReaderView {
                 // Images
                 Section {
                     Toggle("Image Context Actions", isOn: $imageInteractions)
-                    Picker("Scale Type", selection: $imageScaleType) {
-                        ForEach(ImageScaleOption.allCases, id: \.rawValue) {
-                            Text($0.description)
-                                .tag($0)
+                    if !isVertical {
+                        Picker("Scale Type", selection: $imageScaleType) {
+                            ForEach(ImageScaleOption.allCases, id: \.rawValue) {
+                                Text($0.description)
+                                    .tag($0)
+                            }
                         }
                     }
+                    
                     Toggle("Downsample Images", isOn: $downsampleImages)
                     if !isVertical {
                         Toggle("Crop Whitespace", isOn: $cropWhiteSpaces)
@@ -205,10 +180,47 @@ extension ReaderView {
             .animation(.default, value: isVertical)
             .animation(.default, value: isPagingVertically)
             .animation(.default, value: verticalAutoScroll)
+
+        }
+    }
+    
+    struct ModeSelectorView: View {
+        @AppStorage(STTKeys.ReaderType) var mode = PanelReadingModes.PAGED_COMIC
+        @EnvironmentObject var model: ReaderView.ViewModel
+
+        var body: some View {
+            Picker("Reading Mode", selection: $mode) {
+                ForEach(PanelReadingModes.allCases, id: \.rawValue) {
+                    Text($0.description)
+                        .tag($0)
+                }
+            }
+            .onChange(of: mode, perform: { v in
+                Task { @MainActor in
+                    model.updateWithUserSetMode(v)
+                }
+            })
         }
     }
 }
 
+
+extension PanelReadingModes {
+    var description: String {
+        switch self {
+            case .PAGED_MANGA:
+                return "RTL (Manga)"
+            case .PAGED_COMIC:
+                return "LTR (Comic)"
+            case .VERTICAL:
+                return "Webtoon"
+            case .VERTICAL_SEPARATED:
+                return "Webtoon Padded"
+            case .PAGED_VERTICAL:
+                return "Paged Vertical"
+        }
+    }
+}
 enum ReaderBlendMode: Int, CaseIterable {
     case normal, screen, multiply
 

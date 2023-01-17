@@ -9,8 +9,8 @@ import SwiftUI
 
 extension ReaderView {
     struct ReaderCustomOverlay: View {
-        @AppStorage(STTKeys.OverlayColor) var overlayColor: Color = .clear
-        @AppStorage(STTKeys.ReaderFilterBlendMode) var readerBlendMode = ReaderBlendMode.normal
+        @AppStorage(STTKeys.OverlayColor, store: .standard) var overlayColor: Color = .clear
+        @AppStorage(STTKeys.ReaderFilterBlendMode, store: .standard) var readerBlendMode = ReaderBlendMode.normal
 
         @EnvironmentObject var model: ReaderView.ViewModel
         var body: some View {

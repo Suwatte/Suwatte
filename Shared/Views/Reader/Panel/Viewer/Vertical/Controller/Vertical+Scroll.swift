@@ -46,7 +46,9 @@ extension Controller {
         current = max(0, current)
         current = min(range.max, current)
         let target =  current / total
-        model.slider.setCurrent(target)
+        Task { @MainActor in
+            model.slider.setCurrent(target)
+        }
     }
     
     func moveToRelativeSliderPosition(_ value: CGFloat) {
