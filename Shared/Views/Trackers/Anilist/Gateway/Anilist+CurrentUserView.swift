@@ -57,6 +57,7 @@ extension AnilistView {
                         // Tag Breakdown
                     }
                     .padding(.horizontal)
+                    .foregroundColor(profileColor.isDark ? .white : .black)
                 }
             }
             .navigationTitle("Profile")
@@ -75,6 +76,8 @@ extension AnilistView {
                     }
                 }
             }
+            .tint(profileColor)
+            .accentColor(profileColor)
         }
 
         var Header: some View {
