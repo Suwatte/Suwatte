@@ -60,7 +60,7 @@ extension PagedController {
         let openingIndex = model.sections.first?.firstIndex(where: { ($0 as? ReaderPage)?.page.index == requestedIndex }) ?? requestedIndex
         let path: IndexPath = .init(item: openingIndex, section: 0)
         collectionView.scrollToItem(at: path, at: .centeredHorizontally, animated: false)
-        let point = collectionView.layoutAttributesForItem(at: path)?.frame.maxX ?? 0
+        let point = collectionView.layoutAttributesForItem(at: path)?.frame.minX ?? 0
         DispatchQueue.main.async {
             self.model.slider.setCurrent(point)
             self.calculateCurrentChapterScrollRange()
@@ -426,7 +426,7 @@ extension PagedController: UIContextMenuInteractionDelegate {
         let indexPath = collectionView.indexPathForItem(at: point)
 
         // Validate Is Image
-        guard let indexPath = indexPath, model.sections[indexPath.section][indexPath.item] is ReaderPage else {
+        guard let indexPath = indexPath, let page = model.sections[indexPath.section][indexPath.item] as? ReaderPage else {
             return nil
         }
 
@@ -455,7 +455,6 @@ extension PagedController: UIContextMenuInteractionDelegate {
 
             // Toggle Bookmark
             let chapter = self.model.activeChapter.chapter
-            let page = indexPath.item + 1
 
             var menu = UIMenu(title: "", children: [photoMenu])
 
@@ -463,12 +462,12 @@ extension PagedController: UIContextMenuInteractionDelegate {
                 return menu
             }
             // Bookmark Actions
-            let isBookmarked = DataManager.shared.isBookmarked(chapter: chapter.toStored(), page: page)
+            let isBookmarked = DataManager.shared.isBookmarked(chapter: chapter.toStored(), page: page.page.index)
             let bkTitle = isBookmarked ? "Remove Bookmark" : "Bookmark Panel"
             let bkSysImage = isBookmarked ? "bookmark.slash" : "bookmark"
 
             let bookmarkAction = UIAction(title: bkTitle, image: UIImage(systemName: bkSysImage), attributes: isBookmarked ? [.destructive] : []) { _ in
-                DataManager.shared.toggleBookmark(chapter: chapter.toStored(), page: page)
+                DataManager.shared.toggleBookmark(chapter: chapter.toStored(), page: page.page.index)
                 ToastManager.shared.info("Bookmark \(isBookmarked ? "Removed" : "Added")!")
             }
 

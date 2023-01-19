@@ -44,10 +44,13 @@ struct HistoryView: View {
         switch historyType {
         case .external:
             ExternalView(unfilteredMarkers: $markers)
+                    .transition(.opacity)
         case .local:
             LocalView(unfilteredMarkers: $markers)
+                    .transition(.opacity)
         case .opds:
             OPDSView()
+                    .transition(.opacity)
         }
     }
 }

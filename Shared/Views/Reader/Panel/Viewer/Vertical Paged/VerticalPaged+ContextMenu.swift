@@ -17,7 +17,7 @@ extension VerticalPager.Controller: UIContextMenuInteractionDelegate {
         let indexPath = collectionView.indexPathForItem(at: point)
 
         // Validate Is Image
-        guard let indexPath = indexPath, model.sections[indexPath.section][indexPath.item] is ReaderPage else {
+        guard let indexPath = indexPath, let page = model.sections[indexPath.section][indexPath.item] as? ReaderPage else {
             return nil
         }
 
@@ -46,7 +46,6 @@ extension VerticalPager.Controller: UIContextMenuInteractionDelegate {
 
             // Toggle Bookmark
             let chapter = self.model.activeChapter.chapter
-            let page = indexPath.item + 1
 
             var menu = UIMenu(title: "", children: [photoMenu])
 
@@ -54,12 +53,12 @@ extension VerticalPager.Controller: UIContextMenuInteractionDelegate {
                 return menu
             }
             // Bookmark Actions
-            let isBookmarked = DataManager.shared.isBookmarked(chapter: chapter.toStored(), page: page)
+            let isBookmarked = DataManager.shared.isBookmarked(chapter: chapter.toStored(), page: page.page.index)
             let bkTitle = isBookmarked ? "Remove Bookmark" : "Bookmark Panel"
             let bkSysImage = isBookmarked ? "bookmark.slash" : "bookmark"
 
             let bookmarkAction = UIAction(title: bkTitle, image: UIImage(systemName: bkSysImage), attributes: isBookmarked ? [.destructive] : []) { _ in
-                DataManager.shared.toggleBookmark(chapter: chapter.toStored(), page: page)
+                DataManager.shared.toggleBookmark(chapter: chapter.toStored(), page: page.page.index)
                 ToastManager.shared.info("Bookmark \(isBookmarked ? "Removed" : "Added")!")
             }
 

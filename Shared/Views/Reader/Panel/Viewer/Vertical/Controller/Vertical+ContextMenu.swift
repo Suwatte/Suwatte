@@ -18,7 +18,7 @@ extension Controller: UIContextMenuInteractionDelegate {
     {
         let point = interaction.location(in: collectionNode.view)
         let indexPath = collectionNode.indexPathForItem(at: point)
-        guard let indexPath else { return nil }
+        guard let indexPath, let page = model.sections[indexPath.section][indexPath.item] as? ReaderPage else { return nil }
         let node = collectionNode.nodeForItem(at: indexPath) as? Controller.ImageNode
         guard let image = node?.imageNode.image else { return nil }
 
@@ -42,7 +42,6 @@ extension Controller: UIContextMenuInteractionDelegate {
 
             // Toggle Bookmark
             let chapter = self.model.activeChapter.chapter
-            let page = indexPath.item + 1
 
             var menu = UIMenu(title: "", children: [photoMenu])
 
@@ -50,12 +49,12 @@ extension Controller: UIContextMenuInteractionDelegate {
                 return menu
             }
             // Bookmark Actions
-            let isBookmarked = DataManager.shared.isBookmarked(chapter: chapter.toStored(), page: page)
+            let isBookmarked = DataManager.shared.isBookmarked(chapter: chapter.toStored(), page: page.page.index)
             let bkTitle = isBookmarked ? "Remove Bookmark" : "Bookmark Panel"
             let bkSysImage = isBookmarked ? "bookmark.slash" : "bookmark"
 
             let bookmarkAction = UIAction(title: bkTitle, image: UIImage(systemName: bkSysImage), attributes: isBookmarked ? [.destructive] : []) { _ in
-                DataManager.shared.toggleBookmark(chapter: chapter.toStored(), page: page)
+                DataManager.shared.toggleBookmark(chapter: chapter.toStored(), page: page.page.index)
                 ToastManager.shared.info("Bookmark \(isBookmarked ? "Removed" : "Added")!")
             }
 
