@@ -301,36 +301,29 @@ extension ReaderView.ViewModel {
 
 extension ReaderView.ViewModel {
     func didScrollTo(path: IndexPath) {        
-        scrollTask?.cancel()
-        scrollTask = nil
-        scrollTask = Task {
-            // Get Page
-            let item = sections[path.section][path.item]
+        // Get Page
+        let item = sections[path.section][path.item]
 
-            guard let readerPage = item as? ReaderPage else {
-                if let transition = item as? ReaderView.Transition {
-                    handleTransition(transition: transition)
-                }
-                return
+        guard let readerPage = item as? ReaderPage else {
+            if let transition = item as? ReaderView.Transition {
+                handleTransition(transition: transition)
             }
-            let page = readerPage.page
-            if page.chapterId != activeChapter.chapter._id, let chapter = chapterCache[page.chapterId] {
-                onChapterChanged(chapter: chapter)
-                return
-            }
-
-            // Last Page
-            if page.index + 1 == activeChapter.pages?.count, let chapter = chapterCache[page.chapterId], recursiveGetChapter(for: chapter.chapter) == nil {
-                onPageChanged(page: page)
-                onChapterChanged(chapter: chapter)
-            } else {
-                // Reg, Page Change
-                onPageChanged(page: page)
-            }
-
-            // TODO: Handle Auto Flag Changing
+            return
         }
-        // Reset CollectionView.
+        let page = readerPage.page
+        if page.chapterId != activeChapter.chapter._id, let chapter = chapterCache[page.chapterId] {
+            onChapterChanged(chapter: chapter)
+            return
+        }
+
+        // Last Page
+        if page.index + 1 == activeChapter.pages?.count, let chapter = chapterCache[page.chapterId], recursiveGetChapter(for: chapter.chapter) == nil {
+            onPageChanged(page: page)
+            onChapterChanged(chapter: chapter)
+        } else {
+            // Reg, Page Change
+            onPageChanged(page: page)
+        }
     }
 
     private var incognitoMode: Bool {

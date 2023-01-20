@@ -243,7 +243,6 @@ extension Target {
                                 Image(systemName: "dot.radiowaves.up.forward")
                                     .foregroundColor(color)
                                     .font(.footnote.weight(.bold))
-                                    .shimmering()
                             }
 
                             if let pages = publication.streamLink?.properties["count"] as? String ?? publication.metadata.numberOfPages?.description {

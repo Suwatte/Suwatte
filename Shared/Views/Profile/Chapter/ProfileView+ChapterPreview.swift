@@ -16,9 +16,6 @@ private typealias CView = ProfileView.Skeleton.ChapterView
 extension ProfileView.Skeleton.ChapterView {
     struct PreviewView: View {
         @EnvironmentObject var model: ProfileView.ViewModel
-        @ObservedResults(ICDMDownloadObject.self) var downloads
-        @ObservedResults(ChapterMarker.self, where: { $0.chapter != nil }) var markers
-
         var body: some View {
             HStack {
                 Spacer()
@@ -42,9 +39,6 @@ extension ProfileView.Skeleton.ChapterView {
                 Spacer()
             }
             .animation(.easeInOut(duration: 0.25), value: model.chapters)
-            .onAppear {
-                $markers.where = { $0.chapter.sourceId == model.source.id && $0.chapter.contentId == model.content.contentId && $0.chapter != nil }
-            }
         }
 
         @ViewBuilder
@@ -118,12 +112,7 @@ extension ProfileView.Skeleton.ChapterView {
 
 extension ProfileView.Skeleton.ChapterView.PreviewView {
     func isChapterCompleted(_ chapter: StoredChapter) -> Bool {
-        markers
-            .where { $0.chapter.sourceId == chapter.sourceId }
-            .where { $0.chapter.contentId == chapter.contentId }
-            .where { $0._id == chapter._id || ($0.chapter.number == chapter.number && $0.chapter.volume == chapter.volume) }
-            .where { $0.completed == true }
-            .count >= 1
+        model.readChapters.contains(chapter.number)
     }
 
     func isChapterNew(_ chapter: StoredChapter) -> Bool {
@@ -141,9 +130,7 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
     }
 
     func getDownload(_ chapter: StoredChapter) -> ICDMDownloadObject? {
-        downloads
-            .where { $0._id == chapter._id }
-            .first
+        model.downloads[chapter._id]
     }
 }
 

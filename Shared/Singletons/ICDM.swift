@@ -164,15 +164,17 @@ extension ICDM {
 
 //
 extension ICDM {
-    func add(chapters: [StoredChapter]) {
-        let ids = chapters.map { $0._id }
+    func add(chapters: [String]) {
         let realm = try! Realm()
 
         let completedIds = realm
             .objects(ICDMDownloadObject.self)
-            .where { $0._id.in(ids) && $0.status == .completed && $0.status != .active }
+            .where { $0._id.in(chapters) && $0.status == .completed && $0.status != .active }
             .map { $0._id }
 
+        let chapters = realm
+            .objects(StoredChapter.self)
+            .where({ $0._id.in(chapters) })
         let targets = chapters.filter { !completedIds.contains($0._id) }
 
         let objects = targets.sorted(by: { $0.index > $1.index }).map { chapter -> ICDMDownloadObject in

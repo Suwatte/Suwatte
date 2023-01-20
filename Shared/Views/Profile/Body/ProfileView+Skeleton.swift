@@ -56,7 +56,7 @@ extension ProfileView {
                 }
                 .transition(.opacity)
                 .onDisappear {
-                    self.viewModel.notificationToken?.invalidate()
+                    self.viewModel.currentMarkerToken?.invalidate()
                 }
         }
     }

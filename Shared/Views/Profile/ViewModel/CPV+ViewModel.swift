@@ -29,6 +29,7 @@ extension ProfileView {
             try! content.toStoredContent(withSource: source.id)
         }
 
+        // TODO: Make Chapters Realm Based?
         @Published var chapters: Loadable<[StoredChapter]> = .idle
         @Published var working = false
         @Published var linkedHasUpdate = false
@@ -44,21 +45,73 @@ extension ProfileView {
         @Published var actionState: ActionState = .init(state: .none)
         @Published var linkedUpdates: [HighlightIndentier] = []
         @Published var threadSafeChapters: [DSKCommon.Chapter]?
-        var notificationToken: NotificationToken?
+        
+        // Tokens
+        var currentMarkerToken: NotificationToken?
+        
+        // Download Tracking Variables
+        var downloadTrackingToken: NotificationToken?
+        @Published var downloads: [String: ICDMDownloadObject] = [:]
+        // Chapter Marking Variables
+        var chapterMarkersToken: NotificationToken?
+        @Published var readChapters = Set<Double>()
+
         var syncTask: Task<Void, Error>?
+        
         init(_ entry: DaisukeEngine.Structs.Highlight, _ source: DaisukeContentSource) {
             self.entry = entry
             self.source = source
+            setupObservers()
         }
 
         @Published var selection: String?
+        // De Init
         deinit {
-            notificationToken?.invalidate()
-            print("Deallocated Profile ViewModel")
+            currentMarkerToken?.invalidate()
+            chapterMarkersToken?.invalidate()
+            downloadTrackingToken?.invalidate()
+            Logger.shared.debug("CPVM Deallocated")
         }
     }
 }
-
+extension ProfileView.ViewModel {
+    
+    func setupObservers() {
+        let realm = try! Realm()
+        
+        // Get Read Chapters
+        let _r1 = realm
+            .objects(ChapterMarker.self)
+            .where({ $0.chapter.contentId == entry.contentId })
+            .where({ $0.chapter.sourceId == source.id })
+            .where({ $0.completed == true })
+        chapterMarkersToken = _r1.observe({ [weak self] collection in
+            switch collection {
+                case .initial(let values):
+                    let initial = values.map({ $0.chapter!.number })
+                    self?.readChapters.formUnion(initial)
+                case let .update(_, deleted, inserted, _):
+                    let insertedNumbers = inserted.map({ _r1[$0].chapter!.number })
+                    let deletedNumbers = deleted.map({ _r1[$0].chapter!.number })
+                    self?.readChapters.formUnion(insertedNumbers)
+                    self?.readChapters.subtract(deletedNumbers)
+                default:
+                    break
+            }
+        })
+        
+        // Get Download
+        let _r2 = realm
+            .objects(ICDMDownloadObject.self)
+            .where({ $0.chapter.contentId == entry.contentId })
+            .where({ $0.chapter.sourceId == source.id })
+        
+        downloadTrackingToken = _r2.observe({ [weak self] collection in
+            self?.downloads =  Dictionary(uniqueKeysWithValues: _r2.map{ ($0._id, $0) })
+        })
+    }
+    
+}
 extension ProfileView.ViewModel {
     func loadContentFromNetwork() async {
         do {
@@ -163,8 +216,14 @@ extension ProfileView.ViewModel {
     }
 
     func removeNotifier() {
-        notificationToken?.invalidate()
-        notificationToken = nil
+        currentMarkerToken?.invalidate()
+        currentMarkerToken = nil
+        
+        chapterMarkersToken?.invalidate()
+        chapterMarkersToken = nil
+        
+        downloadTrackingToken?.invalidate()
+        downloadTrackingToken = nil
     }
     var contentIdentifier: String {
         sttIdentifier().id
@@ -210,7 +269,7 @@ extension ProfileView.ViewModel {
         let id = entry.id
         let sourceId = source.id
         let realm = try! Realm()
-        notificationToken = realm
+        currentMarkerToken = realm
             .objects(ChapterMarker.self)
             .where { $0.chapter.contentId == id }
             .where { $0.chapter.sourceId == sourceId }

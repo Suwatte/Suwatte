@@ -44,8 +44,6 @@ struct ChapterList: View {
     @State var selection: String?
     @State var selections = Set<StoredChapter>()
     @State var presentOptions = false
-    @ObservedResults(ICDMDownloadObject.self) var downloads
-    @ObservedResults(ChapterMarker.self, where: { $0.chapter != nil }) var markers
     @AppStorage(STTKeys.ChapterListSortKey, store: .standard) var sortKey = ChapterSortOption.number
     @AppStorage(STTKeys.ChapterListDescending, store: .standard) var sortDesc = true
     @AppStorage(STTKeys.ChapterListShowOnlyDownloaded, store: .standard) var showOnlyDownloads = false
@@ -59,6 +57,9 @@ struct ChapterList: View {
                 .fullScreenCover(item: $selection, onDismiss: handleReconnection) { chapterId in
                     let chapter = visibleChapters.first(where: { $0.chapterId == chapterId })!
                     ReaderGateWay(readingMode: model.content.recommendedReadingMode ?? .PAGED_COMIC, chapterList: visibleChapters, openTo: chapter)
+                        .onAppear {
+                            model.removeNotifier()
+                        }
                 }
         }
         .sheet(isPresented: $presentOptions, content: {
@@ -155,8 +156,12 @@ struct ChapterList: View {
             doFilter()
         }
     }
+    
     func handleReconnection() {
-        model.getMarkers()
+        DispatchQueue.main.async {
+            model.getMarkers()
+            model.setupObservers()
+        }
     }
 
     func ChaptersView(_ chapters: [StoredChapter]) -> some View {
@@ -320,7 +325,7 @@ extension ChapterList {
             }
         } else {
             Button {
-                ICDM.shared.add(chapters: [chapter])
+                ICDM.shared.add(chapters: [chapter._id])
                 let c = model.storedContent
                 if !DataManager.shared.isInLibrary(content: c) {
                     DataManager.shared.toggleLibraryState(for: c)
@@ -355,19 +360,7 @@ extension ChapterList {
 
 extension ChapterList {
     func isChapterCompleted(_ chapter: StoredChapter) -> Bool {
-        let base = markers
-            .where { $0.chapter.sourceId == chapter.sourceId }
-            .where { $0.chapter.contentId == chapter.contentId }
-            .where { $0._id == chapter._id || ($0.chapter.number == chapter.number && $0.chapter.volume == chapter.volume) }
-
-        let markedCompleted = base
-            .where { $0.completed == true }
-            .count >= 1
-
-        let progressCompleted = base
-            .where { $0.lastPageRead == $0.totalPageCount }
-            .count >= 1
-        return progressCompleted && markedCompleted
+        model.readChapters.contains(chapter.number)
     }
 
     func isChapterNew(_ chapter: StoredChapter) -> Bool {
@@ -385,9 +378,7 @@ extension ChapterList {
     }
 
     func getDownload(_ chapter: StoredChapter) -> ICDMDownloadObject? {
-        downloads
-            .where { $0._id == chapter._id }
-            .first
+        model.downloads[chapter._id]
     }
 }
 
@@ -482,7 +473,7 @@ extension ChapterList {
     }
 
     func addToDownloadQueue() {
-        ICDM.shared.add(chapters: Array(selections))
+        ICDM.shared.add(chapters: Array(selections).map(\._id))
         deselectAll()
     }
 
