@@ -73,7 +73,7 @@ struct MoreView: View {
                     }
 
                     Section {
-                        Link(destination: URL(string: "https://discord.gg/nvtZGrvyZT")!) {
+                        Link(destination: URL(string: "https://discord.gg/PnxPBNwkj2")!) {
                             Text("Discord Server")
                         }
                         Link(destination: URL(string: "https://twitter.com/ceresmir")!) {

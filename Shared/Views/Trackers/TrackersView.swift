@@ -18,14 +18,15 @@ struct TrackersView: View {
                     MSLabelView(title: "Anilist", imageName: "anilist")
                 }
 
-                NavigationLink(destination: Text("Placeholder")) {
-                    MSLabelView(title: "MyAnimeList", imageName: "mal")
-                }
+                
+//                NavigationLink(destination: Text("Placeholder")) {
+//                    MSLabelView(title: "MyAnimeList", imageName: "mal")
+//                }
             }
 
             Section {
                 Toggle(isOn: $nonSelectiveSync) {
-                    Text("Non-Selective Sync \(Image(systemName: "info.circle"))")
+                    Text("Auto Track \(Image(systemName: "info.circle"))")
                         .onTapGesture {
                             presentAlert.toggle()
                         }
@@ -34,7 +35,7 @@ struct TrackersView: View {
             } header: {
                 Text("Settings")
             }
-            .alert("Non-Selective Sync", isPresented: $presentAlert) {
+            .alert("Auto Track", isPresented: $presentAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
                 Text("Suwatte Will Begin Tracking Previously Untracked Titles Automatically")
