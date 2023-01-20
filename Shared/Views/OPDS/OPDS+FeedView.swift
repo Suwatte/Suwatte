@@ -139,11 +139,12 @@ extension Target {
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
         var body: some View {
             ASCollectionView(section: AS_SECTION)
-                .layout { _ in
-                    DefaultGridLayout(75)
-                }
+                .layout(createCustomLayout: {
+                    DynamicGridLayout(75)
+                }, configureCustomLayout: { layout in
+                    layout.invalidateLayout()
+                })
                 .alwaysBounceVertical()
-                .shouldRecreateLayoutOnStateChange(true)
                 .animateOnDataRefresh(true)
                 .fullScreenCover(item: $chapter) { chapter in
                     ReaderGateWay(readingMode: .PAGED_COMIC, chapterList: [chapter], openTo: chapter, title: chapter.title)

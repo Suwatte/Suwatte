@@ -82,12 +82,12 @@ extension AnilistView {
                     PaginationView
                 }
             }
-
-            .layout { _ in
-                DefaultGridLayout(header: .absolute(30), footer: .estimated(44))
-            }
+            .layout(createCustomLayout: {
+                DynamicGridLayout(header: .absolute(30), footer: .estimated(44))
+            }, configureCustomLayout: { layout in
+                layout.invalidateLayout()
+            })
             .alwaysBounceVertical()
-            .shouldRecreateLayoutOnStateChange(true)
             .animateOnDataRefresh(true)
             .onPullToRefresh { endRefreshing in
                 Task { @MainActor in

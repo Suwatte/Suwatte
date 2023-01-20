@@ -21,14 +21,12 @@ struct DownloadsView: View {
     @AppStorage(STTKeys.TileStyle) var style = TileStyle.COMPACT
     var body: some View {
         ASCollectionView(section: AS_SECTION)
-            .layout {
-                DefaultGridLayout()
-            }
-            .layout { _ in
-                DefaultGridLayout()
-            }
+            .layout(createCustomLayout: {
+                DynamicGridLayout()
+            }, configureCustomLayout: { layout in
+                layout.invalidateLayout()
+            })
             .alwaysBounceVertical()
-            .shouldRecreateLayoutOnStateChange(true)
             .animateOnDataRefresh(true)
             .navigationTitle("Downloads")
             .navigationBarTitleDisplayMode(.inline)

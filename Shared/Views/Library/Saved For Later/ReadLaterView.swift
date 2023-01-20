@@ -51,11 +51,12 @@ extension LibraryView {
                 }
             }
 
-            .layout { _ in
-                DefaultGridLayout()
-            }
+            .layout(createCustomLayout: {
+                DynamicGridLayout()
+            }, configureCustomLayout: { layout in
+                layout.invalidateLayout()
+            })
             .alwaysBounceVertical()
-            .shouldRecreateLayoutOnStateChange(true)
             .animateOnDataRefresh(true)
             .animation(.default, value: library)
             .animation(.default, value: unsortedEntries)
