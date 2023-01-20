@@ -23,7 +23,7 @@ extension ProfileView.Skeleton {
                 .layout { _ in
                     SECTION_LAYOUT()
                 }
-                .frame(height: COLLECTION_HEIGHT)
+                .frame(height: COLLECTION_HEIGHT + 44 * CGFloat(SECTIONS.count))
         }
 
         var COLLECTION_HEIGHT: CGFloat {
@@ -31,7 +31,7 @@ extension ProfileView.Skeleton {
             let isSeparated = tileStyle == .SEPARATED
             let baseHeight = 150 * 1.5
             let titleHeight = (isSeparated ? 50 : 0)
-            let cellHeight = CGFloat(titleHeight) + CGFloat(baseHeight) + 50
+            let cellHeight = CGFloat(titleHeight) + CGFloat(baseHeight)
             return CGFloat(count) * cellHeight
         }
 
@@ -65,7 +65,7 @@ extension ProfileView.Skeleton {
                         }
                         Spacer()
                     }
-                    .padding(.vertical)
+                    .frame(height: 44)
                 }
             }
         }
@@ -91,7 +91,7 @@ extension ProfileView.Skeleton {
                 let section = NSCollectionLayoutSection(group: itemsGroup)
                 section.interGroupSpacing = 7
                 section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
-                section.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
+                section.orthogonalScrollingBehavior = .continuous
                 section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
                 section.boundarySupplementaryItems = [.init(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(50)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)]
                 return section
