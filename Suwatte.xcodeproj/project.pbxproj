@@ -271,6 +271,8 @@
 		DF9BD6552891E6B2006628D0 /* DSK+CS+Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BD6542891E6B2006628D0 /* DSK+CS+Search.swift */; };
 		DF9BD6582892413E006628D0 /* DSK+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BD6572892413E006628D0 /* DSK+URL.swift */; };
 		DF9BD65A28924559006628D0 /* DSK+LibraryUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BD65928924559006628D0 /* DSK+LibraryUpdate.swift */; };
+		DF9C9EF0297AE3A9004A3BC5 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = DF9C9EEF297AE3A9004A3BC5 /* FirebaseAnalytics */; };
+		DF9C9EF2297AE410004A3BC5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DF9C9EF1297AE40F004A3BC5 /* GoogleService-Info.plist */; };
 		DFA6264C28ED1EA500914B1C /* Vertical+ASController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA6264B28ED1EA500914B1C /* Vertical+ASController.swift */; };
 		DFAC77942814D1BA00AF6394 /* AnilistView+DirectoryView+FilterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAC77932814D1BA00AF6394 /* AnilistView+DirectoryView+FilterSheet.swift */; };
 		DFAC77962815B3DA00AF6394 /* AL+Genre.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAC77952815B3DA00AF6394 /* AL+Genre.swift */; };
@@ -579,6 +581,7 @@
 		DF9BD6542891E6B2006628D0 /* DSK+CS+Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+CS+Search.swift"; sourceTree = "<group>"; };
 		DF9BD6572892413E006628D0 /* DSK+URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+URL.swift"; sourceTree = "<group>"; };
 		DF9BD65928924559006628D0 /* DSK+LibraryUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+LibraryUpdate.swift"; sourceTree = "<group>"; };
+		DF9C9EF1297AE40F004A3BC5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		DFA6264B28ED1EA500914B1C /* Vertical+ASController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+ASController.swift"; sourceTree = "<group>"; };
 		DFAC77932814D1BA00AF6394 /* AnilistView+DirectoryView+FilterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnilistView+DirectoryView+FilterSheet.swift"; sourceTree = "<group>"; };
 		DFAC77952815B3DA00AF6394 /* AL+Genre.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AL+Genre.swift"; sourceTree = "<group>"; };
@@ -639,6 +642,7 @@
 				DF59C988285054670027F19D /* Unrar in Frameworks */,
 				DF248F0C2813844C00818300 /* KeychainSwift in Frameworks */,
 				DF2DA77327CF11C50046FE20 /* Alamofire in Frameworks */,
+				DF9C9EF0297AE3A9004A3BC5 /* FirebaseAnalytics in Frameworks */,
 				DFAEE12728B839E500B11484 /* NukeExtensions in Frameworks */,
 				DFB47EF12880C0B30040A1BD /* R2Shared in Frameworks */,
 				DFB47EF32880C0B30040A1BD /* ReadiumOPDS in Frameworks */,
@@ -1100,6 +1104,7 @@
 		DF8D09E72800EE47003E4C3E /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				DF9C9EF1297AE40F004A3BC5 /* GoogleService-Info.plist */,
 				DF79D2702810E7500052470D /* placeholder.json */,
 				DF8D09E82800EE47003E4C3E /* SuwatteInfo.plist */,
 				DF8D09E92800EE47003E4C3E /* Assets.xcassets */,
@@ -1973,6 +1978,7 @@
 				DF15F5942967D3DD0085DB1F /* UIHostingConfigurationBackport */,
 				DF15F5972967D4E80085DB1F /* SwiftUIBackports */,
 				DF15F59A2967DF790085DB1F /* SkeletonView */,
+				DF9C9EEF297AE3A9004A3BC5 /* FirebaseAnalytics */,
 			);
 			productName = "Suwatte (iOS)";
 			productReference = DFCE6EAF280108EA002E220C /* Suwatte.app */;
@@ -2020,6 +2026,7 @@
 				DF15F5932967D3DD0085DB1F /* XCRemoteSwiftPackageReference "UIHostingConfigurationBackport" */,
 				DF15F5962967D4E70085DB1F /* XCRemoteSwiftPackageReference "SwiftUIBackports" */,
 				DF15F5992967DF780085DB1F /* XCRemoteSwiftPackageReference "SkeletonView" */,
+				DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = DF2DA6FF27CD82430046FE20;
 			projectDirPath = "";
@@ -2038,6 +2045,7 @@
 				DF79D2712810E7500052470D /* placeholder.json in Resources */,
 				DF86CACA285841BA0008B17A /* STTLaunchScreen.storyboard in Resources */,
 				DF8D0B272800EE47003E4C3E /* Assets.xcassets in Resources */,
+				DF9C9EF2297AE410004A3BC5 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2729,6 +2737,14 @@
 				kind = branch;
 			};
 		};
+		DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		DFAEE12328B839E500B11484 /* XCRemoteSwiftPackageReference "Nuke" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kean/Nuke";
@@ -2825,6 +2841,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit" */;
 			productName = FlagKit;
+		};
+		DF9C9EEF297AE3A9004A3BC5 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
 		};
 		DFAEE12428B839E500B11484 /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;

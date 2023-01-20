@@ -10,6 +10,7 @@ import Kingfisher
 import RealmSwift
 import UIKit
 import Nuke
+import FirebaseCore
 
 class STTAppDelegate: NSObject, UIApplicationDelegate {
     func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
@@ -62,6 +63,10 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
         config.fileURL = directory.appendingPathComponent("suwatte_db.realm")
         Realm.Configuration.defaultConfiguration = config
 
+        
+        // Analytics
+        FirebaseApp.configure()
+        
         return true
     }
 }
