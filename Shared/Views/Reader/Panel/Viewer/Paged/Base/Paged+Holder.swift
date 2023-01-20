@@ -309,8 +309,8 @@ extension PagedDisplayHolder {
     }
     
     func activateFitScreenConstraint(_ size: CGSize) {
-        let height = min((size.height / size.width) * bounds.width, bounds.height)
-        let width = height * size.ratio
+        let height = min((size.height / size.width) * frame.width, frame.height)
+        let width = min(height * size.ratio, frame.width)
         widthConstraint = imageView.widthAnchor.constraint(equalToConstant: width)
         heightContraint = imageView.heightAnchor.constraint(equalToConstant: height)
         scrollView.didUpdateSize(size: .init(width: width, height: height))

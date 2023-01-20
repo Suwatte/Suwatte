@@ -243,6 +243,7 @@ extension ReaderView.ReaderMenuOverlay {
             model.activeChapter.data.LOADED && !(model.activeChapter.pages?.isEmpty ?? false)
         }
 
+        @Environment(\.colorScheme) var colorScheme
         var body: some View {
             VStack {
                 HStack {
@@ -273,7 +274,7 @@ extension ReaderView.ReaderMenuOverlay {
         var OverlaySlider: some View {
             ZStack(alignment: Alignment(horizontal: .center, vertical: .center)) {
                 RoundedRectangle(cornerRadius: 100)
-                    .foregroundColor(.sttGray)
+                    .foregroundColor( colorScheme == .light ? .black.opacity(0.75) : .sttGray.opacity(0.80))
                     .frame(height: 25)
 
                 if model.slider.min < model.slider.max {
