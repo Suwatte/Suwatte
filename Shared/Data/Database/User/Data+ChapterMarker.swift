@@ -118,7 +118,11 @@ extension DataManager {
                 marker.dateRead = Date()
                 marker.lastPageRead = last
                 marker.totalPageCount = total
-                marker.completed = false
+                if last == total && chapter.requestedPageOffset == nil {
+                    marker.completed = true
+                } else {
+                    marker.completed = false
+                }
                 marker.lastPageOffset = lastOffset
                 try! realm.safeWrite {
                     realm.add(marker, update: .all)
