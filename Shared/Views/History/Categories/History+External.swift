@@ -8,78 +8,38 @@
 import RealmSwift
 import SwiftUI
 
+
 extension HistoryView {
-    struct ExternalView: View {
-        @ObservedResults(ChapterMarker.self) var unfilteredMarkers
-        @State var selection: HighlightIndentier?
+    struct ExternalContentTile: View {
+        @EnvironmentObject var model: HistoryView.ViewModel
+        var marker: HistoryObject
+        @State var excerpt: DSKCommon.Highlight?
+        @State var loaded: Bool = false
+        var size = 140.0
         var body: some View {
-            let markers = getFiltered()
-            ScrollView {
-                LazyVStack {
-                    ForEach(markers) { marker in
-                        Tile(marker: marker, selection: $selection)
-                            .modifier(HistoryView.ContextMenuModifier(marker: marker))
-                            .padding(.vertical, 5)
-                            .animation(.default, value: markers.contains(marker))
-                            .id(marker.id)
-                            .transition(HistoryView.transition)
+            Group {
+                if let excerpt {
+                    ContentFound(excerpt)
+                        .onTapGesture {
+                            model.selection = (marker.sourceId, excerpt)
+                        }
+                } else {
+                    if loaded {
+                        EmptyView()
+                    } else {
+                        ProgressView()
                     }
                 }
-                .padding()
             }
-            .animation(.default, value: unfilteredMarkers)
-            .animation(.default, value: markers)
-            .navigationTitle("History")
-            .modifier(InteractableContainer(selection: $selection))
-        }
-
-        private func getFiltered() -> Results<ChapterMarker> {
-            return unfilteredMarkers.where { value in
-                let timeAgo = Calendar.current.date(
-                    byAdding: .month,
-                    value: -3,
-                    to: Date()
-                )! // Three Months Back
-                return value.chapter != nil &&
-                    value.chapter.sourceId != STTHelpers.LOCAL_CONTENT_ID &&
-                    value.chapter.sourceId != STTHelpers.OPDS_CONTENT_ID &&
-                    value.dateRead != nil &&
-                    value.dateRead >= timeAgo
-            }
-            .sorted(by: \.dateRead, ascending: false)
-            .distinct(by: ["chapter.sourceId", "chapter.contentId"])
-        }
-    }
-}
-
-extension HistoryView.ExternalView {
-    struct Tile: View {
-        var marker: ChapterMarker
-        var size = 140.0
-        @Binding var selection: HighlightIndentier?
-
-        var body: some View {
-            if let entry = entry {
-                ContentFound(entry)
-                    .modifier(HistoryView.StyleModifier())
-                    .onTapGesture {
-                        let chapter = marker.chapter!
-                        selection = (chapter.sourceId, .init(contentId: chapter.contentId, cover: entry.cover, title: entry.title))
-                    }
+            .task {
+                if excerpt != nil { return }
+                let data = DataManager.shared.getStoredContent(marker.sourceId, marker.contentId)
+                excerpt = data?.toHighlight()
+                loaded = true
             }
         }
-
-        // Data
-        var entry: StoredContent? {
-            return DataManager.shared.getStoredContent(chapter.sourceId, chapter.contentId)
-        }
-
-        var chapter: StoredChapter {
-            marker.chapter!
-        }
-
         var identifier: ContentIdentifier {
-            ContentIdentifier(contentId: chapter.contentId, sourceId: chapter.sourceId)
+            ContentIdentifier(contentId: marker.contentId, sourceId: marker.sourceId)
         }
 
         // Views
@@ -92,7 +52,7 @@ extension HistoryView.ExternalView {
         }
 
         @ViewBuilder
-        func ContentFound(_ entry: StoredContent) -> some View {
+        func ContentFound(_ entry: DSKCommon.Highlight) -> some View {
             HStack {
                 ImageView(imageUrl: entry.cover)
 
@@ -102,7 +62,7 @@ extension HistoryView.ExternalView {
                         .fontWeight(.semibold)
                         .lineLimit(3)
 
-                    Text(chapter.displayName)
+                    Text(marker.chapterName)
                         .font(.footnote)
                         .fontWeight(.medium)
                         .foregroundColor(.gray)
@@ -124,28 +84,28 @@ extension HistoryView.ExternalView {
 extension HistoryView {
     static var transition = AnyTransition.asymmetric(insertion: .slide, removal: .scale)
 
-    struct ContextMenuModifier: ViewModifier {
-        var marker: ChapterMarker
+    struct DeleteModifier: ViewModifier {
+        var marker: HistoryObject
         func body(content: Content) -> some View {
             content
-                .contextMenu {
+                .swipeActions(allowsFullSwipe: true, content: {
                     Button(role: .destructive) {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { // Wait for Context Menu Animation to finish
-                            handleRemoveMarkers(marker)
-                        }
+                        handleRemoveMarkers(marker)
                     } label: {
                         Label("Remove", systemImage: "eye.slash")
                     }
-                }
+                    .tint(.red)
+                })
         }
 
-        private func handleRemoveMarkers(_ marker: ChapterMarker) {
+        private func handleRemoveMarkers(_ marker: HistoryObject) {
             let realm = try! Realm()
+            
             let targets = realm.objects(ChapterMarker.self).where {
-                $0.chapter.contentId == marker.chapter!.contentId &&
-                    $0.chapter.sourceId == marker.chapter!.sourceId
+                $0.chapter.contentId == marker.contentId &&
+                    $0.chapter.sourceId == marker.sourceId
             }
-            try! realm.safeWrite {
+            realm.writeAsync {
                 realm.delete(targets)
             }
         }

@@ -34,6 +34,26 @@ final class ChapterMarker: Object, ObjectKeyIdentifiable {
     }
 
     @Persisted var lastPageOffset: Double?
+    
+    func toHistoryObject() -> HistoryObject {
+        .init(id: _id, chapterName: chapter?.displayName ?? "", contentId: chapter?.contentId ?? "", sourceId: chapter?.sourceId ?? "", chapterId: chapter?.chapterId ?? "", progress: progress, completed: completed, dateRead: dateRead)
+    }
+    
+    func toOPDSHistoryObject() -> HistoryObject {
+        .init(id: _id, chapterName: chapter?.title ?? "", contentId: chapter?.contentId ?? "", sourceId: STTHelpers.OPDS_CONTENT_ID, chapterId: chapter?.chapterId ?? "", progress: progress, completed: completed, dateRead: dateRead, thumbnail: chapter?.thumbnail ?? "")
+    }
+}
+
+struct HistoryObject: Hashable, Identifiable {
+    var id: String
+    var chapterName: String
+    var contentId: String
+    var sourceId: String
+    var chapterId: String
+    var progress: Double
+    var completed: Bool
+    var dateRead: Date?
+    var thumbnail: String?
 }
 
 extension DataManager {

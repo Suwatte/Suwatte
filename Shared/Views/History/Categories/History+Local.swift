@@ -10,68 +10,17 @@ import RealmSwift
 import SwiftUI
 
 extension HistoryView {
-    struct LocalView: View {
-        @ObservedResults(ChapterMarker.self) var unfilteredMarkers
-        var body: some View {
-            let markers = getFiltered()
-            ScrollView {
-                LazyVStack {
-                    ForEach(markers) { marker in
-                        Tile(marker: marker)
-                            .modifier(HistoryView.ContextMenuModifier(marker: marker))
-                            .padding(.vertical, 5)
-                            .animation(.default, value: markers.contains(marker))
-                            .id(marker.id)
-                            .transition(HistoryView.transition)
-                    }
-                }
-                .padding()
-            }
-            .animation(.default, value: markers)
-            .navigationTitle("History")
-        }
-
-        private func getFiltered() -> Results<ChapterMarker> {
-            return unfilteredMarkers.where { value in
-                let timeAgo = Calendar.current.date(
-                    byAdding: .month,
-                    value: -3,
-                    to: Date()
-                )! // Three Months Back
-                return value.chapter != nil &&
-                    value.chapter.sourceId == STTHelpers.LOCAL_CONTENT_ID &&
-                    value.dateRead != nil &&
-                    value.dateRead >= timeAgo
-            }
-            .sorted(by: \.dateRead, ascending: false)
-            .distinct(by: ["chapter.sourceId", "chapter.contentId"])
-        }
-    }
-}
-
-extension HistoryView.LocalView {
-    struct Tile: View {
-        var marker: ChapterMarker
+    struct LocalContentTile: View {
+        var marker: HistoryObject
         var size = 140.0
-        @State var selection: LocalContentManager.Book?
-
+        @EnvironmentObject var model: HistoryView.ViewModel
         var body: some View {
-            if let id = Int64(chapter.contentId), let book = LocalContentManager.shared.getBook(withId: id) {
+            if let id = Int64(marker.contentId), let book = LocalContentManager.shared.getBook(withId: id) {
                 ContentFound(book)
-                    .modifier(HistoryView.StyleModifier())
                     .onTapGesture {
-                        selection = book
-                    }
-                    .fullScreenCover(item: $selection) { entry in
-                        let chapter = LocalContentManager.shared.generateStored(for: entry)
-                        ReaderGateWay(readingMode: entry.type == .comic ? .PAGED_COMIC : .NOVEL, chapterList: [chapter], openTo: chapter, title: entry.title)
+                        model.selectedBook = book
                     }
             }
-        }
-
-        // Data
-        var chapter: StoredChapter {
-            marker.chapter!
         }
 
         // Views
@@ -95,7 +44,7 @@ extension HistoryView.LocalView {
                         .font(.headline)
                         .fontWeight(.semibold)
                         .lineLimit(3)
-                    Text(chapter.displayName)
+                    Text("On My \(UIDevice.current.model)")
                         .font(.footnote)
                         .fontWeight(.medium)
                         .foregroundColor(.gray)

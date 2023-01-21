@@ -106,8 +106,8 @@ class STTHelpers {
             do {
                 let obj = StoredChapterData()
                 obj.chapter = chapter.toStored()
-                let baseLink = chapter.contentId
-                let pageCount = chapter.chapterId.split(separator: "|").first
+                let baseLink = chapter.chapterId
+                let pageCount = chapter.metadata["opds_page_count"]
 
                 guard let pageCount = pageCount, let count = Int(pageCount) else {
                     throw OPDSParserError.documentNotValid

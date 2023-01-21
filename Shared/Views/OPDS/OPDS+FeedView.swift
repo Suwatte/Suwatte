@@ -11,6 +11,7 @@ import R2Shared
 import ReadiumOPDS
 import SwiftUI
 import SwiftUIBackports
+import RealmSwift
 
 extension OPDSView {
     struct LoadableFeedView: View {
@@ -348,12 +349,16 @@ extension Publication: Identifiable {
         }
 
         let chapter = StoredChapter()
-
         chapter.sourceId = STTHelpers.OPDS_CONTENT_ID
-        chapter.contentId = link.href
-        chapter.chapterId = "\(count)|\(lastRead)"
-        chapter._id = UUID().uuidString
+        chapter.contentId = metadata.identifier ?? link.href
+        chapter.chapterId = link.href
+        chapter._id = ContentIdentifier(contentId: chapter.contentId, sourceId: chapter.sourceId).id
         chapter.title = metadata.title
+        chapter.thumbnail = thumbnailURL
+        let d = Map<String, String>()
+        d.setValue(count, forKey: "opds_page_count")
+        d.setValue(lastRead, forKey: "opds_last_read")
+        chapter.metadata = d
         return chapter
     }
 }

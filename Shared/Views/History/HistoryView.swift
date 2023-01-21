@@ -8,49 +8,49 @@
 import RealmSwift
 import SwiftUI
 
-extension STTKeys {
-    static var HistoryType = "APP.history_type"
-}
-
 struct HistoryView: View {
-    @ObservedResults(ChapterMarker.self) var markers
-    @AppStorage(STTKeys.HistoryType) var historyType = STTContentType.external
-
+    @StateObject var model = ViewModel()
+    
     var body: some View {
-        Gateway
-            .animation(.default, value: historyType)
-            .navigationTitle("History")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        Picker(selection: $historyType) {
-                            ForEach(STTContentType.allCases) { value in
-                                Text(value.label)
-                                    .tag(value)
-                            }
-                        } label: {
-                            Label("Content Type", systemImage: "book")
-                        }
-                        .pickerStyle(.menu)
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
+        List {
+            ForEach(model.markers) { marker in
+                CellGateWay(marker: marker)
+                    .listRowSeparator(.hidden)
+            }
+            .animation(.default, value: model.markers)
+        }
+        .listStyle(.plain)
+        .navigationTitle("History")
+        .modifier(InteractableContainer(selection: $model.selection))
+        .fullScreenCover(item: $model.selectedBook, onDismiss: model.observe) { entry in
+            let chapter = LocalContentManager.shared.generateStored(for: entry)
+            ReaderGateWay(readingMode: entry.type == .comic ? .PAGED_COMIC : .NOVEL, chapterList: [chapter], openTo: chapter, title: entry.title)
+                .onAppear {
+                    model.removeObserver()
+                }
+        }
+        .fullScreenCover(item: $model.selectedOPDSContent, onDismiss: model.observe) { entry in
+            let chapter = DataManager.shared.getLatestStoredChapter(entry.sourceId, entry.contentId)
+            Group {
+                if let chapter {
+                    ReaderGateWay(readingMode:  .PAGED_COMIC, chapterList: [chapter], openTo: chapter, title: entry.chapterName)
+                } else {
+                    NavigationView {
+                        Text("This Content Could not be found")
+                            .closeButton()
                     }
                 }
             }
-    }
-
-    @ViewBuilder
-    var Gateway: some View {
-        switch historyType {
-        case .external:
-            ExternalView(unfilteredMarkers: $markers)
-                    .transition(.opacity)
-        case .local:
-            LocalView(unfilteredMarkers: $markers)
-                    .transition(.opacity)
-        case .opds:
-            OPDSView()
-                    .transition(.opacity)
+            .onAppear {
+                model.removeObserver()
+            }
+        }
+        .environmentObject(model)
+        .onDisappear(perform: model.removeObserver)
+        .task {
+            if model.token == nil {
+                model.observe()
+            }
         }
     }
 }
@@ -83,21 +83,23 @@ extension HistoryView {
     }
 }
 
-enum STTContentType: Int, CaseIterable, Identifiable {
-    case external, local, opds
+extension HistoryView {
+    struct CellGateWay: View {
+        var marker: HistoryObject
+        var body: some View {
+            Group {
+                switch marker.sourceId {
+                    case STTHelpers.OPDS_CONTENT_ID:
+                        OPDSContentTile(marker: marker)
+                    case STTHelpers.LOCAL_CONTENT_ID:
+                        LocalContentTile(marker: marker)
+                    default:
+                        ExternalContentTile(marker: marker)
+                }
+            }
+            .modifier(StyleModifier())
+            .modifier(DeleteModifier(marker: marker))
 
-    var id: Int {
-        hashValue
-    }
-
-    var label: String {
-        switch self {
-        case .external:
-            return "Content Source"
-        case .local:
-            return "Local"
-        case .opds:
-            return "OPDS Stream"
         }
     }
 }

@@ -295,6 +295,8 @@
 		DFB47F002881013A0040A1BD /* Data+OPDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB47EFF2881013A0040A1BD /* Data+OPDS.swift */; };
 		DFB47F02288107D00040A1BD /* OPDS+FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB47F01288107CF0040A1BD /* OPDS+FeedView.swift */; };
 		DFB7FAFE297B162D00599097 /* ProfileView+AnilistRecommendations.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB7FAFD297B162D00599097 /* ProfileView+AnilistRecommendations.swift */; };
+		DFB7FB00297B871100599097 /* HistoryView+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB7FAFF297B871100599097 /* HistoryView+ViewModel.swift */; };
+		DFB7FB03297B965D00599097 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = DFB7FB02297B965D00599097 /* OrderedCollections */; };
 		DFBBB7492974A894001DAAE9 /* DoublePaged+ImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBBB7482974A894001DAAE9 /* DoublePaged+ImageCell.swift */; };
 		DFBBB74B2974A8CF001DAAE9 /* DoublePaged+Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBBB74A2974A8CF001DAAE9 /* DoublePaged+Controller.swift */; };
 		DFBBB74D2974A8E5001DAAE9 /* DoublePaged+ContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBBB74C2974A8E5001DAAE9 /* DoublePaged+ContextMenu.swift */; };
@@ -600,6 +602,7 @@
 		DFB47EFF2881013A0040A1BD /* Data+OPDS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+OPDS.swift"; sourceTree = "<group>"; };
 		DFB47F01288107CF0040A1BD /* OPDS+FeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OPDS+FeedView.swift"; sourceTree = "<group>"; };
 		DFB7FAFD297B162D00599097 /* ProfileView+AnilistRecommendations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProfileView+AnilistRecommendations.swift"; sourceTree = "<group>"; };
+		DFB7FAFF297B871100599097 /* HistoryView+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HistoryView+ViewModel.swift"; sourceTree = "<group>"; };
 		DFBBB7482974A894001DAAE9 /* DoublePaged+ImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DoublePaged+ImageCell.swift"; sourceTree = "<group>"; };
 		DFBBB74A2974A8CF001DAAE9 /* DoublePaged+Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DoublePaged+Controller.swift"; sourceTree = "<group>"; };
 		DFBBB74C2974A8E5001DAAE9 /* DoublePaged+ContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DoublePaged+ContextMenu.swift"; sourceTree = "<group>"; };
@@ -646,6 +649,7 @@
 				DF2DA77327CF11C50046FE20 /* Alamofire in Frameworks */,
 				DF9C9EF0297AE3A9004A3BC5 /* FirebaseAnalytics in Frameworks */,
 				DFAEE12728B839E500B11484 /* NukeExtensions in Frameworks */,
+				DFB7FB03297B965D00599097 /* OrderedCollections in Frameworks */,
 				DFB47EF12880C0B30040A1BD /* R2Shared in Frameworks */,
 				DFB47EF32880C0B30040A1BD /* ReadiumOPDS in Frameworks */,
 				DF36E6D0285D08D700FB8B67 /* BetterSafariView in Frameworks */,
@@ -1652,6 +1656,7 @@
 			children = (
 				DF6A896F288B71C70045529D /* Categories */,
 				DF8D0AA82800EE47003E4C3E /* HistoryView.swift */,
+				DFB7FAFF297B871100599097 /* HistoryView+ViewModel.swift */,
 			);
 			path = History;
 			sourceTree = "<group>";
@@ -1982,6 +1987,7 @@
 				DF15F5972967D4E80085DB1F /* SwiftUIBackports */,
 				DF15F59A2967DF790085DB1F /* SkeletonView */,
 				DF9C9EEF297AE3A9004A3BC5 /* FirebaseAnalytics */,
+				DFB7FB02297B965D00599097 /* OrderedCollections */,
 			);
 			productName = "Suwatte (iOS)";
 			productReference = DFCE6EAF280108EA002E220C /* Suwatte.app */;
@@ -2030,6 +2036,7 @@
 				DF15F5962967D4E70085DB1F /* XCRemoteSwiftPackageReference "SwiftUIBackports" */,
 				DF15F5992967DF780085DB1F /* XCRemoteSwiftPackageReference "SkeletonView" */,
 				DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections" */,
 			);
 			productRefGroup = DF2DA6FF27CD82430046FE20;
 			projectDirPath = "";
@@ -2393,6 +2400,7 @@
 				DF8D0B962800EE48003E4C3E /* ProfileView+Covers.swift in Sources */,
 				DF8D0B6B2800EE48003E4C3E /* HorizontalSlider.swift in Sources */,
 				DF9BD6462891C16D006628D0 /* DSK+Tag.swift in Sources */,
+				DFB7FB00297B871100599097 /* HistoryView+ViewModel.swift in Sources */,
 				DFAC77A02817AD5200AF6394 /* AL+MediaFunctions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2765,6 +2773,14 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		DFF1043C28A9963C00E2C3A4 /* XCRemoteSwiftPackageReference "AnyCodable" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Flight-School/AnyCodable";
@@ -2875,6 +2891,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DFB47EEF2880C0B30040A1BD /* XCRemoteSwiftPackageReference "swift-toolkit" */;
 			productName = ReadiumOPDS;
+		};
+		DFB7FB02297B965D00599097 /* OrderedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = OrderedCollections;
 		};
 		DFF1043D28A9963D00E2C3A4 /* AnyCodable */ = {
 			isa = XCSwiftPackageProductDependency;

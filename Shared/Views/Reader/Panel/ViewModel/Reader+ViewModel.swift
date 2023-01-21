@@ -53,7 +53,7 @@ extension ReaderView {
             let sourceIndexAcc = chapterList.map { $0.index }.reduce(0, +)
             let sortedChapters = sourceIndexAcc > 0 ? chapterList.sorted(by: { $0.index > $1.index }) : chapterList.sorted(by: { $0.number > $1.number })
             self.chapterList = sortedChapters.map { $0.toThreadSafe() }
-            if chapter.chapterType == .LOCAL {
+            if chapter.chapterType == .LOCAL || chapter.chapterType == .OPDS {
                 DataManager.shared.storeChapters([chapter])
             }
             contentTitle = title
@@ -340,7 +340,7 @@ extension ReaderView.ViewModel {
 
     private func onPageChanged(page: ReaderView.Page) {
         activeChapter.requestedPageIndex = page.index
-        if incognitoMode || activeChapter.chapter.chapterType == .OPDS { return } // Incoginito or OPDS which does not track progress
+        if incognitoMode { return } // Incoginito
 
         // Save Progress
         if let chapter = chapterCache[page.chapterId], canMark(sourceId: chapter.chapter.sourceId) {
@@ -354,7 +354,7 @@ extension ReaderView.ViewModel {
                 menuControl.menu = true
             }
         }
-        if incognitoMode || activeChapter.chapter.chapterType == .OPDS { return }
+        if incognitoMode { return }
 
         let chapter = transition.from
         if transition.to == nil {
@@ -384,7 +384,7 @@ extension ReaderView.ViewModel {
             }
         }
 
-        if incognitoMode || activeChapter.chapter.chapterType == .OPDS { return }
+        if incognitoMode { return }
 
         // Moving to Previous Chapter, Do Not Mark as Completed
         if lastChapter.chapter.number > chapter.chapter.number {
