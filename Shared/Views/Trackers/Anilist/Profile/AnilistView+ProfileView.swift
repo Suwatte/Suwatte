@@ -12,7 +12,13 @@ import SwiftUI
 
 extension AnilistView {
     struct ProfileView: View {
-        var entry: Anilist.SearchResult
+        
+        struct BasicEntry {
+            var id: Int
+            var title: String
+            var webUrl: URL?
+        }
+        var entry: BasicEntry
 
         var onStatusUpdated: (_ id: Int, _ status: Anilist.MediaListStatus) -> Void
         @State var presentGlobalSearch = false
@@ -24,7 +30,7 @@ extension AnilistView {
                 DataView(data: data, onStatusUpdated: onStatusUpdated, scoreFormat: scoreFormat)
                     .transition(.opacity)
             }
-            .navigationTitle(entry.title.userPreferred)
+            .navigationTitle(entry.title)
             .navigationBarTitleDisplayMode(.inline)
             .toast()
             .onChange(of: anilistModel.notifier) { _ in
@@ -50,7 +56,7 @@ extension AnilistView {
                 }
             }
             .hiddenNav(presenting: $presentGlobalSearch) {
-                SearchView(initialQuery: entry.title.userPreferred)
+                SearchView(initialQuery: entry.title)
             }
         }
 

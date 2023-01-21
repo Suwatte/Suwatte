@@ -238,7 +238,7 @@ extension AnilistView.DirectoryView {
                 isPresenting.toggle()
             }
             .background {
-                NavigationLink(destination: AnilistView.ProfileView(entry: data, onStatusUpdated: { _, status in
+                NavigationLink(destination: AnilistView.ProfileView(entry: .init(id: data.id, title: data.title.userPreferred, webUrl: data.webUrl), onStatusUpdated: { _, status in
                     listStatus = status
                 }), isActive: $isPresenting, label: { EmptyView() })
             }
