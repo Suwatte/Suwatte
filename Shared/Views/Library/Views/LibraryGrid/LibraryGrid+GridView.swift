@@ -53,11 +53,12 @@ extension LibraryView.LibraryGrid {
                     EmptyView()
                 })
             }
-            .layout { _ in
-                DefaultGridLayout()
-            }
+            .layout(createCustomLayout: {
+                DynamicGridLayout()
+            }, configureCustomLayout: { layout in
+                layout.invalidateLayout()
+            })
             .alwaysBounceVertical()
-            .shouldRecreateLayoutOnStateChange(true)
             .animateOnDataRefresh(true)
             .ignoresSafeArea(.keyboard, edges: .all)
             .animation(.default, value: model.isSelecting)
@@ -142,8 +143,9 @@ struct NeutralButtonStyle: ButtonStyle {
     }
 }
 
-func DefaultGridLayout(header: NSCollectionLayoutDimension? = nil , footer: NSCollectionLayoutDimension? = nil, _ titleSize: CGFloat? = nil) -> ASCollectionLayoutSection {
-    .init { environment in
+func DynamicGridLayout(header: NSCollectionLayoutDimension? = nil , footer: NSCollectionLayoutDimension? = nil, _ titleSize: CGFloat? = nil) -> UICollectionViewCompositionalLayout {
+    UICollectionViewCompositionalLayout { _, environment in
+        
         let viewingPotrait = environment.container.contentSize.width < environment.container.contentSize.height
         let itemsPerRow = UserDefaults.standard.integer(forKey: viewingPotrait ? STTKeys.GridItemsPerRow_P : STTKeys.GridItemsPerRow_LS)
         let style = TileStyle(rawValue: UserDefaults.standard.integer(forKey: STTKeys.TileStyle)) ?? .COMPACT
@@ -191,55 +193,5 @@ func DefaultGridLayout(header: NSCollectionLayoutDimension? = nil , footer: NSCo
         section.boundarySupplementaryItems = items
         return section
     }
-}
-class SuwatteDefaultGridLayout: UICollectionViewFlowLayout {
-    var itemsPerRow: Int {
-        didSet {
-            invalidateLayout()
-        }
-    }
 
-    var itemStyle: TileStyle {
-        didSet {
-            invalidateLayout()
-        }
-    }
-
-    var titleSize = CGFloat(50)
-    init(itemsPerRow: Int, style: TileStyle) {
-        self.itemsPerRow = itemsPerRow
-        itemStyle = style
-        super.init()
-
-        minimumInteritemSpacing = 6
-        minimumLineSpacing = 6
-        sectionInset = .init(top: 15, left: 20, bottom: 10, right: 20)
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func prepare() {
-        super.prepare()
-        guard let collectionView = collectionView else { return }
-
-        collectionView.allowsMultipleSelectionDuringEditing = true
-        let itemSpacing = minimumInteritemSpacing * CGFloat(itemsPerRow - 1)
-        let sectionInsets = sectionInset.left + sectionInset.right
-        let insets = collectionView.safeAreaInsets
-        let safeAreaInsets = insets.right + insets.left
-        let total = itemSpacing + sectionInsets + safeAreaInsets
-        let width = collectionView.bounds.width - total
-
-        let itemWidth = (width / CGFloat(itemsPerRow)).rounded(.down)
-
-        var itemHeight = itemWidth * 1.5
-        if itemStyle == .SEPARATED, itemWidth >= 100 {
-            itemHeight += titleSize
-        }
-
-        itemSize = CGSize(width: itemWidth, height: itemHeight)
-    }
 }

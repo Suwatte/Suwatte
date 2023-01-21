@@ -73,7 +73,13 @@ extension Controller {
         }
         let requestedIndex = rChapter.requestedPageIndex
         rChapter.requestedPageOffset = nil
-        let page = model.sections[0].get(index: requestedIndex)
+        let pageIndex = model
+            .sections
+            .first?
+            .firstIndex(where: { ($0 as? ReaderPage)?.page.index == requestedIndex }) ?? rChapter.requestedPageIndex
+        let page = model
+            .sections[0]
+            .get(index: pageIndex)
         let open = getStack(for: 0)
             .firstIndex(where: { $0.primary === page || $0.secondary === page }) ?? 0
         collectionView.scrollToItem(at: .init(item: open, section: 0), at: .centeredHorizontally, animated: false)

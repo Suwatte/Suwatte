@@ -18,7 +18,7 @@ struct SuwatteApp: App {
                 .onOpenURL(perform: handleURL(_:))
                 .sheet(item: $navModel.identifier) { ids in
                     NavigationView {
-                        ProfileView(entry: .init(contentId: ids.contentId, cover: STTHost.coverNotFound.absoluteString, title: "Loading"), sourceId: ids.sourceId)
+                        ProfileView(entry: .init(contentId: ids.contentId, cover: STTHost.coverNotFound.absoluteString, title: "..."), sourceId: ids.sourceId)
                             .closeButton()
                     }
                 }

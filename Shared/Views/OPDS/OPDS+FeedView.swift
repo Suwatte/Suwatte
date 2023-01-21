@@ -11,6 +11,7 @@ import R2Shared
 import ReadiumOPDS
 import SwiftUI
 import SwiftUIBackports
+import RealmSwift
 
 extension OPDSView {
     struct LoadableFeedView: View {
@@ -139,11 +140,12 @@ extension Target {
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
         var body: some View {
             ASCollectionView(section: AS_SECTION)
-                .layout { _ in
-                    DefaultGridLayout(75)
-                }
+                .layout(createCustomLayout: {
+                    DynamicGridLayout(75)
+                }, configureCustomLayout: { layout in
+                    layout.invalidateLayout()
+                })
                 .alwaysBounceVertical()
-                .shouldRecreateLayoutOnStateChange(true)
                 .animateOnDataRefresh(true)
                 .fullScreenCover(item: $chapter) { chapter in
                     ReaderGateWay(readingMode: .PAGED_COMIC, chapterList: [chapter], openTo: chapter, title: chapter.title)
@@ -243,7 +245,6 @@ extension Target {
                                 Image(systemName: "dot.radiowaves.up.forward")
                                     .foregroundColor(color)
                                     .font(.footnote.weight(.bold))
-                                    .shimmering()
                             }
 
                             if let pages = publication.streamLink?.properties["count"] as? String ?? publication.metadata.numberOfPages?.description {
@@ -348,12 +349,16 @@ extension Publication: Identifiable {
         }
 
         let chapter = StoredChapter()
-
         chapter.sourceId = STTHelpers.OPDS_CONTENT_ID
-        chapter.contentId = link.href
-        chapter.chapterId = "\(count)|\(lastRead)"
-        chapter._id = UUID().uuidString
+        chapter.contentId = metadata.identifier ?? link.href
+        chapter.chapterId = link.href
+        chapter._id = ContentIdentifier(contentId: chapter.contentId, sourceId: chapter.sourceId).id
         chapter.title = metadata.title
+        chapter.thumbnail = thumbnailURL
+        let d = Map<String, String>()
+        d.setValue(count, forKey: "opds_page_count")
+        d.setValue(lastRead, forKey: "opds_last_read")
+        chapter.metadata = d
         return chapter
     }
 }

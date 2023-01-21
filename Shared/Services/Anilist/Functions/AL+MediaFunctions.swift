@@ -165,7 +165,7 @@ extension Anilist {
                     }
                   }
                 }
-                recommendations(perPage: 5, sort: [RATING_DESC, ID]) {
+                recommendations(perPage: 25, sort: [RATING_DESC, ID]) {
                   pageInfo {
                     total
                   }
@@ -283,7 +283,36 @@ extension Anilist {
           }
         }
         """
+        
+        static var MEDIA_RECOMMENDATION_QUERY = """
+            query Profile($id: Int) {
+              Media(id: $id) {
+                recommendations(perPage: 25, sort: [RATING_DESC, ID]) {
+                  pageInfo {
+                    total
+                  }
+                  nodes {
+                    mediaRecommendation {
+                      id
+                      title {
+                        userPreferred
+                      }
+                      format
+                      type
+                      status(version: 2)
+                      bannerImage
+                      coverImage {
+                        large
+                        extraLarge
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            """
     }
+
 }
 
 extension Anilist {
@@ -320,5 +349,11 @@ extension Anilist {
 
         return try await updateMediaListEntry(mediaId: id,
                                               data: ["status": MediaListStatus.CURRENT.rawValue])
+    }
+    
+    func getRecommendations(for id: Int) async throws -> Anilist.RecommendationResponse.PathObject {
+        return try await request(query: Queries.MEDIA_RECOMMENDATION_QUERY,
+                                 variables: ["id": id],
+                                 to: Anilist.RecommendationResponse.self).data.Media.recommendations
     }
 }

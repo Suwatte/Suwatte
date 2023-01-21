@@ -69,7 +69,7 @@ extension DoublePagedViewer.Controller {
     func onUserDidScroll(to offset: CGFloat) {
         // Update Offset
         if !model.slider.isScrubbing {
-//            updateSliderOffset()
+            updateSliderOffset()
         }
     }
 }

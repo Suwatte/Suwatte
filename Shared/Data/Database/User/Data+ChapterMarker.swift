@@ -34,6 +34,26 @@ final class ChapterMarker: Object, ObjectKeyIdentifiable {
     }
 
     @Persisted var lastPageOffset: Double?
+    
+    func toHistoryObject() -> HistoryObject {
+        .init(id: _id, chapterName: chapter?.displayName ?? "", contentId: chapter?.contentId ?? "", sourceId: chapter?.sourceId ?? "", chapterId: chapter?.chapterId ?? "", progress: progress, completed: completed, dateRead: dateRead)
+    }
+    
+    func toOPDSHistoryObject() -> HistoryObject {
+        .init(id: _id, chapterName: chapter?.title ?? "", contentId: chapter?.contentId ?? "", sourceId: STTHelpers.OPDS_CONTENT_ID, chapterId: chapter?.chapterId ?? "", progress: progress, completed: completed, dateRead: dateRead, thumbnail: chapter?.thumbnail ?? "")
+    }
+}
+
+struct HistoryObject: Hashable, Identifiable {
+    var id: String
+    var chapterName: String
+    var contentId: String
+    var sourceId: String
+    var chapterId: String
+    var progress: Double
+    var completed: Bool
+    var dateRead: Date?
+    var thumbnail: String?
 }
 
 extension DataManager {
@@ -103,25 +123,33 @@ extension DataManager {
     }
 
     func setProgress(from chapter: ReaderView.ReaderChapter) {
-        let realm = try! Realm()
-
-        let last = chapter.requestedPageIndex + 1
-        var lastOffset: Double?
-        if let offset = chapter.requestedPageOffset {
-            lastOffset = Double(offset)
+        DispatchQueue(label: "background").async {
+            autoreleasepool {
+                let realm = try! Realm()
+                
+                let last = chapter.requestedPageIndex + 1
+                var lastOffset: Double?
+                if let offset = chapter.requestedPageOffset {
+                    lastOffset = Double(offset)
+                }
+                let total = chapter.pages?.count ?? 0
+                let marker = ChapterMarker()
+                marker.chapter = chapter.chapter.toStored()
+                marker.dateRead = Date()
+                marker.lastPageRead = last
+                marker.totalPageCount = total
+                if last == total && chapter.requestedPageOffset == nil {
+                    marker.completed = true
+                } else {
+                    marker.completed = false
+                }
+                marker.lastPageOffset = lastOffset
+                try! realm.safeWrite {
+                    realm.add(marker, update: .all)
+                }
+            }
         }
-        let total = chapter.pages?.count ?? 0
-        let marker = ChapterMarker()
-        marker.chapter = chapter.chapter.toStored()
-        marker.dateRead = Date()
-        marker.lastPageRead = last
-        marker.totalPageCount = total
-        marker.completed = false
-        marker.lastPageOffset = lastOffset
 
-        try! realm.safeWrite {
-            realm.add(marker, update: .all)
-        }
     }
     
     func setNovelProgress(from chapter: ReaderView.ReaderChapter, pageCount: Int) {
@@ -145,25 +173,31 @@ extension DataManager {
     }
 
     func setProgress(chapter: StoredChapter, completed: Bool = true) {
-        let realm = try! Realm()
+        DispatchQueue(label: "background").async {
+            autoreleasepool {
+                let realm = try! Realm()
+                
+                var target: ChapterMarker?
+                target = realm.objects(ChapterMarker.self)
+                    .where({ $0._id == chapter._id })
+                    .first
 
-        var target: ChapterMarker?
-        target = realm.objects(ChapterMarker.self).first(where: { $0._id == chapter._id })
-
-        if target == nil {
-            target = ChapterMarker()
-            target?.chapter = chapter
-        }
-
-        if let target = target {
-            try! realm.safeWrite {
-                target.completed = completed
-                if completed {
-                    target.totalPageCount = 0
-                    target.lastPageRead = 0
-                    target.lastPageOffset = nil
+                if target == nil {
+                    target = ChapterMarker()
+                    target?.chapter = chapter
                 }
-                realm.add(target, update: .modified)
+
+                if let target = target {
+                    try! realm.safeWrite {
+                        target.completed = completed
+                        if completed {
+                            target.totalPageCount = 0
+                            target.lastPageRead = 0
+                            target.lastPageOffset = nil
+                        }
+                        realm.add(target, update: .modified)
+                    }
+                }
             }
         }
     }

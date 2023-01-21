@@ -101,7 +101,7 @@ extension AnilistView {
         @State var markedForRefresh: Bool = false
         var body: some View {
             LoadableView(load, loadable) { data in
-                NavigationLink(destination: AnilistView.ProfileView(entry: data.toSearchResult(), onStatusUpdated: { _, _ in })) {
+                NavigationLink(destination: AnilistView.ProfileView(entry: .init(id: data.id, title: data.title.userPreferred, webUrl: data.webUrl), onStatusUpdated: { _, _ in })) {
                     TrackerExcerptTile(data: data)
                 }
                 .onDisappear {

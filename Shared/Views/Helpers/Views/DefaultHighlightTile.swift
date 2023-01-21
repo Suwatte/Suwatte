@@ -38,7 +38,7 @@ struct DefaultTile: View {
                 .opacity(libraryIsSelecting ? 0.8 : 1)
 
             if reader.size.width >= 100 {
-                LinearGradient(gradient: Gradient(colors: [.clear, Color(red: 15 / 255, green: 15 / 255, blue: 15 / 255)]), startPoint: .center, endPoint: .bottom)
+                LinearGradient(gradient: Gradient(colors: [.clear, Color(red: 15 / 255, green: 15 / 255, blue: 15 / 255).opacity(0.80)]), startPoint: .center, endPoint: .bottom)
                 VStack(alignment: .leading) {
                     Spacer()
                     Text(entry.title)
@@ -48,7 +48,7 @@ struct DefaultTile: View {
                         .foregroundColor(Color.white)
                         .shadow(radius: 2)
                         .multilineTextAlignment(.leading)
-                        .padding(.all, 5)
+                        .padding(.all, 7)
                         .frame(width: reader.size.width, alignment: .leading)
                 }
             }

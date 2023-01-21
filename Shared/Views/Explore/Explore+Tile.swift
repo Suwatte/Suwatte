@@ -91,17 +91,18 @@ extension ExploreView.HighlightTile {
                 STTImageView(url: URL(string: entry.cover), identifier: .init(contentId: entry.id, sourceId: sourceId))
                     .cornerRadius(10)
 
-                LinearGradient(gradient: Gradient(colors: [.clear, Color(red: 15 / 255, green: 15 / 255, blue: 15 / 255)]), startPoint: .center, endPoint: .bottom)
+                LinearGradient(gradient: Gradient(colors: [.clear, Color(red: 15 / 255, green: 15 / 255, blue: 15 / 255).opacity(0.8)]), startPoint: .center, endPoint: .bottom)
                 VStack(alignment: .leading) {
                     Spacer()
                     Text(entry.title)
-                        .font(.subheadline)
+                        .font(.footnote)
                         .fontWeight(.bold)
                         .lineLimit(2)
                         .foregroundColor(Color.white)
                         .shadow(radius: 2)
                         .multilineTextAlignment(.leading)
-                        .padding(.all, 5)
+                        .padding(.horizontal, 7)
+                        .padding(.bottom, 10)
                 }
                 .frame(maxWidth: reader.size.width, alignment: .leading)
             }

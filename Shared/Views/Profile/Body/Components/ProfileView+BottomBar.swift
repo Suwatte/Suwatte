@@ -145,9 +145,7 @@ extension ProfileView.Skeleton.BottomBar {
 
 extension ProfileView.Skeleton.BottomBar {
     struct ActionsListButton: View {
-        @ObservedResults(ReadLater.self) var savedForLater
         @ObservedResults(CustomThumbnail.self) var thumbnails
-        @ObservedResults(LibraryEntry.self) var library
         @ObservedResults(ContentLink.self) var contentLinks
         @State private var inputImage: UIImage?
         @State private var presentImageSheet = false
@@ -202,9 +200,7 @@ extension ProfileView.Skeleton.BottomBar {
         }
 
         var isSavedForLater: Bool {
-            savedForLater
-                .where { $0.content._id == sttId.id }
-                .count >= 1
+            model.savedForLater
         }
 
         var hasCustomThumb: Bool {
@@ -214,7 +210,9 @@ extension ProfileView.Skeleton.BottomBar {
         }
 
         var SaveForLaterButton: some View {
-            Button { DataManager.shared.toggleReadLater(sttId.sourceId, sttId.contentId) } label: {
+            Button {
+                DataManager.shared.toggleReadLater(sttId.sourceId, sttId.contentId)
+            } label: {
                 Label(isSavedForLater ? "Remove from Read Later" : "Save For Later",
                       systemImage: isSavedForLater ? "circle.slash" : "clock")
             }
@@ -222,7 +220,7 @@ extension ProfileView.Skeleton.BottomBar {
 
         @ViewBuilder
         var MigrateButton: some View {
-            if library.contains(where: { $0._id == sttId.id }) {
+            if model.inLibrary {
                 Button { model.presentMigrationView.toggle() } label: {
                     Label("Migrate", systemImage: "tray.full")
                 }

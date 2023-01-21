@@ -6,8 +6,8 @@
 	<string></string>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>com.suwatte.fetch_updates</string>
-		<string>com.suwatte.auto_backup</string>
+		<string>com.ceres.suwatte.fetch_updates</string>
+		<string>com.ceres.suwatte.auto_backup</string>
 	</array>
 	<key>CFBundleDocumentTypes</key>
 	<array>

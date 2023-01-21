@@ -38,7 +38,7 @@ final class DaisukeEngine: ObservableObject {
 
     init() {
         // Start Virtual Machine
-        let queue = DispatchQueue(label: "com.suwatte.daisuke")
+        let queue = DispatchQueue(label: "com.ceres.suwatte.daisuke")
         vm = queue.sync { JSVirtualMachine()! }
 
         // Create Directory

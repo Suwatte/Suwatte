@@ -16,6 +16,7 @@ struct SettingsView: View {
             UpdatesSection()
             PrivacySection()
             NetworkSection()
+            RunnersSection()
         }
         .navigationBarTitle("Settings")
     }

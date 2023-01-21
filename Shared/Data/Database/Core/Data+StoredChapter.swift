@@ -20,6 +20,8 @@ struct ThreadSafeChapter: Hashable {
     var language: String?
     var date: Date
     var webUrl: String?
+    var thumbnail: String?
+    var metadata: [String: String] = [:]
 
     func toStored() -> StoredChapter {
         let obj = StoredChapter()
@@ -34,13 +36,17 @@ struct ThreadSafeChapter: Hashable {
         obj.language = language
         obj.date = date
         obj.webUrl = webUrl
-
+        obj.thumbnail = thumbnail
+        
+        metadata.forEach({
+            obj.metadata.setValue($1, forKey: $0)
+        })
         return obj
     }
 
     var chapterType: ReaderView.ReaderChapter.ChapterType {
         if sourceId == STTHelpers.LOCAL_CONTENT_ID { return .LOCAL }
-        else if sourceId.contains(STTHelpers.OPDS_CONTENT_ID) { return .OPDS }
+        else if sourceId == STTHelpers.OPDS_CONTENT_ID { return .OPDS }
         else { return .EXTERNAL }
     }
 
@@ -71,6 +77,8 @@ final class StoredChapter: Object, ObjectKeyIdentifiable {
     @Persisted var date: Date
 
     @Persisted var webUrl: String?
+    @Persisted var thumbnail: String?
+    @Persisted var metadata: Map<String, String>
 
     @Persisted var providers: List<ChapterProvider>
 
@@ -102,7 +110,8 @@ final class StoredChapter: Object, ObjectKeyIdentifiable {
     }
 
     func toThreadSafe() -> ThreadSafeChapter {
-        .init(_id: _id, sourceId: sourceId, chapterId: chapterId, contentId: contentId, index: index, number: number, language: language, date: date, webUrl: webUrl)
+        let data = Dictionary(uniqueKeysWithValues: metadata.asKeyValueSequence().map({ ($0, $1) }))
+        return .init(_id: _id, sourceId: sourceId, chapterId: chapterId, contentId: contentId, index: index, number: number, volume: volume, title: title, language: language, date: date, webUrl: webUrl, thumbnail: thumbnail, metadata: data)
     }
 }
 

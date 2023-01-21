@@ -82,12 +82,12 @@ extension AnilistView {
                     PaginationView
                 }
             }
-
-            .layout { _ in
-                DefaultGridLayout(header: .absolute(30), footer: .estimated(44))
-            }
+            .layout(createCustomLayout: {
+                DynamicGridLayout(header: .absolute(30), footer: .estimated(44))
+            }, configureCustomLayout: { layout in
+                layout.invalidateLayout()
+            })
             .alwaysBounceVertical()
-            .shouldRecreateLayoutOnStateChange(true)
             .animateOnDataRefresh(true)
             .onPullToRefresh { endRefreshing in
                 Task { @MainActor in
@@ -238,7 +238,7 @@ extension AnilistView.DirectoryView {
                 isPresenting.toggle()
             }
             .background {
-                NavigationLink(destination: AnilistView.ProfileView(entry: data, onStatusUpdated: { _, status in
+                NavigationLink(destination: AnilistView.ProfileView(entry: .init(id: data.id, title: data.title.userPreferred, webUrl: data.webUrl), onStatusUpdated: { _, status in
                     listStatus = status
                 }), isActive: $isPresenting, label: { EmptyView() })
             }

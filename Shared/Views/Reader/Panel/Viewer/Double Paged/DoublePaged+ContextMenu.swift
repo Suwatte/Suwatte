@@ -15,16 +15,37 @@ extension DoublePagedViewer.Controller: UIContextMenuInteractionDelegate {
         let point = interaction.location(in: collectionView)
         let indexPath = collectionView.indexPathForItem(at: point)
 
-        // Validate Is Image
-        guard let indexPath = indexPath, model.sections[indexPath.section][indexPath.item] is ReaderPage else {
+        guard let indexPath = indexPath, let page = getStack(for: indexPath.section).get(index: indexPath.item) else {
             return nil
         }
+        
 
         // Get Image
-        guard let image = (interaction.view as? UIImageView)?.image else {
+        guard let imageView = (interaction.view as? UIImageView), let image = imageView.image else {
             return nil
         }
-
+        
+        var target: ReaderView.Page? = nil
+        
+        // If Secondary Page is nil, return the primary page
+        // Else if the interaction point is on the left side of the screen & the user is reading in the comic (->) format, use primary page else secondary
+        // Make this shit readable.
+        if page.secondary == nil  {
+            target = (page.primary as? ReaderPage)?.page
+        } else {
+            let primary = (page.primary as? ReaderPage)?.page
+            let secondary = (page.secondary as? ReaderPage)?.page
+            target = imageView.frame.minX < collectionView.frame.midX ? primary : secondary
+            if !Preferences.standard.readingLeftToRight {
+                if target == primary {
+                    target = secondary
+                } else {
+                    target = primary
+                }
+            }
+        }
+        
+        guard let target = target else { return nil }
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
 
             // Image Actiosn menu
@@ -45,7 +66,6 @@ extension DoublePagedViewer.Controller: UIContextMenuInteractionDelegate {
 
             // Toggle Bookmark
             let chapter = self.model.activeChapter.chapter
-            let page = indexPath.item + 1
 
             var menu = UIMenu(title: "", children: [photoMenu])
 
@@ -53,12 +73,12 @@ extension DoublePagedViewer.Controller: UIContextMenuInteractionDelegate {
                 return menu
             }
             // Bookmark Actions
-            let isBookmarked = DataManager.shared.isBookmarked(chapter: chapter.toStored(), page: page)
+            let isBookmarked = DataManager.shared.isBookmarked(chapter: chapter.toStored(), page: target.index)
             let bkTitle = isBookmarked ? "Remove Bookmark" : "Bookmark Panel"
             let bkSysImage = isBookmarked ? "bookmark.slash" : "bookmark"
 
             let bookmarkAction = UIAction(title: bkTitle, image: UIImage(systemName: bkSysImage), attributes: isBookmarked ? [.destructive] : []) { _ in
-                DataManager.shared.toggleBookmark(chapter: chapter.toStored(), page: page)
+                DataManager.shared.toggleBookmark(chapter: chapter.toStored(), page: target.index)
                 ToastManager.shared.info("Bookmark \(isBookmarked ? "Removed" : "Added")!")
             }
 

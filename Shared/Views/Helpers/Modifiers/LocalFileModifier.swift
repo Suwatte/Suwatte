@@ -35,7 +35,7 @@ struct OpenLocalModifier: ViewModifier {
     }
 }
 
-let serialQueue = DispatchQueue(label: "com.suwatte.unarchiver")
+let serialQueue = DispatchQueue(label: "com.ceres.suwatte.unarchiver")
 struct LocalContentImageProvider: ImageDataProvider {
     var cacheKey: String
     var fileId: String
