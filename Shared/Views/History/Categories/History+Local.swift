@@ -20,6 +20,8 @@ extension HistoryView {
                     .onTapGesture {
                         model.selectedBook = book
                     }
+                    .modifier(StyleModifier())
+
             }
         }
 

@@ -20,9 +20,6 @@ extension HistoryView {
             Group {
                 if let excerpt {
                     ContentFound(excerpt)
-                        .onTapGesture {
-                            model.selection = (marker.sourceId, excerpt)
-                        }
                 } else {
                     if loaded {
                         EmptyView()
@@ -30,6 +27,11 @@ extension HistoryView {
                         ProgressView()
                     }
                 }
+            }
+            .modifier(StyleModifier())
+            .onTapGesture {
+                guard let excerpt else { return }
+                model.selection = (marker.sourceId, excerpt)
             }
             .task {
                 if excerpt != nil { return }

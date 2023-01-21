@@ -38,6 +38,7 @@ extension HistoryView {
 
                 HistoryView.ProgressIndicator(progress: marker.completed ? 1.0 : marker.progress)
             }
+            .modifier(StyleModifier())
             .onTapGesture {
                 model.selectedOPDSContent = marker
             }

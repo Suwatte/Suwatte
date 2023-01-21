@@ -16,6 +16,7 @@ struct HistoryView: View {
             ForEach(model.markers) { marker in
                 CellGateWay(marker: marker)
                     .listRowSeparator(.hidden)
+                    .id(marker.id)
             }
             .animation(.default, value: model.markers)
         }
@@ -64,6 +65,7 @@ extension HistoryView {
                 .padding()
                 .background(Color.primary.opacity(0.05))
                 .cornerRadius(10)
+                .contentShape(Rectangle())
         }
     }
 
@@ -97,7 +99,6 @@ extension HistoryView {
                         ExternalContentTile(marker: marker)
                 }
             }
-            .modifier(StyleModifier())
             .modifier(DeleteModifier(marker: marker))
 
         }
