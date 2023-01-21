@@ -40,6 +40,7 @@ struct STTImageView: View {
     }
 
     func load(_ size: CGSize) {
+        if loader.view != nil { return }
         loader.processors = [.resize(size: size)]
         loader.animation = .easeOut(duration: 0.25)
         guard let imageURL, imageURL.isHTTP else {
@@ -93,6 +94,8 @@ struct BaseImageView: View {
     }
 
     func load(_ size: CGSize) {
+        if loader.view != nil { return }
+
         loader.processors = [.resize(size: size)]
         loader.animation = .easeOut(duration: 0.25)
 
