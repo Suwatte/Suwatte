@@ -17,26 +17,30 @@ extension Parsable {
         guard let str = DaisukeEngine.stringify(val: value) else {
             throw DaisukeEngine.Errors.NamedError(name: "Conversion Error", message: "Could not convert returned valeu to JSON string.")
         }
-
-        let jsonData = str.data(using: .utf8)!
+        let jsonData = str.data(using: .utf8, allowLossyConversion: false)!
         self = try DaisukeEngine.decode(data: jsonData, to: Self.self)
     }
 }
 
 extension DaisukeEngine {
     static func stringify(val: JSValue) -> String? {
-        let json = val.context.evaluateScript("(function(){ return JSON })()")
+        let json = val.context.evaluateScript("""
+(function () {
+  const moment = require("moment");
+  Date.prototype.toJSON = function () {
+    return moment(this).format();
+  };
+  return JSON;
+})();
+""")
         return json?.invokeMethod("stringify", withArguments: [val]).toString()
     }
 
-    static func decode<T: Decodable>(data: Data, to _: T.Type) throws -> T {
+    static func decode<T: Decodable>(data: Data, to _: T.Type, dateFormatter: DateFormatter? = nil) throws -> T {
         let decoder = JSONDecoder()
 
         // Date Formatter
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-        decoder.dateDecodingStrategy = .formatted(dateFormatter)
-
+        decoder.dateDecodingStrategy = dateFormatter != nil ? .formatted(dateFormatter!) : .iso8601
         // Decode & Closure
         let object = try decoder.decode(T.self, from: data)
         return object
@@ -46,18 +50,10 @@ extension DaisukeEngine {
         let encoder = JSONEncoder()
 
         // Date Formatter
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-        encoder.dateEncodingStrategy = .formatted(dateFormatter)
+        encoder.dateEncodingStrategy = .iso8601
 
         // Encode & Closure
         let data = try encoder.encode(value)
         return data
-    }
-
-    static func formatDate(_ date: Date) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-        return dateFormatter.string(from: date)
     }
 }

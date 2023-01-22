@@ -174,7 +174,7 @@ extension DaisukeEngine.LocalContentSource {
                     return
                 }
                 do {
-                    let jsonData = str.data(using: .utf8)!
+                    let jsonData = str.data(using: .utf8, allowLossyConversion: false)!
                     let output: T = try DaisukeEngine.decode(data: jsonData, to: T.self)
                     handler.resume(returning: output)
                 } catch {

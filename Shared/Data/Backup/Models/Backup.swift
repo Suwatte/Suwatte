@@ -26,12 +26,23 @@ struct Backup: Codable {
     var runners: [StoredRunnerObject]?
     static func load(from url: URL) throws -> Backup {
         let json = try Data(contentsOf: url)
-        return try DaisukeEngine.decode(data: json, to: Backup.self)
+        let version = try DaisukeEngine.decode(data: json, to: BasicBackUpScheme.self)
+        if version.schemaVersion >= 3 { // Pre ISO 8601 Change
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+            return try DaisukeEngine.decode(data: json, to: Backup.self, dateFormatter: dateFormatter)
+        } else {
+            return try DaisukeEngine.decode(data: json, to: Backup.self)
+        }
     }
 
     func encoded() throws -> Data {
         try DaisukeEngine.encode(value: self)
     }
+}
+
+struct BasicBackUpScheme : Codable {
+    var schemaVersion: Int
 }
 
 extension DataManager {
