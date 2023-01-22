@@ -142,12 +142,14 @@ extension ReaderView {
         var HeaderButtons: some View {
             HStack {
                 Button {
-                    //                    presentationMode.wrappedValue.dismiss()
+                    //
                     if var topController = KEY_WINDOW?.rootViewController {
                         while let presentedViewController = topController.presentedViewController {
                             topController = presentedViewController
                         }
                         topController.dismiss(animated: true)
+                    } else {
+                        presentationMode.wrappedValue.dismiss()
                     }
                 } label: {
                     Image(systemName: "xmark.circle.fill").resizable().modifier(ReaderButtonModifier())

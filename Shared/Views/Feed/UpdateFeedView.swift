@@ -71,7 +71,7 @@ struct UpdateFeedView: View {
         Section {
             ForEach(grouped[key]!) { entry in
                 UpdateFeedTile(entry: entry)
-                    .swipeActions(edge: .leading) {
+                    .swipeActions(allowsFullSwipe: true) {
                         Button(action: { DataManager.shared.clearUpdates(id: entry._id) }) {
                             Label("Clear Updates", systemImage: "xmark.circle")
                         }

@@ -35,7 +35,7 @@ extension ProfileView {
                                  .navigationTitle(viewModel.content.title)
                                  .fullScreenCover(item: $viewModel.selection, onDismiss: {
                                      Task {
-                                         viewModel.getMarkers()
+                                         handleReconnection()
                                          KingfisherManager.shared.cache.clearMemoryCache()
                                      }
                                  }) { id in
@@ -70,7 +70,6 @@ extension ProfileView {
                                  }
                              }
                          }
-
                          .animation(.default)
                          .environmentObject(viewModel)
                          .environmentObject(viewModel.source)
@@ -79,6 +78,12 @@ extension ProfileView {
         @ViewBuilder
         var PLACEHOLDER: some View {
             ProgressView()
+        }
+        func handleReconnection() {
+            DispatchQueue.main.async {
+                viewModel.getMarkers()
+                viewModel.setupObservers()
+            }
         }
     }
 
