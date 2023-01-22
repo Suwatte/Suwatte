@@ -11,7 +11,7 @@ import RealmSwift
 import SwiftUI
 import UIKit
 import UIHostingConfigurationBackport
-import SkeletonView
+import OrderedCollections
 
 final class ExploreCollectionsController: UICollectionViewController {
     var source: DaisukeContentSource!
@@ -27,6 +27,12 @@ final class ExploreCollectionsController: UICollectionViewController {
     
     var loadingCache: [AnyHashable: Bool] = [:]
     var errorCache: [AnyHashable: Error] = [:]
+    
+    var library: OrderedSet<String> = []
+    var savedForLater: OrderedSet<String> = []
+    
+    var libraryNotificationToken: NotificationToken?
+    var sflNotificationToken: NotificationToken?
     var tileStyle: TileStyle! {
         didSet {
             collectionView.collectionViewLayout.invalidateLayout()
@@ -34,6 +40,8 @@ final class ExploreCollectionsController: UICollectionViewController {
     }
     
     func disconnect() {
+        libraryNotificationToken?.invalidate()
+        sflNotificationToken?.invalidate()
         tasks.forEach { task in
             task?.cancel()
         }
@@ -82,8 +90,8 @@ final class ExploreCollectionsController: UICollectionViewController {
                 let shouldShowPlaceholder = self.loadingCache[excerpt] ?? false
                 cell.backgroundColor = .clear
                 cell.contentConfiguration = nil
-                let inLibrary = DataManager.shared.contentInLibrary(s: sourceId, c: data.contentId)
-                let readLater = DataManager.shared.contentSavedForLater(s: sourceId, c: data.contentId)
+                let inLibrary = library.contains(data.contentId)
+                let readLater = savedForLater.contains(data.contentId)
                 cell.contentConfiguration = UIHostingConfigurationBackport {
                     ContentCell(data: data, style: style, sourceId: sourceId, placeholder: shouldShowPlaceholder, inLibrary: inLibrary, readLater: readLater)
                 }
@@ -153,19 +161,38 @@ extension CTR {
         refreshControl.tintColor = .init(data.flatMap({ Color(rawValue: $0) }) ?? .gray)
         refreshControl.addTarget(self, action: #selector(reload), for: .valueChanged)
         collectionView.refreshControl = refreshControl
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        observeLibrary()
+
         if snapshot.sectionIdentifiers.isEmpty {
             loadTags()
             handleCollections()
         }
+
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         disconnect()
+    }
+    
+    func observeLibrary() {
+        let realm = try! Realm()
+        
+        let libraryResults = realm.objects(LibraryEntry.self).where({ $0.content.sourceId == source.id })
+        let savedForLaterResults = realm.objects(ReadLater.self).where({ $0.content.sourceId == source.id })
+        
+        libraryNotificationToken = libraryResults.observe { [weak self] _ in
+            self?.library = OrderedSet(libraryResults.compactMap(\.content?.contentId))
+        }
+        sflNotificationToken = savedForLaterResults.observe { [weak self] _ in
+            self?.savedForLater = OrderedSet(savedForLaterResults.compactMap(\.content?.contentId))
+
+        }
     }
 }
 
