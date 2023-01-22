@@ -67,7 +67,7 @@ extension SettingsView {
         @AppStorage(STTKeys.UpdateInterval) var updateInterval: STTUpdateInterval = .oneHour
         @AppStorage(STTKeys.CheckLinkedOnUpdateCheck) var checkLinkedOnUpdate = false
         @AppStorage(STTKeys.UpdateContentData) var updateContent = false
-        @AppStorage(STTKeys.UpdateSkipConditions) var skipConditions: [Int] = SkipCondition.allCases.map(\.rawValue)
+        @Preference(\.skipConditions) var skipConditions
         var body: some View {
             Section {
                 // Update Interval
@@ -78,11 +78,7 @@ extension SettingsView {
                     }
                 }
                 NavigationLink("Skip Conditions") {
-                    MultiSelectionView(options: SkipCondition.allCases, selection: .init(get: {
-                        return Set(skipConditions.compactMap({ SkipCondition(rawValue: $0) }))
-                                   }, set: { value in
-                            skipConditions = value.map(\.rawValue)
-                        })) { condition in
+                    MultiSelectionView(options: SkipCondition.allCases, selection: BINDING) { condition in
                         Text(condition.description)
                     }
                     .buttonStyle(.plain)
@@ -103,6 +99,15 @@ extension SettingsView {
                 Text("Updates")
             }
             
+        }
+        
+        var BINDING: Binding<Set<SkipCondition>> {
+            .init {
+                Set(skipConditions)
+            } set: { value in
+                skipConditions = Array(value)
+            }
+
         }
     }
 }
@@ -159,7 +164,7 @@ extension SettingsView {
     }
 }
 
-enum SkipCondition:  Int, CaseIterable, Identifiable {
+enum SkipCondition:  Int, CaseIterable, Identifiable, UserDefaultsSerializable {
     case INVALID_FLAG, NO_MARKERS, HAS_UNREAD
     
     var description: String {

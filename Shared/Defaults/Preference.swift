@@ -110,6 +110,9 @@ final class Preferences {
     
     @UserDefault(STTKeys.ReaderType)
     var readerType = ReadingMode.PAGED_COMIC
+    
+    @UserDefault(STTKeys.UpdateSkipConditions)
+    var skipConditions: [SkipCondition] = SkipCondition.allCases
 }
 
 @propertyWrapper

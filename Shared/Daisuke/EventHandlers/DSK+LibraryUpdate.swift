@@ -41,13 +41,8 @@ extension DaisukeEngine {
     @MainActor
     private func fetchUpdatesForSource(source: DaisukeContentSource) async throws -> Int {
         let realm = try! Realm(queue: nil)
-
         let date = UserDefaults.standard.object(forKey: STTKeys.LastFetchedUpdates) as! Date
-        let selective = Preferences.standard.selectiveUpdates
-        
-        let raw = UserDefaults.standard.object(forKey: STTKeys.UpdateSkipConditions) as? [Int]
-        let skipConditions = raw?.compactMap({ SkipCondition(rawValue: $0) }) ?? SkipCondition.allCases
-        
+        let skipConditions = Preferences.standard.skipConditions
         let validStatuses = [ContentStatus.ONGOING, .HIATUS, .UNKNOWN]
         var results = realm.objects(LibraryEntry.self)
             .where({ $0.content != nil })
@@ -60,13 +55,11 @@ extension DaisukeEngine {
             results = results
                 .where({ $0.flag == .reading })
         }
-        
         // Title Has Unread Skip Condition
         if skipConditions.contains(.HAS_UNREAD) {
             results = results
                 .where({ $0.unreadCount == 0 })
         }
-        
         // Title Has No Markers, Has not been started
         if skipConditions.contains(.NO_MARKERS) {
             let startedTitles = realm
