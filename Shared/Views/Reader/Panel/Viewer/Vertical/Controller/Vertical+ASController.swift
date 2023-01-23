@@ -34,11 +34,6 @@ extension VerticalViewer {
             fatalError("init(coder:) has not been implemented")
         }
 
-        // MARK: DeInit
-
-        deinit {
-            Logger.shared.debug("Vertical Controller Deallocated")
-        }
 
         // MARK: View Did Load
 

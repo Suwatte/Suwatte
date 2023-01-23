@@ -72,7 +72,7 @@ class STTScheduler {
             to: lastChecked
         )! // One Month Back
 
-        if Date.now < next {
+        if Date.now > next {
             task.setTaskCompleted(success: true)
             return
         }

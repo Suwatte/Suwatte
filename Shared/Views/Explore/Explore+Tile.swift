@@ -13,13 +13,12 @@ extension ExploreView {
     struct HighlightTile: View {
         var entry: DaisukeEngine.Structs.Highlight
         var style: DSKCommon.CollectionStyle
-
+        
         @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
-
+        
         var sourceId: String
         var body: some View {
-            Group {
-                switch style {
+            switch style {
                 case .INFO: INFO
                 case .NORMAL:
                     if tileStyle == .SEPARATED {
@@ -31,7 +30,6 @@ extension ExploreView {
                     }
                 case .GALLERY: GALLERY(entry: entry)
                 case .UPDATE_LIST: LATEST
-                }
             }
         }
     }
@@ -46,21 +44,21 @@ extension ExploreView.HighlightTile {
                 .cornerRadius(7)
                 .padding(.all, 5)
                 .shadow(radius: 2.5)
-
+            
             VStack(alignment: .leading) {
                 Text(entry.title)
                     .font(.headline)
                     .fontWeight(.bold)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
-
+                
                 if let tags = entry.tags {
                     Text(tags.prefix(3).joined(separator: ", "))
                         .lineLimit(3)
                         .multilineTextAlignment(.leading)
                         .font(.subheadline.weight(.thin))
                 }
-
+                
                 Spacer()
                 VStack(alignment: .leading) {
                     if let views = entry.stats?.views, views != 0 {
@@ -69,7 +67,7 @@ extension ExploreView.HighlightTile {
                     if let follows = entry.stats?.follows, follows != 0 {
                         Text("\(follows) Follows")
                     }
-
+                    
                     if let rating = entry.stats?.rating {
                         Text("\(rating.clean) \(Image(systemName: "star.fill"))")
                     }
@@ -84,13 +82,13 @@ extension ExploreView.HighlightTile {
         .background(Color.primary.opacity(0.05))
         .cornerRadius(7)
     }
-
+    
     var NORMAL_CPT: some View {
         GeometryReader { reader in
             ZStack {
                 STTImageView(url: URL(string: entry.cover), identifier: .init(contentId: entry.id, sourceId: sourceId))
                     .cornerRadius(10)
-
+                
                 LinearGradient(gradient: Gradient(colors: [.clear, Color(red: 15 / 255, green: 15 / 255, blue: 15 / 255).opacity(0.8)]), startPoint: .center, endPoint: .bottom)
                 VStack(alignment: .leading) {
                     Spacer()
@@ -109,14 +107,14 @@ extension ExploreView.HighlightTile {
             .cornerRadius(10)
         }
     }
-
+    
     var NORMAL_SEP: some View {
         GeometryReader { reader in
             VStack(alignment: .leading, spacing: 5) {
                 STTImageView(url: URL(string: entry.cover), identifier: .init(contentId: entry.id, sourceId: sourceId))
                     .frame(height: reader.size.width * 1.5)
                     .cornerRadius(7)
-
+                
                 Text(entry.title)
                     .font(.subheadline)
                     .lineLimit(2)
@@ -124,7 +122,7 @@ extension ExploreView.HighlightTile {
             }
         }
     }
-
+    
     var LATEST: some View {
         HStack(alignment: .top, spacing: 5) {
             // Image
@@ -133,7 +131,7 @@ extension ExploreView.HighlightTile {
                 .cornerRadius(7)
                 .padding(.all, 7)
                 .shadow(radius: 2.5)
-
+            
             VStack(alignment: .leading) {
                 Text(entry.title)
                     .font(.headline)
@@ -145,7 +143,7 @@ extension ExploreView.HighlightTile {
                         .font(.headline)
                         .fontWeight(.light)
                 }
-
+                
                 if let updates = entry.updates {
                     let date = updates.date?.timeAgo()
                     Text("\(updates.label)\(date.map { " • \($0)" } ?? "")")
@@ -165,7 +163,7 @@ extension ExploreView.HighlightTile {
         .background(Color.primary.opacity(0.05))
         .cornerRadius(7)
     }
-
+    
     struct GALLERY: View {
         var entry: DaisukeEngine.Structs.Highlight
         @EnvironmentObject var source: DaisukeContentSource
@@ -176,13 +174,13 @@ extension ExploreView.HighlightTile {
         private var foreGroundColor: Color {
             endColor.isDark ? .white : .black
         }
-
+        
         @StateObject private var loader = FetchImage()
         var urls: [URL] {
             let strs = Set([entry.cover] + (entry.additionalCovers ?? []))
             return strs.compactMap { URL(string: $0) }
         }
-
+        
         var body: some View {
             ZStack(alignment: .bottom) {
                 Group {
@@ -193,13 +191,13 @@ extension ExploreView.HighlightTile {
                                 .aspectRatio(contentMode: .fill)
                                 .frame(height: proxy.size.width * 1.5, alignment: .center)
                         }
-
+                        
                     } else {
                         Color.gray.opacity(0.25)
                             .shimmering()
                     }
                 }
-
+                
                 LinearGradient(gradient: Gradient(colors: [.clear, endColor]), startPoint: .center, endPoint: .bottom)
                 VStack {
                     // Image Carasouel
@@ -213,18 +211,18 @@ extension ExploreView.HighlightTile {
                             .multilineTextAlignment(.center)
                             .font(.subheadline.weight(.semibold))
                     }
-
+                    
                     if let tags = entry.tags {
                         Text(tags.prefix(3).joined(separator: ", "))
                             .lineLimit(1)
                             .multilineTextAlignment(.center)
                             .font(.subheadline.weight(.light))
                     }
-
+                    
                     if entry.covers.count > 1 {
                         HStack {
                             ForEach(entry.covers, id: \.self) { cover in
-
+                                
                                 Rectangle()
                                     .frame(height: 3.5, alignment: .center)
                                     .foregroundColor(foreGroundColor.opacity((currentImageIndex == entry.covers.firstIndex(of: cover)!) ? 1.0 : 0.25))
@@ -235,7 +233,7 @@ extension ExploreView.HighlightTile {
                     }
                 }
                 .foregroundColor(foreGroundColor)
-
+                
                 .padding()
             }
             .animation(.default, value: currentImageIndex)
@@ -256,14 +254,14 @@ extension ExploreView.HighlightTile {
                 prefetcher.stopPrefetching(with: urls)
             })
         }
-
+        
         func load(url: URL?) async {
             guard let url else { return }
             let req = try? await(source as? DSK.LocalContentSource)?.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
             loader.animation = .easeOut(duration: 0.25)
             loader.load(req ?? url)
         }
-
+        
         func didAppear() {
             // Update Loader
             loader.onSuccess = { response in
@@ -271,12 +269,12 @@ extension ExploreView.HighlightTile {
                     endColor = Color(color)
                 }
             }
-
+            
             // Load First Image
             Task {
                 await load(url: urls.first)
             }
-
+            
             if urls.count == 1 {
                 return
             }

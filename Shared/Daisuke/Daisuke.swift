@@ -38,7 +38,7 @@ final class DaisukeEngine: ObservableObject {
 
     init() {
         // Start Virtual Machine
-        let queue = DispatchQueue(label: "com.ceres.suwatte.daisuke")
+        let queue = DispatchQueue(label: "com.ceres.suwatte.daisuke", attributes: .concurrent)
         vm = queue.sync { JSVirtualMachine()! }
 
         // Create Directory
@@ -159,7 +159,7 @@ extension DaisukeEngine {
         sources.removeValue(forKey: runner.id)
         sources.updateValue(runner, forKey: runner.id)
         if let runner = runner as? LocalContentSource {
-            Task {
+            Task.detached {
                 try? await runner.registerDefaultPrefs()
                 await runner.onSourceLoaded()
             }
