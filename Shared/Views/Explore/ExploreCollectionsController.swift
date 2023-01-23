@@ -10,7 +10,7 @@ import NukeUI
 import RealmSwift
 import SwiftUI
 import UIKit
-import UIHostingConfigurationBackport
+import SwiftUIBackports
 import OrderedCollections
 
 final class ExploreCollectionsController: UICollectionViewController {
@@ -49,10 +49,6 @@ final class ExploreCollectionsController: UICollectionViewController {
     }
     
     
-    deinit {
-        Logger.shared.debug("ExploreViewController Deallocated")
-    }
-    
     // MARK: DataSource
     func getExcerpt(id: String) -> CollectionExcerpt? {
         snapshot
@@ -66,7 +62,7 @@ final class ExploreCollectionsController: UICollectionViewController {
             if let data = item.content as? Err {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "errorCell", for: indexPath)
                 cell.contentConfiguration = nil
-                cell.contentConfiguration = UIHostingConfigurationBackport {
+                cell.backport.contentConfiguration = Backport.UIHostingConfiguration  {
                     let error = errorCache[item.section] ?? DSK.Errors.NamedError(name: "Error", message: data.description)
                     ErrorView(error: error, sourceID: source.id) { [weak self] in
                         if case DSK.Errors.NetworkErrorCloudflareProtected = error {
@@ -78,6 +74,7 @@ final class ExploreCollectionsController: UICollectionViewController {
                         }
                     }
                 }
+                .margins(.all, 0)
                 return cell
             }
             // Content Cell
@@ -92,18 +89,20 @@ final class ExploreCollectionsController: UICollectionViewController {
                 cell.contentConfiguration = nil
                 let inLibrary = library.contains(data.contentId)
                 let readLater = savedForLater.contains(data.contentId)
-                cell.contentConfiguration = UIHostingConfigurationBackport {
+                cell.backport.contentConfiguration = Backport.UIHostingConfiguration  {
                     ContentCell(data: data, style: style, sourceId: sourceId, placeholder: shouldShowPlaceholder, inLibrary: inLibrary, readLater: readLater)
                 }
+                .margins(.all, 0)
                 return cell
             }
             // Tag Cell
             if let data = item.content as? DSKCommon.Tag {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "tagCell", for: indexPath)
                 cell.contentConfiguration = nil
-                cell.contentConfiguration = UIHostingConfigurationBackport {
+                cell.backport.contentConfiguration = Backport.UIHostingConfiguration  {
                     TagTile(tag: data)
                 }
+                .margins(.all, 0)
                 return cell
             }
             
@@ -118,9 +117,10 @@ final class ExploreCollectionsController: UICollectionViewController {
                 let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "tagHeaderCell", for: indexPath)
                 guard let header = header as? UICollectionViewCell else { fatalError("Invalid Header") }
                 header.contentConfiguration = nil
-                header.contentConfiguration = UIHostingConfigurationBackport {
+                header.backport.contentConfiguration = Backport.UIHostingConfiguration  {
                     TagHeaderView()
                 }
+                .margins(.all, 0)
                 return header
             }
             
@@ -128,9 +128,10 @@ final class ExploreCollectionsController: UICollectionViewController {
                 let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "sectionHeaderCell", for: indexPath)
                 guard let header = header as? UICollectionViewCell else { fatalError("Invalid Header") }
                 header.contentConfiguration = nil
-                header.contentConfiguration = UIHostingConfigurationBackport {
+                header.backport.contentConfiguration = Backport.UIHostingConfiguration  {
                     HeaderView(excerpt: section, request: section.request)
                 }
+                .margins(.all, 0)
                 return header
             }
             fatalError("Failed To Return Cell")
