@@ -76,7 +76,7 @@ extension DataManager {
         }
             
         try! realm.safeWrite {
-            realm.add(obj, update: .modified)
+            realm.add(obj, update: .all)
         }
     }
     func getRunnerInfomation(id: String) -> StoredRunnerObject? {

@@ -157,6 +157,7 @@ extension DaisukeEngine {
 
     private func addSource(runner: DaisukeContentSource) throws {
         sources.removeValue(forKey: runner.id)
+        sources[runner.id] = nil
         sources.updateValue(runner, forKey: runner.id)
         if let runner = runner as? LocalContentSource {
             Task.detached {
