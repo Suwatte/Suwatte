@@ -35,9 +35,14 @@ extension ReaderView {
         @Preference(\.invertTapSidesToNavigate) var invertTapSidesToNavigate
         @Preference(\.VerticalPagePadding) var verticalPagePadding
         @Preference(\.imageScaleType) var imageScaleType
-        private let range: ClosedRange<Double> = 2.5 ... 30
+        @Preference(\.usePillarBox) var usePillarBox
+        @Preference(\.pillarBoxPCT) var pillarBoxPCT
         
+        private let autoScrollRange: ClosedRange<Double> = 2.5 ... 30
+        private let pillarBoxRange: ClosedRange<Double> = 0.15 ... 1.0
         @EnvironmentObject var model: ReaderView.ViewModel
+        @State var holdingAutoScrollBinding: Double = 0.0
+        @State var holdingPillarBoxPCT : Double = 0.0
 
         var body: some View {
             Form {
@@ -63,9 +68,9 @@ extension ReaderView {
                         Toggle("AutoScroll", isOn: $verticalAutoScroll)
                         if verticalAutoScroll {
                             let bridge = Binding<Double>(get: {
-                                range.upperBound - autoScrollSpeed + range.lowerBound
+                                autoScrollRange.upperBound - holdingAutoScrollBinding + autoScrollRange.lowerBound
                             }, set: {
-                                autoScrollSpeed = range.upperBound - $0 + range.lowerBound
+                                holdingAutoScrollBinding = autoScrollRange.upperBound - $0 + autoScrollRange.lowerBound
                             })
                             VStack(alignment: .leading) {
                                 Text("Scroll Speed")
@@ -76,7 +81,10 @@ extension ReaderView {
                                         .frame(width: 25)
                                         .foregroundColor(.gray)
 
-                                    Slider(value: bridge, in: range)
+                                    Slider(value: bridge, in: autoScrollRange) { editing in
+                                        if editing { return }
+                                        autoScrollSpeed = holdingAutoScrollBinding
+                                    }
                                     Image(systemName: "hare")
                                         .resizable()
                                         .scaledToFit()
@@ -89,9 +97,29 @@ extension ReaderView {
                         Text("AutoScroll")
                     } footer: {
                         if verticalAutoScroll {
-                            Text("Will scroll through one screens height in roughly \(autoScrollSpeed.clean) seconds.")
+                            Text("Will scroll through one screens height in roughly \(holdingAutoScrollBinding.clean) seconds.")
                         }
                     }
+                    
+                    Section {
+                        Toggle("Enabled Pillarbox", isOn: $usePillarBox)
+                        if usePillarBox {
+                            VStack(alignment: .leading) {
+                                Text("Amount")
+                                Slider(value: $holdingPillarBoxPCT, in: pillarBoxRange) { editing in
+                                    if editing { return }
+                                    pillarBoxPCT = holdingPillarBoxPCT
+                                }
+                            }
+                        }
+                    } header: {
+                        Text("Pillarbox / Horizontal Padding")
+                    } footer: {
+                        if usePillarBox {
+                            Text("Images will be sized to fit roughly \((holdingPillarBoxPCT * 100).clean)% of the screen's width.")
+                        }
+                    }
+                    
                 }
 
                 Section {
@@ -174,12 +202,17 @@ extension ReaderView {
                     Text("Filters")
                 }
             }
+            .onAppear {
+                holdingPillarBoxPCT = pillarBoxPCT
+                holdingAutoScrollBinding = autoScrollSpeed
+            }
             .animation(.default, value: enableOverlay)
             .animation(.default, value: useSystemBG)
             .animation(.default, value: tapToNavigate)
             .animation(.default, value: isVertical)
             .animation(.default, value: isPagingVertically)
             .animation(.default, value: verticalAutoScroll)
+            .animation(.default, value: usePillarBox)
 
         }
     }

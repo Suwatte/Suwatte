@@ -113,6 +113,12 @@ final class Preferences {
     
     @UserDefault(STTKeys.UpdateSkipConditions)
     var skipConditions: [SkipCondition] = SkipCondition.allCases
+    
+    @UserDefault(STTKeys.VerticalPillarBoxEnabled)
+    var usePillarBox = false
+    
+    @UserDefault(STTKeys.VerticalPillarBoxPCT)
+    var pillarBoxPCT = 1.0 // 0.15 -> 1.0
 }
 
 @propertyWrapper

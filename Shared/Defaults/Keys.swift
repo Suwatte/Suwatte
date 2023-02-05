@@ -126,4 +126,7 @@ enum STTKeys {
     static let AlwaysAskForLibraryConfig = "APP.library_always_asks"
     static let DefaultCollection = "LIBRARY.default_collection"
     static let DefaultReadingFlag = "LIBRARY.default_reading_flag"
+    
+    static let VerticalPillarBoxEnabled = "READER.pillar_box_enabled"
+    static let VerticalPillarBoxPCT = "READER.pillar_box_pct"
 }
