@@ -119,6 +119,9 @@ final class Preferences {
     
     @UserDefault(STTKeys.VerticalPillarBoxPCT)
     var pillarBoxPCT = 1.0 // 0.15 -> 1.0
+    
+    @UserDefault(STTKeys.PrefersDirectoryView)
+    var useDirectory = false
 }
 
 @propertyWrapper

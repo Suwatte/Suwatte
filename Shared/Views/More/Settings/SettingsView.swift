@@ -153,10 +153,11 @@ extension SettingsView {
 extension SettingsView {
     struct RunnersSection: View {
         @AppStorage(STTKeys.HideNSFWRunners) var hideNSFWRunners = false
-
+        @Preference(\.useDirectory) var useDirectory
         var body: some View {
             Section {
                 Toggle("Hide NSFW Sources", isOn: $hideNSFWRunners)
+                Toggle("Disable Explore Page", isOn: $useDirectory)
             } header: {
                 Text("Runners")
             }

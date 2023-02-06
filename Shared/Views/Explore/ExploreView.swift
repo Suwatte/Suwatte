@@ -14,9 +14,10 @@ import UIKit
 struct ExploreView: View {
     @EnvironmentObject var source: DaisukeContentSource
     @StateObject var model = ViewModel()
+    @Preference(\.useDirectory) var useDirectory
     var body: some View {
         Group {
-            if hasExplorePage {
+            if hasExplorePage && !useDirectory {
                 ExploreCollectioViewRepresentable()
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
