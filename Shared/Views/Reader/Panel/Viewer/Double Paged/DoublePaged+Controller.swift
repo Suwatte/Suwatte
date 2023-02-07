@@ -20,9 +20,6 @@ extension DoublePagedViewer {
         var isScrolling: Bool = false
         var cache: [Int: [PageGroup]] = [:]
         var pendingUpdates = false
-        deinit {
-            Logger.shared.debug("Double Pager Controller Deallocated")
-        }
     }
 }
 

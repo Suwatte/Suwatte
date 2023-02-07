@@ -24,9 +24,6 @@ extension PagedViewer {
         var isScrolling: Bool = false
         var enableInteractions: Bool = Preferences.standard.imageInteractions
         var lastPathBeforeRotation: IndexPath?
-        deinit {
-            Logger.shared.debug("Paged Controller Deallocated")
-        }
     }
 }
 

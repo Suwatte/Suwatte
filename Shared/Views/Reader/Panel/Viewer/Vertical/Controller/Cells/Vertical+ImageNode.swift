@@ -7,6 +7,7 @@
 
 import AsyncDisplayKit
 import Kingfisher
+import Combine
 import UIKit
 
 private typealias Controller = VerticalViewer.Controller
@@ -22,6 +23,7 @@ extension Controller {
         var savedOffset: CGFloat?
         var working = false
         var isZoomed = false
+        var subscriptions = Set<AnyCancellable>()
         lazy var zoomingTap: UITapGestureRecognizer = {
             let zoomingTap = UITapGestureRecognizer(target: self, action: #selector(handleZoomingTap(_:)))
             zoomingTap.numberOfTapsRequired = 2
@@ -137,6 +139,7 @@ extension Controller {
                 if let delegate, contextMenuEnabled {
                     imageNode.view.addInteraction(UIContextMenuInteraction(delegate: delegate))
                 }
+                listen()
             }
         }
 
@@ -163,10 +166,30 @@ extension Controller {
             didFinishImageTasks()
         }
 
-        override func layoutSpecThatFits(_: ASSizeRange) -> ASLayoutSpec {
-            if let ratio = ratio {
-                let imagePlace = ASRatioLayoutSpec(ratio: ratio, child: imageNode)
-                return imagePlace
+        override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
+            if let image {
+                if Preferences.standard.usePillarBox {
+                    var pct = CGFloat(Preferences.standard.pillarBoxPCT)
+                    // Guards
+                    pct = max(pct, 0.15)
+                    pct = min(pct, 1.0)
+                    
+                    imageNode.style.width = ASDimensionMakeWithFraction(pct)
+                    // Height Calculations
+                    let width = constrainedSize.max.width * pct
+                    let height = width / image.size.ratio
+                    imageNode.style.height = ASDimensionMakeWithPoints(height)
+                    let n = ASDisplayNode()
+                    n.style.width = ASDimensionMake("100%")
+                    imageNode.style.alignSelf = .center
+                    let base = ASRelativeLayoutSpec(horizontalPosition: .center, verticalPosition: .center, sizingOption:[], child: imageNode)
+                    return  ASAbsoluteLayoutSpec(children: [n, base])
+                } else {
+                    return ASRatioLayoutSpec(ratio: 1 / image.size.ratio, child: imageNode)
+                }
+                
+
+               
             } else {
                 let ratio = 1 / UIScreen.main.bounds.size.ratio
                 return ASRatioLayoutSpec(ratio: ratio, child: progressNode)
@@ -189,6 +212,22 @@ extension Controller {
 
         func didFinishImageTasks() {
             working = false
+        }
+        
+        func listen() {
+            Preferences.standard.preferencesChangedSubject
+                .filter { changedKeyPath in
+                    changedKeyPath == \Preferences.usePillarBox ||
+                    changedKeyPath == \Preferences.pillarBoxPCT
+                }
+                .sink { [weak self] _ in
+                    guard let image = self?.image else { return }
+                    let size = image.size.scaledTo(UIScreen.main.bounds.size)
+                    self?.frame = .init(origin: .init(x: 0, y: 0), size: size)
+                    self?.ratio = size.height / size.width
+                    self?.transitionLayout(with: .init(min: size, max: size), animated: true, shouldMeasureAsync: false)
+                }
+                .store(in: &subscriptions)
         }
     }
 }
@@ -252,5 +291,7 @@ extension Controller.ImageNode {
         KingfisherManager.shared.cache.memoryStorage.remove(forKey: page.CELL_KEY)
         imageNode.alpha = 0
         progressNode.alpha = 1
+        subscriptions.forEach({ $0.cancel() })
+        subscriptions.removeAll()
     }
 }

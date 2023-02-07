@@ -44,14 +44,12 @@ extension HistoryView {
                 .observe { [weak self] _ in
                     self?.markers = OrderedSet(results.map({ $0.chapter?.sourceId != STTHelpers.OPDS_CONTENT_ID ? $0.toHistoryObject() : $0.toOPDSHistoryObject() }))
                 }
-            Logger.shared.debug("HistoryView Observer Added")
 
         }
         
         func removeObserver() {
             token?.invalidate()
             token = nil
-            Logger.shared.debug("HistoryView Observer Removed")
         }
     }
     

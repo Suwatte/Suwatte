@@ -38,7 +38,7 @@ extension LibraryView.LibraryGrid {
                             .resizable()
                             .foregroundColor(state.isSelected ? .accentColor : .black)
                             .clipShape(Circle())
-                            .frame(width: 25, height: 25)
+                            .frame(width: 20, height: 20)
                             .overlay(Circle().stroke(Color.white, lineWidth: 3).shadow(radius: 10))
                             .padding(.all, 5)
                             .opacity(model.isSelecting ? 1 : 0)
@@ -56,6 +56,8 @@ extension LibraryView.LibraryGrid {
             .layout(createCustomLayout: {
                 DynamicGridLayout()
             }, configureCustomLayout: { layout in
+                layout.collectionView?.allowsMultipleSelection = true
+                layout.collectionView?.allowsMultipleSelectionDuringEditing = true
                 layout.invalidateLayout()
             })
             .alwaysBounceVertical()

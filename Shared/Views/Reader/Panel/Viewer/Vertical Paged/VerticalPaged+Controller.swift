@@ -22,9 +22,6 @@ extension VerticalPager {
 
         var enableInteractions: Bool = Preferences.standard.imageInteractions
 
-        deinit {
-            Logger.shared.debug("Vertical Pager Controller Deallocated")
-        }
     }
 }
 

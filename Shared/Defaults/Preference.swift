@@ -110,6 +110,18 @@ final class Preferences {
     
     @UserDefault(STTKeys.ReaderType)
     var readerType = ReadingMode.PAGED_COMIC
+    
+    @UserDefault(STTKeys.UpdateSkipConditions)
+    var skipConditions: [SkipCondition] = SkipCondition.allCases
+    
+    @UserDefault(STTKeys.VerticalPillarBoxEnabled)
+    var usePillarBox = false
+    
+    @UserDefault(STTKeys.VerticalPillarBoxPCT)
+    var pillarBoxPCT = 1.0 // 0.15 -> 1.0
+    
+    @UserDefault(STTKeys.PrefersDirectoryView)
+    var useDirectory = false
 }
 
 @propertyWrapper

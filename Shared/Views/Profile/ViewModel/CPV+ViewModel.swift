@@ -84,7 +84,6 @@ extension ProfileView {
             downloadTrackingToken?.invalidate()
             libraryTrackingToken?.invalidate()
             readLaterToken?.invalidate()
-            Logger.shared.debug("CPVM Deallocated")
         }
     }
 }

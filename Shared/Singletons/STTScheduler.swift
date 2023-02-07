@@ -67,13 +67,14 @@ class STTScheduler {
 
         let lastChecked = UserDefaults.standard.object(forKey: STTKeys.LastAutoBackup) as? Date ?? .distantPast
         let next = Calendar.current.date(
-            byAdding: .hour,
-            value: 12,
+            byAdding: .day,
+            value: 7,
             to: lastChecked
-        )! // One Month Back
+        )! // 7 Days Interval
 
         if Date.now < next {
             task.setTaskCompleted(success: true)
+            Logger.shared.log("[STTScheduler] [\(backup_task)] AutoBackup Interval Not Met")
             return
         }
 
