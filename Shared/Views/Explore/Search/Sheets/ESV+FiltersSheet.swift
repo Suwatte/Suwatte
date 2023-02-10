@@ -85,17 +85,29 @@ extension ExploreView.SearchView.FilterSheet {
                                 .font(.headline)
                                 .fontWeight(.bold)
 
-                            InteractiveTagView(filteredTags(tags: filter.property.tags)) { tag in
-                                Button {
-                                    withAnimation {
-                                        handleAction(for: tag, canExclude: filter.canExclude)
-                                    }
+                            if (filter.displayAsToggle ?? false) , let tag = filter.property.tags.first {
+                                Toggle(tag.label, isOn: .init(get: {
+                                    request.includedTags.contains(tag.id)
+                                }, set: { val in
+                                    request.includedTags.removeAll(where: { $0 == tag.id })
 
-                                } label: {
-                                    Text(tag.label)
-                                        .modifier(ActionStyleModifier(color: backgroundColor(tag: tag)))
+                                    if val {
+                                        request.includedTags.append(tag.id)
+                                    }
+                                }))
+                            } else {
+                                InteractiveTagView(filteredTags(tags: filter.property.tags)) { tag in
+                                    Button {
+                                        withAnimation {
+                                            handleAction(for: tag, filter: filter)
+                                        }
+
+                                    } label: {
+                                        Text(tag.label)
+                                            .modifier(ActionStyleModifier(color: backgroundColor(tag: tag)))
+                                    }
+                                    .buttonStyle(.plain)
                                 }
-                                .buttonStyle(.plain)
                             }
                         }
                     }
@@ -128,16 +140,20 @@ extension ExploreView.SearchView.FilterSheet {
             request.excludedTags.contains(where: { $0 == tag.id })
         }
 
-        func handleAction(for tag: Tag, canExclude: Bool) {
+        func handleAction(for tag: Tag, filter: Filter) {
+            let filterTags = filter.property.tags.map(\.id)
             if includes(tag) {
                 request.includedTags.removeAll(where: { $0 == tag.id })
-
-                if canExclude {
+                
+                if filter.canExclude ?? false {
                     request.excludedTags.append(tag.id)
                 }
             } else if excludes(tag) {
                 request.excludedTags.removeAll(where: { $0 == tag.id })
             } else {
+                if filter.singleSelect ?? false {
+                    request.includedTags.removeAll(where: { filterTags.contains($0) })
+                }
                 request.includedTags.append(tag.id)
             }
         }

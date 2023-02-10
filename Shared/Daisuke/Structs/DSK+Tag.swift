@@ -15,7 +15,9 @@ extension DaisukeEngine.Structs {
     struct Filter: Parsable, Identifiable, Hashable {
         var id: String
         var property: Property
-        var canExclude: Bool
+        var canExclude: Bool?
+        var displayAsToggle: Bool?
+        var singleSelect: Bool?
     }
 
     struct Property: Parsable, Identifiable, Hashable {
@@ -33,7 +35,7 @@ extension DaisukeEngine.Structs {
     struct Tag: Parsable, Hashable, Identifiable {
         var id: String
         var label: String
-        var adultContent: Bool
+        var adultContent: Bool?
         var imageUrl: String?
     }
 }
