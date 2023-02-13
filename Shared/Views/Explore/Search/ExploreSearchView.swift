@@ -34,7 +34,7 @@ extension ExploreView {
             // MARK: Filter Sheet
 
             .fullScreenCover(isPresented: $model.presentFilters, onDismiss: defaultCall) {
-                FilterSheet()
+                FilterSheet(populated: model.request.filters)
                     .tint(accentColor)
                     .accentColor(accentColor)
             }
@@ -102,6 +102,10 @@ extension ExploreView {
             Task {
                 await model.makeRequest()
             }
+        }
+        
+        func didUpdateFilters() {
+            
         }
 
         func initialRequest() {

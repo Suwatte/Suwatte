@@ -135,7 +135,7 @@ extension DaisukeEngine.Structs.Chapter {
         chapter.webUrl = webUrl
 
         let providers = providers?.map { provider -> ChapterProvider in
-            let links = provider.links.map { link -> ChapterProviderLink in
+            let links = provider.links?.map { link -> ChapterProviderLink in
                 let l = ChapterProviderLink()
                 l.url = link.url
                 l.type = link.type
@@ -143,7 +143,10 @@ extension DaisukeEngine.Structs.Chapter {
             }
 
             let p = ChapterProvider()
-            p.links.append(objectsIn: links)
+            
+            if let links {
+                p.links.append(objectsIn: links)
+            }
             p.name = provider.name
             p.id = provider.id
             return p

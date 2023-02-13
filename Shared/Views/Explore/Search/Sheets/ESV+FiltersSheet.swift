@@ -12,6 +12,7 @@ extension ExploreView.SearchView {
         @EnvironmentObject var model: ExploreView.SearchView.ViewModel
         typealias Filter = DaisukeEngine.Structs.Filter
         @State var filters: Loadable<[Filter]> = .idle
+        @State var populated: [DSKCommon.PopulatedFilter]?
         @State var query = ""
         var body: some View {
             NavigationView {
@@ -28,7 +29,7 @@ extension ExploreView.SearchView {
                         }
                     }
                 }, { value in
-                    LoadedFiltersView(filters: value, request: $model.request, query: $query)
+                    LoadedFiltersView(filters: value, populated: $populated, query: $query)
                 })
                 .animation(.default, value: query)
                 .navigationTitle("Filters")
@@ -43,14 +44,14 @@ extension ExploreView.SearchView {
                     ToolbarItemGroup(placement: .bottomBar) {
                         Button("Reset") {
                             model.request = .init(page: 1)
-                            model.request.sort = model.sorters.first
+                            model.request.sort = model.sorters.first?.id
                             model.presentFilters.toggle()
                         }
-
+                        
                         Spacer()
-                        if let filters = filters.value {
+                        if populated != model.request.filters {
                             Button("Apply") {
-                                DataManager.shared.saveSearch(model.request.includedTags, model.request.excludedTags, model.source.id, filters)
+                                model.request.filters = populated
                                 model.presentFilters.toggle()
                             }
                         }
@@ -58,7 +59,7 @@ extension ExploreView.SearchView {
                 }
             }
         }
-
+        
         func loadFilters() async {
             do {
                 let response = try await model.source.getSearchFilters()
@@ -73,73 +74,162 @@ extension ExploreView.SearchView {
 extension ExploreView.SearchView.FilterSheet {
     struct LoadedFiltersView: View {
         @State var filters: [DaisukeEngine.Structs.Filter]
-        @Binding var request: DaisukeEngine.Structs.SearchRequest
+        @Binding var populated: [DSKCommon.PopulatedFilter]?
         @Binding var query: String
-
+        
         var body: some View {
+            
             ScrollView {
-                VStack(spacing: 20) {
-                    ForEach(filters) { filter in
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(filter.property.label)
-                                .font(.headline)
-                                .fontWeight(.bold)
-
-                            InteractiveTagView(filteredTags(tags: filter.property.tags)) { tag in
-                                Button {
-                                    withAnimation {
-                                        handleAction(for: tag, canExclude: filter.canExclude)
-                                    }
-
-                                } label: {
-                                    Text(tag.label)
-                                        .modifier(ActionStyleModifier(color: backgroundColor(tag: tag)))
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
+                VStack(alignment: .leading, spacing: 20) {
+                    ForEach(filters) {
+                        SingleFilterView(filter: $0, savedFilters: $populated, query: $query)
                     }
                 }
                 .padding()
             }
         }
+    }
+}
 
-        func filteredTags(tags: [DSKCommon.Tag]) -> [DSKCommon.Tag] {
-            var tags = tags
-
+extension ExploreView.SearchView.FilterSheet {
+    struct SingleFilterView : View {
+        var filter: DSKCommon.Filter
+        @Binding var savedFilters: [DSKCommon.PopulatedFilter]?
+        @Binding var query: String
+        var body: some View {
+            VStack(alignment: .leading) {
+                Text(filter.title)
+                    .font(.headline)
+                    .fontWeight(.bold)
+                if let subtitle = filter.subtitle {
+                    Text(subtitle)
+                        .font(.subheadline)
+                        .fontWeight(.light)
+                }
+                
+                Group {
+                    switch filter.type {
+                        case .info: EmptyView()
+                        case .toggle: Toggle(filter.label ?? filter.title, isOn: ToggleBinding)
+                        case .select, .multiselect, .excludableMultiselect:
+                            InteractiveTagView(options) { tag in
+                                Button {
+                                    withAnimation {
+                                        handleOptionAction(tag)
+                                    }
+                                } label: {
+                                    Text(tag.label)
+                                        .modifier(ActionStyleModifier(color: optionColor(tag)))
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        case .text:
+                            HStack {
+                                TextField(filter.label ?? filter.title, text: TextBinding)
+                                    .textFieldStyle(.roundedBorder)
+                                Button("Clear", role: .destructive) {
+                                    setFilter()
+                                }
+                        }
+                    }
+                }
+                
+            }
+        }
+        
+        // MARK: Binding
+        var ToggleBinding : Binding<Bool> {
+            .init {
+                populated?.bool ?? false
+            } set: { val in
+                setFilter(bool: val)
+            }
+        }
+        
+        var TextBinding: Binding<String> {
+            .init {
+                populated?.text ?? ""
+            } set: { val in
+                setFilter(text: val.isEmpty ? nil : val)
+            }
+        }
+        
+        // MARK: Helper Functions
+        var populated:  DSKCommon.PopulatedFilter? {
+            savedFilters?.first(where: { $0.id == filter.id })
+        }
+        
+        var options: [DSKCommon.Option] {
+            var ops = filter.options ?? []
+            
             if !query.isEmpty {
-                tags = tags.filter {
+                ops = ops.filter {
                     $0.label.lowercased().contains(query.lowercased())
                 }
             }
-            return tags.sorted(by: \.label, descending: false)
+            return ops.sorted(by: \.label, descending: false)
         }
-
-        typealias Tag = DaisukeEngine.Structs.Tag
-        func backgroundColor(tag: Tag) -> Color {
-            includes(tag) ? .green : excludes(tag) ? .red : .primary.opacity(0.1)
-        }
-
-        func includes(_ tag: Tag) -> Bool {
-            request.includedTags.contains(where: { $0 == tag.id })
-        }
-
-        func excludes(_ tag: Tag) -> Bool {
-            request.excludedTags.contains(where: { $0 == tag.id })
-        }
-
-        func handleAction(for tag: Tag, canExclude: Bool) {
-            if includes(tag) {
-                request.includedTags.removeAll(where: { $0 == tag.id })
-
-                if canExclude {
-                    request.excludedTags.append(tag.id)
-                }
-            } else if excludes(tag) {
-                request.excludedTags.removeAll(where: { $0 == tag.id })
-            } else {
-                request.includedTags.append(tag.id)
+        
+        
+        func setFilter(bool: Bool? = nil , text: String? = nil , included: [String]? = nil , excluded: [String]? = nil) {
+            
+            var idx = savedFilters?.firstIndex(where: { $0.id == filter.id })
+            
+            // Filter has not been populated
+            if idx == nil {
+                if savedFilters == nil { savedFilters = [] }
+                savedFilters?.append(.init(id: filter.id))
+                idx = savedFilters!.endIndex - 1
             }
+            
+            guard let idx else { return }
+            savedFilters?[idx].bool = bool
+            savedFilters?[idx].text = text
+            savedFilters?[idx].included = included
+            savedFilters?[idx].excluded = excluded
+        }
+        
+        func handleOptionAction(_ option: DSKCommon.Option) {
+            var included = Set(populated?.included ?? [])
+            var excluded = Set(populated?.excluded ?? [])
+            let id = option.id
+            
+
+            
+            switch filter.type {
+                case .select:
+                    if included.contains(id) {
+                        included.remove(id)
+                    } else {
+                        included.removeAll()
+                        included.insert(id)
+                    }
+                case .multiselect:
+                    if included.contains(id) {
+                        included.remove(id)
+                    } else {
+                        included.insert(id)
+                    }
+                case .excludableMultiselect:
+                    if included.contains(id) {
+                        included.remove(id)
+                        excluded.insert(id)
+                    } else if excluded.contains(id) {
+                        excluded.remove(id)
+                    } else {
+                        included.insert(id)
+                    }
+                    
+                default: break
+            }
+            
+            setFilter(included: included.isEmpty ? nil : Array(included), excluded: excluded.isEmpty ? nil : Array(excluded))
+        }
+        
+        func optionColor(_ option: DSKCommon.Option) -> Color {
+            if populated?.included?.contains(option.id) ?? false { return .green }
+            if populated?.excluded?.contains(option.id) ?? false { return .red }
+            return .primary.opacity(0.1)
         }
     }
 }

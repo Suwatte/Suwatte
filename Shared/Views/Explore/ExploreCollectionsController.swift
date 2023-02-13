@@ -96,7 +96,7 @@ final class ExploreCollectionsController: UICollectionViewController {
                 return cell
             }
             // Tag Cell
-            if let data = item.content as? DSKCommon.Tag {
+            if let data = item.content as? DSKCommon.ExploreTag {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "tagCell", for: indexPath)
                 cell.contentConfiguration = nil
                 cell.backport.contentConfiguration = Backport.UIHostingConfiguration  {
@@ -349,6 +349,10 @@ extension CTR {
         
         try Task.checkCancellation()
         
+        if let source = source as? DSK.LocalContentSource {
+            try await source.willResolveExploreCollections()
+        }
+        
         await withTaskGroup(of: Void.self, body: { group in
             
             for collection in collections {
@@ -409,6 +413,7 @@ extension CTR {
     struct ContentData: Hashable {
         var section: AnyHashable
         var content: AnyHashable
+        var random = String.random(length: 25)
     }
     struct ContentCell: View {
         var data: DSKCommon.Highlight
@@ -510,7 +515,7 @@ extension CTR {
     }
     
     struct TagTile: View {
-        var tag: DSKCommon.Tag
+        var tag: DSKCommon.ExploreTag
         @State var color: Color = .fadedPrimary
         @EnvironmentObject var source: DaisukeContentSource
         @StateObject private var loader = FetchImage()
@@ -562,7 +567,7 @@ extension CTR {
         }
         
         var request: DSKCommon.SearchRequest {
-            .init(query: nil, page: 1, includedTags: [tag.id], excludedTags: [], sort: nil)
+            .init(query: nil, page: 1,  sort: nil, filters: [ .init(id: tag.filterId, included: [tag.id] ) ])
         }
     }
 }

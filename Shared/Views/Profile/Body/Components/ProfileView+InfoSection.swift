@@ -60,7 +60,7 @@ extension ProfileView.Skeleton {
         var source: DaisukeContentSource
         var body: some View {
             InteractiveTagView(property.tags) { tag in
-                NavigationLink(destination: ExploreView.SearchView(model: .init(request: generateSearchRequest(tagId: tag.id), source: source), tagLabel: tag.label)) {
+                NavigationLink(destination: ExploreView.SearchView(model: .init(request: generateSearchRequest(tagId: tag.id, propertyId: property.id), source: source), tagLabel: tag.label)) {
                     Text(tag.label)
                         .modifier(ProfileTagStyle())
                 }
@@ -68,8 +68,8 @@ extension ProfileView.Skeleton {
             }
         }
 
-        fileprivate func generateSearchRequest(tagId: String) -> DaisukeEngine.Structs.SearchRequest {
-            .init(page: 1, includedTags: [tagId])
+        fileprivate func generateSearchRequest(tagId: String, propertyId: String) -> DaisukeEngine.Structs.SearchRequest {
+            .init(page: 1, filters: [ .init(id: propertyId, included: [tagId]) ])
         }
     }
 }

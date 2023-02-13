@@ -14,4 +14,13 @@ extension DaisukeEngine.LocalContentSource {}
 
 // MARK: Explore Section
 
-extension DaisukeEngine.LocalContentSource {}
+extension DaisukeEngine.LocalContentSource {
+    
+    func willResolveExploreCollections() async throws {
+        do {
+            try await callOptionalVoidMethod(method: "willResolveExploreCollections", arguments: [])
+        } catch {
+            ToastManager.shared.display(.error(nil, "[\(id)] [willResolveExploreCollections] \(error.localizedDescription)"))
+        }
+    }
+}

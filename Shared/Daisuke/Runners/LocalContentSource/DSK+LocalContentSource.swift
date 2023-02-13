@@ -74,11 +74,11 @@ extension DaisukeEngine {
             try await callMethodReturningDecodable(method: "getSourceTags", arguments: [], resolvesTo: [DaisukeEngine.Structs.Property].self)
         }
 
-        override func getExplorePageTags() async throws -> [DaisukeEngine.Structs.Tag]? {
+        override func getExplorePageTags() async throws -> [DaisukeEngine.Structs.ExploreTag]? {
             let method = "getExplorePageTags"
             if !methodExists(method: method) { return nil }
 
-            return try await callMethodReturningDecodable(method: method, arguments: [], resolvesTo: [DaisukeEngine.Structs.Tag].self)
+            return try await callMethodReturningDecodable(method: method, arguments: [], resolvesTo: [DaisukeEngine.Structs.ExploreTag].self)
         }
 
         typealias CollectionExcerpt = DSKCommon.CollectionExcerpt

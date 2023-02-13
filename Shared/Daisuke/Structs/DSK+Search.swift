@@ -11,9 +11,8 @@ extension DaisukeEngine.Structs {
     struct SearchRequest: Parsable, Hashable, Codable {
         var query: String?
         var page: Int = 1
-        var includedTags: [String] = []
-        var excludedTags: [String] = []
-        var sort: SortOption?
+        var sort: String?
+        var filters: [PopulatedFilter]?
 
         static var defaultReq: Self {
             .init()
@@ -30,5 +29,27 @@ extension DaisukeEngine.Structs {
         var page: Int
         var isLastPage: Bool
         var totalResultCount: Int?
+    }
+    
+    struct Filter: Parsable, Identifiable, Hashable {
+        var id: String
+        var title: String
+        var type: FilterType
+        var subtitle: String?
+        var label: String?
+        var options: [Option]?
+    }
+    
+    struct PopulatedFilter: Parsable, Identifiable, Hashable {
+        var id: String
+        var bool: Bool?
+        var text: String?
+        var selected: String?
+        var included: [String]?
+        var excluded: [String]?
+    }
+    
+    enum FilterType: Int, Codable {
+        case toggle, select, multiselect, excludableMultiselect, text, info
     }
 }

@@ -10,7 +10,7 @@ import SwiftUI
 
 struct InstalledRunnersView: View {
     @ObservedObject var engine = DaisukeEngine.shared
-    @ObservedResults(StoredRunnerObject.self, sortDescriptor: .init(keyPath: "order", ascending: true)) var savedRunners
+    @ObservedResults(StoredRunnerObject.self, sortDescriptor: .init(keyPath: "name", ascending: true)) var savedRunners
     @State var showAddSheet = false
     @Environment(\.editMode) var editMode
     var body: some View {
@@ -46,7 +46,7 @@ struct InstalledRunnersView: View {
                         try? engine.removeRunner(id: s.id)
                     }
                 }
-                .onMove(perform: move)
+//                .onMove(perform: move)
             } header: {
                 Text("Content Sources")
             }

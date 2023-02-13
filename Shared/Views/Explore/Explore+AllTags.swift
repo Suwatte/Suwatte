@@ -36,7 +36,7 @@ extension ExploreView.AllTagsView {
                 if !tags.isEmpty {
                     Section {
                         ForEach(tags) {
-                            Cell(for: $0)
+                            Cell(for: $0, propertyId: property.id)
                         }
                     } header: {
                         Text(property.label)
@@ -50,9 +50,9 @@ extension ExploreView.AllTagsView {
         property.tags.sorted(by: { $0.label < $1.label }).filter { text.isEmpty ? true : $0.label.lowercased().contains(text.lowercased()) }
     }
 
-    func Cell(for tag: DaisukeEngine.Structs.Tag) -> some View {
+    func Cell(for tag: DaisukeEngine.Structs.Tag, propertyId: String) -> some View {
         NavigationLink(tag.label) {
-            let request = DaisukeEngine.Structs.SearchRequest(query: nil, page: 1, includedTags: [tag.id], excludedTags: [], sort: nil)
+            let request = DaisukeEngine.Structs.SearchRequest(query: nil, page: 1,sort: nil, filters: [.init(id: propertyId, included: [tag.id] )])
             ExploreView.SearchView(model: .init(request: request, source: source), tagLabel: tag.label)
         }
     }

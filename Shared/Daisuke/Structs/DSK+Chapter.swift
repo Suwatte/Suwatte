@@ -37,7 +37,7 @@ extension DaisukeEngine.Structs {
     struct ChapterProvider: Parsable, Hashable {
         var id: String
         var name: String
-        var links: [ChapterProviderLink]
+        var links: [ChapterProviderLink]?
     }
 
     struct ChapterProviderLink: Parsable, Hashable {
