@@ -69,7 +69,7 @@ extension DaisukeEngine {
             throw DSK.Errors.MethodNotImplemented
         }
 
-        override func getExplorePageTags() async throws -> [DaisukeEngine.Structs.Tag]? {
+        override func getExplorePageTags() async throws -> [DaisukeEngine.Structs.ExploreTag]? {
             throw DSK.Errors.MethodNotImplemented
         }
 

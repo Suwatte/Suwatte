@@ -89,7 +89,7 @@ class DaisukeContentSource: DSKCSBase, ObservableObject, Identifiable, Equatable
         throw DSK.Errors.MethodNotImplemented
     }
 
-    func getExplorePageTags() async throws -> [DaisukeEngine.Structs.Tag]? {
+    func getExplorePageTags() async throws -> [DaisukeEngine.Structs.ExploreTag]? {
         throw DSK.Errors.MethodNotImplemented
     }
 

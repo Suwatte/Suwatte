@@ -76,8 +76,8 @@ extension ExploreView.SearchView.HistoryView {
         model.callFromHistory = true
         model.query = entry.text ?? ""
         model.request.query = entry.text
-        model.request.includedTags = entry.included.toArray()
-        model.request.excludedTags = entry.excluded.toArray()
+//        model.request.includedTags = entry.included.toArray()
+//        model.request.excludedTags = entry.excluded.toArray()
         presentationMode.wrappedValue.dismiss()
     }
 }

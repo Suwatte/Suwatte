@@ -77,7 +77,10 @@ extension ProfileView.Skeleton {
 
         @State var presentCovers = false
         var body: some View {
-            if !model.content.covers.isEmpty {
+            if model.content.covers.count > 1 {
+                GeometryReader { orix in
+                    Text("")
+                }
                 VStack(alignment: .leading, spacing: 7) {
                     Divider()
                     Button { presentCovers.toggle() } label: {

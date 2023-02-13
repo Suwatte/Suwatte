@@ -69,7 +69,7 @@ extension ExploreView.SearchView {
                 ForEach(model.sorters) { sorter in
                     Button(sorter.label) {
                         withAnimation {
-                            model.request.sort = sorter
+                            model.request.sort = sorter.id
                             model.request.page = 1
                             Task {
                                 await model.makeRequest()
@@ -114,7 +114,7 @@ extension ExploreView.SearchView.ResultsView {
 
 extension ExploreView.SearchView.ResultsView {
     var SORT_TITLE: String {
-        if let sorter = model.request.sort {
+        if let sortId = model.request.sort, let sorter = model.sorters.first(where: { $0.id == sortId }) {
             return sorter.label
         }
         return "Order"

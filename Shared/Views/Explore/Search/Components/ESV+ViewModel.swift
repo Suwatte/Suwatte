@@ -47,7 +47,7 @@ extension ExploreView.SearchView {
                 await MainActor.run(body: {
                     sorters = res
                     if !sorters.isEmpty, self.request.sort == nil {
-                        self.request.sort = sorters.first
+                        self.request.sort = sorters.first?.id
                     }
                 })
             }
@@ -56,7 +56,7 @@ extension ExploreView.SearchView {
         func softReset() {
             request.page = 1
             request.query = nil
-            request.sort = sorters.first
+            request.sort = sorters.first?.id
         }
 
         func makeRequest() async {
