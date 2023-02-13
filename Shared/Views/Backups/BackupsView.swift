@@ -116,7 +116,7 @@ extension BackupsView {
     }
 
     func handleRestore(url: URL) {
-        ToastManager.shared.loading.toggle()
+        ToastManager.shared.loading = true
 
         restoreTask = Task {
             do {
@@ -126,7 +126,7 @@ extension BackupsView {
                 try await manager.restore(from: url)
 
                 await MainActor.run(body: {
-                    ToastManager.shared.loading.toggle()
+                    ToastManager.shared.loading = false
                     ToastManager.shared.info("Restored Backup!")
                 })
 
@@ -134,6 +134,7 @@ extension BackupsView {
                 Logger.shared.error("[BackUpView] [Restore] \(error)")
                 await MainActor.run(body: {
                     ToastManager.shared.error(error)
+                    ToastManager.shared.loading = false
                 })
             }
         }
