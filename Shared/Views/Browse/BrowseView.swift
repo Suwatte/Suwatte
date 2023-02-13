@@ -11,7 +11,7 @@ import SwiftUI
 
 struct BrowseView: View {
     @EnvironmentObject var daisuke : DaisukeEngine
-    @ObservedResults(StoredRunnerObject.self, sortDescriptor: .init(keyPath: "order")) var savedRunners
+    @ObservedResults(StoredRunnerObject.self, sortDescriptor: .init(keyPath: "name")) var savedRunners
     @State var presentImporter = false
     var body: some View {
         NavigationView {
