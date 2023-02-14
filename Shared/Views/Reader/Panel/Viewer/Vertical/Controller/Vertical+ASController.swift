@@ -34,7 +34,6 @@ extension VerticalViewer {
             fatalError("init(coder:) has not been implemented")
         }
 
-
         // MARK: View Did Load
 
         override func viewDidLoad() {
@@ -91,12 +90,11 @@ extension VerticalViewer {
             let path: IndexPath = .init(item: openingIndex, section: 0)
             collectionNode.scrollToItem(at: path, at: .top, animated: false)
 
-        
             // TODO: Last Offset
             if let lastOffset = rChapter.requestedPageOffset {
                 collectionNode.contentOffset.y += lastOffset
             }
-            
+
             updateSliderOffset()
 
             UIView.animate(withDuration: 0.2,

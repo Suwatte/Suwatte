@@ -21,7 +21,6 @@ extension HistoryView {
                         model.selectedBook = book
                     }
                     .modifier(StyleModifier())
-
             }
         }
 

@@ -11,10 +11,9 @@ import JavaScriptCore
 
 extension DaisukeEngine {
     final class LocalContentSource: DaisukeContentSource, DaisukeRunnerProtocol {
-        
         @Published var user: DSKCommon.User?
         @Published var authMethod: DSKCommon.AuthMethod?
-        
+
         internal var runnerClass: JSValue
         required init(runnerClass: JSValue) throws {
             self.runnerClass = runnerClass
@@ -24,7 +23,7 @@ extension DaisukeEngine {
             super.init(info: try ContentSourceInfo(value: dictionary))
             setupAuthentication()
         }
-        
+
         private func setupAuthentication() {
             Task {
                 self.user = try? await getAuthenticatedUser()
@@ -208,12 +207,11 @@ extension DaisukeEngine.LocalContentSource {
     }
 }
 
-
 extension DaisukeEngine.LocalContentSource {
     var canSyncUserLibrary: Bool {
         methodExists(method: "syncUserLibrary")
     }
-    
+
     var hasExplorePage: Bool {
         methodExists(method: "createExploreCollections")
     }

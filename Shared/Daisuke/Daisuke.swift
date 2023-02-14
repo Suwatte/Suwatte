@@ -253,8 +253,7 @@ extension DaisukeEngine {
             try! realm.safeWrite {
                 realm.add(obj, update: .modified)
             }
-            
-            
+
             let info = ContentSourceInfo(id: runner.id, name: runner.name, version: runner.version, website: runner.website, supportedLanguages: runner.supportedLanguages)
             let source = HostedContentSource(host: URL(string: list)!, info: info)
             try addSource(runner: source)

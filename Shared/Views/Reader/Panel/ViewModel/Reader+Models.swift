@@ -90,21 +90,24 @@ extension ReaderView {
     }
 
     // MARK: Reader Chapter
+
     struct ChapterData: Hashable {
         var id: String
         var contentId: String
         var sourceId: String
         var chapterId: String
-        
+
         var pages: [DSKCommon.ChapterPage]
         var text: String?
 
         var imageURLs: [String] {
             pages.compactMap { $0.url }
         }
+
         var rawDatas: [String] {
             pages.compactMap { $0.raw?.toBase64() }
         }
+
         var urls: [URL] = []
         var archivePaths: [String] = []
     }
@@ -175,10 +178,7 @@ extension ReaderView {
         }
     }
 
-    
     struct Page: Hashable {
-        
-        
         var index: Int
         var isLocal: Bool {
             archivePath != nil || downloadURL != nil
@@ -266,16 +266,14 @@ extension ReaderView.Page {
     }
 }
 
-
 extension StoredChapterData {
     func toReadableChapterData() -> ReaderView.ChapterData {
         .init(id: _id, contentId: chapter?.contentId ?? "",
               sourceId: chapter?.sourceId ?? "",
               chapterId: chapter?.chapterId ?? "",
-              pages: pages.map({ .init(url: $0.url, raw: $0.raw)}),
+              pages: pages.map { .init(url: $0.url, raw: $0.raw) },
               text: text,
               urls: urls,
-              archivePaths: archivePaths
-        )
+              archivePaths: archivePaths)
     }
 }

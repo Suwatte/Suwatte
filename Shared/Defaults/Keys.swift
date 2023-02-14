@@ -118,15 +118,15 @@ enum STTKeys {
     static let UpdateSkipConditions = "APP.update_skip_conditions"
     static let FilteredProviders = "CONTENT.filtered_providers"
     static let FilteredLanguages = "CONTENT.filtered_langauges"
-    
+
     static let ImageScaleType = "READER.image_scale"
-    
+
     static let ReaderType = "READER.type"
-    
+
     static let AlwaysAskForLibraryConfig = "APP.library_always_asks"
     static let DefaultCollection = "LIBRARY.default_collection"
     static let DefaultReadingFlag = "LIBRARY.default_reading_flag"
-    
+
     static let VerticalPillarBoxEnabled = "READER.pillar_box_enabled"
     static let VerticalPillarBoxPCT = "READER.pillar_box_pct"
     static let PrefersDirectoryView = "APP.use_directory"

@@ -6,8 +6,8 @@
 //
 
 import AsyncDisplayKit
-import Kingfisher
 import Combine
+import Kingfisher
 import UIKit
 
 private typealias Controller = VerticalViewer.Controller
@@ -173,7 +173,7 @@ extension Controller {
                     // Guards
                     pct = max(pct, 0.15)
                     pct = min(pct, 1.0)
-                    
+
                     imageNode.style.width = ASDimensionMakeWithFraction(pct)
                     // Height Calculations
                     let width = constrainedSize.max.width * pct
@@ -182,14 +182,12 @@ extension Controller {
                     let n = ASDisplayNode()
                     n.style.width = ASDimensionMake("100%")
                     imageNode.style.alignSelf = .center
-                    let base = ASRelativeLayoutSpec(horizontalPosition: .center, verticalPosition: .center, sizingOption:[], child: imageNode)
-                    return  ASAbsoluteLayoutSpec(children: [n, base])
+                    let base = ASRelativeLayoutSpec(horizontalPosition: .center, verticalPosition: .center, sizingOption: [], child: imageNode)
+                    return ASAbsoluteLayoutSpec(children: [n, base])
                 } else {
                     return ASRatioLayoutSpec(ratio: 1 / image.size.ratio, child: imageNode)
                 }
-                
 
-               
             } else {
                 let ratio = 1 / UIScreen.main.bounds.size.ratio
                 return ASRatioLayoutSpec(ratio: ratio, child: progressNode)
@@ -213,12 +211,12 @@ extension Controller {
         func didFinishImageTasks() {
             working = false
         }
-        
+
         func listen() {
             Preferences.standard.preferencesChangedSubject
                 .filter { changedKeyPath in
                     changedKeyPath == \Preferences.usePillarBox ||
-                    changedKeyPath == \Preferences.pillarBoxPCT
+                        changedKeyPath == \Preferences.pillarBoxPCT
                 }
                 .sink { [weak self] _ in
                     guard let image = self?.image else { return }
@@ -291,7 +289,7 @@ extension Controller.ImageNode {
         KingfisherManager.shared.cache.memoryStorage.remove(forKey: page.CELL_KEY)
         imageNode.alpha = 0
         progressNode.alpha = 1
-        subscriptions.forEach({ $0.cancel() })
+        subscriptions.forEach { $0.cancel() }
         subscriptions.removeAll()
     }
 }

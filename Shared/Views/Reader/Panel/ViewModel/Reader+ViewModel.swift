@@ -94,11 +94,11 @@ extension ReaderView {
             readerChapter.data = .loading
             let cData = await STTHelpers.getChapterData(chapter)
             switch cData {
-                case .loaded(let t):
-                    readerChapter.data = .loaded(t.toReadableChapterData())
-                case .failed(let error):
-                    readerChapter.data = .failed(error)
-                default: break
+            case let .loaded(t):
+                readerChapter.data = .loaded(t.toReadableChapterData())
+            case let .failed(error):
+                readerChapter.data = .failed(error)
+            default: break
             }
             notifyOfChange()
 
@@ -130,7 +130,7 @@ extension ReaderView {
             } else {
                 insertPublisher.send(asNextChapter ? sections.count - 1 : 0)
             }
-            
+
             notifyOfChange()
             if pages.isEmpty {
                 loadNextChapter()
@@ -300,7 +300,7 @@ extension ReaderView.ViewModel {
 }
 
 extension ReaderView.ViewModel {
-    func didScrollTo(path: IndexPath) {        
+    func didScrollTo(path: IndexPath) {
         // Get Page
         let item = sections[path.section][path.item]
 
@@ -483,77 +483,76 @@ extension ReaderView.ViewModel {
     var contentIdentifier: ContentIdentifier {
         ContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId)
     }
-    @discardableResult func updateWithUserSetMode(_ value : PanelReadingModes? = nil) -> Bool {
+
+    @discardableResult func updateWithUserSetMode(_ value: PanelReadingModes? = nil) -> Bool {
         let id = contentIdentifier
         let saved = UserDefaults(suiteName: id.id)?.object(forKey: STTKeys.ReaderType) as? Int
-        
-        let userSetMode = saved.flatMap({ PanelReadingModes(rawValue: $0) }) ?? value
+
+        let userSetMode = saved.flatMap { PanelReadingModes(rawValue: $0) } ?? value
         let preferences = Preferences.standard
 
         if let userSetMode {
             switch userSetMode {
-                case .PAGED_MANGA:
-                    preferences.isReadingVertically = false
-                    preferences.readingLeftToRight = false
-                    preferences.isPagingVertically = false
-                case .PAGED_COMIC:
-                    preferences.isReadingVertically = false
-                    preferences.readingLeftToRight = true
-                    preferences.isPagingVertically = false
-
-                case .VERTICAL:
-                    preferences.isReadingVertically = true
-                    preferences.isPagingVertically = false
-                    preferences.VerticalPagePadding = false
-
-                case .VERTICAL_SEPARATED:
-                    preferences.isReadingVertically = true
-                    preferences.VerticalPagePadding = true
-                    preferences.isPagingVertically = false
-
-                case .PAGED_VERTICAL:
-                    preferences.isReadingVertically = false
-                    preferences.isPagingVertically = true
-            }
-            return true
-        }
-        return false
-    }
-    func updateViewerMode(with mode: ReadingMode) {
-        guard !updateWithUserSetMode() else { return }
-        let defaults = UserDefaults(suiteName: contentIdentifier.id)
-        let preferences = Preferences.standard
-        switch mode {
             case .PAGED_MANGA:
                 preferences.isReadingVertically = false
                 preferences.readingLeftToRight = false
                 preferences.isPagingVertically = false
-                defaults?.set(PanelReadingModes.PAGED_MANGA.rawValue, forKey: STTKeys.ReaderType)
             case .PAGED_COMIC:
                 preferences.isReadingVertically = false
                 preferences.readingLeftToRight = true
                 preferences.isPagingVertically = false
-                defaults?.set(PanelReadingModes.PAGED_COMIC.rawValue, forKey: STTKeys.ReaderType)
-
 
             case .VERTICAL:
                 preferences.isReadingVertically = true
                 preferences.isPagingVertically = false
                 preferences.VerticalPagePadding = false
-                defaults?.set(PanelReadingModes.VERTICAL.rawValue, forKey: STTKeys.ReaderType)
-
 
             case .VERTICAL_SEPARATED:
                 preferences.isReadingVertically = true
                 preferences.VerticalPagePadding = true
                 preferences.isPagingVertically = false
-                defaults?.set(PanelReadingModes.VERTICAL_SEPARATED.rawValue, forKey: STTKeys.ReaderType)
-
 
             case .PAGED_VERTICAL:
                 preferences.isReadingVertically = false
                 preferences.isPagingVertically = true
-                defaults?.set(PanelReadingModes.PAGED_VERTICAL.rawValue, forKey: STTKeys.ReaderType)
+            }
+            return true
+        }
+        return false
+    }
+
+    func updateViewerMode(with mode: ReadingMode) {
+        guard !updateWithUserSetMode() else { return }
+        let defaults = UserDefaults(suiteName: contentIdentifier.id)
+        let preferences = Preferences.standard
+        switch mode {
+        case .PAGED_MANGA:
+            preferences.isReadingVertically = false
+            preferences.readingLeftToRight = false
+            preferences.isPagingVertically = false
+            defaults?.set(PanelReadingModes.PAGED_MANGA.rawValue, forKey: STTKeys.ReaderType)
+        case .PAGED_COMIC:
+            preferences.isReadingVertically = false
+            preferences.readingLeftToRight = true
+            preferences.isPagingVertically = false
+            defaults?.set(PanelReadingModes.PAGED_COMIC.rawValue, forKey: STTKeys.ReaderType)
+
+        case .VERTICAL:
+            preferences.isReadingVertically = true
+            preferences.isPagingVertically = false
+            preferences.VerticalPagePadding = false
+            defaults?.set(PanelReadingModes.VERTICAL.rawValue, forKey: STTKeys.ReaderType)
+
+        case .VERTICAL_SEPARATED:
+            preferences.isReadingVertically = true
+            preferences.VerticalPagePadding = true
+            preferences.isPagingVertically = false
+            defaults?.set(PanelReadingModes.VERTICAL_SEPARATED.rawValue, forKey: STTKeys.ReaderType)
+
+        case .PAGED_VERTICAL:
+            preferences.isReadingVertically = false
+            preferences.isPagingVertically = true
+            defaults?.set(PanelReadingModes.PAGED_VERTICAL.rawValue, forKey: STTKeys.ReaderType)
 
         default: break
         }

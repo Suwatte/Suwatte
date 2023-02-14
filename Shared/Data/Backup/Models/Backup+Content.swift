@@ -82,7 +82,7 @@ extension StoredTag: Codable {
 
         id = try container.decode(String.self, forKey: .id)
         label = try container.decode(String.self, forKey: .label)
-        adultContent = try container.decode(Bool.self, forKey: .adultContent)
+        adultContent = try container.decodeIfPresent(Bool.self, forKey: .adultContent) ?? false
     }
 
     func encode(to encoder: Encoder) throws {

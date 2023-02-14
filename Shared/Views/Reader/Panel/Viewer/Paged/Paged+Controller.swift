@@ -14,7 +14,7 @@ extension UICollectionView {
 }
 
 extension PagedViewer {
-    final class PagedController: UICollectionViewController, PagerDelegate {        
+    final class PagedController: UICollectionViewController, PagerDelegate {
         var model: ReaderView.ViewModel!
         var subscriptions = Set<AnyCancellable>()
         var currentPath: IndexPath? {
@@ -288,7 +288,7 @@ extension PagedController {
     override func collectionView(_: UICollectionView, willDisplay _: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         handleChapterPreload(at: indexPath)
     }
-    
+
     override func collectionView(_: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt _: IndexPath) {
         guard let cell = cell as? ImageCell else {
             return
@@ -492,7 +492,7 @@ extension PagedController: UICollectionViewDataSourcePrefetching {
 
 extension PagedController {
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        self.collectionView.collectionViewLayout.invalidateLayout()
+        collectionView.collectionViewLayout.invalidateLayout()
         super.viewWillTransition(to: size, with: coordinator)
     }
 }

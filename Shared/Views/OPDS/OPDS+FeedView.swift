@@ -9,9 +9,9 @@ import ASCollectionView
 import Kingfisher
 import R2Shared
 import ReadiumOPDS
+import RealmSwift
 import SwiftUI
 import SwiftUIBackports
-import RealmSwift
 
 extension OPDSView {
     struct LoadableFeedView: View {
@@ -167,21 +167,21 @@ extension Target {
                 }
             }
         }
-        
+
         struct TileOverlay: View {
             @ObservedObject var download: LocalContentManager.DownloadObject
             var body: some View {
                 ZStack(alignment: .topTrailing) {
                     Group {
                         switch download.status {
-                            case .failing:
-                                ColoredBadge(color: .red)
-                            case .active:
-                                ColoredBadge(color: .green)
-                            case .queued:
-                                ColoredBadge(color: .gray)
-                            default:
-                                EmptyView()
+                        case .failing:
+                            ColoredBadge(color: .red)
+                        case .active:
+                            ColoredBadge(color: .green)
+                        case .queued:
+                            ColoredBadge(color: .gray)
+                        default:
+                            EmptyView()
                         }
                     }
                 }
@@ -202,7 +202,7 @@ extension Target {
         @State var presentDialog = false
         @State var presentAlert = false
         @Binding var chapter: StoredChapter?
-        
+
         var request: URLRequest? {
             var headers = HTTPHeaders()
             if let auth = client.authHeader {
@@ -227,7 +227,6 @@ extension Target {
                             Color.gray.opacity(0.25)
                                 .shimmering()
                                 .transition(.opacity)
-
                         }
                     }
                     .frame(width: imageWidth, height: imageHeight)
@@ -250,14 +249,12 @@ extension Target {
                             if let pages = publication.streamLink?.properties["count"] as? String ?? publication.metadata.numberOfPages?.description {
                                 Text(pages + " Pages")
                                     .font(.footnote.weight(.thin))
-
                             }
                         }
                     }
 
                     .frame(alignment: .topLeading)
                 }
-                
             }
             .onAppear {
                 if let request = request {
@@ -274,13 +271,13 @@ extension Target {
             }, message: {
                 Text(PublicationDescription)
             })
-            
+
             .confirmationDialog("Actions", isPresented: $presentDialog) {
                 if publication.isStreamable {
                     Button("Info") {
                         presentAlert.toggle()
                     }
-                    
+
                     if let link = publication.acquisitionLink.flatMap({ URL(string: $0) }) {
                         if LocalContentManager.shared.hasFile(fileName: link.lastPathComponent) {
                             Button("Read") {
@@ -312,11 +309,11 @@ extension Target {
                 }
             }
         }
-        
+
         var PublicationDescription: String {
             let title = publication.metadata.title
             let other = publication.metadata.description ?? ""
-            
+
             return "\(title)\n\(other)"
         }
     }
@@ -362,4 +359,3 @@ extension Publication: Identifiable {
         return chapter
     }
 }
-

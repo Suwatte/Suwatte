@@ -103,10 +103,8 @@ extension ExploreView {
                 await model.makeRequest()
             }
         }
-        
-        func didUpdateFilters() {
-            
-        }
+
+        func didUpdateFilters() {}
 
         func initialRequest() {
             if initialized {

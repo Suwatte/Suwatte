@@ -38,7 +38,7 @@ extension ExploreView.SearchView {
                             if state.isLastInSection {
                                 await model.paginate()
                             }
-                    }
+                        }
                 }
                 .cacheCells()
                 .sectionHeader {
@@ -52,9 +52,9 @@ extension ExploreView.SearchView {
                     PaginationView
                 }
             }
-            
+
             .layout(createCustomLayout: {
-                DynamicGridLayout(header: .absolute(30), footer: .estimated(44))
+                DynamicGridLayout(header: .estimated(30), footer: .estimated(44))
             }, configureCustomLayout: { layout in
                 layout.invalidateLayout()
             })
@@ -105,7 +105,7 @@ extension ExploreView.SearchView.ResultsView {
                     }
                     readLater.toggle()
                 } label: {
-                    Label( readLater ? "Remove from Read Later" : "Add to Read Later", systemImage: readLater ? "bookmark.slash" : "bookmark")
+                    Label(readLater ? "Remove from Read Later" : "Add to Read Later", systemImage: readLater ? "bookmark.slash" : "bookmark")
                 }
             }
         }

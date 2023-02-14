@@ -30,7 +30,7 @@ extension PagedViewer {
             pageViewContraints.removeAll()
             super.prepareForReuse()
         }
-        
+
         func set(page: ReaderPage, delegate: PagerDelegate) {
             // Initialize
             pageView = PagedDisplayHolder()
@@ -45,26 +45,24 @@ extension PagedViewer {
             if Preferences.standard.imageInteractions {
                 pageView.addImageInteraction(UIContextMenuInteraction(delegate: delegate))
             }
-            
-            
+
             // AutoLayout
             pageViewContraints = [
                 pageView.widthAnchor.constraint(equalTo: widthAnchor),
                 pageView.heightAnchor.constraint(equalTo: heightAnchor),
                 pageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-                pageView.centerXAnchor.constraint(equalTo: centerXAnchor)
+                pageView.centerXAnchor.constraint(equalTo: centerXAnchor),
             ]
             NSLayoutConstraint.activate(pageViewContraints)
             pageView.subscribe()
         }
-        
-        var pageViewContraints : [NSLayoutConstraint] = []
+
+        var pageViewContraints: [NSLayoutConstraint] = []
 
         func setImage() {
             pageView?.load()
         }
-        
-        
+
         func cancelTasks() {
             pageView?.cancel()
         }

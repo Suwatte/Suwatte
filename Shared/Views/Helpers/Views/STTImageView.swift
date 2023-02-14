@@ -17,7 +17,7 @@ struct STTImageView: View {
     var mode: SwiftUI.ContentMode = .fill
     @ObservedResults(CustomThumbnail.self) var thumbnails
     @StateObject private var loader = FetchImage()
-    
+
     var body: some View {
         GeometryReader { proxy in
             let size: CGSize = .init(width: proxy.size.width, height: proxy.size.width * 1.5)
@@ -40,7 +40,7 @@ struct STTImageView: View {
             .modifier(DisabledNavLink())
         }
     }
-    
+
     func load(_ size: CGSize) {
         if loader.view != nil { return }
         loader.priority = .normal
@@ -56,14 +56,14 @@ struct STTImageView: View {
             loader.load(req ?? imageURL)
         }
     }
-    
+
     var imageURL: URL? {
         if hasCustomThumb {
             return STTImageProvider.urlFor(id: identifier.id)
         }
         return url
     }
-    
+
     var hasCustomThumb: Bool {
         thumbnails.contains(where: { $0._id == identifier.id })
     }
@@ -74,7 +74,7 @@ struct BaseImageView: View {
     var sourceId: String?
     var mode: SwiftUI.ContentMode = .fill
     @StateObject private var loader = FetchImage()
-    
+
     var body: some View {
         GeometryReader { proxy in
             let size: CGSize = .init(width: proxy.size.width, height: proxy.size.width * 1.5)
@@ -94,13 +94,13 @@ struct BaseImageView: View {
             .background(Color.gray.opacity(0.25))
         }
     }
-    
+
     func load(_ size: CGSize) {
         if loader.view != nil { return }
-        
+
         loader.processors = [.resize(size: size)]
         loader.animation = .easeOut(duration: 0.25)
-        
+
         guard let url, url.isHTTP else {
             loader.load(url)
             return
@@ -120,7 +120,7 @@ class AsyncImageModifier: AsyncImageDownloadRequestModifier {
     init(sourceId: String?) {
         self.sourceId = sourceId
     }
-    
+
     let sourceId: String?
     func modified(for request: URLRequest, reportModified: @escaping (URLRequest?) -> Void) {
         guard let sourceId, let source = DaisukeEngine.shared.getJSSource(with: sourceId) else {
@@ -142,13 +142,11 @@ class AsyncImageModifier: AsyncImageDownloadRequestModifier {
             reportModified(request)
         }
     }
-    
+
     var onDownloadTaskStarted: ((DownloadTask?) -> Void)?
 }
 
-
-struct DisabledNavLink : ViewModifier {
-    
+struct DisabledNavLink: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background {
@@ -161,4 +159,3 @@ struct DisabledNavLink : ViewModifier {
             }
     }
 }
-

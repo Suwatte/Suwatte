@@ -28,7 +28,7 @@ extension DaisukeEngine.Structs {
         var pages: [ChapterPage]?
         var text: String?
     }
-    
+
     struct ChapterPage: Parsable, Hashable {
         var url: String?
         var raw: String?

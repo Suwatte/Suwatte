@@ -30,7 +30,7 @@ extension DaisukeEngine.Structs {
         var isLastPage: Bool
         var totalResultCount: Int?
     }
-    
+
     struct Filter: Parsable, Identifiable, Hashable {
         var id: String
         var title: String
@@ -39,7 +39,7 @@ extension DaisukeEngine.Structs {
         var label: String?
         var options: [Option]?
     }
-    
+
     struct PopulatedFilter: Parsable, Identifiable, Hashable {
         var id: String
         var bool: Bool?
@@ -48,7 +48,7 @@ extension DaisukeEngine.Structs {
         var included: [String]?
         var excluded: [String]?
     }
-    
+
     enum FilterType: Int, Codable {
         case toggle, select, multiselect, excludableMultiselect, text, info
     }

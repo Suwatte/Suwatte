@@ -5,8 +5,8 @@
 //  Created by Mantton on 2023-01-04.
 //
 
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 struct SettingsView: View {
     var body: some View {
@@ -22,11 +22,9 @@ struct SettingsView: View {
     }
 }
 
-
-
 // MARK: Misc
+
 extension SettingsView {
-    
     struct MiscSection: View {
         private let options = AppTabs.defaultSettings
         @AppStorage(STTKeys.IntialTabIndex) var InitialSelection = 3
@@ -41,9 +39,8 @@ extension SettingsView {
                 Text("Tab")
             }
             .buttonStyle(.plain)
-            
         }
-        
+
         var OpeningTab: some View {
             NavigationLink {
                 List {
@@ -60,9 +57,7 @@ extension SettingsView {
     }
 }
 
-
 extension SettingsView {
-    
     struct UpdatesSection: View {
         @AppStorage(STTKeys.UpdateInterval) var updateInterval: STTUpdateInterval = .oneHour
         @AppStorage(STTKeys.CheckLinkedOnUpdateCheck) var checkLinkedOnUpdate = false
@@ -84,34 +79,29 @@ extension SettingsView {
                     .buttonStyle(.plain)
                     .navigationTitle("Skip Conditions")
                 }
-                
-                
-                
+
             } header: {
                 Text("Updates")
             }
-            
+
             Section {
                 // Check Linked
                 Toggle("Check Linked Titles", isOn: $checkLinkedOnUpdate)
                 Toggle("Update Title Information", isOn: $updateContent)
-            } header : {
+            } header: {
                 Text("Updates")
             }
-            
         }
-        
+
         var BINDING: Binding<Set<SkipCondition>> {
             .init {
                 Set(skipConditions)
             } set: { value in
                 skipConditions = Array(value)
             }
-
         }
     }
 }
-
 
 extension SettingsView {
     struct PrivacySection: View {
@@ -140,15 +130,13 @@ extension SettingsView {
                 Button("Clear Cookies", role: .destructive) {
                     HTTPCookieStorage.shared.removeCookies(since: .distantPast)
                 }
-                
+
             } header: {
                 Text("Networking")
             }
         }
-
     }
 }
-
 
 extension SettingsView {
     struct RunnersSection: View {
@@ -165,26 +153,24 @@ extension SettingsView {
     }
 }
 
-enum SkipCondition:  Int, CaseIterable, Identifiable, UserDefaultsSerializable {
+enum SkipCondition: Int, CaseIterable, Identifiable, UserDefaultsSerializable {
     case INVALID_FLAG, NO_MARKERS, HAS_UNREAD
-    
+
     var description: String {
         switch self {
-            case .HAS_UNREAD: return "Has Unread Chapters"
-            case .INVALID_FLAG: return "Flag Not Set to 'Reading'"
-            case .NO_MARKERS: return "Not Started"
+        case .HAS_UNREAD: return "Has Unread Chapters"
+        case .INVALID_FLAG: return "Flag Not Set to 'Reading'"
+        case .NO_MARKERS: return "Not Started"
         }
     }
-    
+
     var id: Int {
         rawValue
     }
 }
 
-
 extension SettingsView {
-    
-    struct LibrarySection : View {
+    struct LibrarySection: View {
         @AppStorage(STTKeys.AlwaysAskForLibraryConfig) private var alwaysAsk = true
         @ObservedResults(LibraryCollection.self, sortDescriptor: .init(keyPath: "order", ascending: true)) private var collections
         @AppStorage(STTKeys.DefaultCollection) var defaultCollection: String = ""
@@ -192,7 +178,7 @@ extension SettingsView {
         var body: some View {
             Section {
                 Toggle("Always Prompt", isOn: $alwaysAsk)
-                
+
                 if !alwaysAsk {
                     Picker("Default Collection", selection: .init($defaultCollection, deselectTo: "")) {
                         Text("None")
@@ -203,9 +189,8 @@ extension SettingsView {
                         }
                     }
                     .transition(.slide)
-
                 }
-                
+
                 if !alwaysAsk {
                     Picker("Default Reading Flag", selection: $defaultFlag) {
                         ForEach(LibraryFlag.allCases) {
@@ -226,7 +211,6 @@ extension SettingsView {
 public extension Binding where Value: Equatable {
     init(_ source: Binding<Value>, deselectTo value: Value) {
         self.init(get: { source.wrappedValue },
-                  set: { source.wrappedValue = $0 == source.wrappedValue ? value : $0 }
-        )
+                  set: { source.wrappedValue = $0 == source.wrappedValue ? value : $0 })
     }
 }

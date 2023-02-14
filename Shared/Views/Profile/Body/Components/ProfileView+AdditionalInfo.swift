@@ -78,7 +78,7 @@ extension ProfileView.Skeleton {
         @State var presentCovers = false
         var body: some View {
             if model.content.covers.count > 1 {
-                GeometryReader { orix in
+                GeometryReader { _ in
                     Text("")
                 }
                 VStack(alignment: .leading, spacing: 7) {

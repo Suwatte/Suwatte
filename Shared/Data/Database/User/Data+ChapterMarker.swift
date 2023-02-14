@@ -34,11 +34,11 @@ final class ChapterMarker: Object, ObjectKeyIdentifiable {
     }
 
     @Persisted var lastPageOffset: Double?
-    
+
     func toHistoryObject() -> HistoryObject {
         .init(id: _id, chapterName: chapter?.displayName ?? "", contentId: chapter?.contentId ?? "", sourceId: chapter?.sourceId ?? "", chapterId: chapter?.chapterId ?? "", progress: progress, completed: completed, dateRead: dateRead)
     }
-    
+
     func toOPDSHistoryObject() -> HistoryObject {
         .init(id: _id, chapterName: chapter?.title ?? "", contentId: chapter?.contentId ?? "", sourceId: STTHelpers.OPDS_CONTENT_ID, chapterId: chapter?.chapterId ?? "", progress: progress, completed: completed, dateRead: dateRead, thumbnail: chapter?.thumbnail ?? "")
     }
@@ -86,9 +86,9 @@ extension DataManager {
                 realm.create(ChapterMarker.self, value: object, update: .modified)
             }
         }
-        
+
         let identifiers = chapters
-            .map({ ContentIdentifier(contentId: $0.contentId, sourceId: $0.sourceId) })
+            .map { ContentIdentifier(contentId: $0.contentId, sourceId: $0.sourceId) }
             .distinct()
         identifiers.forEach { updateUnreadCount(for: $0, realm) }
         notifySourceOfMarkState(chapters: chapters, completed: completed)
@@ -126,7 +126,7 @@ extension DataManager {
         DispatchQueue(label: "background").async {
             autoreleasepool {
                 let realm = try! Realm()
-                
+
                 let last = chapter.requestedPageIndex + 1
                 var lastOffset: Double?
                 if let offset = chapter.requestedPageOffset {
@@ -149,12 +149,11 @@ extension DataManager {
                 }
             }
         }
-
     }
-    
+
     func setNovelProgress(from chapter: ReaderView.ReaderChapter, pageCount: Int) {
         let realm = try! Realm()
-        
+
         let last = chapter.requestedPageIndex + 1
         let total = chapter.pages?.count
         let marker = ChapterMarker()
@@ -176,10 +175,10 @@ extension DataManager {
         DispatchQueue(label: "background").async {
             autoreleasepool {
                 let realm = try! Realm()
-                
+
                 var target: ChapterMarker?
                 target = realm.objects(ChapterMarker.self)
-                    .where({ $0._id == chapter._id })
+                    .where { $0._id == chapter._id }
                     .first
 
                 if target == nil {

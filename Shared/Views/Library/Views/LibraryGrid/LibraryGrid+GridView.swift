@@ -145,28 +145,28 @@ struct NeutralButtonStyle: ButtonStyle {
     }
 }
 
-func DynamicGridLayout(header: NSCollectionLayoutDimension? = nil , footer: NSCollectionLayoutDimension? = nil, _ titleSize: CGFloat? = nil) -> UICollectionViewCompositionalLayout {
+func DynamicGridLayout(header: NSCollectionLayoutDimension? = nil, footer: NSCollectionLayoutDimension? = nil, _ titleSize: CGFloat? = nil) -> UICollectionViewCompositionalLayout {
     UICollectionViewCompositionalLayout { _, environment in
-        
+
         let viewingPotrait = environment.container.contentSize.width < environment.container.contentSize.height
         let itemsPerRow = UserDefaults.standard.integer(forKey: viewingPotrait ? STTKeys.GridItemsPerRow_P : STTKeys.GridItemsPerRow_LS)
         let style = TileStyle(rawValue: UserDefaults.standard.integer(forKey: STTKeys.TileStyle)) ?? .COMPACT
-       
+
         let SPACING: CGFloat = 10
         let INSET: CGFloat = 16
-        let totalSpacing =  SPACING * CGFloat(itemsPerRow - 1)
+        let totalSpacing = SPACING * CGFloat(itemsPerRow - 1)
         let groupWidth = environment.container.contentSize.width - (INSET * 2) - totalSpacing
         let estimatedItemWidth = (groupWidth / CGFloat(itemsPerRow)).rounded(.down)
         let shouldAddTitle = style == .SEPARATED && estimatedItemWidth >= 100 || titleSize != nil
         let titleSize: CGFloat = shouldAddTitle ? titleSize ?? 44 : 0
         let height = (estimatedItemWidth * 1.5) + titleSize
-        
+
         // Item
         let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(
-                    widthDimension: .fractionalWidth(1 / CGFloat(itemsPerRow)),
-                    heightDimension: .absolute(height)
-                ))
-        
+            widthDimension: .fractionalWidth(1 / CGFloat(itemsPerRow)),
+            heightDimension: .absolute(height)
+        ))
+
         // Group / Row
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: NSCollectionLayoutSize(
@@ -176,24 +176,23 @@ func DynamicGridLayout(header: NSCollectionLayoutDimension? = nil , footer: NSCo
             subitem: item,
             count: itemsPerRow
         )
-        group.interItemSpacing =  .fixed(SPACING)
+        group.interItemSpacing = .fixed(SPACING)
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = .init(top: 15, leading: INSET, bottom: 10, trailing: INSET)
         section.interGroupSpacing = SPACING
-        
+
         var items: [NSCollectionLayoutBoundarySupplementaryItem] = []
-        
+
         if let header {
-            let headerComponent : NSCollectionLayoutBoundarySupplementaryItem = .init(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: header), elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
+            let headerComponent: NSCollectionLayoutBoundarySupplementaryItem = .init(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: header), elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
             items.append(headerComponent)
         }
-        
+
         if let footer {
-            let footerComponent : NSCollectionLayoutBoundarySupplementaryItem = .init(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: footer), elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottom)
+            let footerComponent: NSCollectionLayoutBoundarySupplementaryItem = .init(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: footer), elementKind: UICollectionView.elementKindSectionFooter, alignment: .bottom)
             items.append(footerComponent)
         }
         section.boundarySupplementaryItems = items
         return section
     }
-
 }

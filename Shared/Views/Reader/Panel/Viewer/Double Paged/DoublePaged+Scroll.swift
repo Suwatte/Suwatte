@@ -7,15 +7,13 @@
 
 import UIKit
 
-
-
 extension DoublePagedViewer.Controller {
     func getCurrentChapterScrollRange() -> (min: CGFloat, max: CGFloat) {
         // Get Current IP
         guard let path = currentPath else {
             return (min: .zero, max: .zero)
         }
-        
+
         var sectionMinOffset: CGFloat = .zero
         var sectionMaxOffset: CGFloat = .zero
 
@@ -37,19 +35,19 @@ extension DoublePagedViewer.Controller {
         }
         return (min: sectionMinOffset, max: sectionMaxOffset)
     }
-    
+
     func updateSliderOffset() {
         let range = getCurrentChapterScrollRange()
         let total = range.max - range.min
         var current = collectionView.contentOffset.x - range.min
         current = max(0, current)
         current = min(range.max, current)
-        let target =  current / total
+        let target = current / total
         DispatchQueue.main.async { [weak self] in
             self?.model.slider.setCurrent(target)
         }
     }
-    
+
     func getPositionRelativeTo(_ value: CGFloat) -> CGPoint {
         let range = getCurrentChapterScrollRange()
         let total = range.max - range.min
@@ -60,13 +58,12 @@ extension DoublePagedViewer.Controller {
     }
 }
 
-
 extension DoublePagedViewer.Controller {
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         onUserDidScroll(to: scrollView.contentOffset.x)
     }
 
-    func onUserDidScroll(to offset: CGFloat) {
+    func onUserDidScroll(to _: CGFloat) {
         // Update Offset
         if !model.slider.isScrubbing {
             updateSliderOffset()
@@ -108,17 +105,14 @@ extension DoublePagedViewer.Controller {
         }
         let item = getStack(for: path.section)
             .get(index: path.item)
-        
-        
 
         let page = item?.secondary ?? item?.primary
         let index = model.sections[path.section].firstIndex(where: { $0 === page })
         if let index {
             model.didScrollTo(path: .init(item: index, section: path.section))
         }
-        
+
         model.scrubbingPageNumber = nil
         model.activeChapter.requestedPageOffset = nil
     }
 }
-

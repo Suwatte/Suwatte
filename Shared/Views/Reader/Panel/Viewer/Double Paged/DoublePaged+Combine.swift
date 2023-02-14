@@ -6,7 +6,7 @@
 //
 import UIKit
 
-fileprivate typealias ImageCell = DoublePagedViewer.ImageCell
+private typealias ImageCell = DoublePagedViewer.ImageCell
 extension DoublePagedViewer.Controller {
     func listen() {
         // MARK: LTR & RTL Publisher
@@ -40,11 +40,12 @@ extension DoublePagedViewer.Controller {
 
                 if let path = collectionView.indexPathForItem(at: position),
                    let cell = collectionView.cellForItem(at: path) as? ImageCell,
-                   let pView = cell.pageView {
-                    let page = pView.secondPage?.page ?? pView.page.page 
+                   let pView = cell.pageView
+                {
+                    let page = pView.secondPage?.page ?? pView.page.page
                     model.scrubbingPageNumber = page.index + 1
                 }
-                
+
                 collectionView.setContentOffset(position, animated: false)
             }
         }
@@ -96,7 +97,7 @@ extension DoublePagedViewer.Controller {
         // MARK: Insert Publisher
 
         model.insertPublisher.sink { [unowned self] section in
-            
+
             Task { @MainActor in
                 let topInsertion = section == 0 && model.sections.count != 0
 //                 Next Chapter Logic

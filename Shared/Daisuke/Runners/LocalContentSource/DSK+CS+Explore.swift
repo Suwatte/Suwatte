@@ -15,7 +15,6 @@ extension DaisukeEngine.LocalContentSource {}
 // MARK: Explore Section
 
 extension DaisukeEngine.LocalContentSource {
-    
     func willResolveExploreCollections() async throws {
         do {
             try await callOptionalVoidMethod(method: "willResolveExploreCollections", arguments: [])

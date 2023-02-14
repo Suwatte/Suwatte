@@ -5,8 +5,8 @@
 //  Created by Mantton on 2022-07-22.
 //
 
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 extension HistoryView {
     struct OPDSContentTile: View {
@@ -43,6 +43,7 @@ extension HistoryView {
                 model.selectedOPDSContent = marker
             }
         }
+
         var identifier: ContentIdentifier {
             ContentIdentifier(contentId: marker.contentId, sourceId: marker.sourceId)
         }
@@ -55,7 +56,5 @@ extension HistoryView {
                 .cornerRadius(5)
                 .shadow(radius: 3)
         }
-
-
     }
 }

@@ -79,6 +79,7 @@ extension ProfileView {
         var PLACEHOLDER: some View {
             ProgressView()
         }
+
         func handleReconnection() {
             DispatchQueue.main.async {
                 viewModel.getMarkers()

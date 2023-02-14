@@ -59,7 +59,7 @@ final class LibraryEntry: Object, ObjectKeyIdentifiable {
     @Persisted var collections = List<String>()
     @Persisted var flag = LibraryFlag.unknown
     @Persisted var linkedHasUpdates = false
-    
+
     @Persisted var unreadCount: Int
 }
 
@@ -192,7 +192,7 @@ extension DataManager {
             }
         }
     }
-    
+
     func toggleCollection(for entry: String, withId cid: String) {
         let realm = try! Realm()
 
@@ -272,38 +272,38 @@ extension DataManager {
         return realm.objects(LibraryEntry.self)
             .filter { $0.dateAdded < date && $0.content?.sourceId == sourceId && $0.content?.status == .ONGOING }
     }
-    
+
     func getUnreadCount(for id: ContentIdentifier, _ realm: Realm? = nil) -> Int {
         let realm = try! realm ?? Realm()
         // Get Read Count
         let read = realm
             .objects(ChapterMarker.self)
-            .where({ $0.chapter.contentId == id.contentId })
-            .where({ $0.chapter.sourceId == id.sourceId })
-            .where({ $0.completed == true })
+            .where { $0.chapter.contentId == id.contentId }
+            .where { $0.chapter.sourceId == id.sourceId }
+            .where { $0.completed == true }
             .distinct(by: [\.chapter?.number])
             .count
         // Get Total Chapter Count
         let total = realm
             .objects(StoredChapter.self)
-            .where({ $0.contentId == id.contentId })
-            .where({ $0.sourceId == id.sourceId })
+            .where { $0.contentId == id.contentId }
+            .where { $0.sourceId == id.sourceId }
             .distinct(by: [\.number])
             .count
         return total - read
     }
-    
+
     func updateUnreadCount(for id: ContentIdentifier, _ realm: Realm? = nil) {
         let realm = try! realm ?? Realm()
-        
+
         let target = realm
             .objects(LibraryEntry.self)
-            .where({ $0.content.contentId == id.contentId })
-            .where({ $0.content.sourceId == id.sourceId })
+            .where { $0.content.contentId == id.contentId }
+            .where { $0.content.sourceId == id.sourceId }
             .first
-        
+
         guard let target else { return }
-        
+
         let count = getUnreadCount(for: id, realm)
         try! realm.safeWrite {
             target.unreadCount = count
@@ -311,24 +311,22 @@ extension DataManager {
     }
 }
 
-
 extension DataManager {
-    
     func contentInLibrary(s: String, c: String, realm: Realm? = nil) -> Bool {
         let realm = try! realm ?? Realm()
-        
+
         return !realm
             .objects(LibraryEntry.self)
-            .where({ $0.content.contentId == c && $0.content.sourceId == s })
+            .where { $0.content.contentId == c && $0.content.sourceId == s }
             .isEmpty
     }
-    
+
     func contentSavedForLater(s: String, c: String, realm: Realm? = nil) -> Bool {
         let realm = try! realm ?? Realm()
-        
+
         return !realm
             .objects(ReadLater.self)
-            .where({ $0.content.contentId == c && $0.content.sourceId == s })
+            .where { $0.content.contentId == c && $0.content.sourceId == s }
             .isEmpty
     }
 }

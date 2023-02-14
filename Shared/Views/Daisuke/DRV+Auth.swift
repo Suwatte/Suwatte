@@ -46,6 +46,7 @@ extension DaisukeContentSourceView {
             }
             .animation(.default, value: source.user)
         }
+
         @ViewBuilder
         func LoadedUserView(user: DSKCommon.User) -> some View {
             AuthenticatedUserView(user: user, presentWebView: $presentWebView)

@@ -5,22 +5,21 @@
 //  Created by Mantton on 2022-04-03.
 //
 
+import FirebaseCore
 import Foundation
 import Kingfisher
+import Nuke
 import RealmSwift
 import UIKit
-import Nuke
-import FirebaseCore
 
 class STTAppDelegate: NSObject, UIApplicationDelegate {
     func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        
         // Register BG Tasks
         STTScheduler.shared.registerTasks()
 
         // Set Default UD Values
         UserDefaults.standard.register(defaults: STTUserDefaults)
-        
+
         // KF Cache
         let cache = Kingfisher.ImageCache.default
         cache.memoryStorage.config.totalCostLimit = 500 * 1024 * 1024 // 500 MB
@@ -32,7 +31,7 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
         kingfisherManagerSession.httpCookieStorage = HTTPCookieStorage.shared
         kingfisherManagerSession.headers.add(.userAgent(Preferences.standard.userAgent))
         KingfisherManager.shared.downloader.sessionConfiguration = kingfisherManagerSession
-        
+
         // Nuke Requests
         let nukeConfig = DataLoader.defaultConfiguration
         nukeConfig.headers.add(.userAgent(Preferences.standard.userAgent))
@@ -53,7 +52,7 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
                 ToastManager.shared.display(.error(nil, "Notifications Disabled"))
             }
         }
-        
+
         // Realm
         var config = Realm.Configuration(schemaVersion: UInt64(SCHEMA_VERSION))
         let directory = FileManager.default.applicationSupport.appendingPathComponent("Database", isDirectory: true)
@@ -63,10 +62,9 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
         config.fileURL = directory.appendingPathComponent("suwatte_db.realm")
         Realm.Configuration.defaultConfiguration = config
 
-        
         // Analytics
         FirebaseApp.configure()
-        
+
         return true
     }
 }

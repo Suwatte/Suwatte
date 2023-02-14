@@ -21,7 +21,7 @@ struct Runner: Codable, Hashable {
     var website: String
     var supportedLanguages: [String]
     var path: String
-    
+
     var authors: [String]?
     var thumbnail: String?
     var nsfw: Bool?
@@ -61,24 +61,24 @@ extension DataManager {
         let realm = try! Realm()
         let obj = StoredRunnerObject()
 
-        
         obj.id = runner.id
         obj.listURL = url.absoluteString
         obj.name = runner.name
         obj.hosted = hosted
         obj.order = getRunnerInfomation(id: runner.id)?.order ?? realm.objects(StoredRunnerObject.self).count + 1
-        
+
         if let thumbnail = runner.thumbnail {
             obj.thumbnail = url
                 .appendingPathComponent("assets")
                 .appendingPathComponent(thumbnail)
                 .absoluteString
         }
-            
+
         try! realm.safeWrite {
             realm.add(obj, update: .all)
         }
     }
+
     func getRunnerInfomation(id: String) -> StoredRunnerObject? {
         let realm = try! Realm()
 

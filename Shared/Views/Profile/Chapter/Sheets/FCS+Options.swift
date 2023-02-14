@@ -11,7 +11,7 @@ struct FCS_Options: View {
     @EnvironmentObject var model: ProfileView.ViewModel
     @AppStorage(STTKeys.FilteredProviders) private var filteredProviders: [String] = []
     @AppStorage(STTKeys.FilteredLanguages) private var filteredLanguages: [String] = []
-    
+
     var body: some View {
         NavigationView {
             List {
@@ -27,9 +27,8 @@ struct FCS_Options: View {
             .animation(.default, value: filteredProviders)
         }
         .navigationViewStyle(.stack)
-        
     }
-    
+
     var ProvidersSection: some View {
         Section {
             ForEach(AllProviders, id: \.id) { provider in
@@ -44,7 +43,6 @@ struct FCS_Options: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                
             }
         } header: {
             Text("Providers")
@@ -52,19 +50,18 @@ struct FCS_Options: View {
     }
 }
 
-
 extension FCS_Options {
     var AllProviders: [DSKCommon.ChapterProvider] {
         let providers = model
             .threadSafeChapters?
-            .map({ $0.providers ?? [] })
-            .flatMap({ $0 }) ?? []
-        
+            .map { $0.providers ?? [] }
+            .flatMap { $0 } ?? []
+
         return providers
             .distinct()
             .sorted(by: \.name, descending: false)
     }
-    
+
     func toggleProvider(_ provider: DSKCommon.ChapterProvider) {
         if filteredProviders.contains(provider.id) {
             filteredProviders.removeAll(where: { $0 == provider.id })
@@ -74,15 +71,14 @@ extension FCS_Options {
     }
 }
 
-
 extension FCS_Options {
-    var AllLanugages : [String] {
+    var AllLanugages: [String] {
         (model
             .threadSafeChapters?
-            .compactMap({ $0.language }) ?? [])
-        .distinct()
+            .compactMap { $0.language } ?? [])
+            .distinct()
     }
-    
+
     func toggleLangauge(_ lang: String) {
         if filteredLanguages.contains(lang) {
             filteredLanguages.removeAll(where: { $0 == lang })
@@ -90,7 +86,7 @@ extension FCS_Options {
             filteredLanguages.append(lang)
         }
     }
-    
+
     var LanguagesSection: some View {
         Section {
             ForEach(AllLanugages) { lang in

@@ -18,7 +18,7 @@ struct BookmarksView: View {
         // Filter Bookmarks
         $bookmarks.sortDescriptor = SortDescriptor(keyPath: "dateAdded", ascending: false)
     }
-    
+
     var body: some View {
         NavigationView {
             List(SortedIdentifiers) { marker in
@@ -42,13 +42,13 @@ struct BookmarksView: View {
             .animation(.default, value: bookmarks)
         }
     }
-    
+
     func Cell(bookmark: Bookmark, marker: ChapterMarker, url: String) -> some View {
         HStack {
             BaseImageView(url: URL(string: url), sourceId: marker.chapter!.sourceId, mode: .fit)
                 .frame(width: 120, height: 120 * 1.5, alignment: .center)
                 .cornerRadius(7)
-            
+
             Spacer()
             VStack(alignment: .trailing) {
                 Spacer()
@@ -72,13 +72,13 @@ struct BookmarksView: View {
                 Label("Remove", systemImage: "trash")
             }
             .tint(.red)
-
         }
     }
+
     var GroupedByMarker: [ChapterMarker: [Bookmark]] {
         Dictionary(grouping: targets(), by: { $0.marker! })
     }
-    
+
     func targets() -> Results<Bookmark> {
         bookmarks
             .where { $0.marker != nil }
@@ -86,7 +86,7 @@ struct BookmarksView: View {
             .where { $0.marker.chapter.sourceId == model.source.id }
             .where { $0.marker.chapter.contentId == model.content.contentId }
     }
-    
+
     var SortedIdentifiers: [ChapterMarker] {
         let dictionary = GroupedByMarker
         return Array(dictionary.keys.sorted(by: { $0.chapter!.number > $1.chapter!.number }))

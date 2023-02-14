@@ -5,10 +5,10 @@
 //  Created by Mantton on 2022-06-07.
 //
 
+import Alamofire
 import Foundation
 import Kingfisher
 import UIKit
-import Alamofire
 
 final class LocalContentManager: ObservableObject {
     @Published var isSelecting = false
@@ -61,7 +61,7 @@ final class LocalContentManager: ObservableObject {
         case FailedToExtractArchive
         case BookGenerationFailed
     }
-    
+
     func hasFile(fileName: String) -> Bool {
         let path = directory.appendingPathComponent(fileName)
         return path.exists
@@ -126,8 +126,8 @@ final class LocalContentManager: ObservableObject {
             book.pageCount = try? archive.entries().count
             book.thumbnail = Book.Thumb(path: rarClient.getThumbnail(for: archive))
 
-            case "epub":
-                ToastManager.shared.info("EPUB files are currently not supported")
+        case "epub":
+            ToastManager.shared.info("EPUB files are currently not supported")
         default: break
         }
 
@@ -295,9 +295,8 @@ extension STTHelpers {
     static let OPDS_CONTENT_ID = "c9d560ee-c4ff-4977-8cdf-fe9473825b8b"
 }
 
-
 extension LocalContentManager {
-    class DownloadObject : ObservableObject {
+    class DownloadObject: ObservableObject {
         var url: URL
         var opdsClient: OPDSClient?
         @Published var progress: Double = 0
@@ -305,17 +304,17 @@ extension LocalContentManager {
         var cover: String
         var status: DownloadStatus
         var added: Date
-        var request : DownloadRequest? = nil
+        var request: DownloadRequest?
 
         init(url: URL, title: String, cover: String) {
             self.url = url
             self.title = title
             self.cover = cover
-            self.status = .queued
-            self.added = .now
+            status = .queued
+            added = .now
         }
     }
-    
+
     func startDownloadQueue() {
         if let first = downloads.first {
             startDownload(first)
@@ -323,38 +322,37 @@ extension LocalContentManager {
             deleteTemp()
         }
     }
-    
+
     func didFinishLastDownload() {
         guard let target = downloads.popFirst() else {
             deleteTemp()
             return
         }
-        
+
         if target.status == .failing {
             target.added = .now
             downloads.append(target)
         }
-        
+
         // New Item At Top, Restart
         startDownloadQueue()
     }
-    
+
     func deleteTemp() {
         let temp = FileManager.default.documentDirectory.appendingPathComponent("__temp__")
         if temp.contents.isEmpty {
             try? FileManager.default.removeItem(at: temp)
         }
     }
-    
-    
+
     func addToQueue(_ download: DownloadObject) {
         downloads.append(download)
-        
+
         if downloads.count == 1 {
             startDownloadQueue()
         }
     }
-    
+
     func removeFromQueue(_ download: DownloadObject) {
         if download.status == .active {
             download.request?.cancel()
@@ -366,20 +364,19 @@ extension LocalContentManager {
             downloads.remove(at: index)
         }
     }
-    
+
     func startDownload(_ download: DownloadObject) {
         if download.status != .queued {
             let _ = downloads.popFirst()
             didFinishLastDownload()
-
         }
-        
+
         let temp = FileManager.default.documentDirectory.appendingPathComponent("__temp__")
         let downloadPath = temp.appendingPathComponent(download.url.lastPathComponent)
         let destination: DownloadRequest.Destination = { _, _ in
             (downloadPath, [.removePreviousFile, .createIntermediateDirectories])
         }
-        
+
         var headers: HTTPHeaders = .init()
         if let auth = download.opdsClient?.authHeader {
             headers.add(.init(name: "Authorization", value: auth))
@@ -387,23 +384,23 @@ extension LocalContentManager {
         let final = directory.appendingPathComponent(download.url.lastPathComponent)
         download.status = .active
         download.request = AF.download(download.url,
-                    method: .get,
-                    headers: headers,
-                    to: destination)
-        .downloadProgress { progress in
-            download.progress = progress.fractionCompleted
-        }
-        .response { response in
-            do {
-                let url = try response.result.get()
-                if let url {
-                    try FileManager.default.moveItem(at: url, to: final)
-                }
-                download.status = .completed
-            } catch {
-                download.status = .failing
+                                       method: .get,
+                                       headers: headers,
+                                       to: destination)
+            .downloadProgress { progress in
+                download.progress = progress.fractionCompleted
             }
-            self.didFinishLastDownload()
-        }
+            .response { response in
+                do {
+                    let url = try response.result.get()
+                    if let url {
+                        try FileManager.default.moveItem(at: url, to: final)
+                    }
+                    download.status = .completed
+                } catch {
+                    download.status = .failing
+                }
+                self.didFinishLastDownload()
+            }
     }
 }

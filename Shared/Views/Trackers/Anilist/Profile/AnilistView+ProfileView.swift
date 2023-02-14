@@ -12,12 +12,12 @@ import SwiftUI
 
 extension AnilistView {
     struct ProfileView: View {
-        
         struct BasicEntry {
             var id: Int
             var title: String
             var webUrl: URL?
         }
+
         var entry: BasicEntry
 
         var onStatusUpdated: (_ id: Int, _ status: Anilist.MediaListStatus) -> Void

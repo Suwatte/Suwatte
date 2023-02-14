@@ -7,6 +7,7 @@
 
 import Alamofire
 import FlagKit
+import Kingfisher
 import RealmSwift
 import SwiftUI
 
@@ -241,7 +242,7 @@ extension RunnerListsView {
                 base = base.filter { !Set($0.supportedLanguages).intersection(selectedLanguages).isEmpty }
             }
 
-            return base
+            return base.sorted(by: \.name, descending: false)
         }
     }
 }
@@ -347,7 +348,10 @@ extension RunnerListsView.RunnerListInfo {
 
         func RunnerHeader(runner: Runner) -> some View {
             HStack {
-                STTThumbView(url: runner.thumbnail.flatMap({ URL(string: listURL)!.appendingPathComponent("assets").appendingPathComponent($0) }))
+                let url = runner.thumbnail.flatMap { URL(string: listURL)!.appendingPathComponent("assets").appendingPathComponent($0) }
+                KFImage(url)
+                    .resizable()
+                    .scaledToFill()
                     .frame(width: 44, height: 44)
                     .cornerRadius(7)
                 VStack(alignment: .leading, spacing: 5) {

@@ -156,7 +156,7 @@ struct ChapterList: View {
             doFilter()
         }
     }
-    
+
     func handleReconnection() {
         DispatchQueue.main.async {
             model.getMarkers()
@@ -196,8 +196,8 @@ struct ChapterList: View {
                             Button { mark(chapter: chapter, read: true, above: false) } label: {
                                 Label("As Read", systemImage: "eye.circle")
                             }
-                            
-                            Button { mark(chapter: chapter, read: false, above: false) } label :{
+
+                            Button { mark(chapter: chapter, read: false, above: false) } label: {
                                 Label("As Unread", systemImage: "eye.slash.circle")
                             }
                         }
@@ -216,6 +216,7 @@ extension ChapterList {
             filterChapters()
         }
     }
+
     func filterChapters() {
         guard let chapters = model.chapters.value else { return }
         // Filter Language, Providers, Downloads
@@ -223,7 +224,7 @@ extension ChapterList {
             .filter(filterDownloads(_:))
             .filter(filterProviders(_:))
             .filter(filterLanguages(_:))
-        
+
         // Sort
         switch sortKey {
         case .number:
@@ -247,7 +248,7 @@ extension ChapterList {
             base = base
                 .sorted(by: \.index, descending: !sortDesc) // Reverese Source Index
         }
-        
+
         Task { @MainActor in
             withAnimation {
                 visibleChapters = base
@@ -255,21 +256,19 @@ extension ChapterList {
         }
     }
 
-    
     func filterDownloads(_ chapter: StoredChapter) -> Bool {
         if !showOnlyDownloads { return true }
         return DataManager.shared.hasDownload(id: chapter._id)
     }
-    
+
     func filterProviders(_ chapter: StoredChapter) -> Bool {
         if filteredProviders.isEmpty { return true }
         return chapter.providers.contains(where: { !filteredProviders.contains($0.id) })
     }
-    
+
     func filterLanguages(_ chapter: StoredChapter) -> Bool {
         guard let lang = chapter.language else { return false }
         return !filteredLanguages.contains(lang)
-        
     }
 }
 
@@ -398,6 +397,7 @@ extension ChapterList {
             markAsUnread()
         }
     }
+
     func selectAbove() {
         if selections.isEmpty { return }
 
@@ -488,7 +488,7 @@ extension ChapterList {
         }
         deselectAll()
     }
-    
+
     func didMark() {
         Task.detached {
             try? await model.handleAnilistSync()

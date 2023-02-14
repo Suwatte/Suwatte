@@ -47,7 +47,7 @@ extension ExploreView.SearchView {
                             model.request.sort = model.sorters.first?.id
                             model.presentFilters.toggle()
                         }
-                        
+
                         Spacer()
                         if populated != model.request.filters {
                             Button("Apply") {
@@ -59,7 +59,7 @@ extension ExploreView.SearchView {
                 }
             }
         }
-        
+
         func loadFilters() async {
             do {
                 let response = try await model.source.getSearchFilters()
@@ -76,9 +76,8 @@ extension ExploreView.SearchView.FilterSheet {
         @State var filters: [DaisukeEngine.Structs.Filter]
         @Binding var populated: [DSKCommon.PopulatedFilter]?
         @Binding var query: String
-        
+
         var body: some View {
-            
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     ForEach(filters) {
@@ -92,7 +91,7 @@ extension ExploreView.SearchView.FilterSheet {
 }
 
 extension ExploreView.SearchView.FilterSheet {
-    struct SingleFilterView : View {
+    struct SingleFilterView: View {
         var filter: DSKCommon.Filter
         @Binding var savedFilters: [DSKCommon.PopulatedFilter]?
         @Binding var query: String
@@ -106,46 +105,46 @@ extension ExploreView.SearchView.FilterSheet {
                         .font(.subheadline)
                         .fontWeight(.light)
                 }
-                
+
                 Group {
                     switch filter.type {
-                        case .info: EmptyView()
-                        case .toggle: Toggle(filter.label ?? filter.title, isOn: ToggleBinding)
-                        case .select, .multiselect, .excludableMultiselect:
-                            InteractiveTagView(options) { tag in
-                                Button {
-                                    withAnimation {
-                                        handleOptionAction(tag)
-                                    }
-                                } label: {
-                                    Text(tag.label)
-                                        .modifier(ActionStyleModifier(color: optionColor(tag)))
+                    case .info: EmptyView()
+                    case .toggle: Toggle(filter.label ?? filter.title, isOn: ToggleBinding)
+                    case .select, .multiselect, .excludableMultiselect:
+                        InteractiveTagView(options) { tag in
+                            Button {
+                                withAnimation {
+                                    handleOptionAction(tag)
                                 }
-                                .buttonStyle(.plain)
+                            } label: {
+                                Text(tag.label)
+                                    .modifier(ActionStyleModifier(color: optionColor(tag)))
                             }
-                        case .text:
-                            HStack {
-                                TextField(filter.label ?? filter.title, text: TextBinding)
-                                    .textFieldStyle(.roundedBorder)
-                                Button("Clear", role: .destructive) {
-                                    setFilter()
-                                }
+                            .buttonStyle(.plain)
+                        }
+                    case .text:
+                        HStack {
+                            TextField(filter.label ?? filter.title, text: TextBinding)
+                                .textFieldStyle(.roundedBorder)
+                            Button("Clear", role: .destructive) {
+                                setFilter()
+                            }
                         }
                     }
                 }
-                
             }
         }
-        
+
         // MARK: Binding
-        var ToggleBinding : Binding<Bool> {
+
+        var ToggleBinding: Binding<Bool> {
             .init {
                 populated?.bool ?? false
             } set: { val in
                 setFilter(bool: val)
             }
         }
-        
+
         var TextBinding: Binding<String> {
             .init {
                 populated?.text ?? ""
@@ -153,15 +152,16 @@ extension ExploreView.SearchView.FilterSheet {
                 setFilter(text: val.isEmpty ? nil : val)
             }
         }
-        
+
         // MARK: Helper Functions
-        var populated:  DSKCommon.PopulatedFilter? {
+
+        var populated: DSKCommon.PopulatedFilter? {
             savedFilters?.first(where: { $0.id == filter.id })
         }
-        
+
         var options: [DSKCommon.Option] {
             var ops = filter.options ?? []
-            
+
             if !query.isEmpty {
                 ops = ops.filter {
                     $0.label.lowercased().contains(query.lowercased())
@@ -169,63 +169,59 @@ extension ExploreView.SearchView.FilterSheet {
             }
             return ops.sorted(by: \.label, descending: false)
         }
-        
-        
-        func setFilter(bool: Bool? = nil , text: String? = nil , included: [String]? = nil , excluded: [String]? = nil) {
-            
+
+        func setFilter(bool: Bool? = nil, text: String? = nil, included: [String]? = nil, excluded: [String]? = nil) {
             var idx = savedFilters?.firstIndex(where: { $0.id == filter.id })
-            
+
             // Filter has not been populated
             if idx == nil {
                 if savedFilters == nil { savedFilters = [] }
                 savedFilters?.append(.init(id: filter.id))
                 idx = savedFilters!.endIndex - 1
             }
-            
+
             guard let idx else { return }
             savedFilters?[idx].bool = bool
             savedFilters?[idx].text = text
             savedFilters?[idx].included = included
             savedFilters?[idx].excluded = excluded
         }
-        
+
         func handleOptionAction(_ option: DSKCommon.Option) {
             var included = Set(populated?.included ?? [])
             var excluded = Set(populated?.excluded ?? [])
             let id = option.id
-            
 
-            
             switch filter.type {
-                case .select:
-                    if included.contains(id) {
-                        included.remove(id)
-                    } else {
-                        included.removeAll()
-                        included.insert(id)
-                    }
-                case .multiselect:
-                    if included.contains(id) {
-                        included.remove(id)
-                    } else {
-                        included.insert(id)
-                    }
-                case .excludableMultiselect:
-                    if included.contains(id) {
-                        included.remove(id)
-                        excluded.insert(id)
-                    } else if excluded.contains(id) {
-                        excluded.remove(id)
-                    } else {
-                        included.insert(id)
-                    }
-                    
-                default: break
+            case .select:
+                if included.contains(id) {
+                    included.remove(id)
+                } else {
+                    included.removeAll()
+                    included.insert(id)
+                }
+            case .multiselect:
+                if included.contains(id) {
+                    included.remove(id)
+                } else {
+                    included.insert(id)
+                }
+            case .excludableMultiselect:
+                if included.contains(id) {
+                    included.remove(id)
+                    excluded.insert(id)
+                } else if excluded.contains(id) {
+                    excluded.remove(id)
+                } else {
+                    included.insert(id)
+                }
+
+            default: break
             }
-            
+
             setFilter(included: included.isEmpty ? nil : Array(included), excluded: excluded.isEmpty ? nil : Array(excluded))
         }
-        
+
         func optionColor(_ option: DSKCommon.Option) -> Color {
             if populated?.included?.contains(option.id) ?? false { return .green }
             if populated?.excluded?.contains(option.id) ?? false { return .red }

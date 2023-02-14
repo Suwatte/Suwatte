@@ -91,7 +91,7 @@ extension CloudFlareErrorView {
                 guard let source = DaisukeEngine.shared.getJSSource(with: sourceID) else {
                     return
                 }
-                if let dskRequest = try? await source.willAttemptCloudflareVerification(),let request = try? dskRequest.toURLRequest() {
+                if let dskRequest = try? await source.willAttemptCloudflareVerification(), let request = try? dskRequest.toURLRequest() {
                     let _ = self.webView.load(request)
                 } else if let url = URL(string: source.info.website) {
                     let request = URLRequest(url: url)

@@ -82,18 +82,17 @@ private extension ProfileView.Skeleton {
                 AdditionalInfoView()
                 AdditionalCoversView()
                     .padding(.horizontal)
-                
-                VStack (alignment: .leading, spacing: 20) {
+
+                VStack(alignment: .leading, spacing: 20) {
                     if let collections = viewModel.content.includedCollections, !collections.isEmpty {
                         RelatedContentView(collections: collections)
                     }
-                    
+
                     if let id = viewModel.anilistId {
                         ProfileView.AnilistRecommendationSection(id: id)
                     }
                 }
                 .padding(.top, 5)
-               
             }
             .padding(.vertical)
             .padding(.bottom, 70)

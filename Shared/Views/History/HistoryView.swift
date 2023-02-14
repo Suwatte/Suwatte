@@ -10,7 +10,7 @@ import SwiftUI
 
 struct HistoryView: View {
     @StateObject var model = ViewModel()
-    
+
     var body: some View {
         List {
             ForEach(model.markers) { marker in
@@ -34,7 +34,7 @@ struct HistoryView: View {
             let chapter = DataManager.shared.getLatestStoredChapter(entry.sourceId, entry.contentId)
             Group {
                 if let chapter {
-                    ReaderGateWay(readingMode:  .PAGED_COMIC, chapterList: [chapter], openTo: chapter, title: entry.chapterName)
+                    ReaderGateWay(readingMode: .PAGED_COMIC, chapterList: [chapter], openTo: chapter, title: entry.chapterName)
                 } else {
                     NavigationView {
                         Text("This Content Could not be found")
@@ -91,16 +91,15 @@ extension HistoryView {
         var body: some View {
             Group {
                 switch marker.sourceId {
-                    case STTHelpers.OPDS_CONTENT_ID:
-                        OPDSContentTile(marker: marker)
-                    case STTHelpers.LOCAL_CONTENT_ID:
-                        LocalContentTile(marker: marker)
-                    default:
-                        ExternalContentTile(marker: marker)
+                case STTHelpers.OPDS_CONTENT_ID:
+                    OPDSContentTile(marker: marker)
+                case STTHelpers.LOCAL_CONTENT_ID:
+                    LocalContentTile(marker: marker)
+                default:
+                    ExternalContentTile(marker: marker)
                 }
             }
             .modifier(DeleteModifier(marker: marker))
-
         }
     }
 }

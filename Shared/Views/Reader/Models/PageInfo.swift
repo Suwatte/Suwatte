@@ -7,10 +7,7 @@
 
 import Foundation
 
-
 struct PageInfo: Hashable {
-    
-    
     var index: Int
     var isLocal: Bool {
         archivePath != nil || downloadURL != nil

@@ -8,7 +8,6 @@
 import RealmSwift
 import SwiftUI
 
-
 extension HistoryView {
     struct ExternalContentTile: View {
         @EnvironmentObject var model: HistoryView.ViewModel
@@ -40,6 +39,7 @@ extension HistoryView {
                 loaded = true
             }
         }
+
         var identifier: ContentIdentifier {
             ContentIdentifier(contentId: marker.contentId, sourceId: marker.sourceId)
         }
@@ -102,7 +102,7 @@ extension HistoryView {
 
         private func handleRemoveMarkers(_ marker: HistoryObject) {
             let realm = try! Realm()
-            
+
             let targets = realm.objects(ChapterMarker.self).where {
                 $0.chapter.contentId == marker.contentId &&
                     $0.chapter.sourceId == marker.sourceId

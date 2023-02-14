@@ -7,12 +7,11 @@
 
 import SwiftUI
 
-
 extension ProfileView {
     struct AnilistRecommendationSection: View {
         typealias Response = Anilist.RecommendationResponse.PathObject
         var id: Int
-        @State var loadable : Loadable<Response> = .idle
+        @State var loadable: Loadable<Response> = .idle
         var body: some View {
             LoadableView(load, loadable) { value in
                 if value.nodes.isEmpty {
@@ -22,12 +21,12 @@ extension ProfileView {
                 }
             }
         }
-        
+
         func load() {
             loadable = .loading
             Task {
                 do {
-                    let data = try await Anilist.shared.getRecommendations(for: id )
+                    let data = try await Anilist.shared.getRecommendations(for: id)
                     loadable = .loaded(data)
                 } catch {
                     loadable = .failed(error)
@@ -37,13 +36,11 @@ extension ProfileView {
     }
 }
 
-
 extension ProfileView.AnilistRecommendationSection {
-    
     struct CoreView: View {
         var data: Response
         @EnvironmentObject var model: ProfileView.ViewModel
-        
+
         var body: some View {
             VStack(alignment: .leading) {
                 HStack {
@@ -56,8 +53,8 @@ extension ProfileView.AnilistRecommendationSection {
                         .font(.headline.weight(.semibold))
                 }
                 .padding(.horizontal)
-                
-                ScrollView(.horizontal,showsIndicators: false) {
+
+                ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
                         ForEach(data.nodes, id: \.mediaRecommendation.id) {
                             Cell(data: $0.mediaRecommendation)
@@ -65,11 +62,9 @@ extension ProfileView.AnilistRecommendationSection {
                     }
                     .padding(.horizontal)
                 }
-                
             }
         }
     }
-    
 }
 
 extension ProfileView.AnilistRecommendationSection.CoreView {
@@ -84,19 +79,17 @@ extension ProfileView.AnilistRecommendationSection.CoreView {
             } label: {
                 DefaultTile(entry: .init(contentId: data.id.description, cover: data.coverImage.large, title: data.title.userPreferred))
                     .frame(width: 150, height: CELL_HEIGHT)
-                
             }
             .buttonStyle(NeutralButtonStyle())
         }
-        
-        
+
         var CELL_HEIGHT: CGFloat {
             var height = 150 * 1.5
-            
+
             if style == .SEPARATED {
                 height += 50
             }
-            
+
             return height
         }
     }

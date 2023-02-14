@@ -31,7 +31,7 @@ extension DSK.LocalContentSource {
         guard methodExists(method: "getAuthenticationMethod") else { return nil }
         return try await callMethodReturningDecodable(method: "getAuthenticationMethod", arguments: [], resolvesTo: DSKCommon.AuthMethod.self)
     }
-    
+
     func getAuthenticatedUser() async throws -> DSKCommon.User? {
         try await withCheckedThrowingContinuation { handler in
             let method = "getAuthenticatedUser"

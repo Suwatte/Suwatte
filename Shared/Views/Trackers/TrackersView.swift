@@ -18,7 +18,6 @@ struct TrackersView: View {
                     MSLabelView(title: "Anilist", imageName: "anilist")
                 }
 
-                
 //                NavigationLink(destination: Text("Placeholder")) {
 //                    MSLabelView(title: "MyAnimeList", imageName: "mal")
 //                }

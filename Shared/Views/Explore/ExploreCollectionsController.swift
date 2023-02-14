@@ -7,11 +7,11 @@
 
 import Combine
 import NukeUI
+import OrderedCollections
 import RealmSwift
 import SwiftUI
-import UIKit
 import SwiftUIBackports
-import OrderedCollections
+import UIKit
 
 final class ExploreCollectionsController: UICollectionViewController {
     var source: DaisukeContentSource!
@@ -23,14 +23,13 @@ final class ExploreCollectionsController: UICollectionViewController {
     var TAG_SECTION_ID = UUID().uuidString
     let refreshControl = UIRefreshControl()
     var tasks = [Task<Void, Never>?]()
-    
-    
+
     var loadingCache: [AnyHashable: Bool] = [:]
     var errorCache: [AnyHashable: Error] = [:]
-    
+
     var library: OrderedSet<String> = []
     var savedForLater: OrderedSet<String> = []
-    
+
     var libraryNotificationToken: NotificationToken?
     var sflNotificationToken: NotificationToken?
     var tileStyle: TileStyle! {
@@ -38,7 +37,7 @@ final class ExploreCollectionsController: UICollectionViewController {
             collectionView.collectionViewLayout.invalidateLayout()
         }
     }
-    
+
     func disconnect() {
         libraryNotificationToken?.invalidate()
         sflNotificationToken?.invalidate()
@@ -47,22 +46,22 @@ final class ExploreCollectionsController: UICollectionViewController {
         }
         tasks.removeAll()
     }
-    
-    
+
     // MARK: DataSource
+
     func getExcerpt(id: String) -> CollectionExcerpt? {
         snapshot
             .sectionIdentifiers
             .first { ($0 as? CollectionExcerpt)?.id == id } as? CollectionExcerpt
     }
-    
-    private lazy var DATA_SOURCE: DataSource  = {
+
+    private lazy var DATA_SOURCE: DataSource = {
         let dataSource = DataSource(collectionView: collectionView) { [unowned self] collectionView, indexPath, item in
             // Error Cell
             if let data = item.content as? Err {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "errorCell", for: indexPath)
                 cell.contentConfiguration = nil
-                cell.backport.contentConfiguration = Backport.UIHostingConfiguration  {
+                cell.backport.contentConfiguration = Backport.UIHostingConfiguration {
                     let error = errorCache[item.section] ?? DSK.Errors.NamedError(name: "Error", message: data.description)
                     ErrorView(error: error, sourceID: source.id) { [weak self] in
                         if case DSK.Errors.NetworkErrorCloudflareProtected = error {
@@ -89,7 +88,7 @@ final class ExploreCollectionsController: UICollectionViewController {
                 cell.contentConfiguration = nil
                 let inLibrary = library.contains(data.contentId)
                 let readLater = savedForLater.contains(data.contentId)
-                cell.backport.contentConfiguration = Backport.UIHostingConfiguration  {
+                cell.backport.contentConfiguration = Backport.UIHostingConfiguration {
                     ContentCell(data: data, style: style, sourceId: sourceId, placeholder: shouldShowPlaceholder, inLibrary: inLibrary, readLater: readLater)
                 }
                 .margins(.all, 0)
@@ -99,16 +98,16 @@ final class ExploreCollectionsController: UICollectionViewController {
             if let data = item.content as? DSKCommon.ExploreTag {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "tagCell", for: indexPath)
                 cell.contentConfiguration = nil
-                cell.backport.contentConfiguration = Backport.UIHostingConfiguration  {
+                cell.backport.contentConfiguration = Backport.UIHostingConfiguration {
                     TagTile(tag: data)
                 }
                 .margins(.all, 0)
                 return cell
             }
-            
+
             return nil
         }
-        
+
         dataSource.supplementaryViewProvider = { [unowned self] collectionView, kind, indexPath in
             if kind != UICollectionView.elementKindSectionHeader { fatalError("Should Only Be Header") }
             let section = DATA_SOURCE.sectionIdentifier(for: indexPath.section)
@@ -117,18 +116,18 @@ final class ExploreCollectionsController: UICollectionViewController {
                 let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "tagHeaderCell", for: indexPath)
                 guard let header = header as? UICollectionViewCell else { fatalError("Invalid Header") }
                 header.contentConfiguration = nil
-                header.backport.contentConfiguration = Backport.UIHostingConfiguration  {
+                header.backport.contentConfiguration = Backport.UIHostingConfiguration {
                     TagHeaderView()
                 }
                 .margins(.all, 0)
                 return header
             }
-            
+
             if let section = section as? CollectionExcerpt {
                 let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "sectionHeaderCell", for: indexPath)
                 guard let header = header as? UICollectionViewCell else { fatalError("Invalid Header") }
                 header.contentConfiguration = nil
-                header.backport.contentConfiguration = Backport.UIHostingConfiguration  {
+                header.backport.contentConfiguration = Backport.UIHostingConfiguration {
                     HeaderView(excerpt: section, request: section.request)
                 }
                 .margins(.all, 0)
@@ -136,14 +135,13 @@ final class ExploreCollectionsController: UICollectionViewController {
             }
             fatalError("Failed To Return Cell")
         }
-        
+
         return dataSource
     }()
 }
 
 private typealias CTR = ExploreCollectionsController
 extension CTR {
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.setCollectionViewLayout(getLayout(), animated: false)
@@ -154,17 +152,16 @@ extension CTR {
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "errorCell")
         collectionView.register(UICollectionViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "tagHeaderCell")
         collectionView.register(UICollectionViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "sectionHeaderCell")
-        
+
         collectionView.backgroundColor = nil
         collectionView.backgroundView = nil
-        
+
         let data = UserDefaults.standard.string(forKey: STTKeys.AppAccentColor)
-        refreshControl.tintColor = .init(data.flatMap({ Color(rawValue: $0) }) ?? .gray)
+        refreshControl.tintColor = .init(data.flatMap { Color(rawValue: $0) } ?? .gray)
         refreshControl.addTarget(self, action: #selector(reload), for: .valueChanged)
         collectionView.refreshControl = refreshControl
-        
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         observeLibrary()
@@ -173,32 +170,29 @@ extension CTR {
             loadTags()
             handleCollections()
         }
-
     }
-    
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         disconnect()
     }
-    
+
     func observeLibrary() {
         let realm = try! Realm()
-        
-        let libraryResults = realm.objects(LibraryEntry.self).where({ $0.content.sourceId == source.id })
-        let savedForLaterResults = realm.objects(ReadLater.self).where({ $0.content.sourceId == source.id })
-        
+
+        let libraryResults = realm.objects(LibraryEntry.self).where { $0.content.sourceId == source.id }
+        let savedForLaterResults = realm.objects(ReadLater.self).where { $0.content.sourceId == source.id }
+
         libraryNotificationToken = libraryResults.observe { [weak self] _ in
             self?.library = OrderedSet(libraryResults.compactMap(\.content?.contentId))
         }
         sflNotificationToken = savedForLaterResults.observe { [weak self] _ in
             self?.savedForLater = OrderedSet(savedForLaterResults.compactMap(\.content?.contentId))
-
         }
     }
 }
 
 extension CTR {
-    
     func addTagSection() {
         snapshot.deleteSections([TAG_SECTION_ID])
         if snapshot.sectionIdentifiers.isEmpty {
@@ -208,6 +202,7 @@ extension CTR {
             snapshot.insertSections([TAG_SECTION_ID], beforeSection: firstSection)
         }
     }
+
     func loadTags() {
         let task = Task {
             do {
@@ -215,7 +210,7 @@ extension CTR {
                 errorCache.removeValue(forKey: TAG_SECTION_ID)
                 if let data {
                     addTagSection()
-                    snapshot.appendItems(data.map({ .init(section: TAG_SECTION_ID, content: $0) }), toSection: TAG_SECTION_ID)
+                    snapshot.appendItems(data.map { .init(section: TAG_SECTION_ID, content: $0) }, toSection: TAG_SECTION_ID)
                 }
             } catch {
                 addTagSection()
@@ -223,14 +218,14 @@ extension CTR {
                 errorCache[TAG_SECTION_ID] = error
             }
             await MainActor.run(body: {
-                loadingCache.removeValue(forKey:TAG_SECTION_ID)
+                loadingCache.removeValue(forKey: TAG_SECTION_ID)
                 DATA_SOURCE.apply(snapshot)
             })
         }
-        
+
         tasks.append(task)
     }
-    
+
     func handleCollections() {
         let task = Task {
             do {
@@ -239,10 +234,10 @@ extension CTR {
                 Logger.shared.error("[ExploreViewController] \(error.localizedDescription)", .init(function: #function, line: #line))
             }
         }
-        
+
         tasks.append(task)
     }
-    
+
     func updateSectionExcerpt(with collection: CollectionExcerpt) {
         guard let current = getExcerpt(id: collection.id) else {
             snapshot.appendSections([collection])
@@ -254,7 +249,7 @@ extension CTR {
         snapshot.insertSections([collection], beforeSection: current)
         snapshot.deleteSections([current])
     }
-    
+
     func updateOrder() {
         for elem in snapshot.sectionIdentifiers {
             guard let elem = elem as? CollectionExcerpt else { continue }
@@ -263,12 +258,13 @@ extension CTR {
             }
         }
     }
+
     func handleLoadSection(collection: DSKCommon.CollectionExcerpt) async {
         let id = collection.id
         let toBeDeleted = snapshot.itemIdentifiers(inSection: collection)
         snapshot.deleteItems(toBeDeleted)
         loadingCache[collection] = true
-        snapshot.appendItems(DSKCommon.Highlight.placeholders().map({ .init(section: collection, content: $0) }), toSection: collection)
+        snapshot.appendItems(DSKCommon.Highlight.placeholders().map { .init(section: collection, content: $0) }, toSection: collection)
         await MainActor.run(body: { [DATA_SOURCE, snapshot] in
             DATA_SOURCE.apply(snapshot)
         })
@@ -281,17 +277,17 @@ extension CTR {
                 if let title = data.title {
                     excerpt.title = title
                 }
-                
+
                 if let subtitle = data.subtitle {
                     excerpt.subtitle = subtitle
                 }
-                
+
                 let items = data
                     .highlights
                 updateSectionExcerpt(with: excerpt)
                 let toBeDeleted = snapshot.itemIdentifiers(inSection: excerpt)
                 snapshot.deleteItems(toBeDeleted)
-                snapshot.appendItems(items.map({ .init(section: excerpt, content: $0) }), toSection: excerpt)
+                snapshot.appendItems(items.map { .init(section: excerpt, content: $0) }, toSection: excerpt)
                 loadingCache[collection] = false
                 try Task.checkCancellation()
                 await MainActor.run(body: { [unowned self] in
@@ -306,13 +302,13 @@ extension CTR {
             let toBeDeleted = snapshot.itemIdentifiers(inSection: collection)
             snapshot.deleteItems(toBeDeleted)
             snapshot.appendItems([.init(section: collection, content: Err(description: error.localizedDescription))], toSection: collection)
-            
+
             await MainActor.run(body: { [DATA_SOURCE, snapshot] in
                 DATA_SOURCE.apply(snapshot)
             })
         }
     }
-    
+
     func reloadAllSections() {
         let allItems = snapshot.itemIdentifiers
         snapshot.deleteItems(allItems)
@@ -320,7 +316,7 @@ extension CTR {
         loadTags()
         handleCollections()
     }
-    
+
     func reloadSingleSection(excerpt: DSKCommon.CollectionExcerpt) {
         let items = snapshot.itemIdentifiers(inSection: excerpt)
         snapshot.deleteItems(items)
@@ -329,32 +325,31 @@ extension CTR {
         }
         tasks.append(task)
     }
-    
+
     func loadCollections() async throws {
         let collections = try await source
             .createExplorePageCollections()
-        
-        
+
         try Task.checkCancellation()
         collections.forEach {
             self.updateSectionExcerpt(with: $0)
         }
-        let toRemove = self.snapshot.sectionIdentifiers.filter({ $0 is CollectionExcerpt && !collections.contains($0 as! CollectionExcerpt) })
-        self.snapshot.deleteSections(toRemove)
+        let toRemove = snapshot.sectionIdentifiers.filter { $0 is CollectionExcerpt && !collections.contains($0 as! CollectionExcerpt) }
+        snapshot.deleteSections(toRemove)
         updateOrder()
-        
+
         await MainActor.run(body: {
             self.DATA_SOURCE.apply(self.snapshot)
         })
-        
+
         try Task.checkCancellation()
-        
+
         if let source = source as? DSK.LocalContentSource {
             try await source.willResolveExploreCollections()
         }
-        
+
         await withTaskGroup(of: Void.self, body: { group in
-            
+
             for collection in collections {
                 group.addTask { [weak self] in
                     // Resolve Section
@@ -363,7 +358,7 @@ extension CTR {
             }
         })
     }
-    
+
     @objc func reload() {
         collectionView.refreshControl?.beginRefreshing()
         reloadAllSections()
@@ -372,26 +367,25 @@ extension CTR {
 }
 
 extension CTR {
-    
     func getLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { [unowned self] section, environment in
             guard let section = DATA_SOURCE.sectionIdentifier(for: section) else {
                 return NormalLayout()
             }
-            
+
             if snapshot.itemIdentifiers(inSection: section).first?.content is Err {
                 return ErrorLayout()
             }
-            
+
             if let section = section as? String, section == TAG_SECTION_ID {
                 return TagsLayout()
             }
             if let section = section as? CollectionExcerpt {
                 switch section.style {
-                    case .NORMAL: return NormalLayout()
-                    case .UPDATE_LIST: return LastestLayout(environment)
-                    case .GALLERY: return GalleryLayout(environment)
-                    case .INFO: return InfoLayout(environment)
+                case .NORMAL: return NormalLayout()
+                case .UPDATE_LIST: return LastestLayout(environment)
+                case .GALLERY: return GalleryLayout(environment)
+                case .INFO: return InfoLayout(environment)
                 }
             }
             return NormalLayout()
@@ -409,12 +403,13 @@ extension CTR {
     struct Err: Hashable {
         var description: String
     }
-    
+
     struct ContentData: Hashable {
         var section: AnyHashable
         var content: AnyHashable
         var random = String.random(length: 25)
     }
+
     struct ContentCell: View {
         var data: DSKCommon.Highlight
         var style: DSKCommon.CollectionStyle
@@ -457,14 +452,13 @@ extension CTR {
             .conditional(placeholder) { view in
                 view.redacted(reason: .placeholder)
             }
-            
-            
         }
+
         var shouldHide: Bool {
             protectContent && manager.isExpired
         }
     }
-    
+
     struct TagHeaderView: View {
         @AppStorage(STTKeys.AppAccentColor) var color = Color.sttDefault
         @EnvironmentObject var source: DaisukeContentSource
@@ -485,6 +479,7 @@ extension CTR {
             }
         }
     }
+
     struct HeaderView: View {
         var excerpt: DSKCommon.CollectionExcerpt
         var request: DSKCommon.SearchRequest?
@@ -513,13 +508,13 @@ extension CTR {
             .frame(maxWidth: UIScreen.main.bounds.width - 20)
         }
     }
-    
+
     struct TagTile: View {
         var tag: DSKCommon.ExploreTag
         @State var color: Color = .fadedPrimary
         @EnvironmentObject var source: DaisukeContentSource
         @StateObject private var loader = FetchImage()
-        
+
         var body: some View {
             NavigationLink(destination: ExploreView.SearchView(model: .init(request: request, source: source), tagLabel: tag.label)) {
                 ZStack(alignment: .bottom) {
@@ -536,7 +531,7 @@ extension CTR {
                     .background(Color.accentColor.opacity(0.80))
                     .clipped()
                     .shimmering(active: loader.isLoading)
-                    
+
                     Text(tag.label)
                         .font(.subheadline)
                         .fontWeight(.semibold)
@@ -565,9 +560,9 @@ extension CTR {
                 }
             }
         }
-        
+
         var request: DSKCommon.SearchRequest {
-            .init(query: nil, page: 1,  sort: nil, filters: [ .init(id: tag.filterId, included: [tag.id] ) ])
+            .init(query: nil, page: 1, sort: nil, filters: [.init(id: tag.filterId, included: [tag.id])])
         }
     }
 }
