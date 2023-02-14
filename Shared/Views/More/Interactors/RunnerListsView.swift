@@ -7,9 +7,9 @@
 
 import Alamofire
 import FlagKit
+import Kingfisher
 import RealmSwift
 import SwiftUI
-import Kingfisher
 
 struct RunnerListsView: View {
     @State var presentAlert = false
@@ -348,7 +348,7 @@ extension RunnerListsView.RunnerListInfo {
 
         func RunnerHeader(runner: Runner) -> some View {
             HStack {
-                let url = runner.thumbnail.flatMap({ URL(string: listURL)!.appendingPathComponent("assets").appendingPathComponent($0) })
+                let url = runner.thumbnail.flatMap { URL(string: listURL)!.appendingPathComponent("assets").appendingPathComponent($0) }
                 KFImage(url)
                     .resizable()
                     .scaledToFill()

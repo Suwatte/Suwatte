@@ -122,12 +122,12 @@ extension DaisukeEngine.Structs {
 extension DaisukeEngine.Structs.Highlight {
     static func placeholders() -> [Self] {
         (0 ... 30).map { _ in
-                .init(contentId: .random(length: 10),
-                      cover: .random(),
-                      title: .random(length: 20),
-                      tags: (0...5)
-                    .map({ "\(String.random(length: 10))\($0)"})
-                      , stats: .init(Stats(views: 100, follows: 100000, rating: 10)))
+            .init(contentId: .random(length: 10),
+                  cover: .random(),
+                  title: .random(length: 20),
+                  tags: (0 ... 5)
+                      .map { "\(String.random(length: 10))\($0)" },
+                  stats: .init(Stats(views: 100, follows: 100_000, rating: 10)))
         }
     }
 

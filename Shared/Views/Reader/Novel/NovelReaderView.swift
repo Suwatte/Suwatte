@@ -76,6 +76,7 @@ extension NovelReaderView {
         }
     }
 }
+
 extension NovelReaderView.ViewModel {
     var tap: some Gesture {
         DragGesture(minimumDistance: 0)

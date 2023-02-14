@@ -7,7 +7,6 @@
 
 import UIKit
 
-
 extension DoublePagedViewer.Controller: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction,
                                 configurationForMenuAtLocation _: CGPoint) -> UIContextMenuConfiguration?
@@ -18,19 +17,18 @@ extension DoublePagedViewer.Controller: UIContextMenuInteractionDelegate {
         guard let indexPath = indexPath, let page = getStack(for: indexPath.section).get(index: indexPath.item) else {
             return nil
         }
-        
 
         // Get Image
         guard let imageView = (interaction.view as? UIImageView), let image = imageView.image else {
             return nil
         }
-        
-        var target: ReaderView.Page? = nil
-        
+
+        var target: ReaderView.Page?
+
         // If Secondary Page is nil, return the primary page
         // Else if the interaction point is on the left side of the screen & the user is reading in the comic (->) format, use primary page else secondary
         // Make this shit readable.
-        if page.secondary == nil  {
+        if page.secondary == nil {
             target = (page.primary as? ReaderPage)?.page
         } else {
             let primary = (page.primary as? ReaderPage)?.page
@@ -44,7 +42,7 @@ extension DoublePagedViewer.Controller: UIContextMenuInteractionDelegate {
                 }
             }
         }
-        
+
         guard let target = target else { return nil }
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
 
@@ -87,4 +85,3 @@ extension DoublePagedViewer.Controller: UIContextMenuInteractionDelegate {
         })
     }
 }
-

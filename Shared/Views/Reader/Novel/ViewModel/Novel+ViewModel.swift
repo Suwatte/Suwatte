@@ -71,11 +71,11 @@ extension NovelReaderView {
             readerChapter.data = .loading
             let cData = await STTHelpers.getChapterData(chapter)
             switch cData {
-                case .loaded(let t):
-                    readerChapter.data = .loaded(t.toReadableChapterData())
-                case .failed(let error):
-                    readerChapter.data = .failed(error)
-                default: break
+            case let .loaded(t):
+                readerChapter.data = .loaded(t.toReadableChapterData())
+            case let .failed(error):
+                readerChapter.data = .failed(error)
+            default: break
             }
 //            notifyOfChange()
 
@@ -84,7 +84,7 @@ extension NovelReaderView {
             }
 
             let newPages = await Task { @MainActor in
-                return generateViews(for: data, title: chapter.displayName)
+                generateViews(for: data, title: chapter.displayName)
             }.value
 
             if asNextChapter {
@@ -99,13 +99,13 @@ extension NovelReaderView {
                 readerChapter.requestedPageIndex = values.0
                 readerChapter.requestedPageOffset = values.1
             }
-            
+
             if readerChapterList.count == 1 {
                 reloadPublisher.send()
             } else {
                 insertPublisher.send(asNextChapter ? sections.count - 1 : 0)
             }
-            
+
             notifyOfChange()
             if newPages.isEmpty {
                 loadNextChapter()
@@ -117,7 +117,7 @@ extension NovelReaderView {
                 updater.toggle()
             }
         }
-        
+
         func getPageCount() -> Int {
             counts[activeChapter.chapter._id] ?? 0
         }
@@ -128,7 +128,7 @@ extension NovelReaderView.ViewModel {
     func generateViews(for chapter: ReaderView.ChapterData, title: String) -> [NovelPage] {
         var pages = [NovelPage]()
         let text = chapter.text ?? "No Text Returned from Source"
-        let joined = "\(title )\n\n" + text + "\n"
+        let joined = "\(title)\n\n" + text + "\n"
         var textStorage: NSTextStorage?
         let data = Data(joined.utf8)
         if let attributedString = try? NSAttributedString(data: data,
@@ -174,7 +174,7 @@ extension NovelReaderView.ViewModel {
 
 //            let lowerBound = joined.index(joined.startIndex, offsetBy: range.lowerBound)
 //            let upperBound = joined.index(joined.startIndex, offsetBy: range.upperBound)
-////            let pagedText = joined[lowerBound ..< upperBound]
+            ////            let pagedText = joined[lowerBound ..< upperBound]
 //
 //            let prevLastIndex = pages.last?.lastPageIndex ?? 0
 
@@ -210,7 +210,7 @@ extension NovelReaderView.ViewModel {
 
     func listen() {
         let targets = [\Preferences.novelBGColor, \.novelFontSize, \.novelFontColor, \.novelUseVertical, \.novelOrientationLock, \.novelUseSystemColor, \.novelUseDoublePaged]
-        
+
         Preferences.standard.preferencesChangedSubject
             .filter { path in
                 guard let path = path as? PartialKeyPath<Preferences> else { return false }

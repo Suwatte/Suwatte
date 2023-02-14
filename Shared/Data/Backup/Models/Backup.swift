@@ -41,7 +41,7 @@ struct Backup: Codable {
     }
 }
 
-struct BasicBackUpScheme : Codable {
+struct BasicBackUpScheme: Codable {
     var schemaVersion: Int
 }
 

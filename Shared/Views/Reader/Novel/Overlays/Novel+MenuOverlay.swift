@@ -156,7 +156,7 @@ extension NovelReaderView.MenuOverlay {
                 OverlaySlider
                     .opacity(READY ? 1 : 0)
                     .buttonStyle(.plain)
-                
+
                 Text("\(model.scrubbingPageNumber ?? (model.currentSectionPageNumber)) / \(model.getPageCount())")
                     .font(.headline)
                     .foregroundColor(.gray)

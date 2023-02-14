@@ -7,8 +7,8 @@
 
 import Foundation
 import ReadiumOPDS
-import UIKit
 import RealmSwift
+import UIKit
 
 class STTHelpers {
     static func toggleSelection<T: Equatable>(list1: inout [T], list2: inout [T], element: T) {
@@ -134,28 +134,28 @@ class STTHelpers {
             return firstVal == nil && secondVal == nil
         }
     }
-    
+
     static func getAnilistID(id: String) -> Int? {
         let realm = try! Realm()
-        
+
         guard let content = realm
             .objects(StoredContent.self)
-            .where({ $0._id == id})
+            .where({ $0._id == id })
             .first
         else { return nil }
-        
+
         if let value = content.trackerInfo["al"].flatMap(Int.init) {
             return value
         }
-        
+
         if let value = DataManager.shared.getTrackerInfo(id)?.al.flatMap(Int.init) {
             return value
         }
-        
+
         if let value = try? DataManager.shared.getPossibleTrackerInfo(for: id)?["al"]?.flatMap(Int.init) {
             return value
         }
-        
+
         return nil
     }
 }

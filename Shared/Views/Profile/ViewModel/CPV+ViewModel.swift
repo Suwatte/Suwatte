@@ -45,31 +45,29 @@ extension ProfileView {
         @Published var actionState: ActionState = .init(state: .none)
         @Published var linkedUpdates: [HighlightIndentier] = []
         @Published var threadSafeChapters: [DSKCommon.Chapter]?
-        
+
         // Tokens
         var currentMarkerToken: NotificationToken?
-        
+
         // Download Tracking Variables
         var downloadTrackingToken: NotificationToken?
         @Published var downloads: [String: ICDMDownloadObject] = [:]
         // Chapter Marking Variables
         var chapterMarkersToken: NotificationToken?
         @Published var readChapters = Set<Double>()
-        
+
         // Library Tracking Token
         var libraryTrackingToken: NotificationToken?
         var readLaterToken: NotificationToken?
         @Published var savedForLater: Bool = false
         @Published var inLibrary: Bool = false
-        
+
         // ReadLater Tracking Token
         var syncTask: Task<Void, Error>?
-        
+
         // Anilist ID
-        lazy var anilistId : Int? = {
-            STTHelpers.getAnilistID(id: sttIdentifier().id)
-        }()
-        
+        lazy var anilistId: Int? = STTHelpers.getAnilistID(id: sttIdentifier().id)
+
         init(_ entry: DaisukeEngine.Structs.Highlight, _ source: DaisukeContentSource) {
             self.entry = entry
             self.source = source
@@ -87,82 +85,81 @@ extension ProfileView {
         }
     }
 }
+
 extension ProfileView.ViewModel {
-    
     func setupObservers() {
         let realm = try! Realm()
-        
+
         // Get Read Chapters
         let _r1 = realm
             .objects(ChapterMarker.self)
-            .where({ $0.chapter.contentId == entry.contentId })
-            .where({ $0.chapter.sourceId == source.id })
-            .where({ $0.completed == true })
-        chapterMarkersToken = _r1.observe({ [weak self] collection in
+            .where { $0.chapter.contentId == entry.contentId }
+            .where { $0.chapter.sourceId == source.id }
+            .where { $0.completed == true }
+        chapterMarkersToken = _r1.observe { [weak self] collection in
             switch collection {
-                case .initial(let values):
-                    let initial = values.map({ $0.chapter!.number })
-                    self?.readChapters.formUnion(initial)
-                case let .update(_, deleted, inserted, _):
-                    let insertedNumbers = inserted.map({ _r1[$0].chapter!.number })
-                    let deletedNumbers = deleted.map({ _r1[$0].chapter!.number })
-                    self?.readChapters.formUnion(insertedNumbers)
-                    self?.readChapters.subtract(deletedNumbers)
-                default:
-                    break
+            case let .initial(values):
+                let initial = values.map { $0.chapter!.number }
+                self?.readChapters.formUnion(initial)
+            case let .update(_, deleted, inserted, _):
+                let insertedNumbers = inserted.map { _r1[$0].chapter!.number }
+                let deletedNumbers = deleted.map { _r1[$0].chapter!.number }
+                self?.readChapters.formUnion(insertedNumbers)
+                self?.readChapters.subtract(deletedNumbers)
+            default:
+                break
             }
-        })
-        
+        }
+
         // Get Download
         let _r2 = realm
             .objects(ICDMDownloadObject.self)
-            .where({ $0.chapter.contentId == entry.contentId })
-            .where({ $0.chapter.sourceId == source.id })
-        
-        downloadTrackingToken = _r2.observe({ [weak self] collection in
-            self?.downloads =  Dictionary(uniqueKeysWithValues: _r2.map{ ($0._id, $0) })
-        })
-        
+            .where { $0.chapter.contentId == entry.contentId }
+            .where { $0.chapter.sourceId == source.id }
+
+        downloadTrackingToken = _r2.observe { [weak self] _ in
+            self?.downloads = Dictionary(uniqueKeysWithValues: _r2.map { ($0._id, $0) })
+        }
+
         // Get Library
         let id = sttIdentifier().id
-        
+
         let _r3 = realm
             .objects(LibraryEntry.self)
-            .where({ $0._id ==  id})
-        
-        libraryTrackingToken = _r3.observe({[weak self] _ in
+            .where { $0._id == id }
+
+        libraryTrackingToken = _r3.observe { [weak self] _ in
             self?.inLibrary = !_r3.isEmpty
-        })
-        
-        
+        }
+
         // Read Later
         let _r4 = realm
             .objects(ReadLater.self)
-            .where({ $0._id ==  id})
+            .where { $0._id == id }
 
-        readLaterToken = _r4.observe({[weak self] _ in
+        readLaterToken = _r4.observe { [weak self] _ in
             self?.savedForLater = !_r4.isEmpty
-        })
+        }
     }
-    
+
     func removeNotifier() {
         currentMarkerToken?.invalidate()
         currentMarkerToken = nil
-        
+
         chapterMarkersToken?.invalidate()
         chapterMarkersToken = nil
-        
+
         downloadTrackingToken?.invalidate()
         downloadTrackingToken = nil
-        
+
         libraryTrackingToken?.invalidate()
         libraryTrackingToken = nil
-        
+
         readLaterToken?.invalidate()
         readLaterToken = nil
     }
-    
 }
+
 extension ProfileView.ViewModel {
     func loadContentFromNetwork() async {
         do {
@@ -175,12 +172,12 @@ extension ProfileView.ViewModel {
             }
             try Task.checkCancellation()
             try await Task.sleep(seconds: 0.1)
-            
+
             // Load Chapters
             Task.detached { [weak self] in
                 await self?.loadChapters(parsed.chapters)
             }
-            
+
             // Save to Realm
             Task.detached { [weak self] in
                 if let source = self?.source, let stored = try? parsed.toStoredContent(withSource: source.id) {
@@ -191,7 +188,7 @@ extension ProfileView.ViewModel {
             Task.detached { [weak self] in
                 await self?.loadChapters()
             }
-            
+
             Task { @MainActor [weak self] in
                 if self?.loadableContent.LOADED ?? false {
                     ToastManager.shared.error("Failed to Update Profile")
@@ -209,7 +206,7 @@ extension ProfileView.ViewModel {
             self?.working = true
             self?.threadSafeChapters = parsedChapters
         }
-        
+
         if let chapters = parsedChapters {
             let unmanaged = chapters.map { $0.toStoredChapter(withSource: source.id) }
             await MainActor.run { [weak self] in
@@ -261,11 +258,9 @@ extension ProfileView.ViewModel {
                     }
                     self?.working = false
                 }
-
             }
         }
     }
-
 
     var contentIdentifier: String {
         sttIdentifier().id
@@ -301,12 +296,11 @@ extension ProfileView.ViewModel {
         if storedChapters.isEmpty { return }
 
         chapters = .loaded(storedChapters)
-        Task { @MainActor in 
+        Task { @MainActor in
             getMarkers()
         }
     }
 
-    
     func getMarkers() {
         let id = entry.id
         let sourceId = source.id
@@ -320,14 +314,13 @@ extension ProfileView.ViewModel {
             .observe { [weak self] collection in
                 switch collection {
                 case let .initial(results):
-                        self?.calculateActionState(results.first)
+                    self?.calculateActionState(results.first)
                 case let .update(results, _, _, _):
-                        self?.calculateActionState(results.first)
+                    self?.calculateActionState(results.first)
                 case let .error(error):
                     ToastManager.shared.error(error)
                 }
             }
-        
     }
 
     func calculateActionState(_ marker: ChapterMarker?) {
@@ -612,36 +605,37 @@ extension ProfileView.ViewModel {
 
 // Reference: https://academy.realm.io/posts/realm-notifications-on-background-threads-with-swift/
 class BackgroundWorker: NSObject {
-  private var thread: Thread!
-  private var block: (()->Void)!
+    private var thread: Thread!
+    private var block: (() -> Void)!
 
     @objc internal func runBlock() { block() }
 
-  internal func start(_ block: @escaping () -> Void) {
-    self.block = block
+    internal func start(_ block: @escaping () -> Void) {
+        self.block = block
 
-    let threadName = String(describing: self)
-      .components(separatedBy: .punctuationCharacters)[1]
+        let threadName = String(describing: self)
+            .components(separatedBy: .punctuationCharacters)[1]
 
-    thread = Thread { [weak self] in
-      while (self != nil && !self!.thread.isCancelled) {
-        RunLoop.current.run(
-            mode: RunLoop.Mode.default,
-          before: Date.distantFuture)
-      }
-      Thread.exit()
+        thread = Thread { [weak self] in
+            while self != nil && !self!.thread.isCancelled {
+                RunLoop.current.run(
+                    mode: RunLoop.Mode.default,
+                    before: Date.distantFuture
+                )
+            }
+            Thread.exit()
+        }
+        thread.name = "\(threadName)-\(UUID().uuidString)"
+        thread.start()
+
+        perform(#selector(runBlock),
+                on: thread,
+                with: nil,
+                waitUntilDone: false,
+                modes: [RunLoop.Mode.default.rawValue])
     }
-    thread.name = "\(threadName)-\(UUID().uuidString)"
-    thread.start()
 
-    perform(#selector(runBlock),
-      on: thread,
-      with: nil,
-      waitUntilDone: false,
-            modes: [RunLoop.Mode.default.rawValue])
-  }
-
-  public func stop() {
-    thread.cancel()
-  }
+    public func stop() {
+        thread.cancel()
+    }
 }

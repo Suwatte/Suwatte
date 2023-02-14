@@ -88,11 +88,10 @@ extension ProfileView.Skeleton.ChapterView {
                 .cornerRadius(12)
 
                 VStack(alignment: .center) {
-                    
                     NavigationLink {
                         ChapterList()
                             .environmentObject(model)
-                    .defaultAppStorage(.init(suiteName: model.sttIdentifier().id) ?? .standard)
+                            .defaultAppStorage(.init(suiteName: model.sttIdentifier().id) ?? .standard)
                     } label: {
                         Text(chapters.count >= 5 ? "View All Chapters" : "Manage Chapters")
                             .font(.headline)
@@ -128,7 +127,7 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
     }
 
     func chapterProgress(_ chapter: StoredChapter) -> Double? {
-        guard let id = model.actionState.chapter?._id , id == chapter._id else {
+        guard let id = model.actionState.chapter?._id, id == chapter._id else {
             return nil
         }
         return model.actionState.marker?.progress

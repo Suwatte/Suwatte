@@ -37,10 +37,10 @@ struct ThreadSafeChapter: Hashable {
         obj.date = date
         obj.webUrl = webUrl
         obj.thumbnail = thumbnail
-        
-        metadata.forEach({
+
+        metadata.forEach {
             obj.metadata.setValue($1, forKey: $0)
-        })
+        }
         return obj
     }
 
@@ -110,7 +110,7 @@ final class StoredChapter: Object, ObjectKeyIdentifiable {
     }
 
     func toThreadSafe() -> ThreadSafeChapter {
-        let data = Dictionary(uniqueKeysWithValues: metadata.asKeyValueSequence().map({ ($0, $1) }))
+        let data = Dictionary(uniqueKeysWithValues: metadata.asKeyValueSequence().map { ($0, $1) })
         return .init(_id: _id, sourceId: sourceId, chapterId: chapterId, contentId: contentId, index: index, number: number, volume: volume, title: title, language: language, date: date, webUrl: webUrl, thumbnail: thumbnail, metadata: data)
     }
 }
@@ -143,7 +143,7 @@ extension DaisukeEngine.Structs.Chapter {
             }
 
             let p = ChapterProvider()
-            
+
             if let links {
                 p.links.append(objectsIn: links)
             }

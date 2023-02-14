@@ -32,9 +32,8 @@ extension DoublePagedViewer {
             pageViewContraints.removeAll()
             super.prepareForReuse()
         }
-        
-        func set(page: ReaderPage,secondary: ReaderPage?, delegate: DoublePagedViewer.Controller) {
 
+        func set(page: ReaderPage, secondary: ReaderPage?, delegate: DoublePagedViewer.Controller) {
             // Initialize
             pageView = DoublePagedDisplayHolder()
             pageView?.page = page
@@ -43,25 +42,24 @@ extension DoublePagedViewer {
             guard let pageView else { fatalError("Holder Cannot Be Nil") }
             pageView.translatesAutoresizingMaskIntoConstraints = false
             addSubview(pageView)
-            pageView.setup()            
+            pageView.setup()
             // AutoLayout
             pageViewContraints = [
                 pageView.widthAnchor.constraint(equalTo: widthAnchor),
                 pageView.heightAnchor.constraint(equalTo: heightAnchor),
                 pageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-                pageView.centerXAnchor.constraint(equalTo: centerXAnchor)
+                pageView.centerXAnchor.constraint(equalTo: centerXAnchor),
             ]
             NSLayoutConstraint.activate(pageViewContraints)
 //            pageView.subscribe()
         }
-        
-        var pageViewContraints : [NSLayoutConstraint] = []
+
+        var pageViewContraints: [NSLayoutConstraint] = []
 
         func setImage() {
             pageView?.load()
         }
-        
-        
+
         func cancelTasks() {
 //            pageView?.cancel()
         }

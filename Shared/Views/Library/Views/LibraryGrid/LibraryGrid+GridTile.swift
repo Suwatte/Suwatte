@@ -24,18 +24,18 @@ extension LibraryView.LibraryGrid {
                 }
             }
         }
-        
+
         @ViewBuilder
         var InfoOverlay: some View {
             switch badgeType {
-                case .unread:
-                    if entry.unreadCount >= 1 {
-                        CapsuleBadge(text: min(entry.unreadCount, 999).description)
-                    }
-                case .update:
-                    if entry.updateCount >= 1 {
-                        CapsuleBadge(text: min(entry.updateCount, 999).description)
-                    }
+            case .unread:
+                if entry.unreadCount >= 1 {
+                    CapsuleBadge(text: min(entry.unreadCount, 999).description)
+                }
+            case .update:
+                if entry.updateCount >= 1 {
+                    CapsuleBadge(text: min(entry.updateCount, 999).description)
+                }
             }
         }
     }

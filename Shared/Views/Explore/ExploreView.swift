@@ -35,7 +35,7 @@ struct ExploreView: View {
         .environmentObject(source)
         .modifier(InteractableContainer(selection: $model.selection))
     }
-    
+
     var hasExplorePage: Bool {
         if let source = source as? DaisukeEngine.LocalContentSource {
             return source.hasExplorePage

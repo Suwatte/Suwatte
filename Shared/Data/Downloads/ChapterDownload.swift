@@ -53,12 +53,12 @@ extension DataManager {
 
         return urls.map { URL(string: $0)! }
     }
-    
+
     func hasDownload(id: String) -> Bool {
         let realm = try! Realm()
-        
+
         return !realm.objects(ICDMDownloadObject.self)
-            .where({ $0.chapter._id == id })
+            .where { $0.chapter._id == id }
             .isEmpty
     }
 }

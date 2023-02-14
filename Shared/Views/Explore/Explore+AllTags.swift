@@ -52,7 +52,7 @@ extension ExploreView.AllTagsView {
 
     func Cell(for tag: DaisukeEngine.Structs.Tag, propertyId: String) -> some View {
         NavigationLink(tag.label) {
-            let request = DaisukeEngine.Structs.SearchRequest(query: nil, page: 1,sort: nil, filters: [.init(id: propertyId, included: [tag.id] )])
+            let request = DaisukeEngine.Structs.SearchRequest(query: nil, page: 1, sort: nil, filters: [.init(id: propertyId, included: [tag.id])])
             ExploreView.SearchView(model: .init(request: request, source: source), tagLabel: tag.label)
         }
     }

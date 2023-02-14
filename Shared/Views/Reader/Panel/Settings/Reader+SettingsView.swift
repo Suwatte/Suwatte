@@ -37,12 +37,12 @@ extension ReaderView {
         @Preference(\.imageScaleType) var imageScaleType
         @Preference(\.usePillarBox) var usePillarBox
         @Preference(\.pillarBoxPCT) var pillarBoxPCT
-        
+
         private let autoScrollRange: ClosedRange<Double> = 2.5 ... 30
         private let pillarBoxRange: ClosedRange<Double> = 0.15 ... 1.0
         @EnvironmentObject var model: ReaderView.ViewModel
         @State var holdingAutoScrollBinding: Double = 0.0
-        @State var holdingPillarBoxPCT : Double = 0.0
+        @State var holdingPillarBoxPCT: Double = 0.0
 
         var body: some View {
             Form {
@@ -100,7 +100,7 @@ extension ReaderView {
                             Text("Will scroll through one screens height in roughly \(holdingAutoScrollBinding.clean) seconds.")
                         }
                     }
-                    
+
                     Section {
                         Toggle("Enabled Pillarbox", isOn: $usePillarBox)
                         if usePillarBox {
@@ -119,7 +119,6 @@ extension ReaderView {
                             Text("Images will be sized to fit roughly \((holdingPillarBoxPCT * 100).clean)% of the screen's width.")
                         }
                     }
-                    
                 }
 
                 Section {
@@ -155,7 +154,7 @@ extension ReaderView {
                             }
                         }
                     }
-                    
+
                     Toggle("Downsample Images", isOn: $downsampleImages)
                     if !isVertical {
                         Toggle("Crop Whitespace", isOn: $cropWhiteSpaces)
@@ -213,10 +212,9 @@ extension ReaderView {
             .animation(.default, value: isPagingVertically)
             .animation(.default, value: verticalAutoScroll)
             .animation(.default, value: usePillarBox)
-
         }
     }
-    
+
     struct ModeSelectorView: View {
         @AppStorage(STTKeys.ReaderType) var mode = PanelReadingModes.PAGED_COMIC
         @EnvironmentObject var model: ReaderView.ViewModel
@@ -237,23 +235,23 @@ extension ReaderView {
     }
 }
 
-
 extension PanelReadingModes {
     var description: String {
         switch self {
-            case .PAGED_MANGA:
-                return "RTL (Manga)"
-            case .PAGED_COMIC:
-                return "LTR (Comic)"
-            case .VERTICAL:
-                return "Webtoon"
-            case .VERTICAL_SEPARATED:
-                return "Webtoon Padded"
-            case .PAGED_VERTICAL:
-                return "Paged Vertical"
+        case .PAGED_MANGA:
+            return "RTL (Manga)"
+        case .PAGED_COMIC:
+            return "LTR (Comic)"
+        case .VERTICAL:
+            return "Webtoon"
+        case .VERTICAL_SEPARATED:
+            return "Webtoon Padded"
+        case .PAGED_VERTICAL:
+            return "Paged Vertical"
         }
     }
 }
+
 enum ReaderBlendMode: Int, CaseIterable {
     case normal, screen, multiply
 

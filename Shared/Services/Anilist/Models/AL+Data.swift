@@ -247,32 +247,31 @@ extension Date {
     }
 }
 
-
 extension Anilist {
-    struct RecommendationResponse : Decodable {
+    struct RecommendationResponse: Decodable {
         var data: Media
-        
-        
+
         struct Media: Decodable {
             var Media: ExternalNodeObject
         }
-        
+
         struct ExternalNodeObject: Decodable {
             var recommendations: PathObject
         }
-        struct PathObject : Decodable {
+
+        struct PathObject: Decodable {
             var pageInfo: PageInfo
             var nodes: [InternalNodeObject]
-            
         }
+
         struct PageInfo: Decodable {
             var total: Int
         }
-        
+
         struct InternalNodeObject: Decodable {
             var mediaRecommendation: Excerpt
         }
-        
+
         struct Excerpt: Decodable {
             var id: Int
             var title: Anilist.Media.MediaTitle

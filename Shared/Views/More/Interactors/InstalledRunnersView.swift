@@ -26,7 +26,7 @@ struct InstalledRunnersView: View {
                         }
                     } label: {
                         HStack(spacing: 15) {
-                            STTThumbView(url: getSaved(source.id)?.thumbnail.flatMap({ URL(string: $0) }))
+                            STTThumbView(url: getSaved(source.id)?.thumbnail.flatMap { URL(string: $0) })
                                 .frame(width: 44, height: 44, alignment: .center)
                                 .cornerRadius(7)
                             VStack(alignment: .leading, spacing: 5) {

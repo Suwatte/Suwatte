@@ -116,7 +116,6 @@ struct MoreView: View {
         }
     }
 
-    
     var GeneralSection: some View {
         Group {
             Section {

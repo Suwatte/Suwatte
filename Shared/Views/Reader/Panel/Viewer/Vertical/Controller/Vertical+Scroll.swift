@@ -38,19 +38,19 @@ extension Controller {
     var currentPath: IndexPath? {
         collectionNode.indexPathForItem(at: currentPoint)
     }
-    
+
     func updateSliderOffset() {
         let range = getCurrentChapterScrollRange()
         let total = range.max - range.min
         var current = collectionNode.contentOffset.y - range.min
         current = max(0, current)
         current = min(range.max, current)
-        let target =  current / total
+        let target = current / total
         Task { @MainActor in
             model.slider.setCurrent(target)
         }
     }
-    
+
     func moveToRelativeSliderPosition(_ value: CGFloat) {
         let range = getCurrentChapterScrollRange()
         let total = range.max - range.min
@@ -90,13 +90,13 @@ extension Controller {
             model.menuControl.hideMenu()
         }
     }
-    
+
     func getCurrentChapterScrollRange() -> (min: CGFloat, max: CGFloat) {
         // Get Current IP
         guard let path = collectionNode.indexPathForItem(at: currentPoint) else {
             return (min: .zero, max: .zero)
         }
-        
+
         var sectionMinOffset: CGFloat = .zero
         var sectionMaxOffset: CGFloat = .zero
 

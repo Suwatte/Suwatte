@@ -25,7 +25,7 @@ struct ReaderGateWay: View {
                 WebReader(chapter: openTo)
             default:
                 ReaderView(model: .init(chapterList: chapterList, openTo: openTo, title: title, pageIndex: pageIndex, readingMode: readingMode))
-                        .defaultAppStorage(.init(suiteName: openTo.ContentIdentifer) ?? .standard)
+                    .defaultAppStorage(.init(suiteName: openTo.ContentIdentifer) ?? .standard)
             }
         }
         .onDisappear {

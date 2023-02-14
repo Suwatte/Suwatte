@@ -123,7 +123,7 @@ private extension Skeleton {
                                 if !defaultCollection.isEmpty {
                                     DataManager.shared.toggleCollection(for: model.contentIdentifier, withId: defaultCollection)
                                 }
-                                
+
                                 if defaultFlag != .unknown {
                                     var s = Set<String>()
                                     s.insert(model.contentIdentifier)

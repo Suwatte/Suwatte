@@ -29,7 +29,6 @@ struct OpenLocalModifier: ViewModifier {
                         }
                         url.stopAccessingSecurityScopedResource()
                     }
-                    
                 }
             }
     }

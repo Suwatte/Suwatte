@@ -98,34 +98,34 @@ final class Preferences {
 
     @UserDefault(STTKeys.VerticalAutoScrollSpeed)
     var verticalAutoScrollSpeed: Double = 16
-    
+
     @UserDefault(STTKeys.DefaultUserAgent)
     var userAgent = "Suwatte iOS Client V\(Bundle.main.releaseVersionNumberPretty)"
-    
+
     @UserDefault(STTKeys.ImageScaleType)
     var imageScaleType = ImageScaleOption.screen
-    
+
     @UserDefault(STTKeys.AppAccentColor)
     var accentColor = Color.sttDefault
-    
+
     @UserDefault(STTKeys.ReaderType)
     var readerType = ReadingMode.PAGED_COMIC
-    
+
     @UserDefault(STTKeys.UpdateSkipConditions)
     var skipConditions: [SkipCondition] = SkipCondition.allCases
-    
+
     @UserDefault(STTKeys.VerticalPillarBoxEnabled)
     var usePillarBox = false
-    
+
     @UserDefault(STTKeys.VerticalPillarBoxPCT)
     var pillarBoxPCT = 1.0 // 0.15 -> 1.0
-    
+
     @UserDefault(STTKeys.PrefersDirectoryView)
     var useDirectory = false
 }
 
 @propertyWrapper
-struct UserDefault<Value : UserDefaultsSerializable> {
+struct UserDefault<Value: UserDefaultsSerializable> {
     let key: String
     let defaultValue: Value
 
@@ -149,7 +149,7 @@ struct UserDefault<Value : UserDefaultsSerializable> {
             let key = instance[keyPath: storageKeyPath].key
             let defaultValue = instance[keyPath: storageKeyPath].defaultValue
             let stored = container.object(forKey: key) as? Value.StoredValue
-            return stored.map({ Value(storedValue: $0) }) ?? defaultValue
+            return stored.map { Value(storedValue: $0) } ?? defaultValue
         }
         set {
             let container = instance.userDefaults

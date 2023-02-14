@@ -174,7 +174,7 @@ extension ICDM {
 
         let chapters = realm
             .objects(StoredChapter.self)
-            .where({ $0._id.in(chapters) })
+            .where { $0._id.in(chapters) }
         let targets = chapters.filter { !completedIds.contains($0._id) }
 
         let objects = targets.sorted(by: { $0.index > $1.index }).map { chapter -> ICDMDownloadObject in

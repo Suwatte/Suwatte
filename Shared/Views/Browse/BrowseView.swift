@@ -10,7 +10,7 @@ import RealmSwift
 import SwiftUI
 
 struct BrowseView: View {
-    @EnvironmentObject var daisuke : DaisukeEngine
+    @EnvironmentObject var daisuke: DaisukeEngine
     @ObservedResults(StoredRunnerObject.self, sortDescriptor: .init(keyPath: "name")) var savedRunners
     @State var presentImporter = false
     var body: some View {
@@ -51,12 +51,12 @@ struct BrowseView: View {
                 } label: {
                     let saved = getSaved(source.id)
                     HStack(spacing: 15) {
-                        KFImage(saved?.thumbnail.flatMap({ URL(string: $0) }))
-                            .placeholder({ _ in
+                        KFImage(saved?.thumbnail.flatMap { URL(string: $0) })
+                            .placeholder { _ in
                                 Image("stt_icon")
                                     .resizable()
                                     .scaledToFill()
-                            })
+                            }
                             .resizable()
                             .scaledToFill()
                             .frame(width: 32.0, height: 32.0)

@@ -29,14 +29,14 @@ extension DaisukeEngine.Structs {
         var label: String
         var adultContent: Bool?
     }
-    
+
     struct ExploreTag: Parsable, Hashable, Identifiable {
         var id: String
         var label: String
         var filterId: String
         var imageUrl: String?
     }
-    
+
     struct Option: Parsable, Hashable, Identifiable {
         var id: String
         var label: String

@@ -33,7 +33,7 @@ extension DataManager {
             realm.add(object)
         }
     }
-    
+
     func deleteSearch(_ object: SearchHistory) {
         guard let object = object.thaw() else {
             return

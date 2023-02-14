@@ -5,14 +5,13 @@
 //  Created by Mantton on 2023-01-07.
 //
 
-import SwiftUI
 import Kingfisher
+import SwiftUI
 
 struct LCV_Download: View {
     @StateObject var manager: LocalContentManager = .shared
     var body: some View {
         NavigationView {
-            
             List {
                 Section {
                     ForEach(manager.downloads, id: \.url) { download in
@@ -34,19 +33,16 @@ struct LCV_Download: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
                         Button("Cancel All", role: .destructive) {
-                            manager.downloads.forEach({ manager.removeFromQueue($0) })
+                            manager.downloads.forEach { manager.removeFromQueue($0) }
                         }
                     } label: {
                         Image(systemName: "ellipsis.circle")
                     }
-
                 }
             }
         }
-
     }
-    
-    
+
     struct Tile: View {
         @ObservedObject var download: LocalContentManager.DownloadObject
 
@@ -64,7 +60,7 @@ struct LCV_Download: View {
                 .scaledToFit()
                 .background(Color.fadedPrimary)
                 .cornerRadius(7)
-                
+
                 VStack {
                     Text(download.title)
                         .font(.callout)
@@ -74,8 +70,6 @@ struct LCV_Download: View {
                 Spacer()
                 HistoryView.ProgressIndicator(progress: download.progress)
             }
-            
         }
     }
 }
-

@@ -15,7 +15,7 @@ struct ReaderView: View {
     @AppStorage(STTKeys.VerticalAutoScroll, store: .standard) var verticalAutoScroll = false
 
     @AppStorage(STTKeys.ReaderType) var readerType = PanelReadingModes.PAGED_COMIC
-    
+
     @Preference(\.isReadingVertically) var isVertical
     @Preference(\.displayNavOverlay) var displayNavOverlay
     @Preference(\.tapSidesToNavigate) var tapSidesToNavigate

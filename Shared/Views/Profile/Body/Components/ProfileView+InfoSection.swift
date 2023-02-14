@@ -69,7 +69,7 @@ extension ProfileView.Skeleton {
         }
 
         fileprivate func generateSearchRequest(tagId: String, propertyId: String) -> DaisukeEngine.Structs.SearchRequest {
-            .init(page: 1, filters: [ .init(id: propertyId, included: [tagId]) ])
+            .init(page: 1, filters: [.init(id: propertyId, included: [tagId])])
         }
     }
 }

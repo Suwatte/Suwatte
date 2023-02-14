@@ -176,7 +176,7 @@ struct CapsuleBadge: View {
             }
             .padding(.all, 3)
         }
-        .frame(width: height * 2 , height: height, alignment: .leading)
+        .frame(width: height * 2, height: height, alignment: .leading)
         .offset(x: 8, y: -8)
     }
 }

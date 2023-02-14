@@ -32,12 +32,12 @@ extension DaisukeEngine {
             configuration.headers.add(.userAgent(Preferences.standard.userAgent))
             return .init(configuration: configuration)
         }()
+
         typealias Request = DSKCommon.Request
         typealias Response = DSKCommon.Response
         typealias RequestConfig = DSKCommon.RequestConfig
         var requestInterceptHandler: JSValue?
         var responseInterceptHandler: JSValue?
-        
 
         func _request(_ request: JSValue) -> JSValue {
             .init(newPromiseIn: request.context) { [self] resolve, reject in
@@ -128,14 +128,14 @@ extension DaisukeEngine.NetworkClient {
 
         let data = try afResponse.result.get()
         let headers = httpResponse.headers.dictionary
-        guard (200...299).contains(httpResponse.statusCode) else {
+        guard (200 ... 299).contains(httpResponse.statusCode) else {
             let base = Alamofire.AFError.responseValidationFailed(reason: .unacceptableStatusCode(code: httpResponse.statusCode))
             switch httpResponse.statusCode {
-                case 503, 403:
-                    guard headers["Server"] == "cloudflare" else { throw base }
-                    throw DSK.Errors.NetworkErrorCloudflareProtected
-                default:
-                    throw base
+            case 503, 403:
+                guard headers["Server"] == "cloudflare" else { throw base }
+                throw DSK.Errors.NetworkErrorCloudflareProtected
+            default:
+                throw base
             }
         }
         var response = Response(data: data,

@@ -8,14 +8,15 @@
 import SwiftUI
 enum LibraryBadge: Int, CaseIterable {
     case unread, update
-    
+
     var description: String {
         switch self {
-            case .unread: return "Unread Count"
-            case .update: return "Update Count"
+        case .unread: return "Unread Count"
+        case .update: return "Update Count"
         }
     }
 }
+
 extension LibraryView.LibraryGrid {
     struct OptionsSheet: View {
         @AppStorage(STTKeys.LibraryShowBadges) var showBadges = true
@@ -56,7 +57,5 @@ extension LibraryView.LibraryGrid {
                 .closeButton()
             }
         }
-        
-       
     }
 }
