@@ -88,7 +88,12 @@ extension ProfileView.Skeleton.ChapterView {
                 .cornerRadius(12)
 
                 VStack(alignment: .center) {
-                    NavigationLink(destination: ChapterList().environmentObject(model)) {
+                    
+                    NavigationLink {
+                        ChapterList()
+                            .environmentObject(model)
+                    .defaultAppStorage(.init(suiteName: model.sttIdentifier().id) ?? .standard)
+                    } label: {
                         Text(chapters.count >= 5 ? "View All Chapters" : "Manage Chapters")
                             .font(.headline)
                             .fontWeight(.semibold)

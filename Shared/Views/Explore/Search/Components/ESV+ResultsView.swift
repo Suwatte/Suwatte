@@ -54,7 +54,7 @@ extension ExploreView.SearchView {
             }
             
             .layout(createCustomLayout: {
-                DynamicGridLayout(header: .absolute(30), footer: .estimated(44))
+                DynamicGridLayout(header: .estimated(30), footer: .estimated(44))
             }, configureCustomLayout: { layout in
                 layout.invalidateLayout()
             })
