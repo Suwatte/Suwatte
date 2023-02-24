@@ -228,7 +228,7 @@
     {
       "identity" : "realm-core",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/realm/realm-core.git",
+      "location" : "https://github.com/realm/realm-core",
       "state" : {
         "revision" : "b77443ca7fa25407869ca537bf3ae912b1427bff",
         "version" : "12.13.0"

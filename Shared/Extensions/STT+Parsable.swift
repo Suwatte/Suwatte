@@ -26,10 +26,6 @@ extension DaisukeEngine {
     static func stringify(val: JSValue) -> String? {
         let json = val.context.evaluateScript("""
         (function () {
-          const moment = require("moment");
-          Date.prototype.toJSON = function () {
-            return moment(this).format();
-          };
           return JSON;
         })();
         """)

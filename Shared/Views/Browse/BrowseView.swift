@@ -11,7 +11,7 @@ import SwiftUI
 
 struct BrowseView: View {
     @EnvironmentObject var daisuke: DaisukeEngine
-    @ObservedResults(StoredRunnerObject.self, sortDescriptor: .init(keyPath: "name")) var savedRunners
+    @ObservedResults(StoredRunnerObject.self) var runners
     @State var presentImporter = false
     var body: some View {
         NavigationView {
@@ -29,7 +29,7 @@ struct BrowseView: View {
 
     var SearchSection: some View {
         Section {
-            NavigationLink("Search All") {
+            NavigationLink("Search All Content Sources") {
                 SearchView()
             }
             NavigationLink("Image Search") {
@@ -42,39 +42,37 @@ struct BrowseView: View {
 
     @ViewBuilder
     var InstalledSourcesSection: some View {
-        let sources = daisuke.getSources().sorted(by: { getSaved($0.id)?.order ?? 0 < getSaved($1.id)?.order ?? 0 })
+        let results = runners.sorted(by: [SortDescriptor(keyPath: "enabled", ascending: true), SortDescriptor(keyPath: "name", ascending: true)])
         Section {
-            ForEach(sources, id: \.id) { source in
-                NavigationLink {
-                    ExploreView()
-                        .environmentObject(source)
-                } label: {
-                    let saved = getSaved(source.id)
-                    HStack(spacing: 15) {
-                        KFImage(saved?.thumbnail.flatMap { URL(string: $0) })
-                            .placeholder { _ in
-                                Image("stt_icon")
-                                    .resizable()
-                                    .scaledToFill()
-                            }
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 32.0, height: 32.0)
-                            .cornerRadius(5)
-                        Text(source.name)
-                        Spacer()
+            ForEach(results) { runner in
+                let source = DSK.shared.getSource(with: runner.id)
+                
+                if let source {
+                    NavigationLink {
+                        ExploreView()
+                            .environmentObject(source)
+                    } label: {
+                        HStack(spacing: 15) {
+                            KFImage(URL(string: runner.thumbnail))
+                                .placeholder { _ in
+                                    Image("stt_icon")
+                                        .resizable()
+                                        .scaledToFill()
+                                }
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 32.0, height: 32.0)
+                                .cornerRadius(5)
+                            Text(source.name)
+                            Spacer()
+                        }
                     }
+                    .disabled(!runner.enabled)
                 }
             }
         } header: {
             Text("Content Sources")
         }
-    }
-
-    func getSaved(_ id: String) -> StoredRunnerObject? {
-        savedRunners
-            .where { $0.id == id }
-            .first
     }
 
     var AnilistSection: some View {

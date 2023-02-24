@@ -320,7 +320,7 @@ extension RunnerListsView.RunnerListInfo {
                 .appendingPathComponent("\(runner.path).stt")
             do {
                 try await DaisukeEngine.shared.importRunner(from: url)
-                DataManager.shared.saveRunnerInfomation(runner: runner, at: base)
+//                DataManager.shared.saveRunnerInfomation(runner: runner, at: base)
                 ToastManager.shared.info("\(runner.name) Saved!")
             } catch {
                 ToastManager.shared.display(.error(error))

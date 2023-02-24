@@ -64,6 +64,12 @@ extension DaisukeEngine {
         do {
             let content = try String(contentsOf: commons, encoding: .utf8)
             _ = context.evaluateScript(content)
+            _ = context.evaluateScript("""
+          const moment = require("moment");
+          Date.prototype.toJSON = function () {
+            return moment(this).format();
+          };
+""")
         } catch {
             Logger.shared.error(error.localizedDescription, .init(file: #file, function: #function, line: #line))
         }

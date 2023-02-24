@@ -67,17 +67,6 @@ extension DaisukeEngine {
         injectLogger(context)
         return context
     }
-
-    private func timeMethod(_ action: @escaping () async throws -> Void) async throws {
-        let start = DispatchTime.now() // <<<<<<<<<< Start time
-        try await action()
-        let end = DispatchTime.now() // <<<<<<<<<<   end time
-
-        let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds // <<<<< Difference in nano seconds (UInt64)
-        let timeInterval = Double(nanoTime) / 1_000_000_000 // Technically could overflow for long running tests
-
-        Logger.shared.debug("Evaluated in \(timeInterval) seconds")
-    }
 }
 
 // MARK: Init Runners
@@ -106,22 +95,22 @@ extension DaisukeEngine {
     }
 
     private func startHostedRunners() {
-        let hostedRunners = DataManager.shared.getHostedRunners()
-
-        for runner in hostedRunners {
-            do {
-                guard let str = runner.info, let data = str.data(using: .utf8), let strUrl = runner.listURL, let url = URL(string: strUrl) else {
-                    ToastManager.shared.error(DSK.Errors.NamedError(name: "StartUp Error", message: "Invalid Source Info"))
-                    return
-                }
-                let info = try DaisukeEngine.decode(data: data, to: ContentSourceInfo.self)
-                let source = HostedContentSource(host: url, info: info)
-                try addSource(runner: source)
-
-            } catch {
-                ToastManager.shared.error(error)
-            }
-        }
+//        let hostedRunners = DataManager.shared.getHostedRunners()
+//
+//        for runner in hostedRunners {
+//            do {
+//                guard let str = runner.info, let data = str.data(using: .utf8), let strUrl = runner.listURL, let url = URL(string: strUrl) else {
+//                    ToastManager.shared.error(DSK.Errors.NamedError(name: "StartUp Error", message: "Invalid Source Info"))
+//                    return
+//                }
+//                let info = try DaisukeEngine.decode(data: data, to: ContentSourceInfo.self)
+//                let source = HostedContentSource(host: url, info: info)
+//                try addSource(runner: source)
+//
+//            } catch {
+//                ToastManager.shared.error(error)
+//            }
+//        }
     }
 
     private func startRunner(at path: URL) throws -> DaisukeContentSource {
@@ -129,7 +118,6 @@ extension DaisukeEngine {
         let content = try String(contentsOfFile: path.relativePath, encoding: String.Encoding.utf8)
 
         // Evaluate Script
-        _ = context.evaluateScript("let ASSETS_DIRECTORY = '';")
         _ = context.evaluateScript(content)
         _ = context.evaluateScript("const DAISUKE_RUNNER = new STTPackage.Target();")
         let runnerClass = context.daisukeRunner()
@@ -139,10 +127,6 @@ extension DaisukeEngine {
         }
 
         let source = try LocalContentSource(runnerClass: runnerClass)
-        if let url = DataManager.shared.getRunnerInfomation(id: source.id)?.listURL {
-            let val = url + "/assets"
-            _ = context.evaluateScript("ASSETS_DIRECTORY = '\(val)';")
-        }
         return source
     }
 
@@ -169,7 +153,7 @@ extension DaisukeEngine {
 
     func removeRunner(id: String) throws {
         sources.removeValue(forKey: id)
-        DataManager.shared.removeRunnerInformation(id: id)
+        DataManager.shared.deleteRunner(id)
         let path = directory.appendingPathComponent("\(id).stt")
         try FileManager.default.removeItem(at: path)
     }
@@ -238,29 +222,29 @@ extension DaisukeEngine {
     func saveHostedRunner(list: String, runner: Runner) {
         let realm = try! Realm()
 
-        do {
-            let data = try DaisukeEngine.encode(value: runner)
-            let str = String(decoding: data, as: UTF8.self)
-
-            let obj = StoredRunnerObject()
-            obj.id = runner.id
-            obj.hosted = true
-            obj.listURL = list
-            obj.info = str
-            obj.name = runner.name
-            obj.thumbnail = runner.thumbnail
-
-            try! realm.safeWrite {
-                realm.add(obj, update: .modified)
-            }
-
-            let info = ContentSourceInfo(id: runner.id, name: runner.name, version: runner.version, website: runner.website, supportedLanguages: runner.supportedLanguages)
-            let source = HostedContentSource(host: URL(string: list)!, info: info)
-            try addSource(runner: source)
-
-        } catch {
-            ToastManager.shared.error(error)
-        }
+//        do {
+//            let data = try DaisukeEngine.encode(value: runner)
+//            let str = String(decoding: data, as: UTF8.self)
+//
+//            let obj = StoredRunnerObject()
+//            obj.id = runner.id
+//            obj.hosted = true
+//            obj.listURL = list
+//            obj.info = str
+//            obj.name = runner.name
+//            obj.thumbnail = runner.thumbnail
+//
+//            try! realm.safeWrite {
+//                realm.add(obj, update: .modified)
+//            }
+//
+//            let info = ContentSourceInfo(id: runner.id, name: runner.name, version: runner.version, website: runner.website, supportedLanguages: runner.supportedLanguages)
+//            let source = HostedContentSource(host: URL(string: list)!, info: info)
+//            try addSource(runner: source)
+//
+//        } catch {
+//            ToastManager.shared.error(error)
+//        }
     }
 }
 
