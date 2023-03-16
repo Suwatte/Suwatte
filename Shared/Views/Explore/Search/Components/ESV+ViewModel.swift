@@ -16,7 +16,7 @@ extension ExploreView.SearchView {
         @Published var presentFilters = false
         @Published var callFromHistory = false
 
-        var source: DaisukeContentSource
+        var source: AnyContentSource
 
         private var cancellables = Set<AnyCancellable>()
 
@@ -37,7 +37,7 @@ extension ExploreView.SearchView {
 
         @Published var paginationStatus = PaginationStatus.IDLE
 
-        init(request: DaisukeEngine.Structs.SearchRequest, source: DaisukeContentSource) {
+        init(request: DaisukeEngine.Structs.SearchRequest = .init(), source: AnyContentSource) {
             self.request = request
             self.source = source
             Task {
@@ -64,7 +64,7 @@ extension ExploreView.SearchView {
                 result = .loading
             })
             do {
-                let data = try await source.getSearchResults(query: request)
+                let data = try await source.getSearchResults(request)
 
                 await MainActor.run(body: {
                     self.result = .loaded(data.results)
@@ -86,12 +86,12 @@ extension ExploreView.SearchView {
             }
 
             await MainActor.run(body: {
-                request.page += 1
+                request.page? += 1
                 paginationStatus = .LOADING
             })
 
             do {
-                let response = try await source.getSearchResults(query: request)
+                let response = try await source.getSearchResults(request)
                 if response.results.isEmpty {
                     await MainActor.run(body: {
                         self.paginationStatus = .END
@@ -114,7 +114,7 @@ extension ExploreView.SearchView {
             } catch {
                 await MainActor.run(body: {
                     self.paginationStatus = .ERROR(error: error)
-                    self.request.page -= 1
+                    self.request.page? -= 1
                 })
             }
         }

@@ -317,11 +317,17 @@ extension NovelReaderView.ViewModel {
         }
 
         // Services
-        let source = DaisukeEngine.shared.getJSSource(with: lastChapter.chapter.sourceId)
         let contentId = lastChapter.chapter.contentId
         let chapterId = lastChapter.chapter.chapterId
+        let sourceId = lastChapter.chapter.sourceId
+        let source = SourceManager.shared.getSource(id: sourceId) as? any SyncableSource
         Task {
-            await source?.onChapterRead(contentId: contentId, chapterId: chapterId)
+            do {
+                try await source?.onChapterRead(contentId: contentId, chapterId: chapterId)
+
+            } catch {
+                ToastManager.shared.info("Failed to Sync Read Marker")
+            }
         }
     }
 

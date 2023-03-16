@@ -71,7 +71,7 @@ extension DaisukeEngine {
           };
 """)
         } catch {
-            Logger.shared.error(error.localizedDescription, .init(file: #file, function: #function, line: #line))
+            Logger.shared.error(error.localizedDescription)
         }
     }
 

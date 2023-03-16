@@ -59,7 +59,7 @@ struct LCV_Download: View {
                 .frame(minWidth: 0, idealWidth: size, maxWidth: size, minHeight: 0, idealHeight: size * 1.5, maxHeight: size * 1.5, alignment: .center)
                 .scaledToFit()
                 .background(Color.fadedPrimary)
-                .cornerRadius(7)
+                .cornerRadius(5)
 
                 VStack {
                     Text(download.title)

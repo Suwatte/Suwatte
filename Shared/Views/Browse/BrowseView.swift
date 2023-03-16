@@ -10,14 +10,14 @@ import RealmSwift
 import SwiftUI
 
 struct BrowseView: View {
-    @EnvironmentObject var daisuke: DaisukeEngine
+    @StateObject var manager = SourceManager.shared
     @ObservedResults(StoredRunnerObject.self) var runners
     @State var presentImporter = false
     var body: some View {
         NavigationView {
             List {
                 SearchSection
-                if !daisuke.getSources().isEmpty {
+                if !FilteredRunners.isEmpty {
                     InstalledSourcesSection
                 }
                 AnilistSection
@@ -29,7 +29,7 @@ struct BrowseView: View {
 
     var SearchSection: some View {
         Section {
-            NavigationLink("Search All Content Sources") {
+            NavigationLink("Search All Sources") {
                 SearchView()
             }
             NavigationLink("Image Search") {
@@ -39,18 +39,21 @@ struct BrowseView: View {
             Text("Search")
         }
     }
+    
+    var FilteredRunners: Results<StoredRunnerObject> {
+        runners
+            .sorted(by: [SortDescriptor(keyPath: "enabled", ascending: true),
+                         SortDescriptor(keyPath: "name", ascending: true)])
+    }
 
     @ViewBuilder
     var InstalledSourcesSection: some View {
-        let results = runners.sorted(by: [SortDescriptor(keyPath: "enabled", ascending: true), SortDescriptor(keyPath: "name", ascending: true)])
         Section {
-            ForEach(results) { runner in
-                let source = DSK.shared.getSource(with: runner.id)
-                
+            ForEach(FilteredRunners) { runner in
+                let source = manager.getSource(id: runner.id)
                 if let source {
                     NavigationLink {
-                        ExploreView()
-                            .environmentObject(source)
+                        ExploreView(model: .init(source: source))
                     } label: {
                         HStack(spacing: 15) {
                             KFImage(URL(string: runner.thumbnail))

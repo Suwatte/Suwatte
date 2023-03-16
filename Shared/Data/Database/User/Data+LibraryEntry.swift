@@ -75,11 +75,16 @@ extension DataManager {
             object.flag = flag
         }
 
-        guard let id = object.content?.contentId, let sourceId = object.content?.sourceId, let source = DaisukeEngine.shared.getJSSource(with: sourceId) else {
+        guard let id = object.content?.contentId, let sourceId = object.content?.sourceId, let source = SourceManager.shared.getSource(id: sourceId) as? any SyncableSource else {
             return
         }
         Task {
-            await source.onContentsReadingFlagChanged(contentIds: [id], flag: flag)
+            do {
+               try await source.onContentsReadingFlagChanged(ids: [id], flag: flag)
+            } catch {
+                ToastManager.shared.error(error)
+                Logger.shared.error(error.localizedDescription)
+            }
         }
     }
 
@@ -98,7 +103,9 @@ extension DataManager {
 
         let sourceIds = Set(targets.compactMap { $0.content?.sourceId })
         for id in sourceIds {
-            guard let source = DaisukeEngine.shared.getJSSource(with: id) else {
+            let source = SourceManager.shared.getSource(id: id) as? any SyncableSource
+
+            guard let source else {
                 return
             }
 
@@ -107,7 +114,12 @@ extension DataManager {
                 .compactMap { $0.content?.contentId } as [String]
 
             Task {
-                await source.onContentsReadingFlagChanged(contentIds: contentIds, flag: flag)
+                do {
+                    try await source.onContentsReadingFlagChanged(ids: contentIds, flag: flag)
+                } catch {
+                    ToastManager.shared.error(error)
+                    Logger.shared.info(error.localizedDescription)
+                }
             }
         }
     }
@@ -117,11 +129,16 @@ extension DataManager {
         let realm = try! Realm()
 
         let ids = content.ContentIdentifier
-        let source = DaisukeEngine.shared.getJSSource(with: content.sourceId)
+        let source = SourceManager.shared.getSource(id: content.sourceId) as? any SyncableSource
         if let target = realm.objects(LibraryEntry.self).first(where: { $0._id == content._id }) {
             // Run Removal Event
             Task {
-                await source?.onContentsRemovedFromLibrary(ids: [ids.contentId])
+                do {
+                    try await source?.onContentsRemovedFromLibrary(ids: [ids.contentId])
+                } catch {
+                    ToastManager.shared.info("Failed to Sync With Content Source")
+                    Logger.shared.error(error.localizedDescription)
+                }
             }
             // In Library, delete object
             try! realm.safeWrite {
@@ -136,7 +153,6 @@ extension DataManager {
             let obj = LibraryEntry()
             obj.content = content
             // Update Dates
-            obj.lastRead = Date()
             obj.lastOpened = Date()
             obj.unreadCount = unread
             realm.add(obj, update: .modified)
@@ -147,7 +163,12 @@ extension DataManager {
 
         // Run Addition Event
         Task {
-            await source?.onContentsAddedToLibrary(ids: [ids.contentId])
+            do {
+                try await source?.onContentsAddedToLibrary(ids: [ids.contentId])
+            } catch {
+                ToastManager.shared.info("Failed to Sync With Content Source")
+                Logger.shared.error(error.localizedDescription)
+            }
         }
 
         Task {
@@ -216,9 +237,13 @@ extension DataManager {
         let grouped = Dictionary(grouping: ids, by: { $0.sourceId })
 
         for (key, value) in grouped {
-            let source = DaisukeEngine.shared.getJSSource(with: key)
+            let source = SourceManager.shared.getSource(id: key) as? any SyncableSource
             Task {
-                await source?.onContentsRemovedFromLibrary(ids: value.map { $0.contentId })
+                do {
+                    try await source?.onContentsRemovedFromLibrary(ids: value.map { $0.contentId })
+                } catch {
+                    ToastManager.shared.info("Failed to Sync With Content Source")
+                }
             }
         }
 

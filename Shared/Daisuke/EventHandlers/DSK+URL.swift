@@ -19,7 +19,7 @@ extension DaisukeEngine {
                     results.append(.init(contentId: result.contentId, sourceId: source.id))
                 }
             } catch {
-                Logger.shared.error("\(error.localizedDescription)", .init(file: #file, function: #function, line: #line))
+                Logger.shared.error("\(error.localizedDescription)")
             }
         }
         return results
@@ -27,7 +27,7 @@ extension DaisukeEngine {
 
     @discardableResult
     func handleURL(for url: URL) async -> Bool {
-        let results = await DaisukeEngine.shared.handleGetIdentifier(for: url.relativeString)
+        let results = await SourceManager.shared.handleGetIdentifier(for: url.relativeString)
 
         if results.isEmpty {
             return false
@@ -45,7 +45,7 @@ extension DaisukeEngine {
 
         // Add Actions
         for result in results {
-            guard let source = DaisukeEngine.shared.getSource(with: result.sourceId) else {
+            guard let source = SourceManager.shared.getSource(id: result.sourceId) else {
                 continue
             }
             // Add Action

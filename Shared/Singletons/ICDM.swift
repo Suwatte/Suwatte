@@ -195,7 +195,7 @@ extension ICDM {
 //
 extension ICDM {
     private func getImages(of ids: ChapterIndentifier) async throws -> (urls: [URL], raws: [Data], text: String) {
-        let source = DaisukeEngine.shared.getSource(with: ids.source)
+        let source = SourceManager.shared.getSource(id: ids.source)
 
         guard let source = source else {
             throw DaisukeEngine.Errors.NamedError(name: "Downloads", message: "Source Not Found")

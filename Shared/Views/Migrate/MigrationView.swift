@@ -16,7 +16,7 @@ struct MigrationView: View {
     @State var operationState = OperationState.idle
     @State var operations: [String: ItemState] = [:]
     @State var operationsTask: Task<Void, Never>?
-    @State var preferredDestinations: [DaisukeContentSource] = []
+    @State var preferredDestinations: [AnyContentSource] = []
     @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
     @Environment(\.presentationMode) var presentationMode
     @State var presentAlert = false
@@ -44,13 +44,7 @@ struct MigrationView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onDisappear(perform: cancelOperations)
         .animation(.default, value: operationState)
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") {
-                    presentationMode.wrappedValue.dismiss()
-                }
-            }
-        }
+
         .alert("Start Migration", isPresented: $presentAlert) {
             Button("Cancel", role: .cancel) {}
             Button("Start", role: .destructive) {
@@ -208,14 +202,13 @@ extension MigrationView {
             }
         }
         .navigationTitle("Sources")
-        .animation(.default, value: preferredDestinations)
         .environment(\.editMode, .constant(.active))
     }
 
-    private func getAvailableSources() -> [DaisukeContentSource] {
-        let allSources = DSK.shared.getSources()
+    private func getAvailableSources() -> [AnyContentSource] {
+        let allSources = SourceManager.shared.sources
         return allSources
-            .filter { !preferredDestinations.contains($0) }
+            .filter { !preferredDestinations.map(\.id).contains($0.id) }
     }
 
     private func move(from source: IndexSet, to destination: Int) {
@@ -273,7 +266,7 @@ extension MigrationView {
             HStack {
                 Text(content.SourceName)
                 Spacer()
-                Text(DaisukeEngine.shared.getSource(with: state.value()?.sourceId ?? "")?.name ?? "")
+                Text(SourceManager.shared.getSource(id: state.value()?.sourceId ?? "")?.name ?? "")
             }
             .padding(.horizontal)
             .font(.subheadline.weight(.ultraLight))
@@ -323,7 +316,6 @@ extension MigrationView {
             case .idle, .searching:
                 DefaultTile(entry: DSKCommon.Highlight.placeholders().first!)
                     .redacted(reason: .placeholder)
-                    .shimmering()
             case .noMatches:
                 NavigationLink {
                     ManualDestinationSelectionView(content: initial, states: $operations)
@@ -378,7 +370,7 @@ extension MigrationView {
     }
 
     private typealias ReturnValue = (HighlightIndentier, Double)
-    private func handleSourcesSearch(id: String, query: String, chapter: Double?, sources: [DaisukeContentSource]) async -> (String, ItemState) {
+    private func handleSourcesSearch(id: String, query: String, chapter: Double?, sources: [AnyContentSource]) async -> (String, ItemState) {
         await withTaskGroup(of: ReturnValue?.self, body: { group in
 
             for source in sources {
@@ -423,8 +415,8 @@ extension MigrationView {
         })
     }
 
-    private func searchSource(query: String, chapter: Double?, source: DaisukeContentSource) async -> ReturnValue? {
-        let data = try? await source.getSearchResults(query: .init(query: query))
+    private func searchSource(query: String, chapter: Double?, source: AnyContentSource) async -> ReturnValue? {
+        let data = try? await source.getSearchResults(.init(query: query))
         let result = data?.results.first
 
         guard let result else { return nil }
@@ -445,7 +437,7 @@ extension MigrationView {
         return (identifier, target.number)
     }
 
-    private func getChapters(for source: DaisukeContentSource, id: String) async -> [DSKCommon.Chapter] {
+    private func getChapters(for source: AnyContentSource, id: String) async -> [DSKCommon.Chapter] {
         (try? await source.getContentChapters(contentId: id)) ?? []
     }
 }

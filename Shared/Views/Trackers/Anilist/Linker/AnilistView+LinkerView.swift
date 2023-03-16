@@ -25,7 +25,7 @@ extension AnilistView {
                     HStack(alignment: .top) {
                         STTImageView(url: URL(string: entry.cover), identifier: .init(contentId: entry.contentId, sourceId: sourceId))
                             .frame(width: 100, height: 150, alignment: .center)
-                            .cornerRadius(7)
+                            .cornerRadius(5)
                         VStack(alignment: .leading) {
                             Text(entry.title)
                                 .font(.headline)
@@ -102,7 +102,7 @@ extension AnilistView {
                 ZStack(alignment: .topLeading) {
                     BaseImageView(url: URL(string: data.coverImage.large))
                         .frame(width: 100, height: 150, alignment: .center)
-                        .cornerRadius(7)
+                        .cornerRadius(5)
                         .shadow(radius: 2.5)
 
                     Image("anilist")

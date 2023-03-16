@@ -88,14 +88,24 @@ extension CloudFlareErrorView {
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
             Task { @MainActor in
-                guard let source = DaisukeEngine.shared.getJSSource(with: sourceID) else {
+                guard let source = SourceManager.shared.getSource(id: sourceID) as? any ModifiableSource else {
                     return
                 }
-                if let dskRequest = try? await source.willAttemptCloudflareVerification(), let request = try? dskRequest.toURLRequest() {
+                
+                do {
+                    if !source.config.hasCustomCloudflareRequest {
+                        throw DSK.Errors.NamedError(name: "Daisuke Warning", message: "Source Has not provided a bypass url. Defaulting to source provided website.")
+                    }
+                    let request = try await source.getCloudflareVerificationRequest().toURLRequest()
                     let _ = self.webView.load(request)
-                } else if let url = URL(string: source.info.website) {
-                    let request = URLRequest(url: url)
-                    let _ = self.webView.load(request)
+
+                } catch {
+                    let url = URL(string: source.info.website)
+                    if let url {
+                        let _ = self.webView.load(.init(url: url))
+                    }
+                    ToastManager.shared.error(error)
+                    Logger.shared.error("\(error)")
                 }
             }
         }

@@ -54,14 +54,12 @@ extension ExploreView {
             })
 
             // MARK: Navigation
-
             .searchable(text: $model.query, placement: .navigationBarDrawer(displayMode: .always))
             .navigationTitle(NAV_TITLE)
             .navigationBarTitleDisplayMode(.inline)
             .onReceive(model.$query.debounce(for: .seconds(0.45), scheduler: DispatchQueue.main), perform: didRecieveQuery(_:))
             .onSubmit(of: .search, didSubmitSearch)
-            .environmentObject(model.source) // Required for Highlight Navigation
-            .environmentObject(model) // Required for Result Count
+            .environmentObject(model)
             .animation(.default, value: model.result)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
@@ -84,7 +82,7 @@ extension ExploreView {
             if let tagLabel = tagLabel {
                 return "\(tagLabel) Titles"
             } else {
-                if let source = model.source as? DSK.LocalContentSource, source.hasExplorePage && !useDirectory {
+                if !useDirectory {
                     return "Search"
                 } else {
                     return "Directory"

@@ -99,7 +99,7 @@ extension ReaderView {
                 }
                 .padding()
                 .background(Color.primary.opacity(0.05))
-                .cornerRadius(7)
+                .cornerRadius(5)
             }
         }
 

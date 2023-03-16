@@ -58,8 +58,8 @@ struct SearchView: View {
         .init(rawValue: UserDefaults.standard.string(forKey: STTKeys.SourcesHiddenFromGlobalSearch) ?? "") ?? []
     }
 
-    var sources: [DaisukeContentSource] {
-        return DaisukeEngine.shared.getSources().filter { !disabledSourceIds.contains($0.id) }
+    var sources: [AnyContentSource] {
+        SourceManager.shared.sources.filter { !disabledSourceIds.contains($0.id) }
     }
 
     var RESULT_VIEW: some View {
@@ -249,7 +249,7 @@ struct SearchView: View {
 
 extension SearchView {
     struct Cell: View {
-        var source: DaisukeEngine.LocalContentSource
+        var source: AnyContentSource
         var request: DaisukeEngine.Structs.SearchRequest
         var body: some View {
             Text(source.name)
@@ -267,8 +267,8 @@ extension SearchView {
             .init(rawValue: UserDefaults.standard.string(forKey: STTKeys.SourcesHiddenFromGlobalSearch) ?? "") ?? []
         }
 
-        var sources: [DaisukeContentSource] {
-            DaisukeEngine.shared.getSources().filter { !disabledSourceIds.contains($0.id) }
+        var sources: [AnyContentSource] {
+            SourceManager.shared.sources.filter { !disabledSourceIds.contains($0.id) }
         }
 
         func makeRequests() {
@@ -280,7 +280,7 @@ extension SearchView {
 
                 Task { @MainActor in
                     do {
-                        let data = try await source.getSearchResults(query: request)
+                        let data = try await source.getSearchResults(request)
                         results[source.id] = .loaded(data)
                     } catch {
                         results[source.id] = .failed(error)
@@ -295,7 +295,8 @@ extension SearchView {
             }
             Task { @MainActor in
                 do {
-                    let data = try await source.getSearchResults(query: .init(query: query))
+                    let request = DSKCommon.SearchRequest(query: query)
+                    let data = try await source.getSearchResults(request)
                     results[source.id] = .loaded(data)
                 } catch {
                     results[source.id] = .failed(error)

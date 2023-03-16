@@ -138,7 +138,7 @@ class BackupManager: ObservableObject {
             for runner in runners {
                 guard let url = URL(string: runner.1) else { return }
                 group.addTask {
-                    try? await DaisukeEngine.shared.importRunner(from: url, with: runner.0)
+                    try? await SourceManager.shared.importRunner(from: url, with: runner.0)
                 }
             }
         }

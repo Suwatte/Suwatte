@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-extension DaisukeContentSourceView {
+extension ContentSourceView {
     struct PreferencesView: View {
-        @EnvironmentObject var source: DaisukeEngine.LocalContentSource
-        @State var loadable = Loadable<[DSKCommon.PreferenceGroup]?>.idle
+        var source: AnyContentSource
+        @State var loadable = Loadable<[DSKCommon.PreferenceGroup]>.idle
         var body: some View {
             LoadableView(loadable: loadable) {
                 ProgressView()
@@ -26,7 +26,7 @@ extension DaisukeContentSourceView {
                     }
                 }
             } _: { value in
-                loadedView(value: value)
+                ContentSourceSettingsView(source: source, preferences: value)
             }
             .animation(.default, value: loadable)
         }
@@ -36,7 +36,7 @@ extension DaisukeContentSourceView {
                 loadable = .loading
             })
             do {
-                let data = try await source.getUserPreferences()
+                let data = try await source.getSourcePreferences()
                 await MainActor.run(body: {
                     loadable = .loaded(data)
                 })
@@ -50,21 +50,8 @@ extension DaisukeContentSourceView {
     }
 }
 
-extension DaisukeContentSourceView.PreferencesView {
-    @ViewBuilder
-    func loadedView(value: [DSKCommon.PreferenceGroup]?) -> some View {
-        if let preferences = value {
-            ContentSourceSettingsView(preferences: preferences)
-        } else {
-            Text("Source has no settings :)")
-                .font(.headline.weight(.light))
-                .foregroundColor(.gray)
-        }
-    }
-}
-
 struct ContentSourceSettingsView: View {
-    @EnvironmentObject var source: DSK.LocalContentSource
+    var source: AnyContentSource
     var preferences: [DSKCommon.PreferenceGroup]
     var body: some View {
         Form {
@@ -90,11 +77,12 @@ struct ContentSourceSettingsView: View {
     @ViewBuilder
     func TYPE_SWITCH(pref: DSKCommon.Preference) -> some View {
         switch pref.type {
-        case .select: SelectionView(sourceId: source.id, pref: pref)
-        case .multiSelect: MultiSelectView(sourceId: source.id, pref: pref)
-        case .stepper: StepperView(sourceId: source.id, pref: pref)
-        case .textfield: TextFieldView(sourceId: source.id, pref: pref)
-        case .toggle: ToggleView(sourceId: source.id, pref: pref)
+        case .select: SelectionView(source: source, pref: pref)
+        case .multiSelect: MultiSelectView(source: source, pref: pref)
+        case .stepper: StepperView(source: source, pref: pref)
+        case .textfield: TextFieldView(source: source, pref: pref)
+        case .toggle: ToggleView(source: source, pref: pref)
+        case .button: ButtoNView(source: source, pref: pref)
         }
     }
 }
@@ -103,15 +91,15 @@ struct ContentSourceSettingsView: View {
 
 extension ContentSourceSettingsView {
     struct SelectionView: View {
-        var sourceId: String
+        var source: AnyContentSource
         var pref: DSKCommon.Preference
         @State var selection: String
 
-        init(sourceId: String, pref: DSKCommon.Preference) {
-            self.sourceId = sourceId
+        init(source: AnyContentSource, pref: DSKCommon.Preference) {
+            self.source = source
             self.pref = pref
-            let currentValue = DataManager.shared.getStoreValue(for: sourceId, key: pref.key)
-            _selection = State(initialValue: currentValue ?? pref.defaultValue)
+            let value = (pref.value.value as? String) ?? pref.options?.first?.value ?? ""
+            _selection = State(initialValue: value)
         }
 
         var body: some View {
@@ -122,7 +110,11 @@ extension ContentSourceSettingsView {
                 }
             }
             .onChange(of: selection) { value in
-                DataManager.shared.setStoreValue(for: sourceId, key: pref.key, value: value)
+                if let source = source as? WKContentSource {
+                    Task {
+                        await source.updateSourcePreference(key:pref.key,value:selection)
+                    }
+                }
             }
         }
     }
@@ -132,28 +124,26 @@ extension ContentSourceSettingsView {
 
 extension ContentSourceSettingsView {
     struct ToggleView: View {
-        var sourceId: String
+        var source: AnyContentSource
         var pref: DSKCommon.Preference
         @State var isOn: Bool
 
-        init(sourceId: String, pref: DSKCommon.Preference) {
-            self.sourceId = sourceId
+        init(source: AnyContentSource, pref: DSKCommon.Preference) {
+            self.source = source
             self.pref = pref
-
-            let currentValue = DataManager.shared.getStoreValue(for: sourceId, key: pref.key) ?? pref.defaultValue
-            var active = false
-
-            if currentValue == "1" || currentValue == "true" {
-                active = true
-            }
-
-            _isOn = State(initialValue: active)
+            
+            let value = (pref.value.value as? Bool) ?? false
+            _isOn = State(initialValue: value)
         }
 
         var body: some View {
             Toggle(pref.label, isOn: $isOn)
                 .onChange(of: isOn) { value in
-                    DataManager.shared.setStoreValue(for: sourceId, key: pref.key, value: value ? "true" : "false")
+                    if let source = source as? WKContentSource {
+                        Task {
+                            await source.updateSourcePreference(key:pref.key, value:value)
+                        }
+                    }
                 }
         }
     }
@@ -163,22 +153,24 @@ extension ContentSourceSettingsView {
 
 extension ContentSourceSettingsView {
     struct TextFieldView: View {
-        var sourceId: String
+        var source: AnyContentSource
         var pref: DSKCommon.Preference
         @State var text: String
-        init(sourceId: String, pref: DSKCommon.Preference) {
-            self.sourceId = sourceId
+        init(source: AnyContentSource, pref: DSKCommon.Preference) {
+            self.source = source
             self.pref = pref
-
-            let currentValue = DataManager.shared.getStoreValue(for: sourceId, key: pref.key) ?? pref.defaultValue
-
-            _text = State(initialValue: currentValue)
+            let value = (pref.value.value as? String) ?? ""
+            _text = State(initialValue: value)
         }
 
         var body: some View {
             TextField(pref.label, text: $text)
                 .onSubmit {
-                    DataManager.shared.setStoreValue(for: sourceId, key: pref.key, value: text)
+                    if let source = source as? WKContentSource {
+                        Task {
+                            await source.updateSourcePreference(key:pref.key, value:text)
+                        }
+                    }
                 }
         }
     }
@@ -188,24 +180,26 @@ extension ContentSourceSettingsView {
 
 extension ContentSourceSettingsView {
     struct StepperView: View {
-        var sourceId: String
+        var source: AnyContentSource
         var pref: DSKCommon.Preference
         @State var value: Int
-        init(sourceId: String, pref: DSKCommon.Preference) {
-            self.sourceId = sourceId
+        init(source: AnyContentSource, pref: DSKCommon.Preference) {
+            self.source = source
             self.pref = pref
-
-            let currentValue = DataManager.shared.getStoreValue(for: sourceId, key: pref.key) ?? pref.defaultValue
-
-            _value = State(initialValue: Int(currentValue) ?? 1)
+            let cValue = (pref.value.value as? Int) ?? pref.minStepper
+            _value = State(initialValue: cValue)
         }
 
         var body: some View {
             Stepper(value: $value, in: pref.minStepper ... pref.maxStepper) {
                 FieldLabel(primary: pref.label, secondary: value.description)
             }
-            .onChange(of: value) { val in
-                DataManager.shared.setStoreValue(for: sourceId, key: pref.key, value: String(val))
+            .onChange(of: value) { value in
+                if let source = source as? WKContentSource {
+                    Task {
+                        await source.updateSourcePreference(key:pref.key, value:value)
+                    }
+                }
             }
         }
     }
@@ -215,18 +209,15 @@ extension ContentSourceSettingsView {
 
 extension ContentSourceSettingsView {
     struct MultiSelectView: View {
-        var sourceId: String
+        var source: AnyContentSource
         var pref: DSKCommon.Preference
         @State var selections: [String]
-        init(sourceId: String, pref: DSKCommon.Preference) {
-            self.sourceId = sourceId
+        init(source: AnyContentSource, pref: DSKCommon.Preference) {
+            self.source = source
             self.pref = pref
 
-            let currentValue = DataManager.shared.getStoreValue(for: sourceId, key: pref.key) ?? pref.defaultValue
-
-            let splitted = currentValue.components(separatedBy: ", ")
-
-            _selections = State(initialValue: splitted)
+            let value = (pref.value.value as? [String]) ?? []
+            _selections = State(initialValue: value)
         }
 
         var body: some View {
@@ -247,8 +238,11 @@ extension ContentSourceSettingsView {
                 STTLabelView(title: pref.label, label: LABEL_V)
             }
             .onChange(of: selections) { newValue in
-                let keyStoreValue = newValue.joined(separator: ", ")
-                DataManager.shared.setStoreValue(for: sourceId, key: pref.key, value: keyStoreValue)
+                if let source = source as? WKContentSource {
+                    Task {
+                        await source.updateSourcePreference(key:pref.key, value:newValue)
+                    }
+                }
             }
         }
 
@@ -272,6 +266,38 @@ extension ContentSourceSettingsView {
             }
 
             return "\(selections.count) Selected"
+        }
+    }
+}
+
+// MARK: Button
+extension ContentSourceSettingsView {
+    struct ButtoNView: View {
+        var source: AnyContentSource
+        var pref: DSKCommon.Preference
+        init(source: AnyContentSource, pref: DSKCommon.Preference) {
+            self.source = source
+            self.pref = pref
+        }
+        
+        var destructive : Bool {
+            pref.isDestructive ?? false
+        }
+        var body: some View {
+            
+            Button(role: destructive ? .destructive : nil) {
+                if let source = source as? WKContentSource {
+                    Task {
+                        await source.updateSourcePreference(key:pref.key, value: "")
+                    }
+                }
+            } label: {
+                if let image = pref.systemImage {
+                    Label(pref.label, systemImage: image)
+                } else {
+                    Text(pref.label)
+                }
+            }
         }
     }
 }

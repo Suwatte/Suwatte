@@ -44,16 +44,16 @@ final class DaisukeEngine: ObservableObject {
         // Create Directory
         directory.createDirectory()
         Logger.shared.log("\(STT_EV) Daisuke Engine Started.")
-        Task { @MainActor in
-            do {
-                try await getDependencies()
-                startRunners()
-            } catch {
-                ToastManager.shared.error("Failed to Start Runners")
-                Logger.shared.error("\(error)")
-            }
-            ToastManager.shared.loading = false
-        }
+//        Task { @MainActor in
+//            do {
+//                try await getDependencies()
+//                startRunners()
+//            } catch {
+//                ToastManager.shared.error("Failed to Start Runners")
+//                Logger.shared.error("\(error)")
+//            }
+//            ToastManager.shared.loading = false
+//        }
     }
 }
 

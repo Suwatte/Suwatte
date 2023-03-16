@@ -33,7 +33,7 @@ extension DaisukeEngine.Structs {
     struct ExploreTag: Parsable, Hashable, Identifiable {
         var id: String
         var label: String
-        var filterId: String
+        var request: SearchRequest
         var imageUrl: String?
     }
 

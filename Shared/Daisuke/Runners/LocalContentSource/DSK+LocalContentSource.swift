@@ -91,7 +91,7 @@ extension DaisukeEngine {
             return try await callMethodReturningDecodable(method: "resolveExploreCollection", arguments: [excerpt], resolvesTo: DSKCommon.ExploreCollection.self)
         }
 
-        override func getSearchResults(query: DaisukeEngine.Structs.SearchRequest) async throws -> DaisukeEngine.Structs.PagedResult {
+        override func getSearchResults(_ query: DaisukeEngine.Structs.SearchRequest) async throws -> DaisukeEngine.Structs.PagedResult {
             let queryValue = JSValue(object: try query.asDictionary(), in: runnerClass.context)
             guard let queryValue = queryValue else {
                 throw DaisukeEngine.Errors.NamedError(name: "Swift to JS", message: "Unable to Convert SearchRequest to JS Object")
@@ -111,6 +111,13 @@ extension DaisukeEngine {
                 return []
             }
             return try await callMethodReturningDecodable(method: "getSearchSorters", arguments: [], resolvesTo: [DaisukeEngine.Structs.SortOption].self)
+        }
+        override func willResolveExploreCollections() async throws {
+            do {
+                try await callOptionalVoidMethod(method: "willResolveExploreCollections", arguments: [])
+            } catch {
+                ToastManager.shared.display(.error(nil, "[\(id)] [willResolveExploreCollections] \(error.localizedDescription)"))
+            }
         }
     }
 }
@@ -188,21 +195,6 @@ extension DaisukeEngine.LocalContentSource {
 
 extension DaisukeEngine.LocalContentSource {
     func registerDefaultPrefs() async throws {
-        let groups = try await getUserPreferences()
-
-        guard let groups else {
-            return
-        }
-
-        let prefs = groups.flatMap { $0.children }
-
-        for pref in prefs {
-            let v = DataManager.shared.getStoreValue(for: id, key: pref.key)
-            guard v == nil else {
-                return
-            }
-            DataManager.shared.setStoreValue(for: id, key: pref.key, value: pref.defaultValue)
-        }
         Logger.shared.log("[\(id)] Registered Default Preferences")
     }
 }

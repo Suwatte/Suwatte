@@ -9,21 +9,20 @@ import RealmSwift
 import SwiftUI
 
 struct InstalledRunnersView: View {
-    @ObservedObject var engine = DaisukeEngine.shared
-    @ObservedResults(StoredRunnerObject.self) var runners
+    @ObservedObject var manager = SourceManager.shared
+    @ObservedResults(StoredRunnerObject.self) var result
     @State var showAddSheet = false
+    
+    var runners: Results<StoredRunnerObject> {
+        result.sorted(by: [SortDescriptor(keyPath: "enabled", ascending: true), SortDescriptor(keyPath: "name", ascending: true)])
+    }
     var body: some View {
-        let results = runners.sorted(by: [SortDescriptor(keyPath: "enabled", ascending: true), SortDescriptor(keyPath: "name", ascending: true)])
         List {
             Section {
-                ForEach(results, id: \.id) { runner in
-                    if let source = DSK.shared.getSource(with: runner.id) {
+                ForEach(runners, id: \.id) { runner in
+                    if let source = SourceManager.shared.getSource(id: runner.id) {
                         NavigationLink {
-                            if let source = source as? DSK.LocalContentSource {
-                                DaisukeContentSourceView(source: source)
-                            } else {
-                                Text("Hosted Source Menu")
-                            }
+                                ContentSourceView(source: source)
                         } label: {
                             HStack(spacing: 15) {
                                 STTThumbView(url:  URL(string: runner.thumbnail) )
@@ -38,9 +37,15 @@ struct InstalledRunnersView: View {
                                 }
                             }
                         }
-                        .swipeActions(allowsFullSwipe: true) {
+                        .swipeActions {
                             Button {
-                                try? engine.removeRunner(id: runner.id)
+                                
+                            } label : {
+                                Label("Disable", systemImage: "pause.fill")
+                            }
+                            .tint(.yellow)
+                            Button {
+                                
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
@@ -52,7 +57,7 @@ struct InstalledRunnersView: View {
             } header: {
                 Text("Content Sources")
             }
-            .opacity(results.isEmpty ? 0 : 1)
+            .opacity(runners.isEmpty ? 0 : 1)
         }
         .navigationTitle("Installed Runners")
         .toolbar {
@@ -62,7 +67,7 @@ struct InstalledRunnersView: View {
                 }
             }
         }
-        .animation(.default,value: engine.sources)
+        .animation(.default,value: result)
         .fileImporter(isPresented: $showAddSheet, allowedContentTypes: [.init(filenameExtension: "stt")!]) { result in
 
             guard let path = try? result.get() else {
@@ -73,7 +78,7 @@ struct InstalledRunnersView: View {
             if path.startAccessingSecurityScopedResource() {
                 Task {
                     do {
-                        try await DaisukeEngine.shared.importRunner(from: path)
+                        try await SourceManager.shared.importRunner(from: path)
                         await MainActor.run {
                             ToastManager.shared.info("Added!")
                         }

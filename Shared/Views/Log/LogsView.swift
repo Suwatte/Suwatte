@@ -12,9 +12,9 @@ struct LogsView: View {
     @State var presenting = false
     var body: some View {
         List {
-            ForEach(logger.logs, id: \.message.hashValue) { log in
+            ForEach(logger.logs) { log in
                 HStack {
-                    Text(log.DisplayMessage.trimmingCharacters(in: .whitespacesAndNewlines))
+                    Text(log.OutputMessage.trimmingCharacters(in: .whitespacesAndNewlines))
                         .foregroundColor(log.level.color)
                         .font(.caption)
                         .fontWeight(.light)

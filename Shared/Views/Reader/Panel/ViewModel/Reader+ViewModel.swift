@@ -343,9 +343,11 @@ extension ReaderView.ViewModel {
         if incognitoMode { return } // Incoginito
 
         // Save Progress
-        if let chapter = chapterCache[page.chapterId], canMark(sourceId: chapter.chapter.sourceId) {
-            DataManager.shared.setProgress(from: chapter)
+        guard let chapter = chapterCache[page.chapterId], canMark(sourceId: chapter.chapter.sourceId) else {
+            return
         }
+        DataManager.shared.setProgress(from: chapter)
+        DataManager.shared.updateLastRead(id: ContentIdentifier(contentId: chapter.chapter.contentId, sourceId: chapter.chapter.sourceId).id)
     }
 
     private func handleTransition(transition: ReaderView.Transition) {
@@ -407,6 +409,8 @@ extension ReaderView.ViewModel {
         handleSourceSync(contentId: lastChapter.chapter.contentId,
                          sourceId: lastChapter.chapter.sourceId,
                          chapterId: lastChapter.chapter.chapterId)
+        
+        DataManager.shared.updateLastRead(id: ContentIdentifier(contentId: lastChapter.chapter.contentId, sourceId: lastChapter.chapter.sourceId).id)
     }
 
     private func getStoredTrackerInfo() -> StoredTrackerInfo? {
@@ -437,9 +441,14 @@ extension ReaderView.ViewModel {
 
     private func handleSourceSync(contentId: String, sourceId: String, chapterId: String) {
         // Services
-        let source = DaisukeEngine.shared.getJSSource(with: sourceId)
+        let source = SourceManager.shared.getSource(id: sourceId) as? any SyncableSource
         Task {
-            await source?.onChapterRead(contentId: contentId, chapterId: chapterId)
+            do {
+                try await source?.onChapterRead(contentId: contentId, chapterId: chapterId)
+
+            } catch {
+                ToastManager.shared.info("Failed to Sync Read Marker")
+            }
         }
     }
 }

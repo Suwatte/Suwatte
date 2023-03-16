@@ -46,8 +46,15 @@ struct ContentSourceInfo: Codable, Parsable {
     var thumbnail: String?
 }
 
-class DaisukeContentSource: DSKCSBase, ObservableObject, Identifiable, Equatable {
-    var info: ContentSourceInfo
+class DaisukeContentSource: DSKCSBase, ObservableObject, Identifiable, Equatable , ContentSource {
+    func getSourcePreferences() async throws -> [DSKCommon.PreferenceGroup] {
+        throw DSK.Errors.MethodNotImplemented
+    }
+    
+    var config: SourceConfig
+    
+    
+    var info: SourceInfo
 
     var id: String {
         info.id
@@ -66,7 +73,8 @@ class DaisukeContentSource: DSKCSBase, ObservableObject, Identifiable, Equatable
     }
 
     init(info: ContentSourceInfo) {
-        self.info = info
+        self.info = SourceInfo(id: info.id, name: info.name, version: info.version, website: info.website, supportedLanguages: info.supportedLanguages)
+        self.config = .init()
     }
 
     func getContent(id _: String) async throws -> DaisukeEngine.Structs.Content {
@@ -100,9 +108,13 @@ class DaisukeContentSource: DSKCSBase, ObservableObject, Identifiable, Equatable
     func resolveExplorePageCollection(_: DSKCommon.CollectionExcerpt) async throws -> DSKCommon.ExploreCollection {
         throw DSK.Errors.MethodNotImplemented
     }
+    
+    func willResolveExploreCollections() async throws {
+        throw DSK.Errors.MethodNotImplemented
+    }
 
 //
-    func getSearchResults(query _: DaisukeEngine.Structs.SearchRequest) async throws -> DaisukeEngine.Structs.PagedResult {
+    func getSearchResults(_ query : DaisukeEngine.Structs.SearchRequest) async throws -> DaisukeEngine.Structs.PagedResult {
         throw DSK.Errors.MethodNotImplemented
     }
 

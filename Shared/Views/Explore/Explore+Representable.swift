@@ -7,13 +7,12 @@
 
 import SwiftUI
 
-struct ExploreCollectioViewRepresentable: UIViewControllerRepresentable {
-    @EnvironmentObject var source: DaisukeContentSource
+struct ExploreCollectionViewRepresentable: UIViewControllerRepresentable {
     @EnvironmentObject var model: ExploreView.ViewModel
     @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
     func makeUIViewController(context _: Context) -> some ExploreCollectionsController {
         let controller = ExploreCollectionsController(collectionViewLayout: UICollectionViewLayout())
-        controller.source = source
+        controller.source = model.source
         controller.model = model
         controller.tileStyle = tileStyle
         return controller

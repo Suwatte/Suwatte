@@ -39,7 +39,7 @@ extension DaisukeEngine {
     }
 
     @MainActor
-    private func fetchUpdatesForSource(source: DaisukeContentSource) async throws -> Int {
+    private func fetchUpdatesForSource(source: AnyContentSource) async throws -> Int {
         let realm = try! Realm(queue: nil)
         let date = UserDefaults.standard.object(forKey: STTKeys.LastFetchedUpdates) as! Date
         let skipConditions = Preferences.standard.skipConditions
@@ -83,7 +83,7 @@ extension DaisukeEngine {
 
             // Fetch Chapters
             let chapters = try? await getChapters(for: contentId, with: source)
-            let marked = try? await(source as? DSK.LocalContentSource)?.getReadChapterMarkers(for: contentId)
+            let marked = try? await(source as? (any SyncableSource))?.getReadChapterMarkers(contentId: contentId)
             let lastFetched = DataManager.shared.getLatestStoredChapter(source.id, contentId)
             // Calculate Update Count
             var filtered = chapters?
@@ -142,7 +142,7 @@ extension DaisukeEngine {
         return updateCount
     }
 
-    private func getChapters(for id: String, with source: DaisukeContentSource) async throws -> [DSKCommon.Chapter] {
+    private func getChapters(for id: String, with source: AnyContentSource) async throws -> [DSKCommon.Chapter] {
         let shouldUpdateProfile = UserDefaults.standard.bool(forKey: STTKeys.UpdateContentData)
 
         if shouldUpdateProfile {
@@ -165,9 +165,9 @@ extension DaisukeEngine {
         let linked = DataManager.shared.getLinkedContent(for: id)
 
         for title in linked {
-            guard let source = DaisukeEngine.shared.getSource(with: title.sourceId) else { continue }
+            guard let source = SourceManager.shared.getSource(id: title.sourceId) else { continue }
             guard let chapters = try? await source.getContentChapters(contentId: title.contentId) else { continue }
-            let marked = try? await(source as? DSK.LocalContentSource)?.getReadChapterMarkers(for: title.contentId)
+            let marked = try? await(source as? (any SyncableSource))?.getReadChapterMarkers(contentId: title.contentId)
             let lastFetched = DataManager.shared.getLatestStoredChapter(source.id, title.contentId)
             var filtered = chapters
 

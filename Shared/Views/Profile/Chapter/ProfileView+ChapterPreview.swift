@@ -147,7 +147,7 @@ struct LinkedUpdatesView: View {
             Text("Linked Titles Containing More Chapters")
             Divider()
             ForEach(data, id: \.entry.hashValue) { id in
-                Button("\(id.entry.title) [\(DaisukeEngine.shared.getSource(with: id.sourceId)!.name)]") {
+                Button("\(id.entry.title) [\(SourceManager.shared.getSource(id: id.sourceId)!.name)]") {
                     selection = id
                 }
             }
@@ -166,6 +166,6 @@ struct LinkedUpdatesView: View {
     }
 
     func filtered() -> [HighlightIndentier] {
-        model.linkedUpdates.filter { DaisukeEngine.shared.getSource(with: $0.sourceId) != nil }
+        model.linkedUpdates.filter { SourceManager.shared.getSource(id: $0.sourceId) != nil }
     }
 }

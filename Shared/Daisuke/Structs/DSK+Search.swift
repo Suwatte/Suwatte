@@ -10,7 +10,7 @@ import Foundation
 extension DaisukeEngine.Structs {
     struct SearchRequest: Parsable, Hashable, Codable {
         var query: String?
-        var page: Int = 1
+        var page: Int? = 1
         var sort: String?
         var filters: [PopulatedFilter]?
 

@@ -81,7 +81,7 @@ extension DaisukeEngine {
             throw DSK.Errors.MethodNotImplemented
         }
 
-        override func getSearchResults(query: DaisukeEngine.Structs.SearchRequest) async throws -> DaisukeEngine.Structs.PagedResult {
+        override func getSearchResults(_ query: DaisukeEngine.Structs.SearchRequest) async throws -> DaisukeEngine.Structs.PagedResult {
             let url = URL(string: "/source/\(id)/search", relativeTo: host)
 
             guard let url = url else {

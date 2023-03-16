@@ -6,10 +6,11 @@
 //
 
 import Foundation
+import AnyCodable
 
 extension DaisukeEngine.Structs {
     enum PreferenceType: Int, Codable {
-        case select, multiSelect, stepper, toggle, textfield
+        case select, multiSelect, stepper, toggle, textfield, button
     }
 
     struct SelectOption: Parsable, Hashable {
@@ -28,23 +29,28 @@ extension DaisukeEngine.Structs {
         var key: String
         var label: String
         var type: PreferenceType
-        var defaultValue: String
         var options: [SelectOption]?
-
+        
+        var value: AnyCodable
         // Stepper
-        var maxStepperValue: Int?
-        var minStepperValue: Int?
+        var maxValue: Int?
+        var minValue: Int?
 
         // MultiSelect
         var minSelectionCount: Int?
         var maxSelectionCount: Int?
+        
+        // Button
+        var subtitle: String?
+        var isDestructive: Bool?
+        var systemImage: String?
 
         var minStepper: Int {
-            minStepperValue ?? 1
+            minValue ?? 1
         }
 
         var maxStepper: Int {
-            maxStepperValue ?? 100
+            maxValue ?? 100
         }
 
         var minSelect: Int {

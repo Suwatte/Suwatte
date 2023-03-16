@@ -11,23 +11,26 @@ import SwiftUI
 import UIKit
 import WebKit
 
-extension DaisukeContentSourceView {
+extension ContentSourceView {
     struct AuthSection: View {
-        @EnvironmentObject var source: DaisukeEngine.LocalContentSource
+        var source: any AuthSource
         @State var presentBasicAuthSheet = false
         @State var presentWebView = false
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
+        
+        var method: DSKCommon.AuthMethod? {
+            source.config.authenticationMethod
+        }
+        
+        @State var user: Loadable<DSKCommon.User> = .idle
+        
         var body: some View {
             Group {
-                if let user = source.user {
-                    LoadedUserView(user: user)
-                } else {
-                    LoadedNoUserView()
-                }
+                Gateway
             }
             .sheet(isPresented: $presentBasicAuthSheet) {
                 NavigationView {
-                    SignInSheet(usesEmail: source.authMethod == .email_pw)
+                    SignInSheet(usesEmail: method == .email_pw)
                         .navigationTitle("Sign In")
                         .closeButton()
                         .tint(accentColor)
@@ -37,14 +40,34 @@ extension DaisukeContentSourceView {
             .fullScreenCover(isPresented: $presentWebView) {
                 NavigationView {
                     WebAuthWebView(source: source)
-                        .navigationBarTitle("WebView Auth", displayMode: .inline)
+                        .navigationBarTitle("Authenticate In WebView", displayMode: .inline)
                         .closeButton(title: "Done")
                         .toast()
                         .tint(accentColor)
                         .accentColor(accentColor)
                 }
             }
-            .animation(.default, value: source.user)
+            .animation(.default, value: user)
+        }
+        
+        var Gateway: some View {
+            LoadableView(loadUser, user) {
+                LoadedUserView(user: $0)
+            }
+        }
+        
+        func loadUser() {
+            self.user = .loading
+            Task {
+                do {
+                    let data = try await source.getAuthenticatedUser()
+                    if let data {
+                        self.user = .loaded(data)
+                    }
+                } catch {
+                    self.user = .failed(error)
+                }
+            }
         }
 
         @ViewBuilder
@@ -54,10 +77,10 @@ extension DaisukeContentSourceView {
 
         @ViewBuilder
         func LoadedNoUserView() -> some View {
-            if let authMethod = source.authMethod {
+            if let method {
                 Section {
                     Button {
-                        switch authMethod {
+                        switch method {
                         case .email_pw, .username_pw:
                             presentBasicAuthSheet.toggle()
                         case .oauth:
@@ -77,7 +100,7 @@ extension DaisukeContentSourceView {
     }
 }
 
-extension DaisukeContentSourceView {
+extension ContentSourceView {
     struct SignInSheet: View {
         var usesEmail: Bool
         @State var username: String = ""
@@ -208,7 +231,7 @@ extension DaisukeContentSourceView {
     }
 }
 
-extension DaisukeContentSourceView {
+extension ContentSourceView {
     struct AuthenticatedUserView: View {
         @EnvironmentObject var source: DaisukeEngine.LocalContentSource
         var user: DSKCommon.User
@@ -303,7 +326,7 @@ extension DaisukeContentSourceView {
 // MARK: WebView
 
 struct WebAuthWebView: UIViewControllerRepresentable {
-    var source: DSK.LocalContentSource
+    var source: any AuthSource
     func makeUIViewController(context _: Context) -> some Controller {
         let view = Controller()
         view.source = source
@@ -316,7 +339,7 @@ struct WebAuthWebView: UIViewControllerRepresentable {
 extension WebAuthWebView {
     class Controller: UIViewController, WKUIDelegate {
         var webView: WKWebView!
-        var source: DSK.LocalContentSource!
+        var source: (any AuthSource)!
 
         override func viewDidLoad() {
             super.viewDidLoad()
@@ -333,7 +356,7 @@ extension WebAuthWebView {
             super.viewWillAppear(animated)
             Task { @MainActor in
                 do {
-                    let dskRequest = try await source.willRequestWebViewAuth()
+                    let dskRequest = try await source.willRequestAuthenticationWebView()
                     let request = try dskRequest.toURLRequest()
                     let _ = self.webView.load(request)
                 } catch {
@@ -357,9 +380,16 @@ extension WebAuthWebView.Controller: WKNavigationDelegate {
                 AF.session.configuration.httpCookieStorage?.setCookie(cookie)
                 Task { @MainActor in
                     guard let self else { return }
-                    let isValid = (try? await self.source.didReceiveWebAuthCookie(name: cookie.name)) ?? false
-                    if isValid {
-                        ToastManager.shared.info("[\(self.source.name)] Logged In!")
+                    
+                    do {
+                        let dsk = DSKCommon.Cookie(name: cookie.name, value: cookie.value)
+                        let isValidCookie = try await self.source.didReceiveAuthenticationCookieFromWebView(cookie: dsk)
+                        if isValidCookie {
+                            ToastManager.shared.info("[\(self.source.name)] Logged In!")
+                        }
+                    } catch {
+                        ToastManager.shared.error(error)
+                        Logger.shared.error(error.localizedDescription)
                     }
                 }
             }

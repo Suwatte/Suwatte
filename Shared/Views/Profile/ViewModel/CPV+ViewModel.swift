@@ -21,15 +21,13 @@ extension Task where Success == Never, Failure == Never {
 extension ProfileView {
     final class ViewModel: ObservableObject {
         @Published var entry: DaisukeEngine.Structs.Highlight
-        var source: DaisukeContentSource
+        var source: AnyContentSource
 
         @Published var content: DSKCommon.Content = .placeholder
         @Published var loadableContent: Loadable<Bool> = .idle
         var storedContent: StoredContent {
             try! content.toStoredContent(withSource: source.id)
         }
-
-        // TODO: Make Chapters Realm Based?
         @Published var chapters: Loadable<[StoredChapter]> = .idle
         @Published var working = false
         @Published var linkedHasUpdate = false
@@ -68,7 +66,7 @@ extension ProfileView {
         // Anilist ID
         lazy var anilistId: Int? = STTHelpers.getAnilistID(id: sttIdentifier().id)
 
-        init(_ entry: DaisukeEngine.Structs.Highlight, _ source: DaisukeContentSource) {
+        init(_ entry: DaisukeEngine.Structs.Highlight, _ source: AnyContentSource) {
             self.entry = entry
             self.source = source
             setupObservers()
@@ -192,7 +190,7 @@ extension ProfileView.ViewModel {
             Task { @MainActor [weak self] in
                 if self?.loadableContent.LOADED ?? false {
                     ToastManager.shared.error("Failed to Update Profile")
-                    Logger.shared.error("[ProfileView] \(error.localizedDescription)", .init(function: #function))
+                    Logger.shared.error("[ProfileView] \(error.localizedDescription)")
                 } else {
                     self?.loadableContent = .failed(error)
                 }
@@ -475,9 +473,9 @@ extension ProfileView.ViewModel {
     }
 
     private func handleReadMarkers() async throws {
-        guard let source = source as? DSK.LocalContentSource else { return }
+        guard let source = source as? WKContentSource else { return }
         // Check if Syncable
-        if !source.canSyncUserLibrary { return }
+        if !source.config.canSyncWithSource { return }
         let user = try? await source.getAuthenticatedUser()
 
         guard let _ = user else { return }
@@ -491,7 +489,7 @@ extension ProfileView.ViewModel {
         })
 
         // Get Read Chapters on Source
-        let readChapterIds = try await source.getReadChapterMarkers(for: entry.id)
+        let readChapterIds = try await source.getReadChapterMarkers(contentId: entry.id)
 
         // Init Realm
         // Save New Chapters
@@ -505,7 +503,7 @@ extension ProfileView.ViewModel {
         // Get Chapters that are out of sync
         let markers = getOutOfSyncMarkers(with: readChapterIds)
         // Sync to Source
-        await source.onChaptersMarked(contentId: entry.id, chapterIds: markers, completed: true)
+        try? await source.onChaptersMarked(contentId: entry.id, chapterIds: markers, completed: true)
 
         await MainActor.run(body: {
             syncState = .done
@@ -573,7 +571,7 @@ extension ProfileView.ViewModel {
 
         let updates = await withTaskGroup(of: (Bool, HighlightIndentier).self, returning: [HighlightIndentier].self, body: { group -> [HighlightIndentier] in
             for entry in identifiers {
-                guard let src = DaisukeEngine.shared.getSource(with: entry.sourceId) else {
+                guard let src = SourceManager.shared.getSource(id: entry.sourceId) else {
                     continue
                 }
 

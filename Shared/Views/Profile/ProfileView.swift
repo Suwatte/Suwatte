@@ -14,7 +14,7 @@ struct ProfileView: View {
     @State var initialized = false
     var body: some View {
         Group {
-            if let source = DaisukeEngine.shared.getSource(with: sourceId) {
+            if let source = SourceManager.shared.getSource(id: sourceId) {
                 StateGate(viewModel: .init(entry, source))
             } else {
                 NoMatchingIDView

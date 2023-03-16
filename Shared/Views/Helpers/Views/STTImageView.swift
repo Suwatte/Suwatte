@@ -51,9 +51,21 @@ struct STTImageView: View {
             return
         }
         Task {
-            let source = DaisukeEngine.shared.getJSSource(with: identifier.sourceId)
-            let req = try? await source?.willRequestImage(request: .init(url: imageURL.absoluteString))?.toURLRequest()
-            loader.load(req ?? imageURL)
+            let source = SourceManager.shared.getSource(id: identifier.sourceId)
+            
+            do {
+                if let source = source as? any ModifiableSource, source.config.hasThumbnailInterceptor {
+                    let dskRequest = DSKCommon.Request(url: imageURL.absoluteString)
+                    let dskResponse = try await source.willRequestImage(request: dskRequest)
+                    let imageRequest = ImageRequest(urlRequest: try dskResponse.toURLRequest())
+                    loader.load(imageRequest)
+                    return
+                }
+            } catch {
+                Logger.shared.error(error.localizedDescription)
+            }
+            
+            loader.load(url)
         }
     }
 
@@ -106,11 +118,18 @@ struct BaseImageView: View {
             return
         }
         Task {
-            if let sourceId = sourceId, let source = DaisukeEngine.shared.getJSSource(with: sourceId) {
-                let req = try? await source.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
-                loader.load(req ?? url)
-                return
+            do {
+                if let sourceId, let source = SourceManager.shared.getSource(id: sourceId) as? any ModifiableSource, source.config.hasThumbnailInterceptor {
+                    let dskRequest = DSKCommon.Request(url: url.absoluteString)
+                    let dskResponse = try await source.willRequestImage(request: dskRequest)
+                    let imageRequest = ImageRequest(urlRequest: try dskResponse.toURLRequest())
+                    loader.load(imageRequest)
+                    return
+                }
+            } catch {
+                Logger.shared.error(error.localizedDescription)
             }
+            
             loader.load(url)
         }
     }
@@ -123,23 +142,20 @@ class AsyncImageModifier: AsyncImageDownloadRequestModifier {
 
     let sourceId: String?
     func modified(for request: URLRequest, reportModified: @escaping (URLRequest?) -> Void) {
-        guard let sourceId, let source = DaisukeEngine.shared.getJSSource(with: sourceId) else {
-            reportModified(request)
-            return
-        }
-        do {
-            let req = try request.toDaisukeNetworkRequest()
-            Task {
-                let modified = try await source.willRequestImage(request: req)
-                if let modified {
+
+        Task {
+            do {
+                if let sourceId, let source = SourceManager.shared.getSource(id: sourceId) as? any ModifiableSource, source.config.hasThumbnailInterceptor {
+                    let dskRequest = try request.toDaisukeNetworkRequest()
+                    let dskResponse = try await source.willRequestImage(request: dskRequest)
+                    let imageRequest = try dskResponse.toURLRequest()
                     try Task.checkCancellation()
-                    reportModified(try modified.toURLRequest())
-                } else {
-                    reportModified(request)
+                    reportModified(imageRequest)
+                    return
                 }
+            } catch {
+                reportModified(request)
             }
-        } catch {
-            reportModified(request)
         }
     }
 

@@ -137,6 +137,7 @@ private extension Skeleton {
                     } label: {
                         Image(systemName: action.imageName)
                     }
+                    .disabled(action.option == .WEBVIEW && model.content.webUrl == nil)
                 }
             }
 

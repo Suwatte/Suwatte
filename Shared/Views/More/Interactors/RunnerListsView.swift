@@ -56,7 +56,7 @@ extension RunnerListsView {
     func handleSubmit(url: String) async {
         if url.isEmpty { return }
         do {
-            try await DaisukeEngine.shared.saveRunnerList(at: url)
+            try await SourceManager.shared.saveRunnerList(at: url)
             DispatchQueue.main.async {
                 ToastManager.shared.display(.info("Saved Runner!"))
             }
@@ -69,7 +69,7 @@ extension RunnerListsView {
     }
 
     func promptURL() {
-        let ac = UIAlertController(title: "Enter List URL", message: "Suwatte will automatically parse valid URLS.", preferredStyle: .alert)
+        let ac = UIAlertController(title: "Enter List URL", message: "Suwatte will parse valid URLS.", preferredStyle: .alert)
         ac.addTextField()
         let field = ac.textFields![0]
         field.autocorrectionType = .no
@@ -131,7 +131,7 @@ extension RunnerListsView {
                 guard let url = URL(string: listURL) else {
                     throw DaisukeEngine.Errors.NamedError(name: "Parse Error", message: "Invalid URL")
                 }
-                let data = try await DaisukeEngine.shared.getRunnerList(at: url)
+                let data = try await SourceManager.shared.getRunnerList(at: url)
 
                 loadable = .loaded(data)
                 DataManager.shared.saveRunnerList(data, at: url)
@@ -319,8 +319,7 @@ extension RunnerListsView.RunnerListInfo {
                 .appendingPathComponent("runners")
                 .appendingPathComponent("\(runner.path).stt")
             do {
-                try await DaisukeEngine.shared.importRunner(from: url)
-//                DataManager.shared.saveRunnerInfomation(runner: runner, at: base)
+                try await SourceManager.shared.importRunner(from: url)
                 ToastManager.shared.info("\(runner.name) Saved!")
             } catch {
                 ToastManager.shared.display(.error(error))
@@ -411,7 +410,7 @@ extension RunnerListsView {
         func handleSubmit(url: String) async {
             if url.isEmpty { return }
             do {
-                try await DaisukeEngine.shared.saveRunnerList(at: url)
+                try await SourceManager.shared.saveRunnerList(at: url)
                 DispatchQueue.main.async {
                     ToastManager.shared.display(.info("Saved Runner!"))
                     presenting.toggle()

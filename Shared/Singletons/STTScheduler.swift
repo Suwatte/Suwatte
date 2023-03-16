@@ -104,7 +104,7 @@ class STTScheduler {
         }
 
         let updateTask = Task { @MainActor [weak self] in
-            let updates = await DaisukeEngine.shared.handleBackgroundLibraryUpdate()
+            let updates = await SourceManager.shared.handleBackgroundLibraryUpdate()
 
             if updates > 0 {
                 STTNotifier.shared.scheduleUpdateNotification(count: updates)

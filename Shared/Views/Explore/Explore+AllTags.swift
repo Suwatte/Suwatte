@@ -9,7 +9,7 @@ import SwiftUI
 
 extension ExploreView {
     struct AllTagsView: View {
-        @EnvironmentObject var source: DaisukeContentSource
+        var source: AnyContentSource
         @State var properties: Loadable<[DaisukeEngine.Structs.Property]> = .idle
         @State var selectedTag: String?
         @State var text: String = ""

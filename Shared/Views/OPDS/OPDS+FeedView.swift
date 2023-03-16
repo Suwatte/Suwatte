@@ -231,7 +231,7 @@ extension Target {
                     }
                     .frame(width: imageWidth, height: imageHeight)
                     .background(Color.fadedPrimary)
-                    .cornerRadius(7)
+                    .cornerRadius(5)
 
                     VStack(alignment: .leading, spacing: 1.5) {
                         Text(STTHelpers.getComicTitle(from: publication.metadata.title))

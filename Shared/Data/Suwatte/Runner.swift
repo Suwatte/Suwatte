@@ -83,4 +83,42 @@ extension DataManager {
             .where({ $0.id == id})
             .first
     }
+    
+    func saveRunner(_ info: SourceInfo) {
+        let realm = try! Realm()
+        
+        
+        let target = realm
+            .objects(StoredRunnerObject.self)
+            .where({ $0.id == info.id })
+            .first
+        
+        guard target == nil else {
+            return
+        }
+        let obj = StoredRunnerObject()
+        obj.name = info.name
+        obj.id = info.id
+        obj.version = info.version
+        obj.enabled = true
+        
+        try! realm.safeWrite {
+            realm.add(obj)
+        }
+    }
+    
+    func getActiveRunners() -> Results<StoredRunnerObject> {
+        let realm = try! Realm()
+        
+        return realm
+            .objects(StoredRunnerObject.self)
+            .where({ $0.enabled == true })
+            .sorted(by: [SortDescriptor(keyPath: "enabled", ascending: true),
+                         SortDescriptor(keyPath: "name", ascending: true)])
+    }
+    
+    func getActiveSources() -> [AnyContentSource] {
+        let runners = getActiveRunners()
+        return runners.compactMap({ SourceManager.shared.getSource(id: $0.id) })
+    }
 }

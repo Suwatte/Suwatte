@@ -246,7 +246,7 @@ extension CollectionManagementView {
             Section {
                 NavigationLink {
                     List {
-                        ForEach(DaisukeEngine.shared.getSources(), id: \.id) { source in
+                        ForEach(SourceManager.shared.sources, id: \.id) { source in
                             Button {
                                 if sourceSelections.contains(source.id) { sourceSelections.removeAll(where: { $0 == source.id }) } else {
                                     sourceSelections.append(source.id)
