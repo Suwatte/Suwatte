@@ -91,7 +91,7 @@ extension CloudFlareErrorView {
                 guard let source = SourceManager.shared.getSource(id: sourceID) as? any ModifiableSource else {
                     return
                 }
-                
+
                 do {
                     if !source.config.hasCustomCloudflareRequest {
                         throw DSK.Errors.NamedError(name: "Daisuke Warning", message: "Source Has not provided a bypass url. Defaulting to source provided website.")

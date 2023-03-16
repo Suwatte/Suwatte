@@ -14,6 +14,4 @@ extension DaisukeEngine.LocalContentSource {}
 
 // MARK: Explore Section
 
-extension DaisukeEngine.LocalContentSource {
-    
-}
+extension DaisukeEngine.LocalContentSource {}

@@ -28,6 +28,7 @@ extension ProfileView {
         var storedContent: StoredContent {
             try! content.toStoredContent(withSource: source.id)
         }
+
         @Published var chapters: Loadable<[StoredChapter]> = .idle
         @Published var working = false
         @Published var linkedHasUpdate = false

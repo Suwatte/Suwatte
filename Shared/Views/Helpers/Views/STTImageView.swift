@@ -52,7 +52,7 @@ struct STTImageView: View {
         }
         Task {
             let source = SourceManager.shared.getSource(id: identifier.sourceId)
-            
+
             do {
                 if let source = source as? any ModifiableSource, source.config.hasThumbnailInterceptor {
                     let dskRequest = DSKCommon.Request(url: imageURL.absoluteString)
@@ -64,7 +64,7 @@ struct STTImageView: View {
             } catch {
                 Logger.shared.error(error.localizedDescription)
             }
-            
+
             loader.load(url)
         }
     }
@@ -129,7 +129,7 @@ struct BaseImageView: View {
             } catch {
                 Logger.shared.error(error.localizedDescription)
             }
-            
+
             loader.load(url)
         }
     }
@@ -142,7 +142,6 @@ class AsyncImageModifier: AsyncImageDownloadRequestModifier {
 
     let sourceId: String?
     func modified(for request: URLRequest, reportModified: @escaping (URLRequest?) -> Void) {
-
         Task {
             do {
                 if let sourceId, let source = SourceManager.shared.getSource(id: sourceId) as? any ModifiableSource, source.config.hasThumbnailInterceptor {

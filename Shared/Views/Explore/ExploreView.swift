@@ -44,7 +44,7 @@ extension ExploreView {
     class ViewModel: ObservableObject {
         @Published var selection: HighlightIndentier?
         var source: AnyContentSource
-        
+
         init(source: AnyContentSource) {
             self.source = source
         }

@@ -43,16 +43,13 @@ final class StoredRunnerObject: Object, Identifiable {
     @Persisted var name: String
     @Persisted var version: Double
     @Persisted var type: RunnerType
-    
-    
+
     @Persisted var dateAdded: Date = .init()
     @Persisted var enabled: Bool
-    
+
     @Persisted var listURL: String
     @Persisted var thumbnail: String
 }
-
-
 
 extension DataManager {
     func saveRunnerList(_ data: RunnerList, at url: URL) {
@@ -65,34 +62,33 @@ extension DataManager {
             realm.add(obj, update: .modified)
         }
     }
-    
+
     func deleteRunner(_ id: String) {
         let realm = try! Realm()
-    
-        let results = realm.objects(StoredRunnerObject.self).where({ $0.id == id })
+
+        let results = realm.objects(StoredRunnerObject.self).where { $0.id == id }
         try! realm.safeWrite {
             realm.delete(results)
         }
     }
-    
+
     func getRunner(_ id: String) -> StoredRunnerObject? {
         let realm = try! Realm()
-        
+
         return realm
             .objects(StoredRunnerObject.self)
-            .where({ $0.id == id})
+            .where { $0.id == id }
             .first
     }
-    
+
     func saveRunner(_ info: SourceInfo) {
         let realm = try! Realm()
-        
-        
+
         let target = realm
             .objects(StoredRunnerObject.self)
-            .where({ $0.id == info.id })
+            .where { $0.id == info.id }
             .first
-        
+
         guard target == nil else {
             return
         }
@@ -101,24 +97,24 @@ extension DataManager {
         obj.id = info.id
         obj.version = info.version
         obj.enabled = true
-        
+
         try! realm.safeWrite {
             realm.add(obj)
         }
     }
-    
+
     func getActiveRunners() -> Results<StoredRunnerObject> {
         let realm = try! Realm()
-        
+
         return realm
             .objects(StoredRunnerObject.self)
-            .where({ $0.enabled == true })
+            .where { $0.enabled == true }
             .sorted(by: [SortDescriptor(keyPath: "enabled", ascending: true),
                          SortDescriptor(keyPath: "name", ascending: true)])
     }
-    
+
     func getActiveSources() -> [AnyContentSource] {
         let runners = getActiveRunners()
-        return runners.compactMap({ SourceManager.shared.getSource(id: $0.id) })
+        return runners.compactMap { SourceManager.shared.getSource(id: $0.id) }
     }
 }

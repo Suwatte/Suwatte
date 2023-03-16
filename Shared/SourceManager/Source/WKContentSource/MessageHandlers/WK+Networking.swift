@@ -15,9 +15,9 @@ extension WKContentSource {
         init(id: String) {
             self.id = id
         }
-        
+
         func userContentController(
-            _ userContentController: WKUserContentController,
+            _: WKUserContentController,
             didReceive message: WKScriptMessage,
             replyHandler: @escaping (Any?, String?) -> Void
         ) {
@@ -34,7 +34,7 @@ extension WKContentSource {
     }
 }
 
-fileprivate typealias H = WKContentSource.NetworkHandler
+private typealias H = WKContentSource.NetworkHandler
 
 extension H {
     func request(_ config: Any) async throws -> Any {
@@ -46,11 +46,10 @@ extension H {
         // Get Data
         let data = try JSONSerialization.data(withJSONObject: config)
         let object = try JSONDecoder().decode(DSKCommon.Request.self, from: data)
-        
-        
+
         // Make Request
         let response = try await client.makeRequest(with: object)
-        
+
         // Serialize Response
         let encodedResponse = try JSONEncoder().encode(response)
         let responseObject = try JSONSerialization.jsonObject(with: encodedResponse)

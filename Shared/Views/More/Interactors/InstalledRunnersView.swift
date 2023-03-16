@@ -12,20 +12,21 @@ struct InstalledRunnersView: View {
     @ObservedObject var manager = SourceManager.shared
     @ObservedResults(StoredRunnerObject.self) var result
     @State var showAddSheet = false
-    
+
     var runners: Results<StoredRunnerObject> {
         result.sorted(by: [SortDescriptor(keyPath: "enabled", ascending: true), SortDescriptor(keyPath: "name", ascending: true)])
     }
+
     var body: some View {
         List {
             Section {
                 ForEach(runners, id: \.id) { runner in
                     if let source = SourceManager.shared.getSource(id: runner.id) {
                         NavigationLink {
-                                ContentSourceView(source: source)
+                            ContentSourceView(source: source)
                         } label: {
                             HStack(spacing: 15) {
-                                STTThumbView(url:  URL(string: runner.thumbnail) )
+                                STTThumbView(url: URL(string: runner.thumbnail))
                                     .frame(width: 44, height: 44, alignment: .center)
                                     .cornerRadius(7)
                                 VStack(alignment: .leading, spacing: 2.5) {
@@ -38,19 +39,14 @@ struct InstalledRunnersView: View {
                             }
                         }
                         .swipeActions {
-                            Button {
-                                
-                            } label : {
+                            Button {} label: {
                                 Label("Disable", systemImage: "pause.fill")
                             }
                             .tint(.yellow)
-                            Button {
-                                
-                            } label: {
+                            Button {} label: {
                                 Label("Delete", systemImage: "trash")
                             }
                             .tint(.red)
-
                         }
                     }
                 }
@@ -67,7 +63,7 @@ struct InstalledRunnersView: View {
                 }
             }
         }
-        .animation(.default,value: result)
+        .animation(.default, value: result)
         .fileImporter(isPresented: $showAddSheet, allowedContentTypes: [.init(filenameExtension: "stt")!]) { result in
 
             guard let path = try? result.get() else {
@@ -93,4 +89,3 @@ struct InstalledRunnersView: View {
         }
     }
 }
-

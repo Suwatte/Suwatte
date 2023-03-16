@@ -39,7 +39,7 @@ struct BrowseView: View {
             Text("Search")
         }
     }
-    
+
     var FilteredRunners: Results<StoredRunnerObject> {
         runners
             .sorted(by: [SortDescriptor(keyPath: "enabled", ascending: true),

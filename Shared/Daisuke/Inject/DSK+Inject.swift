@@ -65,11 +65,11 @@ extension DaisukeEngine {
             let content = try String(contentsOf: commons, encoding: .utf8)
             _ = context.evaluateScript(content)
             _ = context.evaluateScript("""
-          const moment = require("moment");
-          Date.prototype.toJSON = function () {
-            return moment(this).format();
-          };
-""")
+                      const moment = require("moment");
+                      Date.prototype.toJSON = function () {
+                        return moment(this).format();
+                      };
+            """)
         } catch {
             Logger.shared.error(error.localizedDescription)
         }

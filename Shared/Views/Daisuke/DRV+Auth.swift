@@ -17,13 +17,13 @@ extension ContentSourceView {
         @State var presentBasicAuthSheet = false
         @State var presentWebView = false
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
-        
+
         var method: DSKCommon.AuthMethod? {
             source.config.authenticationMethod
         }
-        
+
         @State var user: Loadable<DSKCommon.User> = .idle
-        
+
         var body: some View {
             Group {
                 Gateway
@@ -49,15 +49,15 @@ extension ContentSourceView {
             }
             .animation(.default, value: user)
         }
-        
+
         var Gateway: some View {
             LoadableView(loadUser, user) {
                 LoadedUserView(user: $0)
             }
         }
-        
+
         func loadUser() {
-            self.user = .loading
+            user = .loading
             Task {
                 do {
                     let data = try await source.getAuthenticatedUser()
@@ -380,7 +380,7 @@ extension WebAuthWebView.Controller: WKNavigationDelegate {
                 AF.session.configuration.httpCookieStorage?.setCookie(cookie)
                 Task { @MainActor in
                     guard let self else { return }
-                    
+
                     do {
                         let dsk = DSKCommon.Cookie(name: cookie.name, value: cookie.value)
                         let isValidCookie = try await self.source.didReceiveAuthenticationCookieFromWebView(cookie: dsk)

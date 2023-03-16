@@ -5,8 +5,8 @@
 //  Created by Mantton on 2022-08-11.
 //
 
-import Foundation
 import AnyCodable
+import Foundation
 
 extension DaisukeEngine.Structs {
     enum PreferenceType: Int, Codable {
@@ -30,7 +30,7 @@ extension DaisukeEngine.Structs {
         var label: String
         var type: PreferenceType
         var options: [SelectOption]?
-        
+
         var value: AnyCodable
         // Stepper
         var maxValue: Int?
@@ -39,7 +39,7 @@ extension DaisukeEngine.Structs {
         // MultiSelect
         var minSelectionCount: Int?
         var maxSelectionCount: Int?
-        
+
         // Button
         var subtitle: String?
         var isDestructive: Bool?

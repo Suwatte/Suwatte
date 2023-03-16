@@ -21,12 +21,11 @@ extension ExploreView.SearchView {
         @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
         @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
         @State var selection: HighlightIndentier?
-        
-        
+
         var sourceId: String {
             model.source.id
         }
-        
+
         var body: some View {
             ASCollectionView {
                 ASCollectionViewSection(id: 0,
@@ -130,7 +129,7 @@ extension ExploreView.SearchView.ResultsView {
                 Text("\(resultCount) Results")
             }
             Spacer()
-            
+
             if !model.sorters.isEmpty {
                 Button {
                     presentSortDialog.toggle()
@@ -143,7 +142,6 @@ extension ExploreView.SearchView.ResultsView {
                 .buttonStyle(.plain)
                 .multilineTextAlignment(.trailing)
             }
-            
         }
         .font(.subheadline.weight(.light))
         .foregroundColor(Color.primary.opacity(0.7))

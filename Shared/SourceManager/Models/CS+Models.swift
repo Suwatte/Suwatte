@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 struct ContentSourceModel {}
 
 typealias CSMD = ContentSourceModel

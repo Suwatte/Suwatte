@@ -80,7 +80,7 @@ extension DataManager {
         }
         Task {
             do {
-               try await source.onContentsReadingFlagChanged(ids: [id], flag: flag)
+                try await source.onContentsReadingFlagChanged(ids: [id], flag: flag)
             } catch {
                 ToastManager.shared.error(error)
                 Logger.shared.error(error.localizedDescription)

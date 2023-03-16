@@ -76,7 +76,7 @@ extension LibraryView {
                                 } label: {
                                     Label("Settings", systemImage: "gearshape")
                                 }
-                                
+
                                 Button {
                                     presentMigrateSheet.toggle()
                                 } label: {

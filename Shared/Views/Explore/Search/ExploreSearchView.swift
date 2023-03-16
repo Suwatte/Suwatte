@@ -54,6 +54,7 @@ extension ExploreView {
             })
 
             // MARK: Navigation
+
             .searchable(text: $model.query, placement: .navigationBarDrawer(displayMode: .always))
             .navigationTitle(NAV_TITLE)
             .navigationBarTitleDisplayMode(.inline)

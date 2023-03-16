@@ -6,8 +6,8 @@
 //
 import Alamofire
 import Foundation
-import UIKit
 import RealmSwift
+import UIKit
 
 final class SourceManager: ObservableObject {
     static let shared = SourceManager()
@@ -15,23 +15,23 @@ final class SourceManager: ObservableObject {
         .default
         .applicationSupport
         .appendingPathComponent("Runners", isDirectory: true)
-    
+
     internal var commons: URL {
         directory
             .appendingPathComponent("common.js")
     }
-    
+
     @Published var sources: [AnyContentSource] = []
     init() {
         // Create Directory
         directory.createDirectory()
-        self.log("Initializing...")
+        log("Initializing...")
         start()
     }
-
 }
 
 // MARK: - Public
+
 extension SourceManager {
     func getSource(id: String) -> AnyContentSource? {
         sources.first(where: { $0.id == id })
@@ -39,14 +39,15 @@ extension SourceManager {
 }
 
 // MARK: - Log
+
 extension SourceManager {
-    internal func log(lvl: Logger.Level = .log, _ message: String) {
+    func log(lvl: Logger.Level = .log, _ message: String) {
         Logger.shared.log(level: lvl, message, "SourceManager")
     }
 }
 
-
 // MARK: Start Up
+
 extension SourceManager {
     func start() {
         Task {
@@ -62,7 +63,7 @@ extension SourceManager {
             })
         }
     }
-    
+
     func startWKSources() async {
         let urls = try? FileManager
             .default
@@ -77,7 +78,7 @@ extension SourceManager {
             await addSource(source)
         }
     }
-    
+
     func getDependencies() async throws {
         if commons.exists { return }
 
@@ -125,13 +126,12 @@ extension SourceManager {
     }
 }
 
-
 extension SourceManager {
     func startSource(at url: URL) async -> WKContentSource {
         let source = await WKContentSource(.placeholder, url)
         return source
     }
-    
+
     @MainActor
     func addSource(_ src: AnyContentSource) {
         sources.removeAll(where: { $0.id == src.id })
@@ -141,7 +141,6 @@ extension SourceManager {
 }
 
 extension SourceManager {
-    
     @MainActor
     func importRunner(from url: URL) async throws {
         if url.isFileURL {
@@ -167,7 +166,7 @@ extension SourceManager {
             .appendingPathComponent("\(runner.path).stt")
         try await handleNetworkRunnerImport(from: path)
     }
-    
+
     private func validateRunnerVersion(runner: AnyContentSource) throws {
         // Validate that the incoming runner has a higher version
         let current = getSource(id: runner.id)
@@ -205,12 +204,12 @@ extension SourceManager {
         let validRunnerPath = directory.appendingPathComponent("\(runner.id).stt")
         let _ = try FileManager.default.replaceItemAt(validRunnerPath, withItemAt: downloadURL)
         try? FileManager.default.removeItem(at: downloadURL)
-        
+
         Task { @MainActor in
             addSource(runner)
         }
     }
-    
+
     func getRunnerList(at url: URL) async throws -> RunnerList {
         let listUrl = url.lastPathComponent == "runners.json" ? url : url.runnersListURL
         let req = URLRequest(url: listUrl, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 10)
@@ -233,8 +232,8 @@ extension SourceManager {
     }
 }
 
-
 // MARK: - URL Events
+
 extension SourceManager {
     func handleGetIdentifier(for url: String) async -> [ContentIdentifier] {
         var results = [ContentIdentifier]()
@@ -293,8 +292,8 @@ extension SourceManager {
     }
 }
 
-
 // MARK: - Updates
+
 extension SourceManager {
     func handleBackgroundLibraryUpdate() async -> Int {
         return await fetchLibaryUpdates()
@@ -305,7 +304,6 @@ extension SourceManager {
     }
 
     private func fetchLibaryUpdates() async -> Int {
-        
         let result = await withTaskGroup(of: Int.self, body: { group in
 
             for source in sources {

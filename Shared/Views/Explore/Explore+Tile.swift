@@ -258,7 +258,7 @@ extension ExploreView.HighlightTile {
             guard let url else { return }
             loader.animation = .easeOut(duration: 0.25)
             let source = SourceManager.shared.getSource(id: sourceId)
-            
+
             do {
                 if let source = source as? any ModifiableSource, source.config.hasThumbnailInterceptor {
                     let dskRequest = DSKCommon.Request(url: url.absoluteString)
@@ -270,7 +270,7 @@ extension ExploreView.HighlightTile {
             } catch {
                 Logger.shared.error(error.localizedDescription)
             }
-            
+
             loader.load(url)
         }
 

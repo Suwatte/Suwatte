@@ -112,6 +112,7 @@ extension DaisukeEngine {
             }
             return try await callMethodReturningDecodable(method: "getSearchSorters", arguments: [], resolvesTo: [DaisukeEngine.Structs.SortOption].self)
         }
+
         override func willResolveExploreCollections() async throws {
             do {
                 try await callOptionalVoidMethod(method: "willResolveExploreCollections", arguments: [])

@@ -91,7 +91,7 @@ class STTHelpers {
                 return .loaded(data)
             }
             // Get from source
-                guard let source = SourceManager.shared.getSource(id: chapter.sourceId) else {
+            guard let source = SourceManager.shared.getSource(id: chapter.sourceId) else {
                 return .failed(DaisukeEngine.Errors.NamedError(name: "SourceManager", message: "Source Not Found"))
             }
             do {

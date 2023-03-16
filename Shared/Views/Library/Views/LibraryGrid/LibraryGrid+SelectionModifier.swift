@@ -40,7 +40,6 @@ extension LibraryView.LibraryGrid {
                                             }
                                         }
                                     }
-                                
                             }
                             .navigationViewStyle(.stack)
                         }

@@ -5,8 +5,8 @@
 //  Created by Mantton on 2023-03-07.
 //
 
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 struct PreMigrationView: View {
     @ObservedResults(LibraryEntry.self) var library
@@ -17,7 +17,7 @@ struct PreMigrationView: View {
                 ForEach(sources, id: \.id) { source in
                     NavigationLink {
                         MigrationView(contents: library
-                            .where({ $0.content.sourceId == source.id })
+                            .where { $0.content.sourceId == source.id }
                             .compactMap(\.content)
                         )
                     } label: {
@@ -28,25 +28,22 @@ struct PreMigrationView: View {
             .navigationTitle("Select Source")
             .closeButton()
         }
-        
     }
-    
+
     var sources: [AnyContentSource] {
         DataManager.shared.getActiveSources()
     }
 }
 
-
 extension DataManager {
     func getUserLibrary(for id: String) -> [StoredContent] {
-        
         let realm = try! Realm()
-        
+
         let objects = realm
             .objects(LibraryEntry.self)
-            .where({ $0.content.sourceId == id })
+            .where { $0.content.sourceId == id }
             .compactMap(\.content)
-        
+
         return Array(objects)
     }
 }

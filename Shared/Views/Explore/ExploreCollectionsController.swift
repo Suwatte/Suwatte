@@ -347,7 +347,7 @@ extension CTR {
         try Task.checkCancellation()
 
         try await source.willResolveExploreCollections()
-        
+
         await withTaskGroup(of: Void.self, body: { group in
 
             for collection in collections {

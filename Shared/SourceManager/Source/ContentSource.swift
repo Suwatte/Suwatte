@@ -8,17 +8,18 @@
 import Foundation
 
 // MARK: - Source Info
+
 struct SourceInfo: Decodable {
     var id: String
     var name: String
     var version: Double
-    
+
     var authors: [String]?
     var minSupportedAppVersion: String?
     var website: String
     var supportedLanguages: [String]
     var thumbnail: String?
-    
+
     static let placeholder = SourceInfo(id: ".stt", name: "Source", version: 0.1, website: STTHost.root.absoluteString, supportedLanguages: [])
 }
 
@@ -35,6 +36,7 @@ struct SourceConfig {
 }
 
 // MARK: - Source Protocol
+
 protocol ContentSource: Equatable {
     var info: SourceInfo { get set }
     var config: SourceConfig { get set }
@@ -47,7 +49,7 @@ protocol ContentSource: Equatable {
     func createExplorePageCollections() async throws -> [DSKCommon.CollectionExcerpt]
     func resolveExplorePageCollection(_ excerpt: DSKCommon.CollectionExcerpt) async throws -> DSKCommon.ExploreCollection
     func willResolveExploreCollections() async throws
-    func getSearchResults(_ query : DSKCommon.SearchRequest) async throws -> DSKCommon.PagedResult
+    func getSearchResults(_ query: DSKCommon.SearchRequest) async throws -> DSKCommon.PagedResult
     func getSearchFilters() async throws -> [DSKCommon.Filter]
     func getSearchSortOptions() async throws -> [DSKCommon.SortOption]
     func getIdentifiers(for id: String) async throws -> DaisukeEngine.Structs.URLContentIdentifer?
@@ -55,12 +57,14 @@ protocol ContentSource: Equatable {
 }
 
 // MARK: - Modifiable Source Protocol
-protocol ModifiableSource : ContentSource {
-    func getCloudflareVerificationRequest()  async throws -> DSKCommon.Request
+
+protocol ModifiableSource: ContentSource {
+    func getCloudflareVerificationRequest() async throws -> DSKCommon.Request
     func willRequestImage(request: DSKCommon.Request) async throws -> DSKCommon.Request
 }
 
 // MARK: - Syncable Source Protocol
+
 protocol SyncableSource: ContentSource {
     func onContentsAddedToLibrary(ids: [String]) async throws
     func onContentsRemovedFromLibrary(ids: [String]) async throws
@@ -72,7 +76,8 @@ protocol SyncableSource: ContentSource {
 }
 
 // MARK: - Auth Source
-protocol AuthSource : ContentSource {
+
+protocol AuthSource: ContentSource {
     func getAuthenticatedUser() async throws -> DSKCommon.User?
     func handleBasicAuthentication(id: String, password: String) async throws
     func handleUserSignOut() async throws
@@ -81,10 +86,12 @@ protocol AuthSource : ContentSource {
 }
 
 // MARK: - Identifiers
+
 extension ContentSource {
     var id: String {
         info.id
     }
+
     var name: String {
         info.name
     }
@@ -95,6 +102,7 @@ extension ContentSource {
 }
 
 // MARK: - Equatable
+
 extension ContentSource {
     static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.id == rhs.id && lhs.version == rhs.version
@@ -102,6 +110,6 @@ extension ContentSource {
 }
 
 // MARK: - Alias
+
 typealias CS = ContentSource
 typealias AnyContentSource = any ContentSource
-

@@ -17,7 +17,7 @@ struct ContentSourceView: View {
             HeaderSection
             InfoSection
 //            AuthSection()
-            
+
             if source.config.hasPreferences {
                 Section {
                     NavigationLink("Preferences") {
@@ -27,7 +27,6 @@ struct ContentSourceView: View {
                 } header: {
                     Text("Settings")
                 }
-
             }
 
             Section {
@@ -57,7 +56,6 @@ struct ContentSourceView: View {
         }
         .navigationTitle(source.name)
     }
-
 
     var HeaderSection: some View {
         Section {

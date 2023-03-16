@@ -109,10 +109,10 @@ extension ContentSourceSettingsView {
                         .tag($0.value)
                 }
             }
-            .onChange(of: selection) { value in
+            .onChange(of: selection) { _ in
                 if let source = source as? WKContentSource {
                     Task {
-                        await source.updateSourcePreference(key:pref.key,value:selection)
+                        await source.updateSourcePreference(key: pref.key, value: selection)
                     }
                 }
             }
@@ -131,7 +131,7 @@ extension ContentSourceSettingsView {
         init(source: AnyContentSource, pref: DSKCommon.Preference) {
             self.source = source
             self.pref = pref
-            
+
             let value = (pref.value.value as? Bool) ?? false
             _isOn = State(initialValue: value)
         }
@@ -141,7 +141,7 @@ extension ContentSourceSettingsView {
                 .onChange(of: isOn) { value in
                     if let source = source as? WKContentSource {
                         Task {
-                            await source.updateSourcePreference(key:pref.key, value:value)
+                            await source.updateSourcePreference(key: pref.key, value: value)
                         }
                     }
                 }
@@ -168,7 +168,7 @@ extension ContentSourceSettingsView {
                 .onSubmit {
                     if let source = source as? WKContentSource {
                         Task {
-                            await source.updateSourcePreference(key:pref.key, value:text)
+                            await source.updateSourcePreference(key: pref.key, value: text)
                         }
                     }
                 }
@@ -197,7 +197,7 @@ extension ContentSourceSettingsView {
             .onChange(of: value) { value in
                 if let source = source as? WKContentSource {
                     Task {
-                        await source.updateSourcePreference(key:pref.key, value:value)
+                        await source.updateSourcePreference(key: pref.key, value: value)
                     }
                 }
             }
@@ -240,7 +240,7 @@ extension ContentSourceSettingsView {
             .onChange(of: selections) { newValue in
                 if let source = source as? WKContentSource {
                     Task {
-                        await source.updateSourcePreference(key:pref.key, value:newValue)
+                        await source.updateSourcePreference(key: pref.key, value: newValue)
                     }
                 }
             }
@@ -271,6 +271,7 @@ extension ContentSourceSettingsView {
 }
 
 // MARK: Button
+
 extension ContentSourceSettingsView {
     struct ButtoNView: View {
         var source: AnyContentSource
@@ -279,16 +280,16 @@ extension ContentSourceSettingsView {
             self.source = source
             self.pref = pref
         }
-        
-        var destructive : Bool {
+
+        var destructive: Bool {
             pref.isDestructive ?? false
         }
+
         var body: some View {
-            
             Button(role: destructive ? .destructive : nil) {
                 if let source = source as? WKContentSource {
                     Task {
-                        await source.updateSourcePreference(key:pref.key, value: "")
+                        await source.updateSourcePreference(key: pref.key, value: "")
                     }
                 }
             } label: {

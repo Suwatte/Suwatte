@@ -205,14 +205,14 @@ extension DataManager {
             }
         }
     }
-    
+
     func updateLastRead(id: String) {
         DispatchQueue(label: "background").async {
             autoreleasepool {
                 let realm = try! Realm()
                 let target = realm
                     .objects(LibraryEntry.self)
-                    .where({ $0.content._id == id })
+                    .where { $0.content._id == id }
                     .first
                 guard let target else { return }
                 try! realm.safeWrite {

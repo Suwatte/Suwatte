@@ -7,17 +7,16 @@
 
 import WebKit
 
-
 extension WKContentSource {
     class StoreHandler: NSObject, WKScriptMessageHandlerWithReply {
         internal let id: String
-        
+
         init(id: String) {
             self.id = id
         }
-        
+
         func userContentController(
-            _ userContentController: WKUserContentController,
+            _: WKUserContentController,
             didReceive message: WKScriptMessage,
             replyHandler: @escaping (Any?, String?) -> Void
         ) {
@@ -40,7 +39,7 @@ extension WKContentSource {
     }
 }
 
-fileprivate typealias H = WKContentSource.StoreHandler
+private typealias H = WKContentSource.StoreHandler
 
 extension H {
     struct Message: Decodable {
@@ -48,50 +47,45 @@ extension H {
         var action: Action
         var key: String
         var value: String?
-        
-        enum Action : String, Decodable {
-            case get, set , remove
+
+        enum Action: String, Decodable {
+            case get, set, remove
         }
-        
+
         enum Store: String, Decodable {
             case os, ss
         }
     }
 }
 
-
 extension H {
     func handle(message: Message) throws -> String? {
         switch message.store {
-            case .os: // ObjectStore
-                switch message.action {
-                    case .get:
-                        return DataManager.shared.getStoreValue(for: id, key: message.key)
-                    case .set:
-                        guard let value = message.value else {
-                            throw DSK.Errors.ValueStoreErrorKeyValuePairInvalid
-                        }
-                        DataManager.shared.setStoreValue(for: id, key: message.key, value: value)
-                        break
-                    case .remove:
-                        DataManager.shared.removeStoreValue(for: id, key: message.key)
-                        
+        case .os: // ObjectStore
+            switch message.action {
+            case .get:
+                return DataManager.shared.getStoreValue(for: id, key: message.key)
+            case .set:
+                guard let value = message.value else {
+                    throw DSK.Errors.ValueStoreErrorKeyValuePairInvalid
                 }
-                
-            case .ss: // SecureStore
-                switch message.action {
-                    case .get:
-                        return DataManager.shared.getKeychainValue(for: id, key: message.key)
-                    case .set:
-                        guard let value = message.value else {
-                            throw DSK.Errors.ValueStoreErrorKeyValuePairInvalid
-                        }
-                        DataManager.shared.setKeychainValue(for: id, key: message.key, value: value)
-                        break
-                    case .remove:
-                        DataManager.shared.deleteKeyChainValue(for: id, key: message.key)
+                DataManager.shared.setStoreValue(for: id, key: message.key, value: value)
+            case .remove:
+                DataManager.shared.removeStoreValue(for: id, key: message.key)
+            }
+
+        case .ss: // SecureStore
+            switch message.action {
+            case .get:
+                return DataManager.shared.getKeychainValue(for: id, key: message.key)
+            case .set:
+                guard let value = message.value else {
+                    throw DSK.Errors.ValueStoreErrorKeyValuePairInvalid
                 }
-                
+                DataManager.shared.setKeychainValue(for: id, key: message.key, value: value)
+            case .remove:
+                DataManager.shared.deleteKeyChainValue(for: id, key: message.key)
+            }
         }
         return nil
     }

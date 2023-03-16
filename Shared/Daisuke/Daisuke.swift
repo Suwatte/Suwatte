@@ -219,7 +219,7 @@ extension DaisukeEngine {
         })
     }
 
-    func saveHostedRunner(list: String, runner: Runner) {
+    func saveHostedRunner(list _: String, runner _: Runner) {
         let realm = try! Realm()
 
 //        do {

@@ -409,7 +409,7 @@ extension ReaderView.ViewModel {
         handleSourceSync(contentId: lastChapter.chapter.contentId,
                          sourceId: lastChapter.chapter.sourceId,
                          chapterId: lastChapter.chapter.chapterId)
-        
+
         DataManager.shared.updateLastRead(id: ContentIdentifier(contentId: lastChapter.chapter.contentId, sourceId: lastChapter.chapter.sourceId).id)
     }
 
