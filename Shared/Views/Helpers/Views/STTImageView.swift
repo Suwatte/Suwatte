@@ -124,7 +124,9 @@ struct BaseImageView: View {
                     let dskResponse = try await source.willRequestImage(request: dskRequest)
                     let imageRequest = ImageRequest(urlRequest: try dskResponse.toURLRequest())
                     loader.load(imageRequest)
-                    return
+                } else {
+                    loader.load(url)
+
                 }
             } catch {
                 Logger.shared.error(error.localizedDescription)
@@ -151,6 +153,8 @@ class AsyncImageModifier: AsyncImageDownloadRequestModifier {
                     try Task.checkCancellation()
                     reportModified(imageRequest)
                     return
+                } else {
+                    reportModified(request)
                 }
             } catch {
                 reportModified(request)

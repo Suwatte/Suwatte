@@ -42,16 +42,12 @@ extension SettingsView {
         }
 
         var OpeningTab: some View {
-            NavigationLink {
-                List {
-                    ForEach(Array(zip(options.indices, options)), id: \.0) { index, option in
-                        SelectionLabel(label: option.label(), isSelected: index == InitialSelection, action: { InitialSelection = index })
-                    }
+            
+            Picker("Opening Tab", selection: $InitialSelection) {
+                ForEach(options, id: \.rawValue) {
+                    Text($0.label())
+                        .tag($0.rawValue)
                 }
-                .buttonStyle(.plain)
-                .navigationTitle("Opening Tab")
-            } label: {
-                STTLabelView(title: "Opening Tab", label: options[InitialSelection].label())
             }
         }
     }
