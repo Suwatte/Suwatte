@@ -104,8 +104,8 @@ const main = () => {
   window.RUNNER = RUNNER;
 
   // Required Set Up Methods
-  setupSourceConfig();
   overrideConsole(RUNNER.info.id);
+  setupSourceConfig();
 
   // Run Post Initialization Methods
   if (RUNNER.onSourceLoaded) {
@@ -264,20 +264,75 @@ const getReadChapterMarkers = async (contentId) => {
   return prepare(data);
 };
 
+// * Auth Source Methods
+const getAuthenticatedUser = async () => {
+  const data = await RUNNER.getAuthenticatedUser();
+  return prepare(data);
+};
+
+const handleBasicAuthentication = async (id, password) => {
+  if (!RUNNER.handleBasicAuthentication)
+    throw new Error(
+      "Method Not Implemented. The Source has stated it uses basic authentication but the handler method has not been implemented"
+    );
+  return await RUNNER.handleBasicAuthentication(id, password);
+};
+
+const handleUserSignOut = async () => {
+  if (!RUNNER.handleUserSignOut)
+    throw new Error(
+      "Method Not Implemented. The Source has provided an authentication solution but not implemented the Sign-Out Handler"
+    );
+  return await RUNNER.handleUserSignOut();
+};
+
+const willRequestAuthenticationWebView = async () => {
+  if (!RUNNER.willRequestAuthenticationWebView)
+    throw new Error(
+      "Method Not Implemented. The Source has stated it uses the WebView Authentication method but has not implemented the required handler method (willRequestAuthenticationWebView)"
+    );
+
+  const data = await RUNNER.willRequestAuthenticationWebView();
+  return prepare(data);
+};
+
+const didReceiveAuthenticationCookieFromWebView = async (cookie) => {
+  if (!RUNNER.didReceiveAuthenticationCookieFromWebView)
+    throw new Error(
+      "Method Not Implemented. The Source has stated it uses the WebView Authentication method but has not implemented the required handler method (didReceiveAuthenticationCookieFromWebView)"
+    );
+
+  const didReceive = await RUNNER.didReceiveAuthenticationCookieFromWebView(
+    cookie
+  );
+
+  return prepare({ didReceive });
+};
+
 //
 function setupSourceConfig() {
-  if (RUNNER.createExploreCollections)
-    window.webkit.messageHandlers.state.postMessage("explore");
-  if (RUNNER.createExploreCollections)
-    window.webkit.messageHandlers.state.postMessage("explore_tags");
-  if (RUNNER.getSourceTags)
-    window.webkit.messageHandlers.state.postMessage("source_tags");
-  if (RUNNER.getReadChapterMarkers)
-    window.webkit.messageHandlers.state.postMessage("read_markers");
-  if (RUNNER.syncUserLibrary)
-    window.webkit.messageHandlers.state.postMessage("sync");
-  if (RUNNER.getSourcePreferences)
-    window.webkit.messageHandlers.state.postMessage("preferences");
+  try {
+    const config = RUNNER.info.config ?? {};
+
+    config.hasExplorePage = !!RUNNER.createExploreCollections;
+    config.hasExplorePageTags = !!RUNNER.getExplorePageTags;
+    config.hasSourceTags = !!RUNNER.getSourceTags;
+    config.canFetchChapterMarkers = !!RUNNER.getReadChapterMarkers;
+    config.canSyncWithSource = !!RUNNER.syncUserLibrary;
+    config.hasPreferences = !!RUNNER.getSourcePreferences;
+    config.hasThumbnailInterceptor = !!RUNNER.willRequestImage;
+    config.hasCustomCloudflareRequest =
+      !!RUNNER.getCloudflareVerificationRequest;
+
+    if (config.chapterDataCachingDisabled === undefined)
+      config.chapterDataCachingDisabled = false;
+    if (config.chapterDateUpdateDisabled === undefined)
+      config.chapterDateUpdateDisabled = false;
+
+    RUNNER.info.config = config;
+  } catch (err) {
+    console.log("Err");
+  }
 }
 function overrideConsole(context) {
   function log(level, args) {
@@ -326,6 +381,6 @@ function overrideConsole(context) {
   };
 
   window.addEventListener("error", function (e) {
-    log("JS Error", [`${e.message} at ${e.filename}:${e.lineno}:${e.colno}`]);
+    log("JS Error", [`${e.message}`]);
   });
 }

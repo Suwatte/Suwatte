@@ -72,18 +72,6 @@ extension C: WKScriptMessageHandler {
         switch msg {
         case "loaded":
             didEnterReadyState()
-        case "explore":
-            config.hasExplorePage = true
-        case "explore_tags":
-            config.hasExplorePageTags = true
-        case "source_tags":
-            config.hasSourceTags = true
-        case "read_markers":
-            config.canFetchChapterMarkers = true
-        case "sync":
-            config.canSyncWithSource = true
-        case "preferences":
-            config.hasPreferences = true
         default:
             break
         }
@@ -205,6 +193,7 @@ extension C {
         do {
             let data = try await eval("return prepare(RUNNER.info);", to: SourceInfo.self)
             info = data
+            config = info.config ?? .init()
         } catch {
             Logger.shared.error("\(error)")
         }

@@ -19,11 +19,12 @@ struct SourceInfo: Decodable {
     var website: String
     var supportedLanguages: [String]
     var thumbnail: String?
+    var config: SourceConfig?
 
     static let placeholder = SourceInfo(id: ".stt", name: "Source", version: 0.1, website: STTHost.root.absoluteString, supportedLanguages: [])
 }
 
-struct SourceConfig {
+struct SourceConfig : Codable {
     var hasExplorePage = false
     var hasExplorePageTags = false
     var hasSourceTags = false
@@ -33,6 +34,8 @@ struct SourceConfig {
     var authenticationMethod: DSKCommon.AuthMethod? = nil
     var hasThumbnailInterceptor = false
     var hasCustomCloudflareRequest = false
+    var chapterDataCachingDisabled = false
+    var chapterDateUpdateDisabled = false
 }
 
 // MARK: - Source Protocol
