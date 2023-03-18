@@ -8,72 +8,87 @@
 import Foundation
 import RealmSwift
 
-class ContentLink: Object, Identifiable {
+final class ContentLink : Object, Identifiable {
     @Persisted(primaryKey: true) var id = UUID().uuidString
-    @Persisted var parent: StoredContent?
-    @Persisted var child: StoredContent?
+    @Persisted var ids: MutableSet<String>
 }
 
 extension DataManager {
     func linkContent(_ parent: StoredContent, _ child: DSKCommon.Highlight, _ sourceId: String) -> Bool {
-        let childStored = child.toStored(sourceId: sourceId)
-        return linkContent(parent, childStored)
+        let id = ContentIdentifier(contentId: child.contentId, sourceId: sourceId).id
+        saveIfNeeded(child, sourceId)
+        return linkContent(parent._id, id)
     }
 
-    func linkContent(_ parent: StoredContent, _ child: StoredContent) -> Bool {
+    func linkContent(_ one: String, _ two: String) -> Bool {
         let realm = try! Realm()
 
         let matches = !realm
             .objects(ContentLink.self)
-            .where { $0.parent._id == parent._id || $0.child._id == parent._id }
-            .where { $0.parent._id == child._id || $0.child._id == child._id }
+            .where { $0.ids.contains(one) && $0.ids.contains(two) }
             .isEmpty
 
         if matches {
             return false
         }
-
-        let obj = ContentLink()
-        obj.parent = parent
-
-        let savedChild = realm
-            .objects(StoredContent.self)
-            .where { $0._id == child._id }
+        
+        let target = realm
+            .objects(ContentLink.self)
+            .where({ $0.ids.containsAny(in: [one, two]) })
             .first
-        obj.child = savedChild ?? child
-
-        try! realm.safeWrite {
-            realm.add(obj, update: .modified)
+        
+        // A or B already in a linkset
+        if let target {
+            try! realm.safeWrite {
+                target.ids.insert(one)
+                target.ids.insert(two)
+            }
+        } else {
+            let obj = ContentLink()
+            obj.ids.insert(one)
+            obj.ids.insert(two)
+            try! realm.safeWrite {
+                realm.add(obj)
+            }
         }
-
         return true
     }
 
     func unlinkContent(_ child: StoredContent, _ from: StoredContent) {
         let realm = try! Realm()
-
-        let matches = realm
+        
+        let target = realm
             .objects(ContentLink.self)
-            .where { $0.parent._id == from._id || $0.child._id == from._id }
-            .where { $0.parent._id == child._id || $0.child._id == child._id }
-
+            .where({ $0.ids.containsAny(in: [child._id, from._id]) })
+            .first
+        
+        guard let target else {
+            return
+        }
         try! realm.safeWrite {
-            realm.delete(matches)
+            target.ids.remove(child._id)
         }
     }
 
     func getLinkedContent(for id: String) -> [StoredContent] {
         let realm = try! Realm()
-        let matches = realm
+        var ids = realm
             .objects(ContentLink.self)
-            .where { $0.parent._id == id || $0.child._id == id }
+            .where { $0.ids.contains(id) }
+            .first?
+            .ids
+            
+        
 
-        let entries = matches.map { link in
-            if link.parent?._id == id { return link.child }
-            return link.parent
-        }.compactMap { $0 } as [StoredContent]
-
-        return entries
+        guard let ids else {
+            return []
+        }
+        
+        var arr = Array(ids)
+        arr.removeAll(where: { $0 == id })
+        let contents = Array(getStoredContents(ids: arr))
+        
+        return contents
     }
 
     func getPossibleTrackerInfo(for id: String) throws -> [String: String?]? {
@@ -106,6 +121,22 @@ extension DataManager {
             "kt": match.kt,
             "mu": match.mu,
         ]
+    }
+    
+    func saveIfNeeded(_ h: DSKCommon.Highlight, _ sId: String) {
+        let realm = try! Realm()
+        
+        let result = realm
+            .objects(StoredContent.self)
+            .where({ $0.sourceId ==  sId && $0.contentId == h.contentId })
+        guard result.isEmpty  else {
+            return
+        }
+        
+        let obj = h.toStored(sourceId: sId)
+        try! realm.safeWrite {
+            realm.add(obj)
+        }
     }
 }
 

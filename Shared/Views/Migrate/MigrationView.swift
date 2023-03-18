@@ -513,19 +513,7 @@ extension MigrationView {
             switch libraryStrat {
             case .link:
                 guard let content = target.content else { return }
-                let matches = !realm
-                    .objects(ContentLink.self)
-                    .where { $0.parent._id == content._id || $0.child._id == content._id }
-                    .where { $0.parent._id == stored._id || $0.child._id == stored._id }
-                    .isEmpty
-                if matches {
-                    return
-                }
-
-                let obj = ContentLink()
-                obj.parent = content
-                obj.child = stored
-                realm.add(obj)
+                let _ = DataManager.shared.linkContent(stored._id, content._id)
             case .replace:
                 let obj = LibraryEntry()
                 obj.content = stored
