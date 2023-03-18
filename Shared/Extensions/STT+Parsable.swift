@@ -52,4 +52,22 @@ extension DaisukeEngine {
         let data = try encoder.encode(value)
         return data
     }
+    
+    static func stringify(_ v : Encodable) throws -> String {
+        let data = try Self.encode(value: v)
+        let str = String.init(data: data, encoding: .utf8)
+        guard let str else {
+            throw DSK.Errors.InvalidJSONObject
+        }
+        return str
+    }
+    
+    static func parse<T: Decodable>(_ v: String, to: T.Type) throws -> T {
+        let data = v.data(using: .utf8)
+        guard let data else {
+            throw DSK.Errors.InvalidJSONObject
+        }
+        
+        return try Self.decode(data: data, to: T.self)
+    }
 }

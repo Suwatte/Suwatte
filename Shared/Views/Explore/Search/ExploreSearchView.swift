@@ -103,7 +103,6 @@ extension ExploreView {
             }
         }
 
-        func didUpdateFilters() {}
 
         func initialRequest() {
             if initialized {
@@ -114,7 +113,7 @@ extension ExploreView {
         }
 
         func didSubmitSearch() {
-            DataManager.shared.saveSearch(model.query, sourceId: model.source.id)
+            try? DataManager.shared.saveSearch(model.request, sourceId: model.source.id, display: model.request.query ?? "")
         }
 
         func didRecieveQuery(_ val: String) {

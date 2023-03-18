@@ -19,7 +19,7 @@ struct SearchView: View {
     @ObservedResults(ReadLater.self) var readLater
 
     @State var presentHistory = false
-    @ObservedResults(SearchHistory.self, where: { $0.sourceId == nil && $0.text != nil }, sortDescriptor: SortDescriptor(keyPath: "date", ascending: false)) var history
+    @ObservedResults(UpdatedSearchHistory.self, where: { $0.sourceId == nil }, sortDescriptor: SortDescriptor(keyPath: "date", ascending: false)) var history
     @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
 
     var body: some View {
@@ -42,7 +42,8 @@ struct SearchView: View {
             model.makeRequests()
         }
         .onSubmit(of: .search) {
-            DataManager.shared.saveSearch(model.query, sourceId: nil)
+            let request: DSKCommon.SearchRequest = .init(query: model.query, page: 1)
+            try? DataManager.shared.saveSearch(request, sourceId: nil, display: model.query)
         }
         .onAppear {
             if initialQuery.isEmpty || !initial { return }
@@ -216,11 +217,11 @@ struct SearchView: View {
         List {
             ForEach(history) { entry in
                 Button {
-                    model.query = entry.text!
+                    didSelectHistory(entry)
                 }
                     label: {
                     HStack {
-                        Text(entry.text!)
+                        Text(entry.displayText)
                             .font(.headline)
                             .fontWeight(.light)
                         Spacer()
@@ -234,6 +235,10 @@ struct SearchView: View {
             }
             .onDelete(perform: $history.remove(atOffsets:))
         }
+    }
+    
+    func didSelectHistory(_ h: UpdatedSearchHistory) {
+        model.query = h.displayText
     }
 
     func inLibrary(_ entry: Highlight, _ sourceId: String) -> Bool {

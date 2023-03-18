@@ -54,6 +54,7 @@ extension ExploreView.SearchView {
         }
 
         func softReset() {
+            request = .init()
             request.page = 1
             request.query = nil
             request.sort = sorters.first?.id

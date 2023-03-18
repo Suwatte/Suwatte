@@ -8,33 +8,32 @@
 import Foundation
 import RealmSwift
 
-final class SearchHistory: Object, ObjectKeyIdentifiable, Codable {
-    @Persisted var text: String?
+final class UpdatedSearchHistory: Object, ObjectKeyIdentifiable, Codable {
     @Persisted var sourceId: String?
-    @Persisted var included: List<String>
-    @Persisted var excluded: List<String>
-    @Persisted var date: Date
-    @Persisted var label: String
+    @Persisted var data: String // JSON String of SearchREquest
+    @Persisted var displayText: String
+    @Persisted var date: Date = .now
+    @Persisted(primaryKey: true) var _id: ObjectId
 }
 
 extension DataManager {
-    func saveSearch(_ text: String, sourceId: String?) {
+    func saveSearch(_ request: DSKCommon.SearchRequest, sourceId: String?, display: String) throws {
         let incognito = Preferences.standard.incognitoMode
         if incognito { return }
 
         let realm = try! Realm()
 
+        let data = try DSK.stringify(request)
+        let obj = UpdatedSearchHistory()
+        obj.data = data
+        obj.displayText = display
+        obj.sourceId = sourceId
         try! realm.safeWrite {
-            let object = SearchHistory()
-            object.sourceId = sourceId
-            object.text = text
-            object.date = Date()
-            object.label = text
-            realm.add(object)
+            realm.add(obj, update: .modified)
         }
     }
 
-    func deleteSearch(_ object: SearchHistory) {
+    func deleteSearch(_ object: UpdatedSearchHistory) {
         guard let object = object.thaw() else {
             return
         }
@@ -47,17 +46,17 @@ extension DataManager {
 }
 
 extension DataManager {
-    func getSearchHistory(for sourceId: String) -> [SearchHistory] {
+    func getSearchHistory(for sourceId: String) -> [UpdatedSearchHistory] {
         let realm = try! Realm()
 
-        return realm.objects(SearchHistory.self).filter { $0.sourceId == sourceId }
+        return realm.objects(UpdatedSearchHistory.self).filter { $0.sourceId == sourceId }
     }
 
     // No Source ID means it was an all source search
-    func getAllSearchHistory() -> [SearchHistory] {
+    func getAllSearchHistory() -> [UpdatedSearchHistory] {
         let realm = try! Realm()
 
-        return realm.objects(SearchHistory.self).filter { $0.sourceId == nil }
+        return realm.objects(UpdatedSearchHistory.self).filter { $0.sourceId == nil }
     }
 }
 
@@ -66,7 +65,7 @@ extension DataManager {
         let realm = try! Realm()
 
         try! realm.safeWrite {
-            realm.delete(realm.objects(SearchHistory.self).where { $0.sourceId == sourceId })
+            realm.delete(realm.objects(UpdatedSearchHistory.self).where { $0.sourceId == sourceId })
         }
     }
 }

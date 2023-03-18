@@ -193,7 +193,6 @@ extension ExploreView.HighlightTile {
 
                     } else {
                         Color.gray.opacity(0.25)
-                            .shimmering()
                     }
                 }
 

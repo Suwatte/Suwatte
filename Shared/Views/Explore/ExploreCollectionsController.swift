@@ -448,7 +448,6 @@ extension CTR {
                         .transition(.opacity)
                 }
             }
-            .shimmering(active: placeholder)
             .conditional(placeholder) { view in
                 view.redacted(reason: .placeholder)
             }
@@ -532,7 +531,6 @@ extension CTR {
                     .frame(height: 120)
                     .background(Color.accentColor.opacity(0.80))
                     .clipped()
-                    .shimmering(active: loader.isLoading)
 
                     Text(tag.label)
                         .font(.subheadline)

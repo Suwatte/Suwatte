@@ -28,7 +28,6 @@ struct STTImageView: View {
                         .aspectRatio(contentMode: mode)
                 } else {
                     Color.gray.opacity(0.25)
-                        .shimmering()
                 }
             }
             .task { load(size) }
@@ -97,7 +96,6 @@ struct BaseImageView: View {
                         .aspectRatio(contentMode: mode)
                 } else {
                     Color.gray.opacity(0.25)
-                        .shimmering()
                 }
             }
             .onAppear { load(size) }

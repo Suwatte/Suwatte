@@ -10,7 +10,7 @@ import SwiftUI
 
 extension ExploreView.SearchView {
     struct HistoryView: View {
-        @ObservedResults(SearchHistory.self) var results
+        @ObservedResults(UpdatedSearchHistory.self) var results
         @ObservedObject var toastManager = ToastManager()
 
         @EnvironmentObject var model: ExploreView.SearchView.ViewModel
@@ -53,9 +53,9 @@ extension ExploreView.SearchView {
 }
 
 extension ExploreView.SearchView.HistoryView {
-    func Cell(for data: SearchHistory) -> some View {
+    func Cell(for data: UpdatedSearchHistory) -> some View {
         Button { didTap(data) } label: {
-            Text(data.label)
+            Text(data.displayText)
                 .font(.body.weight(.light))
                 .contentShape(Rectangle())
         }
@@ -70,12 +70,19 @@ extension ExploreView.SearchView.HistoryView {
         ToastManager.shared.loading.toggle()
     }
 
-    func didTap(_ entry: SearchHistory) {
-        // Unecessarily confusing
+    func didTap(_ entry: UpdatedSearchHistory) {
         model.softReset()
-        model.callFromHistory = true
-        model.query = entry.text ?? ""
-        model.request.query = entry.text
+        do {
+            let request = try DSK.parse(entry.data, to: DSKCommon.SearchRequest.self)
+            model.callFromHistory = true
+            model.request = request
+            if let q = request.query {
+                model.query = q
+            }
+        } catch {
+            Logger.shared.error("\(error)")
+            ToastManager.shared.error(error)
+        }
         presentationMode.wrappedValue.dismiss()
     }
 }

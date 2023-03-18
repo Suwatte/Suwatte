@@ -225,7 +225,6 @@ extension Target {
                                 .transition(.opacity)
                         } else {
                             Color.gray.opacity(0.25)
-                                .shimmering()
                                 .transition(.opacity)
                         }
                     }
