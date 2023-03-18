@@ -7,6 +7,7 @@
 import Alamofire
 import Foundation
 import RealmSwift
+import JavaScriptCore
 import UIKit
 
 final class SourceManager: ObservableObject {
@@ -22,9 +23,13 @@ final class SourceManager: ObservableObject {
     }
 
     @Published var sources: [AnyContentSource] = []
+    private let vm: JSVirtualMachine
     init() {
+
         // Create Directory
         directory.createDirectory()
+        let queue = DispatchQueue(label: "com.ceres.suwatte.daisuke", attributes: .concurrent)
+        vm = queue.sync { JSVirtualMachine()! }
         log("Initializing...")
         start()
     }
@@ -53,7 +58,7 @@ extension SourceManager {
         Task {
             do {
                 try await getDependencies()
-                await startWKSources()
+                await startJSCSources()
             } catch {
                 ToastManager.shared.error("Failed to Start Runners")
                 Logger.shared.error("\(error)")
@@ -64,7 +69,7 @@ extension SourceManager {
         }
     }
 
-    func startWKSources() async {
+    func startJSCSources() async {
         let urls = try? FileManager
             .default
             .contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
@@ -74,8 +79,13 @@ extension SourceManager {
             return
         }
         for url in urls {
-            let source = await startSource(at: url)
-            await addSource(source)
+            do {
+                let source = try startSource(at: url)
+                await addSource(source)
+            } catch {
+                Logger.shared.error("Failed to start source, \(error)")
+            }
+
         }
     }
 
@@ -127,8 +137,8 @@ extension SourceManager {
 }
 
 extension SourceManager {
-    func startSource(at url: URL) async -> WKContentSource {
-        let source = await WKContentSource(.placeholder, url)
+    func startSource(at url: URL) throws -> JSCContentSource {
+        let source = try JSCContentSource(path: url)
         return source
     }
 
@@ -177,7 +187,7 @@ extension SourceManager {
     }
 
     private func handleFileRunnerImport(from url: URL) async throws {
-        let runner = await startSource(at: url)
+        let runner = try startSource(at: url)
         try validateRunnerVersion(runner: runner)
         let validRunnerPath = directory.appendingPathComponent("\(runner.id).stt")
         let _ = try FileManager.default.replaceItemAt(validRunnerPath, withItemAt: url)
@@ -198,7 +208,7 @@ extension SourceManager {
 
         let downloadURL = try await request.serializingDownloadedFileURL().result.get()
 
-        let runner = await startSource(at: downloadURL)
+        let runner = try startSource(at: downloadURL)
 
         try validateRunnerVersion(runner: runner)
         let validRunnerPath = directory.appendingPathComponent("\(runner.id).stt")
@@ -479,5 +489,34 @@ extension SourceManager {
             if !filtered.isEmpty { return true }
         }
         return false
+    }
+}
+
+
+extension SourceManager {
+    
+    internal func newJSCContext() -> JSContext {
+        JSContext(virtualMachine: vm)!
+    }
+    
+    internal func add(class cls: AnyClass, name: String, context: JSContext) {
+        let constructorName = "__constructor__\(name)"
+        
+        let constructor: @convention(block) () -> NSObject = {
+            let cls = cls as! NSObject.Type
+            return cls.init()
+        }
+        
+        context.setObject(unsafeBitCast(constructor, to: AnyObject.self),
+                          forKeyedSubscript: constructorName as NSCopying & NSObjectProtocol)
+        
+        let script = "function \(name)() " +
+        "{ " +
+        "   var obj = \(constructorName)(); " +
+        "   obj.setThisValue(obj); " +
+        "   return obj; " +
+        "} "
+        
+        context.evaluateScript(script)
     }
 }

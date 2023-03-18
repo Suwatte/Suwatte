@@ -57,17 +57,17 @@ extension DaisukeEngine.LocalContentSource {
     }
 }
 
-extension DaisukeEngine.LocalContentSource {
-    func willRequestImage(request: DaisukeEngine.NetworkClient.Request) async throws -> DaisukeEngine.NetworkClient.Request? {
+extension DaisukeEngine.LocalContentSource: ModifiableSource {
+    func willRequestImage(request: DSKCommon.Request) async throws -> DSKCommon.Request {
         guard methodExists(method: "willRequestImage") else {
-            return nil
+            throw DSK.Errors.MethodNotImplemented
         }
         let dict = try request.asDictionary()
 
         return try await callMethodReturningDecodable(method: "willRequestImage", arguments: [dict], resolvesTo: DaisukeEngine.NetworkClient.Request.self)
     }
 
-    func willAttemptCloudflareVerification() async throws -> DSKCommon.Request {
-        try await callMethodReturningDecodable(method: "willAttemptCloudflareVerification", arguments: [], resolvesTo: DSKCommon.Request.self)
+    func getCloudflareVerificationRequest() async throws -> DSKCommon.Request {
+        try await callMethodReturningDecodable(method: "getCloudflareVerificationRequest", arguments: [], resolvesTo: DSKCommon.Request.self)
     }
 }

@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: - Source Info
 
-struct SourceInfo: Decodable {
+struct SourceInfo: Decodable, Parsable {
     var id: String
     var name: String
     var version: Double
@@ -57,6 +57,8 @@ protocol ContentSource: Equatable {
     func getSearchSortOptions() async throws -> [DSKCommon.SortOption]
     func getIdentifiers(for id: String) async throws -> DaisukeEngine.Structs.URLContentIdentifer?
     func getSourcePreferences() async throws -> [DSKCommon.PreferenceGroup]
+    func updateSourcePreference(key: String, value: Any) async
+
 }
 
 // MARK: - Modifiable Source Protocol

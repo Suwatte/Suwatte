@@ -58,6 +58,13 @@
 		DF32646B2802A6C70066EB08 /* STTImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF32646A2802A6C70066EB08 /* STTImageView.swift */; };
 		DF356D7529BFFE9F000B605C /* WK+AuthSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF356D7429BFFE9E000B605C /* WK+AuthSource.swift */; };
 		DF356D7729C179C4000B605C /* WK+ModifiableSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF356D7629C179C4000B605C /* WK+ModifiableSource.swift */; };
+		DF356D7A29C57AC7000B605C /* JSCContentSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF356D7929C57AC7000B605C /* JSCContentSource.swift */; };
+		DF356D7D29C57C2E000B605C /* JSCC+ContentSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF356D7C29C57C2E000B605C /* JSCC+ContentSource.swift */; };
+		DF356D7F29C57F63000B605C /* JSCC+SyncableSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF356D7E29C57F63000B605C /* JSCC+SyncableSource.swift */; };
+		DF356D8129C58199000B605C /* JSCC+ModifiableSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF356D8029C58199000B605C /* JSCC+ModifiableSource.swift */; };
+		DF356D8329C5825D000B605C /* JSCC+AuthSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF356D8229C5825D000B605C /* JSCC+AuthSource.swift */; };
+		DF356D8629C5845C000B605C /* JSCC+Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF356D8529C5845C000B605C /* JSCC+Store.swift */; };
+		DF356D8829C5846C000B605C /* JSCC+Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF356D8729C5846C000B605C /* JSCC+Logging.swift */; };
 		DF36E6D0285D08D700FB8B67 /* BetterSafariView in Frameworks */ = {isa = PBXBuildFile; productRef = DF36E6CF285D08D700FB8B67 /* BetterSafariView */; };
 		DF44FA7C29ABD27800BAFA74 /* Bridge.js in Resources */ = {isa = PBXBuildFile; fileRef = DF44FA7B29ABD27800BAFA74 /* Bridge.js */; };
 		DF44FA7E29ABE38700BAFA74 /* WK+Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF44FA7D29ABE38700BAFA74 /* WK+Store.swift */; };
@@ -389,6 +396,13 @@
 		DF32646A2802A6C70066EB08 /* STTImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STTImageView.swift; sourceTree = "<group>"; };
 		DF356D7429BFFE9E000B605C /* WK+AuthSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WK+AuthSource.swift"; sourceTree = "<group>"; };
 		DF356D7629C179C4000B605C /* WK+ModifiableSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WK+ModifiableSource.swift"; sourceTree = "<group>"; };
+		DF356D7929C57AC7000B605C /* JSCContentSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSCContentSource.swift; sourceTree = "<group>"; };
+		DF356D7C29C57C2E000B605C /* JSCC+ContentSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCC+ContentSource.swift"; sourceTree = "<group>"; };
+		DF356D7E29C57F63000B605C /* JSCC+SyncableSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCC+SyncableSource.swift"; sourceTree = "<group>"; };
+		DF356D8029C58199000B605C /* JSCC+ModifiableSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCC+ModifiableSource.swift"; sourceTree = "<group>"; };
+		DF356D8229C5825D000B605C /* JSCC+AuthSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCC+AuthSource.swift"; sourceTree = "<group>"; };
+		DF356D8529C5845C000B605C /* JSCC+Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCC+Store.swift"; sourceTree = "<group>"; };
+		DF356D8729C5846C000B605C /* JSCC+Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCC+Logging.swift"; sourceTree = "<group>"; };
 		DF44FA7B29ABD27800BAFA74 /* Bridge.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = Bridge.js; sourceTree = "<group>"; };
 		DF44FA7D29ABE38700BAFA74 /* WK+Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WK+Store.swift"; sourceTree = "<group>"; };
 		DF47DDDB28B5542D00D779E5 /* AV+EntryEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AV+EntryEditor.swift"; sourceTree = "<group>"; };
@@ -889,6 +903,36 @@
 				DF30193828BFCBD00024AA8B /* ZoomingScrollView.swift */,
 			);
 			path = Zooming;
+			sourceTree = "<group>";
+		};
+		DF356D7829C57764000B605C /* JSCContentSource */ = {
+			isa = PBXGroup;
+			children = (
+				DF356D8429C583FA000B605C /* MessageHandlers */,
+				DF356D7B29C57BC9000B605C /* Implementations */,
+				DF356D7929C57AC7000B605C /* JSCContentSource.swift */,
+			);
+			path = JSCContentSource;
+			sourceTree = "<group>";
+		};
+		DF356D7B29C57BC9000B605C /* Implementations */ = {
+			isa = PBXGroup;
+			children = (
+				DF356D7C29C57C2E000B605C /* JSCC+ContentSource.swift */,
+				DF356D7E29C57F63000B605C /* JSCC+SyncableSource.swift */,
+				DF356D8029C58199000B605C /* JSCC+ModifiableSource.swift */,
+				DF356D8229C5825D000B605C /* JSCC+AuthSource.swift */,
+			);
+			path = Implementations;
+			sourceTree = "<group>";
+		};
+		DF356D8429C583FA000B605C /* MessageHandlers */ = {
+			isa = PBXGroup;
+			children = (
+				DF356D8529C5845C000B605C /* JSCC+Store.swift */,
+				DF356D8729C5846C000B605C /* JSCC+Logging.swift */,
+			);
+			path = MessageHandlers;
 			sourceTree = "<group>";
 		};
 		DF482EEE29555492002D3308 /* Vertical Paged */ = {
@@ -1795,6 +1839,7 @@
 		DF99004B29A94A35006EB29A /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				DF356D7829C57764000B605C /* JSCContentSource */,
 				DF99005729A94F90006EB29A /* WKContentSource */,
 				DF99004C29A94A48006EB29A /* ContentSource.swift */,
 				DF99005329A94ECC006EB29A /* APIContentSource.swift */,
@@ -2195,7 +2240,9 @@
 			files = (
 				DF8D0B7A2800EE48003E4C3E /* LibraryGrid+ViewModel.swift in Sources */,
 				DFD1F9BA28F7B0C2000766C1 /* Vertical+ImageNode.swift in Sources */,
+				DF356D8829C5846C000B605C /* JSCC+Logging.swift in Sources */,
 				DF8D0B992800EE48003E4C3E /* ProfileView+AdditionalInfo.swift in Sources */,
+				DF356D8329C5825D000B605C /* JSCC+AuthSource.swift in Sources */,
 				DF8D0BB32800EE48003E4C3E /* DefaultHighlightTile.swift in Sources */,
 				DF59C98B285054C20027F19D /* LCM+Zip.swift in Sources */,
 				DF59C98F28505C9F0027F19D /* LCV+Grid.swift in Sources */,
@@ -2221,6 +2268,7 @@
 				DFD1F9B128F7B037000766C1 /* Vertical+Zoom.swift in Sources */,
 				DF32646528029BA80066EB08 /* Data+CustomThumbnail.swift in Sources */,
 				DF8D0B402800EE47003E4C3E /* DataManager.swift in Sources */,
+				DF356D7F29C57F63000B605C /* JSCC+SyncableSource.swift in Sources */,
 				DF9BD6532891E602006628D0 /* DSK+CS+Explore.swift in Sources */,
 				DF8D0B832800EE48003E4C3E /* Explore+AllTags.swift in Sources */,
 				DF482EF629555730002D3308 /* VerticalPaged+Combine.swift in Sources */,
@@ -2302,8 +2350,10 @@
 				DFF1044028A9A6B800E2C3A4 /* DSK+Networking.swift in Sources */,
 				DF515FF928E2A8DC002B6D60 /* DSK+CS+Action.swift in Sources */,
 				DFA6264C28ED1EA500914B1C /* Vertical+ASController.swift in Sources */,
+				DF356D7A29C57AC7000B605C /* JSCContentSource.swift in Sources */,
 				DFD1F9BE28F7B191000766C1 /* Vertical+ProgressNode.swift in Sources */,
 				DF8D0B662800EE47003E4C3E /* ReaderNavigation.swift in Sources */,
+				DF356D8629C5845C000B605C /* JSCC+Store.swift in Sources */,
 				DF6824A328A5ECEB00AB30A1 /* DSK+CS+Authentication.swift in Sources */,
 				DF8D0B632800EE47003E4C3E /* VerticalImage+Zoomable.swift in Sources */,
 				DF03F73D28482AC500602E59 /* Novel+ChapterList.swift in Sources */,
@@ -2411,6 +2461,7 @@
 				DF8D0B512800EE47003E4C3E /* Backup+Collection.swift in Sources */,
 				DF03F7382846F7A900602E59 /* Novel+ViewModel.swift in Sources */,
 				DF6C25CB282D97EB002BE1AA /* STT+Parsable.swift in Sources */,
+				DF356D7D29C57C2E000B605C /* JSCC+ContentSource.swift in Sources */,
 				DF8D0BB82800EE48003E4C3E /* SelectionLabel.swift in Sources */,
 				DF1FD5C2284B31AB00A67F0E /* DoublePaged+Representable.swift in Sources */,
 				DF8D0BA22800EE48003E4C3E /* UpdateFeedTile.swift in Sources */,
@@ -2471,6 +2522,7 @@
 				DF248F22281393A400818300 /* AnilistView.swift in Sources */,
 				DF67EB9928E7B07700076FF5 /* AddContentLink.swift in Sources */,
 				DFAC779E28165FA400AF6394 /* AL+Data.swift in Sources */,
+				DF356D8129C58199000B605C /* JSCC+ModifiableSource.swift in Sources */,
 				DF67EB9B28E7B08400076FF5 /* ManageContentLinks.swift in Sources */,
 				DF8D0B3D2800EE47003E4C3E /* Preference.swift in Sources */,
 				DF13892828BEA0450035BDBB /* Explore+Representable.swift in Sources */,

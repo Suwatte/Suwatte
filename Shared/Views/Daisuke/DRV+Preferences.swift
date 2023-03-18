@@ -110,10 +110,8 @@ extension ContentSourceSettingsView {
                 }
             }
             .onChange(of: selection) { _ in
-                if let source = source as? WKContentSource {
-                    Task {
-                        await source.updateSourcePreference(key: pref.key, value: selection)
-                    }
+                Task {
+                    await source.updateSourcePreference(key: pref.key, value: selection)
                 }
             }
         }
@@ -139,10 +137,8 @@ extension ContentSourceSettingsView {
         var body: some View {
             Toggle(pref.label, isOn: $isOn)
                 .onChange(of: isOn) { value in
-                    if let source = source as? WKContentSource {
-                        Task {
-                            await source.updateSourcePreference(key: pref.key, value: value)
-                        }
+                    Task {
+                        await source.updateSourcePreference(key: pref.key, value: value)
                     }
                 }
         }
@@ -166,10 +162,8 @@ extension ContentSourceSettingsView {
         var body: some View {
             TextField(pref.label, text: $text)
                 .onSubmit {
-                    if let source = source as? WKContentSource {
-                        Task {
-                            await source.updateSourcePreference(key: pref.key, value: text)
-                        }
+                    Task {
+                        await source.updateSourcePreference(key: pref.key, value: text)
                     }
                 }
         }
@@ -195,10 +189,8 @@ extension ContentSourceSettingsView {
                 FieldLabel(primary: pref.label, secondary: value.description)
             }
             .onChange(of: value) { value in
-                if let source = source as? WKContentSource {
-                    Task {
-                        await source.updateSourcePreference(key: pref.key, value: value)
-                    }
+                Task {
+                    await source.updateSourcePreference(key: pref.key, value: value)
                 }
             }
         }
@@ -238,10 +230,8 @@ extension ContentSourceSettingsView {
                 STTLabelView(title: pref.label, label: LABEL_V)
             }
             .onChange(of: selections) { newValue in
-                if let source = source as? WKContentSource {
-                    Task {
-                        await source.updateSourcePreference(key: pref.key, value: newValue)
-                    }
+                Task {
+                    await source.updateSourcePreference(key: pref.key, value: newValue)
                 }
             }
         }
@@ -287,10 +277,8 @@ extension ContentSourceSettingsView {
 
         var body: some View {
             Button(role: destructive ? .destructive : nil) {
-                if let source = source as? WKContentSource {
-                    Task {
-                        await source.updateSourcePreference(key: pref.key, value: "")
-                    }
+                Task {
+                    await source.updateSourcePreference(key: pref.key, value: "")
                 }
             } label: {
                 if let image = pref.systemImage {

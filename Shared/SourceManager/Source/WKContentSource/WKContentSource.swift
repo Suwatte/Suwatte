@@ -163,6 +163,7 @@ extension C {
                         _ = try result.get()
                         handler.resume()
                     } catch {
+                        Logger.shared.error("\(error)")
                         handler.resume(throwing: error)
                     }
                 })
@@ -182,6 +183,8 @@ extension C {
                         let output = try DaisukeEngine.decode(data: data, to: T.self)
                         handler.resume(returning: output)
                     } catch {
+                        let e = error as? WKError
+                        Logger.shared.error(e?.errorUserInfo["WKJavaScriptExceptionMessage"] as? String ?? "\(error)")
                         handler.resume(throwing: error)
                     }
                 })

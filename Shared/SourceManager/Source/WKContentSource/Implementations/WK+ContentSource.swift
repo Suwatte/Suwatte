@@ -72,7 +72,7 @@ extension C: ContentSource {
     }
 
     func getSearchSortOptions() async throws -> [DSKCommon.SortOption] {
-        let body = "return getSourceTags();"
+        let body = "return getSearchSorters();"
         return try await eval(body, to: [DSKCommon.SortOption].self)
     }
 

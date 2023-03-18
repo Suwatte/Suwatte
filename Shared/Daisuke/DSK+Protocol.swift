@@ -47,6 +47,10 @@ struct ContentSourceInfo: Codable, Parsable {
 }
 
 class DaisukeContentSource: DSKCSBase, ObservableObject, Identifiable, Equatable, ContentSource {
+    func updateSourcePreference(key: String, value: Any) async {
+        
+    }
+    
     func getSourcePreferences() async throws -> [DSKCommon.PreferenceGroup] {
         throw DSK.Errors.MethodNotImplemented
     }
