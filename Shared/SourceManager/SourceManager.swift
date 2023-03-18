@@ -90,15 +90,17 @@ extension SourceManager {
     }
 
     func getDependencies() async throws {
-        if commons.exists { return }
-
         await MainActor.run(body: {
             ToastManager.shared.loading = true
         })
-        try await getCommons()
-        await MainActor.run(body: {
-            ToastManager.shared.info("Updated Commons")
-        })
+        
+        do {
+            try await getCommons()
+        } catch {
+            if !commons.exists {
+                throw DSK.Errors.NamedError(name: "Commons", message: "Common Libraries Not Installed")
+            }
+        }
     }
 
     private func getCommons() async throws {
@@ -110,10 +112,8 @@ extension SourceManager {
             .validate()
             .serializingDecodable(DSKCommon.JSCommon.self)
             .value
-
         let saved = UserDefaults.standard.string(forKey: STTKeys.JSCommonsVersion)
-        let shouldRedownload = saved == nil || [ComparisonResult.orderedDescending].contains(data.version.compare(saved!)) || !commons.exists
-
+        let shouldRedownload = !commons.exists || saved == nil || [ComparisonResult.orderedDescending].contains(data.version.compare(saved!))
         if !shouldRedownload {
             return
         }
@@ -133,6 +133,9 @@ extension SourceManager {
         let _ = try FileManager.default.replaceItemAt(commons, withItemAt: downloadURL)
         try? FileManager.default.removeItem(at: downloadURL)
         UserDefaults.standard.set(data.version, forKey: STTKeys.JSCommonsVersion)
+        await MainActor.run(body: {
+            ToastManager.shared.info("Updated Commons")
+        })
     }
 }
 
