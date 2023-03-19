@@ -7,6 +7,8 @@
 
 import Foundation
 
+typealias DSK = DaisukeEngine
+typealias DSKCommon = DaisukeEngine.Structs
 // MARK: - Source Info
 
 struct SourceInfo: Decodable, Parsable {
