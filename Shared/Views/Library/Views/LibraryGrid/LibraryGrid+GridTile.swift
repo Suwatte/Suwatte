@@ -22,7 +22,6 @@ extension LibraryView.LibraryGrid {
                 if showBadges && !model.isSelecting {
                     InfoOverlay
                 }
-                Text(entry.lastRead.timeAgo(numericDates: true))
             }
         }
 

@@ -103,9 +103,13 @@ extension ContentSourceView {
             Task {
                 do {
                     let data = try await (source as! any AuthSource).getAuthenticatedUser()
-                    self.user = .loaded(data)
+                    await MainActor.run {
+                        self.user = .loaded(data)
+                    }
                 } catch {
-                    self.user = .failed(error)
+                    await MainActor.run {
+                        self.user = .failed(error)
+                    }
                     Logger.shared.error("\(error)")
                 }
             }
@@ -252,58 +256,24 @@ extension ContentSourceView {
         @Binding var presentWebView: Bool
         @EnvironmentObject var model: ContentSourceView.ViewModel
         var body: some View {
-            HStack(alignment: .center) {
-                BaseImageView(url: URL(string: user.avatar ?? ""))
-                    .background(.gray)
-                    .clipShape(Circle())
-                    .frame(width: 75, height: 75)
-                    .padding(.all, 7)
+            Section {
+                HStack(alignment: .center) {
+                    BaseImageView(url: URL(string: user.avatar ?? ""))
+                        .background(.gray)
+                        .clipShape(Circle())
+                        .frame(width: 75, height: 75)
+                        .padding(.all, 7)
 
-                Text(user.username)
-                    .font(.title3)
-                    .fontWeight(.bold)
-            }
-            if let info = user.info {
-                Section {
+                    Text(user.username)
+                        .font(.title3)
+                        .fontWeight(.bold)
+                }
+                if let info = user.info {
                     InteractiveTagView(info) { tag in
                         Text(tag)
                             .modifier(ProfileTagStyle())
                     }
-                } header: {
-                    Text("Info")
                 }
-            }
-            if source.config.canSyncWithSource {
-                Section {
-                    Button {
-                        presentShouldSync.toggle()
-                    } label: {
-                        Label("Sync Library", systemImage: "arrow.triangle.2.circlepath")
-                    }
-                    .buttonStyle(.plain)
-                } header: {
-                    Text("Sync")
-                }
-                .alert("Sync Library", isPresented: $presentShouldSync, actions: {
-                    Button("Cancel", role: .cancel) {}
-                    Button("Proceed") {
-                        Task {
-                            do {
-                                try await handleContentSync()
-                            } catch {
-                                await MainActor.run(body: {
-                                    ToastManager.shared.error(error)
-                                })
-                            }
-                            ToastManager.shared.loading = false
-                        }
-                    }
-                }, message: {
-                    Text("Are you sure you want to sync your \(source.name) library?")
-                })
-            }
-
-            Section {
                 Button("Sign Out", role: .destructive) {
                     Task {
                         do {
@@ -325,6 +295,38 @@ extension ContentSourceView {
                     }
                 }
             }
+
+
+            if source.config.canSyncWithSource {
+                Section {
+                    Button {
+                        presentShouldSync.toggle()
+                    } label: {
+                        Label("Sync Library", systemImage: "arrow.triangle.2.circlepath")
+                    }
+                    .buttonStyle(.plain)
+                } header: {
+                    Text("Sync")
+                }
+                .alert("Sync Library", isPresented: $presentShouldSync, actions: {
+                    Button("Cancel", role: .cancel) {}
+                    Button("Proceed") {
+                        Task {
+                            do {
+                                try await handleContentSync()
+                            } catch {
+                                Logger.shared.error("\(error)")
+                                await MainActor.run(body: {
+                                    ToastManager.shared.error(error)
+                                })
+                            }
+                            ToastManager.shared.loading = false
+                        }
+                    }
+                }, message: {
+                    Text("Are you sure you want to sync your \(source.name) library?")
+                })
+            }
         }
 
         func handleContentSync() async throws {
@@ -334,7 +336,9 @@ extension ContentSourceView {
             guard let source = source as? any SyncableSource  else {
                 throw DSK.Errors.NamedError(name: "Daisuke", message: "Source Cannot Sync")
             }
-//            try await source.syncUserLibrary()
+            let library = DataManager.shared.getUpSync(for: source.id)
+            let downSynced = try await source.syncUserLibrary(library: library)
+            DataManager.shared.downSyncLibrary(entries: downSynced, sourceId: source.id)
             await MainActor.run(body: {
                 ToastManager.shared.info("Synced!")
             })
@@ -414,4 +418,20 @@ extension WebAuthWebView.Controller: WKNavigationDelegate {
             }
         }
     }
+}
+
+
+extension DataManager {
+    
+    func getUpSync(for id: String) -> [DSKCommon.UpSyncedContent] {
+        let realm = try! Realm(queue: nil)
+
+        let library: [DSKCommon.UpSyncedContent] = realm
+            .objects(LibraryEntry.self)
+            .where { $0.content.sourceId == id }
+            .where { $0.content != nil }
+            .map { .init(id: $0.content!.contentId, flag: $0.flag) }
+        return library
+    }
+
 }
