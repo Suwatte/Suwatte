@@ -64,7 +64,7 @@ extension Logger {
             write(entry: entry)
         }
 
-        if entry.level == .warn || entry.level == .info {
+        if entry.level == .info {
             ToastManager.shared.info(entry.message)
         }
     }

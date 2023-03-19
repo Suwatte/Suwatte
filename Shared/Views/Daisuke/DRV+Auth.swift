@@ -16,7 +16,8 @@ extension ContentSourceView {
         @EnvironmentObject var model: ContentSourceView.ViewModel
         var method: DSKCommon.AuthMethod
         @State var presentBasicAuthSheet = false
-        @State var presentWebView = false
+        @State var presentWebViewSignIn = false
+        @State var presentWebViewSignOut = false
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
         
@@ -36,10 +37,20 @@ extension ContentSourceView {
                         .accentColor(accentColor)
                 }
             }
-            .fullScreenCover(isPresented: $presentWebView, onDismiss: model.loadUser) {
+            .fullScreenCover(isPresented: $presentWebViewSignIn, onDismiss: model.loadUser) {
                 NavigationView {
                     WebAuthWebView(source: source)
-                        .navigationBarTitle("Authenticate In WebView", displayMode: .inline)
+                        .navigationBarTitle("Login", displayMode: .inline)
+                        .closeButton(title: "Done")
+                        .toast()
+                        .tint(accentColor)
+                        .accentColor(accentColor)
+                }
+            }
+            .fullScreenCover(isPresented: $presentWebViewSignOut, onDismiss: model.loadUser) {
+                NavigationView {
+                    WebAuthWebView(source: source, isSignIn: false)
+                        .navigationBarTitle("Logout", displayMode: .inline)
                         .closeButton(title: "Done")
                         .toast()
                         .tint(accentColor)
@@ -63,7 +74,7 @@ extension ContentSourceView {
 
         @ViewBuilder
         func LoadedUserView(user: DSKCommon.User) -> some View {
-            AuthenticatedUserView(source: source, user: user, presentWebView: $presentWebView)
+            AuthenticatedUserView(source: source, user: user, presentWebView: $presentWebViewSignOut)
         }
 
         @ViewBuilder
@@ -76,7 +87,7 @@ extension ContentSourceView {
                     case .oauth:
                         break
                     case .web:
-                        presentWebView.toggle()
+                        presentWebViewSignIn.toggle()
                     }
                 } label: {
                     Label("Sign In", systemImage: "person.fill.viewfinder")
@@ -350,9 +361,11 @@ extension ContentSourceView {
 
 struct WebAuthWebView: UIViewControllerRepresentable {
     var source: any AuthSource
+    var isSignIn: Bool = true
     func makeUIViewController(context _: Context) -> some Controller {
         let view = Controller()
         view.source = source
+        view.isSignIn = isSignIn
         return view
     }
 
@@ -362,6 +375,7 @@ struct WebAuthWebView: UIViewControllerRepresentable {
 extension WebAuthWebView {
     class Controller: UIViewController, WKUIDelegate {
         var webView: WKWebView!
+        var isSignIn: Bool!
         var source: (any AuthSource)!
 
         override func viewDidLoad() {
@@ -396,6 +410,10 @@ extension WebAuthWebView.Controller: WKNavigationDelegate {
     }
 
     func webView(_ webView: WKWebView, didFinish _: WKNavigation!) {
+        
+        if !isSignIn {
+            return
+        }
         let cookieStore = webView.configuration.websiteDataStore.httpCookieStore
         cookieStore.getAllCookies { [weak self] cookies in
 
@@ -409,6 +427,7 @@ extension WebAuthWebView.Controller: WKNavigationDelegate {
                         let isValidCookie = try await self.source.didReceiveAuthenticationCookieFromWebView(cookie: dsk)
                         if isValidCookie {
                             ToastManager.shared.info("[\(self.source.name)] Logged In!")
+                            self.dismiss(animated: true, completion: nil)
                         }
                     } catch {
                         ToastManager.shared.error(error)

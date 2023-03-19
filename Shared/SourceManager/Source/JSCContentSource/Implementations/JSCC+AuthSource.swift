@@ -29,7 +29,7 @@ extension JSCC : AuthSource {
     }
     
     func willRequestAuthenticationWebView() async throws -> DSKCommon.Request {
-        let method = "willRequestAuthenticationWebView"
+        let method = "willRequestWebViewAuth"
         if !methodExists(method: method) {
             throw DSK.Errors.MethodNotImplemented
         }
