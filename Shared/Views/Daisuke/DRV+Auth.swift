@@ -13,31 +13,30 @@ import WebKit
 
 extension ContentSourceView {
     struct AuthSection: View {
-        var source: any AuthSource
+        @EnvironmentObject var model: ContentSourceView.ViewModel
+        var method: DSKCommon.AuthMethod
         @State var presentBasicAuthSheet = false
         @State var presentWebView = false
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
-        var method: DSKCommon.AuthMethod? {
-            source.config.authenticationMethod
+        
+        var source: any AuthSource {
+            model.source as! any AuthSource
         }
-
-        @State var user: Loadable<DSKCommon.User> = .idle
-
         var body: some View {
             Group {
                 Gateway
             }
-            .sheet(isPresented: $presentBasicAuthSheet) {
+            .sheet(isPresented: $presentBasicAuthSheet, onDismiss: model.loadUser) {
                 NavigationView {
-                    SignInSheet(usesEmail: method == .email_pw)
+                    SignInSheet(usesEmail: method == .email_pw, source: source)
                         .navigationTitle("Sign In")
                         .closeButton()
                         .tint(accentColor)
                         .accentColor(accentColor)
                 }
             }
-            .fullScreenCover(isPresented: $presentWebView) {
+            .fullScreenCover(isPresented: $presentWebView, onDismiss: model.loadUser) {
                 NavigationView {
                     WebAuthWebView(source: source)
                         .navigationBarTitle("Authenticate In WebView", displayMode: .inline)
@@ -47,53 +46,67 @@ extension ContentSourceView {
                         .accentColor(accentColor)
                 }
             }
-            .animation(.default, value: user)
+            .animation(.default, value: model.user)
         }
 
         var Gateway: some View {
-            LoadableView(loadUser, user) {
-                LoadedUserView(user: $0)
-            }
-        }
-
-        func loadUser() {
-            user = .loading
-            Task {
-                do {
-                    let data = try await source.getAuthenticatedUser()
-                    if let data {
-                        self.user = .loaded(data)
-                    }
-                } catch {
-                    self.user = .failed(error)
+            LoadableView(model.loadUser, model.user) { user in
+                if let user {
+                    LoadedUserView(user: user)
+                } else {
+                    LoadedNoUserView()
                 }
             }
         }
 
+
+
         @ViewBuilder
         func LoadedUserView(user: DSKCommon.User) -> some View {
-            AuthenticatedUserView(user: user, presentWebView: $presentWebView)
+            AuthenticatedUserView(source: source, user: user, presentWebView: $presentWebView)
         }
 
         @ViewBuilder
         func LoadedNoUserView() -> some View {
-            if let method {
-                Section {
-                    Button {
-                        switch method {
-                        case .email_pw, .username_pw:
-                            presentBasicAuthSheet.toggle()
-                        case .oauth:
-                            break
-                        case .web:
-                            presentWebView.toggle()
-                        }
-                    } label: {
-                        Label("Sign In", systemImage: "person.fill.viewfinder")
+            Section {
+                Button {
+                    switch method {
+                    case .email_pw, .username_pw:
+                        presentBasicAuthSheet.toggle()
+                    case .oauth:
+                        break
+                    case .web:
+                        presentWebView.toggle()
                     }
-                    .buttonStyle(.plain)
-                } header: {
-                    Text("Authentication")
+                } label: {
+                    Label("Sign In", systemImage: "person.fill.viewfinder")
+                }
+                .buttonStyle(.plain)
+            } header: {
+                Text("Authentication")
+            }
+        }
+    }
+}
+
+extension ContentSourceView {
+    final class ViewModel: ObservableObject {
+        var source: AnyContentSource
+        @Published var user: Loadable<DSKCommon.User?> = .idle
+        
+        init(s: AnyContentSource) {
+            source = s
+        }
+        
+        func loadUser() {
+            user = .loading
+            Task {
+                do {
+                    let data = try await (source as! any AuthSource).getAuthenticatedUser()
+                    self.user = .loaded(data)
+                } catch {
+                    self.user = .failed(error)
+                    Logger.shared.error("\(error)")
                 }
             }
         }
@@ -107,7 +120,7 @@ extension ContentSourceView {
         @State var password: String = ""
         @State var loginStatus: Loadable<Bool> = .idle
         @Environment(\.presentationMode) var presentationMode
-        @EnvironmentObject var source: DaisukeEngine.LocalContentSource
+        var source: any AuthSource
 
         var body: some View {
             VStack {
@@ -220,11 +233,11 @@ extension ContentSourceView {
 
             Task { @MainActor in
                 do {
-                    try await source.handleBasicAuth(id: username, password: password)
-                    source.user = try await source.getAuthenticatedUser()
+                    try await source.handleBasicAuthentication(id: username, password: password)
                     presentationMode.wrappedValue.dismiss()
                 } catch {
                     self.loginStatus = .failed(error)
+                    Logger.shared.error("\(error)")
                 }
             }
         }
@@ -233,10 +246,11 @@ extension ContentSourceView {
 
 extension ContentSourceView {
     struct AuthenticatedUserView: View {
-        @EnvironmentObject var source: DaisukeEngine.LocalContentSource
+        var source: AnyContentSource
         var user: DSKCommon.User
         @State var presentShouldSync = false
         @Binding var presentWebView: Bool
+        @EnvironmentObject var model: ContentSourceView.ViewModel
         var body: some View {
             HStack(alignment: .center) {
                 BaseImageView(url: URL(string: user.avatar ?? ""))
@@ -259,7 +273,7 @@ extension ContentSourceView {
                     Text("Info")
                 }
             }
-            if source.canSyncUserLibrary {
+            if source.config.canSyncWithSource {
                 Section {
                     Button {
                         presentShouldSync.toggle()
@@ -293,18 +307,20 @@ extension ContentSourceView {
                 Button("Sign Out", role: .destructive) {
                     Task {
                         do {
-                            guard let authMethod = source.authMethod else {
+                            guard let authMethod = source.config.authenticationMethod else {
                                 return
                             }
                             switch authMethod {
                             case .username_pw, .email_pw, .oauth:
-                                try await source.handleUserSignOut()
+                                    try await (source as? any AuthSource)?.handleUserSignOut()
+                                    model.loadUser()
+
                             case .web:
                                 presentWebView.toggle()
                             }
-                            try await source.user = source.getAuthenticatedUser()
                         } catch {
                             ToastManager.shared.error(error)
+                            Logger.shared.error("\(error)")
                         }
                     }
                 }
@@ -315,7 +331,10 @@ extension ContentSourceView {
             await MainActor.run(body: {
                 ToastManager.shared.loading.toggle()
             })
-            try await source.syncUserLibrary()
+            guard let source = source as? any SyncableSource  else {
+                throw DSK.Errors.NamedError(name: "Daisuke", message: "Source Cannot Sync")
+            }
+//            try await source.syncUserLibrary()
             await MainActor.run(body: {
                 ToastManager.shared.info("Synced!")
             })

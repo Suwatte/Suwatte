@@ -23,7 +23,7 @@ struct InstalledRunnersView: View {
                 ForEach(runners, id: \.id) { runner in
                     if let source = SourceManager.shared.getSource(id: runner.id) {
                         NavigationLink {
-                            ContentSourceView(source: source)
+                            ContentSourceView(model: .init(s: source))
                         } label: {
                             HStack(spacing: 15) {
                                 STTThumbView(url: URL(string: runner.thumbnail))

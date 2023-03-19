@@ -18,7 +18,7 @@ extension JSCC : AuthSource {
     }
     
     func handleBasicAuthentication(id: String, password: String) async throws {
-        if !methodExists(method: "handleBasicAuthentication") {
+        if !methodExists(method: "handleBasicAuth") {
             throw DSK.Errors.MethodNotImplemented
         }
         try await callOptionalVoidMethod(method: "handleBasicAuth", arguments: [id, password])

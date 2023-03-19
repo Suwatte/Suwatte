@@ -9,14 +9,21 @@ import Kingfisher
 import SwiftUI
 
 struct ContentSourceView: View {
-    var source: AnyContentSource
+    @StateObject var model: ViewModel
     @AppStorage(STTKeys.SourcesDisabledFromHistory) var sourcesDisabledFromHistory: [String] = []
     @AppStorage(STTKeys.SourcesHiddenFromGlobalSearch) var sourcesHiddenFromGlobalSearch: [String] = []
+    
+    var source: AnyContentSource {
+        model.source
+    }
     var body: some View {
         List {
             HeaderSection
             InfoSection
-//            AuthSection()
+            
+            if let method = source.config.authenticationMethod{
+                AuthSection(method: method)
+            }
 
             if source.config.hasPreferences {
                 Section {
@@ -55,6 +62,8 @@ struct ContentSourceView: View {
             }
         }
         .navigationTitle(source.name)
+        .environmentObject(model)
+        .animation(.default, value: model.user)
     }
 
     var HeaderSection: some View {
