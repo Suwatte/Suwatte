@@ -250,7 +250,7 @@ extension RunnerListsView {
 extension RunnerListsView.RunnerListInfo {
     struct RunnerListCell: View {
         @State var isLoading = false
-        @ObservedObject var engine = DaisukeEngine.shared
+        @ObservedObject var engine = SourceManager.shared
         var listURL: String
         var list: RunnerList
         var runner: Runner
@@ -263,11 +263,7 @@ extension RunnerListsView.RunnerListInfo {
                 Button {
                     Task { @MainActor in
                         isLoading = true
-                        if list.hosted ?? false {
-                            engine.saveHostedRunner(list: listURL, runner: runner)
-                        } else {
-                            await saveExternalRunnerList()
-                        }
+                        await saveExternalRunnerList()
                         isLoading = false
                     }
                 } label: {
@@ -315,11 +311,8 @@ extension RunnerListsView.RunnerListInfo {
         func saveExternalRunnerList() async {
             let base = URL(string: listURL)!
 
-            let url = base
-                .appendingPathComponent("runners")
-                .appendingPathComponent("\(runner.path).stt")
             do {
-                try await SourceManager.shared.importRunner(from: url)
+                try await SourceManager.shared.importRunner(from: base, with: runner.id)
                 ToastManager.shared.info("\(runner.name) Saved!")
             } catch {
                 ToastManager.shared.display(.error(error))
@@ -333,7 +326,7 @@ extension RunnerListsView.RunnerListInfo {
                     return .appOutDated
                 }
             }
-            guard let installed = engine.getSource(with: runner.id) else {
+            guard let installed = engine.getSource(id: runner.id) else {
                 return .notInstalled
             }
             if installed.version > runner.version {

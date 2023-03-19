@@ -39,11 +39,9 @@ struct InstalledRunnersView: View {
                             }
                         }
                         .swipeActions {
-                            Button {} label: {
-                                Label("Disable", systemImage: "pause.fill")
-                            }
-                            .tint(.yellow)
-                            Button {} label: {
+                            Button {
+                                SourceManager.shared.deleteSource(with: runner.id)
+                            } label: {
                                 Label("Delete", systemImage: "trash")
                             }
                             .tint(.red)

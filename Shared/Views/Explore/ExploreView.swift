@@ -20,14 +20,13 @@ struct ExploreView: View {
                 ExploreCollectionViewRepresentable()
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
-                            NavigationLink(destination: SearchView(model: .init(source: model.source))) {
+                            NavigationLink(destination: SearchView(model: .init(source: model.source), usingDirectory: false)) {
                                 Image(systemName: "magnifyingglass")
                             }
                         }
                     }
             } else {
                 ExploreView.SearchView(model: .init(source: model.source))
-                EmptyView()
             }
         }
         .navigationTitle(model.source.name)

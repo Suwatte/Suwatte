@@ -146,10 +146,13 @@ extension SourceManager {
     }
 
     @MainActor
-    func addSource(_ src: AnyContentSource) {
+    func addSource(_ src: AnyContentSource, listURL: URL? = nil) {
         sources.removeAll(where: { $0.id == src.id })
         sources.append(src)
-        DataManager.shared.saveRunner(src.info)
+        
+        Task.detached {
+            DataManager.shared.saveRunner(src.info, listURL: listURL)
+        }
     }
 }
 
@@ -177,7 +180,7 @@ extension SourceManager {
         let path = url
             .appendingPathComponent("runners")
             .appendingPathComponent("\(runner.path).stt")
-        try await handleNetworkRunnerImport(from: path)
+        try await handleNetworkRunnerImport(from: path, with: url)
     }
 
     private func validateRunnerVersion(runner: AnyContentSource) throws {
@@ -197,7 +200,7 @@ extension SourceManager {
         await addSource(runner)
     }
 
-    private func handleNetworkRunnerImport(from url: URL) async throws {
+    private func handleNetworkRunnerImport(from url: URL, with list: URL? = nil) async throws {
         let req = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
         let path = url.lastPathComponent
         let tempLocation = directory
@@ -219,7 +222,7 @@ extension SourceManager {
         try? FileManager.default.removeItem(at: downloadURL)
 
         Task { @MainActor in
-            addSource(runner)
+            addSource(runner, listURL: list)
         }
     }
 
@@ -521,5 +524,22 @@ extension SourceManager {
         "} "
         
         context.evaluateScript(script)
+    }
+}
+
+
+extension SourceManager {
+    func deleteSource(with id: String ) {
+        // Remove From Active Runners
+        sources.removeAll(where: { $0.id == id })
+        
+        // Remove From Realm
+        DataManager.shared.deleteRunner(id)
+        
+        // Delete .STT File If present
+        Task {
+            let path = directory.appendingPathComponent("\(id).stt")
+            try? FileManager.default.removeItem(at: path)
+        }
     }
 }

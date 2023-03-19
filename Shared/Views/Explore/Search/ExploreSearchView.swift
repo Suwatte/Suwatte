@@ -11,11 +11,12 @@ extension ExploreView {
     struct SearchView: View {
         @StateObject var model: ViewModel
         var tagLabel: String?
+        var usingDirectory: Bool = true
         @State var initialized = false
         @State var firstCall = false
         @State var presentSearchHistory = false
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
-        @Preference(\.useDirectory) var useDirectory
+        
 
         var body: some View {
             LoadableView(loadable: model.result) {
@@ -83,11 +84,7 @@ extension ExploreView {
             if let tagLabel = tagLabel {
                 return "\(tagLabel) Titles"
             } else {
-                if !useDirectory {
-                    return "Search"
-                } else {
-                    return "Directory"
-                }
+                return usingDirectory ? "Directory" : "Search"
             }
         }
 
