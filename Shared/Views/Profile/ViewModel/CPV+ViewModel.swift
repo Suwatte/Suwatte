@@ -474,7 +474,7 @@ extension ProfileView.ViewModel {
     }
 
     private func handleReadMarkers() async throws {
-        guard let source = source as? WKContentSource else { return }
+        guard let source = source as? JSCC else { return }
         // Check if Syncable
         if !source.config.canSyncWithSource { return }
         let user = try? await source.getAuthenticatedUser()

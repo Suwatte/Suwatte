@@ -97,7 +97,9 @@ class STTHelpers {
             do {
                 let data = try await source.getChapterData(contentId: chapter.contentId, chapterId: chapter.chapterId)
                 let stored = data.toStored(withStoredChapter: chapter.toStored())
-                DataManager.shared.saveChapterData(data: stored)
+                if !source.config.chapterDataCachingDisabled {
+                    DataManager.shared.saveChapterData(data: stored)
+                }
                 return .loaded(stored)
             } catch {
                 return .failed(error)
