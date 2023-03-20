@@ -64,6 +64,7 @@ extension VerticalViewer {
             collectionNode.view.contentInsetAdjustmentBehavior = .never
             collectionNode.view.scrollsToTop = false
             model.slider.setRange(0, 1)
+            collectionNode.leadingScreensForBatching = 2
         }
 
         @objc func appMovedToBackground() {
@@ -175,18 +176,22 @@ extension VerticalViewer.Controller {
     @objc func handleDoubleTap(_: UITapGestureRecognizer? = nil) {
         // Do Nothing
     }
-
-    func handleChapterPreload(at path: IndexPath?) {
-        guard let path, let currentPath = currentPath, currentPath.section == path.section else {
-            return
+    
+    func shouldBatchFetch(for collectionNode: ASCollectionNode) -> Bool {
+        guard let currentPath else {
+            return false
         }
-        if currentPath.item < path.item {
-            let preloadNext = model.sections[path.section].count - path.item + 1 < 3
-            if preloadNext, model.readerChapterList.get(index: path.section + 1) == nil {
-                Task.detached { [weak self] in
-                    self?.model.loadNextChapter()
-                }
-            }
+        let index = currentPath.section
+        let item = currentPath.item + 1
+        let count =  model.sections[index].count
+        return model.readerChapterList.get(index: item) == nil && count - item <= 3
+    }
+    
+    
+    func collectionNode(_ collectionNode: ASCollectionNode, willBeginBatchFetchWith context: ASBatchContext) {
+        Task.detached { [weak self] in
+            self?.model.loadNextChapter()
         }
+        context.completeBatchFetching(true)
     }
 }

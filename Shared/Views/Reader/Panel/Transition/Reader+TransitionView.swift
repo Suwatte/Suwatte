@@ -73,9 +73,10 @@ extension ReaderView {
             @State var openCollectionSheet = false
             @State var wasInLibrary = false
             var body: some View {
+                EmptyView()
                 if let content = model.content {
                     MAIN(entry: content)
-                        .onAppear {
+                        .task {
                             inLibrary = DataManager.shared.isInLibrary(content: content)
                             wasInLibrary = inLibrary
                         }

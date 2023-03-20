@@ -40,8 +40,8 @@ extension Controller {
         // MARK: Insert
 
         model.insertPublisher.sink { [unowned self] section in
-
-            Task { @MainActor in
+            
+            DispatchQueue.main.async { [unowned self] in
                 // Next Chapter Logic
                 let data = model.sections[section]
                 let paths = data.indices.map { IndexPath(item: $0, section: section) }
@@ -49,17 +49,25 @@ extension Controller {
                 let layout = collectionNode.collectionViewLayout as? VerticalContentOffsetPreservingLayout
                 let topInsertion = section == 0 && model.sections.count != 0
                 layout?.isInsertingCellsToTop = topInsertion
-
-                CATransaction.begin()
-                CATransaction.setDisableActions(true)
-                collectionNode.performBatchUpdates({
-                    let set = IndexSet(integer: section)
-                    collectionNode.insertSections(set)
-                    collectionNode.insertItems(at: paths)
-                }) { finished in
-                    if finished {
-                        CATransaction.commit()
+                
+                if topInsertion {
+                    CATransaction.begin()
+                    CATransaction.setDisableActions(true)
+                    collectionNode.performBatchUpdates({
+                        let set = IndexSet(integer: section)
+                        collectionNode.insertSections(set)
+                        collectionNode.insertItems(at: paths)
+                    }) { finished in
+                        if finished {
+                            CATransaction.commit()
+                        }
                     }
+                } else {
+                    collectionNode.performBatchUpdates({
+                        let set = IndexSet(integer: section)
+                        collectionNode.insertSections(set)
+                        collectionNode.insertItems(at: paths)
+                    })
                 }
             }
 

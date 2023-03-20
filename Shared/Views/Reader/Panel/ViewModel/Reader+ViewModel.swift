@@ -157,7 +157,6 @@ extension ReaderView {
 
             let nextChapter = recursiveGetChapter(for: chapter)
             let transition = ReaderView.Transition(from: chapter, to: nextChapter, type: .NEXT)
-
             chapterObjects.append(transition)
 
             return chapterObjects

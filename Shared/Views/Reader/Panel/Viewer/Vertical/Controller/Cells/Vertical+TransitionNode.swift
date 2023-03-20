@@ -23,20 +23,22 @@ extension Controller {
             super.init()
             automaticallyManagesSubnodes = true
             backgroundColor = .clear
-            display.setViewBlock {
-                let view = UIHostingController(rootView: ReaderView.ChapterTransitionView(transition: transition)).view!
-                view.backgroundColor = .clear
-                return view
-            }
         }
 
         override func layoutSpecThatFits(_: ASSizeRange) -> ASLayoutSpec {
             ASRatioLayoutSpec(ratio: 1.5, child: display)
         }
-
-        override func didEnterDisplayState() {
-            super.didEnterDisplayState()
-            delegate?.handleChapterPreload(at: indexPath)
+        
+        override func didEnterPreloadState() {
+            super.didEnterPreloadState()
+            if isNodeLoaded  {
+                return
+            }
+            display.setViewBlock {
+                let view = UIHostingController(rootView: ReaderView.ChapterTransitionView(transition: self.transition)).view!
+                view.backgroundColor = .clear
+                return view
+            }
         }
     }
 }
