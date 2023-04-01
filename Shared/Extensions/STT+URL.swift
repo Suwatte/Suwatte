@@ -34,3 +34,13 @@ extension URL {
         return components?.url
     }
 }
+
+extension URL {
+    func absoluteStringByTrimmingQuery() -> String? {
+        if var urlcomponents = URLComponents(url: self, resolvingAgainstBaseURL: false) {
+            urlcomponents.query = nil
+            return urlcomponents.string
+        }
+        return nil
+    }
+}

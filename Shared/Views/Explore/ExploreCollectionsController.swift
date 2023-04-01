@@ -64,7 +64,7 @@ final class ExploreCollectionsController: UICollectionViewController {
                 cell.backport.contentConfiguration = Backport.UIHostingConfiguration {
                     let error = errorCache[item.section] ?? DSK.Errors.NamedError(name: "Error", message: data.description)
                     ErrorView(error: error, sourceID: source.id) { [weak self] in
-                        if case DSK.Errors.NetworkErrorCloudflareProtected = error {
+                        if case DaisukeEngine.Errors.NamedError(name: let name, message: _) = error, name == "CloudflareError" {
                             self?.reloadAllSections()
                         } else if let excerpt = item.section as? CollectionExcerpt {
                             self?.reloadSingleSection(excerpt: excerpt)

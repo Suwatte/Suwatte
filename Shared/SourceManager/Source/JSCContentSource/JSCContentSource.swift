@@ -96,7 +96,7 @@ extension JSCC {
         // Inject Handlers
         SourceManager.shared.add(class: JSCC.LogHandler.self, name: "LogHandler", context: context)
         SourceManager.shared.add(class: JSCC.StoreHandler.self, name: "StoreHandler", context: context)
-        SourceManager.shared.add(class: DSK.NetworkClient.self, name: "NetworkClient", context: context)
+        SourceManager.shared.add(class: JSCC.NetworkHandler.self, name: "NetworkHandler", context: context)
         
         // Evalutate Runner Script
         content = try String(contentsOfFile: path.relativePath, encoding: String.Encoding.utf8)

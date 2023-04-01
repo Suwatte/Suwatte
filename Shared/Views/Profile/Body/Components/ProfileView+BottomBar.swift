@@ -136,6 +136,9 @@ extension ProfileView.Skeleton.BottomBar {
         }
 
         func OpenReader() {
+            // Haptic
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            // State
             model.selection = actionState.chapter?._id
         }
     }

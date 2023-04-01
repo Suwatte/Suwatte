@@ -22,6 +22,8 @@ extension DSKCommon {
         var cookies: [Cookie]?
         var timeout: Double?
         var maxRetries: Int?
+        var maxRedirects: Int?;
+
     }
 
     struct Cookie: Codable, Parsable, Hashable {
@@ -54,7 +56,6 @@ extension DSKCommon {
         var data: String
         var status: Int
         var headers: [String: String]
-        var request: Request
     }
 }
 
