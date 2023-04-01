@@ -153,17 +153,19 @@ extension ReaderView {
             // Add Pages
             chapterObjects.append(contentsOf: pages)
 
-            // Add Transition To Next Page
-
+            // Add Transition To Next Page if transitions are enabled OR This is the last chapter
             let nextChapter = recursiveGetChapter(for: chapter)
-            let transition = ReaderView.Transition(from: chapter, to: nextChapter, type: .NEXT)
-            chapterObjects.append(transition)
+            if Preferences.standard.forceTransitions || nextChapter == nil {
+                let transition = ReaderView.Transition(from: chapter, to: nextChapter, type: .NEXT)
+                chapterObjects.append(transition)
+            }
+
 
             return chapterObjects
         }
 
         func getChapterIndex(_ chapter: ThreadSafeChapter) -> Int {
-            chapterList.firstIndex(where: { $0 == chapter })!
+            chapterList.firstIndex(of: chapter)!
         }
 
         func reload(section: Int) {

@@ -90,6 +90,9 @@ extension DataManager {
             .first
 
         guard target == nil else {
+            try! realm.safeWrite {
+                target?.enabled = true
+            }
             return
         }
         let obj = StoredRunnerObject()

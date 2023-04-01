@@ -89,6 +89,10 @@ extension VerticalPager.Controller {
         guard let path = currentPath else {
             return
         }
+        if path.section != lastViewedSection {
+            STTHelpers.triggerHaptic()
+            lastViewedSection = path.section
+        }
         model.activeChapter.requestedPageOffset = nil
         model.didScrollTo(path: path)
         model.scrubbingPageNumber = nil

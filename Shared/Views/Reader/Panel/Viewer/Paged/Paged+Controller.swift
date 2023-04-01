@@ -24,6 +24,7 @@ extension PagedViewer {
         var isScrolling: Bool = false
         var enableInteractions: Bool = Preferences.standard.imageInteractions
         var lastPathBeforeRotation: IndexPath?
+        var lastViewedSection = 0
     }
 }
 
@@ -406,6 +407,11 @@ extension PagedController {
         // Do Scroll To
         guard let path = currentPath else {
             return
+        }
+        
+        if path.section != lastViewedSection {
+            STTHelpers.triggerHaptic()
+            lastViewedSection = path.section
         }
         model.activeChapter.requestedPageOffset = nil
         model.didScrollTo(path: path)

@@ -148,6 +148,7 @@ struct LinkedUpdatesView: View {
             Divider()
             ForEach(data, id: \.entry.hashValue) { id in
                 Button("\(id.entry.title) [\(SourceManager.shared.getSource(id: id.sourceId)!.name)]") {
+                    STTHelpers.triggerHaptic()
                     selection = id
                 }
             }

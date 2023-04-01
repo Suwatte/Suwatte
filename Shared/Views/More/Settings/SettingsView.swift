@@ -13,6 +13,7 @@ struct SettingsView: View {
         Form {
             MiscSection()
             LibrarySection()
+            ReaderSection()
             UpdatesSection()
             PrivacySection()
             NetworkSection()
@@ -134,6 +135,21 @@ extension SettingsView {
     }
 }
 
+extension SettingsView {
+    struct ReaderSection: View {
+        @Preference(\.forceTransitions) var forceTransitions
+        @Preference(\.enableReaderHaptics) var readerHaptics
+        
+        var body: some View {
+            Section {
+                Toggle("Transition Pages", isOn: $forceTransitions)
+                Toggle("Haptic Feedback", isOn: $readerHaptics)
+            } header: {
+                Text("Reader")
+            }
+        }
+    }
+}
 extension SettingsView {
     struct RunnersSection: View {
         @AppStorage(STTKeys.HideNSFWRunners) var hideNSFWRunners = false

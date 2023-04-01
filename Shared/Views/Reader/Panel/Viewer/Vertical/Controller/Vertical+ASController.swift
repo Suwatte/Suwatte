@@ -19,6 +19,7 @@ extension VerticalViewer {
         var selectedIndexPath: IndexPath!
         var initialOffset: (Int, CGFloat?)?
         var timer: Timer?
+        var lastViewedSection = 0
 
         // MARK: Init
 

@@ -122,6 +122,12 @@ final class Preferences {
 
     @UserDefault(STTKeys.PrefersDirectoryView)
     var useDirectory = false
+    
+    @UserDefault(STTKeys.ForceTransition)
+    var alwaysUseTransitions = true
+    
+    @UserDefault(STTKeys.EnableReaderHaptics)
+    var enableReaderHaptics = true
 }
 
 @propertyWrapper

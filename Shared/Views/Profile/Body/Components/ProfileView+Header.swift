@@ -114,6 +114,7 @@ private extension Skeleton {
                     Button {
                         switch action.option {
                         case .COLLECTIONS:
+                            STTHelpers.triggerHaptic(true)
                             if !EntryInLibrary {
                                 DataManager.shared.toggleLibraryState(for: model.storedContent)
                             }
