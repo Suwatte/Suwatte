@@ -470,7 +470,7 @@ extension CTR {
                 }
                 Spacer()
                 if model.source.config.hasSourceTags {
-                    NavigationLink(destination: EmptyView()) {
+                    NavigationLink(destination: ExploreView.AllTagsView(source: model.source)) {
                         Text("View All")
                             .foregroundColor(color)
                             .fontWeight(.light)
