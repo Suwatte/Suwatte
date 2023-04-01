@@ -43,7 +43,6 @@ extension SettingsView {
         }
 
         var OpeningTab: some View {
-            
             Picker("Opening Tab", selection: $InitialSelection) {
                 ForEach(options, id: \.rawValue) {
                     Text($0.label())
@@ -139,7 +138,7 @@ extension SettingsView {
     struct ReaderSection: View {
         @Preference(\.forceTransitions) var forceTransitions
         @Preference(\.enableReaderHaptics) var readerHaptics
-        
+
         var body: some View {
             Section {
                 Toggle("Transition Pages", isOn: $forceTransitions)
@@ -150,6 +149,7 @@ extension SettingsView {
         }
     }
 }
+
 extension SettingsView {
     struct RunnersSection: View {
         @AppStorage(STTKeys.HideNSFWRunners) var hideNSFWRunners = false

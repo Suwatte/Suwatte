@@ -177,19 +177,18 @@ extension VerticalViewer.Controller {
     @objc func handleDoubleTap(_: UITapGestureRecognizer? = nil) {
         // Do Nothing
     }
-    
-    func shouldBatchFetch(for collectionNode: ASCollectionNode) -> Bool {
+
+    func shouldBatchFetch(for _: ASCollectionNode) -> Bool {
         guard let currentPath else {
             return false
         }
         let index = currentPath.section
         let item = currentPath.item + 1
-        let count =  model.sections[index].count
+        let count = model.sections[index].count
         return model.readerChapterList.get(index: item) == nil && count - item <= 3
     }
-    
-    
-    func collectionNode(_ collectionNode: ASCollectionNode, willBeginBatchFetchWith context: ASBatchContext) {
+
+    func collectionNode(_: ASCollectionNode, willBeginBatchFetchWith context: ASBatchContext) {
         Task.detached { [weak self] in
             self?.model.loadNextChapter()
         }

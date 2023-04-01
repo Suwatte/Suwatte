@@ -513,7 +513,7 @@ extension MigrationView {
             switch libraryStrat {
             case .link:
                 guard let content = target.content else { return }
-                let _ = DataManager.shared.linkContent(stored._id, content._id)
+                _ = DataManager.shared.linkContent(stored._id, content._id)
             case .replace:
                 let obj = LibraryEntry()
                 obj.content = stored

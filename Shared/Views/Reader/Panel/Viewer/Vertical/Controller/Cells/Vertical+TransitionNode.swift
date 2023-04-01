@@ -28,10 +28,10 @@ extension Controller {
         override func layoutSpecThatFits(_: ASSizeRange) -> ASLayoutSpec {
             ASRatioLayoutSpec(ratio: 1.5, child: display)
         }
-        
+
         override func didEnterPreloadState() {
             super.didEnterPreloadState()
-            if isNodeLoaded  {
+            if isNodeLoaded {
                 return
             }
             display.setViewBlock {

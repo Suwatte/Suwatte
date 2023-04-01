@@ -160,7 +160,6 @@ extension ReaderView {
                 chapterObjects.append(transition)
             }
 
-
             return chapterObjects
         }
 

@@ -22,7 +22,6 @@ extension DoublePagedViewer {
         var cache: [Int: [PageGroup]] = [:]
         var pendingUpdates = false
         var lastViewedSection = 0
-
     }
 }
 

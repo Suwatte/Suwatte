@@ -13,20 +13,19 @@ extension JSCC {
         func _post(_ message: JSValue) -> JSValue {
             let output = JSValue(nullIn: message.context)!
             let message = message.toDictionary() as? [String: String]
-            
+
             guard let message else {
                 Logger.shared.error("Failed to Convert Handler Message")
                 return output
             }
-            log( message: message)
+            log(message: message)
             return output
         }
     }
 }
 
-
 extension JSCC.LogHandler {
-    internal func log( message: [String: String]) {
+    func log(message: [String: String]) {
         guard let level = Logger.Level(rawValue: message["level"] ?? "LOG"), let msg = message["message"], let context = message["context"] else {
             Logger.shared.log("\(message)")
             return

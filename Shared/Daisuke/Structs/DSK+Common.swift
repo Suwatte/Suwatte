@@ -13,7 +13,6 @@ extension DSKCommon {
     }
 }
 
-
 extension DSKCommon {
     enum AuthMethod: Int, Codable {
         case username_pw, email_pw, web, oauth

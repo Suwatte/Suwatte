@@ -5,9 +5,9 @@
 //  Created by Mantton on 2023-03-31.
 //
 
+import Alamofire
 import Foundation
 import JavaScriptCore
-import Alamofire
 
 extension JSCC {
     @objc class NetworkHandler: JSObject, JSCCHandlerProtocol {
@@ -16,7 +16,7 @@ extension JSCC {
             configuration.headers.add(.userAgent(Preferences.standard.userAgent))
             return .init(configuration: configuration)
         }()
-        
+
         func _post(_ message: JSValue) -> JSValue {
             .init(newPromiseIn: message.context) { resolve, reject in
                 let context = message.context
@@ -35,7 +35,6 @@ extension JSCC {
     }
 }
 
-
 private typealias H = JSCC.NetworkHandler
 
 extension H {
@@ -44,9 +43,9 @@ extension H {
 
 extension H {
     func handle(message: Message) async throws -> DSKCommon.Response {
-       try await makeRequest(with: message)
+        try await makeRequest(with: message)
     }
-    
+
     func makeRequest(with request: Message) async throws -> DSKCommon.Response {
         let urlRequest = try request.toURLRequest()
         let afResponse = await session.request(urlRequest)
@@ -59,8 +58,8 @@ extension H {
         let data = try afResponse.result.get()
         let headers = httpResponse.headers.dictionary
         var response = DSKCommon.Response(data: data,
-                                status: httpResponse.statusCode,
-                                headers: headers)
+                                          status: httpResponse.statusCode,
+                                          headers: headers)
         return response
     }
 }

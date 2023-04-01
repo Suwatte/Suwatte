@@ -20,10 +20,10 @@ extension ContentSourceView {
         @State var presentWebViewSignOut = false
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
-        
         var source: any AuthSource {
             model.source as! any AuthSource
         }
+
         var body: some View {
             Group {
                 Gateway
@@ -70,8 +70,6 @@ extension ContentSourceView {
             }
         }
 
-
-
         @ViewBuilder
         func LoadedUserView(user: DSKCommon.User) -> some View {
             AuthenticatedUserView(source: source, user: user, presentWebView: $presentWebViewSignOut)
@@ -104,16 +102,16 @@ extension ContentSourceView {
     final class ViewModel: ObservableObject {
         var source: AnyContentSource
         @Published var user: Loadable<DSKCommon.User?> = .idle
-        
+
         init(s: AnyContentSource) {
             source = s
         }
-        
+
         func loadUser() {
             user = .loading
             Task {
                 do {
-                    let data = try await (source as! any AuthSource).getAuthenticatedUser()
+                    let data = try await(source as! any AuthSource).getAuthenticatedUser()
                     await MainActor.run {
                         self.user = .loaded(data)
                     }
@@ -293,8 +291,8 @@ extension ContentSourceView {
                             }
                             switch authMethod {
                             case .username_pw, .email_pw, .oauth:
-                                    try await (source as? any AuthSource)?.handleUserSignOut()
-                                    model.loadUser()
+                                try await(source as? any AuthSource)?.handleUserSignOut()
+                                model.loadUser()
 
                             case .web:
                                 presentWebView.toggle()
@@ -306,7 +304,6 @@ extension ContentSourceView {
                     }
                 }
             }
-
 
             if source.config.canSyncWithSource {
                 Section {
@@ -344,7 +341,7 @@ extension ContentSourceView {
             await MainActor.run(body: {
                 ToastManager.shared.loading.toggle()
             })
-            guard let source = source as? any SyncableSource  else {
+            guard let source = source as? any SyncableSource else {
                 throw DSK.Errors.NamedError(name: "Daisuke", message: "Source Cannot Sync")
             }
             let library = DataManager.shared.getUpSync(for: source.id)
@@ -410,7 +407,6 @@ extension WebAuthWebView.Controller: WKNavigationDelegate {
     }
 
     func webView(_ webView: WKWebView, didFinish _: WKNavigation!) {
-        
         if !isSignIn {
             return
         }
@@ -439,9 +435,7 @@ extension WebAuthWebView.Controller: WKNavigationDelegate {
     }
 }
 
-
 extension DataManager {
-    
     func getUpSync(for id: String) -> [DSKCommon.UpSyncedContent] {
         let realm = try! Realm(queue: nil)
 
@@ -452,5 +446,4 @@ extension DataManager {
             .map { .init(id: $0.content!.contentId, flag: $0.flag) }
         return library
     }
-
 }

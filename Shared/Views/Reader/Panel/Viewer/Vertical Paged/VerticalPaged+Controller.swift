@@ -22,7 +22,6 @@ extension VerticalPager {
 
         var enableInteractions: Bool = Preferences.standard.imageInteractions
         var lastViewedSection = 0
-
     }
 }
 

@@ -16,18 +16,16 @@ extension WKContentSource {
 
         func userContentController(
             _: WKUserContentController,
-            didReceive message: WKScriptMessage,
-            replyHandler: @escaping (Any?, String?) -> Void
-        ) {
-            
-        }
+            didReceive _: WKScriptMessage,
+            replyHandler _: @escaping (Any?, String?) -> Void
+        ) {}
     }
 }
 
 private typealias H = WKContentSource.NetworkHandler
 
 extension H {
-    func request(_ config: Any) async throws -> Any {
+    func request(_: Any) async throws -> Any {
         throw DSK.Errors.MethodNotImplemented
     }
 }

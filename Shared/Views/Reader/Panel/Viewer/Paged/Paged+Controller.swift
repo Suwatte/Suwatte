@@ -408,7 +408,7 @@ extension PagedController {
         guard let path = currentPath else {
             return
         }
-        
+
         if path.section != lastViewedSection {
             STTHelpers.triggerHaptic()
             lastViewedSection = path.section

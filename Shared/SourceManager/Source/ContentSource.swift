@@ -9,6 +9,7 @@ import Foundation
 
 typealias DSK = DaisukeEngine
 typealias DSKCommon = DaisukeEngine.Structs
+
 // MARK: - Source Info
 
 struct SourceInfo: Decodable, Parsable {
@@ -26,7 +27,7 @@ struct SourceInfo: Decodable, Parsable {
     static let placeholder = SourceInfo(id: ".stt", name: "Source", version: 0.1, website: STTHost.root.absoluteString, supportedLanguages: [])
 }
 
-struct SourceConfig : Codable {
+struct SourceConfig: Codable {
     var hasExplorePage = false
     var hasExplorePageTags = false
     var hasSourceTags = false
@@ -60,7 +61,6 @@ protocol ContentSource: Equatable {
     func getIdentifiers(for id: String) async throws -> DaisukeEngine.Structs.URLContentIdentifer?
     func getSourcePreferences() async throws -> [DSKCommon.PreferenceGroup]
     func updateSourcePreference(key: String, value: Any) async
-
 }
 
 // MARK: - Modifiable Source Protocol

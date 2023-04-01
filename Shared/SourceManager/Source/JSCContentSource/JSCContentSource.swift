@@ -11,6 +11,7 @@ import JavaScriptCore
 protocol JSCContextProtocol {
     var runnerClass: JSValue { get }
 }
+
 protocol DaisukeInterface: Codable, Hashable, Identifiable {}
 
 @objc protocol JSObjectProtocol: JSExport {
@@ -29,7 +30,7 @@ class JSObject: NSObject, JSObjectProtocol {
             self.this = JSManagedValue(value: value)
         }
     }
-    
+
     func getRunnerID() throws -> String {
         guard let runner = this?.value.context.daisukeRunner() else {
             throw DaisukeEngine.Errors.RunnerNotFoundOnContainedObject
@@ -47,24 +48,18 @@ final class JSCContentSource: JSCContextProtocol {
     var info: SourceInfo
     var config: SourceConfig
     var runnerClass: JSValue
-    
+
     required init(path: URL) throws {
-        self.runnerClass = try Self.build(for: path)
+        runnerClass = try Self.build(for: path)
         guard let dictionary = runnerClass.forProperty("info") else {
             throw DSK.Errors.RunnerInfoInitFailed
         }
-        self.info = try SourceInfo(value: dictionary)
-        self.config = info.config ?? .init()
+        info = try SourceInfo(value: dictionary)
+        config = info.config ?? .init()
     }
-    
 }
 
-
-
 typealias JSCC = JSCContentSource
-
-
-
 
 // MARK: - Paths
 
@@ -76,7 +71,7 @@ private extension JSCC {
             .appendingPathComponent("Runners", isDirectory: true)
             .appendingPathComponent("common.js")
     }
-    
+
     static var bridgePath: URL {
         Bundle
             .main
@@ -85,41 +80,42 @@ private extension JSCC {
 }
 
 extension JSCC {
-    static func  build(`for` path: URL) throws -> JSValue {
+    static func build(for path: URL) throws -> JSValue {
         // Generate New Context
         let context = SourceManager.shared.newJSCContext()
-        
+
         // Evaluate Commons Script
         var content = try String(contentsOf: Self.commonsPath, encoding: .utf8)
         _ = context.evaluateScript(content)
-        
+
         // Inject Handlers
         SourceManager.shared.add(class: JSCC.LogHandler.self, name: "LogHandler", context: context)
         SourceManager.shared.add(class: JSCC.StoreHandler.self, name: "StoreHandler", context: context)
         SourceManager.shared.add(class: JSCC.NetworkHandler.self, name: "NetworkHandler", context: context)
-        
+
         // Evalutate Runner Script
         content = try String(contentsOfFile: path.relativePath, encoding: String.Encoding.utf8)
         _ = context.evaluateScript(content)
-        
+
         // Evaluate Bridge Script
         content = try String(contentsOf: Self.bridgePath, encoding: .utf8)
         _ = context.evaluateScript(content)
-        
+
         guard let runner = context.daisukeRunner(), runner.isObject else {
             throw DSK.Errors.RunnerClassInitFailed
         }
-        
+
         return runner
     }
 }
 
 // MARK: - JS Method Callers
+
 extension JSCContentSource {
     func methodExists(method: String) -> Bool {
         runnerClass.hasProperty(method)
     }
-    
+
     func callOptionalVoidMethod(method: String, arguments: [Any]) async throws {
         try await withUnsafeThrowingContinuation { handler in
             guard runnerClass.hasProperty(method) else {
@@ -133,7 +129,7 @@ extension JSCContentSource {
             }
         } as Void
     }
-    
+
     func callMethodReturningDecodable<T: Decodable>(method: String, arguments: [Any], resolvesTo _: T.Type) async throws -> T? {
         try await withCheckedThrowingContinuation { handler in
             guard runnerClass.hasProperty(method) else {
@@ -141,7 +137,7 @@ extension JSCContentSource {
                 return
             }
             runnerClass.daisukeCall(method: method, arguments: arguments) { value in
-                
+
                 if value.isNull || value.isUndefined {
                     handler.resume(returning: nil)
                     return
@@ -163,15 +159,15 @@ extension JSCContentSource {
             }
         }
     }
-    
+
     func callMethodReturningObject<T: Parsable>(method: String, arguments: [Any], resolvesTo _: T.Type) async throws -> T {
         try await withCheckedThrowingContinuation { handler in
-            
+
             guard runnerClass.hasProperty(method) else {
                 handler.resume(throwing: DaisukeEngine.Errors.MethodNotFound(name: method))
                 return
             }
-            
+
             runnerClass.daisukeCall(method: method, arguments: arguments) { value in
                 do {
                     let object = try T(value: value)
@@ -179,13 +175,13 @@ extension JSCContentSource {
                 } catch {
                     handler.resume(throwing: error)
                 }
-                
+
             } onFailure: { error in
                 handler.resume(throwing: error)
             }
         }
     }
-    
+
     func callMethodReturningDecodable<T: Decodable>(method: String, arguments: [Any], resolvesTo _: T.Type) async throws -> T {
         try await withCheckedThrowingContinuation { handler in
             guard runnerClass.hasProperty(method) else {
@@ -193,7 +189,7 @@ extension JSCContentSource {
                 return
             }
             runnerClass.daisukeCall(method: method, arguments: arguments) { value in
-                
+
                 let str = DaisukeEngine.stringify(val: value)
                 guard let str = str else {
                     handler.resume(throwing: DaisukeEngine.Errors.NamedError(name: "Invalid Return", message: "Returned Array Object cannot be converted to JSON String"))
@@ -211,8 +207,8 @@ extension JSCContentSource {
             }
         }
     }
-    
-    func callContextMethod<T: Decodable>(method: String, arguments: [Any]? = nil, resolvesTo _: T.Type) async throws -> T {
+
+    func callContextMethod<T: Decodable>(method: String, arguments _: [Any]? = nil, resolvesTo _: T.Type) async throws -> T {
         try await withCheckedThrowingContinuation { handler in
             runnerClass.context!.evaluateScript(method).daisukeCall { value in
                 let str = DaisukeEngine.stringify(val: value)

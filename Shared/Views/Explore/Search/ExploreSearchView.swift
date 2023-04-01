@@ -16,7 +16,6 @@ extension ExploreView {
         @State var firstCall = false
         @State var presentSearchHistory = false
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
-        
 
         var body: some View {
             LoadableView(loadable: model.result) {
@@ -99,7 +98,6 @@ extension ExploreView {
                 await model.makeRequest()
             }
         }
-
 
         func initialRequest() {
             if initialized {

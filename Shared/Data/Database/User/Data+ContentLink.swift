@@ -8,7 +8,7 @@
 import Foundation
 import RealmSwift
 
-final class ContentLink : Object, Identifiable {
+final class ContentLink: Object, Identifiable {
     @Persisted(primaryKey: true) var id = UUID().uuidString
     @Persisted var ids: MutableSet<String>
 }
@@ -31,12 +31,12 @@ extension DataManager {
         if matches {
             return false
         }
-        
+
         let target = realm
             .objects(ContentLink.self)
-            .where({ $0.ids.containsAny(in: [one, two]) })
+            .where { $0.ids.containsAny(in: [one, two]) }
             .first
-        
+
         // A or B already in a linkset
         if let target {
             try! realm.safeWrite {
@@ -56,12 +56,12 @@ extension DataManager {
 
     func unlinkContent(_ child: StoredContent, _ from: StoredContent) {
         let realm = try! Realm()
-        
+
         let target = realm
             .objects(ContentLink.self)
-            .where({ $0.ids.containsAny(in: [child._id, from._id]) })
+            .where { $0.ids.containsAny(in: [child._id, from._id]) }
             .first
-        
+
         guard let target else {
             return
         }
@@ -77,17 +77,15 @@ extension DataManager {
             .where { $0.ids.contains(id) }
             .first?
             .ids
-            
-        
 
         guard let ids else {
             return []
         }
-        
+
         var arr = Array(ids)
         arr.removeAll(where: { $0 == id })
         let contents = Array(getStoredContents(ids: arr))
-        
+
         return contents
     }
 
@@ -122,17 +120,17 @@ extension DataManager {
             "mu": match.mu,
         ]
     }
-    
+
     func saveIfNeeded(_ h: DSKCommon.Highlight, _ sId: String) {
         let realm = try! Realm()
-        
+
         let result = realm
             .objects(StoredContent.self)
-            .where({ $0.sourceId ==  sId && $0.contentId == h.contentId })
-        guard result.isEmpty  else {
+            .where { $0.sourceId == sId && $0.contentId == h.contentId }
+        guard result.isEmpty else {
             return
         }
-        
+
         let obj = h.toStored(sourceId: sId)
         try! realm.safeWrite {
             realm.add(obj)

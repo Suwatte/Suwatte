@@ -6,8 +6,8 @@
 //
 import Alamofire
 import Foundation
-import RealmSwift
 import JavaScriptCore
+import RealmSwift
 import UIKit
 
 final class SourceManager: ObservableObject {
@@ -25,7 +25,6 @@ final class SourceManager: ObservableObject {
     @Published var sources: [AnyContentSource] = []
     private let vm: JSVirtualMachine
     init() {
-
         // Create Directory
         directory.createDirectory()
         let queue = DispatchQueue(label: "com.ceres.suwatte.daisuke", attributes: .concurrent)
@@ -85,7 +84,6 @@ extension SourceManager {
             } catch {
                 Logger.shared.error("Failed to start source, \(error)")
             }
-
         }
     }
 
@@ -93,7 +91,7 @@ extension SourceManager {
         await MainActor.run(body: {
             ToastManager.shared.loading = true
         })
-        
+
         do {
             try await getCommons()
         } catch {
@@ -149,7 +147,7 @@ extension SourceManager {
     func addSource(_ src: AnyContentSource, listURL: URL? = nil) {
         sources.removeAll(where: { $0.id == src.id })
         sources.append(src)
-        
+
         Task.detached {
             DataManager.shared.saveRunner(src.info, listURL: listURL)
         }
@@ -498,44 +496,41 @@ extension SourceManager {
     }
 }
 
-
 extension SourceManager {
-    
-    internal func newJSCContext() -> JSContext {
+    func newJSCContext() -> JSContext {
         JSContext(virtualMachine: vm)!
     }
-    
-    internal func add(class cls: AnyClass, name: String, context: JSContext) {
+
+    func add(class cls: AnyClass, name: String, context: JSContext) {
         let constructorName = "__constructor__\(name)"
-        
+
         let constructor: @convention(block) () -> NSObject = {
             let cls = cls as! NSObject.Type
             return cls.init()
         }
-        
+
         context.setObject(unsafeBitCast(constructor, to: AnyObject.self),
                           forKeyedSubscript: constructorName as NSCopying & NSObjectProtocol)
-        
+
         let script = "function \(name)() " +
-        "{ " +
-        "   var obj = \(constructorName)(); " +
-        "   obj.setThisValue(obj); " +
-        "   return obj; " +
-        "} "
-        
+            "{ " +
+            "   var obj = \(constructorName)(); " +
+            "   obj.setThisValue(obj); " +
+            "   return obj; " +
+            "} "
+
         context.evaluateScript(script)
     }
 }
 
-
 extension SourceManager {
-    func deleteSource(with id: String ) {
+    func deleteSource(with id: String) {
         // Remove From Active Runners
         sources.removeAll(where: { $0.id == id })
-        
+
         // Remove From Realm
         DataManager.shared.deleteRunner(id)
-        
+
         // Delete .STT File If present
         Task {
             let path = directory.appendingPathComponent("\(id).stt")

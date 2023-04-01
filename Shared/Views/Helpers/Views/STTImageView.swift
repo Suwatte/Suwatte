@@ -124,7 +124,6 @@ struct BaseImageView: View {
                     loader.load(imageRequest)
                 } else {
                     loader.load(url)
-
                 }
             } catch {
                 Logger.shared.error(error.localizedDescription)

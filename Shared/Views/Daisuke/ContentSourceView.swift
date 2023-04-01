@@ -12,16 +12,17 @@ struct ContentSourceView: View {
     @StateObject var model: ViewModel
     @AppStorage(STTKeys.SourcesDisabledFromHistory) var sourcesDisabledFromHistory: [String] = []
     @AppStorage(STTKeys.SourcesHiddenFromGlobalSearch) var sourcesHiddenFromGlobalSearch: [String] = []
-    
+
     var source: AnyContentSource {
         model.source
     }
+
     var body: some View {
         List {
             HeaderSection
             InfoSection
-            
-            if let method = source.config.authenticationMethod{
+
+            if let method = source.config.authenticationMethod {
                 AuthSection(method: method)
             }
 

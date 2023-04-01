@@ -12,6 +12,7 @@ import RealmSwift
 
 final class DaisukeEngine: ObservableObject {
     // MARK: Singleton
+
     static let shared = DaisukeEngine()
 }
 
@@ -20,4 +21,3 @@ extension JSContext {
         return evaluateScript("(function(){ return DAISUKE_RUNNER })()")
     }
 }
-

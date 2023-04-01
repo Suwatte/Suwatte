@@ -100,18 +100,17 @@ extension DataManager {
         obj.id = info.id
         obj.version = info.version
         obj.enabled = true
-        
+
         if let listURL {
             obj.listURL = listURL.absoluteString
         }
-        
+
         if let thumbnail = info.thumbnail {
-            if thumbnail.contains("http"){
-                if  URL(string: thumbnail) != nil  {
+            if thumbnail.contains("http") {
+                if URL(string: thumbnail) != nil {
                     obj.thumbnail = thumbnail
                 }
             } else if let listURL {
-                
                 let path = listURL.appendingPathComponent("assets").appendingPathComponent(thumbnail)
                 obj.thumbnail = path.absoluteString
             }

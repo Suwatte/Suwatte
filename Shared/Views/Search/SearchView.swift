@@ -236,7 +236,7 @@ struct SearchView: View {
             .onDelete(perform: $history.remove(atOffsets:))
         }
     }
-    
+
     func didSelectHistory(_ h: UpdatedSearchHistory) {
         model.query = h.displayText
     }

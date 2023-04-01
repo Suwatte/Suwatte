@@ -71,7 +71,7 @@ extension ExploreView.SearchView {
                 filters = .failed(error)
             }
         }
-        
+
         func didSubmitSearch() {
             do {
                 try DataManager.shared.saveSearch(model.request, sourceId: model.source.id, display: prepareSearch())
@@ -81,15 +81,13 @@ extension ExploreView.SearchView {
                 ToastManager.shared.error(error)
             }
         }
-        
+
         func prepareSearch() -> String {
             var texts: [String] = []
             guard let filters = filters.value else {
                 return ""
             }
-            
-            
-            
+
             for populated in model.request.filters ?? [] {
                 // Get Filter
                 let filter = filters.first(where: { $0.id == populated.id })
@@ -100,28 +98,27 @@ extension ExploreView.SearchView {
                 if let value = populated.text {
                     texts.append("\(filter.title) : \(value)")
                 }
-                
+
                 // Toggle
                 if let value = populated.bool, value {
                     texts.append(filter.title)
                 }
-                
+
                 // Included
                 if let value = populated.included, !value.isEmpty, let selected = filter.options?.filter({ value.contains($0.id) }) {
                     let txt = "Including \(filter.title): \(selected.map(\.label).joined(separator: ", "))"
                     texts.append(txt)
                 }
-                
+
                 // Excluded
                 if let value = populated.excluded, !value.isEmpty, let selected = filter.options?.filter({ value.contains($0.id) }) {
                     let txt = "Excluding \(filter.title): \(selected.map(\.label).joined(separator: ", "))"
                     texts.append(txt)
                 }
             }
-            
+
             return texts.joined(separator: "\n")
         }
-        
     }
 }
 

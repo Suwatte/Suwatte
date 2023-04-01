@@ -22,7 +22,7 @@ struct ErrorView: View {
         }
         .padding()
     }
-    
+
     var BaseErrorView: some View {
         VStack(spacing: 10) {
             Image(systemName: "exclamationmark.circle.fill")
@@ -41,19 +41,19 @@ struct ErrorView: View {
                 action()
             }
         label: {
-            Text("Retry")
-                .font(.headline)
-                .fontWeight(.semibold)
-                .foregroundColor(.white)
-                .padding(.vertical, 10)
-                .frame(maxWidth: 100)
-                .background(Color.accentColor)
-                .cornerRadius(7)
-        }
-        .buttonStyle(.plain)
+                Text("Retry")
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .padding(.vertical, 10)
+                    .frame(maxWidth: 100)
+                    .background(Color.accentColor)
+                    .cornerRadius(7)
+            }
+            .buttonStyle(.plain)
         }
     }
-    
+
     func getMessage(for error: Error) -> String {
         if case let DecodingError.valueNotFound(_, context) = error {
             return "JSON Decoding Error (Value not Found): \(context.debugDescription)"

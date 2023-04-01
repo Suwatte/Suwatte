@@ -8,7 +8,6 @@
 import Foundation
 import JavaScriptCore
 
-
 @objc protocol JSCCHandlerProtocol: JSExport, JSObjectProtocol {
     @objc(post:)
     func _post(_ message: JSValue) -> JSValue
@@ -36,7 +35,6 @@ extension JSCC {
     }
 }
 
-
 private typealias H = JSCC.StoreHandler
 
 extension H {
@@ -58,7 +56,7 @@ extension H {
 
 extension H {
     func handle(message: Message) throws -> String? {
-        let id = try self.getRunnerID()
+        let id = try getRunnerID()
         switch message.store {
         case .os: // ObjectStore
             switch message.action {
