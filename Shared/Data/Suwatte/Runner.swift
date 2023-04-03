@@ -8,6 +8,10 @@
 import Foundation
 import RealmSwift
 
+enum RunnerType: Int, PersistableEnum {
+    case API_RUNNER, FILE_RUNNER, PUBLIC_RUNNER
+}
+
 struct RunnerList: Codable, Hashable {
     var listName: String?
     var runners: [Runner]
@@ -36,13 +40,15 @@ final class StoredRunnerList: Object, ObjectKeyIdentifiable {
 
 final class StoredRunnerObject: Object, Identifiable {
     @Persisted(primaryKey: true) var id: String
-    @Persisted var listURL: String?
     @Persisted var name: String
-    @Persisted var thumbnail: String?
-    @Persisted var order: Int
+    @Persisted var version: Double
+    @Persisted var type: RunnerType
+
     @Persisted var dateAdded: Date = .init()
-    @Persisted var hosted: Bool = false
-    @Persisted var info: String?
+    @Persisted var enabled: Bool
+
+    @Persisted var listURL: String
+    @Persisted var thumbnail: String
 }
 
 extension DataManager {
@@ -57,29 +63,16 @@ extension DataManager {
         }
     }
 
-    func saveRunnerInfomation(runner: Runner, at url: URL, hosted: Bool = false) {
+    func deleteRunner(_ id: String) {
         let realm = try! Realm()
-        let obj = StoredRunnerObject()
 
-        obj.id = runner.id
-        obj.listURL = url.absoluteString
-        obj.name = runner.name
-        obj.hosted = hosted
-        obj.order = getRunnerInfomation(id: runner.id)?.order ?? realm.objects(StoredRunnerObject.self).count + 1
-
-        if let thumbnail = runner.thumbnail {
-            obj.thumbnail = url
-                .appendingPathComponent("assets")
-                .appendingPathComponent(thumbnail)
-                .absoluteString
-        }
-
+        let results = realm.objects(StoredRunnerObject.self).where { $0.id == id }
         try! realm.safeWrite {
-            realm.add(obj, update: .all)
+            realm.delete(results)
         }
     }
 
-    func getRunnerInfomation(id: String) -> StoredRunnerObject? {
+    func getRunner(_ id: String) -> StoredRunnerObject? {
         let realm = try! Realm()
 
         return realm
@@ -88,22 +81,58 @@ extension DataManager {
             .first
     }
 
-    func removeRunnerInformation(id: String) {
+    func saveRunner(_ info: SourceInfo, listURL: URL? = nil) {
         let realm = try! Realm()
 
-        let targets = realm
+        let target = realm
             .objects(StoredRunnerObject.self)
-            .where { $0.id == id }
+            .where { $0.id == info.id }
+            .first
+
+        guard target == nil else {
+            try! realm.safeWrite {
+                target?.enabled = true
+            }
+            return
+        }
+        let obj = StoredRunnerObject()
+        obj.name = info.name
+        obj.id = info.id
+        obj.version = info.version
+        obj.enabled = true
+
+        if let listURL {
+            obj.listURL = listURL.absoluteString
+        }
+
+        if let thumbnail = info.thumbnail {
+            if thumbnail.contains("http") {
+                if URL(string: thumbnail) != nil {
+                    obj.thumbnail = thumbnail
+                }
+            } else if let listURL {
+                let path = listURL.appendingPathComponent("assets").appendingPathComponent(thumbnail)
+                obj.thumbnail = path.absoluteString
+            }
+        }
 
         try! realm.safeWrite {
-            realm.delete(targets)
+            realm.add(obj)
         }
     }
 
-    func getHostedRunners() -> Results<StoredRunnerObject> {
+    func getActiveRunners() -> Results<StoredRunnerObject> {
         let realm = try! Realm()
+
         return realm
             .objects(StoredRunnerObject.self)
-            .where { $0.hosted == true && $0.listURL != nil && $0.info != nil }
+            .where { $0.enabled == true }
+            .sorted(by: [SortDescriptor(keyPath: "enabled", ascending: true),
+                         SortDescriptor(keyPath: "name", ascending: true)])
+    }
+
+    func getActiveSources() -> [AnyContentSource] {
+        let runners = getActiveRunners()
+        return runners.compactMap { SourceManager.shared.getSource(id: $0.id) }
     }
 }

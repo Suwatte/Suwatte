@@ -40,7 +40,7 @@ final class StoredContent: Object, ObjectKeyIdentifiable {
     @Persisted var contentType: ExternalContentType = .unknown
     @Persisted var trackerInfo: Map<String, String>
     var SourceName: String {
-        DaisukeEngine.shared.getSource(with: sourceId)?.name ?? "Unrecognized : \(sourceId)"
+        SourceManager.shared.getSource(id: sourceId)?.name ?? "Unrecognized : \(sourceId)"
     }
 
     var ContentIdentifier: ContentIdentifier {
@@ -113,7 +113,7 @@ extension DataManager {
     }
 
     func refreshStored(contentId: String, sourceId: String) async {
-        guard let source = DaisukeEngine.shared.getSource(with: sourceId) else {
+        guard let source = SourceManager.shared.getSource(id: sourceId) else {
             return
         }
 

@@ -14,7 +14,7 @@ import SwiftUIBackports
 import UIKit
 
 final class ExploreCollectionsController: UICollectionViewController {
-    var source: DaisukeContentSource!
+    var source: AnyContentSource!
     typealias Snapshot = NSDiffableDataSourceSnapshot<AnyHashable, ContentData>
     typealias DataSource = UICollectionViewDiffableDataSource<AnyHashable, ContentData>
     typealias CollectionExcerpt = DSKCommon.CollectionExcerpt
@@ -64,7 +64,7 @@ final class ExploreCollectionsController: UICollectionViewController {
                 cell.backport.contentConfiguration = Backport.UIHostingConfiguration {
                     let error = errorCache[item.section] ?? DSK.Errors.NamedError(name: "Error", message: data.description)
                     ErrorView(error: error, sourceID: source.id) { [weak self] in
-                        if case DSK.Errors.NetworkErrorCloudflareProtected = error {
+                        if case DaisukeEngine.Errors.NamedError(name: let name, message: _) = error, name == "CloudflareError" {
                             self?.reloadAllSections()
                         } else if let excerpt = item.section as? CollectionExcerpt {
                             self?.reloadSingleSection(excerpt: excerpt)
@@ -99,7 +99,7 @@ final class ExploreCollectionsController: UICollectionViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "tagCell", for: indexPath)
                 cell.contentConfiguration = nil
                 cell.backport.contentConfiguration = Backport.UIHostingConfiguration {
-                    TagTile(tag: data)
+                    TagTile(tag: data, source: model.source)
                 }
                 .margins(.all, 0)
                 return cell
@@ -128,7 +128,7 @@ final class ExploreCollectionsController: UICollectionViewController {
                 guard let header = header as? UICollectionViewCell else { fatalError("Invalid Header") }
                 header.contentConfiguration = nil
                 header.backport.contentConfiguration = Backport.UIHostingConfiguration {
-                    HeaderView(excerpt: section, request: section.request)
+                    HeaderView(excerpt: section, request: section.request, source: model.source)
                 }
                 .margins(.all, 0)
                 return header
@@ -204,6 +204,9 @@ extension CTR {
     }
 
     func loadTags() {
+        guard source.config.hasExplorePageTags else {
+            return
+        }
         let task = Task {
             do {
                 let data = try await source.getExplorePageTags()
@@ -227,15 +230,15 @@ extension CTR {
     }
 
     func handleCollections() {
-        let task = Task {
+        let task = Task.detached { [weak self] in
             do {
-                try await loadCollections()
+                try await self?.loadCollections()
             } catch {
-                Logger.shared.error("[ExploreViewController] \(error.localizedDescription)", .init(function: #function, line: #line))
+                Logger.shared.error("[ExploreViewController] \(error.localizedDescription)")
             }
         }
 
-        tasks.append(task)
+//        tasks.append(task)
     }
 
     func updateSectionExcerpt(with collection: CollectionExcerpt) {
@@ -296,7 +299,7 @@ extension CTR {
             }
         } catch {
             // Handle Error
-            Logger.shared.error("[ExploreViewController] \(error)", .init(function: #function))
+            Logger.shared.error("[ExploreViewController] \(error)")
             errorCache.updateValue(error, forKey: collection)
             // Add Placeholder Item
             let toBeDeleted = snapshot.itemIdentifiers(inSection: collection)
@@ -329,7 +332,6 @@ extension CTR {
     func loadCollections() async throws {
         let collections = try await source
             .createExplorePageCollections()
-
         try Task.checkCancellation()
         collections.forEach {
             self.updateSectionExcerpt(with: $0)
@@ -344,9 +346,7 @@ extension CTR {
 
         try Task.checkCancellation()
 
-        if let source = source as? DSK.LocalContentSource {
-            try await source.willResolveExploreCollections()
-        }
+        try await source.willResolveExploreCollections()
 
         await withTaskGroup(of: Void.self, body: { group in
 
@@ -448,7 +448,6 @@ extension CTR {
                         .transition(.opacity)
                 }
             }
-            .shimmering(active: placeholder)
             .conditional(placeholder) { view in
                 view.redacted(reason: .placeholder)
             }
@@ -461,7 +460,7 @@ extension CTR {
 
     struct TagHeaderView: View {
         @AppStorage(STTKeys.AppAccentColor) var color = Color.sttDefault
-        @EnvironmentObject var source: DaisukeContentSource
+        @EnvironmentObject var model: ExploreView.ViewModel
         var body: some View {
             HStack {
                 VStack(alignment: .leading) {
@@ -470,12 +469,14 @@ extension CTR {
                         .fontWeight(.semibold)
                 }
                 Spacer()
-                NavigationLink(destination: ExploreView.AllTagsView().environmentObject(source)) {
-                    Text("View All")
-                        .foregroundColor(color)
-                        .fontWeight(.light)
+                if model.source.config.hasSourceTags {
+                    NavigationLink(destination: ExploreView.AllTagsView(source: model.source)) {
+                        Text("View All")
+                            .foregroundColor(color)
+                            .fontWeight(.light)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
         }
     }
@@ -483,7 +484,7 @@ extension CTR {
     struct HeaderView: View {
         var excerpt: DSKCommon.CollectionExcerpt
         var request: DSKCommon.SearchRequest?
-        @EnvironmentObject var source: DaisukeContentSource
+        var source: AnyContentSource
         var body: some View {
             HStack(alignment: .bottom) {
                 VStack(alignment: .leading) {
@@ -512,14 +513,14 @@ extension CTR {
     struct TagTile: View {
         var tag: DSKCommon.ExploreTag
         @State var color: Color = .fadedPrimary
-        @EnvironmentObject var source: DaisukeContentSource
+        var source: AnyContentSource
         @StateObject private var loader = FetchImage()
 
         var body: some View {
-            NavigationLink(destination: ExploreView.SearchView(model: .init(request: request, source: source), tagLabel: tag.label)) {
+            NavigationLink(destination: ExploreView.SearchView(model: .init(request: tag.request, source: source), tagLabel: tag.label)) {
                 ZStack(alignment: .bottom) {
                     Group {
-                        if let view = loader.view {
+                        if let view = loader.image {
                             view
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
@@ -530,7 +531,6 @@ extension CTR {
                     .frame(height: 120)
                     .background(Color.accentColor.opacity(0.80))
                     .clipped()
-                    .shimmering(active: loader.isLoading)
 
                     Text(tag.label)
                         .font(.subheadline)
@@ -544,25 +544,26 @@ extension CTR {
                 .frame(width: 150)
                 .cornerRadius(7)
                 .animation(.default, value: color)
+                .animation(.default, value: loader.image)
             }
             .buttonStyle(NeutralButtonStyle())
             .task {
-                if loader.view != nil { return }
-                loader.animation = .default
-                loader.onSuccess = { result in
+                if loader.image != nil { return }
+                loader.onCompletion = { result in
+                    
+                    guard let result = try? result.get() else {
+                        return
+                    }
+                    
                     if let avgColor = result.image.averageColor {
                         color = Color(uiColor: avgColor)
                     }
                 }
+  
                 if let str = tag.imageUrl, let url = URL(string: str) {
-                    let req = try? await(source as? DSK.LocalContentSource)?.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
-                    loader.load(req ?? url)
+                    loader.load(url)
                 }
             }
-        }
-
-        var request: DSKCommon.SearchRequest {
-            .init(query: nil, page: 1, sort: nil, filters: [.init(id: tag.filterId, included: [tag.id])])
         }
     }
 }

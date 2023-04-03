@@ -217,21 +217,20 @@ extension Target {
                 let imageHeight = imageWidth * 1.5
                 VStack(alignment: .leading, spacing: 5) {
                     Group {
-                        if let view = image.view {
-                            view
+                        if let image = image.image  {
+                            image
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .clipped()
                                 .transition(.opacity)
                         } else {
                             Color.gray.opacity(0.25)
-                                .shimmering()
                                 .transition(.opacity)
                         }
                     }
                     .frame(width: imageWidth, height: imageHeight)
                     .background(Color.fadedPrimary)
-                    .cornerRadius(7)
+                    .cornerRadius(5)
 
                     VStack(alignment: .leading, spacing: 1.5) {
                         Text(STTHelpers.getComicTitle(from: publication.metadata.title))
@@ -262,7 +261,7 @@ extension Target {
                 }
             }
             .onDisappear { image.reset() }
-            .animation(.default, value: image.view)
+            .animation(.default, value: image.isLoading)
             .onTapGesture {
                 presentDialog.toggle()
             }

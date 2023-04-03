@@ -22,13 +22,12 @@ struct STTImageView: View {
         GeometryReader { proxy in
             let size: CGSize = .init(width: proxy.size.width, height: proxy.size.width * 1.5)
             Group {
-                if let view = loader.view {
+                if let view = loader.image {
                     view
                         .resizable()
                         .aspectRatio(contentMode: mode)
                 } else {
                     Color.gray.opacity(0.25)
-                        .shimmering()
                 }
             }
             .task { load(size) }
@@ -38,22 +37,34 @@ struct STTImageView: View {
             .frame(width: proxy.size.width, height: proxy.size.width * 1.5, alignment: .center)
             .background(Color.gray.opacity(0.25))
             .modifier(DisabledNavLink())
+            .animation(.easeOut(duration: 0.25), value: loader.image)
         }
     }
 
     func load(_ size: CGSize) {
-        if loader.view != nil { return }
+        if loader.image != nil { return }
         loader.priority = .normal
         loader.processors = [.resize(size: size)]
-        loader.animation = .easeOut(duration: 0.25)
         guard let imageURL, imageURL.isHTTP else {
             loader.load(url)
             return
         }
         Task {
-            let source = DaisukeEngine.shared.getJSSource(with: identifier.sourceId)
-            let req = try? await source?.willRequestImage(request: .init(url: imageURL.absoluteString))?.toURLRequest()
-            loader.load(req ?? imageURL)
+            let source = SourceManager.shared.getSource(id: identifier.sourceId)
+
+            do {
+                if let source = source as? any ModifiableSource, source.config.hasThumbnailInterceptor {
+                    let dskRequest = DSKCommon.Request(url: imageURL.absoluteString)
+                    let dskResponse = try await source.willRequestImage(request: dskRequest)
+                    let imageRequest = ImageRequest(urlRequest: try dskResponse.toURLRequest())
+                    loader.load(imageRequest)
+                    return
+                }
+            } catch {
+                Logger.shared.error(error.localizedDescription)
+            }
+
+            loader.load(url)
         }
     }
 
@@ -79,38 +90,43 @@ struct BaseImageView: View {
         GeometryReader { proxy in
             let size: CGSize = .init(width: proxy.size.width, height: proxy.size.width * 1.5)
             Group {
-                if let view = loader.view {
+                if let view = loader.image {
                     view
                         .resizable()
                         .aspectRatio(contentMode: mode)
                 } else {
                     Color.gray.opacity(0.25)
-                        .shimmering()
                 }
             }
             .onAppear { load(size) }
             .onDisappear { loader.reset() }
             .frame(width: proxy.size.width, height: proxy.size.width * 1.5, alignment: .center)
             .background(Color.gray.opacity(0.25))
+            .animation(.easeOut(duration: 0.25), value: loader.image)
         }
     }
 
     func load(_ size: CGSize) {
-        if loader.view != nil { return }
-
+        if loader.image != nil { return }
         loader.processors = [.resize(size: size)]
-        loader.animation = .easeOut(duration: 0.25)
-
         guard let url, url.isHTTP else {
             loader.load(url)
             return
         }
         Task {
-            if let sourceId = sourceId, let source = DaisukeEngine.shared.getJSSource(with: sourceId) {
-                let req = try? await source.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
-                loader.load(req ?? url)
-                return
+            do {
+                if let sourceId, let source = SourceManager.shared.getSource(id: sourceId) as? any ModifiableSource, source.config.hasThumbnailInterceptor {
+                    let dskRequest = DSKCommon.Request(url: url.absoluteString)
+                    let dskResponse = try await source.willRequestImage(request: dskRequest)
+                    let imageRequest = ImageRequest(urlRequest: try dskResponse.toURLRequest())
+                    loader.load(imageRequest)
+                } else {
+                    loader.load(url)
+                }
+            } catch {
+                Logger.shared.error(error.localizedDescription)
             }
+
             loader.load(url)
         }
     }
@@ -123,23 +139,21 @@ class AsyncImageModifier: AsyncImageDownloadRequestModifier {
 
     let sourceId: String?
     func modified(for request: URLRequest, reportModified: @escaping (URLRequest?) -> Void) {
-        guard let sourceId, let source = DaisukeEngine.shared.getJSSource(with: sourceId) else {
-            reportModified(request)
-            return
-        }
-        do {
-            let req = try request.toDaisukeNetworkRequest()
-            Task {
-                let modified = try await source.willRequestImage(request: req)
-                if let modified {
+        Task {
+            do {
+                if let sourceId, let source = SourceManager.shared.getSource(id: sourceId) as? any ModifiableSource, source.config.hasThumbnailInterceptor {
+                    let dskRequest = try request.toDaisukeNetworkRequest()
+                    let dskResponse = try await source.willRequestImage(request: dskRequest)
+                    let imageRequest = try dskResponse.toURLRequest()
                     try Task.checkCancellation()
-                    reportModified(try modified.toURLRequest())
+                    reportModified(imageRequest)
+                    return
                 } else {
                     reportModified(request)
                 }
+            } catch {
+                reportModified(request)
             }
-        } catch {
-            reportModified(request)
         }
     }
 

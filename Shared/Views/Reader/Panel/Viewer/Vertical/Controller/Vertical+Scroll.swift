@@ -89,6 +89,15 @@ extension Controller {
         if !model.slider.isScrubbing, model.menuControl.menu {
             model.menuControl.hideMenu()
         }
+
+        guard let currentPath else {
+            return
+        }
+
+        if currentPath.section != lastViewedSection {
+            STTHelpers.triggerHaptic()
+            lastViewedSection = currentPath.section
+        }
     }
 
     func getCurrentChapterScrollRange() -> (min: CGFloat, max: CGFloat) {

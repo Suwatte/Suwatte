@@ -272,7 +272,7 @@ extension AnilistView.DirectoryView {
             VStack(alignment: .leading, spacing: 5) {
                 ImageV
                     .frame(height: reader.size.width * 1.5)
-                    .cornerRadius(7)
+                    .cornerRadius(5)
 
                 Text(data.title.userPreferred)
                     .font(.subheadline)

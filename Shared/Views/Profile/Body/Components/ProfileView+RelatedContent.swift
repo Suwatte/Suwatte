@@ -13,9 +13,7 @@ extension ProfileView.Skeleton {
     struct RelatedContentView: View {
         typealias Highlight = DaisukeEngine.Structs.Highlight
         var collections: [DaisukeEngine.Structs.HighlightCollection]
-        @EnvironmentObject var source: DaisukeContentSource
         @EnvironmentObject var model: ProfileView.ViewModel
-
         var body: some View {
             VStack(alignment: .leading) {
                 ForEach(collections.filter { !$0.highlights.isEmpty }) {
@@ -48,16 +46,15 @@ extension ProfileView.Skeleton.RelatedContentView {
     }
 
     struct Cell: View {
-        @EnvironmentObject var source: DaisukeContentSource
         @EnvironmentObject var model: ProfileView.ViewModel
         @AppStorage(STTKeys.TileStyle) var style = TileStyle.SEPARATED
         var data: Highlight
 
         var body: some View {
             NavigationLink {
-                ProfileView(entry: data, sourceId: source.id)
+                ProfileView(entry: data, sourceId: model.source.id)
             } label: {
-                DefaultTile(entry: data, sourceId: source.id)
+                DefaultTile(entry: data, sourceId: model.source.id)
                     .frame(width: 150, height: CELL_HEIGHT)
             }
             .buttonStyle(NeutralButtonStyle())

@@ -57,7 +57,7 @@ extension ProfileView.Skeleton {
 
     struct PropertyTagsView: View {
         var property: DSKCommon.Property
-        var source: DaisukeContentSource
+        var source: AnyContentSource
         var body: some View {
             InteractiveTagView(property.tags) { tag in
                 NavigationLink(destination: ExploreView.SearchView(model: .init(request: generateSearchRequest(tagId: tag.id, propertyId: property.id), source: source), tagLabel: tag.label)) {

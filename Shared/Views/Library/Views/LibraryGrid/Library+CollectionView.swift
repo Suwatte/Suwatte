@@ -20,6 +20,7 @@ extension LibraryView {
         @AppStorage(STTKeys.ShowOnlyDownloadedTitles) var showDownloadsOnly = false
         // State
         @State var presentOrderOptions = false
+        @State var presentMigrateSheet = false
         @StateObject var model: ViewModel = .init()
         @State var query = ""
 
@@ -77,6 +78,12 @@ extension LibraryView {
                                 }
 
                                 Button {
+                                    presentMigrateSheet.toggle()
+                                } label: {
+                                    Label("Migrate", systemImage: "shippingbox")
+                                }
+
+                                Button {
                                     let targets = filteredLibrary().compactMap { $0.content }.map { ($0.contentId, $0.sourceId) } as [(String, String)]
                                     Task {
                                         for content in targets {
@@ -99,6 +106,9 @@ extension LibraryView {
                 .sheet(isPresented: $model.presentOptionsSheet) {
                     OptionsSheet(collection: collection)
                 }
+                .fullScreenCover(isPresented: $presentMigrateSheet, content: {
+                    PreMigrationView()
+                })
                 .environmentObject(model)
                 .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: Text("Search \(NAV_TITLE)"))
         }

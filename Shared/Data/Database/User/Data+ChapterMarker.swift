@@ -97,13 +97,18 @@ extension DataManager {
     private func notifySourceOfMarkState(chapters: [StoredChapter], completed: Bool) {
         let grouped = Dictionary(grouping: chapters, by: { $0.sourceId })
         for (key, value) in grouped {
-            let source = DaisukeEngine.shared.getJSSource(with: key)
+            let source = SourceManager.shared.getSource(id: key) as? any SyncableSource
             let groupedByContent = Dictionary(grouping: value, by: { $0.contentId })
 
             for (k, v) in groupedByContent {
                 let t = v.map { $0.chapterId }
                 Task {
-                    await source?.onChaptersMarked(contentId: k, chapterIds: t, completed: completed)
+                    do {
+                        try await source?.onChaptersMarked(contentId: k, chapterIds: t, completed: completed)
+
+                    } catch {
+                        ToastManager.shared.info("Failed to Sync Read Marker")
+                    }
                 }
             }
         }
@@ -196,6 +201,23 @@ extension DataManager {
                         }
                         realm.add(target, update: .modified)
                     }
+                }
+            }
+        }
+    }
+
+    func updateLastRead(id: String) {
+        DispatchQueue(label: "background").async {
+            autoreleasepool {
+                let realm = try! Realm()
+                let target = realm
+                    .objects(LibraryEntry.self)
+                    .where { $0.content._id == id }
+                    .first
+                guard let target else { return }
+                try! realm.safeWrite {
+                    target.lastRead = .now
+                    realm.add(target, update: .modified)
                 }
             }
         }

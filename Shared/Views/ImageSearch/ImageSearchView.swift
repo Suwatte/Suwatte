@@ -106,7 +106,7 @@ extension ImageSearchView {
                 BaseImageView(url: URL(string: entry.header.thumbnail))
                     .frame(width: 120, height: 120 * 1.5, alignment: .center)
                     .background(Color.gray)
-                    .cornerRadius(7)
+                    .cornerRadius(5)
                 VStack(alignment: .leading) {
                     Text(entry.data.source)
                         .font(.headline.weight(.semibold))
@@ -136,7 +136,7 @@ extension ImageSearchView {
 
                     Button(url.host ?? "Unknown Host") {
                         Task { @MainActor in
-                            let result = await DaisukeEngine.shared.handleURL(for: url)
+                            let result = await SourceManager.shared.handleURL(for: url)
 
                             if !result {
                                 KEY_WINDOW?.rootViewController?.present(SFSafariViewController(url: url), animated: true)

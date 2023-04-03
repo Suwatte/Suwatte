@@ -143,6 +143,7 @@ extension ReaderView {
             HStack {
                 Button {
                     //
+                    STTHelpers.triggerHaptic()
                     if var topController = KEY_WINDOW?.rootViewController {
                         while let presentedViewController = topController.presentedViewController {
                             topController = presentedViewController
@@ -156,6 +157,7 @@ extension ReaderView {
                 }
                 Spacer()
                 Button {
+                    STTHelpers.triggerHaptic()
                     model.menuControl.toggleSettings()
                 } label: {
                     Image(systemName: "ellipsis.circle.fill")
@@ -204,7 +206,12 @@ extension ReaderView.ReaderMenuOverlay {
         @EnvironmentObject var model: ReaderView.ViewModel
 
         var body: some View {
-            Button(action: { if model.NextChapter != nil { model.resetToChapter(model.NextChapter!) } },
+            Button(action: {
+                       if model.NextChapter != nil {
+                           model.resetToChapter(model.NextChapter!)
+                           STTHelpers.triggerHaptic()
+                       }
+                   },
                    label: {
                        Text("\(Image(systemName: "chevron.right"))")
                            .fontWeight(.semibold)
@@ -221,7 +228,10 @@ extension ReaderView.ReaderMenuOverlay {
         @EnvironmentObject var model: ReaderView.ViewModel
 
         var body: some View {
-            Button(action: { if model.PreviousChapter != nil { model.resetToChapter(model.PreviousChapter!) } },
+            Button(action: { if model.PreviousChapter != nil {
+                       STTHelpers.triggerHaptic()
+                       model.resetToChapter(model.PreviousChapter!)
+                   } },
                    label: {
                        Text("\(Image(systemName: "chevron.left"))")
                            .fontWeight(.bold)

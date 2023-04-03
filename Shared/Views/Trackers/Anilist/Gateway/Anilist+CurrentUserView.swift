@@ -16,6 +16,7 @@ extension AnilistView {
             LoadableView(load, loadable) {
                 CurrentUserView(account: $0)
             }
+            .animation(.default, value: loadable)
         }
 
         func load() {
@@ -84,20 +85,27 @@ extension AnilistView {
             ZStack {
                 // BG
                 if let banner = account.bannerImage {
-                    LazyImage(url: URL(string: banner), resizingMode: .aspectFill)
+                    LazyImage(url: URL(string: banner))
                 }
 
                 // Gradient
                 LinearGradient(colors: [.clear, Color(uiColor: UIColor.systemBackground)], startPoint: .top, endPoint: .bottom)
                 VStack {
-                    LazyImage(url: URL(string: account.avatar.large ?? ""), resizingMode: .aspectFill)
-                        .onSuccess { response in
-                            if let color = response.image.averageColor {
-                                DispatchQueue.main.async {
-                                    profileColor = Color(color)
+                    LazyImage(url: URL(string: account.avatar.large ?? "")) { state in
+                        if let image = state.image {
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .task {
+                                    let color = state.imageContainer?.image.averageColor
+                                    if let color {
+                                        profileColor = Color(color)
+                                    }
                                 }
-                            }
+                                .transition(.opacity)
                         }
+                        
+                    }
                         .frame(width: 100, height: 100, alignment: .center)
                         .clipShape(Circle())
                         .shadow(radius: 3)

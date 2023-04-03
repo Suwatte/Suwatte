@@ -33,6 +33,13 @@ extension LibraryView.LibraryGrid {
                         case .migrate:
                             NavigationView {
                                 MigrationView(contents: selectedEntries.compactMap(\.content))
+                                    .toolbar {
+                                        ToolbarItem(placement: .cancellationAction) {
+                                            Button("Cancel") {
+                                                selectionOption = nil
+                                            }
+                                        }
+                                    }
                             }
                             .navigationViewStyle(.stack)
                         }

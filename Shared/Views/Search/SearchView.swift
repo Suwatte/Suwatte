@@ -19,7 +19,7 @@ struct SearchView: View {
     @ObservedResults(ReadLater.self) var readLater
 
     @State var presentHistory = false
-    @ObservedResults(SearchHistory.self, where: { $0.sourceId == nil && $0.text != nil }, sortDescriptor: SortDescriptor(keyPath: "date", ascending: false)) var history
+    @ObservedResults(UpdatedSearchHistory.self, where: { $0.sourceId == nil }, sortDescriptor: SortDescriptor(keyPath: "date", ascending: false)) var history
     @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
 
     var body: some View {
@@ -42,7 +42,8 @@ struct SearchView: View {
             model.makeRequests()
         }
         .onSubmit(of: .search) {
-            DataManager.shared.saveSearch(model.query, sourceId: nil)
+            let request: DSKCommon.SearchRequest = .init(query: model.query, page: 1)
+            try? DataManager.shared.saveSearch(request, sourceId: nil, display: model.query)
         }
         .onAppear {
             if initialQuery.isEmpty || !initial { return }
@@ -58,8 +59,8 @@ struct SearchView: View {
         .init(rawValue: UserDefaults.standard.string(forKey: STTKeys.SourcesHiddenFromGlobalSearch) ?? "") ?? []
     }
 
-    var sources: [DaisukeContentSource] {
-        return DaisukeEngine.shared.getSources().filter { !disabledSourceIds.contains($0.id) }
+    var sources: [AnyContentSource] {
+        SourceManager.shared.sources.filter { !disabledSourceIds.contains($0.id) }
     }
 
     var RESULT_VIEW: some View {
@@ -216,11 +217,11 @@ struct SearchView: View {
         List {
             ForEach(history) { entry in
                 Button {
-                    model.query = entry.text!
+                    didSelectHistory(entry)
                 }
                     label: {
                     HStack {
-                        Text(entry.text!)
+                        Text(entry.displayText)
                             .font(.headline)
                             .fontWeight(.light)
                         Spacer()
@@ -236,6 +237,10 @@ struct SearchView: View {
         }
     }
 
+    func didSelectHistory(_ h: UpdatedSearchHistory) {
+        model.query = h.displayText
+    }
+
     func inLibrary(_ entry: Highlight, _ sourceId: String) -> Bool {
         library
             .contains(where: { $0.content?.sourceId == sourceId && $0.content?.contentId == entry.id })
@@ -249,7 +254,7 @@ struct SearchView: View {
 
 extension SearchView {
     struct Cell: View {
-        var source: DaisukeEngine.LocalContentSource
+        var source: AnyContentSource
         var request: DaisukeEngine.Structs.SearchRequest
         var body: some View {
             Text(source.name)
@@ -267,8 +272,8 @@ extension SearchView {
             .init(rawValue: UserDefaults.standard.string(forKey: STTKeys.SourcesHiddenFromGlobalSearch) ?? "") ?? []
         }
 
-        var sources: [DaisukeContentSource] {
-            DaisukeEngine.shared.getSources().filter { !disabledSourceIds.contains($0.id) }
+        var sources: [AnyContentSource] {
+            SourceManager.shared.sources.filter { !disabledSourceIds.contains($0.id) }
         }
 
         func makeRequests() {
@@ -280,7 +285,7 @@ extension SearchView {
 
                 Task { @MainActor in
                     do {
-                        let data = try await source.getSearchResults(query: request)
+                        let data = try await source.getSearchResults(request)
                         results[source.id] = .loaded(data)
                     } catch {
                         results[source.id] = .failed(error)
@@ -295,7 +300,8 @@ extension SearchView {
             }
             Task { @MainActor in
                 do {
-                    let data = try await source.getSearchResults(query: .init(query: query))
+                    let request = DSKCommon.SearchRequest(query: query)
+                    let data = try await source.getSearchResults(request)
                     results[source.id] = .loaded(data)
                 } catch {
                     results[source.id] = .failed(error)

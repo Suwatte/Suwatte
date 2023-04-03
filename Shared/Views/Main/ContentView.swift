@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State var tabs = AppTabs.defaultSettings
+    var tabs = AppTabs.defaultSettings
     @AppStorage(STTKeys.IntialTabIndex) var InitialSelection = 3
     @State var selection = 0
     @StateObject var toaster = ToastManager.shared
@@ -26,15 +26,18 @@ struct ContentView: View {
             }
             .environmentObject(toaster)
             .environmentObject(DaisukeEngine.shared)
+            .onAppear {
+                selection = InitialSelection
+            }
     }
 
     var MainContent: some View {
         TabView(selection: $selection) {
-            ForEach(Array(zip(tabs.indices, tabs)), id: \.0) { index, tab in
+            ForEach(tabs, id: \.rawValue) { tab in
                 tab.view()
-                    .tag(index)
+                    .tag(tab.rawValue)
                     .tabItem {
-                        Image(systemName: "\(tab.systemImage())\(selection == index ? ".fill" : "")")
+                        Image(systemName: "\(tab.systemImage())\(selection == tab.rawValue ? ".fill" : "")")
                             // SwiftUI AHIG Override: https://stackoverflow.com/a/70058260
                             .environment(\.symbolVariants, .none)
                     }

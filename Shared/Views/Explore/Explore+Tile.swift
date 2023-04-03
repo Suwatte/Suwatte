@@ -13,10 +13,9 @@ extension ExploreView {
     struct HighlightTile: View {
         var entry: DaisukeEngine.Structs.Highlight
         var style: DSKCommon.CollectionStyle
+        var sourceId: String
 
         @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
-
-        var sourceId: String
         var body: some View {
             switch style {
             case .INFO: INFO
@@ -28,7 +27,7 @@ extension ExploreView {
                     NORMAL_CPT
                         .transition(.opacity)
                 }
-            case .GALLERY: GALLERY(entry: entry)
+            case .GALLERY: GALLERY(entry: entry, sourceId: sourceId)
             case .UPDATE_LIST: LATEST
             }
         }
@@ -41,7 +40,7 @@ extension ExploreView.HighlightTile {
             // Image
             STTImageView(url: URL(string: entry.cover), identifier: .init(contentId: entry.id, sourceId: sourceId))
                 .frame(width: 100)
-                .cornerRadius(7)
+                .cornerRadius(5)
                 .padding(.all, 5)
                 .shadow(radius: 2.5)
 
@@ -80,7 +79,7 @@ extension ExploreView.HighlightTile {
             Spacer()
         }
         .background(Color.primary.opacity(0.05))
-        .cornerRadius(7)
+        .cornerRadius(5)
     }
 
     var NORMAL_CPT: some View {
@@ -113,7 +112,7 @@ extension ExploreView.HighlightTile {
             VStack(alignment: .leading, spacing: 5) {
                 STTImageView(url: URL(string: entry.cover), identifier: .init(contentId: entry.id, sourceId: sourceId))
                     .frame(height: reader.size.width * 1.5)
-                    .cornerRadius(7)
+                    .cornerRadius(5)
 
                 Text(entry.title)
                     .font(.subheadline)
@@ -128,7 +127,7 @@ extension ExploreView.HighlightTile {
             // Image
             STTImageView(url: URL(string: entry.cover), identifier: .init(contentId: entry.id, sourceId: sourceId))
                 .frame(width: 100)
-                .cornerRadius(7)
+                .cornerRadius(5)
                 .padding(.all, 7)
                 .shadow(radius: 2.5)
 
@@ -161,12 +160,12 @@ extension ExploreView.HighlightTile {
             Spacer()
         }
         .background(Color.primary.opacity(0.05))
-        .cornerRadius(7)
+        .cornerRadius(5)
     }
 
     struct GALLERY: View {
         var entry: DaisukeEngine.Structs.Highlight
-        @EnvironmentObject var source: DaisukeContentSource
+        var sourceId: String
         @State private var endColor = Color.black
         @State private var timer: Timer?
         @State private var currentImageIndex = 0
@@ -184,7 +183,7 @@ extension ExploreView.HighlightTile {
         var body: some View {
             ZStack(alignment: .bottom) {
                 Group {
-                    if let view = loader.view {
+                    if let view = loader.image {
                         GeometryReader { proxy in
                             view
                                 .resizable()
@@ -194,7 +193,6 @@ extension ExploreView.HighlightTile {
 
                     } else {
                         Color.gray.opacity(0.25)
-                            .shimmering()
                     }
                 }
 
@@ -244,7 +242,7 @@ extension ExploreView.HighlightTile {
                     await load(url: url)
                 }
             })
-            .cornerRadius(7)
+            .cornerRadius(5)
             .onAppear(perform: didAppear)
             .onDisappear(perform: timer?.invalidate)
             .onAppear {
@@ -253,18 +251,34 @@ extension ExploreView.HighlightTile {
             .onDisappear(perform: {
                 prefetcher.stopPrefetching(with: urls)
             })
+            .animation(.easeOut(duration: 0.25), value: loader.image)
         }
 
         func load(url: URL?) async {
             guard let url else { return }
-            let req = try? await(source as? DSK.LocalContentSource)?.willRequestImage(request: .init(url: url.absoluteString))?.toURLRequest()
-            loader.animation = .easeOut(duration: 0.25)
-            loader.load(req ?? url)
+            let source = SourceManager.shared.getSource(id: sourceId)
+
+            do {
+                if let source = source as? any ModifiableSource, source.config.hasThumbnailInterceptor {
+                    let dskRequest = DSKCommon.Request(url: url.absoluteString)
+                    let dskResponse = try await source.willRequestImage(request: dskRequest)
+                    let imageRequest = ImageRequest(urlRequest: try dskResponse.toURLRequest())
+                    loader.load(imageRequest)
+                    return
+                }
+            } catch {
+                Logger.shared.error(error.localizedDescription)
+            }
+
+            loader.load(url)
         }
 
         func didAppear() {
             // Update Loader
-            loader.onSuccess = { response in
+            loader.onCompletion = { response in
+                guard let response = try? response.get() else {
+                    return
+                }
                 if let color = response.image.averageColor {
                     endColor = Color(color)
                 }

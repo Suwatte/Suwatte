@@ -91,13 +91,15 @@ class STTHelpers {
                 return .loaded(data)
             }
             // Get from source
-            guard let source = DaisukeEngine.shared.getSource(with: chapter.sourceId) else {
-                return .failed(DaisukeEngine.Errors.NamedError(name: "[DAISUKE]", message: "Source Not Found"))
+            guard let source = SourceManager.shared.getSource(id: chapter.sourceId) else {
+                return .failed(DaisukeEngine.Errors.NamedError(name: "SourceManager", message: "Source Not Found"))
             }
             do {
                 let data = try await source.getChapterData(contentId: chapter.contentId, chapterId: chapter.chapterId)
                 let stored = data.toStored(withStoredChapter: chapter.toStored())
-                DataManager.shared.saveChapterData(data: stored)
+                if !source.config.chapterDataCachingDisabled {
+                    DataManager.shared.saveChapterData(data: stored)
+                }
                 return .loaded(stored)
             } catch {
                 return .failed(error)
@@ -157,5 +159,12 @@ class STTHelpers {
         }
 
         return nil
+    }
+
+    static func triggerHaptic(_ overrride: Bool = false) {
+        if Preferences.standard.enableReaderHaptics || overrride {
+            let haptic = UIImpactFeedbackGenerator(style: .medium)
+            haptic.impactOccurred()
+        }
     }
 }

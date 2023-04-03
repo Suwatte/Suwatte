@@ -41,6 +41,13 @@ extension ProfileView {
                 .fullScreenCover(isPresented: $viewModel.presentMigrationView, content: {
                     NavigationView {
                         MigrationView(contents: [viewModel.storedContent])
+                            .toolbar {
+                                ToolbarItem(placement: .cancellationAction) {
+                                    Button("Cancel") {
+                                        viewModel.presentMigrationView.toggle()
+                                    }
+                                }
+                            }
                     }
                 })
                 .safariView(isPresented: $viewModel.presentSafariView) {

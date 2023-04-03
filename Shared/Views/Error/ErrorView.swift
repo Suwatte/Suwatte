@@ -14,7 +14,7 @@ struct ErrorView: View {
     var action: () -> Void
     var body: some View {
         Group {
-            if case DaisukeEngine.Errors.NetworkErrorCloudflareProtected = error, let sourceID = sourceID {
+            if case DaisukeEngine.Errors.NamedError(name: let name, message: _) = error, name == "CloudflareError", let sourceID = sourceID {
                 CloudFlareErrorView(sourceID: sourceID, action: action)
             } else {
                 BaseErrorView
@@ -40,7 +40,7 @@ struct ErrorView: View {
             Button {
                 action()
             }
-                label: {
+        label: {
                 Text("Retry")
                     .font(.headline)
                     .fontWeight(.semibold)

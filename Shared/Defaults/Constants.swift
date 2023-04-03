@@ -39,8 +39,8 @@ let STTUserDefaults: [String: Any] = [
     STTKeys.DefaultUserAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0",
 ]
 
-let SCHEMA_VERSION = 4
-let STT_BRIDGE_VERSION = "1.4.0"
+let SCHEMA_VERSION = 9
+let STT_BRIDGE_VERSION = "2.0.1"
 
 let KEY_WINDOW = UIApplication
     .shared

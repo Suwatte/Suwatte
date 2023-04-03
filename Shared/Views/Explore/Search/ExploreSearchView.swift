@@ -11,11 +11,11 @@ extension ExploreView {
     struct SearchView: View {
         @StateObject var model: ViewModel
         var tagLabel: String?
+        var usingDirectory: Bool = true
         @State var initialized = false
         @State var firstCall = false
         @State var presentSearchHistory = false
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
-        @Preference(\.useDirectory) var useDirectory
 
         var body: some View {
             LoadableView(loadable: model.result) {
@@ -60,8 +60,7 @@ extension ExploreView {
             .navigationBarTitleDisplayMode(.inline)
             .onReceive(model.$query.debounce(for: .seconds(0.45), scheduler: DispatchQueue.main), perform: didRecieveQuery(_:))
             .onSubmit(of: .search, didSubmitSearch)
-            .environmentObject(model.source) // Required for Highlight Navigation
-            .environmentObject(model) // Required for Result Count
+            .environmentObject(model)
             .animation(.default, value: model.result)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
@@ -84,11 +83,7 @@ extension ExploreView {
             if let tagLabel = tagLabel {
                 return "\(tagLabel) Titles"
             } else {
-                if let source = model.source as? DSK.LocalContentSource, source.hasExplorePage && !useDirectory {
-                    return "Search"
-                } else {
-                    return "Directory"
-                }
+                return usingDirectory ? "Directory" : "Search"
             }
         }
 
@@ -104,8 +99,6 @@ extension ExploreView {
             }
         }
 
-        func didUpdateFilters() {}
-
         func initialRequest() {
             if initialized {
                 return
@@ -115,7 +108,7 @@ extension ExploreView {
         }
 
         func didSubmitSearch() {
-            DataManager.shared.saveSearch(model.query, sourceId: model.source.id)
+            try? DataManager.shared.saveSearch(model.request, sourceId: model.source.id, display: model.request.query ?? "")
         }
 
         func didRecieveQuery(_ val: String) {

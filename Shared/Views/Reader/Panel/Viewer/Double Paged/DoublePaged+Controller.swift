@@ -21,6 +21,7 @@ extension DoublePagedViewer {
         var isScrolling: Bool = false
         var cache: [Int: [PageGroup]] = [:]
         var pendingUpdates = false
+        var lastViewedSection = 0
     }
 }
 

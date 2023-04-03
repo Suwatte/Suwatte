@@ -12,40 +12,40 @@ import SwiftUI
 import UIKit
 
 struct ExploreView: View {
-    @EnvironmentObject var source: DaisukeContentSource
-    @StateObject var model = ViewModel()
+    @StateObject var model: ViewModel
     @Preference(\.useDirectory) var useDirectory
     var body: some View {
         Group {
             if hasExplorePage && !useDirectory {
-                ExploreCollectioViewRepresentable()
+                ExploreCollectionViewRepresentable()
                     .toolbar {
                         ToolbarItem(placement: .navigationBarTrailing) {
-                            NavigationLink(destination: SearchView(model: .init(request: .init(), source: source))) {
+                            NavigationLink(destination: SearchView(model: .init(source: model.source), usingDirectory: false)) {
                                 Image(systemName: "magnifyingglass")
                             }
                         }
                     }
             } else {
-                ExploreView.SearchView(model: .init(request: .init(), source: source))
+                ExploreView.SearchView(model: .init(source: model.source))
             }
         }
-        .navigationTitle(source.name)
+        .navigationTitle(model.source.name)
         .environmentObject(model)
-        .environmentObject(source)
         .modifier(InteractableContainer(selection: $model.selection))
     }
 
     var hasExplorePage: Bool {
-        if let source = source as? DaisukeEngine.LocalContentSource {
-            return source.hasExplorePage
-        }
-        return false
+        model.source.config.hasExplorePage
     }
 }
 
 extension ExploreView {
     class ViewModel: ObservableObject {
         @Published var selection: HighlightIndentier?
+        var source: AnyContentSource
+
+        init(source: AnyContentSource) {
+            self.source = source
+        }
     }
 }

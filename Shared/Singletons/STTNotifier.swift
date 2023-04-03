@@ -29,7 +29,7 @@ class STTNotifier {
         let center = UNUserNotificationCenter.current()
         center.add(request) { error in
             if let error = error {
-                Logger.shared.error(error.localizedDescription, .init(file: #file, function: #function, line: #line))
+                Logger.shared.error(error.localizedDescription)
             }
         }
         Logger.shared.log("Notification Scheduled")

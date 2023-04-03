@@ -103,6 +103,12 @@ extension DoublePagedViewer.Controller {
         guard let path = currentPath else {
             return
         }
+
+        if path.section != lastViewedSection {
+            STTHelpers.triggerHaptic()
+            lastViewedSection = path.section
+        }
+
         let item = getStack(for: path.section)
             .get(index: path.item)
 

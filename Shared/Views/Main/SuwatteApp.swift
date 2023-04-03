@@ -45,7 +45,7 @@ extension SuwatteApp {
                     break
                 }
                 Task {
-                    await DaisukeEngine.shared.handleURL(for: url)
+                    await SourceManager.shared.handleURL(for: url)
                 }
             case "anilist":
                 break // TODO: Open Anilist Profile
@@ -57,7 +57,7 @@ extension SuwatteApp {
                 }
                 Task {
                     do {
-                        try await DaisukeEngine.shared.saveRunnerList(at: url.absoluteString)
+                        try await SourceManager.shared.saveRunnerList(at: url.absoluteString)
                         ToastManager.shared.info("Runner List Saved")
                     } catch {
                         ToastManager.shared.error("Failed to save Runner List: \(error.localizedDescription)")
@@ -84,7 +84,7 @@ extension SuwatteApp {
 
             Task {
                 do {
-                    try await DaisukeEngine.shared.importRunner(from: url)
+                    try await SourceManager.shared.importRunner(from: url)
                     await MainActor.run(body: {
                         ToastManager.shared.display(.info("Imported Runner!"))
                     })

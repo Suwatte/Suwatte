@@ -35,7 +35,7 @@ struct UpdateFeedView: View {
 
     @MainActor
     func handleRefresh() async {
-        let count = await DaisukeEngine.shared.handleForegroundLibraryUpdate()
+        let count = await SourceManager.shared.handleForegroundLibraryUpdate()
         if count == 0 {
             ToastManager.shared.display(.info("No Updates in your library."))
         } else {

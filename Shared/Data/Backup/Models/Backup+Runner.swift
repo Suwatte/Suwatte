@@ -39,9 +39,8 @@ extension StoredRunnerObject: Codable {
         let container = try decoder.container(keyedBy: Keys.self)
         id = try container.decode(String.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
-        listURL = try container.decodeIfPresent(String.self, forKey: .listURL)
-        thumbnail = try container.decodeIfPresent(String.self, forKey: .thumbnail)
-        order = try container.decodeIfPresent(Int.self, forKey: .order) ?? 0
+        listURL = try container.decodeIfPresent(String.self, forKey: .listURL) ?? ""
+        thumbnail = try container.decodeIfPresent(String.self, forKey: .thumbnail) ?? ""
     }
 
     func encode(to encoder: Encoder) throws {

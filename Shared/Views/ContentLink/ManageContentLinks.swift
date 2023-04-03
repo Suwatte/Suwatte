@@ -16,7 +16,7 @@ struct ManageContentLinks: View {
     init(content: StoredContent) {
         self.content = content
         let id = content._id
-        $entries.where = { $0.parent._id == id || $0.child._id == id }
+        $entries.where = { $0.ids.contains(id) }
     }
 
     var body: some View {
@@ -56,10 +56,7 @@ struct ManageContentLinks: View {
     }
 
     func fetch() -> [StoredContent] {
-        entries.map { link in
-            if link.parent?._id == content._id { return link.child }
-            return link.parent
-        }.compactMap { $0 }
+        DataManager.shared.getLinkedContent(for: content._id)
     }
 
     @ViewBuilder

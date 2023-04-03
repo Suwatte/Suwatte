@@ -21,6 +21,7 @@ extension VerticalPager {
         var isScrolling: Bool = false
 
         var enableInteractions: Bool = Preferences.standard.imageInteractions
+        var lastViewedSection = 0
     }
 }
 

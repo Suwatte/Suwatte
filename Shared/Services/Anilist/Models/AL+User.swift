@@ -16,7 +16,11 @@ extension Anilist {
         var Viewer: User
     }
 
-    struct User: Decodable {
+    struct User: Decodable, Identifiable, Equatable {
+        static func == (lhs: Anilist.User, rhs: Anilist.User) -> Bool {
+            lhs.id == rhs.id
+        }
+        
         var id: Int
         var name: String
         var about: String?

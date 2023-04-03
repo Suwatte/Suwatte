@@ -130,4 +130,5 @@ enum STTKeys {
     static let VerticalPillarBoxEnabled = "READER.pillar_box_enabled"
     static let VerticalPillarBoxPCT = "READER.pillar_box_pct"
     static let PrefersDirectoryView = "APP.use_directory"
+    static let EnableReaderHaptics = "READER.haptics"
 }

@@ -96,7 +96,7 @@ final class StoredChapter: Object, ObjectKeyIdentifiable {
     }
 
     var SourceName: String {
-        DaisukeEngine.shared.getSource(with: sourceId)?.name ?? "Unrecognized : \(sourceId)"
+        SourceManager.shared.getSource(id: sourceId)?.name ?? "Unrecognized : \(sourceId)"
     }
 
     var ContentIdentifer: String {

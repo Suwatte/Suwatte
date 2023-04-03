@@ -9,57 +9,59 @@ import RealmSwift
 import SwiftUI
 
 struct InstalledRunnersView: View {
-    @ObservedObject var engine = DaisukeEngine.shared
-    @ObservedResults(StoredRunnerObject.self, sortDescriptor: .init(keyPath: "name", ascending: true)) var savedRunners
+    @ObservedObject var manager = SourceManager.shared
+    @ObservedResults(StoredRunnerObject.self) var result
     @State var showAddSheet = false
-    @Environment(\.editMode) var editMode
+
+    var runners: Results<StoredRunnerObject> {
+        result.sorted(by: [SortDescriptor(keyPath: "enabled", ascending: true), SortDescriptor(keyPath: "name", ascending: true)])
+    }
+
     var body: some View {
-        let sources = engine.getSources().sorted(by: { getSaved($0.id)?.order ?? 0 < getSaved($1.id)?.order ?? 0 })
         List {
             Section {
-                ForEach(sources, id: \.id) { source in
-                    NavigationLink {
-                        if let source = source as? DSK.LocalContentSource {
-                            DaisukeContentSourceView(source: source)
-                        } else {
-                            Text("Hosted Source Menu")
-                        }
-                    } label: {
-                        HStack(spacing: 15) {
-                            STTThumbView(url: getSaved(source.id)?.thumbnail.flatMap { URL(string: $0) })
-                                .frame(width: 44, height: 44, alignment: .center)
-                                .cornerRadius(7)
-                            VStack(alignment: .leading, spacing: 5) {
-                                Text(source.name)
-                                    .fontWeight(.semibold)
-                                Text("v" + source.version.clean)
-                                    .font(.footnote.weight(.light))
+                ForEach(runners, id: \.id) { runner in
+                    if let source = SourceManager.shared.getSource(id: runner.id) {
+                        NavigationLink {
+                            ContentSourceView(model: .init(s: source))
+                        } label: {
+                            HStack(spacing: 15) {
+                                STTThumbView(url: URL(string: runner.thumbnail))
+                                    .frame(width: 44, height: 44, alignment: .center)
+                                    .cornerRadius(7)
+                                VStack(alignment: .leading, spacing: 2.5) {
+                                    Text(source.name)
+                                        .fontWeight(.semibold)
+                                    Text(source.version.clean)
+                                        .font(.footnote.weight(.light))
+                                        .foregroundColor(.secondary)
+                                }
                             }
                         }
+                        .swipeActions {
+                            Button {
+                                SourceManager.shared.deleteSource(with: runner.id)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                            .tint(.red)
+                        }
                     }
-                    .disabled(editMode?.wrappedValue == .active)
-                    .disabled(source is DSK.HostedContentSource)
                 }
-                .onDelete { indexSet in
-                    let sources = indexSet.compactMap(sources.get(index:))
-                    sources.forEach { s in
-                        try? engine.removeRunner(id: s.id)
-                    }
-                }
-//                .onMove(perform: move)
             } header: {
                 Text("Content Sources")
             }
+            .opacity(runners.isEmpty ? 0 : 1)
         }
         .navigationTitle("Installed Runners")
         .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .navigationBarTrailing) {
                 Button { showAddSheet.toggle() } label: {
                     Label("Add Runner", systemImage: "plus")
                 }
-                EditButton()
             }
         }
+        .animation(.default, value: result)
         .fileImporter(isPresented: $showAddSheet, allowedContentTypes: [.init(filenameExtension: "stt")!]) { result in
 
             guard let path = try? result.get() else {
@@ -70,7 +72,7 @@ struct InstalledRunnersView: View {
             if path.startAccessingSecurityScopedResource() {
                 Task {
                     do {
-                        try await DaisukeEngine.shared.importRunner(from: path)
+                        try await SourceManager.shared.importRunner(from: path)
                         await MainActor.run {
                             ToastManager.shared.info("Added!")
                         }
@@ -80,32 +82,6 @@ struct InstalledRunnersView: View {
                         }
                     }
                     path.stopAccessingSecurityScopedResource()
-                }
-            }
-        }
-    }
-
-    func getSaved(_ id: String) -> StoredRunnerObject? {
-        savedRunners
-            .where { $0.id == id }
-            .first
-    }
-
-    func move(from source: IndexSet, to destination: Int) {
-        var arr = Array(savedRunners)
-        arr.move(fromOffsets: source, toOffset: destination)
-        DataManager.shared.reorderRunners(arr)
-    }
-}
-
-private extension DataManager {
-    func reorderRunners(_ arr: [StoredRunnerObject]) {
-        let realm = try! Realm()
-
-        try! realm.safeWrite {
-            for runner in arr {
-                if let target = realm.objects(StoredRunnerObject.self).first(where: { $0.id == runner.id }) {
-                    target.order = arr.firstIndex(of: runner)!
                 }
             }
         }

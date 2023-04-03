@@ -16,23 +16,26 @@ extension ExploreView.SearchView {
         typealias Highlight = DaisukeEngine.Structs.Highlight
         var entries: [Highlight]
         @State var presentSortDialog = false
-        @EnvironmentObject var model: ViewModel
-        @EnvironmentObject var source: DaisukeContentSource
-
+        @EnvironmentObject var model: ExploreView.SearchView.ViewModel
         @AppStorage(STTKeys.TileStyle) var style = TileStyle.COMPACT
         @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
         @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
         @State var selection: HighlightIndentier?
+
+        var sourceId: String {
+            model.source.id
+        }
+
         var body: some View {
             ASCollectionView {
                 ASCollectionViewSection(id: 0,
                                         data: entries) { data, state in
-                    let isInLibrary = DataManager.shared.contentInLibrary(s: source.id, c: data.contentId)
-                    let isSavedForLater = DataManager.shared.contentSavedForLater(s: source.id, c: data.contentId)
+                    let isInLibrary = DataManager.shared.contentInLibrary(s: sourceId, c: data.contentId)
+                    let isSavedForLater = DataManager.shared.contentSavedForLater(s: sourceId, c: data.contentId)
 
                     ContentCell(data: data, inLibrary: isInLibrary, readLater: isSavedForLater)
                         .onTapGesture(perform: {
-                            selection = (source.id, data)
+                            selection = (sourceId, data)
                         })
                         .task {
                             if state.isLastInSection {
@@ -85,7 +88,7 @@ extension ExploreView.SearchView {
 
 extension ExploreView.SearchView.ResultsView {
     struct ContentCell: View {
-        @EnvironmentObject var source: DaisukeContentSource
+        @EnvironmentObject var model: ExploreView.SearchView.ViewModel
         let data: DSKCommon.Highlight
         @State var inLibrary: Bool
         @State var readLater: Bool
@@ -99,9 +102,9 @@ extension ExploreView.SearchView.ResultsView {
             .contextMenu {
                 Button {
                     if readLater {
-                        DataManager.shared.removeFromReadLater(source.id, content: data.contentId)
+                        DataManager.shared.removeFromReadLater(model.source.id, content: data.contentId)
                     } else {
-                        DataManager.shared.addToReadLater(source.id, data.contentId)
+                        DataManager.shared.addToReadLater(model.source.id, data.contentId)
                     }
                     readLater.toggle()
                 } label: {
@@ -126,16 +129,19 @@ extension ExploreView.SearchView.ResultsView {
                 Text("\(resultCount) Results")
             }
             Spacer()
-            Button {
-                presentSortDialog.toggle()
-            } label: {
-                HStack {
-                    Text(SORT_TITLE)
-                    Image(systemName: "chevron.down")
+
+            if !model.sorters.isEmpty {
+                Button {
+                    presentSortDialog.toggle()
+                } label: {
+                    HStack {
+                        Text(SORT_TITLE)
+                        Image(systemName: "chevron.down")
+                    }
                 }
+                .buttonStyle(.plain)
+                .multilineTextAlignment(.trailing)
             }
-            .buttonStyle(.plain)
-            .multilineTextAlignment(.trailing)
         }
         .font(.subheadline.weight(.light))
         .foregroundColor(Color.primary.opacity(0.7))

@@ -295,7 +295,7 @@ extension LocalContentView {
                         .resizable()
                         .frame(width: imageWidth, height: imageHeight)
                         .background(Color.fadedPrimary)
-                        .cornerRadius(7)
+                        .cornerRadius(5)
                         .opacity(libraryIsSelecting ? 0.8 : 1)
 
                     if imageWidth >= 100, !showOnlyThumbs {

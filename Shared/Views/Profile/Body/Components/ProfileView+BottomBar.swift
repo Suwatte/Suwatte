@@ -136,6 +136,9 @@ extension ProfileView.Skeleton.BottomBar {
         }
 
         func OpenReader() {
+            // Haptic
+            STTHelpers.triggerHaptic()
+            // State
             model.selection = actionState.chapter?._id
         }
     }

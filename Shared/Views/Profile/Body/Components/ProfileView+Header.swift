@@ -114,6 +114,7 @@ private extension Skeleton {
                     Button {
                         switch action.option {
                         case .COLLECTIONS:
+                            STTHelpers.triggerHaptic(true)
                             if !EntryInLibrary {
                                 DataManager.shared.toggleLibraryState(for: model.storedContent)
                             }
@@ -137,6 +138,7 @@ private extension Skeleton {
                     } label: {
                         Image(systemName: action.imageName)
                     }
+                    .disabled(action.option == .WEBVIEW && model.content.webUrl == nil)
                 }
             }
 
