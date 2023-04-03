@@ -119,6 +119,8 @@
 		DF6B8CA62862A11600DD079D /* PV+ContentLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6B8CA52862A11600DD079D /* PV+ContentLink.swift */; };
 		DF6C25CB282D97EB002BE1AA /* STT+Parsable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6C25CA282D97EB002BE1AA /* STT+Parsable.swift */; };
 		DF6C25CD282DC110002BE1AA /* STT+Conditional.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6C25CC282DC110002BE1AA /* STT+Conditional.swift */; };
+		DF70234F29DA852A0076AAD0 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = DF70234E29DA852A0076AAD0 /* Nuke */; };
+		DF70235129DA852A0076AAD0 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = DF70235029DA852A0076AAD0 /* NukeUI */; };
 		DF72E48F281269A900E40E52 /* SauceNao.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF72E48E281269A900E40E52 /* SauceNao.swift */; };
 		DF72E492281322A000E40E52 /* ImageSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF72E491281322A000E40E52 /* ImageSearchView.swift */; };
 		DF730CD329411F1B00C62C71 /* FlagKit in Frameworks */ = {isa = PBXBuildFile; productRef = DF730CD229411F1B00C62C71 /* FlagKit */; };
@@ -280,9 +282,6 @@
 		DFAC77A02817AD5200AF6394 /* AL+MediaFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAC779F2817AD5100AF6394 /* AL+MediaFunctions.swift */; };
 		DFADB58B29D7D04E00CBE22F /* JSCC+Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFADB58A29D7D04E00CBE22F /* JSCC+Network.swift */; };
 		DFADB58D29D7F19900CBE22F /* STT+URLRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFADB58C29D7F19900CBE22F /* STT+URLRequest.swift */; };
-		DFAEE12528B839E500B11484 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = DFAEE12428B839E500B11484 /* Nuke */; };
-		DFAEE12728B839E500B11484 /* NukeExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = DFAEE12628B839E500B11484 /* NukeExtensions */; };
-		DFAEE12928B839E500B11484 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = DFAEE12828B839E500B11484 /* NukeUI */; };
 		DFAEE12C28B8550E00B11484 /* RawImageDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAEE12B28B8550E00B11484 /* RawImageDataLoader.swift */; };
 		DFAEE12E28B8587A00B11484 /* ArchivedImageDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAEE12D28B8587A00B11484 /* ArchivedImageDataLoader.swift */; };
 		DFAEE13028B9D0A200B11484 /* ExploreCollectionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAEE12F28B9D0A200B11484 /* ExploreCollectionsController.swift */; };
@@ -650,20 +649,19 @@
 				DF248F0C2813844C00818300 /* KeychainSwift in Frameworks */,
 				DF2DA77327CF11C50046FE20 /* Alamofire in Frameworks */,
 				DF9C9EF0297AE3A9004A3BC5 /* FirebaseAnalytics in Frameworks */,
-				DFAEE12728B839E500B11484 /* NukeExtensions in Frameworks */,
 				DFB7FB03297B965D00599097 /* OrderedCollections in Frameworks */,
 				DFB47EF12880C0B30040A1BD /* R2Shared in Frameworks */,
+				DF70234F29DA852A0076AAD0 /* Nuke in Frameworks */,
 				DFB47EF32880C0B30040A1BD /* ReadiumOPDS in Frameworks */,
 				DF36E6D0285D08D700FB8B67 /* BetterSafariView in Frameworks */,
 				DF15F5952967D3DD0085DB1F /* UIHostingConfigurationBackport in Frameworks */,
 				DF730CD329411F1B00C62C71 /* FlagKit in Frameworks */,
-				DFAEE12528B839E500B11484 /* Nuke in Frameworks */,
 				DF52FBBA28947031008FAD3A /* ASCollectionView in Frameworks */,
-				DFAEE12928B839E500B11484 /* NukeUI in Frameworks */,
 				DF482F012955A56F002D3308 /* RealmSwift in Frameworks */,
 				DF2DA72527CD83440046FE20 /* Kingfisher in Frameworks */,
 				DF0D96062824892C00E592D9 /* Realm in Frameworks */,
 				DFF1043E28A9963D00E2C3A4 /* AnyCodable in Frameworks */,
+				DF70235129DA852A0076AAD0 /* NukeUI in Frameworks */,
 				DF59C97D285004860027F19D /* ZIPFoundation in Frameworks */,
 				C3423ED4E5A2EFB664586F1B /* Pods_Suwatte__iOS_.framework in Frameworks */,
 			);
@@ -1981,9 +1979,6 @@
 				DF52FBB928947031008FAD3A /* ASCollectionView */,
 				DFF1043D28A9963D00E2C3A4 /* AnyCodable */,
 				DF47DDE028B5608D00D779E5 /* PartialSheet */,
-				DFAEE12428B839E500B11484 /* Nuke */,
-				DFAEE12628B839E500B11484 /* NukeExtensions */,
-				DFAEE12828B839E500B11484 /* NukeUI */,
 				DF730CD229411F1B00C62C71 /* FlagKit */,
 				DF482F002955A56F002D3308 /* RealmSwift */,
 				DF15F5942967D3DD0085DB1F /* UIHostingConfigurationBackport */,
@@ -1991,6 +1986,8 @@
 				DF15F59A2967DF790085DB1F /* SkeletonView */,
 				DF9C9EEF297AE3A9004A3BC5 /* FirebaseAnalytics */,
 				DFB7FB02297B965D00599097 /* OrderedCollections */,
+				DF70234E29DA852A0076AAD0 /* Nuke */,
+				DF70235029DA852A0076AAD0 /* NukeUI */,
 			);
 			productName = "Suwatte (iOS)";
 			productReference = DFCE6EAF280108EA002E220C /* Suwatte.app */;
@@ -2033,13 +2030,13 @@
 				DF52FBB828947031008FAD3A /* XCRemoteSwiftPackageReference "ASCollectionView" */,
 				DFF1043C28A9963C00E2C3A4 /* XCRemoteSwiftPackageReference "AnyCodable" */,
 				DF47DDDF28B5608C00D779E5 /* XCRemoteSwiftPackageReference "PartialSheet" */,
-				DFAEE12328B839E500B11484 /* XCRemoteSwiftPackageReference "Nuke" */,
 				DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit" */,
 				DF15F5932967D3DD0085DB1F /* XCRemoteSwiftPackageReference "UIHostingConfigurationBackport" */,
 				DF15F5962967D4E70085DB1F /* XCRemoteSwiftPackageReference "SwiftUIBackports" */,
 				DF15F5992967DF780085DB1F /* XCRemoteSwiftPackageReference "SkeletonView" */,
 				DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections" */,
+				DF70234D29DA852A0076AAD0 /* XCRemoteSwiftPackageReference "Nuke" */,
 			);
 			productRefGroup = DF2DA6FF27CD82430046FE20;
 			projectDirPath = "";
@@ -2737,6 +2734,14 @@
 				minimumVersion = 0.3.9;
 			};
 		};
+		DF70234D29DA852A0076AAD0 /* XCRemoteSwiftPackageReference "Nuke" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kean/Nuke";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/madebybowtie/FlagKit.git";
@@ -2758,14 +2763,6 @@
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
 			requirement = {
 				branch = master;
-				kind = branch;
-			};
-		};
-		DFAEE12328B839E500B11484 /* XCRemoteSwiftPackageReference "Nuke" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/kean/Nuke";
-			requirement = {
-				branch = main;
 				kind = branch;
 			};
 		};
@@ -2861,6 +2858,16 @@
 			package = DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar" */;
 			productName = Unrar;
 		};
+		DF70234E29DA852A0076AAD0 /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF70234D29DA852A0076AAD0 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
+		};
+		DF70235029DA852A0076AAD0 /* NukeUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF70234D29DA852A0076AAD0 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = NukeUI;
+		};
 		DF730CD229411F1B00C62C71 /* FlagKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit" */;
@@ -2870,21 +2877,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAnalytics;
-		};
-		DFAEE12428B839E500B11484 /* Nuke */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DFAEE12328B839E500B11484 /* XCRemoteSwiftPackageReference "Nuke" */;
-			productName = Nuke;
-		};
-		DFAEE12628B839E500B11484 /* NukeExtensions */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DFAEE12328B839E500B11484 /* XCRemoteSwiftPackageReference "Nuke" */;
-			productName = NukeExtensions;
-		};
-		DFAEE12828B839E500B11484 /* NukeUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DFAEE12328B839E500B11484 /* XCRemoteSwiftPackageReference "Nuke" */;
-			productName = NukeUI;
 		};
 		DFB47EF02880C0B30040A1BD /* R2Shared */ = {
 			isa = XCSwiftPackageProductDependency;

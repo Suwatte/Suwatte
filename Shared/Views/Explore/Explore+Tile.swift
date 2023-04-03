@@ -183,7 +183,7 @@ extension ExploreView.HighlightTile {
         var body: some View {
             ZStack(alignment: .bottom) {
                 Group {
-                    if let view = loader.view {
+                    if let view = loader.image {
                         GeometryReader { proxy in
                             view
                                 .resizable()
@@ -251,11 +251,11 @@ extension ExploreView.HighlightTile {
             .onDisappear(perform: {
                 prefetcher.stopPrefetching(with: urls)
             })
+            .animation(.easeOut(duration: 0.25), value: loader.image)
         }
 
         func load(url: URL?) async {
             guard let url else { return }
-            loader.animation = .easeOut(duration: 0.25)
             let source = SourceManager.shared.getSource(id: sourceId)
 
             do {
@@ -275,7 +275,10 @@ extension ExploreView.HighlightTile {
 
         func didAppear() {
             // Update Loader
-            loader.onSuccess = { response in
+            loader.onCompletion = { response in
+                guard let response = try? response.get() else {
+                    return
+                }
                 if let color = response.image.averageColor {
                     endColor = Color(color)
                 }

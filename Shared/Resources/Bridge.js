@@ -162,14 +162,14 @@ class NetworkClient {
     const resTransformers = [];
     if (this.transformResponse) {
       if (typeof this.transformResponse === "function")
-        reqTransformers.push(this.transformResponse);
-      else reqTransformers.push(...this.transformResponse);
+        resTransformers.push(this.transformResponse);
+      else resTransformers.push(...this.transformResponse);
     }
 
     if (request.transformResponse) {
       if (typeof request.transformResponse === "function")
-        reqTransformers.push(request.transformResponse);
-      else reqTransformers.push(...request.transformResponse);
+        resTransformers.push(request.transformResponse);
+      else resTransformers.push(...request.transformResponse);
     }
 
     // Run Request Transformers

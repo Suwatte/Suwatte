@@ -520,7 +520,7 @@ extension CTR {
             NavigationLink(destination: ExploreView.SearchView(model: .init(request: tag.request, source: source), tagLabel: tag.label)) {
                 ZStack(alignment: .bottom) {
                     Group {
-                        if let view = loader.view {
+                        if let view = loader.image {
                             view
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
@@ -544,16 +544,22 @@ extension CTR {
                 .frame(width: 150)
                 .cornerRadius(7)
                 .animation(.default, value: color)
+                .animation(.default, value: loader.image)
             }
             .buttonStyle(NeutralButtonStyle())
             .task {
-                if loader.view != nil { return }
-                loader.animation = .default
-                loader.onSuccess = { result in
+                if loader.image != nil { return }
+                loader.onCompletion = { result in
+                    
+                    guard let result = try? result.get() else {
+                        return
+                    }
+                    
                     if let avgColor = result.image.averageColor {
                         color = Color(uiColor: avgColor)
                     }
                 }
+  
                 if let str = tag.imageUrl, let url = URL(string: str) {
                     loader.load(url)
                 }

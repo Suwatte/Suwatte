@@ -217,8 +217,8 @@ extension Target {
                 let imageHeight = imageWidth * 1.5
                 VStack(alignment: .leading, spacing: 5) {
                     Group {
-                        if let view = image.view {
-                            view
+                        if let image = image.image  {
+                            image
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .clipped()
@@ -261,7 +261,7 @@ extension Target {
                 }
             }
             .onDisappear { image.reset() }
-            .animation(.default, value: image.view)
+            .animation(.default, value: image.isLoading)
             .onTapGesture {
                 presentDialog.toggle()
             }
