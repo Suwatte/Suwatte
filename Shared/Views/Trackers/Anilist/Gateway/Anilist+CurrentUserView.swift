@@ -91,7 +91,7 @@ extension AnilistView {
                 // Gradient
                 LinearGradient(colors: [.clear, Color(uiColor: UIColor.systemBackground)], startPoint: .top, endPoint: .bottom)
                 VStack {
-                    LazyImage(url: URL(string: account.avatar.large ?? "")) { state in
+                    LazyImage(url: URL(string: account.avatar.large ?? ""), transaction: .init(animation: .easeInOut(duration: 0.25))) { state in
                         if let image = state.image {
                             image
                                 .resizable()

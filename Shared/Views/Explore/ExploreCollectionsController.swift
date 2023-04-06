@@ -524,6 +524,7 @@ extension CTR {
                             view
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
+                                .transition(.opacity)
                         } else {
                             Color.clear
                         }
@@ -545,10 +546,12 @@ extension CTR {
                 .cornerRadius(7)
                 .animation(.default, value: color)
                 .animation(.default, value: loader.image)
+                .animation(.default, value: loader.isLoading)
             }
             .buttonStyle(NeutralButtonStyle())
             .task {
-                if loader.image != nil { return }
+                if loader.image != nil || loader.isLoading { return }
+                loader.transaction = .init(animation: .easeInOut(duration: 0.25))
                 loader.onCompletion = { result in
                     
                     guard let result = try? result.get() else {

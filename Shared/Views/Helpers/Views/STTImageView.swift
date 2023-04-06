@@ -26,6 +26,7 @@ struct STTImageView: View {
                     view
                         .resizable()
                         .aspectRatio(contentMode: mode)
+                        .transition(.opacity)
                 } else {
                     Color.gray.opacity(0.25)
                 }
@@ -38,12 +39,14 @@ struct STTImageView: View {
             .background(Color.gray.opacity(0.25))
             .modifier(DisabledNavLink())
             .animation(.easeOut(duration: 0.25), value: loader.image)
+            .animation(.easeOut(duration: 0.25), value: loader.isLoading)
         }
     }
 
     func load(_ size: CGSize) {
         if loader.image != nil { return }
         loader.priority = .normal
+        loader.transaction = .init(animation: .easeInOut(duration: 0.25))
         loader.processors = [.resize(size: size)]
         guard let imageURL, imageURL.isHTTP else {
             loader.load(url)
@@ -94,6 +97,7 @@ struct BaseImageView: View {
                     view
                         .resizable()
                         .aspectRatio(contentMode: mode)
+                        .transition(.opacity)
                 } else {
                     Color.gray.opacity(0.25)
                 }
@@ -103,12 +107,14 @@ struct BaseImageView: View {
             .frame(width: proxy.size.width, height: proxy.size.width * 1.5, alignment: .center)
             .background(Color.gray.opacity(0.25))
             .animation(.easeOut(duration: 0.25), value: loader.image)
+            .animation(.easeOut(duration: 0.25), value: loader.isLoading)
         }
     }
 
     func load(_ size: CGSize) {
         if loader.image != nil { return }
         loader.processors = [.resize(size: size)]
+        loader.transaction = .init(animation: .easeInOut(duration: 0.25))
         guard let url, url.isHTTP else {
             loader.load(url)
             return

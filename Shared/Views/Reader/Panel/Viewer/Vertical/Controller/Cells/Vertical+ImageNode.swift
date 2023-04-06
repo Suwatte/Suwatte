@@ -285,7 +285,7 @@ extension Controller.ImageNode {
         imageNode.image = nil
         image = nil
         ratio = nil
-        KingfisherManager.shared.cache.memoryStorage.remove(forKey: page.CELL_KEY)
+//        KingfisherManager.shared.cache.memoryStorage.remove(forKey: page.CELL_KEY)
         imageNode.alpha = 0
         progressNode.alpha = 1
         subscriptions.forEach { $0.cancel() }

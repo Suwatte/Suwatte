@@ -380,7 +380,7 @@ extension ReaderView.ViewModel {
             activeChapter = chapter
         }
 
-        Task {
+        Task.detached {
             lastChapter.pages?.map(\.page.CELL_KEY).forEach {
                 KingfisherManager.shared.cache.memoryStorage.remove(forKey: $0)
             }
@@ -397,20 +397,22 @@ extension ReaderView.ViewModel {
             return
         }
 
-        // Mark As Completed & Update Unread Count
-        DataManager.shared.setProgress(chapter: lastChapter.chapter, completed: true)
-        DataManager.shared.updateUnreadCount(for: .init(contentId: lastChapter.chapter.contentId, sourceId: lastChapter.chapter.sourceId))
+        Task.detached { [weak self] in
+            // Mark As Completed & Update Unread Count
+            DataManager.shared.setProgress(chapter: lastChapter.chapter, completed: true)
+            DataManager.shared.updateUnreadCount(for: .init(contentId: lastChapter.chapter.contentId, sourceId: lastChapter.chapter.sourceId))
 
-        // Anilist Sync
-        handleTrackerSync(number: lastChapter.chapter.number,
-                          volume: lastChapter.chapter.volume)
+            // Anilist Sync
+            self?.handleTrackerSync(number: lastChapter.chapter.number,
+                              volume: lastChapter.chapter.volume)
 
-        // Source Sync
-        handleSourceSync(contentId: lastChapter.chapter.contentId,
-                         sourceId: lastChapter.chapter.sourceId,
-                         chapterId: lastChapter.chapter.chapterId)
+            // Source Sync
+            self?.handleSourceSync(contentId: lastChapter.chapter.contentId,
+                             sourceId: lastChapter.chapter.sourceId,
+                             chapterId: lastChapter.chapter.chapterId)
 
-        DataManager.shared.updateLastRead(id: ContentIdentifier(contentId: lastChapter.chapter.contentId, sourceId: lastChapter.chapter.sourceId).id)
+            DataManager.shared.updateLastRead(id: ContentIdentifier(contentId: lastChapter.chapter.contentId, sourceId: lastChapter.chapter.sourceId).id)
+        }
     }
 
     private func getStoredTrackerInfo() -> StoredTrackerInfo? {

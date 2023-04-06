@@ -33,6 +33,7 @@ extension ProfileView {
                          { _ in
                              ProfileView.Skeleton()
                                  .navigationTitle(viewModel.content.title)
+                                 .transition(.opacity)
                                  .fullScreenCover(item: $viewModel.selection, onDismiss: {
                                      Task {
                                          handleReconnection()
@@ -69,6 +70,7 @@ extension ProfileView {
                                  }
                              }
                          }
+                         .transition(.opacity)
                          .animation(.default)
                          .environmentObject(viewModel)
         }
