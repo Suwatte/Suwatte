@@ -29,13 +29,14 @@ struct ManageContentLinks: View {
                     EntryCell(linked)
                 }
                 .buttonStyle(.plain)
-                .swipeActions(edge: .leading) {
+                .swipeActions {
                     Button(role: .destructive) {
                         DataManager.shared.unlinkContent(linked, content)
                     } label: {
                         Label("Unlink", systemImage: "pin.slash.fill")
                             .tint(.red)
                     }
+                    .tint(.red)
                 }
             }
         }
@@ -56,7 +57,14 @@ struct ManageContentLinks: View {
     }
 
     func fetch() -> [StoredContent] {
-        DataManager.shared.getLinkedContent(for: content._id)
+        let ids = entries.first?.ids
+        guard let ids = entries.first?.ids else {
+            return []
+        }
+        var arr = Array(ids)
+        arr.removeAll(where: { $0 == content._id })
+        let contents = Array(DataManager.shared.getStoredContents(ids: arr))
+        return contents
     }
 
     @ViewBuilder

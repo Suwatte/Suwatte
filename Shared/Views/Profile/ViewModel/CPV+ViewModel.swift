@@ -436,7 +436,7 @@ extension ProfileView.ViewModel {
         if let idStr = content.trackerInfo?["al"], let x = Int(idStr) {
             id = x
         } else {
-            id = getSavedTrackerLink()
+            id = STTHelpers.getAnilistID(id: sttIdentifier().id)
         }
 
         guard let id = id else { return }
@@ -457,20 +457,6 @@ extension ProfileView.ViewModel {
                 }
             }
         }
-    }
-
-    private func getSavedTrackerLink() -> Int? {
-        let realm = try! Realm()
-        let str = realm.objects(TrackerLink.self)
-            .where { $0._id == sttIdentifier().id }
-            .first?
-            .trackerInfo?
-            .al
-        if let str = str {
-            return Int(str)
-        }
-
-        return nil
     }
 
     private func handleReadMarkers() async throws {

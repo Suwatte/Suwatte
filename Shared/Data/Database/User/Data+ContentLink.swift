@@ -72,7 +72,7 @@ extension DataManager {
 
     func getLinkedContent(for id: String) -> [StoredContent] {
         let realm = try! Realm()
-        var ids = realm
+        let ids = realm
             .objects(ContentLink.self)
             .where { $0.ids.contains(id) }
             .first?
