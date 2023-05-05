@@ -76,6 +76,7 @@
 		DF482EF629555730002D3308 /* VerticalPaged+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF482EF529555730002D3308 /* VerticalPaged+Combine.swift */; };
 		DF482EF829555A43002D3308 /* VerticalPaged+ContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF482EF729555A43002D3308 /* VerticalPaged+ContextMenu.swift */; };
 		DF482F012955A56F002D3308 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DF482F002955A56F002D3308 /* RealmSwift */; };
+		DF49415929F4B20800DE9EDC /* ColoredBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF49415829F4B20800DE9EDC /* ColoredBadge.swift */; };
 		DF52FBAF28939745008FAD3A /* PagingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF52FBAE28939745008FAD3A /* PagingScrollView.swift */; };
 		DF52FBBA28947031008FAD3A /* ASCollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = DF52FBB928947031008FAD3A /* ASCollectionView */; };
 		DF52FBBE289487C6008FAD3A /* STTGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF52FBBD289487C6008FAD3A /* STTGridView.swift */; };
@@ -391,6 +392,7 @@
 		DF482EF329555708002D3308 /* VerticalPaged+Scroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VerticalPaged+Scroll.swift"; sourceTree = "<group>"; };
 		DF482EF529555730002D3308 /* VerticalPaged+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VerticalPaged+Combine.swift"; sourceTree = "<group>"; };
 		DF482EF729555A43002D3308 /* VerticalPaged+ContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VerticalPaged+ContextMenu.swift"; sourceTree = "<group>"; };
+		DF49415829F4B20800DE9EDC /* ColoredBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoredBadge.swift; sourceTree = "<group>"; };
 		DF52FBAE28939745008FAD3A /* PagingScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingScrollView.swift; sourceTree = "<group>"; };
 		DF52FBBD289487C6008FAD3A /* STTGridView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = STTGridView.swift; sourceTree = "<group>"; };
 		DF52FBC12896F761008FAD3A /* CollectionManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionManagementView.swift; sourceTree = "<group>"; };
@@ -1734,6 +1736,7 @@
 				DF52FBAE28939745008FAD3A /* PagingScrollView.swift */,
 				DF47DDDD28B55BA500D779E5 /* AdaptiveSheet.swift */,
 				DF730CD42941215100C62C71 /* LanguageCellView.swift */,
+				DF49415829F4B20800DE9EDC /* ColoredBadge.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2188,6 +2191,7 @@
 				DFBBB74D2974A8E5001DAAE9 /* DoublePaged+ContextMenu.swift in Sources */,
 				DFD1F9AF28F7AF4E000766C1 /* Vertical+Navigation.swift in Sources */,
 				DF326461280256760066EB08 /* ProfileView+RelatedContent.swift in Sources */,
+				DF49415929F4B20800DE9EDC /* ColoredBadge.swift in Sources */,
 				DFC39E9528A093D700450EC4 /* RunnerListsView.swift in Sources */,
 				DF8D0B392800EE47003E4C3E /* STT+Realm.swift in Sources */,
 				DF6A896828834AC40045529D /* Orientation.swift in Sources */,
@@ -2529,8 +2533,8 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_TEAM = J2Y5C6J3BM;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KL9W2NU9C5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ./Shared/Resources/SuwatteInfo.plist;
@@ -2551,7 +2555,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.0;
+				MARKETING_VERSION = 5.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ceres.suwatte;
 				PRODUCT_NAME = Suwatte;
@@ -2573,8 +2577,8 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_TEAM = J2Y5C6J3BM;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = KL9W2NU9C5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ./Shared/Resources/SuwatteInfo.plist;
@@ -2595,7 +2599,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.0;
+				MARKETING_VERSION = 5.1;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ceres.suwatte;

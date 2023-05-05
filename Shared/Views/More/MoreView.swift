@@ -44,18 +44,8 @@ struct MoreView: View {
         Section {
             Text("App Version")
                 .badge(Bundle.main.releaseVersionNumber)
-                .onTapGesture(count: 2) {
-                    withAnimation {
-                        showEasterEgg.toggle()
-                    }
-                }
             Text("Daisuke Version")
                 .badge(STT_BRIDGE_VERSION)
-            if showEasterEgg {
-                Text("MangaSoup Version")
-                    .badge("2.0.0")
-            }
-
         } header: {
             Text("Info")
         }
