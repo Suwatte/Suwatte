@@ -94,14 +94,15 @@ extension JSCC {
         SourceManager.shared.add(class: JSCC.NetworkHandler.self, name: "NetworkHandler", context: context)
 
         // Evalutate Runner Script
-        content = try String(contentsOfFile: path.relativePath, encoding: String.Encoding.utf8)
+        content = try String(contentsOf: path, encoding: .utf8)
         _ = context.evaluateScript(content)
-
+        
         // Evaluate Bridge Script
         content = try String(contentsOf: Self.bridgePath, encoding: .utf8)
         _ = context.evaluateScript(content)
-
-        guard let runner = context.daisukeRunner(), runner.isObject else {
+        
+        let runner = context.daisukeRunner()
+        guard let runner,  runner.isObject else {
             throw DSK.Errors.RunnerClassInitFailed
         }
 

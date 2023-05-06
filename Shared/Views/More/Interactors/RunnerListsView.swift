@@ -35,7 +35,7 @@ struct RunnerListsView: View {
             }
             .onDelete(perform: $runnerLists.remove(atOffsets:))
         }
-        .navigationTitle("Saved Runner Lists")
+        .navigationTitle("Saved Lists")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -58,7 +58,7 @@ extension RunnerListsView {
         do {
             try await SourceManager.shared.saveRunnerList(at: url)
             DispatchQueue.main.async {
-                ToastManager.shared.display(.info("Saved Runner!"))
+                ToastManager.shared.display(.info("Saved List!"))
             }
         } catch {
             DispatchQueue.main.async {
