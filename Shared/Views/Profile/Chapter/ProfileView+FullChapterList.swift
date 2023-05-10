@@ -69,6 +69,7 @@ struct ChapterList: View {
             selections.removeAll()
         })
         .animation(.default, value: selections)
+        .animation(.default, value: model.actionState)
         .navigationTitle("Chapters")
         .modifier(ConditionalToolBarModifier(showBB: Binding.constant(editMode?.wrappedValue == .active)))
         .toolbar {
@@ -163,6 +164,22 @@ struct ChapterList: View {
             model.setupObservers()
         }
     }
+    
+    func genId(_ id: String, _ completed: Bool, _ download: ICDMDownloadObject?) -> String {
+        
+        var id = id
+        
+        id += completed.description
+        
+        if let download , !download.isInvalidated {
+            
+            id += download.status.rawValue.description
+        } else {
+            id += "none"
+        }
+        
+        return id
+    }
 
     func ChaptersView(_ chapters: [StoredChapter]) -> some View {
         List(chapters, id: \.self, selection: $selections) { chapter in
@@ -204,7 +221,7 @@ struct ChapterList: View {
                         DownloadView(download, chapter)
                         ProviderView(chapter)
                     }
-                    .id(chapter._id + completed.description + (download?.status.rawValue.description ?? "none"))
+                    .id(genId(chapter._id, completed, download))
             )
         }
     }
@@ -275,7 +292,7 @@ extension ChapterList {
 extension ChapterList {
     @ViewBuilder
     func DownloadView(_ download: ICDMDownloadObject?, _ chapter: StoredChapter) -> some View {
-        if let download = download {
+        if let download = download, !download.isInvalidated {
             switch download.status {
             case .cancelled:
                 EmptyView()

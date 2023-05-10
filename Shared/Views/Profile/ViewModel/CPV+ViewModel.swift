@@ -343,7 +343,7 @@ extension ProfileView.ViewModel {
 
         if !marker.completed {
             // Marker Exists, series has not been complted, resume
-            actionState = .init(state: .resume, chapter: marker.chapter?.toThreadSafe(), marker: (marker.progress, marker.dateRead))
+            actionState = .init(state: .resume, chapter: marker.chapter?.toThreadSafe(), marker: .init(progress: marker.progress,date: marker.dateRead))
             return
         }
 
@@ -514,13 +514,19 @@ extension ProfileView.ViewModel {
 }
 
 extension ProfileView.ViewModel {
-    struct ActionState {
+    struct ActionState: Hashable {
         var state: ProgressState
         var chapter: ThreadSafeChapter?
-        var marker: (progress: Double, date: Date?)?
+        var marker: Marker?
+        
+        
+        struct Marker : Hashable {
+            var progress: Double
+            var date: Date?
+        }
     }
 
-    enum ProgressState {
+    enum ProgressState: Int, Hashable {
         case none, start, resume, bad_path, reRead, upNext, restart
 
         var description: String {
