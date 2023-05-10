@@ -229,13 +229,18 @@ struct ChapterList: View {
 
 extension ChapterList {
     func doFilter() {
+        guard let chapters = model.chapters.value else { return }
+        let ids = chapters.map(\._id)
         DispatchQueue.global(qos: .background).async {
-            filterChapters()
+            filterChapters(ids: ids)
         }
     }
 
-    func filterChapters() {
-        guard let chapters = model.chapters.value else { return }
+    func filterChapters(ids: [String]) {
+        let realm = try! Realm()
+        
+        let chapters = realm.objects(StoredChapter.self).where({ $0._id.in(ids) }).toArray()
+        
         // Filter Language, Providers, Downloads
         var base = chapters
             .filter(filterDownloads(_:))
@@ -265,10 +270,12 @@ extension ChapterList {
             base = base
                 .sorted(by: \.index, descending: !sortDesc) // Reverese Source Index
         }
-
+        
+        let ids = base.map(\._id)
         Task { @MainActor in
+            let realm = try! Realm()
             withAnimation {
-                visibleChapters = base
+                visibleChapters = realm.objects(StoredChapter.self).where({ $0._id.in(ids) }).toArray()
             }
         }
     }
