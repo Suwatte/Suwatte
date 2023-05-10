@@ -106,7 +106,7 @@ extension SourceManager {
         var url = base.appendingPathComponent("versioning.json")
 
         let data = try await AF
-            .request(url)
+            .request(url) { $0.timeoutInterval = 2.5 } // Timeout in 2.5 Seconds.
             .validate()
             .serializingDecodable(DSKCommon.JSCommon.self)
             .value
