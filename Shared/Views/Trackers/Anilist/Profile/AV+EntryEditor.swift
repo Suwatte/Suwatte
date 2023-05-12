@@ -130,7 +130,7 @@ extension AnilistView {
                 // Start & Finish Date
 
                 Section {
-                    if let fuzzy = entry.startedAt, let date = fuzzy.toDate() {
+                    if let date = entry.startedAt.toDate() {
                         HStack {
                             DatePicker("Start Date",
                                        selection: Binding<Date>(get: { date }, set: { v in entry.startedAt = v.toFuzzyDate() }), displayedComponents: .date)
@@ -153,7 +153,7 @@ extension AnilistView {
                         }
                     }
 
-                    if let fuzzy = entry.completedAt, let date = fuzzy.toDate() {
+                    if let date = entry.completedAt.toDate() {
                         HStack {
                             DatePicker("Completion Date",
                                        selection: Binding<Date>(get: { date },

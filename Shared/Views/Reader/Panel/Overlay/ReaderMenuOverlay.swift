@@ -268,8 +268,8 @@ extension ReaderView.ReaderMenuOverlay {
                 .rotationEffect(.degrees(readingLeftToRight ? 0 : 180), anchor: .center)
                 .opacity(isPagingVertically ? 0 : 1)
 
-                if let index = model.activeChapter.requestedPageIndex, let pageCount = model.activeChapter.pages?.last?.page.number {
-                    Text("Page \(model.scrubbingPageNumber != nil ? model.scrubbingPageNumber! : index + 1) of \(pageCount)")
+                if let pageCount = model.activeChapter.pages?.last?.page.number {
+                    Text("Page \(model.scrubbingPageNumber != nil ? model.scrubbingPageNumber! : model.activeChapter.requestedPageIndex + 1) of \(pageCount)")
                         .font(.footnote)
                         .fontWeight(.bold)
                         .foregroundColor(.gray)

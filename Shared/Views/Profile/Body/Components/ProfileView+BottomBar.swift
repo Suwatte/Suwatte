@@ -107,8 +107,8 @@ extension ProfileView.Skeleton.BottomBar {
                     // Chapter Information
                     VStack(alignment: .leading, spacing: 2) {
                         // Chapter Name
-                        if let chapter = actionState.chapter, let name = "Chapter \(chapter.number.clean)" {
-                            Text(name)
+                        if let chapter = actionState.chapter {
+                            Text("Chapter \(chapter.number.clean)")
                                 .font(.subheadline)
                                 .bold()
                         }
