@@ -44,7 +44,7 @@ extension ProfileView {
         @Published var actionState: ActionState = .init(state: .none)
         @Published var linkedUpdates: [HighlightIndentier] = []
         @Published var threadSafeChapters: [DSKCommon.Chapter]?
-
+        private var unMarkedChapters =  Set<Double>()
         // Tokens
         var currentMarkerToken: NotificationToken?
 
@@ -86,6 +86,10 @@ extension ProfileView {
 }
 
 extension ProfileView.ViewModel {
+    
+    func setInvalidatedMarkers(nums: Set<Double>) { // Realm inconvenience in getting deleted indexes
+        unMarkedChapters = nums
+    }
     func setupObservers() {
         let realm = try! Realm()
 
@@ -100,11 +104,11 @@ extension ProfileView.ViewModel {
             case let .initial(values):
                 let initial = values.map { $0.chapter!.number }
                 self?.readChapters.formUnion(initial)
-            case let .update(_, deleted, inserted, _):
-                let insertedNumbers = inserted.map { _r1[$0].chapter!.number }
-                let deletedNumbers = deleted.map { _r1[$0].chapter!.number }
+            case let .update(_, _, inserted, _):
+                let insertedNumbers = inserted.compactMap { _r1.getOrNil($0)?.chapter?.number }
                 self?.readChapters.formUnion(insertedNumbers)
-                self?.readChapters.subtract(deletedNumbers)
+                self?.readChapters.subtract(self?.unMarkedChapters ?? []) // Subtract
+                self?.unMarkedChapters.removeAll() // Clear Store
             default:
                 break
             }
@@ -290,11 +294,12 @@ extension ProfileView.ViewModel {
             .where { $0.contentId == entry.contentId }
             .where { $0.sourceId == source.id }
             .sorted(by: \.index, ascending: true)
-            .map { $0 } as [StoredChapter]
-
+            .map { $0.freeze() } as [StoredChapter]
         if storedChapters.isEmpty { return }
-
-        chapters = .loaded(storedChapters)
+        
+        Task { @MainActor in
+            chapters = .loaded(storedChapters)
+        }
         Task { @MainActor in
             getMarkers()
         }
@@ -396,9 +401,14 @@ extension ProfileView.ViewModel {
 
             } catch {}
         }
-
-        Task {
-            await loadContentFromNetwork()
+        
+        
+        if StateManager.shared.NetworkStateHigh || target == nil  { // Connected To Network OR The Content is not saved thus has to be fetched regardless
+            Task {
+                await loadContentFromNetwork()
+            }
+        } else {
+            setChaptersFromDB()
         }
     }
 

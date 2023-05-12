@@ -204,6 +204,9 @@ struct ChapterList: View {
                 Color.clear
                     .contextMenu {
                         Button {
+                            if completed {
+                                model.setInvalidatedMarkers(nums: [chapter.number])
+                            }
                             DataManager.shared.bulkMarkChapter(chapters: [chapter], completed: !completed)
                             didMark()
                         } label: {
@@ -271,11 +274,10 @@ extension ChapterList {
                 .sorted(by: \.index, descending: !sortDesc) // Reverese Source Index
         }
         
-        let ids = base.map(\._id)
+        let data = base.map({ $0.freeze() })
         Task { @MainActor in
-            let realm = try! Realm()
             withAnimation {
-                visibleChapters = realm.objects(StoredChapter.self).where({ $0._id.in(ids) }).toArray()
+                visibleChapters = data
             }
         }
     }
@@ -487,18 +489,18 @@ extension ChapterList {
     }
 
     func markAsUnread() {
+        model.setInvalidatedMarkers(nums: Set(selections.map(\.number))) // Set These markers to be invalidated
         DataManager.shared.bulkMarkChapter(chapters: Array(selections), completed: false)
         deselectAll()
-
-        let c = model.storedContent
-        if !DataManager.shared.isInLibrary(content: c) {
-            DataManager.shared.toggleLibraryState(for: c)
-        }
     }
 
     func addToDownloadQueue() {
         ICDM.shared.add(chapters: Array(selections).map(\._id))
         deselectAll()
+        let c = model.storedContent
+        if !DataManager.shared.isInLibrary(content: c) {
+            DataManager.shared.toggleLibraryState(for: c)
+        }
     }
 
     func removeDownload() {
