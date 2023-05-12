@@ -269,8 +269,13 @@ extension SourceManager {
 
     @discardableResult
     func handleURL(for url: URL) async -> Bool {
+        await MainActor.run {
+            ToastManager.shared.loading = true
+        }
         let results = await handleGetIdentifier(for: url.relativeString)
-
+        await MainActor.run {
+            ToastManager.shared.loading = false
+        }
         if results.isEmpty {
             return false
         }
