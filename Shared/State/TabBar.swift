@@ -63,7 +63,8 @@ enum AppTabs: Int, CaseIterable {
         case .downloads:
             return "square.and.arrow.down"
         case .feed:
-            return "bell"
+            let hasNotifs = UIApplication.shared.applicationIconBadgeNumber > 0
+            return hasNotifs ? "bell.badge" : "bell"
         case .more:
             return "ellipsis.circle"
         case .library:

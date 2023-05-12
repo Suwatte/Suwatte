@@ -106,7 +106,7 @@ extension SourceManager {
         var url = base.appendingPathComponent("versioning.json")
 
         let data = try await AF
-            .request(url)
+            .request(url) { $0.timeoutInterval = 2.5 } // Timeout in 2.5 Seconds.
             .validate()
             .serializingDecodable(DSKCommon.JSCommon.self)
             .value
@@ -176,8 +176,12 @@ extension SourceManager {
         }
 
         let path = url
+            .sttBase?
             .appendingPathComponent("runners")
             .appendingPathComponent("\(runner.path).stt")
+        guard let path else {
+            throw DSK.Errors.NamedError(name: "Host", message: "Invalid Runner URL")
+        }
         try await handleNetworkRunnerImport(from: path, with: url)
     }
 
@@ -240,9 +244,8 @@ extension SourceManager {
         guard let base else {
             throw DSK.Errors.NamedError(name: "Validation", message: "Invalid URL")
         }
-        let url = base.runnersListURL
-        let runnerList = try await getRunnerList(at: url)
-        DataManager.shared.saveRunnerList(runnerList, at: url)
+        let runnerList = try await getRunnerList(at: base)
+        DataManager.shared.saveRunnerList(runnerList, at: base)
     }
 }
 
@@ -266,8 +269,13 @@ extension SourceManager {
 
     @discardableResult
     func handleURL(for url: URL) async -> Bool {
+        await MainActor.run {
+            ToastManager.shared.loading = true
+        }
         let results = await handleGetIdentifier(for: url.relativeString)
-
+        await MainActor.run {
+            ToastManager.shared.loading = false
+        }
         if results.isEmpty {
             return false
         }

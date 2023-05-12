@@ -66,7 +66,7 @@ struct SearchView: View {
     var RESULT_VIEW: some View {
         ASCollectionView(sections: RESULT_SECTIONS)
             .alwaysBounceVertical()
-            .layout(scrollDirection: .vertical, interSectionSpacing: 30, layoutPerSection: { sectionID in
+            .layout(scrollDirection: .vertical, interSectionSpacing: 7, layoutPerSection: { sectionID in
 
                 if sectionID.contains("::FAILED") {
                     return ErrorLayout()
@@ -95,7 +95,7 @@ struct SearchView: View {
 
             let section = NSCollectionLayoutSection(group: itemsGroup)
             section.interGroupSpacing = 0
-            section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
+            section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 5)
             section.orthogonalScrollingBehavior = .none
             section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
             section.boundarySupplementaryItems = [.init(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(50)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)]
@@ -123,7 +123,7 @@ struct SearchView: View {
             //            itemsGroup.interItemSpacing = .fixed(10)
             let section = NSCollectionLayoutSection(group: itemsGroup)
             section.interGroupSpacing = 7
-            section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
+            section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 5)
             section.orthogonalScrollingBehavior = .continuous
             section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
             section.boundarySupplementaryItems = [.init(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .absolute(50)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)]
@@ -132,7 +132,14 @@ struct SearchView: View {
     }
 
     var RESULT_SECTIONS: [ASCollectionViewSection<String>] {
-        model.results.map { key, value in
+        model
+            .results
+            .sorted(by: { a, b in
+                let aCount = a.value.value?.totalResultCount ?? a.value.value?.results.count ?? 0
+                let bCount = b.value.value?.totalResultCount ?? b.value.value?.results.count ?? 0
+                return bCount < aCount
+            })
+            .map { key, value in
             let source = model.sources.first(where: { $0.id == key })
             switch value {
             case let .loaded(data):
@@ -249,16 +256,6 @@ struct SearchView: View {
     func savedForLater(_ entry: Highlight, _ sourceId: String) -> Bool {
         readLater
             .contains(where: { $0.content?.sourceId == sourceId && $0.content?.contentId == entry.id })
-    }
-}
-
-extension SearchView {
-    struct Cell: View {
-        var source: AnyContentSource
-        var request: DaisukeEngine.Structs.SearchRequest
-        var body: some View {
-            Text(source.name)
-        }
     }
 }
 

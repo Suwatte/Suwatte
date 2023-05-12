@@ -133,11 +133,9 @@ extension ImageSearchView {
                 let urls = data.compactMap { URL(string: $0) }
                 let array = Array(zip(urls.indices, urls))
                 ForEach(array, id: \.0) { _, url in
-
                     Button(url.host ?? "Unknown Host") {
                         Task { @MainActor in
                             let result = await SourceManager.shared.handleURL(for: url)
-
                             if !result {
                                 KEY_WINDOW?.rootViewController?.present(SFSafariViewController(url: url), animated: true)
                             }

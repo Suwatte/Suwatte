@@ -69,6 +69,7 @@ struct ChapterList: View {
             selections.removeAll()
         })
         .animation(.default, value: selections)
+        .animation(.default, value: model.actionState)
         .navigationTitle("Chapters")
         .modifier(ConditionalToolBarModifier(showBB: Binding.constant(editMode?.wrappedValue == .active)))
         .toolbar {
@@ -163,6 +164,22 @@ struct ChapterList: View {
             model.setupObservers()
         }
     }
+    
+    func genId(_ id: String, _ completed: Bool, _ download: ICDMDownloadObject?) -> String {
+        
+        var id = id
+        
+        id += completed.description
+        
+        if let download , !download.isInvalidated {
+            
+            id += download.status.rawValue.description
+        } else {
+            id += "none"
+        }
+        
+        return id
+    }
 
     func ChaptersView(_ chapters: [StoredChapter]) -> some View {
         List(chapters, id: \.self, selection: $selections) { chapter in
@@ -187,6 +204,9 @@ struct ChapterList: View {
                 Color.clear
                     .contextMenu {
                         Button {
+                            if completed {
+                                model.setInvalidatedMarkers(nums: [chapter.number])
+                            }
                             DataManager.shared.bulkMarkChapter(chapters: [chapter], completed: !completed)
                             didMark()
                         } label: {
@@ -204,7 +224,7 @@ struct ChapterList: View {
                         DownloadView(download, chapter)
                         ProviderView(chapter)
                     }
-                    .id(chapter._id + completed.description + (download?.status.rawValue.description ?? "none"))
+                    .id(genId(chapter._id, completed, download))
             )
         }
     }
@@ -212,13 +232,18 @@ struct ChapterList: View {
 
 extension ChapterList {
     func doFilter() {
+        guard let chapters = model.chapters.value else { return }
+        let ids = chapters.map(\._id)
         DispatchQueue.global(qos: .background).async {
-            filterChapters()
+            filterChapters(ids: ids)
         }
     }
 
-    func filterChapters() {
-        guard let chapters = model.chapters.value else { return }
+    func filterChapters(ids: [String]) {
+        let realm = try! Realm()
+        
+        let chapters = realm.objects(StoredChapter.self).where({ $0._id.in(ids) }).toArray()
+        
         // Filter Language, Providers, Downloads
         var base = chapters
             .filter(filterDownloads(_:))
@@ -248,10 +273,11 @@ extension ChapterList {
             base = base
                 .sorted(by: \.index, descending: !sortDesc) // Reverese Source Index
         }
-
+        
+        let data = base.map({ $0.freeze() })
         Task { @MainActor in
             withAnimation {
-                visibleChapters = base
+                visibleChapters = data
             }
         }
     }
@@ -275,7 +301,7 @@ extension ChapterList {
 extension ChapterList {
     @ViewBuilder
     func DownloadView(_ download: ICDMDownloadObject?, _ chapter: StoredChapter) -> some View {
-        if let download = download {
+        if let download = download, !download.isInvalidated {
             switch download.status {
             case .cancelled:
                 EmptyView()
@@ -463,18 +489,18 @@ extension ChapterList {
     }
 
     func markAsUnread() {
+        model.setInvalidatedMarkers(nums: Set(selections.map(\.number))) // Set These markers to be invalidated
         DataManager.shared.bulkMarkChapter(chapters: Array(selections), completed: false)
         deselectAll()
-
-        let c = model.storedContent
-        if !DataManager.shared.isInLibrary(content: c) {
-            DataManager.shared.toggleLibraryState(for: c)
-        }
     }
 
     func addToDownloadQueue() {
         ICDM.shared.add(chapters: Array(selections).map(\._id))
         deselectAll()
+        let c = model.storedContent
+        if !DataManager.shared.isInLibrary(content: c) {
+            DataManager.shared.toggleLibraryState(for: c)
+        }
     }
 
     func removeDownload() {

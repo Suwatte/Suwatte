@@ -16,10 +16,11 @@ struct SuwatteApp: App {
         WindowGroup {
             ContentView()
                 .onOpenURL(perform: handleURL(_:))
-                .sheet(item: $navModel.identifier) { ids in
+                .fullScreenCover(item: $navModel.identifier) { ids in
                     NavigationView {
                         ProfileView(entry: .init(contentId: ids.contentId, cover: STTHost.coverNotFound.absoluteString, title: "..."), sourceId: ids.sourceId)
                             .closeButton()
+                            .environmentObject(ToastManager.shared)
                     }
                 }
                 .environmentObject(navModel)

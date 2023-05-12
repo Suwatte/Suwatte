@@ -189,6 +189,7 @@ extension ExploreView.HighlightTile {
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .frame(height: proxy.size.width * 1.5, alignment: .center)
+                                .transition(.opacity)
                         }
 
                     } else {
@@ -252,6 +253,8 @@ extension ExploreView.HighlightTile {
                 prefetcher.stopPrefetching(with: urls)
             })
             .animation(.easeOut(duration: 0.25), value: loader.image)
+            .animation(.easeOut(duration: 0.25), value: loader.isLoading)
+
         }
 
         func load(url: URL?) async {
@@ -275,6 +278,7 @@ extension ExploreView.HighlightTile {
 
         func didAppear() {
             // Update Loader
+            loader.transaction = .init(animation: .easeInOut(duration: 0.25))
             loader.onCompletion = { response in
                 guard let response = try? response.get() else {
                     return

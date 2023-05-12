@@ -19,7 +19,6 @@ extension JSCC {
 
         func _post(_ message: JSValue) -> JSValue {
             .init(newPromiseIn: message.context) { resolve, reject in
-                let context = message.context
                 Task {
                     do {
                         let message = try Message(value: message)
@@ -57,7 +56,7 @@ extension H {
         }
         let data = try afResponse.result.get()
         let headers = httpResponse.headers.dictionary
-        var response = DSKCommon.Response(data: data,
+        let response = DSKCommon.Response(data: data,
                                           status: httpResponse.statusCode,
                                           headers: headers)
         return response

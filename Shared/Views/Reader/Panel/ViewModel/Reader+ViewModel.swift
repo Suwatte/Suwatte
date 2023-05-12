@@ -41,6 +41,9 @@ extension ReaderView {
         var chapterCache: [String: ReaderChapter] = [:]
         var chapterSectionCache: [String: Int] = [:]
         var scrollTask: Task<Void, Never>?
+        
+        var content: StoredContent?
+        var isInLibrary: Bool = false
         // Combine
         let reloadSectionPublisher = PassthroughSubject<Int, Never>()
         let navigationPublisher = PassthroughSubject<ReaderNavigation.NavigationType, Never>()
@@ -56,6 +59,12 @@ extension ReaderView {
             if chapter.chapterType == .LOCAL || chapter.chapterType == .OPDS {
                 DataManager.shared.storeChapters([chapter])
             }
+            // Update Content
+            let chapter = chapter
+            self.content = DataManager.shared.getStoredContent(chapter.sourceId, chapter.contentId)
+            if let content  {
+                self.isInLibrary = DataManager.shared.isInLibrary(content: content)
+            }
             contentTitle = title
             activeChapter = .init(chapter: chapter.toThreadSafe())
             if let pageIndex = pageIndex {
@@ -65,6 +74,8 @@ extension ReaderView {
             }
             readerChapterList.append(activeChapter)
             updateViewerMode(with: readingMode)
+            
+
         }
 
         func loadChapter(_ chapter: ThreadSafeChapter, asNextChapter: Bool = true) async {
@@ -199,11 +210,6 @@ extension ReaderView {
             Task {
                 await loadChapter(target, asNextChapter: false)
             }
-        }
-
-        var content: StoredContent? {
-            let chapter = activeChapter.chapter
-            return DataManager.shared.getStoredContent(chapter.sourceId, chapter.contentId)
         }
 
         var title: String {
@@ -380,7 +386,7 @@ extension ReaderView.ViewModel {
             activeChapter = chapter
         }
 
-        Task {
+        Task.detached {
             lastChapter.pages?.map(\.page.CELL_KEY).forEach {
                 KingfisherManager.shared.cache.memoryStorage.remove(forKey: $0)
             }
@@ -397,20 +403,22 @@ extension ReaderView.ViewModel {
             return
         }
 
-        // Mark As Completed & Update Unread Count
-        DataManager.shared.setProgress(chapter: lastChapter.chapter, completed: true)
-        DataManager.shared.updateUnreadCount(for: .init(contentId: lastChapter.chapter.contentId, sourceId: lastChapter.chapter.sourceId))
+        Task.detached { [weak self] in
+            // Mark As Completed & Update Unread Count
+            DataManager.shared.setProgress(chapter: lastChapter.chapter, completed: true)
+            DataManager.shared.updateUnreadCount(for: .init(contentId: lastChapter.chapter.contentId, sourceId: lastChapter.chapter.sourceId))
 
-        // Anilist Sync
-        handleTrackerSync(number: lastChapter.chapter.number,
-                          volume: lastChapter.chapter.volume)
+            // Anilist Sync
+            self?.handleTrackerSync(number: lastChapter.chapter.number,
+                              volume: lastChapter.chapter.volume)
 
-        // Source Sync
-        handleSourceSync(contentId: lastChapter.chapter.contentId,
-                         sourceId: lastChapter.chapter.sourceId,
-                         chapterId: lastChapter.chapter.chapterId)
+            // Source Sync
+            self?.handleSourceSync(contentId: lastChapter.chapter.contentId,
+                             sourceId: lastChapter.chapter.sourceId,
+                             chapterId: lastChapter.chapter.chapterId)
 
-        DataManager.shared.updateLastRead(id: ContentIdentifier(contentId: lastChapter.chapter.contentId, sourceId: lastChapter.chapter.sourceId).id)
+            DataManager.shared.updateLastRead(id: ContentIdentifier(contentId: lastChapter.chapter.contentId, sourceId: lastChapter.chapter.sourceId).id)
+        }
     }
 
     private func getStoredTrackerInfo() -> StoredTrackerInfo? {
@@ -428,9 +436,10 @@ extension ReaderView.ViewModel {
         let chapterVolume = volume.map { Int($0) }
 
         // Ids
+        let id = ContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId).id
         // Anilist
-        let alId = content?.trackerInfo["al"] ?? getStoredTrackerInfo()?.al ?? (getLinkedTrackerInfo()?["al"] ?? nil) // ???
         Task {
+            let alId = STTHelpers.getAnilistID(id: id).flatMap({ String($0) })
             do {
                 try await STTHelpers.syncToAnilist(mediaID: alId, progress: chapterNumber, progressVolume: chapterVolume)
             } catch {

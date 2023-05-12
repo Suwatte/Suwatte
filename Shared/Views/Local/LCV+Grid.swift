@@ -322,22 +322,3 @@ extension LocalContentView {
         }
     }
 }
-
-struct ColoredBadge: View {
-    var color: Color
-    var bodySize: CGFloat = 17.0
-    var internalSize: CGFloat = 12
-    var offset: CGFloat = 8.0
-    var body: some View {
-        ZStack(alignment: .center) {
-            Circle()
-                .foregroundColor(.systemBackground)
-            Circle()
-                .foregroundColor(color)
-                .frame(width: internalSize, height: internalSize)
-        }
-        .frame(width: bodySize, height: bodySize, alignment: .leading)
-        .offset(x: offset, y: -offset)
-        .transition(.scale)
-    }
-}

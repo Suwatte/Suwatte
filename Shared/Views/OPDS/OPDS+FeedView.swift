@@ -257,11 +257,13 @@ extension Target {
             }
             .onAppear {
                 if let request = request {
+                    image.transaction = .init(animation: .easeInOut(duration: 0.25))
                     image.load(.init(urlRequest: request))
                 }
             }
             .onDisappear { image.reset() }
             .animation(.default, value: image.isLoading)
+            .animation(.easeInOut(duration: 0.25), value: image.image)
             .onTapGesture {
                 presentDialog.toggle()
             }

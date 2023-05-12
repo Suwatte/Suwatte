@@ -12,6 +12,7 @@ struct ContentView: View {
     @AppStorage(STTKeys.IntialTabIndex) var InitialSelection = 3
     @State var selection = 0
     @StateObject var toaster = ToastManager.shared
+    @StateObject var appState = StateManager.shared
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
@@ -25,7 +26,7 @@ struct ContentView: View {
                 }
             }
             .environmentObject(toaster)
-            .environmentObject(DaisukeEngine.shared)
+            .environmentObject(appState)
             .onAppear {
                 selection = InitialSelection
             }

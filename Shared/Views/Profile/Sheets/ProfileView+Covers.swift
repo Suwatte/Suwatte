@@ -6,7 +6,6 @@
 //
 
 import Kingfisher
-import NukeUI
 import SwiftUI
 
 extension ProfileView {
@@ -19,6 +18,10 @@ extension ProfileView {
                 TabView {
                     ForEach(covers, id: \.self) { cover in
                         KFImage(URL(string: cover))
+                            .placeholder({ _ in
+                                Color.gray.opacity(0.25)
+                                    .shimmering()
+                            })
                             .resizable()
                             .requestModifier(AsyncImageModifier(sourceId: model.source.id))
                             .scaledToFit()

@@ -115,6 +115,7 @@ extension ReaderView {
                     Text("Preparing Reader...")
                         .font(.footnote)
                         .fontWeight(.light)
+                        .opacity(0.5)
                 }
                 .transition(.opacity)
                 .onAppear {

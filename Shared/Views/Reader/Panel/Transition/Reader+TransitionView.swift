@@ -77,7 +77,7 @@ extension ReaderView {
                 if let content = model.content {
                     MAIN(entry: content)
                         .task {
-                            inLibrary = DataManager.shared.isInLibrary(content: content)
+                            inLibrary = model.isInLibrary
                             wasInLibrary = inLibrary
                         }
                 }
@@ -91,7 +91,6 @@ extension ReaderView {
                             inLibrary = DataManager.shared.toggleLibraryState(for: entry)
                             if inLibrary { openCollectionSheet.toggle() }
                         }
-
                         .transition(.opacity)
                     }
                 }
@@ -101,6 +100,7 @@ extension ReaderView {
                 .padding()
                 .background(Color.primary.opacity(0.05))
                 .cornerRadius(5)
+                .opacity(wasInLibrary ? 0 : 1)
             }
         }
 
