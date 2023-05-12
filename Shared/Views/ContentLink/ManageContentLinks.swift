@@ -57,7 +57,6 @@ struct ManageContentLinks: View {
     }
 
     func fetch() -> [StoredContent] {
-        let ids = entries.first?.ids
         guard let ids = entries.first?.ids else {
             return []
         }

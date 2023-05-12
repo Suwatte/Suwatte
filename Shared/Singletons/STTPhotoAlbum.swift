@@ -96,7 +96,7 @@ internal extension STTPhotoAlbum {
             }
 
             guard error == nil else {
-                Logger.shared.error("[STTPhotoAlbum] \(error?.localizedDescription)")
+                Logger.shared.error("[STTPhotoAlbum] \(error?.localizedDescription ?? "An Error Occurred")")
                 return
             }
 
