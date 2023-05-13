@@ -21,15 +21,6 @@ extension AnilistView.DirectoryView {
         var body: some View {
             NavigationView {
                 List {
-                    // Adult Content
-                    Section {
-                        NavigationLink("Adult Content") {
-                            AdultContentView(value: $model.request.isAdult)
-                        }
-                    } header: {
-                        Text("Content Preferences")
-                    }
-
                     // Genres & Tags
                     Section {
                         LoadableView(loadGenres, model.genres) { options in
@@ -86,10 +77,8 @@ extension AnilistView.DirectoryView {
             // Volume
             // Publishing Status
 
-            // Doujin
             // Hide my Anime
             // Only show my anime
-            // Adult
 
             // Advanced Genres & Tag Filters
 
@@ -111,7 +100,7 @@ extension FilterSheet {
         var data: [String]
         var body: some View {
             List {
-                ForEach(data) { option in
+                ForEach(processed_data) { option in
                     Button { toggleSelection(option) } label: {
                         HStack {
                             Text(option)
@@ -136,6 +125,10 @@ extension FilterSheet {
                     }
                 }
             }
+        }
+        
+        var processed_data : [String] {
+            data.filter({ $0 != "Hentai" })
         }
 
         func cellColor(_ selection: String) -> Color {
@@ -210,7 +203,7 @@ extension FilterSheet {
         var body: some View {
             let grouped = groupedData
             List {
-                ForEach(Array(grouped.keys).sorted(by: { $0 < $1 })) { key in
+                ForEach(Array(grouped.keys.filter({ !$0.contains("Sexual") })).sorted(by: { $0 < $1 })) { key in
                     CategorySection(key, grouped[key]!)
                 }
             }
@@ -228,13 +221,22 @@ extension FilterSheet {
 
         func CategorySection(_ key: String, _ data: [Anilist.Tag]) -> some View {
             Section {
-                ForEach(data, id: \.name) {
+                ForEach(data.filter({ !$0.isAdult }), id: \.name) {
                     Cell($0)
                 }
             } header: {
-                Text(key)
+                Text(formatKey(key:key))
             }
             .headerProminence(.increased)
+        }
+        
+        func formatKey(key: String) -> String {
+            
+            let matches = key.groups(for: "^(?:Theme|Cast|Setting|Other)-(.*)$")
+            guard let tag = matches.first?.last else {
+                return key
+            }
+            return tag.replacingOccurrences(of: "-", with: " ").trimmingCharacters(in: .whitespacesAndNewlines)
         }
 
         func Cell(_ tag: Anilist.Tag) -> some View {
@@ -275,40 +277,6 @@ extension FilterSheet {
     }
 }
 
-extension FilterSheet {
-    struct AdultContentView: View {
-        @Binding var value: Bool?
-        var body: some View {
-            List {
-                Button { value = false } label: {
-                    Cell("Hide Adult Content", isSelected: value == false)
-                }
-                Button { value = nil } label: {
-                    Cell("Include Adult Content", isSelected: value == nil)
-                }
-                Button { value = true } label: {
-                    Cell("Show only Adult Content", isSelected: value == true)
-                }
-            }
-            .buttonStyle(.plain)
-            .navigationTitle("Adult Content")
-            .navigationBarTitleDisplayMode(.inline)
-        }
-
-        func Cell(_ label: String, isSelected: Bool) -> some View {
-            HStack {
-                Text(label)
-                Spacer()
-                Image(systemName: "checkmark")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 15, height: 15, alignment: .center)
-                    .opacity(isSelected ? 1 : 0)
-            }
-            .contentShape(Rectangle())
-        }
-    }
-}
 
 extension Anilist.SearchRequest {
     var GenreLabel: String {
