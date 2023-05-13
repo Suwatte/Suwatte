@@ -102,6 +102,12 @@ extension SourceManager {
     }
 
     private func getCommons() async throws {
+        
+        if commons.exists && !StateManager.shared.NetworkStateHigh { // Commons Exists & Device is offline
+            return
+        }
+        
+        
         let base = URL(string: "https://suwatte.github.io/Common")!
         var url = base.appendingPathComponent("versioning.json")
 
