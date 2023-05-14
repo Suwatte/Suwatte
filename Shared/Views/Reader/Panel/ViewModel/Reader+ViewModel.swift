@@ -10,6 +10,7 @@ import Kingfisher
 import SwiftUI
 
 extension ReaderView {
+    @MainActor
     final class ViewModel: ObservableObject {
         @Published var updater = false
         private var cancellables = Set<AnyCancellable>()
@@ -29,7 +30,7 @@ extension ReaderView {
 
         var chapterList: [ThreadSafeChapter]
         @Published var contentTitle: String?
-
+        @Published var containerReady = false
         // Settings
         @Published var menuControl: MenuControl = .init()
         @Published var slider: SliderControl = .init()
@@ -106,7 +107,7 @@ extension ReaderView {
             let cData = await STTHelpers.getChapterData(chapter)
             switch cData {
             case let .loaded(t):
-                readerChapter.data = .loaded(t.toReadableChapterData())
+                    readerChapter.data = .loaded(t.toReadableChapterData())
             case let .failed(error):
                 readerChapter.data = .failed(error)
             default: break
@@ -141,8 +142,10 @@ extension ReaderView {
             } else {
                 insertPublisher.send(asNextChapter ? sections.count - 1 : 0)
             }
-
-            notifyOfChange()
+            
+            Task { @MainActor in
+                containerReady = true
+            }
             if pages.isEmpty {
                 loadNextChapter()
             }
@@ -409,11 +412,11 @@ extension ReaderView.ViewModel {
             DataManager.shared.updateUnreadCount(for: .init(contentId: lastChapter.chapter.contentId, sourceId: lastChapter.chapter.sourceId))
 
             // Anilist Sync
-            self?.handleTrackerSync(number: lastChapter.chapter.number,
+            await self?.handleTrackerSync(number: lastChapter.chapter.number,
                               volume: lastChapter.chapter.volume)
 
             // Source Sync
-            self?.handleSourceSync(contentId: lastChapter.chapter.contentId,
+            await self?.handleSourceSync(contentId: lastChapter.chapter.contentId,
                              sourceId: lastChapter.chapter.sourceId,
                              chapterId: lastChapter.chapter.chapterId)
 

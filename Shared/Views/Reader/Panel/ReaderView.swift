@@ -109,7 +109,7 @@ struct ReaderView: View {
 extension ReaderView {
     var GATEWAY: some View {
         Group {
-            if model.sections.isEmpty {
+            if !model.containerReady {
                 VStack(alignment: .center) {
                     ProgressView()
                     Text("Preparing Reader...")

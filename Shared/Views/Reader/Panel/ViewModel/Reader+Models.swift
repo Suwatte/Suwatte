@@ -15,9 +15,8 @@ protocol ReaderTransitionManager {
     func onChapterCompleted(chapter: ReaderView.ReaderChapter)
 }
 
-protocol ReaderSliderManager {
+protocol ReaderSliderManager  {
     var slider: ReaderView.SliderControl { get set }
-
     func updateSliderOffsets(min: CGFloat, max: CGFloat)
 }
 

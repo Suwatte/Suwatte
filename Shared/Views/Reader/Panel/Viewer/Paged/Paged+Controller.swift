@@ -414,7 +414,9 @@ extension PagedController {
             lastViewedSection = path.section
         }
         model.activeChapter.requestedPageOffset = nil
-        model.didScrollTo(path: path)
+        Task {
+            model.didScrollTo(path: path)
+        }
         model.scrubbingPageNumber = nil
     }
 }

@@ -115,7 +115,9 @@ extension DoublePagedViewer.Controller {
         let page = item?.secondary ?? item?.primary
         let index = model.sections[path.section].firstIndex(where: { $0 === page })
         if let index {
-            model.didScrollTo(path: .init(item: index, section: path.section))
+            Task {
+                model.didScrollTo(path: .init(item: index, section: path.section))
+            }
         }
 
         model.scrubbingPageNumber = nil

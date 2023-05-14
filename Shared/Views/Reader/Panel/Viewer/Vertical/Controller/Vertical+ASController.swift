@@ -64,8 +64,11 @@ extension VerticalViewer {
             collectionNode.view.addGestureRecognizer(tapGR)
             collectionNode.view.contentInsetAdjustmentBehavior = .never
             collectionNode.view.scrollsToTop = false
-            model.slider.setRange(0, 1)
             collectionNode.leadingScreensForBatching = 2
+
+            Task { @MainActor in
+                model.slider.setRange(0, 1)
+            }
         }
 
         @objc func appMovedToBackground() {
@@ -189,9 +192,7 @@ extension VerticalViewer.Controller {
     }
 
     func collectionNode(_: ASCollectionNode, willBeginBatchFetchWith context: ASBatchContext) {
-        Task.detached { [weak self] in
-            self?.model.loadNextChapter()
-        }
+        model.loadNextChapter()
         context.completeBatchFetching(true)
     }
 }

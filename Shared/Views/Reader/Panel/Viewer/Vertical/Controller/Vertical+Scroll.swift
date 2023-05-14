@@ -80,14 +80,18 @@ extension Controller {
             let currentOffset = collectionNode.contentOffset.y
             model.activeChapter.requestedPageOffset = currentOffset - pageOffset
         }
-
-        model.didScrollTo(path: path)
+        
+        Task {
+            model.didScrollTo(path: path)
+        }
     }
 
     func onUserDidScroll(to _: CGFloat) {
         // Update Offset
         if !model.slider.isScrubbing, model.menuControl.menu {
-            model.menuControl.hideMenu()
+            Task { @MainActor in
+                model.menuControl.hideMenu()
+            }
         }
 
         guard let currentPath else {

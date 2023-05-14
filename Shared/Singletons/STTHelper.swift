@@ -65,7 +65,7 @@ class STTHelpers {
                 let obj = StoredChapterData()
                 obj.chapter = chapter.toStored()
                 obj.archivePaths = arr
-                return .loaded(obj)
+                return .loaded(obj.freeze())
             } catch {
                 return .failed(error)
             }
@@ -88,7 +88,7 @@ class STTHelpers {
 
             // Get from Database
             if let data = DataManager.shared.getChapterData(forId: chapter._id) {
-                return .loaded(data)
+                return .loaded(data.freeze())
             }
             // Get from source
             guard let source = SourceManager.shared.getSource(id: chapter.sourceId) else {
@@ -100,7 +100,7 @@ class STTHelpers {
                 if !source.config.chapterDataCachingDisabled {
                     DataManager.shared.saveChapterData(data: stored)
                 }
-                return .loaded(stored)
+                return .loaded(stored.freeze())
             } catch {
                 return .failed(error)
             }
@@ -121,7 +121,7 @@ class STTHelpers {
                 }
 
                 obj.pages.append(objectsIn: pages)
-                return .loaded(obj)
+                return .loaded(obj.freeze())
 
             } catch {
                 return .failed(error)
