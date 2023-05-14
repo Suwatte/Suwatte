@@ -57,7 +57,6 @@ extension DoublePagedDisplayHolder {
 
         delegate = nil
         stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        print("Cancelled")
     }
 
     func reload() {

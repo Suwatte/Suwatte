@@ -62,7 +62,6 @@ class VerticalImageScrollView: UIScrollView, UIScrollViewDelegate {
         zoomView.addGestureRecognizer(zoomingTap)
         zoomView.isUserInteractionEnabled = true
 
-//        print(minimumZoomScale, maximumZoomScale)
     }
 
     func setMaxMinZoomScaleForCurrentBounds() {

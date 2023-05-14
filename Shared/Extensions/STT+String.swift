@@ -188,7 +188,6 @@ extension String {
                 }
             }
         } catch {
-            print("invalid regex: \(error.localizedDescription)")
             return []
         }
     }

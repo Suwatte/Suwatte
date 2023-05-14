@@ -111,9 +111,6 @@ extension RunnerListsView {
                         await load()
                     }
                 }
-                .onAppear {
-                    print(error)
-                }
             } _: { value in
                 InternalListInfoView(list: value, listURL: listURL, text: $text)
             }
