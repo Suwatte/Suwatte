@@ -75,7 +75,6 @@ extension Logger {
         do {
             try log.appendLineToURL(url: file)
         } catch {
-            print(error)
             logs.append(.init(message: "Failed to write log to file, \(error.localizedDescription)", level: .error))
         }
     }
