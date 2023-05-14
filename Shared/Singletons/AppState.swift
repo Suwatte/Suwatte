@@ -15,10 +15,16 @@ import Combine
 final class StateManager : ObservableObject {
     static let shared = StateManager()
     var networkState = NetworkState.unknown
+    var ShowNSFWContent = false
     let monitor = NWPathMonitor()
     
     init() {
         registerNetworkObserver()
+        updateAnilistNSFWSetting()
+    }
+    
+    func didStateChange() {
+        updateAnilistNSFWSetting()
     }
     
     func registerNetworkObserver() {
@@ -30,6 +36,15 @@ final class StateManager : ObservableObject {
             } else {
                 self?.networkState = .offline
             }
+        }
+    }
+    
+    func updateAnilistNSFWSetting() {
+        guard NetworkStateHigh else {
+            return
+        }
+        Task {
+            ShowNSFWContent = await Anilist.shared.nsfwEnabled()
         }
     }
     

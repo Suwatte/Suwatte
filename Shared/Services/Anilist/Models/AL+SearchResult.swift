@@ -97,6 +97,8 @@ extension Anilist {
         var title: Title
         var coverImage: CoverImage
         var mediaListEntry: MediaList?
+        var genres: [String]
+        var countryOfOrigin: String
 
         struct Title: Codable {
             var userPreferred: String

@@ -24,6 +24,7 @@ struct ContentView: View {
                     STTScheduler.shared.scheduleAll()
                 default: break
                 }
+                appState.didStateChange()
             }
             .environmentObject(toaster)
             .environmentObject(appState)

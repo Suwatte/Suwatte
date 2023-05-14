@@ -212,6 +212,7 @@ extension AnilistView.DirectoryView {
         @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
         @State var isPresenting = false
         @State var firstCall = false
+        @Preference(\.blurNSFWContentInSearch) var blurNSFWContent
         var body: some View {
             GeometryReader { reader in
                 ZStack(alignment: .topTrailing) {
@@ -246,6 +247,11 @@ extension AnilistView.DirectoryView {
 
         var ImageV: some View {
             BaseImageView(url: URL(string: data.coverImage.extraLarge))
+                .blur(radius: BLUR_CONTENT ? 50 : 0)
+        }
+        
+        var BLUR_CONTENT: Bool {
+            blurNSFWContent && data.isAdult && data.genres.contains("Hentai")
         }
 
         func CompactStyle(reader: GeometryProxy) -> some View {

@@ -9,6 +9,8 @@ import SwiftUI
 
 struct TrackersView: View {
     @Preference(\.nonSelectiveSync) var nonSelectiveSync
+    @Preference(\.includeNSFWInAnilistSearchResult) var showNSFWContentInSearch
+    @Preference(\.blurNSFWContentInSearch) var blurNSFWContentInSearch
     @State var presentAlert = false
 
     var body: some View {
@@ -29,6 +31,14 @@ struct TrackersView: View {
                         .onTapGesture {
                             presentAlert.toggle()
                         }
+                }
+                
+                Toggle(isOn: $showNSFWContentInSearch) {
+                    Text("Include NSFW Content In Search Results")
+                }
+                
+                Toggle(isOn: $blurNSFWContentInSearch) {
+                    Text("Blur NSFW Content In Search Results")
                 }
 
             } header: {

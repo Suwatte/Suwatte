@@ -26,12 +26,18 @@ extension Anilist {
         var about: String?
         var bannerImage: String?
         var avatar: Avatar
+        var options: UserOptions
         var statistics: UserStatisticType
         var mediaListOptions: MediaListOptions
     }
 
     struct Avatar: Decodable {
         var large: String?
+    }
+    
+    struct UserOptions: Decodable {
+        var displayAdultContent: Bool
+        var profileColor: String
     }
 
     struct UserStatisticType: Decodable {

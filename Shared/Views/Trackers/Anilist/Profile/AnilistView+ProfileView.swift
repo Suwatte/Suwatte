@@ -36,7 +36,7 @@ extension AnilistView {
             .onChange(of: anilistModel.notifier) { _ in
                 load()
             }
-            .animation(.easeOut, value: loadable)
+            .animation(.default, value: loadable)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
@@ -89,7 +89,7 @@ extension AnilistView.ProfileView {
         @EnvironmentObject var toastManager: ToastManager
         var body: some View {
             ScrollView {
-                VStack {
+                VStack(spacing: 20) {
                     // Header
                     HeaderView
 
@@ -203,10 +203,15 @@ private typealias PView = AnilistView.ProfileView.DataView
 
 extension PView {
     var GenresView: some View {
-        HStack {
-            InteractiveTagView(data.genres) { genre in
-                InteractiveTagCell(genre) {
-                    AnilistView.DirectoryView(model: .init(.init(type: data.type, genres: [genre])))
+        VStack(alignment: .leading, spacing: 5) {
+            Text("Genres")
+                .font(.subheadline)
+                .fontWeight(.bold)
+            HStack {
+                InteractiveTagView(data.genres) { genre in
+                    InteractiveTagCell(genre) {
+                        AnilistView.DirectoryView(model: .init(.init(type: data.type, genres: [genre])))
+                    }
                 }
             }
         }
@@ -214,18 +219,13 @@ extension PView {
     }
 
     var TagsView: some View {
-        VStack(spacing: 10) {
-            ForEach(Array(Dictionary(grouping: data.tags, by: { $0.category }).keys).sorted(by: { $0 < $1 })) { category in
-                let tags = data.tags.filter { $0.category == category }
-                VStack(alignment: .leading, spacing: 7) {
-                    Text(category)
-                        .font(.callout)
-                        .fontWeight(.semibold)
-                    InteractiveTagView(tags.sorted(by: { $0.name < $1.name })) { tag in
-                        InteractiveTagCell(tag.name) {
-                            AnilistView.DirectoryView(model: .init(.init(type: data.type, tags: [tag.name])))
-                        }
-                    }
+        VStack(alignment: .leading, spacing: 5) {
+            Text("Tags")
+                .font(.subheadline)
+                .fontWeight(.bold)
+            InteractiveTagView(data.tags.filter({ $0.category != "Sexual Content"}).sorted(by: { $0.name < $1.name })) { tag in
+                InteractiveTagCell(tag.name) {
+                    AnilistView.DirectoryView(model: .init(.init(type: data.type, tags: [tag.name])))
                 }
             }
         }
@@ -290,7 +290,7 @@ extension PView {
                     .frame(width: 20, height: 20)
                     .padding()
                     .clipShape(RoundedRectangle(cornerSize: CGSize(width: 20, height: 20)))
-                    .background(data.isFavourite ? Color.red : Color.sttGray)
+                    .background(data.isFavourite ? Color.red : Color.secondary.opacity(0.25))
                     .foregroundColor(data.isFavourite ? Color.white : Color.red)
                     .cornerRadius(7)
             }

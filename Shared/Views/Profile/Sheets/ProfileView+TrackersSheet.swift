@@ -133,6 +133,6 @@ extension AnilistView {
 
 extension Anilist.Media {
     func toSearchResult() -> Anilist.SearchResult {
-        .init(id: id, type: type, status: status, isAdult: isAdult, title: .init(userPreferred: title.userPreferred), coverImage: .init(large: coverImage.large, extraLarge: coverImage.extraLarge, color: coverImage.color))
+        .init(id: id, type: type, status: status, isAdult: isAdult, title: .init(userPreferred: title.userPreferred), coverImage: .init(large: coverImage.large, extraLarge: coverImage.extraLarge, color: coverImage.color), genres: genres, countryOfOrigin: countryOfOrigin)
     }
 }

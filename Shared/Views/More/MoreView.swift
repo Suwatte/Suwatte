@@ -51,33 +51,13 @@ struct MoreView: View {
         }
 
         Section {
-            NavigationLink("Social") {
-                List {
-                    Section {
-                        Link(destination: URL(string: "https://ko-fi.com/mantton")!) {
-                            Text("Support on KoFi")
-                        }
-                        Link(destination: URL(string: "https://patreon.com/mantton")!) {
-                            Text("Support on Patreon")
-                        }
-                    }
-
-                    Section {
-                        Link(destination: URL(string: "https://discord.gg/PnxPBNwkj2")!) {
-                            Text("Discord Server")
-                        }
-                        Link(destination: URL(string: "https://twitter.com/ceresmir")!) {
-                            Text("Twitter")
-                        }
-                    }
-                }
-                .navigationTitle("Social")
-                .buttonStyle(.plain)
+            Link(destination: URL(string: "https://ko-fi.com/mantton")!) {
+                Text("Support on KoFi")
+            }
+            Link(destination: URL(string: "https://patreon.com/mantton")!) {
+                Text("Support on Patreon")
             }
             Link("About Suwatte", destination: STTHost.root)
-                .buttonStyle(.plain)
-        } footer: {
-            Text("A Mantton Project")
         }
     }
 

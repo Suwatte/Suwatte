@@ -97,6 +97,7 @@ extension FilterSheet {
     struct GenreView: View {
         @Binding var include: [String]?
         @Binding var exclude: [String]?
+        @Preference(\.includeNSFWInAnilistSearchResult) var includeNSFW
         var data: [String]
         var body: some View {
             List {
@@ -128,7 +129,13 @@ extension FilterSheet {
         }
         
         var processed_data : [String] {
-            data.filter({ $0 != "Hentai" })
+            var canShowAdult = StateManager.shared.ShowNSFWContent && includeNSFW
+            
+            if canShowAdult {
+                return data
+            }
+            
+            return data.filter({ $0 != "Hentai" })
         }
 
         func cellColor(_ selection: String) -> Color {
