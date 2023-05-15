@@ -65,7 +65,7 @@ class STTHelpers {
                 let obj = StoredChapterData()
                 obj.chapter = chapter.toStored()
                 obj.archivePaths = arr
-                return .loaded(obj.freeze())
+                return .loaded(obj)
             } catch {
                 return .failed(error)
             }
@@ -100,7 +100,7 @@ class STTHelpers {
                 if !source.config.chapterDataCachingDisabled {
                     DataManager.shared.saveChapterData(data: stored)
                 }
-                return .loaded(stored.freeze())
+                return .loaded(stored.realm == nil ? stored : stored.freeze())
             } catch {
                 return .failed(error)
             }
@@ -121,7 +121,7 @@ class STTHelpers {
                 }
 
                 obj.pages.append(objectsIn: pages)
-                return .loaded(obj.freeze())
+                return .loaded(obj)
 
             } catch {
                 return .failed(error)
