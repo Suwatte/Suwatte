@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 class Logger: ObservableObject {
-    @Published var logs: [Entry] = []
+    var logs: [Entry] = []
     static let shared = Logger()
 
     var file: URL {
