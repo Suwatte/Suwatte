@@ -108,7 +108,6 @@ extension Anilist {
             let user = try await getUser()
             return user.options.displayAdultContent
         } catch {
-            Logger.shared.error(error.localizedDescription)
             return false
         }
     }
