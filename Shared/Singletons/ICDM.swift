@@ -28,7 +28,9 @@ final class InteractorContentDownloader: ObservableObject {
     init() {
         directory.createDirectory()
         tempDir.createDirectory()
-        Logger.shared.log("[ICDM] Resource Initialized")
+        Task { @MainActor in
+            Logger.shared.log("[ICDM] Resource Initialized")
+        }
         resetActives()
         fire()
         runTasks()
@@ -152,7 +154,6 @@ extension ICDM {
             .where { $0.status == .cancelled }
         cancelledTasks.append(contentsOf: targets.map { $0._id })
         clean()
-
         Logger.shared.log("[ICDM] Deleting \(targets.count) Objects")
         try! realm.safeWrite {
             realm.delete(targets)

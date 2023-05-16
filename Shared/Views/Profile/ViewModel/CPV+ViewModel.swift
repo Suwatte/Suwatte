@@ -70,7 +70,6 @@ extension ProfileView {
         init(_ entry: DaisukeEngine.Structs.Highlight, _ source: AnyContentSource) {
             self.entry = entry
             self.source = source
-            setupObservers()
         }
 
         @Published var selection: String?

@@ -27,12 +27,7 @@ class STTNotifier {
 
         // Schedule
         let center = UNUserNotificationCenter.current()
-        center.add(request) { error in
-            if let error = error {
-                Logger.shared.error(error.localizedDescription)
-            }
-        }
-        Logger.shared.log("Notification Scheduled")
+        center.add(request)
     }
 
     func clearBadge() {

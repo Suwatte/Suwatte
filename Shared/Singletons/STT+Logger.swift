@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-class Logger: ObservableObject {
+final class Logger {
     var logs: [Entry] = []
     static let shared = Logger()
 
@@ -47,6 +47,7 @@ extension Logger {
 }
 
 extension Logger {
+    @MainActor
     private func add(entry: Entry) {
         // Add Entry
         if logs.count >= 100 {
@@ -84,7 +85,9 @@ extension Logger {
 
 extension Logger {
     func log(level: Level = .log, _ message: String, _ context: String = "") {
-        add(entry: .init(message: message, level: level, context: context))
+        Task { @MainActor in
+            add(entry: .init(message: message, level: level, context: context))
+        }
     }
 
     func info(_ message: String, _ context: String = "") {

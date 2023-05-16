@@ -17,9 +17,6 @@ extension HistoryView {
         @Published var selection: HighlightIndentier?
         @Published var selectedBook: LocalContentManager.Book?
         @Published var selectedOPDSContent: HistoryObject?
-        init() {
-            observe()
-        }
 
         func observe() {
             let realm = try! Realm()

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LogsView: View {
-    @ObservedObject var logger = Logger.shared
+    private let logger = Logger.shared
     @State var presenting = false
     var body: some View {
         List {

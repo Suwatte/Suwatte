@@ -19,6 +19,7 @@ extension ProfileView {
                                  Task.detached {
                                      await viewModel.loadContentFromDatabase()
                                  }
+                                 viewModel.setupObservers()
                              }
                          },
                          { PLACEHOLDER },
