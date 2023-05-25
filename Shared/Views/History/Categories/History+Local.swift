@@ -5,13 +5,15 @@
 //  Created by Mantton on 2022-07-22.
 //
 
-import Kingfisher
 import RealmSwift
 import SwiftUI
+import NukeUI
 
 extension HistoryView {
     struct LocalContentTile: View {
         var marker: HistoryObject
+        @StateObject private var imageView = FetchImage()
+
         var size = 140.0
         @EnvironmentObject var model: HistoryView.ViewModel
         var body: some View {
@@ -29,16 +31,28 @@ extension HistoryView {
         func ContentFound(_ book: LocalContentManager.Book) -> some View {
             HStack {
                 GeometryReader { proxy in
-                    KFImage.source(book.getImageSource())
-                        .diskCacheExpiration(.expired)
-                        .downsampling(size: proxy.size)
-                        .fade(duration: 0.30)
-                        .resizable()
+                    ZStack {
+                        Rectangle().fill(Color.fadedPrimary)
+                            .task {
+                                imageView.priority = .normal
+                                var request = book.getThumbnailRequest()
+                                request?.processors = [NukeDownsampleProcessor(width: proxy.size.width)]
+                                imageView.load(request)
+                                imageView.transaction = .init(animation: .easeInOut(duration: 0.25))
+
+                            }
+                        imageView
+                            .image?
+                            .resizable()
+                    }
+
                 }
                 .frame(minWidth: 0, idealWidth: size, maxWidth: size, minHeight: 0, idealHeight: size * 1.5, maxHeight: size * 1.5, alignment: .center)
                 .scaledToFit()
-                .background(Color.fadedPrimary)
                 .cornerRadius(7)
+                .onDisappear {
+                    imageView.reset()
+                }
 
                 VStack(alignment: .leading) {
                     Text(book.title)

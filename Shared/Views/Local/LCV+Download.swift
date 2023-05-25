@@ -5,7 +5,6 @@
 //  Created by Mantton on 2023-01-07.
 //
 
-import Kingfisher
 import SwiftUI
 
 struct LCV_Download: View {
@@ -50,11 +49,7 @@ struct LCV_Download: View {
         var body: some View {
             HStack {
                 GeometryReader { proxy in
-                    KFImage.url(URL(string: download.cover))
-                        .diskCacheExpiration(.expired)
-                        .downsampling(size: proxy.size)
-                        .fade(duration: 0.30)
-                        .resizable()
+                    AsyncImage(url: URL(string: download.cover))
                 }
                 .frame(minWidth: 0, idealWidth: size, maxWidth: size, minHeight: 0, idealHeight: size * 1.5, maxHeight: size * 1.5, alignment: .center)
                 .scaledToFit()

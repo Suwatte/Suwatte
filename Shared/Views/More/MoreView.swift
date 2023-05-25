@@ -5,14 +5,11 @@
 //  Created by Mantton on 2022-02-28.
 //
 
-import Kingfisher
 import Nuke
 import SwiftUI
 
 struct MoreView: View {
     @Preference(\.incognitoMode) var incognitoMode
-    @State var cacheSize = Loadable<UInt>.idle
-    @State var showEasterEgg = false
     var body: some View {
         NavigationView {
             List {
@@ -20,6 +17,7 @@ struct MoreView: View {
                 GeneralSection
                 InteractorSection
                 DataSection
+                CacheSection
                 AppInformationSection
             }
             .navigationTitle("More")
@@ -49,15 +47,18 @@ struct MoreView: View {
         } header: {
             Text("Info")
         }
-
+        
         Section {
-            Link(destination: URL(string: "https://ko-fi.com/mantton")!) {
-                Text("Support on KoFi")
-            }
-            Link(destination: URL(string: "https://patreon.com/mantton")!) {
-                Text("Support on Patreon")
-            }
+            Link("Support on KoFi", destination: URL(string: "https://ko-fi.com/mantton")!)
+                .badge("\(Image(systemName: "link"))")
+            Link("Support on Patreon", destination: URL(string: "https://patreon.com/mantton")!)
+                .badge("\(Image(systemName: "link"))")
+            Link("Discord Server", destination: URL(string: "https://discord.gg/8wmkXsT6h5")!)
+                .badge("\(Image(systemName: "link"))")
             Link("About Suwatte", destination: STTHost.root)
+                .badge("\(Image(systemName: "link"))")
+        } header: {
+            Text("Links")
         }
     }
 
@@ -69,20 +70,40 @@ struct MoreView: View {
             NavigationLink("Logs") {
                 LogsView()
             }
-            Button {
-                KingfisherManager.shared.cache.clearCache()
-                ImagePipeline.shared.configuration.dataCache?.removeAll()
-                ToastManager.shared.info("Image Cache Cleared!")
+        } header: {
+            Text("Data")
+        }
+    }
+    
+    var CacheSection: some View {
+        Section {
+            Button(role: .destructive) {
+                Task {
+                    ImagePipeline.shared.cache.removeAll()
+                    ToastManager.shared.info("Image Cache Cleared!")
+                }
             } label: {
                 HStack {
                     Text("Clear Image Cache")
-                        .foregroundColor(.red)
                     Spacer()
+                    Image(systemName: "photo.fill.on.rectangle.fill")
                 }
             }
-            .buttonStyle(.plain)
+            Button(role: .destructive) {
+                Task {
+                    HTTPCookieStorage.shared.removeCookies(since: .distantPast)
+                    URLCache.shared.removeAllCachedResponses()
+                    ToastManager.shared.info("Network Cache Cleared!")
+                }
+            } label: {
+                HStack {
+                    Text("Clear Network Cache")
+                    Spacer()
+                    Image(systemName: "network")
+                }
+            }
         } header: {
-            Text("Data")
+            Text("Cache")
         }
     }
 

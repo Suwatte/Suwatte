@@ -5,7 +5,6 @@
 //  Created by Mantton on 2022-04-10.
 //
 
-import Kingfisher
 import Nuke
 import NukeUI
 import RealmSwift
@@ -47,7 +46,7 @@ struct STTImageView: View {
         if loader.image != nil { return }
         loader.priority = .normal
         loader.transaction = .init(animation: .easeInOut(duration: 0.25))
-        loader.processors = [.resize(size: size)]
+        loader.processors = [NukeDownsampleProcessor(size: size)]
         guard let imageURL, imageURL.isHTTP else {
             loader.load(url)
             return
@@ -103,7 +102,11 @@ struct BaseImageView: View {
                 }
             }
             .onAppear { load(size) }
-            .onDisappear { loader.reset() }
+            .onDisappear {
+                loader.reset()
+                loader.priority = .low
+                
+            }
             .frame(width: proxy.size.width, height: proxy.size.width * 1.5, alignment: .center)
             .background(Color.gray.opacity(0.25))
             .animation(.easeOut(duration: 0.25), value: loader.image)
@@ -113,8 +116,9 @@ struct BaseImageView: View {
 
     func load(_ size: CGSize) {
         if loader.image != nil { return }
-        loader.processors = [.resize(size: size)]
+        loader.processors = [NukeDownsampleProcessor(size: size)]
         loader.transaction = .init(animation: .easeInOut(duration: 0.25))
+        loader.priority = .normal
         guard let url, url.isHTTP else {
             loader.load(url)
             return
@@ -136,34 +140,6 @@ struct BaseImageView: View {
             loader.load(url)
         }
     }
-}
-
-class AsyncImageModifier: AsyncImageDownloadRequestModifier {
-    init(sourceId: String?) {
-        self.sourceId = sourceId
-    }
-
-    let sourceId: String?
-    func modified(for request: URLRequest, reportModified: @escaping (URLRequest?) -> Void) {
-        Task {
-            do {
-                if let sourceId, let source = SourceManager.shared.getSource(id: sourceId) as? any ModifiableSource, source.config.hasThumbnailInterceptor {
-                    let dskRequest = try request.toDaisukeNetworkRequest()
-                    let dskResponse = try await source.willRequestImage(request: dskRequest)
-                    let imageRequest = try dskResponse.toURLRequest()
-                    try Task.checkCancellation()
-                    reportModified(imageRequest)
-                    return
-                } else {
-                    reportModified(request)
-                }
-            } catch {
-                reportModified(request)
-            }
-        }
-    }
-
-    var onDownloadTaskStarted: ((DownloadTask?) -> Void)?
 }
 
 struct DisabledNavLink: ViewModifier {

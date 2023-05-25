@@ -7,8 +7,8 @@
 
 import Combine
 import Foundation
-import Kingfisher
 import UIKit
+import Nuke
 
 extension DoublePagedViewer {
     final class Controller: UICollectionViewController, PagerDelegate {
@@ -22,6 +22,8 @@ extension DoublePagedViewer {
         var cache: [Int: [PageGroup]] = [:]
         var pendingUpdates = false
         var lastViewedSection = 0
+        private let prefetcher = ImagePrefetcher()
+
     }
 }
 
@@ -146,24 +148,61 @@ extension Controller {
 // MARK: Prefetching
 
 extension Controller: UICollectionViewDataSourcePrefetching {
-    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        let urls = indexPaths.map { path -> [URL] in
-            let cell = collectionView.cellForItem(at: path) as? ImageCell
-            guard let cell else { return [] }
-            let page = cell.pageView?.page.page
-            var out: [URL] = []
-            if let page, let url = page.hostedURL.flatMap({ URL(string: $0) }), !page.isLocal {
-                out.append(url)
+    func collectionView(_: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        let pages = indexPaths.compactMap { path -> ReaderView.Page? in
+            guard let page = self.model.sections[path.section][path.item] as? ReaderPage else {
+                return nil
             }
-            let second = cell.pageView?.secondPage?.page
-            if let second, let url = second.hostedURL.flatMap({ URL(string: $0) }), !second.isLocal {
-                out.append(url)
+            return page.page
+        }
+        Task.detached { [weak self] in
+            let requests = await withTaskGroup(of: ImageRequest?.self) { group in
+
+                for page in pages {
+                    group.addTask {
+                        return try? await page.getImageRequest()
+                    }
+                }
+
+                var out = [ImageRequest]()
+                for await result in group {
+                    if let result {
+                        out.append(result)
+                    }
+                }
+                return out
             }
-            return out
+            self?.prefetcher.startPrefetching(with: requests)
+        }
+    }
 
-        }.flatMap { $0 }
+    func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+        let pages = indexPaths.compactMap { path -> ReaderView.Page? in
+            guard let page = self.model.sections[path.section][path.item] as? ReaderPage else {
+                return nil
+            }
+            return page.page
+        }
 
-        ImagePrefetcher(urls: urls).start()
+        Task.detached { [weak self] in
+            let requests = await withTaskGroup(of: ImageRequest?.self) { group in
+
+                for page in pages {
+                    group.addTask {
+                        return try? await page.getImageRequest()
+                    }
+                }
+
+                var out = [ImageRequest]()
+                for await result in group {
+                    if let result {
+                        out.append(result)
+                    }
+                }
+                return out
+            }
+            self?.prefetcher.stopPrefetching(with: requests)
+        }
     }
 }
 

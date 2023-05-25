@@ -6,7 +6,7 @@
 //
 
 import ASCollectionView
-import Kingfisher
+import NukeUI
 import RealmSwift
 import SwiftUI
 
@@ -240,6 +240,7 @@ extension LocalContentView {
         @EnvironmentObject var model: LocalContentManager
         var entry: LocalContentManager.Book
         @Environment(\.libraryIsSelecting) var libraryIsSelecting
+        @StateObject private var imageView = FetchImage()
 
         @AppStorage(STTKeys.LocalThumnailOnly) var showOnlyThumbs = false
         @AppStorage(STTKeys.LocalHideInfo) var showTitleOnly = false
@@ -281,27 +282,34 @@ extension LocalContentView {
                 let imageWidth = proxy.size.width
                 let imageHeight = imageWidth * 1.5
                 VStack(alignment: .leading, spacing: 5) {
-                    KFImage.source(entry.getImageSource())
-                        .placeholder {
-                            Image("stt_icon")
-                                .resizable()
-                                .scaledToFit()
-                                .padding(.all)
-                        }
+                    
+                    ZStack {
+                        Rectangle().fill(Color.fadedPrimary)
+                            .task {
+                                imageView.priority = .normal
+                                var req = entry.getThumbnailRequest()
+                                req?.processors = [NukeDownsampleProcessor(width: imageWidth)]
+                                imageView.transaction = .init(animation: .easeInOut(duration: 0.25))
+                                imageView.load(req)
+                            }
+                        imageView
+                            .image?
+                            .resizable()
 
-                        .diskCacheExpiration(.expired)
-                        .downsampling(size: .init(width: imageWidth * 2, height: imageHeight * 2))
-                        .fade(duration: 0.30)
-                        .resizable()
+                    }
                         .frame(width: imageWidth, height: imageHeight)
-                        .background(Color.fadedPrimary)
                         .cornerRadius(5)
                         .opacity(libraryIsSelecting ? 0.8 : 1)
+                        .onDisappear {
+                            imageView.priority = .low
+                        }
 
                     if imageWidth >= 100, !showOnlyThumbs {
                         titleView
                             .frame(width: proxy.size.width, height: showTitleOnly ? 44 : 90, alignment: .topLeading)
                     }
+                }.onDisappear {
+                    imageView.priority = .low
                 }
             }
         }

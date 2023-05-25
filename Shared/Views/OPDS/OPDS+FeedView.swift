@@ -6,7 +6,6 @@
 //
 
 import ASCollectionView
-import Kingfisher
 import R2Shared
 import ReadiumOPDS
 import RealmSwift

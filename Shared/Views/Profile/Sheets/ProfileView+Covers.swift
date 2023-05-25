@@ -5,8 +5,8 @@
 //  Created by Mantton on 2022-03-07.
 //
 
-import Kingfisher
 import SwiftUI
+import Nuke
 
 extension ProfileView {
     struct CoversSheet: View {
@@ -17,18 +17,13 @@ extension ProfileView {
             NavigationView {
                 TabView {
                     ForEach(covers, id: \.self) { cover in
-                        KFImage(URL(string: cover))
-                            .placeholder({ _ in
-                                Color.gray.opacity(0.25)
-                                    .shimmering()
-                            })
-                            .resizable()
-                            .requestModifier(AsyncImageModifier(sourceId: model.source.id))
-                            .scaledToFit()
+                        BaseImageView(url: .init(string: cover), sourceId: model.source.id)
                             .cornerRadius(5)
                             .contextMenu {
                                 Button {
-                                    handleSaveEvent(for: cover)
+                                    Task {
+                                       await handleSaveEvent(for: cover)
+                                    }
                                 } label: {
                                     Label("Save Image", systemImage: "square.and.arrow.down")
                                 }
@@ -52,15 +47,29 @@ extension ProfileView {
             .toast()
         }
 
-        func handleSaveEvent(for cover: String) {
-            KingfisherManager.shared.retrieveImage(with: URL(string: cover)!) { result in
-                switch result {
-                case let .failure(error):
-                    ToastManager.shared.display(.error(error))
-                case let .success(KIR):
-                    STTPhotoAlbum.shared.save(KIR.image)
-                    ToastManager.shared.info("Cover Saved!")
+        func handleSaveEvent(for cover: String) async {
+            let url = URL(string: cover)
+            guard let url, let source = SourceManager.shared.getSource(id: model.source.id) as? any ModifiableSource else {
+                return
+            }
+            
+            var request = URLRequest(url: url)
+            if source.config.hasThumbnailInterceptor {
+                do {
+                    let dskResponse = try await source.willRequestImage(request: try request.toDaisukeNetworkRequest())
+                    request = try dskResponse.toURLRequest()
+                } catch {
+                    Logger.shared.error("\(error)")
                 }
+            }
+            let imageRequest = ImageRequest(urlRequest: request)
+            do {
+                let image = try await ImagePipeline.shared.image(for: imageRequest)
+                STTPhotoAlbum.shared.save(image)
+
+            } catch {
+                ToastManager.shared.display(.error(error))
+                ToastManager.shared.info("Cover Saved!")
             }
         }
     }

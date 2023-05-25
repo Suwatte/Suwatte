@@ -6,10 +6,10 @@
 //
 
 import Combine
-import Kingfisher
 import SwiftUI
 import UIKit
 import VisionKit
+import Nuke
 
 protocol PagerDelegate: NSObject, UIContextMenuInteractionDelegate {
     var model: ReaderView.ViewModel! { get set }
@@ -27,17 +27,17 @@ extension CGSize {
 
 enum ImageScaleOption: Int, CaseIterable, UserDefaultsSerializable {
     case screen, height, width, stretch
-
+    
     var description: String {
         switch self {
-        case .screen:
-            return "Fit Screen"
-        case .height:
-            return "Fit Height"
-        case .width:
-            return "Fit Width"
-        case .stretch:
-            return "Stretch"
+            case .screen:
+                return "Fit Screen"
+            case .height:
+                return "Fit Height"
+            case .width:
+                return "Fit Width"
+            case .stretch:
+                return "Stretch"
         }
     }
 }
@@ -46,38 +46,36 @@ class PagedDisplayHolder: UIView {
     // Core Properties
     weak var delegate: PagerDelegate?
     var page: ReaderPage!
-
+    
     // Views
-    let imageView = UIImageView()
+    @MainActor let imageView = UIImageView()
     let scrollView = ZoomingScrollView()
     let progressView = CircularProgressBar()
     var errorView: UIView?
-
+    
     // Tasks
-    var providerTask: Task<Kingfisher.Source?, Error>?
-    var downloadTask: Task<Void, Never>?
-    var kfDownloadTask: Kingfisher.DownloadTask?
-
+    private weak var nukeTask: AsyncImageTask?
+    
     // Image Constraints
     var heightContraint: NSLayoutConstraint?
     var widthConstraint: NSLayoutConstraint?
-
+    
     // State
     var subscriptions = Set<AnyCancellable>()
-
+    
     // Vision
     var visionInteraction: UIInteraction?
-
+    
     // Init
     init() {
         super.init(frame: UIScreen.main.bounds)
     }
-
+    
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     lazy var visionPressGesuture: UITapGestureRecognizer = {
         let press = UITapGestureRecognizer(target: self, action: #selector(handleVisionRequest(_:)))
         press.numberOfTapsRequired = 2
@@ -96,23 +94,23 @@ extension PagedDisplayHolder {
         progressView.translatesAutoresizingMaskIntoConstraints = false
         imageView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-
+        
         // Add Core Wrapper & Progress View
         addSubview(progressView)
         addSubview(scrollView)
-
+        
         // Misc Set Up
         scrollView.setup() // Set Up Internal Scroll Wrapper
         imageView.contentMode = .scaleAspectFill // Set ImageView to Aspect Fill
         scrollView.target = imageView // Set the Scroll Wrapper's Target to our ImageView (This Also Adds it to the View Heirachy)
-
+        
         // Make BG Colors Clear
         progressView.backgroundColor = .clear
         scrollView.backgroundColor = .clear
         scrollView.wrapper.backgroundColor = .clear
         imageView.backgroundColor = .clear
         backgroundColor = .clear
-
+        
         // Activate Required 4 Corner Pin Constraints
         NSLayoutConstraint.activate([
             // Scroll
@@ -120,7 +118,7 @@ extension PagedDisplayHolder {
             scrollView.heightAnchor.constraint(equalTo: heightAnchor),
             scrollView.centerXAnchor.constraint(equalTo: centerXAnchor),
             scrollView.centerYAnchor.constraint(equalTo: centerYAnchor),
-
+            
             // Progress
             progressView.widthAnchor.constraint(equalTo: widthAnchor),
             progressView.heightAnchor.constraint(equalTo: heightAnchor),
@@ -135,11 +133,11 @@ extension PagedDisplayHolder {
         // Disable Constraints
         heightContraint?.isActive = false
         widthConstraint?.isActive = false
-
+        
         // Reset
         heightContraint = nil
         widthConstraint = nil
-
+        
         // Reset Scroll Wrapper Constraints
         NSLayoutConstraint.deactivate(scrollView.postImageSetConstraints)
         scrollView.postImageSetConstraints.removeAll()
@@ -153,7 +151,7 @@ extension PagedDisplayHolder {
             .preferencesChangedSubject
             .filter { changedKeyPath in
                 changedKeyPath == \Preferences.downsampleImages ||
-                    changedKeyPath == \Preferences.cropWhiteSpaces
+                changedKeyPath == \Preferences.cropWhiteSpaces
             }
             .sink { [weak self] _ in
                 self?.cancel()
@@ -161,7 +159,7 @@ extension PagedDisplayHolder {
                 self?.load()
             }
             .store(in: &subscriptions)
-
+        
         Preferences
             .standard
             .preferencesChangedSubject
@@ -176,37 +174,45 @@ extension PagedDisplayHolder {
 
 extension PagedDisplayHolder {
     func cancel() {
-        providerTask?.cancel()
-        downloadTask?.cancel()
-        kfDownloadTask?.cancel()
+        nukeTask?.cancel()
     }
 }
 
 extension PagedDisplayHolder {
     func load() {
-        guard imageView.image == nil, providerTask == nil, downloadTask == nil, kfDownloadTask == nil else {
+        
+        let locked = imageView.image != nil || nukeTask != nil
+
+        guard !locked else {
             return
         }
-        setVisible(.loading)
-        providerTask = Task {
-            try await STTImageLoader.shared.load(page: page.page)
-        }
-
-        downloadTask = Task {
+        
+        let page = page.page
+        Task.detached { [weak self] in
             do {
-                let source = try await providerTask?.value
-                guard let source else { throw DSK.Errors.NamedError(name: "E001", message: "Source Not Found") }
-                let options = getKFOptions()
-                kfDownloadTask = KingfisherManager
-                    .shared
-                    .retrieveImage(
-                        with: source,
-                        options: options,
-                        progressBlock: { [weak self] current, total in self?.setProgress(Double(current) / Double(total)) },
-                        completionHandler: { [weak self] in self?.handleLoadEvent($0) }
-                    )
+                let task = try await page.load()
+                
+                for await progress in task.progress {
+                    // Update progress
+                    let p = Double(progress.fraction)
+                    await MainActor.run { [weak self] in
+                        self?.setProgress(p)
+                    }
+                }
+                
+                let image = try await task.image
+                await MainActor.run { [weak self] in
+                    self?.displayImage(image: image)
+                    self?.nukeTask = nil
+                }
+                
             } catch {
-                setError(error)
+                await MainActor.run { [weak self] in
+                    self?.setError(error)
+                }
+            }
+            await MainActor.run {  [weak self] in
+                self?.nukeTask = nil
             }
         }
     }
@@ -216,50 +222,34 @@ extension PagedDisplayHolder {
     func reset() {
         cancel()
         resetConstraints()
-
+        
         imageView.image = nil
         errorView?.removeFromSuperview()
         errorView = nil
-
+        
         imageView.interactions.removeAll()
         scrollView.reset()
-
+        
         imageView.image = nil
         imageView.interactions.removeAll()
         imageView.removeFromSuperview()
-
+        
         delegate = nil
     }
-
+    
     func reload() {
         load()
     }
 }
 
 extension PagedDisplayHolder {
-    func handleLoadEvent(_ result: Result<RetrieveImageResult, KingfisherError>) {
-        switch result {
-        case let .success(success):
-            onPageLoadSuccess(result: success)
-        case let .failure(failure):
-            onPageLoadFailire(error: failure)
-        }
-    }
-
-    func onPageLoadSuccess(result: RetrieveImageResult) {
-        displayImage(image: result.image)
-    }
-
-    func onPageLoadFailire(error: Error) {
-        setError(error)
-    }
-
+    
     func displayImage(image: UIImage) {
         setProgress(1)
         constrain(size: image.size)
         addVisionInteraction()
         setVisible(.set)
-
+        
         Task { @MainActor in
             UIView.transition(with: self.imageView,
                               duration: 0.20,
@@ -268,15 +258,13 @@ extension PagedDisplayHolder {
                               completion: { [weak self] _ in self?.didSetImage() })
         }
     }
-
+    
     func setImage(image: UIImage) {
         imageView.image = image
     }
-
+    
     func didSetImage() {
         scrollView.addGestures()
-        providerTask = nil
-        downloadTask = nil
     }
 }
 
@@ -284,30 +272,30 @@ extension PagedDisplayHolder {
     func constrain(size: CGSize) {
         // Reset Existing Constrains
         resetConstraints()
-
+        
         // Define Constraints
         switch Preferences.standard.imageScaleType {
-        case .screen:
-            activateFitScreenConstraint(size)
-        case .height:
-            activateFitHeightConstraint(size)
-        case .width:
-            activateFitWidthConstraint(size)
-        case .stretch:
-            activateStretchConstraint(size)
+            case .screen:
+                activateFitScreenConstraint(size)
+            case .height:
+                activateFitHeightConstraint(size)
+            case .width:
+                activateFitWidthConstraint(size)
+            case .stretch:
+                activateStretchConstraint(size)
         }
-
+        
         // Activate
         heightContraint?.isActive = true
         widthConstraint?.isActive = true
-
+        
         // Set Priority
         heightContraint?.priority = .required
         widthConstraint?.priority = .required
-
+        
         scrollView.setZoomPosition()
     }
-
+    
     func activateFitScreenConstraint(_ size: CGSize) {
         let height = min((size.height / size.width) * frame.width, frame.height)
         let width = min(height * size.ratio, frame.width)
@@ -315,7 +303,7 @@ extension PagedDisplayHolder {
         heightContraint = imageView.heightAnchor.constraint(equalToConstant: height)
         scrollView.didUpdateSize(size: .init(width: width, height: height))
     }
-
+    
     func activateFitWidthConstraint(_ size: CGSize) {
         let multiplier = size.height / size.width
         let height = bounds.width * multiplier
@@ -323,7 +311,7 @@ extension PagedDisplayHolder {
         heightContraint = imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: multiplier)
         scrollView.didUpdateSize(size: .init(width: bounds.width, height: height))
     }
-
+    
     func activateFitHeightConstraint(_ size: CGSize) {
         let multiplier = size.width / size.height
         let width = bounds.height * multiplier
@@ -331,10 +319,10 @@ extension PagedDisplayHolder {
         widthConstraint = imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: multiplier)
         scrollView.didUpdateSize(size: .init(width: width, height: bounds.height))
     }
-
+    
     func activateStretchConstraint(_ size: CGSize) {
         let ratio = size.ratio
-
+        
         if ratio < 1 {
             let multiplier = size.height / size.width
             let height = bounds.width * multiplier
@@ -355,14 +343,14 @@ extension PagedDisplayHolder {
     func setProgress(_ value: Double) {
         progressView.setProgress(to: value, withAnimation: false)
     }
-
+    
     func setError(_ error: Error) {
         errorView?.removeFromSuperview()
         errorView = nil
-
+        
         let display = ErrorView(error: error, sourceID: page.page.sourceId, action: reload)
         errorView = UIHostingController(rootView: display).view
-
+        
         guard let errorView else { return }
         addSubview(errorView)
         errorView.translatesAutoresizingMaskIntoConstraints = false
@@ -373,30 +361,30 @@ extension PagedDisplayHolder {
             errorView.trailingAnchor.constraint(equalTo: trailingAnchor),
             errorView.leadingAnchor.constraint(equalTo: leadingAnchor),
         ])
-
+        
         // Display
         setVisible(.error)
     }
-
+    
     func setVisible(_ s: PageState) {
         switch s {
-        case .loading:
-            scrollView.isHidden = true
-            errorView?.isHidden = true
-            errorView?.removeFromSuperview()
-            errorView = nil
-            progressView.isHidden = false
-        case .error:
-            errorView?.isHidden = false
-            scrollView.isHidden = true
-            progressView.isHidden = true
-
-        case .set:
-            scrollView.isHidden = false
-            errorView?.isHidden = true
-            errorView?.removeFromSuperview()
-            errorView = nil
-            progressView.isHidden = true
+            case .loading:
+                scrollView.isHidden = true
+                errorView?.isHidden = true
+                errorView?.removeFromSuperview()
+                errorView = nil
+                progressView.isHidden = false
+            case .error:
+                errorView?.isHidden = false
+                scrollView.isHidden = true
+                progressView.isHidden = true
+                
+            case .set:
+                scrollView.isHidden = false
+                errorView?.isHidden = true
+                errorView?.removeFromSuperview()
+                errorView = nil
+                progressView.isHidden = true
         }
     }
 }
@@ -404,55 +392,6 @@ extension PagedDisplayHolder {
 extension PagedDisplayHolder {
     func addImageInteraction(_ interaction: UIInteraction) {
         imageView.addInteraction(interaction)
-    }
-}
-
-extension PagedDisplayHolder {
-    func getKFOptions() -> [KingfisherOptionsInfoItem] {
-        var base: [KingfisherOptionsInfoItem] = [
-            .scaleFactor(UIScreen.main.scale),
-            .retryStrategy(DelayRetryStrategy(maxRetryCount: 3, retryInterval: .seconds(1))),
-            .backgroundDecode,
-            .requestModifier(AsyncImageModifier(sourceId: page.page.sourceId)),
-        ]
-
-        let isLocal = page.page.isLocal
-        let cropWhiteSpaces = Preferences.standard.cropWhiteSpaces
-        let downSampleImage = Preferences.standard.downsampleImages
-
-        // Local Page, Cache to memory only
-        if isLocal {
-            base += [.cacheMemoryOnly]
-        }
-        // Has Processor & Not Local, Cache Original Image to disk
-        if (cropWhiteSpaces || downSampleImage) && !isLocal {
-            base += [.cacheOriginalImage]
-        }
-
-        // Declare Processor
-        var processor: ImageProcessor = DefaultImageProcessor()
-
-        // Initialize Resize Processor
-//        if cropWhiteSpaces || downSampleImage || isLocal {
-//            processor = ResizingImageProcessor(referenceSize: UIScreen.main.bounds.size, mode: .aspectFill)
-//        }
-
-        // Append WhiteSpace Processor
-        if cropWhiteSpaces {
-            processor = processor.append(another: WhiteSpaceProcessor())
-        }
-
-        // Append Downsample Processor
-        if downSampleImage {
-            processor = processor.append(another: STTDownsamplerProcessor())
-        }
-
-        // Append Processor to options
-        if cropWhiteSpaces || downSampleImage || isLocal {
-            base += [.processor(processor)]
-        }
-
-        return base
     }
 }
 
@@ -473,7 +412,7 @@ extension PagedDisplayHolder {
 extension PagedDisplayHolder {
     @objc func handleVisionRequest(_: UITapGestureRecognizer) {
         guard #available(iOS 16, *), ImageAnalyzer.isSupported else { return }
-
+        
         guard let visionInteraction = visionInteraction as? ImageAnalysisInteraction else { return }
         // Currently Display Live Text
         if visionInteraction.analysis != nil {
@@ -490,13 +429,5 @@ extension PagedDisplayHolder {
                 visionInteraction.analysis = analysis
             }
         }
-    }
-}
-
-class STTImageLoader {
-    static let shared = STTImageLoader()
-
-    func load(page: ReaderView.Page) async throws -> Kingfisher.Source? {
-        return page.toKFSource()
     }
 }

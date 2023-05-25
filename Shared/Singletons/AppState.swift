@@ -8,7 +8,7 @@
 import Foundation
 import Network
 import Combine
-
+import Nuke
 
 
 
@@ -50,6 +50,10 @@ final class StateManager : ObservableObject {
     
     var NetworkStateHigh: Bool {
         networkState == .online || networkState == .unknown 
+    }
+    
+    func clearMemoryCache () {
+        ImagePipeline.shared.configuration.imageCache?.removeAll()
     }
 }
 

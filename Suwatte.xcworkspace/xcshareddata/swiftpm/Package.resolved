@@ -19,15 +19,6 @@
       }
     },
     {
-      "identity" : "alerttoast",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Mantton/AlertToast.git",
-      "state" : {
-        "branch" : "master",
-        "revision" : "0883c6ef99a1a824c634d09009d99813c23d50bb"
-      }
-    },
-    {
       "identity" : "anycodable",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Flight-School/AnyCodable",
@@ -78,7 +69,7 @@
       "location" : "https://github.com/firebase/firebase-ios-sdk.git",
       "state" : {
         "branch" : "master",
-        "revision" : "ecd4035dafd01596123f6b5991bd2b74469eea8c"
+        "revision" : "30c70f5eceb98fb8ce8dcb72ed894d742a5110e1"
       }
     },
     {
@@ -113,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleAppMeasurement.git",
       "state" : {
-        "revision" : "9209b95a2593985569918e5e5ee2bf4ef8ff3640",
-        "version" : "10.9.0"
+        "revision" : "69f5b8425dd473d2f2475bba7f88f82cd9da0e36",
+        "version" : "10.10.0"
       }
     },
     {
@@ -160,15 +151,6 @@
       "state" : {
         "branch" : "master",
         "revision" : "c1fde55798b164cad44b5e23cfa2f0f1ebcd76af"
-      }
-    },
-    {
-      "identity" : "kingfisher",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/onevcat/Kingfisher.git",
-      "state" : {
-        "revision" : "af4be924ad984cf4d16f4ae4df424e79a443d435",
-        "version" : "7.6.2"
       }
     },
     {
@@ -231,7 +213,7 @@
       "location" : "https://github.com/realm/realm-swift.git",
       "state" : {
         "branch" : "master",
-        "revision" : "08ee98e7f52a5fb11b10b7430e6f84adbb7433a4"
+        "revision" : "a3592efba8116312eb5b84d6d4731c59bdd5d870"
       }
     },
     {
@@ -303,7 +285,7 @@
       "location" : "https://github.com/shaps80/SwiftUIBackports",
       "state" : {
         "branch" : "main",
-        "revision" : "cbf0a6d8311c73bf722edf85f42535d4d99228c1"
+        "revision" : "8e92217f52f5d3981a96870cc518a095a13b3e08"
       }
     },
     {

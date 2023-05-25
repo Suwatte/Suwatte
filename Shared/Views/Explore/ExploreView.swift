@@ -23,6 +23,11 @@ struct ExploreView: View {
                             }
                         }
                     }
+                    .onDisappear {
+                        Task {
+                            StateManager.shared.clearMemoryCache()
+                        }
+                    }
             } else {
                 ExploreView.SearchView(model: .init(source: model.source))
             }

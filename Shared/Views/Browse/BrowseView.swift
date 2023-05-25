@@ -5,7 +5,6 @@
 //  Created by Mantton on 2022-03-27.
 //
 
-import Kingfisher
 import RealmSwift
 import SwiftUI
 
@@ -56,14 +55,15 @@ struct BrowseView: View {
                         ExploreView(model: .init(source: source))
                     } label: {
                         HStack(spacing: 15) {
-                            KFImage(URL(string: runner.thumbnail))
-                                .placeholder { _ in
-                                    Image("stt_icon")
-                                        .resizable()
-                                        .scaledToFill()
-                                }
-                                .resizable()
-                                .scaledToFill()
+                            AsyncImage(url: URL(string: runner.thumbnail)) { image in
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                            } placeholder: {
+                                Image("stt_icon")
+                                    .resizable()
+                                    .scaledToFill()
+                            }
                                 .frame(width: 32.0, height: 32.0)
                                 .cornerRadius(5)
                             Text(source.name)

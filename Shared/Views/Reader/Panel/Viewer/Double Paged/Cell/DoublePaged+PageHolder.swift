@@ -6,9 +6,9 @@
 //
 
 import Combine
-import Kingfisher
 import SwiftUI
 import UIKit
+import Nuke
 
 class DoublePagedDisplayHolder: UIView {
     // Core Properties
@@ -27,7 +27,7 @@ class DoublePagedDisplayHolder: UIView {
     // State
     var subscriptions = Set<AnyCancellable>()
 
-    var tasks = Set<AnyCancellable>()
+    var tasks = [AsyncImageTask]()
 
     var pageImage: UIImage?
     var secondPageImage: UIImage?
@@ -118,6 +118,7 @@ extension DoublePagedDisplayHolder {
         if let secondPage {
             load(page: secondPage)
         }
+        working = true
     }
 
     func load(page: ReaderPage) {
@@ -127,49 +128,42 @@ extension DoublePagedDisplayHolder {
         if progressView.alpha == 0 {
             setVisible(.loading)
         }
-        // Load First Image
-        let providerTask = Task {
-            try await STTImageLoader.shared.load(page: page.page)
-        }
-        tasks.insert(AnyCancellable(providerTask.cancel))
-
-        let downloadTask = Task {
+        Task.detached { [weak self] in
             do {
-                let source = try await providerTask.value
-                guard let source else { throw DSK.Errors.NamedError(name: "E001", message: "Source Not Found") }
-                let options = getKFOptions()
-                let kfTask = KingfisherManager
-                    .shared
-                    .retrieveImage(
-                        with: source,
-                        options: options,
-                        progressBlock: { [weak self] current, total in self?.setProgress(for: page, value: Double(current) / Double(total)) },
-                        completionHandler: { [weak self] in self?.handleLoadEvent($0, page: page) }
-                    )
-                if let kfTask {
-                    tasks.insert(.init(kfTask.cancel))
+                if await self?.secondPage != nil {
+                    page.page.targetWidth = page.page.targetWidth / 2
                 }
+                
+                let task = try await page.page.load()
+                await MainActor.run { [weak self] in
+                    self?.tasks.append(task)
+                }
+                for await progress in task.progress {
+                    // Update progress
+                    let p = Double(progress.fraction)
+                    await MainActor.run { [weak self] in
+                        self?.setProgress(p)
+                    }
+                }
+                
+                let image = try await task.image
+                await MainActor.run { [weak self] in
+                    self?.onPageLoadSuccess(image: image, target:page)
+                }
+                
             } catch {
-                setError(error)
+                await MainActor.run { [weak self] in
+                    self?.setError(error)
+                }
             }
         }
-
-        tasks.insert(.init(downloadTask.cancel))
     }
 }
 
 extension DoublePagedDisplayHolder {
-    func handleLoadEvent(_ result: Result<RetrieveImageResult, KingfisherError>, page: ReaderPage) {
-        switch result {
-        case let .success(success):
-            onPageLoadSuccess(result: success, target: page)
-        case let .failure(failure):
-            onPageLoadFailire(error: failure)
-        }
-    }
 
-    func onPageLoadSuccess(result: RetrieveImageResult, target: ReaderPage) {
-        let isWide = result.image.size.ratio > 1
+    func onPageLoadSuccess(image: UIImage, target: ReaderPage) {
+        let isWide = image.size.ratio > 1
         target.widePage = isWide
 
         // Target Is Wide and Is the Second Page, Mark the Primary Page as Isolated
@@ -185,9 +179,9 @@ extension DoublePagedDisplayHolder {
 
         // Set Images
         if target === page {
-            pageImage = result.image
+            pageImage = image
         } else {
-            secondPageImage = result.image
+            secondPageImage = image
         }
         if target.isFullPage {
             delegate?.didIsolatePage(maintain: page, note: secondPage)
@@ -339,55 +333,6 @@ extension DoublePagedDisplayHolder {
 }
 
 extension DoublePagedDisplayHolder {
-    func getKFOptions() -> [KingfisherOptionsInfoItem] {
-        var base: [KingfisherOptionsInfoItem] = [
-            .scaleFactor(UIScreen.main.scale),
-            .retryStrategy(DelayRetryStrategy(maxRetryCount: 3, retryInterval: .seconds(1))),
-            .backgroundDecode,
-            .requestModifier(AsyncImageModifier(sourceId: page.page.sourceId)),
-        ]
-
-        let isLocal = page.page.isLocal
-        let cropWhiteSpaces = Preferences.standard.cropWhiteSpaces
-        let downSampleImage = Preferences.standard.downsampleImages
-
-        // Local Page, Cache to memory only
-        if isLocal {
-            base += [.cacheMemoryOnly]
-        }
-        // Has Processor & Not Local, Cache Original Image to disk
-        if (cropWhiteSpaces || downSampleImage) && !isLocal {
-            base += [.cacheOriginalImage]
-        }
-
-        // Declare Processor
-        var processor: ImageProcessor = DefaultImageProcessor()
-
-        // Initialize Resize Processor
-//        if cropWhiteSpaces || downSampleImage || isLocal {
-//            processor = ResizingImageProcessor(referenceSize: UIScreen.main.bounds.size, mode: .aspectFill)
-//        }
-
-        // Append WhiteSpace Processor
-        if cropWhiteSpaces {
-            processor = processor.append(another: WhiteSpaceProcessor())
-        }
-
-        // Append Downsample Processor
-        if downSampleImage {
-            processor = processor.append(another: STTDownsamplerProcessor())
-        }
-
-        // Append Processor to options
-        if cropWhiteSpaces || downSampleImage || isLocal {
-            base += [.processor(processor)]
-        }
-
-        return base
-    }
-}
-
-extension DoublePagedDisplayHolder {
     func subscribe() {
         Preferences
             .standard
@@ -407,6 +352,7 @@ extension DoublePagedDisplayHolder {
 extension DoublePagedDisplayHolder {
     func cancel() {
         tasks.forEach { $0.cancel() }
+        working = false
     }
 }
 

@@ -5,7 +5,6 @@
 //  Created by Mantton on 2022-05-15.
 //
 
-import Kingfisher
 import SwiftUI
 
 struct ReaderGateWay: View {
@@ -27,9 +26,6 @@ struct ReaderGateWay: View {
                 ReaderView(model: .init(chapterList: chapterList, openTo: openTo, title: title, pageIndex: pageIndex, readingMode: readingMode))
                     .defaultAppStorage(.init(suiteName: openTo.ContentIdentifer) ?? .standard)
             }
-        }
-        .onDisappear {
-            KingfisherManager.shared.cache.memoryStorage.removeAll()
         }
         .tint(accentColor)
         .accentColor(accentColor)

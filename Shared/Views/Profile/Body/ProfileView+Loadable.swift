@@ -5,9 +5,10 @@
 //  Created by Mantton on 2022-03-07.
 //
 
-import Kingfisher
 import RealmSwift
 import SwiftUI
+import Nuke
+
 extension ProfileView {
     struct StateGate: View {
         @StateObject var viewModel: ProfileView.ViewModel
@@ -38,7 +39,7 @@ extension ProfileView {
                                  .fullScreenCover(item: $viewModel.selection, onDismiss: {
                                      Task {
                                          handleReconnection()
-                                         KingfisherManager.shared.cache.clearMemoryCache()
+                                         ImagePipeline.shared.configuration.imageCache?.removeAll()
                                      }
                                  }) { id in
                                      let chapterList = viewModel.chapters.value ?? []

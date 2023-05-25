@@ -5,7 +5,6 @@
 //  Created by Mantton on 2022-03-28.
 //
 
-import Kingfisher
 import SwiftUI
 
 struct DefaultTile: View {

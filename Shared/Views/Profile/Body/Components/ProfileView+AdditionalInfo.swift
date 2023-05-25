@@ -5,7 +5,6 @@
 //  Created by Mantton on 2022-03-18.
 //
 
-import Kingfisher
 import SwiftUI
 
 extension ProfileView.Skeleton {

@@ -4,8 +4,7 @@
 //
 //  Created by Mantton on 2022-04-24.
 //
-
-import Kingfisher
+import NukeUI
 import PartialSheet
 import RealmSwift
 import SwiftUI
@@ -150,8 +149,7 @@ extension AnilistView.ProfileView.DataView {
     var HeaderView: some View {
         VStack(alignment: .leading) {
             ZStack(alignment: .leading) {
-                KFImage(URL(string: data.bannerImage ?? ""))
-                    .resizable()
+                AsyncImage(url: data.bannerImage.flatMap({ URL(string: $0) }))                
                     .scaledToFill()
                     .clipped(antialiased: true)
                     .blur(radius: 2.5)

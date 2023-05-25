@@ -7,8 +7,8 @@
 
 import Combine
 import Foundation
-import Kingfisher
 import UIKit
+import Nuke
 
 extension VerticalPager {
     final class Controller: UICollectionViewController, PagerDelegate {
@@ -22,6 +22,8 @@ extension VerticalPager {
 
         var enableInteractions: Bool = Preferences.standard.imageInteractions
         var lastViewedSection = 0
+        private let prefetcher = ImagePrefetcher()
+
     }
 }
 
@@ -134,14 +136,60 @@ extension Controller {
 
 extension Controller: UICollectionViewDataSourcePrefetching {
     func collectionView(_: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        let urls = indexPaths.compactMap { path -> URL? in
-            guard let page = self.model.sections[path.section][path.item] as? ReaderPage, let url = page.page.hostedURL, !page.page.isLocal else {
+        let pages = indexPaths.compactMap { path -> ReaderView.Page? in
+            guard let page = self.model.sections[path.section][path.item] as? ReaderPage else {
                 return nil
             }
-
-            return URL(string: url)
+            return page.page
         }
-        ImagePrefetcher(urls: urls).start()
+        Task.detached { [weak self] in
+            let requests = await withTaskGroup(of: ImageRequest?.self) { group in
+
+                for page in pages {
+                    group.addTask {
+                        return try? await page.getImageRequest()
+                    }
+                }
+
+                var out = [ImageRequest]()
+                for await result in group {
+                    if let result {
+                        out.append(result)
+                    }
+                }
+                return out
+            }
+            self?.prefetcher.startPrefetching(with: requests)
+        }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+        let pages = indexPaths.compactMap { path -> ReaderView.Page? in
+            guard let page = self.model.sections[path.section][path.item] as? ReaderPage else {
+                return nil
+            }
+            return page.page
+        }
+
+        Task.detached { [weak self] in
+            let requests = await withTaskGroup(of: ImageRequest?.self) { group in
+
+                for page in pages {
+                    group.addTask {
+                        return try? await page.getImageRequest()
+                    }
+                }
+
+                var out = [ImageRequest]()
+                for await result in group {
+                    if let result {
+                        out.append(result)
+                    }
+                }
+                return out
+            }
+            self?.prefetcher.stopPrefetching(with: requests)
+        }
     }
 }
 

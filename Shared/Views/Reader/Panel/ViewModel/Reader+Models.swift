@@ -5,8 +5,8 @@
 //  Created by Mantton on 2022-03-29.
 //
 
-import Kingfisher
 import SwiftUI
+import Nuke
 
 // MARK: Protocols
 
@@ -196,6 +196,8 @@ extension ReaderView {
         var rawData: String? = nil
         var archivePath: String? = nil
         var archiveFile: String? = nil
+        
+        var targetWidth: CGFloat = UIScreen.mainScreen.bounds.width
 
         static func == (lhs: Page, rhs: Page) -> Bool {
             return lhs.chapterId == rhs.chapterId && lhs.index == rhs.index
@@ -238,32 +240,108 @@ extension StoredChapter {
 }
 
 extension ReaderView.Page {
-    func toKFSource() -> Kingfisher.Source? {
+    private func prepareImageURL(_ url: URL) async throws -> URLRequest {
+        let sourceId = sourceId
+        guard let source = SourceManager.shared.getSource(id: sourceId) as? any ModifiableSource, source.config.hasThumbnailInterceptor  else {
+            return .init(url: url)
+        }
+        let response = try await source.willRequestImage(request: .init(url: url.absoluteString))
+        let request = try response.toURLRequest()
+        return request
+    }
+    
+    private func prepareProcessors() -> [ImageProcessing] {
+        var processors = [ImageProcessing]()
+        let cropWhiteSpaces = Preferences.standard.cropWhiteSpaces
+        let downSampleImage = Preferences.standard.downsampleImages
+        
+        if downSampleImage || isLocal { // Always Downsample Local Images
+            processors.append(NukeDownsampleProcessor(width: targetWidth))
+        }
+        
+        if cropWhiteSpaces {
+            processors.append(NukeWhitespaceProcessor())
+        }
+        
+        return processors
+    }
+    
+    func load() async throws -> AsyncImageTask {
+        
+
+        let request = try await getImageRequest()
+        
+        guard let request else {
+            throw DSK.Errors.NamedError(name: "Image Loader", message: "No handler resolved the requested page.")
+        }
+        
+        let task = ImagePipeline.shared.imageTask(with: request)
+        return task
+    }
+    
+    func getImageRequest() async throws -> ImageRequest? {
+        var request: ImageRequest? = nil
+        
         // Hosted Image
         if let hostedURL = hostedURL, let url = URL(string: hostedURL) {
-            return url.convertToSource(overrideCacheKey: CELL_KEY)
+            // Load Hosted Image
+            request = try await loadImageFromNetwork(url)
         }
-
+        
         // Downloaded
         else if let url = downloadURL {
-            return url.convertToSource(overrideCacheKey: CELL_KEY)
+            // Load Downloaded Image
+            request = try await loadImageFromDownloadFolder(url)
         }
-
+        
         // Archive
         else if let archivePath = archivePath, let file = archiveFile {
-            let provider = LocalContentImageProvider(cacheKey: CELL_KEY, fileId: file, pagePath: archivePath)
-            return .provider(provider)
+            request = try await loadImageFromArchive(file, archivePath, CELL_KEY)
         }
-
+        
         // Raw Data
         else if let rawData = rawData {
-            let provider = Base64ImageDataProvider(base64String: rawData, cacheKey: CELL_KEY)
-            return .provider(provider)
+            request = try await loadImageFromBase64EncodedString(rawData, CELL_KEY)
         }
-
-        return nil
+        return request
     }
+    
+    private func loadImageFromNetwork(_ url: URL) async throws -> ImageRequest {
+        let request = try await prepareImageURL(url)
+        return ImageRequest(urlRequest: request, processors: prepareProcessors())
+    }
+    
+    private func loadImageFromDownloadFolder(_ url: URL) async throws -> ImageRequest {
+        let request = ImageRequest(url: url, processors: prepareProcessors(), options: .disableDiskCache)
+        return request
+    }
+    
+    private func loadImageFromBase64EncodedString(_ str: String, _ key: String ) async throws ->  ImageRequest {
+        var request = ImageRequest(id: key) {
+            let data = Data(base64Encoded: str)
+            guard let data else {
+                throw DSK.Errors.NamedError(name: "Image Loader", message: "Failed to decode image from base64 string. Please report this to the source authors.")
+            }
+            
+            return data
+        }
+        request.options = .disableDiskCache
+        request.processors = prepareProcessors()
+        
+        return request
+    }
+    
+    private func loadImageFromArchive(_ file: String, _ path: String, _ key: String) async throws -> ImageRequest {
+        let request = ImageRequest(id: key) {
+            try LocalContentManager.shared.getImageData(for: file, ofName: path)
+        }
+        return request
+    }
+    
 }
+
+
+
 
 extension StoredChapterData {
     func toReadableChapterData() -> ReaderView.ChapterData {
@@ -276,3 +354,4 @@ extension StoredChapterData {
               archivePaths: archivePaths)
     }
 }
+ 

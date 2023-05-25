@@ -7,7 +7,6 @@
 
 import Alamofire
 import FlagKit
-import Kingfisher
 import RealmSwift
 import SwiftUI
 
@@ -338,8 +337,7 @@ extension RunnerListsView.RunnerListInfo {
         func RunnerHeader(runner: Runner) -> some View {
             HStack {
                 let url = runner.thumbnail.flatMap { URL(string: listURL)!.appendingPathComponent("assets").appendingPathComponent($0) }
-                KFImage(url)
-                    .resizable()
+                AsyncImage(url: url)
                     .scaledToFill()
                     .frame(width: 44, height: 44)
                     .cornerRadius(7)

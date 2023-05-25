@@ -7,8 +7,8 @@
 
 import Alamofire
 import Foundation
-import Kingfisher
 import UIKit
+import Nuke
 
 final class LocalContentManager: ObservableObject {
     @Published var isSelecting = false
@@ -236,14 +236,15 @@ extension LocalContentManager {
             var path: String?
         }
 
-        func getImageSource() -> Kingfisher.Source? {
-            guard let thumb = thumbnail else {
+        func getThumbnailRequest() -> ImageRequest? {
+            guard let thumb = thumbnail , let path = thumb.path else {
                 return nil
             }
-            if let path = thumb.path {
-                return .provider(LocalContentImageSwiftUIProvider(fileId: String(id), entryPath: path))
+            var request = ImageRequest(id: self.hashValue.description) {
+                try LocalContentManager.shared.getImageData(for: String(id), ofName: path)
             }
-            return nil
+            request.options = .disableDiskCache
+            return request
         }
 
         static func == (lhs: Book, rhs: Book) -> Bool {

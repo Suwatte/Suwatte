@@ -7,8 +7,8 @@
 
 import AsyncDisplayKit
 import Combine
-import Kingfisher
 import UIKit
+import Nuke
 
 private typealias Controller = VerticalViewer.Controller
 extension Controller {
@@ -17,12 +17,12 @@ extension Controller {
         var progressNode: ProgressNode
         let progressModel = ReaderView.ProgressObject()
         let page: ReaderView.Page
-        var downloadTask: DownloadTask?
         var ratio: CGFloat?
         weak var delegate: VerticalViewer.Controller?
         var savedOffset: CGFloat?
         var working = false
         var isZoomed = false
+        private weak var nukeTask: AsyncImageTask?
         var subscriptions = Set<AnyCancellable>()
         lazy var zoomingTap: UITapGestureRecognizer = {
             let zoomingTap = UITapGestureRecognizer(target: self, action: #selector(handleZoomingTap(_:)))
@@ -58,38 +58,36 @@ extension Controller {
                 transitionLayout(with: .init(min: .zero, max: .init(width: view.frame.width, height: savedOffset * 2)), animated: true, shouldMeasureAsync: false)
             }
             working = true
-            var kfOptions: [KingfisherOptionsInfoItem] = [
-                .scaleFactor(UIScreen.main.scale),
-                .retryStrategy(DelayRetryStrategy(maxRetryCount: 3, retryInterval: .seconds(1))),
-                .requestModifier(AsyncImageModifier(sourceId: page.sourceId)),
-                .backgroundDecode,
-            ]
-            guard let source = page.toKFSource() else {
-                return
+            
+            Task.detached { [weak self] in
+                do {
+                    let task = try await self?.page.load()
+                    
+                    guard let task else {
+                        return
+                    }
+                    for await progress in task.progress {
+                        // Update progress
+                        await MainActor.run { [weak self] in
+                            self?.handleProgressBlock(progress.fraction)
+                        }
+                    }
+                    
+                    let image = try await task.image
+                    await MainActor.run { [weak self] in
+                        self?.didLoadImage(image)
+                        self?.nukeTask = nil
+                    }
+                    
+                } catch {
+                    await MainActor.run { [weak self] in
+                        self?.didFailToLoadImage(error)
+                    }
+                }
+                await MainActor.run { [weak self] in
+                    self?.working = false
+                }
             }
-
-            var processor: ImageProcessor?
-
-            if downsample {
-                processor = STTDownsamplerProcessor()
-            }
-
-            if page.isLocal {
-                kfOptions.append(.cacheMemoryOnly)
-                kfOptions += [.cacheMemoryOnly]
-            }
-
-            if downsample, !page.isLocal {
-                kfOptions.append(.cacheOriginalImage)
-            }
-
-            if let processor = processor {
-                kfOptions.append(.processor(processor))
-            }
-            downloadTask = KingfisherManager.shared.retrieveImage(with: source,
-                                                                  options: kfOptions,
-                                                                  progressBlock: { [weak self] in self?.handleProgressBlock($0, $1, source) },
-                                                                  completionHandler: { [weak self] in self?.onImageProvided($0) })
         }
 
         override func animateLayoutTransition(_ context: ASContextTransitioning) {
@@ -143,27 +141,15 @@ extension Controller {
             }
         }
 
-        func onImageProvided(_ result: Result<RetrieveImageResult, KingfisherError>) {
-            switch result {
-            case let .success(imageResult):
-                if page.CELL_KEY != imageResult.source.cacheKey {
-                    return
-                }
-
-                image = imageResult.image
-                if isNodeLoaded {
-                    displayImage()
-                }
-
-            case let .failure(error):
-
-                if error.isNotCurrentTask || error.isTaskCancelled {
-                    return
-                }
-                handleImageFailure(error)
+        
+        func didLoadImage(_ image: UIImage) {
+            self.image = image
+            if isNodeLoaded {
+                displayImage()
             }
-
-            didFinishImageTasks()
+        }
+        func didFailToLoadImage(_ error: Error) {
+            handleImageFailure(error)
         }
 
         override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
@@ -194,13 +180,8 @@ extension Controller {
             }
         }
 
-        func handleProgressBlock(_ received: Int64, _ total: Int64, _ source: Kingfisher.Source) {
-            if source.cacheKey != page.CELL_KEY {
-                downloadTask?.cancel()
-                return
-            }
-            let progress = Double(received) / Double(total)
-            (progressNode.view as? CircularProgressBar)?.setProgress(to: progress, withAnimation: false)
+        func handleProgressBlock(_ progress: Float) {
+            (progressNode.view as? CircularProgressBar)?.setProgress(to: Double(progress), withAnimation: false)
         }
 
         func handleImageFailure(_ error: Error) {
@@ -279,13 +260,12 @@ extension Controller.ImageNode {
     override func didExitVisibleState() {
         super.didExitVisibleState()
         if isZoomed { return }
-        downloadTask?.cancel()
+        nukeTask?.cancel()
         imageNode.view.removeGestureRecognizer(menuTap)
         imageNode.view.removeGestureRecognizer(zoomingTap)
         imageNode.image = nil
         image = nil
         ratio = nil
-//        KingfisherManager.shared.cache.memoryStorage.remove(forKey: page.CELL_KEY)
         imageNode.alpha = 0
         progressNode.alpha = 1
         subscriptions.forEach { $0.cancel() }

@@ -5,7 +5,6 @@
 //  Created by Mantton on 2022-04-22.
 //
 
-import Kingfisher
 import SafariServices
 import SwiftUI
 

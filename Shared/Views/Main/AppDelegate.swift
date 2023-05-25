@@ -7,7 +7,6 @@
 
 import FirebaseCore
 import Foundation
-import Kingfisher
 import Nuke
 import RealmSwift
 import UIKit
@@ -20,27 +19,22 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
         // Set Default UD Values
         UserDefaults.standard.register(defaults: STTUserDefaults)
 
-        // KF Cache
-        let cache = Kingfisher.ImageCache.default
-        cache.memoryStorage.config.totalCostLimit = 500 * 1024 * 1024 // 500 MB
-        cache.memoryStorage.config.countLimit = 15 // 15
-        cache.diskStorage.config.sizeLimit = 1000 * 1024 * 1024 // 1GB
-
-        // KF Requests
-        let kingfisherManagerSession = KingfisherManager.shared.downloader.sessionConfiguration
-        kingfisherManagerSession.httpCookieStorage = HTTPCookieStorage.shared
-        kingfisherManagerSession.headers.add(.userAgent(Preferences.standard.userAgent))
-        KingfisherManager.shared.downloader.sessionConfiguration = kingfisherManagerSession
-
         // Nuke Requests
         let nukeConfig = DataLoader.defaultConfiguration
         nukeConfig.headers.add(.userAgent(Preferences.standard.userAgent))
         nukeConfig.httpCookieStorage = HTTPCookieStorage.shared
 
         let pipeline = ImagePipeline {
+            let dataCache = try? DataCache(name: "com.ceres.suwatte.nuke_cache")
+            let imageCache = ImageCache()
+            dataCache?.sizeLimit = 1024 * 1024 * 1024 // 1 GB
+            imageCache.costLimit = 500 * 1024 * 1024 // 500 MB
+            imageCache.countLimit = 100 // 100 Images
             $0.dataLoader = DataLoader(configuration: nukeConfig)
-            $0.imageCache = Nuke.ImageCache.shared
+            $0.imageCache = imageCache
+            $0.dataCache = dataCache
         }
+        
 
         ImagePipeline.shared = pipeline
         // Notification Center

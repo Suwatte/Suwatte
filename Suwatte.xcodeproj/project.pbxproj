@@ -46,7 +46,7 @@
 		DF248F34281466A500818300 /* AL+SearchResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF248F33281466A500818300 /* AL+SearchResult.swift */; };
 		DF248F36281474A100818300 /* STT+Encodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF248F35281474A100818300 /* STT+Encodable.swift */; };
 		DF29CE9F283C541A001F9823 /* NovelReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF29CE9E283C5419001F9823 /* NovelReaderView.swift */; };
-		DF2DA72527CD83440046FE20 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = DF2DA72427CD83440046FE20 /* Kingfisher */; };
+		DF2D842A2A1EFB4D006B17F0 /* STT+Nuke.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2D84292A1EFB4D006B17F0 /* STT+Nuke.swift */; };
 		DF2DA77327CF11C50046FE20 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = DF2DA77227CF11C50046FE20 /* Alamofire */; };
 		DF30193928BFCBD00024AA8B /* ZoomingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF30193828BFCBD00024AA8B /* ZoomingScrollView.swift */; };
 		DF30193B28C045E30024AA8B /* Backup+Runner.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF30193A28C045E30024AA8B /* Backup+Runner.swift */; };
@@ -157,7 +157,6 @@
 		DF8D0B342800EE47003E4C3E /* STT+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D09FB2800EE47003E4C3E /* STT+Bundle.swift */; };
 		DF8D0B352800EE47003E4C3E /* STT+Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D09FC2800EE47003E4C3E /* STT+Double.swift */; };
 		DF8D0B362800EE47003E4C3E /* STT+CGFloat.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D09FD2800EE47003E4C3E /* STT+CGFloat.swift */; };
-		DF8D0B372800EE47003E4C3E /* STT+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D09FE2800EE47003E4C3E /* STT+Kingfisher.swift */; };
 		DF8D0B382800EE47003E4C3E /* STT+Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D09FF2800EE47003E4C3E /* STT+Array.swift */; };
 		DF8D0B392800EE47003E4C3E /* STT+Realm.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A002800EE47003E4C3E /* STT+Realm.swift */; };
 		DF8D0B3B2800EE47003E4C3E /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A032800EE47003E4C3E /* Constants.swift */; };
@@ -283,8 +282,6 @@
 		DFAC77A02817AD5200AF6394 /* AL+MediaFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAC779F2817AD5100AF6394 /* AL+MediaFunctions.swift */; };
 		DFADB58B29D7D04E00CBE22F /* JSCC+Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFADB58A29D7D04E00CBE22F /* JSCC+Network.swift */; };
 		DFADB58D29D7F19900CBE22F /* STT+URLRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFADB58C29D7F19900CBE22F /* STT+URLRequest.swift */; };
-		DFAEE12C28B8550E00B11484 /* RawImageDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAEE12B28B8550E00B11484 /* RawImageDataLoader.swift */; };
-		DFAEE12E28B8587A00B11484 /* ArchivedImageDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAEE12D28B8587A00B11484 /* ArchivedImageDataLoader.swift */; };
 		DFAEE13028B9D0A200B11484 /* ExploreCollectionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAEE12F28B9D0A200B11484 /* ExploreCollectionsController.swift */; };
 		DFB47EEE2880928C0040A1BD /* RefreshableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB47EED2880928C0040A1BD /* RefreshableScrollView.swift */; };
 		DFB47EF12880C0B30040A1BD /* R2Shared in Frameworks */ = {isa = PBXBuildFile; productRef = DFB47EF02880C0B30040A1BD /* R2Shared */; };
@@ -368,6 +365,7 @@
 		DF248F33281466A500818300 /* AL+SearchResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AL+SearchResult.swift"; sourceTree = "<group>"; };
 		DF248F35281474A100818300 /* STT+Encodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+Encodable.swift"; sourceTree = "<group>"; };
 		DF29CE9E283C5419001F9823 /* NovelReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NovelReaderView.swift; sourceTree = "<group>"; };
+		DF2D84292A1EFB4D006B17F0 /* STT+Nuke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+Nuke.swift"; sourceTree = "<group>"; };
 		DF30193828BFCBD00024AA8B /* ZoomingScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomingScrollView.swift; sourceTree = "<group>"; };
 		DF30193A28C045E30024AA8B /* Backup+Runner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Backup+Runner.swift"; sourceTree = "<group>"; };
 		DF326460280256760066EB08 /* ProfileView+RelatedContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProfileView+RelatedContent.swift"; sourceTree = "<group>"; };
@@ -469,7 +467,6 @@
 		DF8D09FB2800EE47003E4C3E /* STT+Bundle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "STT+Bundle.swift"; sourceTree = "<group>"; };
 		DF8D09FC2800EE47003E4C3E /* STT+Double.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "STT+Double.swift"; sourceTree = "<group>"; };
 		DF8D09FD2800EE47003E4C3E /* STT+CGFloat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "STT+CGFloat.swift"; sourceTree = "<group>"; };
-		DF8D09FE2800EE47003E4C3E /* STT+Kingfisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "STT+Kingfisher.swift"; sourceTree = "<group>"; };
 		DF8D09FF2800EE47003E4C3E /* STT+Array.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "STT+Array.swift"; sourceTree = "<group>"; };
 		DF8D0A002800EE47003E4C3E /* STT+Realm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "STT+Realm.swift"; sourceTree = "<group>"; };
 		DF8D0A032800EE47003E4C3E /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -594,8 +591,6 @@
 		DFAC779F2817AD5100AF6394 /* AL+MediaFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AL+MediaFunctions.swift"; sourceTree = "<group>"; };
 		DFADB58A29D7D04E00CBE22F /* JSCC+Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCC+Network.swift"; sourceTree = "<group>"; };
 		DFADB58C29D7F19900CBE22F /* STT+URLRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+URLRequest.swift"; sourceTree = "<group>"; };
-		DFAEE12B28B8550E00B11484 /* RawImageDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawImageDataLoader.swift; sourceTree = "<group>"; };
-		DFAEE12D28B8587A00B11484 /* ArchivedImageDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedImageDataLoader.swift; sourceTree = "<group>"; };
 		DFAEE12F28B9D0A200B11484 /* ExploreCollectionsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreCollectionsController.swift; sourceTree = "<group>"; };
 		DFB47EED2880928C0040A1BD /* RefreshableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshableScrollView.swift; sourceTree = "<group>"; };
 		DFB47EF62880C1FB0040A1BD /* STT+OPDS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+OPDS.swift"; sourceTree = "<group>"; };
@@ -660,7 +655,6 @@
 				DF730CD329411F1B00C62C71 /* FlagKit in Frameworks */,
 				DF52FBBA28947031008FAD3A /* ASCollectionView in Frameworks */,
 				DF482F012955A56F002D3308 /* RealmSwift in Frameworks */,
-				DF2DA72527CD83440046FE20 /* Kingfisher in Frameworks */,
 				DF0D96062824892C00E592D9 /* Realm in Frameworks */,
 				DFF1043E28A9963D00E2C3A4 /* AnyCodable in Frameworks */,
 				DF70235129DA852A0076AAD0 /* NukeUI in Frameworks */,
@@ -1144,7 +1138,6 @@
 				DF8D09FB2800EE47003E4C3E /* STT+Bundle.swift */,
 				DF8D09FC2800EE47003E4C3E /* STT+Double.swift */,
 				DF8D09FD2800EE47003E4C3E /* STT+CGFloat.swift */,
-				DF8D09FE2800EE47003E4C3E /* STT+Kingfisher.swift */,
 				DF8D09FF2800EE47003E4C3E /* STT+Array.swift */,
 				DF8D0A002800EE47003E4C3E /* STT+Realm.swift */,
 				DF248F35281474A100818300 /* STT+Encodable.swift */,
@@ -1152,6 +1145,7 @@
 				DFF1044128A9A89700E2C3A4 /* STT+JSValue.swift */,
 				DF13892128BDCAEF0035BDBB /* STT+URL.swift */,
 				DFADB58C29D7F19900CBE22F /* STT+URLRequest.swift */,
+				DF2D84292A1EFB4D006B17F0 /* STT+Nuke.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1694,7 +1688,6 @@
 		DF8D0AB62800EE47003E4C3E /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				DFAEE12A28B854FB00B11484 /* Nuke */,
 				DF8D0AB72800EE47003E4C3E /* Modifiers */,
 				DF8D0ABC2800EE47003E4C3E /* Views */,
 			);
@@ -1816,15 +1809,6 @@
 				DF47DDDB28B5542D00D779E5 /* AV+EntryEditor.swift */,
 			);
 			path = Profile;
-			sourceTree = "<group>";
-		};
-		DFAEE12A28B854FB00B11484 /* Nuke */ = {
-			isa = PBXGroup;
-			children = (
-				DFAEE12B28B8550E00B11484 /* RawImageDataLoader.swift */,
-				DFAEE12D28B8587A00B11484 /* ArchivedImageDataLoader.swift */,
-			);
-			path = Nuke;
 			sourceTree = "<group>";
 		};
 		DFB47EF52880C1E70040A1BD /* OPDS */ = {
@@ -1970,7 +1954,6 @@
 			);
 			name = "Suwatte (iOS)";
 			packageProductDependencies = (
-				DF2DA72427CD83440046FE20 /* Kingfisher */,
 				DF2DA77227CF11C50046FE20 /* Alamofire */,
 				DF248F0B2813844C00818300 /* KeychainSwift */,
 				DF0D96052824892C00E592D9 /* Realm */,
@@ -2021,10 +2004,8 @@
 			);
 			mainGroup = DF2DA6FF27CD82430046FE20;
 			packageReferences = (
-				DF2DA72327CD83440046FE20 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				DF2DA77127CF11C50046FE20 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift" */,
-				DF83DD3B28231E280021575B /* XCRemoteSwiftPackageReference "AlertToast" */,
 				DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				DF59C97B285004850027F19D /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 				DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar" */,
@@ -2123,7 +2104,6 @@
 				DFCE6EB6280148E4002E220C /* ReaderView+ChapterSheet.swift in Sources */,
 				DF52FBBE289487C6008FAD3A /* STTGridView.swift in Sources */,
 				DF8D0BA02800EE48003E4C3E /* ProfileView+ChapterListTile.swift in Sources */,
-				DFAEE12C28B8550E00B11484 /* RawImageDataLoader.swift in Sources */,
 				DF8D0B972800EE48003E4C3E /* ProfileView.swift in Sources */,
 				DF32646B2802A6C70066EB08 /* STTImageView.swift in Sources */,
 				DF248F162813897200818300 /* AL+Interceptor.swift in Sources */,
@@ -2183,7 +2163,6 @@
 				DFC39E9E28A1F9F000450EC4 /* ICDM.swift in Sources */,
 				DF8D0B7C2800EE48003E4C3E /* MoreView.swift in Sources */,
 				DF8D0BAC2800EE48003E4C3E /* ErrorView.swift in Sources */,
-				DFAEE12E28B8587A00B11484 /* ArchivedImageDataLoader.swift in Sources */,
 				DFF363262863E4AF006D02C5 /* MigrationView.swift in Sources */,
 				DF79D273281100EB0052470D /* ReaderNavigationOverlay.swift in Sources */,
 				DFD1F9BC28F7B0D0000766C1 /* Vertical+TransitionNode.swift in Sources */,
@@ -2256,7 +2235,6 @@
 				DF8D0B942800EE48003E4C3E /* CPV+ViewModel.swift in Sources */,
 				DFAC779B28161A4F00AF6394 /* AnilistView+ProfileView.swift in Sources */,
 				DF8D0B6F2800EE48003E4C3E /* Loadable+View.swift in Sources */,
-				DF8D0B372800EE47003E4C3E /* STT+Kingfisher.swift in Sources */,
 				DF8D0B532800EE47003E4C3E /* Backup.swift in Sources */,
 				DF68249C28A5CF6D00AB30A1 /* DSK+Preferences.swift in Sources */,
 				DF30193928BFCBD00024AA8B /* ZoomingScrollView.swift in Sources */,
@@ -2299,6 +2277,7 @@
 				DF67EBA428EA34DE00076FF5 /* DSK+Common.swift in Sources */,
 				DF67EB8A28E39E2200076FF5 /* DSK+Sync.swift in Sources */,
 				DF8D0B8E2800EE48003E4C3E /* ESV+ViewModel.swift in Sources */,
+				DF2D842A2A1EFB4D006B17F0 /* STT+Nuke.swift in Sources */,
 				DF52FBC7289C7EBB008FAD3A /* LCV+SettingsSheet.swift in Sources */,
 				DF8D0B652800EE47003E4C3E /* ReaderView.swift in Sources */,
 				DF59C98028500E200027F19D /* LocalFileModifier.swift in Sources */,
@@ -2539,7 +2518,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KL9W2NU9C5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -2553,6 +2532,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = STTLaunchScreen.storyboard;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -2561,7 +2541,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.1.1;
+				MARKETING_VERSION = 5.2;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ceres.suwatte;
 				PRODUCT_NAME = Suwatte;
@@ -2583,7 +2563,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KL9W2NU9C5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -2597,6 +2577,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = STTLaunchScreen.storyboard;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -2605,7 +2586,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 5.1.1;
+				MARKETING_VERSION = 5.2;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ceres.suwatte;
@@ -2684,14 +2665,6 @@
 				kind = branch;
 			};
 		};
-		DF2DA72327CD83440046FE20 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 7.0.0;
-			};
-		};
 		DF2DA77127CF11C50046FE20 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
@@ -2756,14 +2729,6 @@
 				kind = branch;
 			};
 		};
-		DF83DD3B28231E280021575B /* XCRemoteSwiftPackageReference "AlertToast" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Mantton/AlertToast.git";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
 		DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
@@ -2823,11 +2788,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift" */;
 			productName = KeychainSwift;
-		};
-		DF2DA72427CD83440046FE20 /* Kingfisher */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DF2DA72327CD83440046FE20 /* XCRemoteSwiftPackageReference "Kingfisher" */;
-			productName = Kingfisher;
 		};
 		DF2DA77227CF11C50046FE20 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;

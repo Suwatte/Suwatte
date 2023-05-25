@@ -6,7 +6,6 @@
 //
 
 import Combine
-import Kingfisher
 import SwiftUI
 
 extension ReaderView {
@@ -387,12 +386,6 @@ extension ReaderView.ViewModel {
         let lastChapter = activeChapter
         Task { @MainActor in
             activeChapter = chapter
-        }
-
-        Task.detached {
-            lastChapter.pages?.map(\.page.CELL_KEY).forEach {
-                KingfisherManager.shared.cache.memoryStorage.remove(forKey: $0)
-            }
         }
 
         if incognitoMode { return }
