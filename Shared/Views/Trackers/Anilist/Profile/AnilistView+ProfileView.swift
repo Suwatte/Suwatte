@@ -16,53 +16,32 @@ extension AnilistView {
             var title: String
             var webUrl: URL?
         }
-
+        
         var entry: BasicEntry
-
+        
         var onStatusUpdated: (_ id: Int, _ status: Anilist.MediaListStatus) -> Void
-        @State var presentGlobalSearch = false
         @State var loadable = Loadable<Anilist.Media>.idle
         @State var scoreFormat: Anilist.MediaListOptions.ScoreFormat?
         @ObservedObject var anilistModel = Anilist.shared
+
         var body: some View {
             LoadableView(load, loadable) { data in
                 DataView(data: data, onStatusUpdated: onStatusUpdated, scoreFormat: scoreFormat)
                     .transition(.opacity)
             }
-            .navigationTitle(entry.title)
-            .navigationBarTitleDisplayMode(.inline)
             .toast()
             .onChange(of: anilistModel.notifier) { _ in
                 load()
             }
+            .navigationBarHidden(true)
             .animation(.default, value: loadable)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        Button {
-                            presentGlobalSearch.toggle()
-                        } label: {
-                            Label("Find on Source", systemImage: "magnifyingglass")
-                        }
 
-                        Link(destination: entry.webUrl ?? STTHost.notFound) {
-                            Label("Share", systemImage: "square.and.arrow.up")
-                        }
-
-                    } label: {
-                        Image(systemName: "ellipsis")
-                    }
-                }
-            }
-            .hiddenNav(presenting: $presentGlobalSearch) {
-                SearchView(initialQuery: entry.title)
-            }
         }
-
+        
         func load() {
             loadable = .loading
             Task { @MainActor in
-
+                
                 do {
                     let data = try await Anilist.shared.getProfile(entry.id)
                     loadable = .loaded(data)
@@ -86,13 +65,18 @@ extension AnilistView.ProfileView {
         @State var mediaList: Anilist.Media.MediaListEntry? = nil
         var scoreFormat: Anilist.MediaListOptions.ScoreFormat?
         @EnvironmentObject var toastManager: ToastManager
-        var body: some View {
-            ScrollView {
-                VStack(spacing: 20) {
-                    // Header
-                    HeaderView
+        @Environment(\.presentationMode) var presentationMode
+        @State var presentGlobalSearch = false
 
-                    // Media List Entry
+        var body: some View {
+            ScrollView(showsIndicators: false) {
+                VStack (spacing: 5) {
+                    StickyHeader
+                    HeaderView
+                }
+                VStack (spacing: 20) {
+                    
+                    
                     MediaListView
 
                     // Genres
@@ -101,7 +85,10 @@ extension AnilistView.ProfileView {
                     // Tags
                     TagsView
                 }
+                .padding(.bottom)
             }
+            .coordinateSpace(name: "scroll")
+            .ignoresSafeArea(edges: .top)
             .animation(.default, value: lineLimit)
             .animation(.default, value: data.isFavourite)
             .animation(.default, value: data.mediaListEntry)
@@ -139,42 +126,83 @@ extension AnilistView.ProfileView {
                     }
                 }
             }
-
-            .tint(EntryColor)
+            
+            .tint(Color.primary)
+            .hiddenNav(presenting: $presentGlobalSearch) {
+                SearchView(initialQuery: data.title.userPreferred)
+            }
         }
     }
 }
 
 extension AnilistView.ProfileView.DataView {
-    var HeaderView: some View {
-        VStack(alignment: .leading) {
-            ZStack(alignment: .leading) {
-                AsyncImage(url: data.bannerImage.flatMap({ URL(string: $0) }))                
-                    .scaledToFill()
-                    .clipped(antialiased: true)
-                    .blur(radius: 2.5)
-                    .offset(y: -3)
-                    .frame(width: UIScreen.main.bounds.width, height: 220, alignment: .center)
+    var StickyHeader: some View {
+        GeometryReader { proxy in
+            let frame = proxy.frame(in: .named("scroll"))
+            let minY = frame.minY
+            let size = proxy.size
+            let height = max(size.height + minY, size.height)
+            LazyImage(url: data.bannerImage.flatMap({ URL(string: $0) }) ?? URL(string: data.coverImage.extraLarge)) { state in
+                if let image = state.image {
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .blur(radius: 2.5)
+                        .offset(x: 0, y: -4)
 
-                LinearGradient(colors: [.clear, Color(uiColor: UIColor.systemBackground)], startPoint: .top, endPoint: .bottom)
-                    .offset(x: 0, y: 3)
-                    .padding(.bottom, 3)
-
-                HStack {
-                    BaseImageView(url: URL(string: data.coverImage.large))
-                        .frame(width: 120, height: 180, alignment: .center)
-                        .cornerRadius(7)
-                        .padding(.vertical)
-                        .shadow(radius: 2.5)
-                        .padding(.horizontal)
                 }
             }
-            .frame(height: 220, alignment: .center)
+            .frame(width: size.width, height: height, alignment: .top)
+            .overlay {
+                ZStack(alignment: .bottomLeading) {
+                    LinearGradient(colors: [.clear, Color(uiColor: UIColor.systemBackground)], startPoint: .top, endPoint: .bottom)
+                    VStack(alignment: .leading, spacing: 0) {
+                        HStack(alignment: .bottom) {
+                            Button("\(Image(systemName: "chevron.left"))") {
+                                presentationMode.wrappedValue.dismiss()
+                            }
+                            .font(.title3)
+                            Spacer()
+                            Menu("\(Image(systemName: "ellipsis"))") {
+                                Button {
+//                                    presentGlobalSearch.toggle()
+                                } label: {
+                                    Label("Find on Source", systemImage: "magnifyingglass")
+                                }
+                                
+                                Link(destination: data.webUrl ?? STTHost.notFound) {
+                                    Label("Share", systemImage: "square.and.arrow.up")
+                                }
+                                
+                            }
+                            
+                        }
+                        .frame(height: KEY_WINDOW?.safeAreaInsets.top ?? 0)
+                        
+                       Spacer()
+                        BaseImageView(url: URL(string: data.coverImage.large))
+                            .frame(width: 120, height: 180, alignment: .center)
+                            .cornerRadius(7)
+                            .shadow(radius: 2.5)
+                    
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, KEY_WINDOW?.safeAreaInsets.top ?? 0)
+                    .padding(.bottom, 25)
+                }
+            }
+            .offset(y: minY > 0 ? -minY : 0)
+        }
+        .frame(width: UIScreen.main.bounds.width, height: 300, alignment: .center)
+
+    }
+    var HeaderView: some View {
+        VStack(alignment: .leading) {
             VStack(alignment: .leading) {
                 Text(data.title.userPreferred)
                     .font(.title3)
                     .fontWeight(.semibold)
-
+                
                 if let summary = data.description {
                     HTMLStringView(text: summary)
                         .font(.body.weight(.light))
@@ -188,10 +216,10 @@ extension AnilistView.ProfileView.DataView {
                         }
                 }
             }
-            .padding(.horizontal)
-
             Divider()
         }
+        .padding(.horizontal)
+
     }
 }
 
@@ -215,19 +243,28 @@ extension PView {
         }
         .padding(.horizontal)
     }
-
+    
     var TagsView: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Tags")
                 .font(.subheadline)
                 .fontWeight(.bold)
-            InteractiveTagView(data.tags.filter({ $0.category != "Sexual Content"}).sorted(by: { $0.name < $1.name })) { tag in
+            InteractiveTagView(tags) { tag in
                 InteractiveTagCell(tag.name) {
                     AnilistView.DirectoryView(model: .init(.init(type: data.type, tags: [tag.name])))
                 }
             }
         }
         .padding(.horizontal)
+    }
+    
+    var tags : [Anilist.Media.MediaTag] {
+        let base = data.tags.filter({ $0.category != "Sexual Content"}).sorted(by: { $0.name < $1.name })
+        
+        if base.count <= 8 {
+            return base
+        }
+        return Array(base[0...8])
     }
 }
 
@@ -238,10 +275,10 @@ extension PView {
         if let color = data.coverImage.color {
             return Color(hex: color)
         }
-
+        
         return .anilistBlue
     }
-
+    
     func updateStatus(option: Anilist.MediaListStatus) async {
         do {
             let updated = try await Anilist.shared.updateMediaListEntry(mediaId: data.id,
@@ -253,7 +290,7 @@ extension PView {
             ToastManager.shared.display(.error(error))
         }
     }
-
+    
     var MediaListView: some View {
         HStack {
             Button { !Anilist.signedIn() ? presentAuthSheet.toggle() : presentTrackingOptions.toggle() } label: {
@@ -265,7 +302,7 @@ extension PView {
                     .cornerRadius(7)
                     .foregroundColor(EntryColor.isDark ? .white : .black)
             }
-
+            
             if mediaList != nil {
                 Button { presentTrackerEdit.toggle() } label: {
                     Image(systemName: "pencil")
@@ -280,7 +317,7 @@ extension PView {
                 }
                 .transition(.slide)
             }
-
+            
             Button { data.isFavourite.toggle() } label: {
                 Image(systemName: "heart.fill")
                     .resizable()
@@ -311,5 +348,11 @@ struct FieldLabel: View {
                 .fontWeight(.light)
                 .foregroundColor(.primary.opacity(0.5))
         }
+    }
+}
+extension UINavigationController {
+    override open func viewDidLoad() {
+        super.viewDidLoad()
+        interactivePopGestureRecognizer?.delegate = nil
     }
 }

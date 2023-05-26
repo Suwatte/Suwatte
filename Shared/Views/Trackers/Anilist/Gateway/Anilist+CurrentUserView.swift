@@ -42,12 +42,14 @@ extension AnilistView {
         @Environment(\.presentationMode) var presentationMode
 
         var body: some View {
-            ScrollView {
-                VStack {
-                    Header
+            ScrollView (showsIndicators: false) {
+                Header
+                VStack  {
+                    
                     About
                         .padding(.horizontal)
-                    LazyVStack(alignment: .leading, spacing: 7) {
+                        .padding(.top)
+                    VStack(alignment: .leading, spacing: 7) {
                         // Info Stacks
                         MangaStats
                             .padding(.bottom)
@@ -60,66 +62,94 @@ extension AnilistView {
                     .foregroundColor(profileColor.isDark ? .white : .black)
                 }
             }
-            .navigationTitle("Profile")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarHidden(true)
+            .coordinateSpace(name: "scroll")
+            .ignoresSafeArea(edges: .top)
             .environment(\.profileColor, profileColor)
             .animation(.default, value: profileColor)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        Button("Sign Out", role: .destructive) {
-                            Anilist.shared.deleteToken()
-                            presentationMode.wrappedValue.dismiss()
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis")
-                    }
+                    
                 }
             }
-            .tint(profileColor)
+            .tint(Color.primary)
             .accentColor(profileColor)
         }
 
         var Header: some View {
-            ZStack {
-                // BG
-                if let banner = account.bannerImage {
-                    LazyImage(url: URL(string: banner))
+            GeometryReader { proxy in
+                let frame = proxy.frame(in: .named("scroll"))
+                let minY = frame.minY
+                let size = proxy.size
+                let height = max(size.height + minY, size.height)
+                let url = URL(string: account.bannerImage ?? account.avatar.large ?? "")
+                
+                LazyImage(url: url, transaction: .init(animation: .easeInOut(duration: 0.25))) { state in
+                    if let image = state.image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .offset(x: 0, y: -20)
+                    }
                 }
-
-                // Gradient
-                LinearGradient(colors: [.clear, Color(uiColor: UIColor.systemBackground)], startPoint: .top, endPoint: .bottom)
-                VStack {
-                    LazyImage(url: URL(string: account.avatar.large ?? ""), transaction: .init(animation: .easeInOut(duration: 0.25))) { state in
-                        if let image = state.image {
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .task {
-                                    let color = state.imageContainer?.image.averageColor
-                                    if let color {
-                                        profileColor = Color(color)
+                .frame(width: size.width, height: height, alignment: .top)
+                .overlay {
+                    ZStack ( alignment: .bottom) {
+                        LinearGradient(colors: [.clear, Color(uiColor: UIColor.systemBackground)], startPoint: .top, endPoint: .bottom)
+                        VStack(spacing: 0) {
+                            HStack(alignment: .bottom) {
+                                Button("\(Image(systemName: "chevron.left"))") {
+                                    presentationMode.wrappedValue.dismiss()
+                                }
+                                .font(.title3)
+                                Spacer()
+                                Menu("\(Image(systemName: "ellipsis"))") {
+                                    Button("Sign Out", role: .destructive) {
+                                        Anilist.shared.deleteToken()
+                                        presentationMode.wrappedValue.dismiss()
                                     }
                                 }
-                                .transition(.opacity)
-                        }
-                        
-                    }
-                        .frame(width: 100, height: 100, alignment: .center)
-                        .clipShape(Circle())
-                        .shadow(radius: 3)
-                        .overlay(Circle().stroke(Color.accentColor, lineWidth: 1))
-                        .shadow(radius: 5)
-                        .overlay(Circle().stroke(profileColor, lineWidth: 2))
-                        .shadow(color: profileColor, radius: 7)
-                        .padding(.vertical, 7)
-                    Text(account.name)
-                        .font(.title)
-                        .fontWeight(.bold)
-                }
-            }
+                            }
+                            .frame(height: KEY_WINDOW?.safeAreaInsets.top ?? 0)
+                            
+                           Spacer()
+                            VStack {
+                                LazyImage(url: URL(string: account.avatar.large ?? ""), transaction: .init(animation: .easeInOut(duration: 0.25))) { state in
+                                    if let image = state.image {
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .task {
+                                                let color = state.imageContainer?.image.averageColor
+                                                if let color {
+                                                    profileColor = Color(color)
+                                                }
+                                            }
+                                            .transition(.opacity)
+                                    }
 
-            .frame(width: UIScreen.main.bounds.width, height: 180, alignment: .center)
+                                }
+                                .frame(width: 100, height: 100, alignment: .center)
+                                    .clipShape(Circle())
+                                    .shadow(radius: 3)
+                                    .overlay(Circle().stroke(Color.accentColor, lineWidth: 1))
+                                    .shadow(radius: 5)
+                                    .overlay(Circle().stroke(profileColor, lineWidth: 2))
+                                    .shadow(color: profileColor, radius: 7)
+                                Text(account.name)
+                                    .font(.title)
+                                    .fontWeight(.bold)
+                            }
+                        }
+                        .padding(.horizontal)
+                        .padding(.top, KEY_WINDOW?.safeAreaInsets.top ?? 0)
+                        .padding(.bottom, 25)
+                    }
+
+                }
+                .offset(y: minY > 0 ? -minY : 0)
+            }
+            .frame(width: UIScreen.main.bounds.width, height: 250, alignment: .center)
         }
 
         @ViewBuilder
