@@ -179,7 +179,7 @@ extension ReaderView {
 
             var HeaderView: some View {
                 VStack {
-                    Text("Chapter Complete")
+                    Text("Chapter Completed")
                         .font(.headline)
                         .fontWeight(.semibold)
                     Text(from.displayName)
@@ -199,13 +199,9 @@ extension ReaderView {
                         .font(.callout)
                         .fontWeight(.semibold)
                         .foregroundColor(.primary.opacity(0.75))
-                    Image(systemName: SYSTEM_IMAGE)
-                        .resizable()
-                        .foregroundColor(.gray)
-                        .scaledToFit()
+                    ChapterStatusView
                         .frame(width: 15, height: 15, alignment: .center)
 
-                    ChapterStatusView
                 }
             }
 
@@ -227,14 +223,10 @@ extension ReaderView {
                         ErrorView(error: error, action: {})
                     case .idle, .loading:
                         ProgressView()
-
                     case .loaded:
-                        VStack {
-                            Text("Ready!")
-                                .fontWeight(.light)
-                            Image(systemName: "checkmark.circle")
-                        }
-                        .foregroundColor(.green)
+                            Image(systemName: SYSTEM_IMAGE)
+                                .resizable()
+                                .foregroundColor(.green)
                     }
                 }
             }
