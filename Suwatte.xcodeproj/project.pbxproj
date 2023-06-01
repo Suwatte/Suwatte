@@ -107,8 +107,6 @@
 		DF6824A728A5FD8000AB30A1 /* DRV+Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6824A628A5FD8000AB30A1 /* DRV+Auth.swift */; };
 		DF6A896828834AC40045529D /* Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6A896728834AC40045529D /* Orientation.swift */; };
 		DF6A896D28835E150045529D /* Tiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6A896C28835E150045529D /* Tiles.swift */; };
-		DF6A8973288B71F90045529D /* History+OPDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6A8972288B71F90045529D /* History+OPDS.swift */; };
-		DF6A8975288B721E0045529D /* History+Local.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6A8974288B721E0045529D /* History+Local.swift */; };
 		DF6B5754288F42D6007C6B78 /* Daisuke.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6B5753288F42D6007C6B78 /* Daisuke.swift */; };
 		DF6B5759288F453D007C6B78 /* DSK+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6B5758288F453D007C6B78 /* DSK+Error.swift */; };
 		DF6B8CA428629CCE00DD079D /* Data+ContentLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6B8CA328629CCE00DD079D /* Data+ContentLink.swift */; };
@@ -427,8 +425,6 @@
 		DF6824A628A5FD8000AB30A1 /* DRV+Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DRV+Auth.swift"; sourceTree = "<group>"; };
 		DF6A896728834AC40045529D /* Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Orientation.swift; sourceTree = "<group>"; };
 		DF6A896C28835E150045529D /* Tiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tiles.swift; sourceTree = "<group>"; };
-		DF6A8972288B71F90045529D /* History+OPDS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "History+OPDS.swift"; sourceTree = "<group>"; };
-		DF6A8974288B721E0045529D /* History+Local.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "History+Local.swift"; sourceTree = "<group>"; };
 		DF6B5753288F42D6007C6B78 /* Daisuke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Daisuke.swift; sourceTree = "<group>"; };
 		DF6B5758288F453D007C6B78 /* DSK+Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Error.swift"; sourceTree = "<group>"; };
 		DF6B8CA328629CCE00DD079D /* Data+ContentLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+ContentLink.swift"; sourceTree = "<group>"; };
@@ -943,8 +939,6 @@
 		DF6A896F288B71C70045529D /* Categories */ = {
 			isa = PBXGroup;
 			children = (
-				DF6A8972288B71F90045529D /* History+OPDS.swift */,
-				DF6A8974288B721E0045529D /* History+Local.swift */,
 				DFBE48592A26CE84000ABA16 /* History+ContentSource.swift */,
 			);
 			path = Categories;
@@ -2246,7 +2240,6 @@
 				DF8D0BB22800EE48003E4C3E /* MarkDownView.swift in Sources */,
 				DF67EB8C28E3F22700076FF5 /* Logger.swift in Sources */,
 				DF59C98528501BE50027F19D /* LocalContentManager.swift in Sources */,
-				DF6A8975288B721E0045529D /* History+Local.swift in Sources */,
 				DF8D0B252800EE47003E4C3E /* LocalAuthManager.swift in Sources */,
 				DFBE48422A25BCD1000ABA16 /* ChapterData.swift in Sources */,
 				DF8D0B452800EE47003E4C3E /* Data+ValueStore.swift in Sources */,
@@ -2340,7 +2333,6 @@
 				DFB47EF72880C1FB0040A1BD /* STT+OPDS.swift in Sources */,
 				DF8D0B8F2800EE48003E4C3E /* ESV+ResultsView.swift in Sources */,
 				DF8D0BA72800EE48003E4C3E /* AppDelegate.swift in Sources */,
-				DF6A8973288B71F90045529D /* History+OPDS.swift in Sources */,
 				DF482EF0295554B9002D3308 /* VerticalPaged+Controller.swift in Sources */,
 				DF248F22281393A400818300 /* AnilistView.swift in Sources */,
 				DF67EB9928E7B07700076FF5 /* AddContentLink.swift in Sources */,
