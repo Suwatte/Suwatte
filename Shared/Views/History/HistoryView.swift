@@ -8,55 +8,103 @@
 import RealmSwift
 import SwiftUI
 
+fileprivate let threeMonths = Calendar.current.date(
+    byAdding: .month,
+    value: -3,
+    to: .now
+)!
 struct HistoryView: View {
     @StateObject var model = ViewModel()
-
+    
     var body: some View {
-        List {
-            ForEach(model.markers) { marker in
-                CellGateWay(marker: marker)
-                    .listRowSeparator(.hidden)
-                    .id(marker.id)
+        Group {
+            if let markers = model.markers {
+                List(markers) { marker in
+                    Cell(marker: marker)
+                        .listRowSeparator(.hidden)
+                        .modifier(StyleModifier())
+                        .modifier(DeleteModifier(id: marker.id))
+                        .onTapGesture {
+                            action(marker)
+                        }
+                }
+                .transition(.opacity)
+            } else {
+                ProgressView()
+                    .transition(.opacity)
             }
-            .animation(.default, value: model.markers)
         }
+        .modifier(InteractableContainer(selection: $model.csSelection))
         .listStyle(.plain)
         .navigationTitle("History")
-        .modifier(InteractableContainer(selection: $model.selection))
-        .fullScreenCover(item: $model.selectedBook, onDismiss: model.observe) { entry in
-            let chapter = LocalContentManager.shared.generateStored(for: entry)
-            ReaderGateWay(readingMode: entry.type == .comic ? .PAGED_COMIC : .NOVEL, chapterList: [chapter], openTo: chapter, title: entry.title)
-                .onAppear {
-                    model.removeObserver()
-                }
+        .animation(.default, value: model.markers)
+        .task {
+            model.observe()
         }
-        .fullScreenCover(item: $model.selectedOPDSContent, onDismiss: model.observe) { entry in
-            let chapter = DataManager.shared.getLatestStoredChapter(entry.sourceId, entry.contentId)
+        .onDisappear(perform: model.disconnect)
+    }
+}
+
+extension HistoryView {
+    @MainActor
+    final class ViewModel : ObservableObject {
+        @Published var csSelection: HighlightIndentier?
+        @Published var markers: Results<ProgressMarker>?
+        
+        private var notificationToken: NotificationToken?
+        func observe() {
+            let realm = try! Realm()
+            let collection = realm
+                .objects(ProgressMarker.self)
+                .where({
+                    $0.isDeleted == false &&
+                    $0.currentChapter != nil &&
+                    $0.dateRead != nil &&
+                    $0.dateRead >= threeMonths &&
+                    ($0.currentChapter.content != nil || $0.currentChapter.opds != nil)
+                })
+                .distinct(by: ["id"])
+                .sorted(by: \.dateRead, ascending: false)
+            notificationToken = collection
+                .observe { _ in
+                    self.markers = collection
+                }
+            
+            Logger.shared.debug("Observing ProgressMarker Collection")
+        }
+        
+        func disconnect() {
+            Logger.shared.debug("Disconnecting History Observer")
+            notificationToken?.invalidate()
+            notificationToken = nil
+        }
+    }
+}
+
+extension HistoryView {
+    
+    func action(_ marker: ProgressMarker) {
+        if let content = marker.currentChapter?.content {
+            model.csSelection = (content.sourceId, content.toHighlight())
+        }
+    }
+    struct Cell: View {
+        var marker: ProgressMarker
+        var body: some View {
             Group {
-                if let chapter {
-                    ReaderGateWay(readingMode: .PAGED_COMIC, chapterList: [chapter], openTo: chapter, title: entry.chapterName)
-                } else {
-                    NavigationView {
-                        Text("This Content Could not be found")
-                            .closeButton()
+                if let reference = marker.currentChapter {
+                    if let content = reference.content {
+                        ContentSourceCell(marker: marker, content: content, chapter: reference)
                     }
                 }
-            }
-            .onAppear {
-                model.removeObserver()
-            }
-        }
-        .environmentObject(model)
-        .onDisappear(perform: model.removeObserver)
-        .task {
-            if model.token == nil {
-                model.observe()
             }
         }
     }
 }
 
 extension HistoryView {
+    static var transition = AnyTransition.asymmetric(insertion: .slide, removal: .scale)
+
     struct StyleModifier: ViewModifier {
         func body(content: Content) -> some View {
             content
@@ -83,23 +131,46 @@ extension HistoryView {
                 .frame(width: 40, height: 40, alignment: .center)
         }
     }
-}
-
-extension HistoryView {
-    struct CellGateWay: View {
-        var marker: HistoryObject
-        var body: some View {
-            Group {
-                switch marker.sourceId {
-                case STTHelpers.OPDS_CONTENT_ID:
-                    OPDSContentTile(marker: marker)
-                case STTHelpers.LOCAL_CONTENT_ID:
-                    LocalContentTile(marker: marker)
-                default:
-                    ExternalContentTile(marker: marker)
-                }
-            }
-            .modifier(DeleteModifier(marker: marker))
+    
+    
+    struct DeleteModifier: ViewModifier {
+        var id: String
+        func body(content: Content) -> some View {
+            content
+                .swipeActions(allowsFullSwipe: true, content: {
+                    Button(role: .destructive) {
+                        handleRemoveMarker()
+                    } label: {
+                        Label("Remove", systemImage: "eye.slash")
+                    }
+                    .tint(.red)
+                })
+        }
+        private func handleRemoveMarker() {
+            DataManager.shared.removeFromHistory(id: id)
         }
     }
 }
+
+
+//
+//extension HistoryView {
+//    struct CellGateWay: View {
+//        var marker: ProgressMarker
+//        var chapter: ChapterReference {
+//            marker.currentChapter! // Can Not Fail due to query in viewmodel
+//        }
+//        var body: some View {
+//            Group {
+//                if let content = chapter.content {
+//                    ExternalContentTile(marker: marker, excerpt: content.toHighlight())
+//                } else if chapter.isOPDS {
+//                    OPDSContentTile(marker: marker)
+//                } else if chapter.isLocal {
+//                    LocalContentTile(marker: marker)
+//                }
+//            }
+//            .modifier(DeleteModifier(marker: marker))
+//        }
+//    }
+//}

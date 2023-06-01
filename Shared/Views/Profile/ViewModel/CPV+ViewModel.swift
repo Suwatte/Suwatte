@@ -44,7 +44,6 @@ extension ProfileView {
         @Published var actionState: ActionState = .init(state: .none)
         @Published var linkedUpdates: [HighlightIndentier] = []
         @Published var threadSafeChapters: [DSKCommon.Chapter]?
-        private var unMarkedChapters =  Set<Double>()
         // Tokens
         var currentMarkerToken: NotificationToken?
 
@@ -52,7 +51,7 @@ extension ProfileView {
         var downloadTrackingToken: NotificationToken?
         @Published var downloads: [String: ICDMDownloadObject] = [:]
         // Chapter Marking Variables
-        var chapterMarkersToken: NotificationToken?
+        var progressToken: NotificationToken?
         @Published var readChapters = Set<Double>()
 
         // Library Tracking Token
@@ -75,8 +74,14 @@ extension ProfileView {
         @Published var selection: String?
         // De Init
         deinit {
+            disconnect()
+            removeNotifier()
+            Logger.shared.debug("[\(contentIdentifier)] Disconnected Observers")
+        }
+        
+        func disconnect() {
             currentMarkerToken?.invalidate()
-            chapterMarkersToken?.invalidate()
+            progressToken?.invalidate()
             downloadTrackingToken?.invalidate()
             libraryTrackingToken?.invalidate()
             readLaterToken?.invalidate()
@@ -86,31 +91,22 @@ extension ProfileView {
 
 extension ProfileView.ViewModel {
     
-    func setInvalidatedMarkers(nums: Set<Double>) { // Realm inconvenience in getting deleted indexes
-        unMarkedChapters = nums
-    }
     func setupObservers() {
         let realm = try! Realm()
 
         // Get Read Chapters
         let _r1 = realm
-            .objects(ChapterMarker.self)
-            .where { $0.chapter.contentId == entry.contentId }
-            .where { $0.chapter.sourceId == source.id }
-            .where { $0.completed == true }
-        chapterMarkersToken = _r1.observe { [weak self] collection in
-            switch collection {
-            case let .initial(values):
-                let initial = values.map { $0.chapter!.number }
-                self?.readChapters.formUnion(initial)
-            case let .update(_, _, inserted, _):
-                let insertedNumbers = inserted.compactMap { _r1.getOrNil($0)?.chapter?.number }
-                self?.readChapters.formUnion(insertedNumbers)
-                self?.readChapters.subtract(self?.unMarkedChapters ?? []) // Subtract
-                self?.unMarkedChapters.removeAll() // Clear Store
-            default:
-                break
+            .objects(ProgressMarker.self)
+            .where { $0.id == contentIdentifier && $0.isDeleted == false }
+        
+        progressToken = _r1.observe { [weak self] _ in
+            let target = _r1.first
+            guard let target else {
+                self?.calculateActionState(nil)
+                return
             }
+            self?.readChapters = Set(target.readChapters)
+            self?.calculateActionState(target.freeze())
         }
 
         // Get Download
@@ -128,7 +124,7 @@ extension ProfileView.ViewModel {
 
         let _r3 = realm
             .objects(LibraryEntry.self)
-            .where { $0._id == id }
+            .where { $0.id == id }
 
         libraryTrackingToken = _r3.observe { [weak self] _ in
             self?.inLibrary = !_r3.isEmpty
@@ -137,7 +133,7 @@ extension ProfileView.ViewModel {
         // Read Later
         let _r4 = realm
             .objects(ReadLater.self)
-            .where { $0._id == id }
+            .where { $0.id == id }
 
         readLaterToken = _r4.observe { [weak self] _ in
             self?.savedForLater = !_r4.isEmpty
@@ -148,8 +144,8 @@ extension ProfileView.ViewModel {
         currentMarkerToken?.invalidate()
         currentMarkerToken = nil
 
-        chapterMarkersToken?.invalidate()
-        chapterMarkersToken = nil
+        progressToken?.invalidate()
+        progressToken = nil
 
         downloadTrackingToken?.invalidate()
         downloadTrackingToken = nil
@@ -208,7 +204,7 @@ extension ProfileView.ViewModel {
             self?.working = true
             self?.threadSafeChapters = parsedChapters
         }
-
+        let sourceId = source.id
         if let chapters = parsedChapters {
             let unmanaged = chapters.map { $0.toStoredChapter(withSource: source.id) }
             await MainActor.run { [weak self] in
@@ -217,7 +213,6 @@ extension ProfileView.ViewModel {
                 self?.working = false
             }
             // Store To Realm
-            let sourceId = source.id
             Task.detached {
                 let stored = chapters.map { $0.toStoredChapter(withSource: sourceId) }
                 DataManager.shared.storeChapters(stored)
@@ -236,7 +231,6 @@ extension ProfileView.ViewModel {
                     self?.working = false
                 }
                 // Store To Realm
-                let sourceId = source.id
                 Task.detached {
                     let stored = parsedChapters.map { $0.toStoredChapter(withSource: sourceId) }
                     DataManager.shared.storeChapters(stored)
@@ -270,8 +264,16 @@ extension ProfileView.ViewModel {
 
     func didLoadChapters() async {
         let id = sttIdentifier()
-        await MainActor.run { [weak self] in
-            self?.getMarkers()
+        Task.detached {
+            let obj = DataManager
+                .shared
+                .getContentMarker(for: id.id)?
+                .freeze()
+            
+            Task {  @MainActor [weak self] in
+                self?.calculateActionState(obj)
+            }
+            
         }
         Task.detached { [weak self] in
             await self?.handleSync()
@@ -299,86 +301,65 @@ extension ProfileView.ViewModel {
         Task { @MainActor in
             chapters = .loaded(storedChapters)
         }
-        Task { @MainActor in
-            getMarkers()
-        }
     }
 
-    func getMarkers() {
-        let id = entry.id
-        let sourceId = source.id
-        let realm = try! Realm()
-        currentMarkerToken = realm
-            .objects(ChapterMarker.self)
-            .where { $0.chapter.contentId == id }
-            .where { $0.chapter.sourceId == sourceId }
-            .where { $0.dateRead != nil }
-            .sorted(by: \.dateRead, ascending: false)
-            .observe { [weak self] collection in
-                switch collection {
-                case let .initial(results):
-                    self?.calculateActionState(results.first)
-                case let .update(results, _, _, _):
-                    self?.calculateActionState(results.first)
-                case let .error(error):
-                    ToastManager.shared.error(error)
-                }
-            }
-    }
 
-    func calculateActionState(_ marker: ChapterMarker?) {
+    func calculateActionState(_ marker: ProgressMarker?) {
         guard let chapters = chapters.value else {
             actionState = .init(state: .none)
             return
         }
+        
         guard content.contentId == entry.contentId else {
             return
         }
-        guard let marker, let chapter = marker.chapter?.toThreadSafe() else {
+        
+        guard let marker, let chapterRef = marker.currentChapter else {
             // Marker DNE, user has not started reading
+
             if let chapter = chapters.last {
                 // Chapter not found in chapter list, return first chapter
-                actionState = .init(state: .start, chapter: chapter.toThreadSafe(), marker: nil)
+                actionState = .init(state: .start, chapter: .init(name: chapter.chapterName, id: chapter.id), marker: nil)
+                return
+            }
+            actionState = .init(state: .none)
+            return
+            
+        }
+        
+        let info = ActionState.ChapterInfo(name: chapterRef.chapterName, id: chapterRef.id)
+        
+        if !marker.isCompleted {
+//            // Marker Exists, Chapter has not been completed, resume
+            actionState = .init(state: .resume, chapter: info, marker: .init(progress: marker.progress ?? 0.0 ,date: marker.dateRead))
+            return
+        }
+        // Chapter has been completed, Get Current Index
+        guard var index = chapters.firstIndex(where: { $0.chapterId == chapterRef.chapterId }) else {
+            if let chapter = chapters.last {
+                // Chapter not found in chapter list, return first chapter
+                actionState = .init(state: .start, chapter: .init(name: chapter.chapterName, id: chapter.id), marker: nil)
                 return
             }
             actionState = .init(state: .none)
             return
         }
-
-        if !marker.completed {
-            // Marker Exists, series has not been complted, resume
-            actionState = .init(state: .resume, chapter: marker.chapter?.toThreadSafe(), marker: .init(progress: marker.progress,date: marker.dateRead))
-            return
-        }
-
-        // Series has been completed
-
-        // Get current chapter index
-        guard var index = chapters.firstIndex(where: { $0.chapterId == chapter.chapterId }) else {
-            if let chapter = chapters.last {
-                // Chapter not found in chapter list, return first chapter
-                actionState = .init(state: .start, chapter: chapter.toThreadSafe(), marker: nil)
-                return
-            }
-            actionState = .init(state: .none)
-            return
-        }
-
         // Current Index is equal to that of the last available chapter
         // Set action state to re-read
         // marker is nil to avoid progress display
         if index == 0 {
             if content.status == .COMPLETED, let chapter = chapters.last {
-                actionState = .init(state: .restart, chapter: chapter.toThreadSafe(), marker: nil)
+                actionState = .init(state: .restart, chapter: .init(name: chapter.chapterName, id: chapter.id), marker: nil)
                 return
             }
-            actionState = .init(state: .reRead, chapter: marker.chapter?.toThreadSafe(), marker: nil)
+            actionState = .init(state: .reRead, chapter: info, marker: nil)
             return
         }
 
         // index not 0, decrement, sourceIndex moves inverted
         index -= 1
-        actionState = .init(state: .upNext, chapter: chapters.get(index: index)?.toThreadSafe(), marker: nil)
+        let next = chapters.get(index: index)
+        actionState = .init(state: .upNext, chapter: next.flatMap({ .init(name: $0.chapterName, id: $0.id )}), marker: nil)
     }
 
     func loadContentFromDatabase() async {
@@ -452,20 +433,23 @@ extension ProfileView.ViewModel {
 
         let entry = try await Anilist.shared.getProfile(id).mediaListEntry
 
-        if let entry = entry {
-            let progress = entry.progress
-            let targets = chapters.filter { $0.number <= Double(progress) }
-            DataManager.shared.bulkMarkChapter(chapters: targets.map { $0.toStoredChapter(withSource: source.id) })
-
-            let chapter = DataManager.shared.getHighestMarked(id: .init(contentId: sttIdentifier().contentId, sourceId: sttIdentifier().sourceId))
-            if let chapter = chapter, Double(progress) < chapter.number {
-                do {
-                    let _ = try await Anilist.shared.updateMediaListEntry(mediaId: id, data: ["progress": chapter.number])
-                } catch {
-                    Logger.shared.error("[ProfileView] [Anilist] \(error.localizedDescription)")
-                }
-            }
+        guard let entry else { return }
+        let progress = entry.progress
+        let targets = chapters.filter { $0.number <= Double(progress) }.map(\.number)
+        
+        DataManager.shared.markChaptersByNumber(for: sttIdentifier(), chapters: Set(targets))
+        let highestMarkedChapter = DataManager.shared.getContentMarker(for: contentIdentifier)?.maxReadChapter
+        
+        guard let highestMarkedChapter, Double(progress) < highestMarkedChapter else {
+            return
         }
+        
+        do {
+            let _ = try await Anilist.shared.updateMediaListEntry(mediaId: id, data: ["progress": highestMarkedChapter])
+        } catch {
+            Logger.shared.error("[ProfileView] [Anilist] \(error.localizedDescription)")
+        }
+        
     }
 
     private func handleReadMarkers() async throws {
@@ -485,50 +469,55 @@ extension ProfileView.ViewModel {
         })
 
         // Get Read Chapters on Source
-        let readChapterIds = try await source.getReadChapterMarkers(contentId: entry.id)
+        let readChapterIds = Set(try await source.getReadChapterMarkers(contentId: entry.id))
 
-        // Init Realm
-        // Save New Chapters
+        // Get Chapter Numbers of Read Chapters
         let targets = chapters
             .filter { readChapterIds.contains($0.chapterId) }
-            .map { $0.toStoredChapter(withSource: source.id) }
-
-        // Mark Chapters As Read
-        DataManager.shared.bulkMarkChapter(chapters: targets, completed: true)
-
-        // Get Chapters that are out of sync
-        let markers = getOutOfSyncMarkers(with: readChapterIds)
-        // Sync to Source
+            .map(\.number)
+        
+//        // Mark Chapters As Read
+        DataManager.shared.markChaptersByNumber(for: sttIdentifier(), chapters: Set(targets))
+        
+//        // Get Chapters that are out of sync
+        let markers = getOutOfSyncMarkers(with: Array(readChapterIds))
+        
+//        // Sync to Source
         try? await source.onChaptersMarked(contentId: entry.id, chapterIds: markers, completed: true)
-
         await MainActor.run(body: {
             syncState = .done
         })
     }
 
+    // Gets ID's of chapters that are completed but have not been syned to the source.
     private func getOutOfSyncMarkers(with ids: [String]) -> [String] {
-        let realm = try! Realm()
-
-        let markers = realm
-            .objects(ChapterMarker.self)
-            .where { $0.chapter.sourceId == source.id }
-            .where { $0.chapter.contentId == entry.id }
-            .where { $0.completed == true }
-            .where { $0.chapter.chapterId.in(ids) }
-            .toArray()
-            .compactMap { $0.chapter?.chapterId }
-
-        return markers
+        guard let threadSafeChapters else {
+            
+            return []
+        }
+        let marker = DataManager.shared.getContentMarker(for: contentIdentifier)?.readChapters
+        
+        guard let marker else {
+            return []
+        }
+        let marked = Set(marker)
+        
+        let results = threadSafeChapters.filter({ !marked.contains($0.number) }).map(\.chapterId)
+        
+        return results
     }
 }
 
 extension ProfileView.ViewModel {
     struct ActionState: Hashable {
         var state: ProgressState
-        var chapter: ThreadSafeChapter?
+        var chapter: ChapterInfo?
         var marker: Marker?
         
-        
+        struct ChapterInfo: Hashable {
+            var name: String
+            var id: String
+        }
         struct Marker : Hashable {
             var progress: Double
             var date: Date?
@@ -573,7 +562,7 @@ extension ProfileView.ViewModel {
 
         let updates = await withTaskGroup(of: (Bool, HighlightIndentier).self, returning: [HighlightIndentier].self, body: { group -> [HighlightIndentier] in
             for entry in identifiers {
-                guard let src = SourceManager.shared.getSource(id: entry.sourceId) else {
+                guard let src = try? SourceManager.shared.getContentSource(id: entry.sourceId) else {
                     continue
                 }
 
@@ -600,42 +589,5 @@ extension ProfileView.ViewModel {
         Task { @MainActor in
             self.linkedUpdates = updates
         }
-    }
-}
-
-// Reference: https://academy.realm.io/posts/realm-notifications-on-background-threads-with-swift/
-class BackgroundWorker: NSObject {
-    private var thread: Thread!
-    private var block: (() -> Void)!
-
-    @objc internal func runBlock() { block() }
-
-    internal func start(_ block: @escaping () -> Void) {
-        self.block = block
-
-        let threadName = String(describing: self)
-            .components(separatedBy: .punctuationCharacters)[1]
-
-        thread = Thread { [weak self] in
-            while self != nil && !self!.thread.isCancelled {
-                RunLoop.current.run(
-                    mode: RunLoop.Mode.default,
-                    before: Date.distantFuture
-                )
-            }
-            Thread.exit()
-        }
-        thread.name = "\(threadName)-\(UUID().uuidString)"
-        thread.start()
-
-        perform(#selector(runBlock),
-                on: thread,
-                with: nil,
-                waitUntilDone: false,
-                modes: [RunLoop.Mode.default.rawValue])
-    }
-
-    public func stop() {
-        thread.cancel()
     }
 }

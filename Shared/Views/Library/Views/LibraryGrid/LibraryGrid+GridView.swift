@@ -101,7 +101,7 @@ extension LibraryView.LibraryGrid {
                     if content.updateCount >= 1 {
                         let clearUpdatesActions = UIAction(title: "Clear Updates", image: UIImage(systemName: "bell.slash"), attributes: .destructive) {
                             _ in
-                            DataManager.shared.clearUpdates(id: content._id)
+                            DataManager.shared.clearUpdates(id: content.id)
                         }
 
                         destructiveActions.append(clearUpdatesActions)
@@ -112,7 +112,7 @@ extension LibraryView.LibraryGrid {
                         let removeFromCollection = UIAction(title: "Remove from Collection", image: .init(systemName: "xmark"), attributes: .destructive)
                             { _ in
                                 //
-                                DataManager.shared.toggleCollection(for: content, withId: collection._id)
+                                DataManager.shared.toggleCollection(for: content, withId: collection.id)
                             }
 
                         destructiveActions.append(removeFromCollection)

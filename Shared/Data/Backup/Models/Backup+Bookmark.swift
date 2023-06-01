@@ -9,7 +9,7 @@ import Foundation
 
 extension Bookmark: Codable {
     enum Keys: String, CodingKey {
-        case id, page, dateAdded, marker
+        case id, page, dateAdded, marker, offset, chapter
     }
 
     convenience init(from decoder: Decoder) throws {
@@ -17,18 +17,20 @@ extension Bookmark: Codable {
 
         let container = try decoder.container(keyedBy: Keys.self)
 
-        _id = try container.decode(String.self, forKey: .id)
+        id = try container.decode(String.self, forKey: .id)
         page = try container.decode(Int.self, forKey: .page)
         dateAdded = try container.decode(Date.self, forKey: .dateAdded)
-        marker = try container.decodeIfPresent(ChapterMarker.self, forKey: .marker)
+        verticalOffset = try container.decodeIfPresent(Double.self, forKey: .offset)
+//        chapter = try container.decodeIfPresent(StoredChapter.self, forKey: .chapter)
     }
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: Keys.self)
 
-        try container.encode(marker, forKey: .marker)
-        try container.encode(_id, forKey: .id)
+//        try container.encode(chapter, forKey: .chapter)
+        try container.encode(id, forKey: .id)
         try container.encode(dateAdded, forKey: .dateAdded)
         try container.encode(page, forKey: .page)
+        try container.encode(verticalOffset, forKey: .offset)
     }
 }

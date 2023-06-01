@@ -7,26 +7,15 @@
 import Foundation
 import RealmSwift
 
-final class ReadLater: Object, ObjectKeyIdentifiable {
-    @Persisted var dateAdded = Date()
-    @Persisted var content: StoredContent? {
-        didSet {
-            if let id = content?._id {
-                _id = id
-            }
-        }
-    }
 
-    @Persisted(primaryKey: true) var _id: String
-}
 
 extension DataManager {
     func toggleReadLater(_ source: String, _ content: String) {
         let id = ContentIdentifier(contentId: content, sourceId: source).id
         let realm = try! Realm()
-        if let obj = realm.objects(ReadLater.self).first(where: { $0._id == id }) {
+        if let obj = realm.objects(ReadLater.self).first(where: { $0.id == id }) {
             try! realm.safeWrite {
-                realm.delete(obj)
+                obj.isDeleted = true
             }
             return
         }
@@ -37,12 +26,12 @@ extension DataManager {
     func removeFromReadLater(_ source: String, content: String) {
         let realm = try! Realm()
 
-        guard let obj = realm.objects(ReadLater.self).first(where: { $0.content?.contentId == content && $0.content?.sourceId == source }) else {
+        guard let obj = realm.objects(ReadLater.self).first(where: { $0.content?.contentId == content && $0.content?.sourceId == source && $0.isDeleted == false }) else {
             return
         }
 
         try! realm.safeWrite {
-            realm.delete(obj)
+            obj.isDeleted = true
         }
     }
 
@@ -61,7 +50,7 @@ extension DataManager {
             return
         }
 
-        guard let source = SourceManager.shared.getSource(id: sourceID) else {
+        guard let source = try? SourceManager.shared.getContentSource(id: sourceID) else {
             ToastManager.shared.error("[ReadLater] Source not Found")
             return
         }

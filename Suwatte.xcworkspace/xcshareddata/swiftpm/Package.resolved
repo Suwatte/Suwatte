@@ -145,6 +145,15 @@
       }
     },
     {
+      "identity" : "icecream",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/leoz/IceCream",
+      "state" : {
+        "branch" : "master",
+        "revision" : "6f89b7f59860abcc6671f26ee61114ae8f57ee1a"
+      }
+    },
+    {
       "identity" : "keychain-swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/evgenyneu/keychain-swift.git",

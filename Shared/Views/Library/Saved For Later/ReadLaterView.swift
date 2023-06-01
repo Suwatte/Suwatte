@@ -11,7 +11,7 @@ import SwiftUI
 
 extension LibraryView {
     struct ReadLaterView: View {
-        @ObservedResults(ReadLater.self, where: { $0.content != nil }) var unsortedEntries
+        @ObservedResults(ReadLater.self, where: { $0.content != nil && $0.isDeleted == false  }) var unsortedEntries
         @State var ascending = false
         @State var option = ContentSort.dateAdded
         @State var text = ""
@@ -117,7 +117,7 @@ extension LibraryView {
 extension LibraryView.ReadLaterView {
     func inLibrary(_ entry: ReadLater) -> Bool {
         library
-            .contains(where: { $0._id == entry._id })
+            .contains(where: { $0.id == entry.id })
     }
 
     func contextMenuProvider(int _: Int, entry: ReadLater) -> UIContextMenuConfiguration? {

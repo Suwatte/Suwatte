@@ -1,5 +1,5 @@
 //
-//  Paged+ProgressView.swift
+//  Reader+ProgressView.swift
 //  Suwatte (iOS)
 //
 //  Created by Mantton on 2023-01-16.
@@ -78,6 +78,7 @@ class CircularProgressBar: UIView {
         backgroundLayer.strokeColor = UIColor.lightGray.cgColor
         backgroundLayer.lineWidth = lineWidth - (lineWidth * 20 / 100)
         backgroundLayer.fillColor = UIColor.clear.cgColor
+        backgroundLayer.opacity = 0.65
         layer.addSublayer(backgroundLayer)
     }
 

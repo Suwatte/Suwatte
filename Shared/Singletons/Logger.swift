@@ -1,5 +1,5 @@
 //
-//  STT+Logger.swift
+//  StateManager.swift
 //  Suwatte (iOS)
 //
 //  Created by Mantton on 2022-09-27.
@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+
 
 final class Logger {
     var logs: [Entry] = []

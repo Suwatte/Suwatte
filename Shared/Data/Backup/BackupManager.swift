@@ -8,18 +8,58 @@
 import Foundation
 import RealmSwift
 class BackupManager: ObservableObject {
+    private var observer: DispatchSourceFileSystemObject?
+
     static let shared = BackupManager()
-    let directory = FileManager.default.documentDirectory.appendingPathComponent("Backups", isDirectory: true)
+    let directory = CloudDataManager.shared.getDocumentDiretoryURL().appendingPathComponent("Backups", isDirectory: true)
+    @Published var urls: [URL]
 
     init() {
         directory.createDirectory()
         urls = directory.contents.sorted(by: \.lastModified, descending: true)
     }
+    
+    deinit {
+        observer?.cancel()
+    }
+    // Reference: https://medium.com/over-engineering/monitoring-a-folder-for-changes-in-ios-dc3f8614f902
+    func observeDirectory() {
+        let descriptor = open(directory.path, O_EVTONLY)
+        let observer = DispatchSource.makeFileSystemObjectSource(fileDescriptor: descriptor, eventMask: .write, queue: .global(qos: .utility))
+        observer.setEventHandler { [weak self] in
+            Logger.shared.log("[Backups] Handling Event")
+            self?.refresh()
+        }
 
-    @Published var urls: [URL]
+        observer.setRegistrationHandler { [weak self] in
+            Logger.shared.log("[Backups] Observing Directory")
+            self?.refresh()
+        }
 
+        observer.setCancelHandler {
+            Logger.shared.log("[Buckups] Closing Observer")
+            close(descriptor)
+        }
+        
+        observer.resume()
+        self.observer = observer
+    }
+    
+    func stopObserving() {
+        observer?.cancel()
+    }
+
+
+
+    
     func refresh() {
-        urls = directory.contents.sorted(by: \.lastModified, descending: true)
+        let urls =  directory
+            .contents
+            .sorted(by: \.lastModified, descending: true)
+            .filter({ ["json", "icloud" ].contains($0.pathExtension) })
+        Task { @MainActor in
+            self.urls = urls
+        }
     }
 
     func save(name: String? = nil) throws {
@@ -58,9 +98,6 @@ class BackupManager: ObservableObject {
             // Delete old objects
             realm.delete(realm.objects(LibraryEntry.self))
             realm.delete(realm.objects(LibraryCollection.self))
-            // Delete all chapter related objects
-            realm.delete(realm.objects(ChapterMarker.self))
-
             realm.delete(realm.objects(Bookmark.self))
             realm.delete(realm.objects(ReadLater.self))
             realm.delete(realm.objects(StoredRunnerList.self))
@@ -72,7 +109,7 @@ class BackupManager: ObservableObject {
                 .map { $0._id } as [String]
 
             realm.delete(realm.objects(StoredContent.self))
-            realm.delete(realm.objects(StoredChapter.self).where { !$0._id.in(downloads) })
+            realm.delete(realm.objects(StoredChapter.self).where { !$0.id.in(downloads) })
 
             if let libraryEntries = backup.library {
                 let contents = libraryEntries.compactMap { $0.content }
@@ -84,20 +121,6 @@ class BackupManager: ObservableObject {
                 realm.add(collections, update: .all)
             }
 
-            if let markers = backup.markers {
-                let chapters = markers.compactMap { $0.chapter }
-                // Add
-                realm.add(chapters, update: .all)
-                realm.add(markers)
-            }
-
-            if let bookmarks = backup.bookmarks {
-                let markers = bookmarks.compactMap { $0.marker }
-                let chapters = markers.compactMap { $0.chapter }
-                realm.add(chapters, update: .all)
-                realm.add(markers, update: .all)
-                realm.add(bookmarks, update: .all)
-            }
 
             if let readLater = backup.savedForLater {
                 realm.add(readLater, update: .all)

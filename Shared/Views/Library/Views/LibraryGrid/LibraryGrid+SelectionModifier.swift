@@ -115,7 +115,7 @@ extension LibraryView.LibraryGrid {
         func removeFromLibrary() {
             let targets = zip(entries.indices, entries)
                 .filter { model.selectedIndexes.contains($0.0) }
-                .map { $0.1._id }
+                .map { $0.1.id }
 
             DataManager.shared.batchRemoveFromLibrary(with: Set(targets))
 

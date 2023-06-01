@@ -17,12 +17,12 @@ final class STTImageProvider {
         Self.directory.createDirectory()
     }
 
-    func saveImage(_ image: UIImage, for indentifier: String) throws -> String {
+    func saveImage(_ image: UIImage, for indentifier: String) throws -> URL {
         let filename = indentifier.appending(".jpg")
         let filepath = Self.directory.appendingPathComponent(filename)
 
         try image.jpegData(compressionQuality: 1.0)?.write(to: filepath, options: .atomic)
-        return filename
+        return filepath
     }
 
     static func urlFor(id: String) -> URL {

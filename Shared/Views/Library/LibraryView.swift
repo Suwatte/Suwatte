@@ -101,7 +101,7 @@ extension LibraryView {
                     NavigationLink(destination: ReadLaterView()) {
                         Label("Saved For Later", systemImage: "clock.arrow.circlepath")
                     }
-                    NavigationLink(destination: HistoryView()) {
+                    NavigationLink(destination: EmptyView()) {
                         Label("Reading History", systemImage: "clock")
                     }
 
@@ -122,7 +122,7 @@ extension LibraryView {
                 Section {
                     ForEach(LibraryFlag.allCases) { flag in
                         NavigationLink {
-                            LibraryGrid(readingFlag: flag)
+                            LibraryGrid(model: .init(readingFlag: flag))
                         } label: {
                             Label(flag.description, systemImage: "flag")
                         }
@@ -136,18 +136,18 @@ extension LibraryView {
     }
 
     struct CollectionsSectionView: View {
-        @ObservedResults(LibraryCollection.self, sortDescriptor: SortDescriptor(keyPath: "order", ascending: true)) var collections
+        @ObservedResults(LibraryCollection.self,where: { $0.isDeleted == false } , sortDescriptor: SortDescriptor(keyPath: "order", ascending: true)) var collections
 
         @Binding var isActive: Bool
         @Binding var presentCollections: Bool
 
         var body: some View {
             Section {
-                NavigationLink(destination: LibraryGrid(), isActive: $isActive) {
+                NavigationLink(destination: LibraryGrid(model: .init()), isActive: $isActive) {
                     Label("All Titles", systemImage: "folder")
                 }
                 ForEach(collections) { collection in
-                    NavigationLink(destination: LibraryGrid(collection: collection)) {
+                    NavigationLink(destination: LibraryGrid(model: .init(collection: collection))) {
                         Label(collection.name, systemImage: "archivebox")
                     }
                 }

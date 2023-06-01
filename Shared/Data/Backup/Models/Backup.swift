@@ -10,7 +10,6 @@ import RealmSwift
 
 struct Backup: Codable {
     var library: [LibraryEntry]?
-    var markers: [ChapterMarker]?
     var collections: [LibraryCollection]?
     var bookmarks: [Bookmark]?
     var savedForLater: [ReadLater]?
@@ -55,11 +54,7 @@ extension DataManager {
 
         let librarySources = Set(libraryEntries.compactMap { $0.content?.sourceId })
         let libraryIds = Set(libraryEntries.compactMap { $0.content?.contentId })
-        let markers = realm
-            .objects(ChapterMarker.self)
-            .where { $0.chapter != nil }
-            .where { $0.completed == true }
-            .where { $0.chapter.sourceId.in(librarySources) || $0.chapter.contentId.in(libraryIds) }
+
 
         let collections = realm
             .objects(LibraryCollection.self)
@@ -83,7 +78,6 @@ extension DataManager {
         backup.bookmarks = bookmarks.toArray()
         backup.savedForLater = readLater.toArray()
         backup.library = libraryEntries.toArray()
-        backup.markers = markers.toArray()
         backup.collections = collections.toArray()
         backup.runnerLists = lists.toArray()
         backup.runners = runners.toArray()

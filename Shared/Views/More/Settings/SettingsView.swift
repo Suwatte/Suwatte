@@ -197,7 +197,7 @@ extension SettingsView {
                             .tag("")
                         ForEach(collections) {
                             Text($0.name)
-                                .tag($0._id)
+                                .tag($0.id)
                         }
                     }
                     .transition(.slide)

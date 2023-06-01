@@ -1,5 +1,5 @@
 //
-//  ICDM.swift
+//  ContentSourceDownloadManager.swift
 //  Suwatte (iOS)
 //
 //  Created by Mantton on 2022-08-08.
@@ -175,8 +175,8 @@ extension ICDM {
 
         let chapters = realm
             .objects(StoredChapter.self)
-            .where { $0._id.in(chapters) }
-        let targets = chapters.filter { !completedIds.contains($0._id) }
+            .where { $0.id.in(chapters) }
+        let targets = chapters.filter { !completedIds.contains($0.id) }
 
         let objects = targets.sorted(by: { $0.index > $1.index }).map { chapter -> ICDMDownloadObject in
             let dObject = ICDMDownloadObject()
@@ -196,11 +196,7 @@ extension ICDM {
 //
 extension ICDM {
     private func getImages(of ids: ChapterIndentifier) async throws -> (urls: [URL], raws: [Data], text: String) {
-        let source = SourceManager.shared.getSource(id: ids.source)
-
-        guard let source = source else {
-            throw DaisukeEngine.Errors.NamedError(name: "Downloads", message: "Source Not Found")
-        }
+        let source = try SourceManager.shared.getContentSource(id: ids.source)
 
         let data = try await source.getChapterData(contentId: ids.content, chapterId: ids.chapter)
 

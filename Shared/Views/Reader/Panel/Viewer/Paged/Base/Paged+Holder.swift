@@ -188,6 +188,7 @@ extension PagedDisplayHolder {
         }
         
         let page = page.page
+        setVisible(.loading)
         Task.detached { [weak self] in
             do {
                 let task = try await page.load()

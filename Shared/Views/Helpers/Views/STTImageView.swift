@@ -14,9 +14,8 @@ struct STTImageView: View {
     var url: URL?
     var identifier: ContentIdentifier
     var mode: SwiftUI.ContentMode = .fill
-    @ObservedResults(CustomThumbnail.self) var thumbnails
+    @ObservedResults(CustomThumbnail.self, where: { $0.isDeleted == false }) var thumbnails
     @StateObject private var loader = FetchImage()
-
     var body: some View {
         GeometryReader { proxy in
             let size: CGSize = .init(width: proxy.size.width, height: proxy.size.width * 1.5)
@@ -28,6 +27,7 @@ struct STTImageView: View {
                         .transition(.opacity)
                 } else {
                     Color.gray.opacity(0.25)
+                        .shimmering()
                 }
             }
             .task { load(size) }
@@ -36,9 +36,15 @@ struct STTImageView: View {
             }
             .frame(width: proxy.size.width, height: proxy.size.width * 1.5, alignment: .center)
             .background(Color.gray.opacity(0.25))
-            .modifier(DisabledNavLink())
+//            .modifier(DisabledNavLink())
             .animation(.easeOut(duration: 0.25), value: loader.image)
             .animation(.easeOut(duration: 0.25), value: loader.isLoading)
+            .onChange(of: customThumbanailURL) { _ in
+                Task {
+                    loader.reset()
+                    load(size)
+                }
+            }
         }
     }
 
@@ -47,8 +53,9 @@ struct STTImageView: View {
         loader.priority = .normal
         loader.transaction = .init(animation: .easeInOut(duration: 0.25))
         loader.processors = [NukeDownsampleProcessor(size: size)]
-        guard let imageURL, imageURL.isHTTP else {
-            loader.load(url)
+        
+        if let customThumbanailURL {
+            loader.load(customThumbanailURL)
             return
         }
         Task {
@@ -56,7 +63,7 @@ struct STTImageView: View {
 
             do {
                 if let source = source as? any ModifiableSource, source.config.hasThumbnailInterceptor {
-                    let dskRequest = DSKCommon.Request(url: imageURL.absoluteString)
+                    let dskRequest = DSKCommon.Request(url: url?.absoluteString ?? "")
                     let dskResponse = try await source.willRequestImage(request: dskRequest)
                     let imageRequest = ImageRequest(urlRequest: try dskResponse.toURLRequest())
                     loader.load(imageRequest)
@@ -70,15 +77,8 @@ struct STTImageView: View {
         }
     }
 
-    var imageURL: URL? {
-        if hasCustomThumb {
-            return STTImageProvider.urlFor(id: identifier.id)
-        }
-        return url
-    }
-
-    var hasCustomThumb: Bool {
-        thumbnails.contains(where: { $0._id == identifier.id })
+    var customThumbanailURL: URL? {
+        thumbnails.where({ $0.id == identifier.id }).first?.file?.filePath
     }
 }
 
@@ -99,6 +99,7 @@ struct BaseImageView: View {
                         .transition(.opacity)
                 } else {
                     Color.gray.opacity(0.25)
+                        .shimmering()
                 }
             }
             .onAppear { load(size) }
@@ -152,6 +153,7 @@ struct DisabledNavLink: ViewModifier {
                     EmptyView()
                 }
                 .opacity(0)
+//                .disabled(true)
             }
     }
 }

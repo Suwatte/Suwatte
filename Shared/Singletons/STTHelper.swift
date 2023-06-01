@@ -36,19 +36,28 @@ class STTHelpers {
         }
     }
 
-    static func getInitialPosition(for chapter: ThreadSafeChapter, limit: Int) -> (Int, CGFloat?) {
-        guard let marker = DataManager.shared.getChapterMarker(forId: chapter._id) else {
+    static func getInitialPanelPosition(for id: String, chapterId: String, limit: Int) -> (Int, CGFloat?) {
+        guard let marker = DataManager.shared.getContentMarker(for: id), let chapter = marker.currentChapter else {
+            return (0, nil) // No Marker, Start from beginning
+        }
+        
+        guard chapter.chapterId == chapterId else {
+            return (0, nil) // Chapter is not the last read chapter, restart from beginnig
+        }
+        
+        guard let lastPageRead = marker.lastPageRead else { // Marker has last page
             return (0, nil)
         }
-
-        if marker.lastPageRead > limit || marker.lastPageRead < 0 || marker.completed {
+        
+        guard lastPageRead <= limit && lastPageRead > 0 else { // Marker is within bounds
             return (0, nil)
         }
-
-        if let lastOffset = marker.lastPageOffset {
-            return (marker.lastPageRead - 1, CGFloat(lastOffset))
+        
+        if lastPageRead == limit { // Chapter is completed, restart
+            return (0, nil)
         }
-        return (marker.lastPageRead - 1, nil)
+        
+        return (lastPageRead - 1, marker.lastPageOffset.flatMap(CGFloat.init))
     }
 
     static func getChapterData(_ chapter: ThreadSafeChapter) async -> Loadable<StoredChapterData> {
@@ -72,7 +81,7 @@ class STTHelpers {
         case .EXTERNAL:
             // Get from ICDM
             do {
-                let download = try ICDM.shared.getCompletedDownload(for: chapter._id)
+                let download = try ICDM.shared.getCompletedDownload(for: chapter.id)
                 if let download = download {
                     let obj = StoredChapterData()
                     obj.chapter = chapter.toStored()
@@ -87,11 +96,11 @@ class STTHelpers {
             }
 
             // Get from Database
-            if let data = DataManager.shared.getChapterData(forId: chapter._id) {
+            if let data = DataManager.shared.getChapterData(forId: chapter.id) {
                 return .loaded(data.freeze())
             }
             // Get from source
-            guard let source = SourceManager.shared.getSource(id: chapter.sourceId) else {
+            guard let source = try? SourceManager.shared.getContentSource(id: chapter.sourceId) else {
                 return .failed(DaisukeEngine.Errors.NamedError(name: "SourceManager", message: "Source Not Found"))
             }
             do {
@@ -109,12 +118,8 @@ class STTHelpers {
                 let obj = StoredChapterData()
                 obj.chapter = chapter.toStored()
                 let baseLink = chapter.chapterId
-                let pageCount = chapter.metadata["opds_page_count"]
-
-                guard let pageCount = pageCount, let count = Int(pageCount) else {
-                    throw OPDSParserError.documentNotValid
-                }
-                let pages = Array(0 ..< count).map { num -> StoredChapterPage in
+  
+                let pages = Array(0 ..< 10).map { num -> StoredChapterPage in
                     let page = StoredChapterPage()
                     page.url = baseLink.replacingOccurrences(of: "STT_PAGE_NUMBER_PLACEHOLDER", with: num.description)
                     return page
@@ -142,7 +147,7 @@ class STTHelpers {
 
         guard let content = realm
             .objects(StoredContent.self)
-            .where({ $0._id == id })
+            .where({ $0.id == id })
             .first
         else { return nil }
 

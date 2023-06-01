@@ -8,38 +8,6 @@
 import Foundation
 import RealmSwift
 
-class StoredChapterData: Object {
-    @Persisted var chapter: StoredChapter? {
-        didSet {
-            guard let chapter = chapter else {
-                return
-            }
-            _id = chapter._id
-        }
-    }
-
-    @Persisted(primaryKey: true) var _id: String
-
-    @Persisted var pages: List<StoredChapterPage>
-    @Persisted var text: String?
-
-    var imageURLs: [String] {
-        pages.compactMap { $0.url }
-    }
-
-    var rawDatas: [String] {
-        pages.compactMap { $0.raw?.toBase64() }
-    }
-
-    var urls: [URL] = []
-    var archivePaths: [String] = []
-}
-
-class StoredChapterPage: EmbeddedObject, Parsable {
-    @Persisted var url: String?
-    @Persisted var raw: String?
-}
-
 extension DaisukeEngine.Structs.ChapterData {
     func toStored(withStoredChapter chapter: StoredChapter) -> StoredChapterData {
         let object = StoredChapterData()

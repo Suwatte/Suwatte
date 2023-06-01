@@ -63,7 +63,7 @@ struct LCV_Download: View {
                         .lineLimit(2)
                 }
                 Spacer()
-                HistoryView.ProgressIndicator(progress: download.progress)
+//                HistoryView.ProgressIndicator(progress: download.progress)
             }
         }
     }

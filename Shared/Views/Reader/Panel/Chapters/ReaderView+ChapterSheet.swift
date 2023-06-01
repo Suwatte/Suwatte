@@ -24,15 +24,15 @@ extension ReaderView {
                             Button { didSelect(chapter) } label: {
                                 ChapterListTile(chapter: chapter.toStored(), isCompleted: false, isNewChapter: false)
                             }
-                            .listRowBackground(model.activeChapter.chapter._id == chapter._id ? Color.accentColor.opacity(0.05) : nil)
-                            .id(chapter._id)
+                            .listRowBackground(model.activeChapter.chapter.id == chapter.id ? Color.accentColor.opacity(0.05) : nil)
+                            .id(chapter.id)
                         }
                     } header: {
                         Text("Chapter List")
                     }
                 }
                 .onAppear {
-                    proxy.scrollTo(model.activeChapter.chapter._id, anchor: .center)
+                    proxy.scrollTo(model.activeChapter.chapter.id, anchor: .center)
                 }
             }
         }
@@ -41,7 +41,7 @@ extension ReaderView {
 
 extension ReaderView.ChapterSheet {
     func didSelect(_ chapter: ThreadSafeChapter) {
-        if model.activeChapter.chapter._id == chapter._id {
+        if model.activeChapter.chapter.id == chapter.id {
             return
         }
         model.menuControl.toggleChapterList()

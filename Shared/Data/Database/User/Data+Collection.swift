@@ -7,6 +7,7 @@
 
 import Foundation
 import RealmSwift
+import IceCream
 
 enum ContentSelectionType: Int, PersistableEnum, CaseIterable, Identifiable, Codable {
     case none, only, both
@@ -52,29 +53,6 @@ enum ExternalContentType: Int, PersistableEnum, CaseIterable, Identifiable, Coda
     }
 }
 
-final class LibraryCollectionFilter: EmbeddedObject {
-    @Persisted var adultContent: ContentSelectionType = .both
-    @Persisted var readingFlags: List<LibraryFlag>
-    @Persisted var textContains: List<String>
-    @Persisted var statuses: List<ContentStatus>
-    @Persisted var sources: List<String>
-    @Persisted var tagContains: List<String>
-    @Persisted var contentType: List<ExternalContentType>
-}
-
-final class LibraryCollection: Object {
-    @Persisted(primaryKey: true) var _id: String = UUID().uuidString
-    @Persisted var name: String
-    @Persisted var order: Int
-    @Persisted var filter: LibraryCollectionFilter?
-}
-
-extension LibraryCollection: Identifiable {
-    var id: String {
-        return _id
-    }
-}
-
 // MARK: Manager Functions
 
 extension DataManager {
@@ -93,7 +71,7 @@ extension DataManager {
         let realm = try! Realm()
 
         for collection in incoming {
-            if let target = realm.objects(LibraryCollection.self).first(where: { $0.id == collection.id }) {
+            if let target = realm.objects(LibraryCollection.self).first(where: { $0.id == collection.id && collection.isDeleted == false }) {
                 try! realm.safeWrite {
                     target.order = incoming.firstIndex(of: collection)!
                 }
@@ -109,6 +87,21 @@ extension DataManager {
                 return
             }
             collection.name = name
+        }
+    }
+    
+    func deleteCollection(id: String) {
+        let realm = try! Realm()
+        
+        let collection = realm
+            .objects(LibraryCollection.self)
+            .first(where: { $0.isDeleted == false && $0.id == id })
+        
+        guard let collection else { return }
+        
+        try! realm.safeWrite {
+            collection.isDeleted = true
+            collection.filter?.isDeleted = true
         }
     }
 }

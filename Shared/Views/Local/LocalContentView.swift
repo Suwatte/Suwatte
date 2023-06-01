@@ -10,7 +10,6 @@ import SwiftUI
 
 struct LocalContentView: View {
     @ObservedObject var model = LocalContentManager.shared
-    @ObservedResults(ChapterMarker.self, where: { $0.chapter.sourceId == STTHelpers.LOCAL_CONTENT_ID && $0.chapter != nil }) var localMarkers
     @AppStorage(STTKeys.LocalSortLibrary) var sortSelection = LocalContentManager.Book.sortOptions.creationDate
     @AppStorage(STTKeys.LocalOrderLibrary) var isDescending = true
 
@@ -45,6 +44,12 @@ struct LocalContentView: View {
                         .closeButton()
                 }
             })
+            .task {
+                model.observe()
+            }
+            .onDisappear {
+                model.stopObserving()
+            }
             .modifier(OpenLocalModifier(isPresenting: $presentImporter))
             .environmentObject(model)
             .searchable(text: $text, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Library")
@@ -92,7 +97,7 @@ struct LocalContentView: View {
     }
 
     func dateOfMarker(id: Int64) -> Date {
-        localMarkers.first(where: { $0.chapter?.contentId == String(id) })?.dateRead ?? .distantPast
+        .distantPast
     }
 
     @ViewBuilder

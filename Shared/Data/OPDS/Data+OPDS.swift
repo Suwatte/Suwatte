@@ -8,12 +8,14 @@
 import Foundation
 import KeychainSwift
 import RealmSwift
+import IceCream
 
-final class StoredOPDSServer: Object, ObjectKeyIdentifiable {
-    @Persisted(primaryKey: true) var _id = UUID().uuidString
+final class StoredOPDSServer: Object, CKRecordConvertible, CKRecordRecoverable, Identifiable {
+    @Persisted(primaryKey: true) var id = UUID().uuidString
     @Persisted var alias: String
     @Persisted(indexed: true) var host: String
     @Persisted var userName: String
+    @Persisted var isDeleted: Bool = false
 
     func toClient() -> OPDSClient {
         var auth: (String, String)?
@@ -45,6 +47,23 @@ extension DataManager {
         // Save PW to KC
         let keychain = KeychainSwift()
         keychain.synchronizable = true
-        keychain.set(entry.password, forKey: "OPDS_\(obj._id)")
+        keychain.set(entry.password, forKey: "OPDS_\(obj.id)")
+    }
+    
+    func removeOPDServer(id: String) {
+        
+        let realm = try! Realm()
+        
+        guard let target = realm.objects(StoredOPDSServer.self).where({ $0.id == id && $0.isDeleted == false }).first else {
+            return
+        }
+        let keychain = KeychainSwift()
+        keychain.synchronizable = true
+        keychain.delete("OPDS_\(target.id)")
+        
+        try! realm.safeWrite {
+            target.isDeleted = true
+        }
+        
     }
 }

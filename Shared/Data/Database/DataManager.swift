@@ -37,7 +37,7 @@ extension DataManager {
                     .first
                 if currentStored == nil {
                     currentStored = StoredContent()
-                    currentStored?._id = "\(sourceId)||\(entry.id)"
+                    currentStored?.id = "\(sourceId)||\(entry.id)"
                     currentStored?.contentId = entry.id
                     currentStored?.sourceId = sourceId
                     currentStored?.title = entry.title

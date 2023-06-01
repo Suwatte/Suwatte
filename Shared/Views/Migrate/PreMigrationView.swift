@@ -31,7 +31,7 @@ struct PreMigrationView: View {
     }
 
     var sources: [AnyContentSource] {
-        DataManager.shared.getActiveSources()
+       []
     }
 }
 

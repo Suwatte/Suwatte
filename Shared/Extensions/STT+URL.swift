@@ -18,8 +18,7 @@ extension URL {
 
     var contents: [URL] {
         let out = try? FileManager.default.contentsOfDirectory(at: self,
-                                                               includingPropertiesForKeys: [.contentModificationDateKey],
-                                                               options: .skipsHiddenFiles)
+                                                               includingPropertiesForKeys: [.contentModificationDateKey])
         return out ?? []
     }
 

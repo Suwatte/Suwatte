@@ -15,7 +15,6 @@ extension Controller {
     class ImageNode: ASCellNode {
         let imageNode = ASImageNode()
         var progressNode: ProgressNode
-        let progressModel = ReaderView.ProgressObject()
         let page: ReaderView.Page
         var ratio: CGFloat?
         weak var delegate: VerticalViewer.Controller?
@@ -185,7 +184,6 @@ extension Controller {
         }
 
         func handleImageFailure(_ error: Error) {
-            progressModel.setError(error, setImage)
             progressNode.isHidden = false
         }
 

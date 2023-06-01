@@ -111,7 +111,11 @@ final class ExploreCollectionsController: UICollectionViewController {
         dataSource.supplementaryViewProvider = { [unowned self] collectionView, kind, indexPath in
             if kind != UICollectionView.elementKindSectionHeader { fatalError("Should Only Be Header") }
             let section = DATA_SOURCE.sectionIdentifier(for: indexPath.section)
-            guard let section else { fatalError("Section Not Found") }
+            guard let section else {
+                let supplementaryView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "DefaultSupplementaryView", for: indexPath)
+                return supplementaryView
+                
+            }
             if let section = section as? String, section == TAG_SECTION_ID {
                 let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "tagHeaderCell", for: indexPath)
                 guard let header = header as? UICollectionViewCell else { fatalError("Invalid Header") }
@@ -133,7 +137,8 @@ final class ExploreCollectionsController: UICollectionViewController {
                 .margins(.all, 0)
                 return header
             }
-            fatalError("Failed To Return Cell")
+            let supplementaryView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "DefaultSupplementaryView", for: indexPath)
+            return supplementaryView
         }
 
         return dataSource
@@ -152,6 +157,7 @@ extension CTR {
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "errorCell")
         collectionView.register(UICollectionViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "tagHeaderCell")
         collectionView.register(UICollectionViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "sectionHeaderCell")
+        collectionView.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "DefaultSupplementaryView")
 
         collectionView.backgroundColor = nil
         collectionView.backgroundView = nil
@@ -369,14 +375,12 @@ extension CTR {
 extension CTR {
     func getLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { [unowned self] section, environment in
-            guard let section = DATA_SOURCE.sectionIdentifier(for: section) else {
+            guard let section = self.snapshot.sectionIdentifiers.get(index: section) else {
                 return NormalLayout()
             }
-
             if snapshot.itemIdentifiers(inSection: section).first?.content is Err {
                 return ErrorLayout()
             }
-
             if let section = section as? String, section == TAG_SECTION_ID {
                 return TagsLayout()
             }

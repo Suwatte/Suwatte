@@ -49,29 +49,28 @@ struct BrowseView: View {
     var InstalledSourcesSection: some View {
         Section {
             ForEach(FilteredRunners) { runner in
-                let source = manager.getSource(id: runner.id)
-                if let source {
-                    NavigationLink {
-                        ExploreView(model: .init(source: source))
-                    } label: {
-                        HStack(spacing: 15) {
-                            AsyncImage(url: URL(string: runner.thumbnail)) { image in
-                                image
-                                    .resizable()
-                                    .scaledToFill()
-                            } placeholder: {
-                                Image("stt_icon")
-                                    .resizable()
-                                    .scaledToFill()
-                            }
-                                .frame(width: 32.0, height: 32.0)
-                                .cornerRadius(5)
-                            Text(source.name)
-                            Spacer()
+                NavigationLink {
+                    ExploreView(id: runner.id, name: runner.name)
+                } label: {
+                    HStack(spacing: 15) {
+                        AsyncImage(url: URL(string: runner.thumbnail)) { image in
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .transition(.opacity)
+                        } placeholder: {
+                            Image("stt_icon")
+                                .resizable()
+                                .scaledToFill()
+                                .transition(.opacity)
                         }
+                            .frame(width: 32.0, height: 32.0)
+                            .cornerRadius(5)
+                        Text(runner.name)
+                        Spacer()
                     }
-                    .disabled(!runner.enabled)
                 }
+                .disabled(!runner.enabled)
             }
         } header: {
             Text("Content Sources")

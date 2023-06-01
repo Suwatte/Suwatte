@@ -18,7 +18,7 @@ extension StoredContent: Codable {
         self.init()
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        _id = try container.decodeIfPresent(String.self, forKey: .id) ?? "" // Can be Null as it can also be set with the CID & SID
+        id = try container.decodeIfPresent(String.self, forKey: .id) ?? "" // Can be Null as it can also be set with the CID & SID
         sourceId = try container.decodeIfPresent(String.self, forKey: .sourceId) ?? UUID().uuidString
         contentId = try container.decode(String.self, forKey: .contentId)
         title = try container.decode(String.self, forKey: .title)
@@ -49,7 +49,7 @@ extension StoredContent: Codable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
-        try container.encode(_id, forKey: .id)
+        try container.encode(id, forKey: .id)
         try container.encode(sourceId, forKey: .sourceId)
         try container.encode(contentId, forKey: .contentId)
         try container.encode(title, forKey: .title)

@@ -88,7 +88,7 @@ extension CloudFlareErrorView {
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
             Task { @MainActor in
-                guard let source = SourceManager.shared.getSource(id: sourceID) as? any ModifiableSource else {
+                guard let source = try? SourceManager.shared.getContentSource(id: sourceID) as? any ModifiableSource else {
                     return
                 }
 

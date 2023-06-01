@@ -9,16 +9,6 @@ import Foundation
 import KeychainSwift
 import RealmSwift
 
-final class InteractorStoreObject: Object, ObjectKeyIdentifiable {
-    @Persisted(primaryKey: true) var _id: String
-    @Persisted var interactorId: String
-    @Persisted var key: String
-    @Persisted var value: String
-
-    func prepareID() {
-        _id = "\(interactorId)|\(key)"
-    }
-}
 
 extension DataManager {
     func setStoreValue(for id: String, key: String, value: String) {
@@ -36,7 +26,7 @@ extension DataManager {
     func getStoreValue(for id: String, key: String) -> String? {
         let realm = try! Realm()
 
-        guard let obj = realm.objects(InteractorStoreObject.self).first(where: { $0._id == "\(id)|\(key)" }) else {
+        guard let obj = realm.objects(InteractorStoreObject.self).first(where: { $0.id == "\(id)|\(key)" }) else {
             return nil
         }
 
@@ -53,7 +43,7 @@ extension DataManager {
             .first
         if let target {
             try! realm.safeWrite {
-                realm.delete(target)
+                target.isDeleted = true
             }
         }
     }

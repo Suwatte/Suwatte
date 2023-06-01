@@ -8,16 +8,11 @@
 import Foundation
 import RealmSwift
 
-final class TrackerLink: Object, ObjectKeyIdentifiable {
-    @Persisted(primaryKey: true) var _id: String
-    @Persisted var trackerInfo: StoredTrackerInfo?
-}
-
 extension DataManager {
     func linkContentToTracker(id: String, al: String? = nil, kt: String? = nil, mal: String? = nil) {
         let realm = try! Realm()
 
-        if let tracker = realm.objects(TrackerLink.self).first(where: { $0._id == id }) {
+        if let tracker = realm.objects(TrackerLink.self).first(where: { $0.id == id && $0.isDeleted == false  }) {
             try! realm.safeWrite {
                 if let al = al {
                     tracker.trackerInfo?.al = al
@@ -34,7 +29,7 @@ extension DataManager {
         } else {
             let obj = TrackerLink()
 
-            obj._id = id
+            obj.id = id
             let info = StoredTrackerInfo()
             info.al = al
             info.mal = mal
@@ -43,7 +38,7 @@ extension DataManager {
             obj.trackerInfo = info
 
             try! realm.safeWrite {
-                realm.add(obj)
+                realm.add(obj, update: .modified)
             }
         }
     }
@@ -55,13 +50,13 @@ extension DataManager {
         let realm = try! Realm()
 
         try! realm.safeWrite {
-            realm.delete(obj)
+            obj.isDeleted = true
         }
     }
 
     func getTrackerInfo(_ id: String) -> StoredTrackerInfo? {
         let realm = try! Realm()
 
-        return realm.objects(TrackerLink.self).first(where: { $0._id == id })?.trackerInfo
+        return realm.objects(TrackerLink.self).first(where: { $0.id == id && $0.isDeleted == false })?.trackerInfo
     }
 }

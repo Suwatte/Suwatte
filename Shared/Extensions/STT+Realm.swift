@@ -18,9 +18,7 @@ extension RealmSwift.List {
 
 extension Results {
     func toArray() -> [Element] {
-        return compactMap {
-            $0
-        }
+        return Array(self)
     }
 }
 

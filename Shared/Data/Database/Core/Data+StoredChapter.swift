@@ -7,111 +7,67 @@
 
 import Foundation
 import RealmSwift
+import IceCream
 
-struct ThreadSafeChapter: Hashable {
-    var _id: String
-    var sourceId: String
-    var chapterId: String
-    var contentId: String
-    var index: Int
-    var number: Double
-    var volume: Double?
-    var title: String?
-    var language: String?
-    var date: Date
-    var webUrl: String?
-    var thumbnail: String?
-    var metadata: [String: String] = [:]
 
-    func toStored() -> StoredChapter {
-        let obj = StoredChapter()
-        obj._id = _id
-        obj.sourceId = sourceId
-        obj.contentId = contentId
-        obj.chapterId = chapterId
-        obj.index = index
-        obj.number = number
-        obj.volume = volume
-        obj.title = title
-        obj.language = language
-        obj.date = date
-        obj.webUrl = webUrl
-        obj.thumbnail = thumbnail
-
-        metadata.forEach {
-            obj.metadata.setValue($1, forKey: $0)
-        }
-        return obj
-    }
-
-    var chapterType: ReaderView.ReaderChapter.ChapterType {
-        if sourceId == STTHelpers.LOCAL_CONTENT_ID { return .LOCAL }
-        else if sourceId == STTHelpers.OPDS_CONTENT_ID { return .OPDS }
-        else { return .EXTERNAL }
-    }
-
-    var displayName: String {
-        var str = ""
-        if let volume = volume, volume != 0 {
-            str += "Volume \(volume.clean)"
-        }
-        str += " Chapter \(number.clean)"
-        return str.trimmingCharacters(in: .whitespacesAndNewlines)
+extension StoredChapter {
+    func toThreadSafe() -> ThreadSafeChapter {
+        return .init(id: id, sourceId: sourceId, chapterId: chapterId, contentId: contentId, index: index, number: number, volume: volume, title: title, language: language, date: date, webUrl: webUrl, thumbnail: thumbnail)
     }
 }
 
-final class StoredChapter: Object, ObjectKeyIdentifiable {
-    @Persisted(primaryKey: true) var _id: String
 
-    // Identifiers
-    @Persisted(indexed: true) var sourceId: String
-    @Persisted(indexed: true) var chapterId: String
-    @Persisted(indexed: true) var contentId: String
-
-    @Persisted var index: Int
-
-    @Persisted var number: Double
-    @Persisted var volume: Double?
-    @Persisted var title: String?
-    @Persisted var language: String?
-    @Persisted var date: Date
-
-    @Persisted var webUrl: String?
-    @Persisted var thumbnail: String?
-    @Persisted var metadata: Map<String, String>
-
-    @Persisted var providers: List<ChapterProvider>
-
-    var displayName: String {
-        var str = ""
-        if let volume = volume, volume != 0 {
-            str += "Volume \(volume.clean)"
+extension DataManager {
+    
+    func validateChapterReference(id: String, _ realm: Realm? = nil) {
+        let realm = try! realm ?? Realm()
+        let target = realm
+            .objects(ChapterReference.self)
+            .where({ $0.id == id && $0.isDeleted == false  })
+            .first
+        
+        guard let target else {
+            return
         }
-        str += " Chapter \(number.clean)"
-        return str.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // Check if it has any references
+        let hasBookmarks = !realm
+            .objects(Bookmark.self)
+            .where({ $0.isDeleted == false && $0.chapter.id == id })
+            .isEmpty
+        
+        let hasMarker = !realm
+            .objects(ProgressMarker.self)
+            .where({ $0.isDeleted == false && $0.currentChapter.id == id })
+            .isEmpty
+        
+        guard !hasBookmarks && !hasMarker else {
+            return
+        }
+        // Has no references, delete.
+        try! realm.safeWrite {
+            target.isDeleted = true
+        }
+        
     }
+}
 
-    var chapterName: String {
-        "Chapter \(number.clean)"
-    }
-
-    var SourceName: String {
-        SourceManager.shared.getSource(id: sourceId)?.name ?? "Unrecognized : \(sourceId)"
-    }
-
-    var ContentIdentifer: String {
-        ContentIdentifier(contentId: contentId, sourceId: sourceId).id
-    }
-
-    var chapterType: ReaderView.ReaderChapter.ChapterType {
-        if sourceId == STTHelpers.LOCAL_CONTENT_ID { return .LOCAL }
-        else if sourceId.contains(STTHelpers.OPDS_CONTENT_ID) { return .OPDS }
+extension DataManager {
+    func getChapterType(for id: String) -> ReaderView.ReaderChapter.ChapterType {
+        if id == STTHelpers.LOCAL_CONTENT_ID { return .LOCAL }
+        else if id == STTHelpers.OPDS_CONTENT_ID { return .OPDS }
         else { return .EXTERNAL }
     }
+}
 
-    func toThreadSafe() -> ThreadSafeChapter {
-        let data = Dictionary(uniqueKeysWithValues: metadata.asKeyValueSequence().map { ($0, $1) })
-        return .init(_id: _id, sourceId: sourceId, chapterId: chapterId, contentId: contentId, index: index, number: number, volume: volume, title: title, language: language, date: date, webUrl: webUrl, thumbnail: thumbnail, metadata: data)
+extension StoredChapter {
+    func generateReference() -> ChapterReference {
+        let object = ChapterReference()
+        object.id = id
+        object.chapterId = chapterId
+        object.number = number
+        object.volume = volume
+        return object
     }
 }
 
@@ -119,7 +75,7 @@ extension DaisukeEngine.Structs.Chapter {
     func toStoredChapter(withSource sourceId: String) -> StoredChapter {
         let chapter = StoredChapter()
 
-        chapter._id = "\(sourceId)||\(contentId)||\(chapterId)"
+        chapter.id = "\(sourceId)||\(contentId)||\(chapterId)"
 
         chapter.sourceId = sourceId
         chapter.contentId = contentId
@@ -162,7 +118,7 @@ extension DataManager {
 
         return realm.objects(StoredChapter.self).where {
             $0.contentId == content &&
-                $0.sourceId == source
+            $0.sourceId == source
         }
         .sorted(by: \.index, ascending: true)
     }

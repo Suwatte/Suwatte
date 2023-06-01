@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct BackupsView: View {
     @StateObject var manager = BackupManager.shared
@@ -19,12 +20,19 @@ struct BackupsView: View {
     @State var presentAlert = false
     @State var presentImporter = false
     @State var restoreTask: Task<Void, Never>? = nil
-
+    private let downloader = CloudDownloader()
     var body: some View {
         List {
             ForEach(manager.urls, id: \.path) { url in
-                Button(url.deletingPathExtension().lastPathComponent) {
+                Button {
                     selection = url
+                } label: {
+                    HStack {
+                        Text(url.deletingPathExtension().lastPathComponent.trimmingCharacters(in: .punctuationCharacters))
+                        Spacer()
+                        Image(systemName: "icloud")
+                            .opacity(url.pathExtension == "icloud" ? 0.7 : 0)
+                    }
                 }
                 .buttonStyle(.plain)
                 .swipeActions {
@@ -32,7 +40,14 @@ struct BackupsView: View {
                         manager.remove(url: url)
                     }
                 }
+
             }
+        }
+        .task {
+            manager.observeDirectory()
+        }
+        .onDisappear {
+            manager.stopObserving()
         }
         .confirmationDialog("Actions", isPresented: $presentActions) {
             Button("Export") {
@@ -115,21 +130,34 @@ extension BackupsView {
         KEY_WINDOW?.rootViewController!.present(activityController, animated: true, completion: nil)
     }
 
-    func handleRestore(url: URL) {
+    func handleRestore(url: URL)  {
         ToastManager.shared.loading = true
-
+        
         restoreTask = Task {
             do {
                 if !ICDM.shared.isIdle {
                     throw DSK.Errors.NamedError(name: "ERROR", message: "Active Downloads")
                 }
-                try await manager.restore(from: url)
-
-                await MainActor.run(body: {
-                    ToastManager.shared.loading = false
-                    ToastManager.shared.info("Restored Backup!")
-                })
-
+                if url.pathExtension == "icloud" {
+                    downloader.downloadCompletion = { result in
+                        do {
+                            let url = try result.get()
+                            handleRestore(url: url)
+                        } catch {
+                            Task { @MainActor in
+                                ToastManager.shared.loading = false
+                                ToastManager.shared.error(error)
+                            }
+                        }
+                    }
+                    downloader.download(url)
+                } else {
+                    try await manager.restore(from: url)
+                    await MainActor.run(body: {
+                        ToastManager.shared.loading = false
+                        ToastManager.shared.info("Restored Backup!")
+                    })
+                }
             } catch {
                 Logger.shared.error("[BackUpView] [Restore] \(error)")
                 await MainActor.run(body: {

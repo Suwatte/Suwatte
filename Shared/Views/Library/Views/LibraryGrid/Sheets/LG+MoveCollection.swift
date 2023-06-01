@@ -27,7 +27,7 @@ extension LibraryView.LibraryGrid {
                                     Text(collection.name)
                                     Spacer()
                                     Image(systemName: "checkmark")
-                                        .opacity(selectedCollections.contains(collection._id) ? 1.0 : 0.0)
+                                        .opacity(selectedCollections.contains(collection.id) ? 1.0 : 0.0)
                                 }
                             }
                             .buttonStyle(.plain)
@@ -58,7 +58,7 @@ extension LibraryView.LibraryGrid {
                             ToastManager.shared.loading.toggle()
                             let targets = zip(entries.indices, entries)
                                 .filter { model.selectedIndexes.contains($0.0) }
-                                .map { $0.1._id }
+                                .map { $0.1.id }
                             DataManager.shared.moveToCollections(entries: Set(targets), cids: selectedCollections)
                             ToastManager.shared.loading.toggle()
                             presentationMode.wrappedValue.dismiss()
@@ -70,10 +70,10 @@ extension LibraryView.LibraryGrid {
 
         func onSelection(of collection: LibraryCollection) {
             withAnimation {
-                if selectedCollections.contains(collection._id) {
-                    selectedCollections.remove(at: selectedCollections.firstIndex(of: collection._id)!)
+                if selectedCollections.contains(collection.id) {
+                    selectedCollections.remove(at: selectedCollections.firstIndex(of: collection.id)!)
                 } else {
-                    selectedCollections.append(collection._id)
+                    selectedCollections.append(collection.id)
                 }
             }
         }

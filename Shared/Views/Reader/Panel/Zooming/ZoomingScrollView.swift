@@ -119,7 +119,6 @@ class ZoomingScrollView: UIScrollView, UIScrollViewDelegate {
 
     func setZoomPosition() {
         guard contentSize.width > frame.width else {
-//            print("No Point Setting, Content Size < Width", contentSize.width, frame.width)
             return
         }
 

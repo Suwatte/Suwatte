@@ -40,7 +40,7 @@ let STTUserDefaults: [String: Any] = [
     STTKeys.DownsampleImages: true,
 ]
 
-let SCHEMA_VERSION = 9
+let SCHEMA_VERSION = 10
 let STT_BRIDGE_VERSION = "2.0.1"
 
 let KEY_WINDOW = UIApplication

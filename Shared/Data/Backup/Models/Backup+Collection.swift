@@ -16,7 +16,7 @@ extension LibraryCollection: Codable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: Keys.self)
 
-        try container.encode(_id, forKey: .id)
+        try container.encode(id, forKey: .id)
         try container.encode(name, forKey: .name)
         try container.encode(order, forKey: .order)
         try container.encode(filter, forKey: .filter)
@@ -27,7 +27,7 @@ extension LibraryCollection: Codable {
 
         let container = try decoder.container(keyedBy: Keys.self)
 
-        _id = try container.decode(String.self, forKey: .id)
+        id = try container.decode(String.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         order = try container.decode(Int.self, forKey: .order)
         filter = try container.decodeIfPresent(LibraryCollectionFilter.self, forKey: .filter)

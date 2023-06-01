@@ -14,8 +14,6 @@ extension LocalContentView {
     struct Grid: View {
         var data: [LocalContentManager.Book]
 
-        @ObservedResults(ChapterMarker.self, where: { $0.chapter.sourceId == STTHelpers.LOCAL_CONTENT_ID && $0.chapter != nil }) var localMarkers
-
         @Binding var isSelecting: Bool
         @State var selectedIndexes = Set<Int>()
         @State var selection: LocalContentManager.Book?
@@ -70,7 +68,7 @@ extension LocalContentView {
 
 extension LocalContentView.Grid {
     func isRead(id: Int64) -> Bool {
-        localMarkers.contains(where: { $0.chapter?.contentId == String(id) })
+        false
     }
 }
 

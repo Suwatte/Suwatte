@@ -45,7 +45,7 @@ extension ProfileView.Sheets {
         }
 
         var linkedTracker: TrackerLink? {
-            trackerLinks.first(where: { model.sttIdentifier().id == $0._id })
+            trackerLinks.first(where: { model.sttIdentifier().id == $0.id && $0.isDeleted == false })
         }
     }
 }

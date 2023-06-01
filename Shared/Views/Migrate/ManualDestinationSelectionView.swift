@@ -48,7 +48,7 @@ struct ManualDestinationSelectionView: View {
     }
 
     @ViewBuilder
-    func SourceCell(source: AnyContentSource) -> some View {
+    func SourceCell(source: StoredRunnerObject) -> some View {
         let id = source.id
         let data = model.results[id] ?? .loading
         Section {
@@ -121,7 +121,7 @@ struct ManualDestinationSelectionView: View {
     }
 
     func handleSelection(_ h: DSKCommon.Highlight, _ s: String) {
-        states[content._id] = .found((s, h))
+        states[content.id] = .found((s, h))
         isPresenting.toggle()
     }
 }

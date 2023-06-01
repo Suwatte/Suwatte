@@ -2,8 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key></key>
-	<string></string>
+    <key>NSUbiquitousContainers</key>
+    <dict>
+        <key>iCloud.com.ceres.suwatte</key>
+        <dict>
+            <key>NSUbiquitousContainerIsDocumentScopePublic</key>
+            <true/>
+            <key>NSUbiquitousContainerSupportedFolderLevels</key>
+            <string>Any</string>
+        </dict>
+    </dict>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>com.ceres.suwatte.fetch_updates</string>
@@ -28,7 +36,7 @@
 			<string>Owner</string>
 			<key>LSItemContentTypes</key>
 			<array>
-				<string>com.mantton.SuwatteReader.Interactor</string>
+				<string>com.ceres.suwatte.interactor</string>
 			</array>
 		</dict>
 	</array>
@@ -54,9 +62,12 @@
 	<array>
 		<string>fetch</string>
 		<string>processing</string>
+		<string>remote-notification</string>
 	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
+    <key>LSSupportsOpeningDocumentsInPlace</key>
+    <true/>
 	<key>UTImportedTypeDeclarations</key>
 	<array>
 		<dict>
@@ -84,13 +95,28 @@
 			<key>UTTypeIconFiles</key>
 			<array/>
 			<key>UTTypeIdentifier</key>
-			<string>com.mantton.SuwatteReader.Interactor</string>
+			<string>com.ceres.Interactor</string>
 			<key>UTTypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
 					<string>stt</string>
 					<string>STT</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeDescription</key>
+			<string>CBR</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
+			<key>UTTypeIdentifier</key>
+			<string>public.cbr</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>cbr</string>
 				</array>
 			</dict>
 		</dict>

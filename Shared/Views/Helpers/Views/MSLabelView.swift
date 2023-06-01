@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NukeUI
 
 struct MSLabelView: View {
     @State var title: String = ""
@@ -28,23 +29,38 @@ struct STTThumbView: View {
     @State var assetName: String? = nil
     @State var systemName: String? = nil
     @State var url: URL? = nil
-
+    @StateObject var imageFetcher = FetchImage()
     var body: some View {
-        Group {
-            if let systemName = systemName {
-                Image(systemName: systemName)
-                    .resizable()
-            } else if let url = url {
-                AsyncImage(url: url) { image in
-                    image
+        GeometryReader { proxy in
+            Group {
+                if let systemName = systemName {
+                    Image(systemName: systemName)
                         .resizable()
-                } placeholder: {
+                } else if let url = url {
+                    if let image = imageFetcher.image {
+                        image
+                            .resizable()
+                    } else {
+                        Image(assetName ?? "stt_icon")
+                            .resizable()
+                    }
+                } else {
                     Image(assetName ?? "stt_icon")
                         .resizable()
                 }
-            } else {
-                Image(assetName ?? "stt_icon")
-                    .resizable()
+            }
+            .task {
+                guard let url = url else {
+                    return
+                }
+                imageFetcher.priority = .normal
+                imageFetcher.transaction = .init(animation: .easeInOut(duration: 0.33))
+                imageFetcher.load(url)
+                imageFetcher.processors = [NukeDownsampleProcessor(size: proxy.size)]
+            }
+            .onDisappear {
+                imageFetcher.priority = .low
+                imageFetcher.reset()
             }
         }
     }

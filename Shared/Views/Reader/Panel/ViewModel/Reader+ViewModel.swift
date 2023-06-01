@@ -56,15 +56,14 @@ extension ReaderView {
             let sourceIndexAcc = chapterList.map { $0.index }.reduce(0, +)
             let sortedChapters = sourceIndexAcc > 0 ? chapterList.sorted(by: { $0.index > $1.index }) : chapterList.sorted(by: { $0.number > $1.number })
             self.chapterList = sortedChapters.map { $0.toThreadSafe() }
-            if chapter.chapterType == .LOCAL || chapter.chapterType == .OPDS {
-                DataManager.shared.storeChapters([chapter])
-            }
+            
             // Update Content
             let chapter = chapter
             self.content = DataManager.shared.getStoredContent(chapter.sourceId, chapter.contentId)
             if let content  {
                 self.isInLibrary = DataManager.shared.isInLibrary(content: content)
             }
+            
             contentTitle = title
             activeChapter = .init(chapter: chapter.toThreadSafe())
             if let pageIndex = pageIndex {
@@ -74,21 +73,19 @@ extension ReaderView {
             }
             readerChapterList.append(activeChapter)
             updateViewerMode(with: readingMode)
-            
-
         }
 
         func loadChapter(_ chapter: ThreadSafeChapter, asNextChapter: Bool = true) async {
-            let alreadyInList = readerChapterList.contains(where: { $0.chapter._id == chapter._id })
+            let alreadyInList = readerChapterList.contains(where: { $0.chapter.id == chapter.id })
             let readerChapter: ReaderChapter?
 
-            readerChapter = alreadyInList ? readerChapterList.first(where: { $0.chapter._id == chapter._id })! : ReaderChapter(chapter: chapter)
+            readerChapter = alreadyInList ? readerChapterList.first(where: { $0.chapter.id == chapter.id })! : ReaderChapter(chapter: chapter)
 
             guard let readerChapter = readerChapter else {
                 return
             }
 
-            chapterCache[chapter._id] = readerChapter
+            chapterCache[chapter.id] = readerChapter
             // Add To Reader Chapters
             if !alreadyInList {
                 if asNextChapter {
@@ -122,17 +119,17 @@ extension ReaderView {
 
             // Set Opening Page
             if readerChapterList.count == 1, readerChapter.requestedPageIndex == -1 {
-                let values = STTHelpers.getInitialPosition(for: readerChapter.chapter, limit: pages.count)
+                let values = STTHelpers.getInitialPanelPosition(for: contentIdentifier.id, chapterId: readerChapter.chapter.chapterId, limit: pages.count)
                 readerChapter.requestedPageIndex = values.0
                 readerChapter.requestedPageOffset = values.1
             }
             // Add to model section
             if asNextChapter {
                 sections.append(section)
-                chapterSectionCache[readerChapter.chapter._id] = sections.count - 1
+                chapterSectionCache[readerChapter.chapter.id] = sections.count - 1
             } else {
                 chapterSectionCache.forEach { k, v in chapterSectionCache.updateValue(v + 1, forKey: k) }
-                chapterSectionCache[readerChapter.chapter._id] = 0
+                chapterSectionCache[readerChapter.chapter.id] = 0
                 sections.insert(section, at: 0)
             }
 
@@ -319,7 +316,7 @@ extension ReaderView.ViewModel {
             return
         }
         let page = readerPage.page
-        if page.chapterId != activeChapter.chapter._id, let chapter = chapterCache[page.chapterId] {
+        if page.chapterId != activeChapter.chapter.id, let chapter = chapterCache[page.chapterId] {
             onChapterChanged(chapter: chapter)
             return
         }
@@ -354,8 +351,7 @@ extension ReaderView.ViewModel {
         guard let chapter = chapterCache[page.chapterId], canMark(sourceId: chapter.chapter.sourceId) else {
             return
         }
-        DataManager.shared.setProgress(from: chapter)
-        DataManager.shared.updateLastRead(id: ContentIdentifier(contentId: chapter.chapter.contentId, sourceId: chapter.chapter.sourceId).id)
+        DataManager.shared.updateContentProgress(for: contentIdentifier.id, chapter: chapter.chapter, lastPageRead: page.number, totalPageCount: chapter.pages?.count ?? 1)
     }
 
     private func handleTransition(transition: ReaderView.Transition) {
@@ -370,14 +366,14 @@ extension ReaderView.ViewModel {
         if transition.to == nil {
             // Mark As Completed
             if canMark(sourceId: chapter.sourceId) {
-                DataManager.shared.setProgress(chapter: chapter)
+                DataManager.shared.didCompleteChapter(for: contentIdentifier.id, chapter: chapter)
             }
         }
 
         if let num = transition.to?.number, num > transition.from.number {
             // Mark As Completed
             if canMark(sourceId: chapter.sourceId) {
-                DataManager.shared.setProgress(chapter: chapter)
+                DataManager.shared.didCompleteChapter(for: contentIdentifier.id, chapter: chapter)
             }
         }
     }
@@ -399,10 +395,11 @@ extension ReaderView.ViewModel {
             return
         }
 
+        let id = contentIdentifier.id
         Task.detached { [weak self] in
             // Mark As Completed & Update Unread Count
-            DataManager.shared.setProgress(chapter: lastChapter.chapter, completed: true)
-            DataManager.shared.updateUnreadCount(for: .init(contentId: lastChapter.chapter.contentId, sourceId: lastChapter.chapter.sourceId))
+            
+            DataManager.shared.didCompleteChapter(for: id, chapter: lastChapter.chapter)
 
             // Anilist Sync
             await self?.handleTrackerSync(number: lastChapter.chapter.number,
@@ -412,8 +409,6 @@ extension ReaderView.ViewModel {
             await self?.handleSourceSync(contentId: lastChapter.chapter.contentId,
                              sourceId: lastChapter.chapter.sourceId,
                              chapterId: lastChapter.chapter.chapterId)
-
-            DataManager.shared.updateLastRead(id: ContentIdentifier(contentId: lastChapter.chapter.contentId, sourceId: lastChapter.chapter.sourceId).id)
         }
     }
 
@@ -465,7 +460,6 @@ extension STTHelpers {
         guard let mediaID = mediaID, let mediaID = Int(mediaID), Anilist.signedIn() else {
             return
         }
-
         // Get Media
 
         let media = try await Anilist.shared.getProfile(mediaID)
@@ -498,75 +492,91 @@ extension ReaderView.ViewModel {
         ContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId)
     }
 
-    @discardableResult func updateWithUserSetMode(_ value: PanelReadingModes? = nil) -> Bool {
+    func setModeToUserSetting() -> Bool {
         let id = contentIdentifier
-        let saved = UserDefaults(suiteName: id.id)?.object(forKey: STTKeys.ReaderType) as? Int
-
-        let userSetMode = saved.flatMap { PanelReadingModes(rawValue: $0) } ?? value
+        let container = UserDefaults.standard
+        let key = STTKeys.ReaderType + "%%" + id.id
+        let value = container.object(forKey: key)
+        guard let value = value as? Int else {
+            return false
+        }
+        let mode = PanelReadingModes(rawValue:value)
+        guard let mode else {
+            return false
+        }
+        updateViewerMode(with: mode)
+        return true
+    }
+    
+    func updateViewerMode(with mode: PanelReadingModes) {
         let preferences = Preferences.standard
 
-        if let userSetMode {
-            switch userSetMode {
-            case .PAGED_MANGA:
-                preferences.isReadingVertically = false
-                preferences.readingLeftToRight = false
-                preferences.isPagingVertically = false
-            case .PAGED_COMIC:
-                preferences.isReadingVertically = false
-                preferences.readingLeftToRight = true
-                preferences.isPagingVertically = false
+        switch mode {
+        case .PAGED_MANGA:
+            preferences.isReadingVertically = false
+            preferences.readingLeftToRight = false
+            preferences.isPagingVertically = false
+        case .PAGED_COMIC:
+            preferences.isReadingVertically = false
+            preferences.readingLeftToRight = true
+            preferences.isPagingVertically = false
 
-            case .VERTICAL:
-                preferences.isReadingVertically = true
-                preferences.isPagingVertically = false
-                preferences.VerticalPagePadding = false
+        case .VERTICAL:
+            preferences.isReadingVertically = true
+            preferences.isPagingVertically = false
+            preferences.VerticalPagePadding = false
 
-            case .VERTICAL_SEPARATED:
-                preferences.isReadingVertically = true
-                preferences.VerticalPagePadding = true
-                preferences.isPagingVertically = false
+        case .VERTICAL_SEPARATED:
+            preferences.isReadingVertically = true
+            preferences.VerticalPagePadding = true
+            preferences.isPagingVertically = false
 
-            case .PAGED_VERTICAL:
-                preferences.isReadingVertically = false
-                preferences.isPagingVertically = true
-            }
-            return true
+        case .PAGED_VERTICAL:
+            preferences.isReadingVertically = false
+            preferences.isPagingVertically = true
         }
-        return false
+    }
+    
+    func setReadingModeForContent(_ value: PanelReadingModes) {
+        let id = contentIdentifier
+        let container = UserDefaults.standard
+        let key = STTKeys.ReaderType + "%%" + id.id
+        
+        container.setValue(value.rawValue, forKey: key)
     }
 
     func updateViewerMode(with mode: ReadingMode) {
-        guard !updateWithUserSetMode() else { return }
-        let defaults = UserDefaults(suiteName: contentIdentifier.id)
+        guard !setModeToUserSetting() else { return }
+        let defaults = UserDefaults.standard
         let preferences = Preferences.standard
         switch mode {
         case .PAGED_MANGA:
             preferences.isReadingVertically = false
             preferences.readingLeftToRight = false
             preferences.isPagingVertically = false
-            defaults?.set(PanelReadingModes.PAGED_MANGA.rawValue, forKey: STTKeys.ReaderType)
+            defaults.set(PanelReadingModes.PAGED_MANGA.rawValue, forKey: STTKeys.ReaderType)
         case .PAGED_COMIC:
             preferences.isReadingVertically = false
             preferences.readingLeftToRight = true
             preferences.isPagingVertically = false
-            defaults?.set(PanelReadingModes.PAGED_COMIC.rawValue, forKey: STTKeys.ReaderType)
+            defaults.set(PanelReadingModes.PAGED_COMIC.rawValue, forKey: STTKeys.ReaderType)
 
         case .VERTICAL:
             preferences.isReadingVertically = true
             preferences.isPagingVertically = false
             preferences.VerticalPagePadding = false
-            defaults?.set(PanelReadingModes.VERTICAL.rawValue, forKey: STTKeys.ReaderType)
+            defaults.set(PanelReadingModes.VERTICAL.rawValue, forKey: STTKeys.ReaderType)
 
         case .VERTICAL_SEPARATED:
             preferences.isReadingVertically = true
             preferences.VerticalPagePadding = true
             preferences.isPagingVertically = false
-            defaults?.set(PanelReadingModes.VERTICAL_SEPARATED.rawValue, forKey: STTKeys.ReaderType)
+            defaults.set(PanelReadingModes.VERTICAL_SEPARATED.rawValue, forKey: STTKeys.ReaderType)
 
         case .PAGED_VERTICAL:
             preferences.isReadingVertically = false
             preferences.isPagingVertically = true
-            defaults?.set(PanelReadingModes.PAGED_VERTICAL.rawValue, forKey: STTKeys.ReaderType)
+            defaults.set(PanelReadingModes.PAGED_VERTICAL.rawValue, forKey: STTKeys.ReaderType)
 
         default: break
         }

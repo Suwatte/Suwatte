@@ -7,52 +7,10 @@
 
 import Foundation
 import RealmSwift
-
-final class StoredContent: Object, ObjectKeyIdentifiable {
-    // Identifiers
-    @Persisted(primaryKey: true) var _id: String
-    @Persisted(indexed: true) var sourceId: String {
-        didSet {
-            updateId()
-        }
-    }
-
-    @Persisted(indexed: true) var contentId: String {
-        didSet {
-            updateId()
-        }
-    }
-
-    @Persisted(indexed: true) var title: String
-    @Persisted var cover: String
-
-    @Persisted var webUrl: String?
-    @Persisted var summary: String?
-
-    @Persisted var additionalTitles: List<String>
-    @Persisted var additionalCovers: List<String>
-    @Persisted var properties: List<StoredProperty>
-
-    @Persisted var creators: List<String>
-    @Persisted var status: ContentStatus = .UNKNOWN
-    @Persisted var adultContent: Bool = false
-    @Persisted var recommendedReadingMode: ReadingMode = .PAGED_MANGA
-    @Persisted var contentType: ExternalContentType = .unknown
-    @Persisted var trackerInfo: Map<String, String>
-    var SourceName: String {
-        SourceManager.shared.getSource(id: sourceId)?.name ?? "Unrecognized : \(sourceId)"
-    }
-
-    var ContentIdentifier: ContentIdentifier {
-        return .init(contentId: contentId, sourceId: sourceId)
-    }
-}
+import IceCream
 
 extension StoredContent {
-    func updateId() {
-        _id = "\(sourceId)||\(contentId)"
-    }
-
+    
     func toHighlight() -> DaisukeEngine.Structs.Highlight {
         .init(contentId: contentId, cover: cover, title: title)
     }
@@ -71,8 +29,7 @@ extension StoredContent {
     }
 }
 
-extension ContentStatus: PersistableEnum, Codable {}
-extension ReadingMode: PersistableEnum, Codable {}
+
 
 extension DaisukeEngine.Structs.Content {
     func toStoredContent(withSource source: String) throws -> StoredContent {
@@ -95,21 +52,28 @@ extension DataManager {
     func getStoredContent(_ sourceId: String, _ contentId: String) -> StoredContent? {
         let realm = try! Realm()
 
-        return realm.objects(StoredContent.self).first(where: { $0.contentId == contentId && $0.sourceId == sourceId })
+        return realm
+            .objects(StoredContent.self)
+            .where { $0.contentId == contentId && $0.sourceId == sourceId }
+            .first
     }
-
-    func getLastRead(for content: StoredContent) -> ChapterMarker? {
+    
+    func getStoredContent(_ id: String) -> StoredContent? {
         let realm = try! Realm()
 
-        return realm.objects(ChapterMarker.self).first(where: { $0.chapter?.sourceId == content.sourceId && $0.chapter?.contentId == content.contentId })
+        return realm
+            .objects(StoredContent.self)
+            .where { $0.id == id  }
+            .first
     }
+
 
     func getStoredContents(ids: [String]) -> Results<StoredContent> {
         let realm = try! Realm()
 
         return realm
             .objects(StoredContent.self)
-            .filter("_id IN %@", ids)
+            .filter("id IN %@", ids)
     }
 
     func refreshStored(contentId: String, sourceId: String) async {

@@ -22,7 +22,7 @@ extension ProfileView.Sheets {
         @State var flag: LibraryFlag = .unknown
         @State var selectedCollections = Set<String>()
         var entry: LibraryEntry? {
-            libraryEntries.first { $0._id == storedContent._id }
+            libraryEntries.first { $0.id == storedContent.id }
         }
 
         func containsCollection(withID id: String) -> Bool {
@@ -33,7 +33,7 @@ extension ProfileView.Sheets {
         var CollectionLabelName: String {
             if let entry = entry {
                 let collectionNames = entry.collections.compactMap { id in
-                    collections.first(where: { $0._id == id })?.name
+                    collections.first(where: { $0.id == id })?.name
                 }.joined(separator: ", ")
                 return collectionNames
             } else {
@@ -82,7 +82,7 @@ extension ProfileView.Sheets {
         }
 
         func isValidCollection(_ id: String) -> Bool {
-            collections.contains(where: { $0._id == id })
+            collections.contains(where: { $0.id == id })
         }
 
         var CollectionView: some View {
@@ -172,12 +172,12 @@ extension ProfileView.Sheets {
         }
 
         func CollectionCell(for collection: LibraryCollection) -> some View {
-            Button { toggleCollection(id: collection._id) } label: {
+            Button { toggleCollection(id: collection.id) } label: {
                 HStack {
                     Text(collection.name)
                     Spacer()
 
-                    if containsCollection(withID: collection._id) {
+                    if containsCollection(withID: collection.id) {
                         Image(systemName: "checkmark")
                             .transition(.scale)
                     }

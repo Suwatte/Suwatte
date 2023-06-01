@@ -7,7 +7,7 @@
 
 import Foundation
 import RealmSwift
-
+import IceCream
 enum LibraryFlag: Int, PersistableEnum, CaseIterable, Identifiable, Codable {
     case reading, planned, completed, dropped, reReading, paused, unknown
 
@@ -35,33 +35,7 @@ enum LibraryFlag: Int, PersistableEnum, CaseIterable, Identifiable, Codable {
     }
 }
 
-final class LibraryEntry: Object, ObjectKeyIdentifiable {
-    // Core
-    @Persisted(primaryKey: true) var _id: String
-    @Persisted var content: StoredContent? {
-        didSet {
-            if let content = content {
-                _id = content._id
-            }
-        }
-    }
 
-    // Update information
-    @Persisted var updateCount: Int
-    @Persisted var lastUpdated: Date = .distantPast
-
-    // Dates
-    @Persisted var dateAdded: Date
-    @Persisted var lastRead: Date = .distantPast
-    @Persisted var lastOpened: Date = .distantPast
-
-    // Collections
-    @Persisted var collections = List<String>()
-    @Persisted var flag = LibraryFlag.unknown
-    @Persisted var linkedHasUpdates = false
-
-    @Persisted var unreadCount: Int
-}
 
 extension DataManager {
     func setReadingFlag(for object: LibraryEntry, to flag: LibraryFlag) {
@@ -93,7 +67,7 @@ extension DataManager {
 
         let targets = realm
             .objects(LibraryEntry.self)
-            .where { $0._id.in(ids) }
+            .where { $0.id.in(ids) }
 
         try! realm.safeWrite {
             for target in targets {
@@ -130,7 +104,7 @@ extension DataManager {
 
         let ids = content.ContentIdentifier
         let source = SourceManager.shared.getSource(id: content.sourceId) as? any SyncableSource
-        if let target = realm.objects(LibraryEntry.self).first(where: { $0._id == content._id }) {
+        if let target = realm.objects(LibraryEntry.self).first(where: { $0.id == content.id }) {
             // Run Removal Event
             Task {
                 do {
@@ -142,7 +116,7 @@ extension DataManager {
             }
             // In Library, delete object
             try! realm.safeWrite {
-                realm.delete(target)
+                target.isDeleted = true
             }
             return false
         }
@@ -183,7 +157,7 @@ extension DataManager {
     func isInLibrary(content: StoredContent) -> Bool {
         let realm = try! Realm()
 
-        return realm.objects(LibraryEntry.self).contains(where: { $0._id == content._id })
+        return realm.objects(LibraryEntry.self).contains(where: { $0.id == content.id })
     }
 
     // MARK: Collections
@@ -217,7 +191,7 @@ extension DataManager {
     func toggleCollection(for entry: String, withId cid: String) {
         let realm = try! Realm()
 
-        guard let entry = realm.objects(LibraryEntry.self).where({ $0._id == entry }).first else { return }
+        guard let entry = realm.objects(LibraryEntry.self).where({ $0.id == entry }).first else { return }
 
         try! realm.safeWrite {
             if entry.collections.contains(cid) {
@@ -231,7 +205,7 @@ extension DataManager {
     func batchRemoveFromLibrary(with ids: Set<String>) {
         let realm = try! Realm()
 
-        let objects = realm.objects(LibraryEntry.self).filter { ids.contains($0._id) }
+        let objects = realm.objects(LibraryEntry.self).filter { ids.contains($0.id) }
 
         let ids = objects.compactMap { $0.content?.ContentIdentifier }
         let grouped = Dictionary(grouping: ids, by: { $0.sourceId })
@@ -255,7 +229,7 @@ extension DataManager {
     func moveToCollections(entries: Set<String>, cids: [String]) {
         let realm = try! Realm()
 
-        let objects = realm.objects(LibraryEntry.self).filter { entries.contains($0._id) }
+        let objects = realm.objects(LibraryEntry.self).filter { entries.contains($0.id) }
         try! realm.safeWrite {
             objects.forEach {
                 $0.collections.removeAll()
@@ -267,7 +241,7 @@ extension DataManager {
     func clearUpdates(id: String) {
         let realm = try! Realm()
 
-        guard let entry = realm.objects(LibraryEntry.self).first(where: { $0._id == id }) else {
+        guard let entry = realm.objects(LibraryEntry.self).first(where: { $0.id == id }) else {
             return
         }
 
@@ -277,10 +251,10 @@ extension DataManager {
         }
     }
 
-    func updateLastRead(forId id: String) {
-        let realm = try! Realm()
+    func updateLastRead(forId id: String, _ realm: Realm? = nil) {
+        let realm = try! realm ?? Realm()
 
-        guard let entry = realm.objects(LibraryEntry.self).first(where: { $0._id == id }) else {
+        guard let entry = realm.objects(LibraryEntry.self).first(where: { $0.id == id }) else {
             return
         }
 
@@ -300,22 +274,22 @@ extension DataManager {
 
     func getUnreadCount(for id: ContentIdentifier, _ realm: Realm? = nil) -> Int {
         let realm = try! realm ?? Realm()
-        // Get Read Count
-        let read = realm
-            .objects(ChapterMarker.self)
-            .where { $0.chapter.contentId == id.contentId }
-            .where { $0.chapter.sourceId == id.sourceId }
-            .where { $0.completed == true }
-            .distinct(by: [\.chapter?.number])
-            .count
+        // Get Max Read Chapter
+        let maxRead = realm
+            .objects(ProgressMarker.self)
+            .where({ $0.id == id.id })
+            .first?
+            .maxReadChapter ?? -1
+        
         // Get Total Chapter Count
-        let total = realm
+        let unread = realm
             .objects(StoredChapter.self)
             .where { $0.contentId == id.contentId }
             .where { $0.sourceId == id.sourceId }
+            .where { $0.number > maxRead }
             .distinct(by: [\.number])
             .count
-        return total - read
+        return unread
     }
 
     func updateUnreadCount(for id: ContentIdentifier, _ realm: Realm? = nil) {
@@ -332,6 +306,20 @@ extension DataManager {
         let count = getUnreadCount(for: id, realm)
         try! realm.safeWrite {
             target.unreadCount = count
+        }
+    }
+    
+    func decrementUnreadCount(for id: String, _ realm: Realm? = nil) {
+        let realm = try! realm ?? Realm()
+        let target = realm
+            .objects(LibraryEntry.self)
+            .where { $0.content.id == id }
+            .first
+        
+        guard let target else { return }
+        try! realm.safeWrite {
+            target.unreadCount -= 1
+            target.lastRead = .now
         }
     }
 }

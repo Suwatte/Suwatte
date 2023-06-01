@@ -235,7 +235,7 @@ extension DownloadsQueueView {
         let chapters = downloads.sorted(by: { $0.dateAdded < $1.dateAdded }).compactMap { $0.chapter }
         Section {
             ForEach(chapters) { chapter in
-                if let download = downloads.first(where: { $0._id == chapter._id }) {
+                if let download = downloads.first(where: { $0._id == chapter.id }) {
                     DefaultTile(chapter: chapter, download: download)
                 } else {
                     EmptyView()
@@ -246,7 +246,7 @@ extension DownloadsQueueView {
                 VStack(alignment: .leading) {
                     Text(entry.title)
                         .font(.headline)
-                    Text(SourceManager.shared.getSource(id: entry.sourceId)?.name ?? "Unrecognized Source")
+                    Text((try? SourceManager.shared.getContentSource(id: entry.sourceId).name) ?? "Unrecognized Source")
                         .font(.subheadline)
                         .fontWeight(.light)
                 }

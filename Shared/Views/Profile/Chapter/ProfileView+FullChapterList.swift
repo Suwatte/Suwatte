@@ -160,7 +160,6 @@ struct ChapterList: View {
 
     func handleReconnection() {
         DispatchQueue.main.async {
-            model.getMarkers()
             model.setupObservers()
         }
     }
@@ -204,10 +203,8 @@ struct ChapterList: View {
                 Color.clear
                     .contextMenu {
                         Button {
-                            if completed {
-                                model.setInvalidatedMarkers(nums: [chapter.number])
-                            }
-                            DataManager.shared.bulkMarkChapter(chapters: [chapter], completed: !completed)
+    
+                            DataManager.shared.bulkMarkChapters(for: model.sttIdentifier(), chapters: chapters, markAsRead: !completed)
                             didMark()
                         } label: {
                             Label(completed ? "Mark as Unread" : "Mark as Read", systemImage: completed ? "eye.slash.circle" : "eye.circle")
@@ -224,7 +221,7 @@ struct ChapterList: View {
                         DownloadView(download, chapter)
                         ProviderView(chapter)
                     }
-                    .id(genId(chapter._id, completed, download))
+                    .id(genId(chapter.id, completed, download))
             )
         }
     }
@@ -233,7 +230,7 @@ struct ChapterList: View {
 extension ChapterList {
     func doFilter() {
         guard let chapters = model.chapters.value else { return }
-        let ids = chapters.map(\._id)
+        let ids = chapters.map(\.id)
         DispatchQueue.global(qos: .background).async {
             filterChapters(ids: ids)
         }
@@ -242,7 +239,7 @@ extension ChapterList {
     func filterChapters(ids: [String]) {
         let realm = try! Realm()
         
-        let chapters = realm.objects(StoredChapter.self).where({ $0._id.in(ids) }).toArray()
+        let chapters = realm.objects(StoredChapter.self).where({ $0.id.in(ids) }).toArray()
         
         // Filter Language, Providers, Downloads
         var base = chapters
@@ -284,7 +281,7 @@ extension ChapterList {
 
     func filterDownloads(_ chapter: StoredChapter) -> Bool {
         if !showOnlyDownloads { return true }
-        return DataManager.shared.hasDownload(id: chapter._id)
+        return DataManager.shared.hasDownload(id: chapter.id)
     }
 
     func filterProviders(_ chapter: StoredChapter) -> Bool {
@@ -307,50 +304,50 @@ extension ChapterList {
                 EmptyView()
             case .idle, .queued:
                 Button(role: .destructive) {
-                    ICDM.shared.cancel(ids: [chapter._id])
+                    ICDM.shared.cancel(ids: [chapter.id])
                 } label: {
                     Label("Cancel Download", systemImage: "x.circle")
                 }
             case .completed:
                 Button(role: .destructive) {
-                    ICDM.shared.cancel(ids: [chapter._id])
+                    ICDM.shared.cancel(ids: [chapter.id])
                 } label: {
                     Label("Delete Download", systemImage: "trash.circle")
                 }
             case .active:
                 Group {
                     Button(role: .destructive) {
-                        ICDM.shared.cancel(ids: [chapter._id])
+                        ICDM.shared.cancel(ids: [chapter.id])
                     } label: {
                         Label("Cancel Download", systemImage: "x.circle")
                     }
                     Button {
-                        ICDM.shared.pause(ids: [chapter._id])
+                        ICDM.shared.pause(ids: [chapter.id])
                     } label: {
                         Label("Pause Download", systemImage: "pause.circle")
                     }
                 }
             case .paused:
                 Button {
-                    ICDM.shared.resume(ids: [chapter._id])
+                    ICDM.shared.resume(ids: [chapter.id])
                 } label: {
                     Label("Resume Download", systemImage: "play.circle")
                 }
             case .failing:
                 Button {
-                    ICDM.shared.resume(ids: [chapter._id])
+                    ICDM.shared.resume(ids: [chapter.id])
                 } label: {
                     Label("Retry Download", systemImage: "arrow.counterclockwise.circle")
                 }
                 Button(role: .destructive) {
-                    ICDM.shared.cancel(ids: [chapter._id])
+                    ICDM.shared.cancel(ids: [chapter.id])
                 } label: {
                     Label("Cancel Download", systemImage: "x.circle")
                 }
             }
         } else {
             Button {
-                ICDM.shared.add(chapters: [chapter._id])
+                ICDM.shared.add(chapters: [chapter.id])
                 let c = model.storedContent
                 if !DataManager.shared.isInLibrary(content: c) {
                     DataManager.shared.toggleLibraryState(for: c)
@@ -396,14 +393,14 @@ extension ChapterList {
     }
 
     func chapterProgress(_ chapter: StoredChapter) -> Double? {
-        guard let id = model.actionState.chapter?._id, id == chapter._id else {
+        guard let id = model.actionState.chapter?.id, id == chapter.id else {
             return nil
         }
         return model.actionState.marker?.progress
     }
 
     func getDownload(_ chapter: StoredChapter) -> ICDMDownloadObject? {
-        model.downloads[chapter._id]
+        model.downloads[chapter.id]
     }
 }
 
@@ -483,19 +480,18 @@ extension ChapterList {
     }
 
     func markAsRead() {
-        DataManager.shared.bulkMarkChapter(chapters: Array(selections))
+        DataManager.shared.bulkMarkChapters(for: model.sttIdentifier(), chapters: Array(selections))
         deselectAll()
         didMark()
     }
 
     func markAsUnread() {
-        model.setInvalidatedMarkers(nums: Set(selections.map(\.number))) // Set These markers to be invalidated
-        DataManager.shared.bulkMarkChapter(chapters: Array(selections), completed: false)
+        DataManager.shared.bulkMarkChapters(for: model.sttIdentifier(), chapters: Array(selections), markAsRead: false)
         deselectAll()
     }
 
     func addToDownloadQueue() {
-        ICDM.shared.add(chapters: Array(selections).map(\._id))
+        ICDM.shared.add(chapters: Array(selections).map(\.id))
         deselectAll()
         let c = model.storedContent
         if !DataManager.shared.isInLibrary(content: c) {
@@ -504,13 +500,13 @@ extension ChapterList {
     }
 
     func removeDownload() {
-        ICDM.shared.cancel(ids: Array(selections).map(\._id))
+        ICDM.shared.cancel(ids: Array(selections).map(\.id))
         deselectAll()
     }
 
     func clearChapterData() {
         selections.forEach {
-            DataManager.shared.resetChapterData(forId: $0._id)
+            DataManager.shared.resetChapterData(forId: $0.id)
         }
         deselectAll()
     }

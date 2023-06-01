@@ -7,52 +7,39 @@
 
 import Foundation
 import RealmSwift
+import IceCream
 import UIKit
-
-final class CustomThumbnail: Object, ObjectKeyIdentifiable {
-    @Persisted var _id: String
-    @Persisted var content: StoredContent? {
-        didSet {
-            if let content = content {
-                _id = content._id
-            }
-        }
-    }
-}
 
 extension DataManager {
     func setCustomThumbnail(image: UIImage, id: String) {
         let realm = try! Realm()
-
-        guard let content = realm.objects(StoredContent.self).where({ $0._id == id }).first else {
-            ToastManager.shared.display(.error(DaisukeEngine.Errors.RealmThawFailure))
-            return
-        }
+        
         do {
-            _ = try STTImageProvider.shared.saveImage(image, for: content._id)
-
-            let object = CustomThumbnail()
-            object.content = content
-
+            let result = try STTImageProvider.shared.saveImage(image, for: id)
+            let obj = CustomThumbnail()
+            obj.id = id
+            obj.file = CreamAsset.create(object: obj, propName: CustomThumbnail.FILE_KEY,  url: result)
+            obj.isDeleted = false
             try! realm.safeWrite {
-                realm.add(object)
+                realm.add(obj, update: .modified)
             }
+            ToastManager.shared.info("Thumbnail Updated!")
+            
         } catch {
-            ToastManager.shared.display(.error(error))
+            ToastManager.shared.error(error)
+            Logger.shared.error("\(error)")
         }
+
     }
 
     func removeCustomThumbnail(id: String) {
-        let filename = id.appending(".jpg")
-        let filepath = STTImageProvider.directory.appendingPathComponent(filename)
-
-        try? FileManager.default.removeItem(at: filepath)
         let realm = try! Realm()
-
-        if let obj = realm.objects(CustomThumbnail.self).first(where: { $0._id == id }) {
-            try! realm.safeWrite {
-                realm.delete(obj)
-            }
+        
+        guard let target = realm.objects(CustomThumbnail.self).where({ $0.id == id }).first else {
+            return
+        }
+        try! realm.safeWrite {
+            target.isDeleted = true
         }
     }
 }

@@ -19,7 +19,7 @@ struct SearchView: View {
     @ObservedResults(ReadLater.self) var readLater
 
     @State var presentHistory = false
-    @ObservedResults(UpdatedSearchHistory.self, where: { $0.sourceId == nil }, sortDescriptor: SortDescriptor(keyPath: "date", ascending: false)) var history
+    @ObservedResults(UpdatedSearchHistory.self, where: { $0.sourceId == nil && $0.isDeleted == false }, sortDescriptor: SortDescriptor(keyPath: "date", ascending: false)) var history
     @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
 
     var body: some View {
@@ -60,7 +60,7 @@ struct SearchView: View {
     }
 
     var sources: [AnyContentSource] {
-        SourceManager.shared.sources.filter { !disabledSourceIds.contains($0.id) }
+        SourceManager.shared.sources.values.filter { !disabledSourceIds.contains($0.id) }
     }
 
     var RESULT_VIEW: some View {
@@ -173,7 +173,8 @@ struct SearchView: View {
                         Spacer()
                         if data.results.count < data.totalResultCount ?? 0, let source = source {
                             NavigationLink {
-                                ExploreView.SearchView(model: .init(request: .init(query: model.query), source: source))
+                                EmptyView()
+//                                ExploreView.SearchView(model: .init(request: .init(query: model.query), source: source))
                             } label: {
                                 Text("View More \(Image(systemName: "chevron.right"))")
                                     .font(.subheadline)
@@ -269,8 +270,8 @@ extension SearchView {
             .init(rawValue: UserDefaults.standard.string(forKey: STTKeys.SourcesHiddenFromGlobalSearch) ?? "") ?? []
         }
 
-        var sources: [AnyContentSource] {
-            SourceManager.shared.sources.filter { !disabledSourceIds.contains($0.id) }
+        var sources: [StoredRunnerObject] {
+            DataManager.shared.getSavedAndEnabledRunners().filter { !disabledSourceIds.contains($0.id) }
         }
 
         func makeRequests() {
@@ -279,10 +280,10 @@ extension SearchView {
             // Add All Sources To Loading
             sources.forEach { source in
                 results[source.id] = .loading
-
                 Task { @MainActor in
                     do {
-                        let data = try await source.getSearchResults(request)
+                        let controller = try SourceManager.shared.getContentSource(id: source.id)
+                        let data = try await controller.getSearchResults(request)
                         results[source.id] = .loaded(data)
                     } catch {
                         results[source.id] = .failed(error)
@@ -298,7 +299,8 @@ extension SearchView {
             Task { @MainActor in
                 do {
                     let request = DSKCommon.SearchRequest(query: query)
-                    let data = try await source.getSearchResults(request)
+                    let controller = try SourceManager.shared.getContentSource(id: source.id)
+                    let data = try await controller.getSearchResults(request)
                     results[source.id] = .loaded(data)
                 } catch {
                     results[source.id] = .failed(error)

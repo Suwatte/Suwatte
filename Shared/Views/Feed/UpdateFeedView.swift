@@ -7,29 +7,33 @@
 
 import RealmSwift
 import SwiftUI
+
+
 struct UpdateFeedView: View {
+    typealias Grouped = [String: [LibraryEntry]]
     @ObservedResults(LibraryEntry.self) var unfilteredEntries
     @State var selection: HighlightIndentier?
-
+    @StateObject var model = ViewModel()
     var body: some View {
-        let entries = filterEntries()
-        let groups = groupEntries(entries)
-        let sortedGroups = sortedTimeGroups(groups)
         List {
-            ForEach(sortedGroups) {
-                SectionGroup(key: $0, grouped: groups)
-                    .id($0.hash)
+            if let data = model.data {
+                ForEach(data, id: \.header.hashValue) {
+                    SectionGroup(title: $0.header, entries: $0.content)
+                }
             }
+            
         }
         .refreshable {
             await handleRefresh()
         }
         .navigationTitle("Update Feed")
-        .onAppear {
+        .task {
             STTNotifier.shared.clearBadge()
+            model.observe()
         }
+        .onDisappear(perform: model.disconnect)
         .listStyle(.plain)
-        .animation(.default, value: unfilteredEntries)
+        .animation(.default, value: model.data)
         .modifier(InteractableContainer(selection: $selection))
     }
 
@@ -43,36 +47,12 @@ struct UpdateFeedView: View {
         }
     }
 
-    func filterEntries() -> Results<LibraryEntry> {
-        unfilteredEntries.where { entry in
-            let timeAgo = Calendar.current.date(
-                byAdding: .month,
-                value: -5,
-                to: Date()
-            )!
-            return entry.content != nil &&
-                entry.updateCount > 0 &&
-                entry.lastUpdated >= timeAgo
-        }
-        .sorted(by: \.lastUpdated, ascending: false)
-    }
-
-    typealias Grouped = [String: [LibraryEntry]]
-
-    func groupEntries(_ entries: Results<LibraryEntry>) -> Grouped {
-        return Dictionary(grouping: entries, by: { $0.lastUpdated.timeAgoGrouped() })
-    }
-
-    func sortedTimeGroups(_ groups: Grouped) -> [String] {
-        return groups.keys.sorted(by: { groups[$0]![0].lastUpdated > groups[$1]![0].lastUpdated })
-    }
-
-    func SectionGroup(key: String, grouped: Grouped) -> some View {
+    func SectionGroup(title: String, entries: [LibraryEntry]) -> some View {
         Section {
-            ForEach(grouped[key]!) { entry in
+            ForEach(entries) { entry in
                 UpdateFeedTile(entry: entry)
                     .swipeActions(allowsFullSwipe: true) {
-                        Button(action: { DataManager.shared.clearUpdates(id: entry._id) }) {
+                        Button(action: { DataManager.shared.clearUpdates(id: entry.id) }) {
                             Label("Clear Updates", systemImage: "xmark.circle")
                         }
                         .tint(.red)
@@ -84,8 +64,61 @@ struct UpdateFeedView: View {
                     .id(entry.hashValue)
             }
         } header: {
-            Text(key)
+            Text(title)
         }
         .headerProminence(.increased)
     }
+}
+
+
+extension UpdateFeedView {
+    
+    struct GroupedData : Hashable {
+        var header: String
+        var content: [LibraryEntry]
+    }
+    final class ViewModel: ObservableObject {
+        private var token: NotificationToken?
+        @Published var data : [GroupedData]?
+        func observe() {
+            let queue = DispatchQueue(label: "com.ceres.suwatte.feed")
+            queue.async { [weak self] in
+                let date = Calendar.current.date(byAdding: .month, value: -5, to: Date())!
+                let realm = try! Realm()
+                let library = realm
+                    .objects(LibraryEntry.self)
+                    .where({ $0.content != nil })
+                    .where({ $0.updateCount > 0 })
+                    .where({ $0.lastUpdated >= date })
+                    .sorted(by: \.lastUpdated, ascending: false)
+
+                self?.token = library
+                    .observe(on: queue , {[weak self] _ in
+                        let library = library.freeze()
+                        self?.generate(entries: library)
+                    })
+            }
+        }
+        
+        func generate(entries: Results<LibraryEntry>) {
+            let grouped = Dictionary(grouping: entries, by: { $0.lastUpdated.timeAgoGrouped() })
+            let sortedKeys = grouped.keys.sorted(by: { grouped[$0]![0].lastUpdated > grouped[$1]![0].lastUpdated })
+            var prepared = [GroupedData]()
+            sortedKeys.forEach {
+                prepared.append(.init(header: $0, content: grouped[$0] ?? []))
+            }
+            
+            let out = prepared
+            Task { @MainActor in
+                data = out
+            }
+        }
+        
+        func disconnect() {
+            token?.invalidate()
+            token = nil
+        }
+        
+    }
+    
 }

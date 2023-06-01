@@ -216,7 +216,7 @@ extension ReaderView {
 
             @ViewBuilder
             var ChapterStatusView: some View {
-                if let chapter = model.readerChapterList.first(where: { $0.chapter._id == destination._id }) {
+                if let chapter = model.readerChapterList.first(where: { $0.chapter.id == destination.id }) {
                     // Loading Status
                     switch chapter.data {
                     case let .failed(error):

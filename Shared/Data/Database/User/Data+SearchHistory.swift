@@ -8,13 +8,7 @@
 import Foundation
 import RealmSwift
 
-final class UpdatedSearchHistory: Object, ObjectKeyIdentifiable, Codable {
-    @Persisted var sourceId: String?
-    @Persisted var data: String // JSON String of SearchREquest
-    @Persisted var displayText: String
-    @Persisted var date: Date = .now
-    @Persisted(primaryKey: true) var _id: ObjectId
-}
+
 
 extension DataManager {
     func saveSearch(_ request: DSKCommon.SearchRequest, sourceId: String?, display: String) throws {
@@ -40,7 +34,7 @@ extension DataManager {
         let realm = try! Realm()
 
         try! realm.safeWrite {
-            realm.delete(object)
+            object.isDeleted = true
         }
     }
 }
@@ -65,7 +59,9 @@ extension DataManager {
         let realm = try! Realm()
 
         try! realm.safeWrite {
-            realm.delete(realm.objects(UpdatedSearchHistory.self).where { $0.sourceId == sourceId })
+            realm.objects(UpdatedSearchHistory.self).where { $0.sourceId == sourceId }.forEach { obj in
+                obj.isDeleted = true
+            }
         }
     }
 }

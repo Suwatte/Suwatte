@@ -228,7 +228,8 @@ extension ReaderView {
             }
             .onChange(of: mode, perform: { v in
                 Task { @MainActor in
-                    model.updateWithUserSetMode(v)
+                    model.setReadingModeForContent(v)
+                    model.updateViewerMode(with: mode)
                 }
             })
         }

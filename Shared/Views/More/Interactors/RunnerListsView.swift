@@ -48,6 +48,9 @@ struct RunnerListsView: View {
                 promptURL()
             }
         }
+        .onDisappear {
+            StateManager.shared.clearMemoryCache()
+        }
     }
 }
 
@@ -337,9 +340,8 @@ extension RunnerListsView.RunnerListInfo {
         func RunnerHeader(runner: Runner) -> some View {
             HStack {
                 let url = runner.thumbnail.flatMap { URL(string: listURL)!.appendingPathComponent("assets").appendingPathComponent($0) }
-                AsyncImage(url: url)
-                    .scaledToFill()
-                    .frame(width: 44, height: 44)
+                STTThumbView(url: url)
+                    .frame(width: 44, height: 44, alignment: .center)
                     .cornerRadius(7)
                 VStack(alignment: .leading, spacing: 5) {
                     Text(runner.name)
@@ -410,38 +412,6 @@ extension RunnerListsView {
                 }
             }
         }
-    }
-}
-
-extension DaisukeEngine {
-    func getRunnerList(at url: URL) async throws -> RunnerList {
-        let listUrl = url.lastPathComponent == "runners.json" ? url : url.runnersListURL
-        let req = URLRequest(url: listUrl, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 10)
-        let task = AF.request(req).validate().serializingDecodable(RunnerList.self)
-
-        let runnerList = try await task.value
-        return runnerList
-    }
-
-    // Get Source List Info
-    func saveRunnerList(at url: String) async throws {
-        // Get runner list
-        let base = URL(string: url)
-        guard let base else {
-            throw Errors.NamedError(name: "", message: "Invalid URL")
-        }
-        let url = base.runnersListURL
-        let runnerList = try await getRunnerList(at: url)
-        await MainActor.run(body: {
-            let realm = try! Realm()
-            let obj = StoredRunnerList()
-            obj.listName = runnerList.listName
-            obj.url = base.absoluteString
-            obj.hosted = runnerList.hosted ?? false
-            try! realm.safeWrite {
-                realm.add(obj, update: .modified)
-            }
-        })
     }
 }
 

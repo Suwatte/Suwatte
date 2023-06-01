@@ -15,7 +15,7 @@ struct ManageContentLinks: View {
 
     init(content: StoredContent) {
         self.content = content
-        let id = content._id
+        let id = content.id
         $entries.where = { $0.ids.contains(id) }
     }
 
@@ -61,7 +61,7 @@ struct ManageContentLinks: View {
             return []
         }
         var arr = Array(ids)
-        arr.removeAll(where: { $0 == content._id })
+        arr.removeAll(where: { $0 == content.id })
         let contents = Array(DataManager.shared.getStoredContents(ids: arr))
         return contents
     }

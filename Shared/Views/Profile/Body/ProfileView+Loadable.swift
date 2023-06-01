@@ -43,7 +43,7 @@ extension ProfileView {
                                      }
                                  }) { id in
                                      let chapterList = viewModel.chapters.value ?? []
-                                     let chapter = chapterList.first(where: { $0._id == id })
+                                     let chapter = chapterList.first(where: { $0.id == id })
                                      if let chapter = chapter {
                                          ReaderGateWay(readingMode: viewModel.content.recommendedReadingMode ?? .PAGED_COMIC, chapterList: chapterList, openTo: chapter)
                                              .onAppear {
@@ -84,7 +84,6 @@ extension ProfileView {
 
         func handleReconnection() {
             DispatchQueue.main.async {
-                viewModel.getMarkers()
                 viewModel.setupObservers()
             }
         }

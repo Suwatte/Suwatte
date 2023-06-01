@@ -108,7 +108,7 @@ extension ProfileView.Skeleton.BottomBar {
                     VStack(alignment: .leading, spacing: 2) {
                         // Chapter Name
                         if let chapter = actionState.chapter {
-                            Text("Chapter \(chapter.number.clean)")
+                            Text(chapter.name)
                                 .font(.subheadline)
                                 .bold()
                         }
@@ -139,7 +139,7 @@ extension ProfileView.Skeleton.BottomBar {
             // Haptic
             STTHelpers.triggerHaptic()
             // State
-            model.selection = actionState.chapter?._id
+            model.selection = actionState.chapter?.id
         }
     }
 }
@@ -148,7 +148,7 @@ extension ProfileView.Skeleton.BottomBar {
 
 extension ProfileView.Skeleton.BottomBar {
     struct ActionsListButton: View {
-        @ObservedResults(CustomThumbnail.self) var thumbnails
+        @ObservedResults(CustomThumbnail.self, where: { $0.isDeleted == false }) var thumbnails
         @ObservedResults(ContentLink.self) var contentLinks
         @State private var inputImage: UIImage?
         @State private var presentImageSheet = false
@@ -180,7 +180,7 @@ extension ProfileView.Skeleton.BottomBar {
 
             .onChange(of: inputImage) { val in
                 if let val = val {
-                    DataManager.shared.setCustomThumbnail(image: val, id: model.sttIdentifier().id)
+                    DataManager.shared.setCustomThumbnail(image: val, id: sttId.id)
                 }
             }
             .onChange(of: presentNextEntry, perform: { newValue in
@@ -208,7 +208,7 @@ extension ProfileView.Skeleton.BottomBar {
 
         var hasCustomThumb: Bool {
             thumbnails
-                .where { $0.content._id == sttId.id }
+                .where { $0.id == sttId.id }
                 .count >= 1
         }
 

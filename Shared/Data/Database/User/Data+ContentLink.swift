@@ -8,16 +8,11 @@
 import Foundation
 import RealmSwift
 
-final class ContentLink: Object, Identifiable {
-    @Persisted(primaryKey: true) var id = UUID().uuidString
-    @Persisted var ids: MutableSet<String>
-}
-
 extension DataManager {
     func linkContent(_ parent: StoredContent, _ child: DSKCommon.Highlight, _ sourceId: String) -> Bool {
         let id = ContentIdentifier(contentId: child.contentId, sourceId: sourceId).id
         saveIfNeeded(child, sourceId)
-        return linkContent(parent._id, id)
+        return linkContent(parent.id, id)
     }
 
     func linkContent(_ one: String, _ two: String) -> Bool {
@@ -25,7 +20,7 @@ extension DataManager {
 
         let matches = !realm
             .objects(ContentLink.self)
-            .where { $0.ids.contains(one) && $0.ids.contains(two) }
+            .where { $0.ids.contains(one) && $0.ids.contains(two) && $0.isDeleted == false }
             .isEmpty
 
         if matches {
@@ -34,7 +29,7 @@ extension DataManager {
 
         let target = realm
             .objects(ContentLink.self)
-            .where { $0.ids.containsAny(in: [one, two]) }
+            .where { $0.ids.containsAny(in: [one, two]) && $0.isDeleted == false }
             .first
 
         // A or B already in a linkset
@@ -48,7 +43,7 @@ extension DataManager {
             obj.ids.insert(one)
             obj.ids.insert(two)
             try! realm.safeWrite {
-                realm.add(obj)
+                realm.add(obj, update: .modified)
             }
         }
         return true
@@ -59,14 +54,14 @@ extension DataManager {
 
         let target = realm
             .objects(ContentLink.self)
-            .where { $0.ids.containsAny(in: [child._id, from._id]) }
+            .where { $0.ids.containsAny(in: [child.id, from.id]) && $0.isDeleted == false}
             .first
 
         guard let target else {
             return
         }
         try! realm.safeWrite {
-            target.ids.remove(child._id)
+            target.ids.remove(child.id)
         }
     }
 
@@ -74,7 +69,7 @@ extension DataManager {
         let realm = try! Realm()
         let ids = realm
             .objects(ContentLink.self)
-            .where { $0.ids.contains(id) }
+            .where { $0.ids.contains(id) && $0.isDeleted == false }
             .first?
             .ids
 
@@ -101,13 +96,13 @@ extension DataManager {
 
         // Check For Stored Tracker Links
 
-        let ids = linked.map(\._id)
+        let ids = linked.map(\.id)
 
         let realm = try! Realm()
 
         let match = realm
             .objects(TrackerLink.self)
-            .where { $0._id.in(ids) }
+            .where { $0.id.in(ids) }
             .first?
             .trackerInfo
 

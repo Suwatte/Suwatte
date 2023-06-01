@@ -29,7 +29,7 @@ final class ICDMDownloadObject: Object, ObjectKeyIdentifiable {
             guard let chapter = chapter else {
                 return
             }
-            _id = chapter._id
+            _id = chapter.id
         }
     }
 
@@ -58,7 +58,7 @@ extension DataManager {
         let realm = try! Realm()
 
         return !realm.objects(ICDMDownloadObject.self)
-            .where { $0.chapter._id == id }
+            .where { $0.chapter.id == id }
             .isEmpty
     }
 }

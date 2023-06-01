@@ -14,46 +14,31 @@ final class LocalContentManager: ObservableObject {
     @Published var isSelecting = false
     @Published var idHash: [Int64: Book] = [:]
 
-    private var observer: DispatchSourceFileSystemObject?
+    private var observer: DirectoryObserver
     static var shared = LocalContentManager()
-    let directory = FileManager.default.documentDirectory.appendingPathComponent("UserContent", isDirectory: true)
+    let directory = CloudDataManager
+        .shared
+        .getDocumentDiretoryURL()
+        .appendingPathComponent("Library")
     internal let zipClient = ZipClient()
     internal let rarClient = RarClient()
     @Published var downloads: [DownloadObject] = []
+    
     init() {
         directory.createDirectory()
-
-        // Only Observe When App is in the foreground.
-        // This behaviour should change when in the event of a switch to a more panels like approach to file management
-        observer = observeDirectory()
+        observer = DirectoryObserver(extensions: ["cbr", "cbz", "epub"], url: directory)
     }
-
-    // Reference: https://medium.com/over-engineering/monitoring-a-folder-for-changes-in-ios-dc3f8614f902
-    func observeDirectory() -> DispatchSourceFileSystemObject? {
-        let descriptor = open(directory.path, O_EVTONLY)
-        let observer = DispatchSource.makeFileSystemObjectSource(fileDescriptor: descriptor, eventMask: .write, queue: .global(qos: .utility))
-        observer.setEventHandler { [weak self] in
-            Logger.shared.log("[LOCAL CM] Event Caught")
-            self?.updateBooks()
+    
+    func observe() {
+        observer.observe { folder in
+            print(folder)
         }
-
-        observer.setRegistrationHandler { [weak self] in
-            Logger.shared.log("[LOCAL CM] Observer Registered")
-            self?.updateBooks()
-        }
-
-        observer.setCancelHandler {
-            Logger.shared.log("[LOCAL CM] Closing Observer")
-            close(descriptor)
-        }
-        observer.resume()
-        return observer
     }
-
-    deinit {
-        observer?.cancel()
+    
+    func stopObserving() {
+        observer.stopObserving()
     }
-
+    
     enum Errors: Error {
         case FileExists
         case DNE
@@ -131,7 +116,6 @@ final class LocalContentManager: ObservableObject {
         default: break
         }
 
-        //        print("Done - ", book.title)
         return book
     }
 
@@ -169,8 +153,16 @@ final class LocalContentManager: ObservableObject {
     }
 
     func updateBooks() {
+//        for file in directory.contents {
+//            let resources = try? file.resourceValues(forKeys: [.fileResourceIdentifierKey, .fileContentIdentifierKey, .fileSizeKey, .creationDateKey, .addedToDirectoryDateKey])
+//            guard let fileId = resources?.fileContentIdentifier else {
+//                continue
+//            }
+//            print(fileId)
+//        }
+        return
         for file in directory.contents.sorted(by: \.lastModified, descending: true) {
-            if let book = generateBook(at: file) {
+             if let book = generateBook(at: file) {
                 DispatchQueue.main.async { [weak self] in
                     self?.idHash.updateValue(book, forKey: book.id)
                 }
@@ -200,12 +192,10 @@ final class LocalContentManager: ObservableObject {
 
     func generateStored(for book: Book) -> StoredChapter {
         let chapter = StoredChapter()
-        chapter.sourceId = STTHelpers.LOCAL_CONTENT_ID
-        chapter.contentId = String(book.id)
-        chapter.chapterId = ""
+        chapter.chapterId = String(book.id)
         chapter.title = book.title
         chapter.number = book.chapter ?? 1
-        chapter._id = "\(chapter.sourceId)||\(chapter.contentId)||\(chapter.chapterId)"
+        chapter.id = "\(STTHelpers.LOCAL_CONTENT_ID)||\(chapter.chapterId)"
         return chapter
     }
 }

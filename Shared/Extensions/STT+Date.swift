@@ -87,8 +87,7 @@ extension Date {
 
         let unitFlags: Set<Calendar.Component> = [.minute, .hour, .day, .weekOfMonth, .month, .year, .second]
         let components: DateComponents = calendar.dateComponents(unitFlags, from: earliest, to: latest)
-        // print("")
-        // print(components)
+
         if let year = components.year {
             if year >= 2 {
                 return "\(year) years ago"

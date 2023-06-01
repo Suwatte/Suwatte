@@ -10,10 +10,7 @@ import SwiftUI
 
 extension LibraryView {
     struct LibraryGrid: View {
-        var collection: LibraryCollection?
-        var readingFlag: LibraryFlag?
-        @ObservedResults(LibraryEntry.self) var unfilteredEntries
-        @ObservedResults(ICDMDownloadObject.self, where: { $0.status == .completed }) var downloads
+        @StateObject var model: ViewModel
         // Defaults
         @AppStorage(STTKeys.LibraryGridSortKey) var sortKey: KeyPath = .name
         @AppStorage(STTKeys.LibraryGridSortOrder) var sortOrder: SortOrder = .asc
@@ -21,21 +18,38 @@ extension LibraryView {
         // State
         @State var presentOrderOptions = false
         @State var presentMigrateSheet = false
-        @StateObject var model: ViewModel = .init()
         @State var query = ""
 
         @ViewBuilder
         func conditional() -> some View {
-            let filteredResult = filteredLibrary()
-            if filteredResult.isEmpty {
-                No_ENTRIES
-            } else {
-                MainView(filteredResult)
+            Group {
+                if let library = model.library {
+                    if library.isEmpty {
+                        No_ENTRIES
+                    } else {
+                        MainView(library)
+                            .onChange(of: sortKey, perform: observe)
+                            .onChange(of: sortOrder, perform: observe)
+                            .onChange(of: showDownloadsOnly, perform: observe)
+                    }
+                } else {
+                    ProgressView()
+                }
             }
+        }
+        
+        func observe(_ n: Any? = nil) {
+            model.observe(downloadsOnly: showDownloadsOnly, key: sortKey, order: sortOrder)
         }
 
         var body: some View {
             conditional()
+                .task {
+                    observe()
+                }
+                .onDisappear {
+                    model.disconnect()
+                }
                 .toolbar {
                     ToolbarItemGroup(placement: .navigationBarTrailing) {
                         if model.isSelecting {
@@ -84,15 +98,18 @@ extension LibraryView {
                                 }
 
                                 Button {
-                                    let targets = filteredLibrary().compactMap { $0.content }.map { ($0.contentId, $0.sourceId) } as [(String, String)]
                                     Task {
-                                        for content in targets {
-                                            await DataManager.shared.refreshStored(contentId: content.0, sourceId: content.1)
-                                        }
-                                        await MainActor.run {
-                                            ToastManager.shared.info("Database Refreshed")
-                                        }
+                                        model.refresh()
                                     }
+//                                    let targets = filteredLibrary().compactMap { $0.content }.map { ($0.contentId, $0.sourceId) } as [(String, String)]
+//                                    Task {
+//                                        for content in targets {
+//                                            await DataManager.shared.refreshStored(contentId: content.0, sourceId: content.1)
+//                                        }
+//                                        await MainActor.run {
+//                                            ToastManager.shared.info("Database Refreshed")
+//                                        }
+//                                    }
                                 } label: {
                                     Label("Refresh Database", systemImage: "arrow.triangle.2.circlepath")
                                 }
@@ -104,26 +121,26 @@ extension LibraryView {
                     }
                 }
                 .sheet(isPresented: $model.presentOptionsSheet) {
-                    OptionsSheet(collection: collection)
+                    OptionsSheet(collection: model.collection)
                 }
                 .fullScreenCover(isPresented: $presentMigrateSheet, content: {
                     PreMigrationView()
                 })
+                .navigationTitle(NAV_TITLE)
+                .navigationBarTitleDisplayMode(.inline)
                 .environmentObject(model)
                 .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: Text("Search \(NAV_TITLE)"))
         }
 
         var NAV_TITLE: String {
-            collection?.name ?? readingFlag?.description ?? "All Titles"
+            model.collection?.name ?? model.readingFlag?.description ?? "All Titles"
         }
 
         func MainView(_ entries: Results<LibraryEntry>) -> some View {
-            LibraryGrid.Grid(entries: entries, collection: collection)
+            LibraryGrid.Grid(entries: entries, collection: model.collection)
                 .modifier(CollectionModifier(selection: $model.navSelection))
                 .modifier(SelectionModifier(entries: entries))
                 .environment(\.libraryIsSelecting, model.isSelecting)
-                .navigationTitle(NAV_TITLE)
-                .navigationBarTitleDisplayMode(.inline)
                 .animation(.default, value: entries)
         }
 
@@ -166,92 +183,6 @@ extension LibraryView {
 
         func ViewTitle(count: Int) -> String {
             "\(model.isSelecting ? model.selectedIndexes.count : count) \(model.isSelecting ? "Selection" : "Title")\((model.isSelecting ? model.selectedIndexes.count : count) > 1 ? "s" : "")"
-        }
-
-        func filteredLibrary() -> Results<LibraryEntry> {
-            var results = unfilteredEntries
-                .where { $0.content != nil }
-
-            if !query.isEmpty {
-                results = results.filter("ANY content.additionalTitles CONTAINS[cd] %@ OR content.title CONTAINS[cd] %@ OR content.summary CONTAINS[cd] %@", query, query, query)
-            }
-
-            // Collection Filter
-            if let collection = collection {
-                var predicates = [NSPredicate]()
-
-                let idPredicate = NSPredicate(format: "ANY collections CONTAINS[cd] %@", collection._id)
-
-                predicates.append(idPredicate)
-
-                if let filter = collection.filter {
-                    switch filter.adultContent {
-                    case .both: break
-                    case .only:
-                        predicates.append(NSPredicate(format: "content.adultContent = true"))
-                    case .none:
-                        predicates.append(NSPredicate(format: "content.adultContent = false"))
-                    }
-
-                    if !filter.readingFlags.isEmpty {
-                        let flags = filter.readingFlags.map { $0 } as [LibraryFlag]
-                        predicates.append(NSPredicate(format: "flag IN %@", flags))
-                    }
-
-                    if !filter.statuses.isEmpty {
-                        let statuses = filter.statuses.map { $0 } as [ContentStatus]
-                        predicates.append(NSPredicate(format: "content.status IN %@", statuses))
-                    }
-
-                    if !filter.sources.isEmpty {
-                        let sources = filter.sources.map { $0 } as [String]
-                        predicates.append(NSPredicate(format: "content.sourceId IN %@", sources))
-                    }
-
-                    if !filter.textContains.isEmpty {
-                        let texts = filter.textContains.map { $0 } as [String]
-                        for text in texts {
-                            predicates.append(NSPredicate(format: "ANY content.additionalTitles CONTAINS[cd] %@ OR content.title CONTAINS[cd] %@ OR content.summary CONTAINS[cd] %@", text, text, text))
-                        }
-                    }
-
-                    if !filter.contentType.isEmpty {
-                        //                        let types = filter.contentType.map({ $0 }) as [ExternalContentType]
-                    }
-
-                    if !filter.tagContains.isEmpty {
-                        let tags = filter.tagContains.map { $0.lowercased() } as [String]
-                        predicates.append(NSPredicate(format: "ANY content.properties.tags.label IN[cd] %@", tags))
-                    }
-                }
-
-                let compound = NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
-                //                results = results.where {
-                //                    $0.collections.contains(collection._id) || (
-                //
-                //                        $0.content.title.contains(collection.filter., options: )
-                //                    )
-                //                }
-                results = results.filter(compound)
-            }
-
-            if let readingFlag = readingFlag {
-                results = results.where {
-                    $0.flag == readingFlag
-                }
-            }
-
-            if showDownloadsOnly {
-                let ids = downloads.compactMap { $0.chapter?.ContentIdentifer } as [String]
-                results = results.where {
-                    $0._id.in(ids)
-                }
-            }
-
-            let ascending = sortOrder.ascending
-            let keyPath = sortKey.path
-            results = results.sorted(byKeyPath: keyPath, ascending: ascending)
-            return results
         }
     }
 }

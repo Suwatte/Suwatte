@@ -146,7 +146,7 @@ private extension Skeleton {
 
         var EntryInLibrary: Bool {
             libraryEntries
-                .where { $0._id == model.sttIdentifier().id }
+                .where { $0.id == model.sttIdentifier().id }
                 .count >= 1
         }
     }

@@ -47,7 +47,7 @@ extension MCV {
                     Text(collection.name)
                 }
             }
-            .onDelete(perform: $collections.remove)
+            .onDelete(perform: delete)
             .onMove(perform: move)
         }
     }
@@ -57,6 +57,15 @@ extension MCV {
         arr.move(fromOffsets: source, toOffset: destination)
         DataManager.shared.reorderCollections(arr)
     }
+    
+    func delete(from idxs: IndexSet) {
+        let ids = idxs.compactMap({ collections.getOrNil($0)?.id })
+        ids.forEach { id in
+            DataManager.shared.deleteCollection(id: id)
+        }
+    }
+    
+
 }
 
 extension MCV {

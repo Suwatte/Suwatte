@@ -20,6 +20,7 @@ struct MigrationView: View {
     @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
     @Environment(\.presentationMode) var presentationMode
     @State var presentAlert = false
+    @ObservedResults(StoredRunnerObject.self, where: { $0.isDeleted == false && $0.enabled == true }) var runners
     var body: some View {
         List {
             Section {
@@ -206,7 +207,7 @@ extension MigrationView {
     }
 
     private func getAvailableSources() -> [AnyContentSource] {
-        let allSources = SourceManager.shared.sources
+        let allSources = SourceManager.shared.sources.values
         return allSources
             .filter { !preferredDestinations.map(\.id).contains($0.id) }
     }
@@ -231,7 +232,7 @@ extension MigrationView {
     }
 
     func removeItem(id: String) {
-        contents.removeAll(where: { $0._id == id })
+        contents.removeAll(where: { $0.id == id })
         operations.removeValue(forKey: id)
     }
 }
@@ -243,11 +244,11 @@ extension MigrationView {
     var EntriesView: some View {
         let sorted = contents.sorted(by: \.title, descending: false)
         ForEach(sorted) { content in
-            let state = operations[content._id] ?? .idle
+            let state = operations[content.id] ?? .idle
             Section {
                 ItemCell(content, state)
             } header: {
-                if content._id == sorted.first?._id {
+                if content.id == sorted.first?.id {
                     Text("Titles")
                 }
             }
@@ -261,12 +262,13 @@ extension MigrationView {
 extension MigrationView {
     @ViewBuilder
     func ItemCell(_ content: StoredContent, _ state: ItemState) -> some View {
+        let name = runners.where({ $0.id == content.sourceId }).first?.name ?? ""
         VStack {
             // Warning
             HStack {
                 Text(content.SourceName)
                 Spacer()
-                Text(SourceManager.shared.getSource(id: state.value()?.sourceId ?? "")?.name ?? "")
+                Text(name)
             }
             .padding(.horizontal)
             .font(.subheadline.weight(.ultraLight))
@@ -284,7 +286,7 @@ extension MigrationView {
         }
         .swipeActions {
             Button(role: .destructive) {
-                removeItem(id: content._id)
+                removeItem(id: content.id)
             } label: {
                 Label("Remove", systemImage: "trash")
             }
@@ -345,17 +347,17 @@ extension MigrationView {
         })
 
         for content in contents {
-            let id = content._id
-            await MainActor.run(body: {
-                operations[id] = .searching
-            })
+            let id = content.id
+//            await MainActor.run(body: {
+//                operations[id] = .searching
+//            })
             let lastChapter = DataManager.shared.getLatestStoredChapter(content.sourceId, content.contentId)?.number
             let sources = preferredDestinations.filter { $0.id != content.sourceId }
             if Task.isCancelled {
                 return
             }
             // Get Content & Chapters
-            let result = await handleSourcesSearch(id: content._id, query: content.title, chapter: lastChapter, sources: sources)
+            let result = await handleSourcesSearch(id: content.id, query: content.title, chapter: lastChapter, sources: sources)
 
             Task { @MainActor in
                 withAnimation {
@@ -480,15 +482,15 @@ extension MigrationView {
 
     private func filterNonMatches() {
         let cases = contents.filter { content in
-            let data = operations[content._id]
+            let data = operations[content.id]
             guard let data else { return true }
             switch data {
             case .found: return false
             default: return true
             }
-        }.map(\._id)
+        }.map(\.id)
 
-        contents.removeAll(where: { cases.contains($0._id) })
+        contents.removeAll(where: { cases.contains($0.id) })
         cases.forEach {
             operations.removeValue(forKey: $0)
         }
@@ -513,7 +515,7 @@ extension MigrationView {
             switch libraryStrat {
             case .link:
                 guard let content = target.content else { return }
-                _ = DataManager.shared.linkContent(stored._id, content._id)
+                _ = DataManager.shared.linkContent(stored.id, content.id)
             case .replace:
                 let obj = LibraryEntry()
                 obj.content = stored
@@ -528,7 +530,7 @@ extension MigrationView {
             for (id, state) in data {
                 let target = realm
                     .objects(LibraryEntry.self)
-                    .where { $0._id == id }
+                    .where { $0.id == id }
                     .first
                 guard let target else { continue }
                 switch state {

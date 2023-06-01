@@ -8,23 +8,22 @@
 import SwiftUI
 
 struct ReaderGateWay: View {
-    @State var readingMode: ReadingMode
+    var readingMode: ReadingMode
     var chapterList: [StoredChapter]
     var openTo: StoredChapter
     var pageIndex: Int?
     var title: String?
     @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
-
+    
     var body: some View {
         Group {
             switch readingMode {
-            case .NOVEL:
-                NovelReaderView(model: .init(chapterList: chapterList, openTo: openTo))
-            case .WEB:
-                WebReader(chapter: openTo)
-            default:
-                ReaderView(model: .init(chapterList: chapterList, openTo: openTo, title: title, pageIndex: pageIndex, readingMode: readingMode))
-                    .defaultAppStorage(.init(suiteName: openTo.ContentIdentifer) ?? .standard)
+                case .NOVEL:
+                    EmptyView()
+                case .WEB:
+                    WebReader(chapter: openTo)
+                default:
+                    ReaderView(model: .init(chapterList: chapterList, openTo: openTo,title: title, pageIndex: pageIndex ,readingMode: readingMode))
             }
         }
         .tint(accentColor)
@@ -34,7 +33,7 @@ struct ReaderGateWay: View {
 
 struct WebReader: View {
     var chapter: StoredChapter
-
+    
     var body: some View {
         NavigationView {
             STTWebView(url: URL(string: chapter.webUrl ?? ""))

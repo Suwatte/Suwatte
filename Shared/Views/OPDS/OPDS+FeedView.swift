@@ -341,21 +341,19 @@ extension Publication: Identifiable {
     }
 
     func toStoredChapter() throws -> StoredChapter {
-        guard let link = streamLink, let count = link.properties["count"] as? String, let lastRead = link.properties["lastRead"] as? String else {
+        guard let link = streamLink else {
             throw OPDSParserError.documentNotFound
         }
-
         let chapter = StoredChapter()
-        chapter.sourceId = STTHelpers.OPDS_CONTENT_ID
-        chapter.contentId = metadata.identifier ?? link.href
+        chapter.id = STTHelpers.OPDS_CONTENT_ID + "||\(metadata.identifier ?? link.href)"
         chapter.chapterId = link.href
-        chapter._id = ContentIdentifier(contentId: chapter.contentId, sourceId: chapter.sourceId).id
         chapter.title = metadata.title
         chapter.thumbnail = thumbnailURL
-        let d = Map<String, String>()
-        d.setValue(count, forKey: "opds_page_count")
-        d.setValue(lastRead, forKey: "opds_last_read")
-        chapter.metadata = d
+        
+        
+//        let d = Map<String, String>()
+//        d.setValue(count, forKey: "opds_page_count")
+//        d.setValue(lastRead, forKey: "opds_last_read")
         return chapter
     }
 }

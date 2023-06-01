@@ -79,7 +79,7 @@ extension ProfileView.Skeleton.ChapterView {
                             }
                         }
                         .onTapGesture {
-                            model.selection = chapter._id
+                            model.selection = chapter.id
                         }
                     }
                 }
@@ -127,14 +127,14 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
     }
 
     func chapterProgress(_ chapter: StoredChapter) -> Double? {
-        guard let id = model.actionState.chapter?._id, id == chapter._id else {
+        guard let id = model.actionState.chapter?.id, id == chapter.id else {
             return nil
         }
         return model.actionState.marker?.progress
     }
 
     func getDownload(_ chapter: StoredChapter) -> ICDMDownloadObject? {
-        model.downloads[chapter._id]
+        model.downloads[chapter.id]
     }
 }
 

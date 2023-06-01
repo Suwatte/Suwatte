@@ -41,7 +41,7 @@ struct AddContentLink: View {
     }
 
     @ViewBuilder
-    func SourceCell(source: AnyContentSource) -> some View {
+    func SourceCell(source: StoredRunnerObject) -> some View {
         let id = source.id
         let data = model.results[id] ?? .loading
         Section {

@@ -17,7 +17,7 @@ extension ReadLater: Codable {
 
         let container = try decoder.container(keyedBy: Keys.self)
 
-        _id = try container.decode(String.self, forKey: .id)
+        id = try container.decode(String.self, forKey: .id)
         content = try container.decodeIfPresent(StoredContent.self, forKey: .content)
         dateAdded = try container.decode(Date.self, forKey: .dateAdded)
     }
@@ -25,7 +25,7 @@ extension ReadLater: Codable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: Keys.self)
 
-        try container.encode(_id, forKey: .id)
+        try container.encode(id, forKey: .id)
         try container.encode(content, forKey: .content)
         try container.encode(dateAdded, forKey: .dateAdded)
     }

@@ -49,7 +49,7 @@ extension ProfileView {
 
         func handleSaveEvent(for cover: String) async {
             let url = URL(string: cover)
-            guard let url, let source = SourceManager.shared.getSource(id: model.source.id) as? any ModifiableSource else {
+            guard let url, let source = try? SourceManager.shared.getContentSource(id: model.source.id) as? any ModifiableSource else {
                 return
             }
             

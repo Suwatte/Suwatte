@@ -120,7 +120,7 @@ extension ReaderView {
                     return
                 }
 
-                let chapterId = chapter._id
+                let chapterId = chapter.id
 
                 // Archive
                 if !chapterData.archivePaths.isEmpty {
@@ -235,14 +235,14 @@ extension ReaderView {
 
 extension StoredChapter {
     static func == (lhs: StoredChapter, rhs: StoredChapter) -> Bool {
-        lhs._id == rhs._id
+        lhs.id == rhs.id
     }
 }
 
 extension ReaderView.Page {
     private func prepareImageURL(_ url: URL) async throws -> URLRequest {
         let sourceId = sourceId
-        guard let source = SourceManager.shared.getSource(id: sourceId) as? any ModifiableSource, source.config.hasThumbnailInterceptor  else {
+        guard let source = try SourceManager.shared.getContentSource(id: sourceId) as? any ModifiableSource, source.config.hasThumbnailInterceptor  else {
             return .init(url: url)
         }
         let response = try await source.willRequestImage(request: .init(url: url.absoluteString))

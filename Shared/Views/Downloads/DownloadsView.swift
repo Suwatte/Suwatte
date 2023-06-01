@@ -68,28 +68,29 @@ struct DownloadsView: View {
     }
 
     func getEntries() -> [StoredContent] {
-        var data = DataManager
-            .shared
-            .getStoredContents(ids: downloads.map { $0.chapter!.ContentIdentifer })
-
-        if !text.isEmpty {
-            data = data.filter("ANY additionalTitles CONTAINS[cd] %@ OR title CONTAINS[cd] %@ OR summary CONTAINS[cd] %@", text, text, text)
-        }
-
-        let out = data
-            .sorted(by: { lhs, rhs in
-                switch sortOption {
-                case .downloadCount: return downloadCount(for: lhs) < downloadCount(for: rhs)
-                case .title: return lhs.title < rhs.title
-                case .dateAdded: return STTHelpers.optionalCompare(firstVal: earliestDownload(for: lhs)?.dateAdded, secondVal: earliestDownload(for: rhs)?.dateAdded)
-                }
-            })
-
-        if isDescending {
-            return out.reversed()
-        }
-
-        return out
+//        var data = DataManager
+//            .shared
+//            .getStoredContents(ids: downloads.map { $0.chapter!.ContentIdentifer })
+//
+//        if !text.isEmpty {
+//            data = data.filter("ANY additionalTitles CONTAINS[cd] %@ OR title CONTAINS[cd] %@ OR summary CONTAINS[cd] %@", text, text, text)
+//        }
+//
+//        let out = data
+//            .sorted(by: { lhs, rhs in
+//                switch sortOption {
+//                case .downloadCount: return downloadCount(for: lhs) < downloadCount(for: rhs)
+//                case .title: return lhs.title < rhs.title
+//                case .dateAdded: return STTHelpers.optionalCompare(firstVal: earliestDownload(for: lhs)?.dateAdded, secondVal: earliestDownload(for: rhs)?.dateAdded)
+//                }
+//            })
+//
+//        if isDescending {
+//            return out.reversed()
+//        }
+//
+//        return out
+        return []
     }
 }
 
@@ -128,14 +129,16 @@ extension DownloadsView {
     }
 
     func downloadCount(for entry: StoredContent) -> Int {
-        downloads
-            .filter { $0.chapter?.sourceId == entry.sourceId && $0.chapter?.contentId == entry.contentId }
-            .count
+//        downloads
+//            .filter { $0.chapter?.sourceId == entry.sourceId && $0.chapter?.contentId == entry.contentId }
+//            .count
+        0
     }
 
     func earliestDownload(for entry: StoredContent) -> ICDMDownloadObject? {
-        downloads
-            .last(where: { $0.chapter?.sourceId == entry.sourceId && $0.chapter?.contentId == entry.contentId })
+//        downloads
+//            .last(where: { $0.chapter?.sourceId == entry.sourceId && $0.chapter?.contentId == entry.contentId })
+        nil
     }
 }
 

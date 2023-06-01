@@ -93,7 +93,7 @@ extension ExploreView.SearchView.ResultsView {
         @State var readLater: Bool
         var body: some View {
             ZStack(alignment: .topTrailing) {
-                DefaultTile(entry: data)
+                DefaultTile(entry: data, sourceId: model.source.id)
                 if inLibrary || readLater {
                     ColoredBadge(color: inLibrary ? .accentColor : .yellow)
                 }
