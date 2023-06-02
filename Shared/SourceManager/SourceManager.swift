@@ -10,7 +10,7 @@ import JavaScriptCore
 import RealmSwift
 import UIKit
 
-final class SourceManager: ObservableObject {
+final class SourceManager {
     static let shared = SourceManager()
     private let directory = FileManager
         .default
@@ -22,7 +22,7 @@ final class SourceManager: ObservableObject {
             .appendingPathComponent("common.js")
     }
 
-    @Published var sources: [String:AnyContentSource] = [:]
+    var sources: [String:AnyContentSource] = [:]
     private let vm: JSVirtualMachine
     init() {
         // Create Directory
@@ -353,37 +353,54 @@ extension SourceManager {
 // MARK: - Updates
 
 extension SourceManager {
-    func handleBackgroundLibraryUpdate() async -> Int {
-        return await fetchLibaryUpdates()
-    }
-
-    func handleForegroundLibraryUpdate() async -> Int {
-        return await fetchLibaryUpdates()
-    }
-
-    private func fetchLibaryUpdates() async -> Int {
-        let result = await withTaskGroup(of: Int.self, body: { group in
-
-            for source in sources.values {
-                group.addTask {
-                    let count = try? await self.fetchUpdatesForSource(source: source)
-                    return count ?? 0
+    
+    private func fetchLibraryUpdates() async -> Int {
+        let realm = try! await Realm()
+        
+        // Get Sources
+        let sources = realm
+            .objects(StoredRunnerObject.self)
+            .where({ $0.isDeleted == false })
+            .where({ $0.enabled == true })
+            .sorted(by: \.dateAdded)
+            .compactMap { try? self.getContentSource(id: $0.id) }
+        
+        // Fetch Update For Each Source
+        let result = await withTaskGroup(of: Int.self) { group in
+            
+            for source in sources {
+                group.addTask { [weak self] in
+                    do {
+                        let updateCount = try await self?.fetchUpdatesForSource(source: source)
+                        return updateCount ?? 0
+                    } catch {
+                        Logger.shared.error("\(error)")
+                    }
+                    return 0
                 }
             }
-
+            
             var total = 0
             for await result in group {
                 total += result
             }
             return total
-        })
+        }
+        
         UserDefaults.standard.set(Date(), forKey: STTKeys.LastFetchedUpdates)
         return result
     }
+    func handleBackgroundLibraryUpdate() async -> Int {
+        return await fetchLibraryUpdates()
+    }
 
-    @MainActor
+    func handleForegroundLibraryUpdate() async -> Int {
+        return await fetchLibraryUpdates()
+    }
+
     private func fetchUpdatesForSource(source: AnyContentSource) async throws -> Int {
-        let realm = try! Realm(queue: nil)
+        
+        let realm = try! await Realm()
         let date = UserDefaults.standard.object(forKey: STTKeys.LastFetchedUpdates) as! Date
         let skipConditions = Preferences.standard.skipConditions
         let validStatuses = [ContentStatus.ONGOING, .HIATUS, .UNKNOWN]
@@ -404,15 +421,19 @@ extension SourceManager {
                 .where { $0.unreadCount == 0 }
         }
         // Title Has No Markers, Has not been started
-//        if skipConditions.contains(.NO_MARKERS) {
-//            let startedTitles = []
-//
-//            results = results
-//                .where { $0.id.in(startedTitles) }
-//        }
-        let library = results.map { $0 } as [LibraryEntry]
+        if skipConditions.contains(.NO_MARKERS) {
+            let ids = results.map(\.id)
+            let startedTitles = realm
+                .objects(ProgressMarker.self)
+                .where { $0.id.in(ids) }
+                .map(\.id)
+
+            results = results
+                .where { $0.id.in(startedTitles) }
+        }
+        let library = Array(results.freeze())
         var updateCount = 0
-        Logger.shared.log("[DAISUKE] [UPDATER] [\(source.id)] \(library.count) Titles Matching")
+        Logger.shared.info("[\(source.id)] [Updates Checker] Updating \(library.count) titles")
         for entry in library {
             guard let contentId = entry.content?.contentId else {
                 continue
@@ -462,16 +483,19 @@ extension SourceManager {
                 if !entry.linkedHasUpdates, linkedHasUpdate {
                     entry.linkedHasUpdates = true
                 }
-                // Update Chapters
-//                let stored = chapters?
-//                    .map { $0.toStoredChapter(withSource: source.id) }
-//                if let stored {
-//                    realm.add(stored, update: .modified)
-//                }
             }
-
-            // Update Unread Count
-            DataManager.shared.updateUnreadCount(for: entry.content!.ContentIdentifier, realm)
+            
+            
+            guard let chapters = chapters else {
+                DataManager.shared.updateUnreadCount(for: entry.content!.ContentIdentifier, realm)
+                continue
+            }
+            let sourceId = source.id
+            Task {
+                let stored = chapters.map { $0.toStoredChapter(withSource: sourceId )}
+                DataManager.shared.storeChapters(stored)
+                DataManager.shared.updateUnreadCount(for: entry.content!.ContentIdentifier, realm)
+            }
 
             updateCount += updates
         }
@@ -497,39 +521,38 @@ extension SourceManager {
         return chapters
     }
 
-    @MainActor
     func linkedHasUpdates(id: String, lowerChapterLimit: Double?) async -> Bool {
-//        let linked = DataManager.shared.getLinkedContent(for: id)
-//
-//        for title in linked {
-//            guard let source = getSource(id: title.sourceId) else { continue }
-//            guard let chapters = try? await source.getContentChapters(contentId: title.contentId) else { continue }
-//            let marked = try? await(source as? (any SyncableSource))?.getReadChapterMarkers(contentId: title.contentId)
-//            let lastFetched = DataManager.shared.getLatestStoredChapter(source.id, title.contentId)
-//            var filtered = chapters
-//
-//            if let lowerChapterLimit {
-//                filtered = filtered
-//                    .filter { $0.number > lowerChapterLimit }
-//            }
-//
-//            // Marked As Read on Source
-//            if let marked {
-//                filtered = filtered
-//                    .filter { !marked.contains($0.chapterId) }
-//            }
-//
-//            // Already Fetched on Source
-//            if let lastFetched, let lastFetchedUpdatedIndex = chapters
-//                .first(where: { $0.chapterId == lastFetched.chapterId })?
-//                .index
-//            {
-//                filtered = filtered
-//                    .filter { $0.index < lastFetchedUpdatedIndex }
-//            }
-//
-//            if !filtered.isEmpty { return true }
-//        }
+        let linked = DataManager.shared.getLinkedContent(for: id)
+
+        for title in linked {
+            guard let source = getSource(id: title.sourceId) else { continue }
+            guard let chapters = try? await source.getContentChapters(contentId: title.contentId) else { continue }
+            let marked = try? await(source as? (any SyncableSource))?.getReadChapterMarkers(contentId: title.contentId)
+            let lastFetched = DataManager.shared.getLatestStoredChapter(source.id, title.contentId)
+            var filtered = chapters
+
+            if let lowerChapterLimit {
+                filtered = filtered
+                    .filter { $0.number > lowerChapterLimit }
+            }
+
+            // Marked As Read on Source
+            if let marked {
+                filtered = filtered
+                    .filter { !marked.contains($0.chapterId) }
+            }
+
+            // Already Fetched on Source
+            if let lastFetched, let lastFetchedUpdatedIndex = chapters
+                .first(where: { $0.chapterId == lastFetched.chapterId })?
+                .index
+            {
+                filtered = filtered
+                    .filter { $0.index < lastFetchedUpdatedIndex }
+            }
+
+            if !filtered.isEmpty { return true }
+        }
         return false
     }
 }
