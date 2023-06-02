@@ -27,6 +27,8 @@ enum AppTabs: Int, CaseIterable {
                 UpdateFeedView()
             }
             .protectContent()
+            .navigationViewStyle(.stack)
+
         case .more:
             MoreView()
         case .library:
@@ -38,6 +40,7 @@ enum AppTabs: Int, CaseIterable {
                 HistoryView()
             }
             .protectContent()
+            .navigationViewStyle(.stack)
         }
     }
 

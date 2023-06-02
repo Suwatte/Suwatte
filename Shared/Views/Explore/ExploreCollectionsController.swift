@@ -186,8 +186,8 @@ extension CTR {
     func observeLibrary() {
         let realm = try! Realm()
 
-        let libraryResults = realm.objects(LibraryEntry.self).where { $0.content.sourceId == source.id }
-        let savedForLaterResults = realm.objects(ReadLater.self).where { $0.content.sourceId == source.id }
+        let libraryResults = realm.objects(LibraryEntry.self).where { $0.content.sourceId == source.id && $0.isDeleted == false }
+        let savedForLaterResults = realm.objects(ReadLater.self).where { $0.content.sourceId == source.id && $0.isDeleted == false }
 
         libraryNotificationToken = libraryResults.observe { [weak self] _ in
             self?.library = OrderedSet(libraryResults.compactMap(\.content?.contentId))

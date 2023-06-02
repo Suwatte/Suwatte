@@ -17,7 +17,7 @@ struct ContentView: View {
 
     var body: some View {
         MainContent
-            .navigationViewStyle(.stack)
+//            .navigationViewStyle(.stack)
             .onChange(of: scenePhase) { phase in
                 switch phase {
                 case .background:

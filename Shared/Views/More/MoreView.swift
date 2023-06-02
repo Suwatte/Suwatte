@@ -5,7 +5,6 @@
 //  Created by Mantton on 2022-02-28.
 //
 
-import Nuke
 import SwiftUI
 
 struct MoreView: View {
@@ -17,10 +16,11 @@ struct MoreView: View {
                 GeneralSection
                 InteractorSection
                 DataSection
-                CacheSection
                 AppInformationSection
             }
+            .listStyle(.insetGrouped)
             .navigationTitle("More")
+            SettingsView()
         }
     }
 
@@ -72,38 +72,6 @@ struct MoreView: View {
             }
         } header: {
             Text("Data")
-        }
-    }
-    
-    var CacheSection: some View {
-        Section {
-            Button(role: .destructive) {
-                Task {
-                    ImagePipeline.shared.cache.removeAll()
-                    ToastManager.shared.info("Image Cache Cleared!")
-                }
-            } label: {
-                HStack {
-                    Text("Clear Image Cache")
-                    Spacer()
-                    Image(systemName: "photo.fill.on.rectangle.fill")
-                }
-            }
-            Button(role: .destructive) {
-                Task {
-                    HTTPCookieStorage.shared.removeCookies(since: .distantPast)
-                    URLCache.shared.removeAllCachedResponses()
-                    ToastManager.shared.info("Network Cache Cleared!")
-                }
-            } label: {
-                HStack {
-                    Text("Clear Network Cache")
-                    Spacer()
-                    Image(systemName: "network")
-                }
-            }
-        } header: {
-            Text("Cache")
         }
     }
 

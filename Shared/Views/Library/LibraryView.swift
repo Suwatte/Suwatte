@@ -23,6 +23,7 @@ struct LibraryView: View {
                     section.sectionView(firstCollection: $isActive, presentCollections: $presentCollectionSheet)
                 }
             }
+            .listStyle(.insetGrouped)
             .navigationTitle("Library")
             .toolbar(content: {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -44,6 +45,8 @@ struct LibraryView: View {
                 .navigationViewStyle(.stack)
 
             })
+            
+            LibraryGrid(model: .init())
         }
         .onAppear {
             if requireAuth && !LocalAuthManager.shared.isExpired {
@@ -101,13 +104,12 @@ extension LibraryView {
                     NavigationLink(destination: ReadLaterView()) {
                         Label("Saved For Later", systemImage: "clock.arrow.circlepath")
                     }
-                    NavigationLink(destination: EmptyView()) {
+                    NavigationLink(destination: HistoryView()) {
                         Label("Reading History", systemImage: "clock")
                     }
-
-//                    NavigationLink(destination: UpdateFeedView()) {
-//                        Label("Update Feed", systemImage: "bell")
-//                    }
+                    NavigationLink(destination: UpdateFeedView()) {
+                        Label("Your Feed", systemImage: "bell")
+                    }
                     NavigationLink(destination: DownloadsView()) {
                         Label("Downloads", systemImage: "square.and.arrow.down")
                     }

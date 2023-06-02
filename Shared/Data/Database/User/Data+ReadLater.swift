@@ -13,7 +13,7 @@ extension DataManager {
     func toggleReadLater(_ source: String, _ content: String) {
         let id = ContentIdentifier(contentId: content, sourceId: source).id
         let realm = try! Realm()
-        if let obj = realm.objects(ReadLater.self).first(where: { $0.id == id }) {
+        if let obj = realm.objects(ReadLater.self).first(where: { $0.id == id && $0.isDeleted == false }) {
             try! realm.safeWrite {
                 obj.isDeleted = true
             }

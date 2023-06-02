@@ -7,6 +7,7 @@
 
 import RealmSwift
 import SwiftUI
+import Nuke
 
 struct SettingsView: View {
     var body: some View {
@@ -16,6 +17,7 @@ struct SettingsView: View {
             ReaderSection()
             UpdatesSection()
             PrivacySection()
+            CacheSection()
             NetworkSection()
             RunnersSection()
         }
@@ -216,6 +218,43 @@ extension SettingsView {
                 Text("Library")
             }
             .animation(.default, value: alwaysAsk)
+        }
+    }
+}
+
+extension SettingsView {
+    
+    struct CacheSection: View {
+        var body: some View {
+            Section {
+                Button(role: .destructive) {
+                    Task {
+                        ImagePipeline.shared.cache.removeAll()
+                        ToastManager.shared.info("Image Cache Cleared!")
+                    }
+                } label: {
+                    HStack {
+                        Text("Clear Image Cache")
+                        Spacer()
+                        Image(systemName: "photo.fill.on.rectangle.fill")
+                    }
+                }
+                Button(role: .destructive) {
+                    Task {
+                        HTTPCookieStorage.shared.removeCookies(since: .distantPast)
+                        URLCache.shared.removeAllCachedResponses()
+                        ToastManager.shared.info("Network Cache Cleared!")
+                    }
+                } label: {
+                    HStack {
+                        Text("Clear Network Cache")
+                        Spacer()
+                        Image(systemName: "network")
+                    }
+                }
+            } header: {
+                Text("Cache")
+            }
         }
     }
 }

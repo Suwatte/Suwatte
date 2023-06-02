@@ -134,6 +134,7 @@ extension ProfileView.ViewModel {
         let _r4 = realm
             .objects(ReadLater.self)
             .where { $0.id == id }
+            .where { $0.isDeleted == false }
 
         readLaterToken = _r4.observe { [weak self] _ in
             self?.savedForLater = !_r4.isEmpty
