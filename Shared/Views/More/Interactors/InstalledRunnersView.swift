@@ -9,7 +9,7 @@ import RealmSwift
 import SwiftUI
 
 struct InstalledRunnersView: View {
-    @ObservedObject var manager = SourceManager.shared
+    private let manager = SourceManager.shared
     @StateObject var model = ViewModel()
     @State var showAddSheet = false
 

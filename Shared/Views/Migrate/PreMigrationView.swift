@@ -10,7 +10,7 @@ import SwiftUI
 
 struct PreMigrationView: View {
     @ObservedResults(LibraryEntry.self) var library
-    @StateObject var manager = SourceManager.shared
+    private let manager = SourceManager.shared
     var body: some View {
         NavigationView {
             List {

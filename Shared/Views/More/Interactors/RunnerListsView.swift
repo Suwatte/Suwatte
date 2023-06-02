@@ -249,7 +249,7 @@ extension RunnerListsView {
 extension RunnerListsView.RunnerListInfo {
     struct RunnerListCell: View {
         @State var isLoading = false
-        @ObservedObject var engine = SourceManager.shared
+        private let engine = SourceManager.shared
         var listURL: String
         var list: RunnerList
         var runner: Runner
