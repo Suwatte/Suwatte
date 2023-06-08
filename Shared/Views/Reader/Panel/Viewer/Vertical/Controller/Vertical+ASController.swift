@@ -16,9 +16,10 @@ extension VerticalViewer {
         private let zoomTransitionDelegate = ZoomTransitioningDelegate()
         var subscriptions = Set<AnyCancellable>()
         var selectedIndexPath: IndexPath!
-        var initialOffset: (Int, CGFloat?)?
         var timer: Timer?
         var lastViewedSection = 0
+        var consumedInitialPosition = false
+        var openingIndex = 0
 
         // MARK: Init
 
@@ -64,6 +65,16 @@ extension VerticalViewer {
             collectionNode.view.contentInsetAdjustmentBehavior = .never
             collectionNode.view.scrollsToTop = false
             collectionNode.leadingScreensForBatching = 2
+            
+            guard let rChapter = model.readerChapterList.first else {
+                return
+            }
+            let requestedIndex = rChapter.requestedPageIndex
+            openingIndex = model
+                .sections
+                .first?
+                .firstIndex(where: { ($0 as? ReaderPage)?.page.index == requestedIndex }) ?? requestedIndex
+            
 
             Task { @MainActor in
                 model.slider.setRange(0, 1)
@@ -75,28 +86,22 @@ extension VerticalViewer {
         }
 
         // MARK: View DidAppear
-
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            
+            if model.IN_ZOOM_VIEW {
+                model.IN_ZOOM_VIEW = false
+                return
+            }
+            let path: IndexPath = .init(item: openingIndex, section: 0)
+            collectionNode.scrollToItem(at: path, at: .top, animated: false)
+        }
         override func viewDidAppear(_ animated: Bool) {
             super.viewDidAppear(animated)
 
             if model.IN_ZOOM_VIEW {
                 model.IN_ZOOM_VIEW = false
                 return
-            }
-
-            guard let rChapter = model.readerChapterList.first else {
-                return
-            }
-            let requestedIndex = rChapter.requestedPageIndex
-            let openingIndex = model
-                .sections[0]
-                .firstIndex(where: { ($0 as? ReaderPage)?.page.index == requestedIndex }) ?? requestedIndex
-            let path: IndexPath = .init(item: openingIndex, section: 0)
-            collectionNode.scrollToItem(at: path, at: .top, animated: false)
-
-            // TODO: Last Offset
-            if let lastOffset = rChapter.requestedPageOffset {
-                collectionNode.contentOffset.y += lastOffset
             }
 
             updateSliderOffset()
@@ -137,12 +142,16 @@ extension Controller: ASCollectionDataSource {
 extension Controller: ASCollectionDelegate {
     func collectionNode(_: ASCollectionNode, nodeBlockForItemAt indexPath: IndexPath) -> ASCellNodeBlock {
         let data = model.getObject(atPath: indexPath)
-
         if let data = data as? ReaderPage {
-            return {
+            return { [unowned self] in
                 let node = Controller.ImageNode(page: data.page)
                 node.delegate = self
-                if let target = self.initialOffset, indexPath.section == 0, indexPath.item == target.0, let offset = target.1 {
+                guard !consumedInitialPosition else {
+                    return node
+                }
+                let chapter = model.activeChapter
+                if indexPath.section == 0, openingIndex == indexPath.item {
+                    let offset = chapter.requestedPageOffset ?? 0
                     node.savedOffset = offset
                 }
                 return node

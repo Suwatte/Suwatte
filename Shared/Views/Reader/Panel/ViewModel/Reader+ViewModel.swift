@@ -11,7 +11,6 @@ import SwiftUI
 extension ReaderView {
     @MainActor
     final class ViewModel: ObservableObject {
-        @Published var updater = false
         private var cancellables = Set<AnyCancellable>()
         // Core
         var sections: [[AnyObject]] = []
@@ -26,6 +25,8 @@ extension ReaderView {
                 .store(in: &cancellables)
             }
         }
+        
+        var scrollingChapter : ReaderChapter
 
         var chapterList: [ThreadSafeChapter]
         @Published var contentTitle: String?
@@ -65,7 +66,9 @@ extension ReaderView {
             }
             
             contentTitle = title
-            activeChapter = .init(chapter: chapter.toThreadSafe())
+            let c: ReaderChapter = .init(chapter: chapter.toThreadSafe())
+            activeChapter = c
+            scrollingChapter = c
             if let pageIndex = pageIndex {
                 activeChapter.requestedPageIndex = pageIndex
             } else {
@@ -94,8 +97,6 @@ extension ReaderView {
                 } else {
                     readerChapterList.insert(readerChapter, at: 0)
                 }
-
-                notifyOfChange()
             }
 
             // Load Chapter Data
@@ -108,7 +109,6 @@ extension ReaderView {
                 readerChapter.data = .failed(error)
             default: break
             }
-            notifyOfChange()
 
             // Get Images
             guard let pages = readerChapter.pages else {
@@ -181,18 +181,18 @@ extension ReaderView {
             reloadSectionPublisher.send(section)
         }
 
-        func notifyOfChange() {
-            Task { @MainActor in
-                updater.toggle()
-            }
-        }
 
         func getObject(atPath path: IndexPath) -> AnyObject {
             sections[path.section][path.item]
         }
+        
+        func getChapter(at index: Int) -> ReaderChapter? {
+            readerChapterList.get(index: index)
+        }
 
         func loadNextChapter() {
-            guard let lastChapter = readerChapterList.last?.chapter, let nextChapter = recursiveGetChapter(for: lastChapter) else {
+            let currentChapter = Preferences.standard.isReadingVertically ? scrollingChapter : activeChapter
+            guard let nextChapter = recursiveGetChapter(for: currentChapter.chapter) else {
                 return
             }
 
@@ -202,7 +202,8 @@ extension ReaderView {
         }
 
         func loadPreviousChapter() {
-            guard let lastChapter = readerChapterList.first?.chapter, let target = recursiveGetChapter(for: lastChapter, isNext: false) else {
+            let currentChapter = Preferences.standard.isReadingVertically ? scrollingChapter : activeChapter
+            guard let target = recursiveGetChapter(for: currentChapter.chapter, isNext: false) else {
                 return
             }
 
@@ -351,7 +352,8 @@ extension ReaderView.ViewModel {
         guard let chapter = chapterCache[page.chapterId], canMark(sourceId: chapter.chapter.sourceId) else {
             return
         }
-        DataManager.shared.updateContentProgress(for: contentIdentifier.id, chapter: chapter.chapter, lastPageRead: page.number, totalPageCount: chapter.pages?.count ?? 1, lastPageOffset: chapter.requestedPageOffset.flatMap(Double.init))
+        
+        DataManager.shared.updateContentProgress(for: contentIdentifier.id, chapter: chapter.chapter, lastPageRead: chapter.requestedPageIndex + 1, totalPageCount: chapter.pages?.count ?? 1, lastPageOffset: chapter.requestedPageOffset.flatMap(Double.init))
     }
 
     private func handleTransition(transition: ReaderView.Transition) {

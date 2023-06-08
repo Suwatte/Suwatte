@@ -52,10 +52,6 @@ extension Controller {
 
         func setImage() {
             guard ratio == nil, !working, image == nil else { return }
-
-            if let savedOffset {
-                transitionLayout(with: .init(min: .zero, max: .init(width: view.frame.width, height: savedOffset * 2)), animated: true, shouldMeasureAsync: false)
-            }
             working = true
             
             Task.detached { [weak self] in
@@ -111,6 +107,12 @@ extension Controller {
             let Y = manager.collectionViewLayout.layoutAttributesForItem(at: indexPath)?.frame.origin.y
             guard let Y else { return }
             layout.isInsertingCellsToTop = Y < manager.contentOffset.y
+            guard let offset = savedOffset, offset <= imageNode.frame.height else {
+                return
+            }
+            savedOffset = nil
+            self.delegate?.consumedInitialPosition = true
+            manager.contentOffset.y += offset
         }
 
         var image: UIImage?

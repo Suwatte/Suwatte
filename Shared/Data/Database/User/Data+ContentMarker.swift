@@ -97,7 +97,6 @@ extension DataManager {
     func updateContentProgress(for id: String, chapter: ThreadSafeChapter ,lastPageRead: Int, totalPageCount: Int, lastPageOffset: Double? = nil) {
         let realm = try! Realm()
 
-        
         // Get Object
         let target = realm
             .objects(ProgressMarker.self)
