@@ -351,7 +351,7 @@ extension ReaderView.ViewModel {
         guard let chapter = chapterCache[page.chapterId], canMark(sourceId: chapter.chapter.sourceId) else {
             return
         }
-        DataManager.shared.updateContentProgress(for: contentIdentifier.id, chapter: chapter.chapter, lastPageRead: page.number, totalPageCount: chapter.pages?.count ?? 1)
+        DataManager.shared.updateContentProgress(for: contentIdentifier.id, chapter: chapter.chapter, lastPageRead: page.number, totalPageCount: chapter.pages?.count ?? 1, lastPageOffset: chapter.requestedPageOffset.flatMap(Double.init))
     }
 
     private func handleTransition(transition: ReaderView.Transition) {

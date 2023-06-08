@@ -11,9 +11,6 @@ import UIKit
 import VisionKit
 import Nuke
 
-protocol PagerDelegate: NSObject, UIContextMenuInteractionDelegate {
-    var model: ReaderView.ViewModel! { get set }
-}
 
 enum PageState {
     case loading, error, set
@@ -44,7 +41,7 @@ enum ImageScaleOption: Int, CaseIterable, UserDefaultsSerializable {
 
 class PagedDisplayHolder: UIView {
     // Core Properties
-    weak var delegate: PagerDelegate?
+    weak var delegate: UIContextMenuInteractionDelegate?
     var page: ReaderPage!
     
     // Views
@@ -234,8 +231,6 @@ extension PagedDisplayHolder {
         imageView.image = nil
         imageView.interactions.removeAll()
         imageView.removeFromSuperview()
-        
-        delegate = nil
     }
     
     func reload() {

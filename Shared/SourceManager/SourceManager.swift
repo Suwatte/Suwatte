@@ -354,9 +354,9 @@ extension SourceManager {
 
 extension SourceManager {
     
-    private func fetchLibraryUpdates() async -> Int {
-        let realm = try! await Realm()
-        
+    func fetchLibraryUpdates() async -> Int {
+        let realm = try! Realm(queue: nil)
+
         // Get Sources
         let sources = realm
             .objects(StoredRunnerObject.self)
@@ -390,17 +390,10 @@ extension SourceManager {
         UserDefaults.standard.set(Date(), forKey: STTKeys.LastFetchedUpdates)
         return result
     }
-    func handleBackgroundLibraryUpdate() async -> Int {
-        return await fetchLibraryUpdates()
-    }
-
-    func handleForegroundLibraryUpdate() async -> Int {
-        return await fetchLibraryUpdates()
-    }
 
     private func fetchUpdatesForSource(source: AnyContentSource) async throws -> Int {
         
-        let realm = try! await Realm()
+        let realm = try! Realm(queue: nil)
         let date = UserDefaults.standard.object(forKey: STTKeys.LastFetchedUpdates) as! Date
         let skipConditions = Preferences.standard.skipConditions
         let validStatuses = [ContentStatus.ONGOING, .HIATUS, .UNKNOWN]
@@ -422,18 +415,18 @@ extension SourceManager {
         }
         // Title Has No Markers, Has not been started
         if skipConditions.contains(.NO_MARKERS) {
-            let ids = results.map(\.id)
+            let ids = results.map(\.id) as [String]
             let startedTitles = realm
                 .objects(ProgressMarker.self)
                 .where { $0.id.in(ids) }
-                .map(\.id)
+                .map(\.id) as [String]
 
             results = results
                 .where { $0.id.in(startedTitles) }
         }
         let library = Array(results.freeze())
         var updateCount = 0
-        Logger.shared.info("[\(source.id)] [Updates Checker] Updating \(library.count) titles")
+        Logger.shared.log("[\(source.id)] [Updates Checker] Updating \(library.count) titles")
         for entry in library {
             guard let contentId = entry.content?.contentId else {
                 continue

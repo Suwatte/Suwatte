@@ -12,7 +12,7 @@ import SwiftUI
 
 struct RunnerListsView: View {
     @State var presentAlert = false
-    @ObservedResults(StoredRunnerList.self) var runnerLists
+    @ObservedResults(StoredRunnerList.self, where: { $0.isDeleted == false }) var runnerLists
     @AppStorage(STTKeys.AppAccentColor) var color: Color = .sttDefault
     var body: some View {
         List {

@@ -31,11 +31,10 @@ extension PagedViewer {
             super.prepareForReuse()
         }
 
-        func set(page: ReaderPage, delegate: PagerDelegate) {
+        func set(page: ReaderPage, delegate: UIContextMenuInteractionDelegate) {
             // Initialize
             pageView = PagedDisplayHolder()
             pageView?.page = page
-            pageView?.delegate = delegate
             guard let pageView else { fatalError("Holder Cannot Be Nil") }
             pageView.translatesAutoresizingMaskIntoConstraints = false
             addSubview(pageView)

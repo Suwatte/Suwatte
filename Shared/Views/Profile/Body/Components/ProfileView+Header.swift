@@ -100,7 +100,6 @@ extension Skeleton.Header {
 private extension Skeleton {
     struct ActionButtons: View {
         @State var currentAction: Option?
-        @ObservedResults(LibraryEntry.self) var libraryEntries
         @State var presentSafariView = false
         @EnvironmentObject var model: ProfileView.ViewModel
         @AppStorage(STTKeys.AlwaysAskForLibraryConfig) var promptForConfig = true
@@ -145,9 +144,7 @@ private extension Skeleton {
         }
 
         var EntryInLibrary: Bool {
-            libraryEntries
-                .where { $0.id == model.sttIdentifier().id }
-                .count >= 1
+            model.inLibrary
         }
     }
 }

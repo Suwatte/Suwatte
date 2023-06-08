@@ -15,8 +15,8 @@ struct SearchView: View {
     var initialQuery = ""
     @StateObject var model = ViewModel()
 
-    @ObservedResults(LibraryEntry.self) var library
-    @ObservedResults(ReadLater.self) var readLater
+    @ObservedResults(LibraryEntry.self, where: { $0.isDeleted == false }) var library
+    @ObservedResults(ReadLater.self, where: { $0.isDeleted == false }) var readLater
 
     @State var presentHistory = false
     @ObservedResults(UpdatedSearchHistory.self, where: { $0.sourceId == nil && $0.isDeleted == false }, sortDescriptor: SortDescriptor(keyPath: "date", ascending: false)) var history

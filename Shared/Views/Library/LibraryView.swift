@@ -45,8 +45,6 @@ struct LibraryView: View {
                 .navigationViewStyle(.stack)
 
             })
-            
-            LibraryGrid(model: .init())
         }
         .onAppear {
             if requireAuth && !LocalAuthManager.shared.isExpired {
@@ -59,6 +57,7 @@ struct LibraryView: View {
         }
 
         .protectContent()
+        .navigationViewStyle(.stack)
     }
 }
 

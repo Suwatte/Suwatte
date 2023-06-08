@@ -70,11 +70,9 @@ extension HistoryView {
                     self.markers = collection
                 }
             
-            Logger.shared.debug("Observing ProgressMarker Collection")
         }
         
         func disconnect() {
-            Logger.shared.debug("Disconnecting History Observer")
             notificationToken?.invalidate()
             notificationToken = nil
         }

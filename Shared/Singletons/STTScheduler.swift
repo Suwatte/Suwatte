@@ -103,8 +103,8 @@ class STTScheduler {
             return
         }
 
-        let updateTask = Task { @MainActor [weak self] in
-            let updates = await SourceManager.shared.handleBackgroundLibraryUpdate()
+        let updateTask = Task { [weak self] in
+            let updates = await SourceManager.shared.fetchLibraryUpdates()
 
             if updates > 0 {
                 STTNotifier.shared.scheduleUpdateNotification(count: updates)

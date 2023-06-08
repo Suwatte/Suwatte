@@ -33,10 +33,10 @@ extension DoublePagedViewer {
             super.prepareForReuse()
         }
 
-        func set(page: ReaderPage, secondary: ReaderPage?, delegate: DoublePagedViewer.Controller) {
+        func set(primary: ReaderPage, secondary: ReaderPage, delegate: DoublePagedViewer.Controller) {
             // Initialize
             pageView = DoublePagedDisplayHolder()
-            pageView?.page = page
+            pageView?.firstPage = primary
             pageView?.secondPage = secondary
             pageView?.delegate = delegate
             guard let pageView else { fatalError("Holder Cannot Be Nil") }
@@ -61,11 +61,7 @@ extension DoublePagedViewer {
         }
 
         func cancelTasks() {
-//            pageView?.cancel()
-        }
-
-        override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
-            return layoutAttributes
+            pageView?.cancel()
         }
     }
 }

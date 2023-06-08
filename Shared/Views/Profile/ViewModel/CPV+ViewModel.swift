@@ -76,7 +76,6 @@ extension ProfileView {
         deinit {
             disconnect()
             removeNotifier()
-            Logger.shared.debug("[\(contentIdentifier)] Disconnected Observers")
         }
         
         func disconnect() {
@@ -265,6 +264,7 @@ extension ProfileView.ViewModel {
 
     func didLoadChapters() async {
         let id = sttIdentifier()
+
         Task.detached {
             let obj = DataManager
                 .shared
@@ -301,6 +301,20 @@ extension ProfileView.ViewModel {
         
         Task { @MainActor in
             chapters = .loaded(storedChapters)
+        }
+        
+        let id = sttIdentifier()
+
+        Task.detached {
+            let obj = DataManager
+                .shared
+                .getContentMarker(for: id.id)?
+                .freeze()
+            
+            Task {  @MainActor [weak self] in
+                self?.calculateActionState(obj)
+            }
+            
         }
     }
 
@@ -396,8 +410,6 @@ extension ProfileView.ViewModel {
     func sttIdentifier() -> ContentIdentifier {
         .init(contentId: entry.id, sourceId: source.id)
     }
-
-    func checkForUpdatesOnLinked() {}
 }
 
 extension ProfileView.ViewModel {

@@ -10,7 +10,7 @@ import SwiftUI
 
 extension ExploreView.SearchView {
     struct HistoryView: View {
-        @ObservedResults(UpdatedSearchHistory.self) var results
+        @ObservedResults(UpdatedSearchHistory.self, where: { $0.isDeleted == false }) var results
         @ObservedObject var toastManager = ToastManager()
 
         @EnvironmentObject var model: ExploreView.SearchView.ViewModel

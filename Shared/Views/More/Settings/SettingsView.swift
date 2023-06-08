@@ -186,7 +186,7 @@ enum SkipCondition: Int, CaseIterable, Identifiable, UserDefaultsSerializable {
 extension SettingsView {
     struct LibrarySection: View {
         @AppStorage(STTKeys.AlwaysAskForLibraryConfig) private var alwaysAsk = true
-        @ObservedResults(LibraryCollection.self, sortDescriptor: .init(keyPath: "order", ascending: true)) private var collections
+        @ObservedResults(LibraryCollection.self,where: { $0.isDeleted == false }, sortDescriptor: .init(keyPath: "order", ascending: true)) private var collections
         @AppStorage(STTKeys.DefaultCollection) var defaultCollection: String = ""
         @AppStorage(STTKeys.DefaultReadingFlag) var defaultFlag = LibraryFlag.unknown
         var body: some View {

@@ -42,7 +42,7 @@ extension DoublePagedViewer.Controller {
                    let cell = collectionView.cellForItem(at: path) as? ImageCell,
                    let pView = cell.pageView
                 {
-                    let page = pView.secondPage?.page ?? pView.page.page
+                    let page = pView.secondPage?.page ?? pView.firstPage.page
                     model.scrubbingPageNumber = page.index + 1
                 }
 

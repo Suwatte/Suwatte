@@ -11,91 +11,81 @@ import SwiftUI
 
 extension LibraryView {
     struct ReadLaterView: View {
-        @ObservedResults(ReadLater.self, where: { $0.content != nil && $0.isDeleted == false  }) var unsortedEntries
-        @State var ascending = false
-        @State var option = ContentSort.dateAdded
-        @State var text = ""
         typealias Highlight = DaisukeEngine.Structs.Highlight
-        @ObservedResults(LibraryEntry.self) var library
         @AppStorage(STTKeys.TileStyle) var style = TileStyle.COMPACT
         @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
         @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
-
+        @StateObject var model = ViewModel()
         var body: some View {
-            let entries = sortedEntries()
+            Group {
+                if let readLater = model.readLater {
+                    ASCollectionView {
+                        ASCollectionViewSection(id: 0,
+                                                data: readLater,
+                                                contextMenuProvider: contextMenuProvider) { data, _ in
+                            let isInLibrary = inLibrary(data)
+                            let highlight = data.content!.toHighlight()
+                            NavigationLink {
+                                ProfileView(entry: highlight, sourceId: data.content!.sourceId)
+                            } label: {
+                                ZStack(alignment: .topTrailing) {
+                                    DefaultTile(entry: highlight)
 
-            ASCollectionView {
-                ASCollectionViewSection(id: 0,
-                                        data: entries,
-                                        contextMenuProvider: contextMenuProvider) { data, _ in
-                    let isInLibrary = inLibrary(data)
-                    let highlight = data.content!.toHighlight()
-                    NavigationLink {
-                        ProfileView(entry: highlight, sourceId: data.content!.sourceId)
-                    } label: {
-                        ZStack(alignment: .topTrailing) {
-                            DefaultTile(entry: highlight)
-
-                            if isInLibrary {
-                                ColoredBadge(color: .accentColor)
+                                    if isInLibrary {
+                                        ColoredBadge(color: .accentColor)
+                                    }
+                                }
                             }
+                            .buttonStyle(NeutralButtonStyle())
+                        }
+                        .sectionHeader {
+                            EmptyView()
+                        }
+                        .sectionFooter {
+                            EmptyView()
                         }
                     }
-                    .buttonStyle(NeutralButtonStyle())
-                }
-                .sectionHeader {
-                    EmptyView()
-                }
-                .sectionFooter {
-                    EmptyView()
+
+                    .layout(createCustomLayout: {
+                        DynamicGridLayout()
+                    }, configureCustomLayout: { layout in
+                        layout.invalidateLayout()
+                    })
+                    .alwaysBounceVertical()
+                    .animateOnDataRefresh(true)
+                    .ignoresSafeArea(.keyboard, edges: .all)
+                } else {
+                    ProgressView()
+
                 }
             }
-
-            .layout(createCustomLayout: {
-                DynamicGridLayout()
-            }, configureCustomLayout: { layout in
-                layout.invalidateLayout()
-            })
-            .alwaysBounceVertical()
-            .animateOnDataRefresh(true)
-            .animation(.default, value: library)
-            .animation(.default, value: unsortedEntries)
+            .animation(.default, value: model.library)
+            .animation(.default, value: model.readLater)
             .navigationTitle("Saved For Later")
             .navigationBarTitleDisplayMode(.inline)
+            .task {
+                model.observe()
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
-                        Picker("Sort Titles", selection: $option) {
+                        Picker("Sort Titles", selection: $model.sort) {
                             ForEach(ContentSort.allCases, id: \.rawValue) { val in
-                                Button(val.description) {
-                                    option = val
-                                }
+                                Text(val.description)
                                 .tag(val)
                             }
                         }
                         .pickerStyle(.menu)
-                        Picker("Order Titles", selection: $ascending) {
-                            Button("Ascending") {
-                                ascending = true
-                            }
+                        Picker("Order Titles", selection: $model.ascending) {
+                           Text("Ascending")
                             .tag(true)
-                            Button("Descending") {
-                                ascending = false
-                            }
+                            Text("Descending")
                             .tag(false)
                         }
                         .pickerStyle(.menu)
                         Divider()
                         Button {
-                            let targets = entries.compactMap { $0.content }.map { ($0.contentId, $0.sourceId) } as [(String, String)]
-                            Task {
-                                for content in targets {
-                                    await DataManager.shared.refreshStored(contentId: content.0, sourceId: content.1)
-                                }
-                                await MainActor.run {
-                                    ToastManager.shared.info("Database Refreshed Successfully")
-                                }
-                            }
+                            model.refresh()
                         } label: {
                             Label("Refresh Database", systemImage: "arrow.triangle.2.circlepath")
                         }
@@ -104,19 +94,18 @@ extension LibraryView {
                     }
                 }
             }
-            .searchable(text: $text, collection: $unsortedEntries, keyPath: \.content!.title, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Titles")
-            .animation(.default, value: text)
-        }
-
-        func sortedEntries() -> Results<ReadLater> {
-            return unsortedEntries.sorted(byKeyPath: option.KeyPath, ascending: ascending)
+            .searchable(text: $model.query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Titles")
+            .animation(.default, value: model.query)
         }
     }
 }
 
 extension LibraryView.ReadLaterView {
     func inLibrary(_ entry: ReadLater) -> Bool {
-        library
+        guard let library = model.library else {
+            return false
+        }
+        return library
             .contains(where: { $0.id == entry.id })
     }
 

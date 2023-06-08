@@ -10,7 +10,7 @@ import SwiftUI
 
 struct BookmarksView: View {
     @EnvironmentObject var model: ProfileView.ViewModel
-    @ObservedResults(Bookmark.self) var bookmarks
+    @ObservedResults(Bookmark.self, where: { $0.isDeleted == false }) var bookmarks
     @State var selectedChapter: StoredChapter?
     @State var openToIndex: Int?
     init() {

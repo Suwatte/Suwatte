@@ -11,7 +11,7 @@ import UIKit
 import Nuke
 
 extension DoublePagedViewer {
-    final class Controller: UICollectionViewController, PagerDelegate {
+    final class Controller: UICollectionViewController {
         var model: ReaderView.ViewModel!
         var subscriptions = Set<AnyCancellable>()
         var currentPath: IndexPath? {
@@ -28,8 +28,8 @@ extension DoublePagedViewer {
 }
 
 private typealias Controller = DoublePagedViewer.Controller
-private typealias ImageCell = DoublePagedViewer.ImageCell
-
+private typealias DoublePageCell = DoublePagedViewer.ImageCell
+private typealias SinglePageCell = PagedViewer.ImageCell
 // MARK: DataSource
 
 extension Controller {
@@ -90,7 +90,9 @@ extension Controller {
     }
 
     func registerCells() {
-        collectionView.register(ImageCell.self, forCellWithReuseIdentifier: ImageCell.identifier)
+        collectionView.register(DoublePageCell.self, forCellWithReuseIdentifier: DoublePageCell.identifier)
+        collectionView.register(SinglePageCell.self, forCellWithReuseIdentifier: SinglePageCell.identifier)
+
         collectionView.register(ReaderView.TransitionCell.self, forCellWithReuseIdentifier: ReaderView.TransitionCell.identifier)
     }
 
@@ -214,10 +216,11 @@ extension Controller {
     }
 
     override func collectionView(_: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt _: IndexPath) {
-        guard let cell = cell as? ImageCell else {
-            return
+        if let cell = cell as? DoublePageCell {
+            cell.cancelTasks()
+        } else if let cell = cell as? SinglePageCell {
+            cell.cancelTasks()
         }
-        cell.cancelTasks()
     }
 }
 
@@ -254,10 +257,19 @@ extension Controller {
         }
 
         let target = data.primary as? ReaderPage
+        let secondary = data.secondary as? ReaderPage
         guard let target else { fatalError("Target Not ReaderPage") }
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCell.identifier, for: indexPath) as! ImageCell
-        cell.set(page: target, secondary: data.secondary as? ReaderPage, delegate: self) // SetUp
-        cell.setImage() // Set Image
+        if let secondary {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DoublePageCell.identifier, for: indexPath) as! DoublePageCell
+            cell.set(primary: target, secondary: secondary, delegate: self) // SetUp
+            cell.setImage() // Set Image
+            return cell
+
+        }
+        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SinglePageCell.identifier, for: indexPath) as! SinglePageCell
+        cell.set(page: target, delegate: self)
+        cell.setImage()
         return cell
     }
 }

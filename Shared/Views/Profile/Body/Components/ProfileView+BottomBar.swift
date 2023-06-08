@@ -149,7 +149,7 @@ extension ProfileView.Skeleton.BottomBar {
 extension ProfileView.Skeleton.BottomBar {
     struct ActionsListButton: View {
         @ObservedResults(CustomThumbnail.self, where: { $0.isDeleted == false }) var thumbnails
-        @ObservedResults(ContentLink.self) var contentLinks
+        @ObservedResults(ContentLink.self, where: { $0.isDeleted == false }) var contentLinks
         @State private var inputImage: UIImage?
         @State private var presentImageSheet = false
         @State private var presentNextEntry = false

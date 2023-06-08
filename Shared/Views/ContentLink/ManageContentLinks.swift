@@ -9,7 +9,7 @@ import RealmSwift
 import SwiftUI
 
 struct ManageContentLinks: View {
-    @ObservedResults(ContentLink.self) var entries
+    @ObservedResults(ContentLink.self, where: { $0.isDeleted == false }) var entries
     var content: StoredContent
     @State var presentAddSheet = false
 

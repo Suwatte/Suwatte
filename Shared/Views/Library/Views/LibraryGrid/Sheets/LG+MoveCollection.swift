@@ -12,7 +12,7 @@ extension LibraryView.LibraryGrid {
     struct MoveCollectionsView: View {
         var entries: Results<LibraryEntry>
         @EnvironmentObject var model: ViewModel
-        @ObservedResults(LibraryCollection.self) var collections
+        @ObservedResults(LibraryCollection.self, where: { $0.isDeleted == false }) var collections
         @Environment(\.presentationMode) var presentationMode
         @State var selectedCollections = [String]()
         @ObservedObject var toastManager = ToastManager()

@@ -14,8 +14,8 @@ extension ProfileView {
 
 extension ProfileView.Sheets {
     struct LibrarySheet: View {
-        @ObservedResults(LibraryCollection.self) var collections
-        @ObservedResults(LibraryEntry.self) var libraryEntries
+        @ObservedResults(LibraryCollection.self, where: { $0.isDeleted == false }) var collections
+        @ObservedResults(LibraryEntry.self, where: { $0.isDeleted == false }) var libraryEntries
         var storedContent: StoredContent
         private typealias AddCollectionView = LibraryView.ManageCollectionsView.AddCollectionView
 

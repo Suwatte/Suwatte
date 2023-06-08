@@ -13,8 +13,8 @@ import Nuke
 class DoublePagedDisplayHolder: UIView {
     // Core Properties
     weak var delegate: DoublePagedViewer.Controller?
-    var page: ReaderPage!
-    var secondPage: ReaderPage?
+    var firstPage: ReaderPage!
+    var secondPage: ReaderPage!
 
     // Views
     let stackView = UIStackView()
@@ -26,10 +26,11 @@ class DoublePagedDisplayHolder: UIView {
 
     // State
     var subscriptions = Set<AnyCancellable>()
-
-    var tasks = [AsyncImageTask]()
-
-    var pageImage: UIImage?
+    
+    var firstImageTask: AsyncImageTask?
+    var secondImageTask: AsyncImageTask?
+    
+    var firstPageImage: UIImage?
     var secondPageImage: UIImage?
     // Init
     init() {
@@ -52,7 +53,7 @@ extension DoublePagedDisplayHolder {
 
         scrollView.reset()
 
-        pageImage = nil
+        firstPageImage = nil
         secondPageImage = nil
 
         delegate = nil
@@ -60,7 +61,7 @@ extension DoublePagedDisplayHolder {
     }
 
     func reload() {
-        load(page: page)
+        load()
     }
 }
 
@@ -82,10 +83,11 @@ extension DoublePagedDisplayHolder {
         // Misc Set Up
         scrollView.setup() // Set Up Internal Scroll Wrapper
         scrollView.target = stackView // Set the Scroll Wrapper's Target to our ImageView (This Also Adds it to the View Heirachy)
-        scrollView.didUpdateSize(size: UIScreen.main.bounds.size)
+        scrollView.didUpdateSize(size: frame.size)
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.alignment = .center
+        stackView.spacing = .zero
 
         // Make BG Colors Clear
         progressView.backgroundColor = .clear
@@ -108,16 +110,14 @@ extension DoublePagedDisplayHolder {
             progressView.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
 
-        scrollView.standardSize()
+        subscribe()
     }
 }
 
 extension DoublePagedDisplayHolder {
     func load() {
-        load(page: page)
-        if let secondPage {
-            load(page: secondPage)
-        }
+        load(page: firstPage)
+        load(page: secondPage)
         working = true
     }
 
@@ -128,15 +128,19 @@ extension DoublePagedDisplayHolder {
         if progressView.alpha == 0 {
             setVisible(.loading)
         }
+        let size = frame.size
         Task.detached { [weak self] in
             do {
-                if await self?.secondPage != nil {
-                    page.page.targetWidth = page.page.targetWidth / 2
-                }
+                page.page.targetWidth = await self?.secondPage != nil ? size.width / 2 : size.width
+
                 
                 let task = try await page.page.load()
                 await MainActor.run { [weak self] in
-                    self?.tasks.append(task)
+                    if page === self?.firstPage {
+                        self?.firstImageTask = task
+                    } else {
+                        self?.secondImageTask = task
+                    }
                 }
                 for await progress in task.progress {
                     // Update progress
@@ -168,23 +172,23 @@ extension DoublePagedDisplayHolder {
 
         // Target Is Wide and Is the Second Page, Mark the Primary Page as Isolated
         if target.widePage && target === secondPage {
-            page.isolatedPage = true
+            firstPage.isolatedPage = true
         }
 
         // Target Is Wide And This is the Primary Page, Cancel Other Ongoing tasks
-        if target.widePage && target === page {
-            tasks.forEach { $0.cancel() }
-            tasks.removeAll()
+        if target.widePage && target === firstPage {
+            secondImageTask?.cancel()
+            secondImageTask = nil
         }
 
         // Set Images
-        if target === page {
-            pageImage = image
+        if target === firstPage {
+            firstPageImage = image
         } else {
             secondPageImage = image
         }
         if target.isFullPage {
-            delegate?.didIsolatePage(maintain: page, note: secondPage)
+            delegate?.didIsolatePage(maintain: firstPage, note: secondPage)
         }
 
         didLoadImage()
@@ -197,8 +201,8 @@ extension DoublePagedDisplayHolder {
         }
 
         // Page Is Full Page
-        if let pageImage, page.widePage || page.isolatedPage {
-            addImageToStack(image: pageImage)
+        if let firstPageImage, firstPage.widePage || firstPage.isolatedPage {
+            addImageToStack(image: firstPageImage)
             scrollView.addGestures()
             setProgress(1)
             setVisible(.set)
@@ -207,13 +211,14 @@ extension DoublePagedDisplayHolder {
         }
 
         // Double Paged
-        if let pageImage, let secondPageImage {
+        if let firstPageImage, let secondPageImage {
             if Preferences.standard.readingLeftToRight {
-                addImageToStack(image: pageImage)
+                addImageToStack(image: firstPageImage)
                 addImageToStack(image: secondPageImage)
+
             } else {
                 addImageToStack(image: secondPageImage)
-                addImageToStack(image: pageImage)
+                addImageToStack(image: firstPageImage)
             }
             setProgress(1)
             scrollView.addGestures()
@@ -224,8 +229,8 @@ extension DoublePagedDisplayHolder {
 
         // Single Page, No Second, Not Marked as Isolated
         // This is caused by the stack generation logic, Might be worth exploring setting it to isolated when regenerating stack
-        if let pageImage, secondPage == nil {
-            addImageToStack(image: pageImage)
+        if let firstPageImage, secondPage == nil {
+            addImageToStack(image: firstPageImage)
             scrollView.addGestures()
             setProgress(1)
             setVisible(.set)
@@ -241,12 +246,6 @@ extension DoublePagedDisplayHolder {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.isUserInteractionEnabled = true
         stackView.addArrangedSubview(imageView)
-        let multiplier = 1 / image.size.ratio
-
-        let t = imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: multiplier)
-        t.priority = .required
-        t.isActive = true
-
         if let delegate, Preferences.standard.imageInteractions {
             imageView.addInteraction(UIContextMenuInteraction(delegate: delegate))
         }
@@ -267,7 +266,7 @@ extension DoublePagedDisplayHolder {
     }
 
     func setProgress(for page: ReaderPage, value: Double) {
-        if page === self.page {
+        if page === self.firstImageTask {
             progress.0 = value
         } else {
             progress.1 = value
@@ -287,7 +286,7 @@ extension DoublePagedDisplayHolder {
         errorView?.removeFromSuperview()
         errorView = nil
 
-        let display = ErrorView(error: error, sourceID: page.page.sourceId, action: reload)
+        let display = ErrorView(error: error, sourceID: firstPage.page.sourceId, action: reload)
         errorView = UIHostingController(rootView: display).view
 
         guard let errorView else { return }
@@ -342,7 +341,7 @@ extension DoublePagedDisplayHolder {
                     changedKeyPath == \Preferences.cropWhiteSpaces
             }
             .sink { [weak self] _ in
-                self?.cancel()
+                self?.reset()
                 self?.load()
             }
             .store(in: &subscriptions)
@@ -351,67 +350,8 @@ extension DoublePagedDisplayHolder {
 
 extension DoublePagedDisplayHolder {
     func cancel() {
-        tasks.forEach { $0.cancel() }
+        firstImageTask?.cancel()
+        secondImageTask?.cancel()
         working = false
-    }
-}
-
-extension DoublePagedDisplayHolder {
-    class StandardImageView: UIView {
-        let imageView = UIImageView()
-        var heightContraint: NSLayoutConstraint?
-        var widthConstraint: NSLayoutConstraint?
-
-        init() {
-            super.init(frame: .zero)
-            imageView.translatesAutoresizingMaskIntoConstraints = false
-            addSubview(imageView)
-
-            NSLayoutConstraint.activate([
-                imageView.topAnchor.constraint(equalTo: topAnchor),
-                imageView.bottomAnchor.constraint(equalTo: bottomAnchor),
-                imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            ])
-        }
-
-        @available(*, unavailable)
-        required init?(coder _: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-
-        func setImage(image: UIImage) {
-            imageView.image = image
-            activateConstraints()
-        }
-
-        func activateConstraints() {
-            guard let image = imageView.image else { fatalError("Image Not Set") }
-            let size = image.size
-
-            NSLayoutConstraint.activate([
-                imageView.heightAnchor.constraint(lessThanOrEqualTo: heightAnchor),
-                imageView.widthAnchor.constraint(lessThanOrEqualTo: widthAnchor),
-                imageView.centerXAnchor.constraint(equalTo: centerXAnchor),
-                imageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            ])
-
-            heightContraint?.isActive = false
-            widthConstraint?.isActive = false
-
-            let height = (1 / size.ratio) * bounds.width
-            if height > bounds.height || UIScreen.main.bounds.width > UIScreen.main.bounds.height {
-                let multiplier = size.ratio
-                widthConstraint = imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: multiplier)
-                heightContraint = imageView.heightAnchor.constraint(equalTo: heightAnchor)
-            } else {
-                let multiplier = 1 / size.ratio
-                widthConstraint = imageView.widthAnchor.constraint(equalTo: widthAnchor)
-                heightContraint = imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: multiplier)
-            }
-
-            widthConstraint?.isActive = true
-            heightContraint?.isActive = true
-        }
     }
 }

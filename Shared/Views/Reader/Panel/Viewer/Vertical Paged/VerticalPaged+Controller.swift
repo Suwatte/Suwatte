@@ -11,7 +11,7 @@ import UIKit
 import Nuke
 
 extension VerticalPager {
-    final class Controller: UICollectionViewController, PagerDelegate {
+    final class Controller: UICollectionViewController {
         var model: ReaderView.ViewModel!
         var subscriptions = Set<AnyCancellable>()
         var currentPath: IndexPath? {

@@ -41,7 +41,6 @@ extension LibraryView.LibraryGrid {
         func disconnect() {
             token?.invalidate()
             token = nil
-            Logger.shared.debug("Disconnected Library Observer")
         }
         
         func observe(downloadsOnly: Bool, key: KeyPath, order: SortOrder) {
@@ -142,11 +141,24 @@ extension LibraryView.LibraryGrid {
             token = library.observe({ _ in
                 self.library = library.freeze()
             })
-            Logger.shared.debug("Connected Library Observer")
         }
         
         func refresh() {
+            guard let library = library?.freeze().compactMap({ $0.content }) else {
+                return
+            }
+            ToastManager.shared.loading = true
             
+            Task {
+                for content in library {
+                    await DataManager.shared.refreshStored(contentId: content.contentId, sourceId: content.sourceId)
+                }
+                ToastManager.shared.loading = false
+
+                await MainActor.run {
+                    ToastManager.shared.info("Database Refreshed")
+                }
+            }
         }
     }
 }

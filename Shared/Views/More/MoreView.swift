@@ -20,8 +20,8 @@ struct MoreView: View {
             }
             .listStyle(.insetGrouped)
             .navigationTitle("More")
-            SettingsView()
         }
+        .navigationViewStyle(.stack)
     }
 
     var InteractorSection: some View {

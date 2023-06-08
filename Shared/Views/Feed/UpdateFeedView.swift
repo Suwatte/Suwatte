@@ -11,7 +11,6 @@ import SwiftUI
 
 struct UpdateFeedView: View {
     typealias Grouped = [String: [LibraryEntry]]
-    @ObservedResults(LibraryEntry.self) var unfilteredEntries
     @State var selection: HighlightIndentier?
     @StateObject var model = ViewModel()
     var body: some View {
@@ -37,9 +36,8 @@ struct UpdateFeedView: View {
         .modifier(InteractableContainer(selection: $selection))
     }
 
-    @MainActor
     func handleRefresh() async {
-        let count = await SourceManager.shared.handleForegroundLibraryUpdate()
+        let count = await SourceManager.shared.fetchLibraryUpdates()
         if count == 0 {
             ToastManager.shared.display(.info("No Updates in your library."))
         } else {
@@ -93,9 +91,15 @@ extension UpdateFeedView {
                     .sorted(by: \.lastUpdated, ascending: false)
 
                 self?.token = library
-                    .observe(on: queue , {[weak self] _ in
-                        let library = library.freeze()
-                        self?.generate(entries: library)
+                    .observe(on: queue , {[weak self] notification in
+                        switch notification {
+                            case .initial(let results):
+                                self?.generate(entries: results.freeze())
+                            case .update(let results, _, _, _):
+                                self?.generate(entries: results.freeze())
+                            case .error(let error):
+                                Logger.shared.error("\(error)")
+                        }
                     })
             }
         }

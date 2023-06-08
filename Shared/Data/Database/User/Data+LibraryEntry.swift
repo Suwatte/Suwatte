@@ -127,8 +127,9 @@ extension DataManager {
             let obj = LibraryEntry()
             obj.content = content
             // Update Dates
-            obj.lastOpened = Date()
+            obj.lastOpened = .now
             obj.unreadCount = unread
+            obj.lastUpdated = .now
             realm.add(obj, update: .modified)
         }
 

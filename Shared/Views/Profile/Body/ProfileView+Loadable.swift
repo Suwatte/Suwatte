@@ -37,7 +37,6 @@ extension ProfileView {
                                  .navigationTitle(viewModel.content.title)
                                  .transition(.opacity)
                                  .fullScreenCover(item: $viewModel.selection, onDismiss: {
-                                     print("dismissed")
                                      Task {
                                          handleReconnection()
                                          ImagePipeline.shared.configuration.imageCache?.removeAll()

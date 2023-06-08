@@ -16,7 +16,7 @@ extension UICollectionView {
 }
 
 extension PagedViewer {
-    final class PagedController: UICollectionViewController, PagerDelegate {
+    final class PagedController: UICollectionViewController {
         var model: ReaderView.ViewModel!
         var subscriptions = Set<AnyCancellable>()
         var currentPath: IndexPath? {

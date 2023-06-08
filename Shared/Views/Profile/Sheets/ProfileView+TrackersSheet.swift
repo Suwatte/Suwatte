@@ -11,7 +11,7 @@ import SwiftUI
 extension ProfileView.Sheets {
     struct TrackersSheet: View {
         @EnvironmentObject var model: ProfileView.ViewModel
-        @ObservedResults(TrackerLink.self) var trackerLinks
+        @ObservedResults(TrackerLink.self, where: { $0.isDeleted == false }) var trackerLinks
         var body: some View {
             NavigationView {
                 List {

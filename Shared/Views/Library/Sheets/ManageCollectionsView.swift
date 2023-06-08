@@ -11,7 +11,7 @@ import SwiftUI
 extension LibraryView {
     struct ManageCollectionsView: View {
         @Environment(\.presentationMode) var presentationMode
-        @ObservedResults(LibraryCollection.self, sortDescriptor: SortDescriptor(keyPath: "order", ascending: true)) var collections
+        @ObservedResults(LibraryCollection.self, where: { $0.isDeleted == false } ,sortDescriptor: SortDescriptor(keyPath: "order", ascending: true)) var collections
 
         var body: some View {
             NavigationView {

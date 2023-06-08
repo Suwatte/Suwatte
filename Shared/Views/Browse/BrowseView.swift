@@ -9,7 +9,7 @@ import RealmSwift
 import SwiftUI
 
 struct BrowseView: View {
-    @ObservedResults(StoredRunnerObject.self) var runners
+    @ObservedResults(StoredRunnerObject.self, where: { $0.isDeleted == false }) var runners
     @State var presentImporter = false
     var body: some View {
         NavigationView {
@@ -22,8 +22,8 @@ struct BrowseView: View {
             }
             .listStyle(.insetGrouped)
             .navigationTitle("Browse")
-            SearchView()
         }
+        .navigationViewStyle(.stack)
     }
 
     var SearchSection: some View {
