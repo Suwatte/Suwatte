@@ -32,7 +32,12 @@ struct MigrationView: View {
             case .searching:
                 HStack {
                     Spacer()
-                    ProgressView()
+                    VStack(alignment: .center) {
+                        Text("Searching")
+                            .font(.headline)
+                            .fontWeight(.light)
+                        ProgressView()
+                    }
                     Spacer()
                 }
             case .searchComplete: MigrationSection
@@ -49,11 +54,14 @@ struct MigrationView: View {
         .alert("Start Migration", isPresented: $presentAlert) {
             Button("Cancel", role: .cancel) {}
             Button("Start", role: .destructive) {
-                migrate(data: operations)
+                Task.detached {
+                    await migrate(data: operations)
+                }
             }
         } message: {
             Text("Are you sure you want to begin the migration?\nA backup will be automatically generated to protect your data.")
         }
+        .toast()
     }
 }
 
@@ -146,7 +154,12 @@ extension MigrationView {
                 STTLabelView(title: "Preferred Destinations", label: DestinationsLabel())
             }
 
-            Button { startOperations() } label: {
+            Button {
+                Task.detached(priority: .userInitiated) {
+                    await start()
+                }
+                
+            } label: {
                 Label("Begin Searches", systemImage: "magnifyingglass")
             }
             .disabled(!CAN_START)
@@ -207,9 +220,7 @@ extension MigrationView {
     }
 
     private func getAvailableSources() -> [AnyContentSource] {
-        let allSources = SourceManager.shared.sources.values
-        return allSources
-            .filter { !preferredDestinations.map(\.id).contains($0.id) }
+        return runners.filter({ !preferredDestinations.map(\.id).contains($0.id) }).compactMap({ try? SourceManager.shared.getContentSource(id: $0.id) })
     }
 
     private func move(from source: IndexSet, to destination: Int) {
@@ -220,11 +231,6 @@ extension MigrationView {
 // MARK: Functions
 
 extension MigrationView {
-    func startOperations() {
-        operationsTask = Task {
-            await start()
-        }
-    }
 
     func cancelOperations() {
         operationsTask?.cancel()
@@ -318,6 +324,7 @@ extension MigrationView {
             case .idle, .searching:
                 DefaultTile(entry: DSKCommon.Highlight.placeholders().first!)
                     .redacted(reason: .placeholder)
+                    .environment(\.placeholderImageShimmer, false)
             case .noMatches:
                 NavigationLink {
                     ManualDestinationSelectionView(content: initial, states: $operations)
@@ -345,21 +352,18 @@ extension MigrationView {
         await MainActor.run(body: {
             operationState = .searching
         })
-
+        
         for content in contents {
             let id = content.id
-//            await MainActor.run(body: {
-//                operations[id] = .searching
-//            })
             let lastChapter = DataManager.shared.getLatestStoredChapter(content.sourceId, content.contentId)?.number
-            let sources = preferredDestinations.filter { $0.id != content.sourceId }
+            let sources = preferredDestinations
             if Task.isCancelled {
                 return
             }
             // Get Content & Chapters
             let result = await handleSourcesSearch(id: content.id, query: content.title, chapter: lastChapter, sources: sources)
 
-            Task { @MainActor in
+            await MainActor.run {
                 withAnimation {
                     operations[result.0] = result.1
                 }
@@ -497,9 +501,20 @@ extension MigrationView {
     }
 
     func migrate(data: [String: ItemState]) {
-        ToastManager.shared.loading = true
-        ToastManager.shared.info("Migration In Progress\nYour Data has been backed up.")
-        try! BackupManager.shared.save(name: "PreMigration")
+        Task { @MainActor in
+            ToastManager.shared.loading = true
+            ToastManager.shared.info("Migration In Progress\nYour Data has been backed up.")
+        }
+        
+        do {
+            try BackupManager.shared.save(name: "PreMigration")
+        } catch {
+            Task { @MainActor in
+                ToastManager.shared.error(error)
+            }
+            return
+        }
+
         let realm = try! Realm()
 
         func doMigration(entry: HighlightIndentier, target: LibraryEntry) {
@@ -507,6 +522,7 @@ extension MigrationView {
                 .objects(StoredContent.self)
                 .where { $0.contentId == entry.entry.contentId }
                 .where { $0.sourceId == entry.sourceId }
+                .where { $0.isDeleted == false }
                 .first
 
             stored = stored ?? entry.entry.toStored(sourceId: entry.sourceId)
@@ -522,8 +538,11 @@ extension MigrationView {
                 obj.collections = target.collections
                 obj.flag = target.flag
                 obj.dateAdded = target.dateAdded
-                realm.add(obj)
-                realm.delete(target)
+                realm.add(obj, update: .modified)
+                    
+                if target.id != obj.id {
+                    target.isDeleted = true
+                }
             }
         }
         try! realm.safeWrite {
@@ -531,6 +550,7 @@ extension MigrationView {
                 let target = realm
                     .objects(LibraryEntry.self)
                     .where { $0.id == id }
+                    .where({ $0.isDeleted == false })
                     .first
                 guard let target else { continue }
                 switch state {
@@ -541,14 +561,16 @@ extension MigrationView {
                     doMigration(entry: entry, target: target)
                 default:
                     if notFoundStrat == .remove {
-                        realm.delete(target)
+                        target.isDeleted = true
                     }
                 }
             }
         }
-        ToastManager.shared.loading = false
-        ToastManager.shared.cancel()
-        ToastManager.shared.info("Migration Complete!")
-        presentationMode.wrappedValue.dismiss()
+        Task { @MainActor in
+            ToastManager.shared.loading = false
+            ToastManager.shared.cancel()
+            ToastManager.shared.info("Migration Complete!")
+            presentationMode.wrappedValue.dismiss()
+        }
     }
 }

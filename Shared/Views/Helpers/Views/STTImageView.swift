@@ -14,6 +14,8 @@ struct STTImageView: View {
     var url: URL?
     var identifier: ContentIdentifier
     var mode: SwiftUI.ContentMode = .fill
+    @Environment(\.placeholderImageShimmer) var shimmer
+
     @ObservedResults(CustomThumbnail.self, where: { $0.isDeleted == false }) var thumbnails
     @StateObject private var loader = FetchImage()
     var body: some View {
@@ -27,7 +29,7 @@ struct STTImageView: View {
                         .transition(.opacity)
                 } else {
                     Color.gray.opacity(0.25)
-                        .shimmering()
+                        .shimmering(active: shimmer)
                 }
             }
             .task { load(size) }
@@ -156,4 +158,15 @@ struct DisabledNavLink: ViewModifier {
 //                .disabled(true)
             }
     }
+}
+
+private struct ImageShimmerKey: EnvironmentKey {
+  static let defaultValue = true
+}
+
+extension EnvironmentValues {
+  var placeholderImageShimmer: Bool {
+    get { self[ImageShimmerKey.self] }
+    set { self[ImageShimmerKey.self] = newValue }
+  }
 }

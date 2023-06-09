@@ -53,17 +53,7 @@ struct BrowseView: View {
                     ExploreView(id: runner.id, name: runner.name)
                 } label: {
                     HStack(spacing: 15) {
-                        AsyncImage(url: URL(string: runner.thumbnail)) { image in
-                            image
-                                .resizable()
-                                .scaledToFill()
-                                .transition(.opacity)
-                        } placeholder: {
-                            Image("stt_icon")
-                                .resizable()
-                                .scaledToFill()
-                                .transition(.opacity)
-                        }
+                        STTThumbView(url:URL(string: runner.thumbnail))
                             .frame(width: 32.0, height: 32.0)
                             .cornerRadius(5)
                         Text(runner.name)
