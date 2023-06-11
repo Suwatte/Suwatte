@@ -81,7 +81,7 @@ class STTStore {
     if (!value?.[0]) return value; // Return If Empty
 
     const isValid = value.every((v) => typeof v === "string");
-    if (isValid)
+    if (!isValid)
       throw new Error(
         `ObjectStore Type Assertion Failed, Elements of Array are not of type string`
       );

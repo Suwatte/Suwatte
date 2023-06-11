@@ -22,14 +22,16 @@ struct RunnerListsView: View {
                         .navigationTitle(list.listName ?? list.url)
                         .navigationBarTitleDisplayMode(.inline)
                 } label: {
-                    HStack {
+                    VStack(alignment: .leading) {
                         Text(list.listName ?? list.url)
-                        Spacer()
-                        if list.hosted {
-                            Image(systemName: "globe")
-                                .foregroundColor(color)
+                        if list.listName != nil {
+                            Text(list.url)
+                                .font(.caption)
+                                .fontWeight(.light)
+                                .opacity(0.65)
                         }
                     }
+                    
                 }
             }
             .onDelete(perform: $runnerLists.remove(atOffsets:))

@@ -9,7 +9,7 @@ import Foundation
 import RealmSwift
 class BackupManager: ObservableObject {
     private var observer: DispatchSourceFileSystemObject?
-
+    private var test: DirectoryObserver
     static let shared = BackupManager()
     let directory = CloudDataManager.shared.getDocumentDiretoryURL().appendingPathComponent("Backups", isDirectory: true)
     @Published var urls: [URL]
@@ -17,6 +17,7 @@ class BackupManager: ObservableObject {
     init() {
         directory.createDirectory()
         urls = directory.contents.sorted(by: \.lastModified, descending: true)
+        test = .init(directoryURL: directory)
     }
     
     deinit {
@@ -24,25 +25,25 @@ class BackupManager: ObservableObject {
     }
     // Reference: https://medium.com/over-engineering/monitoring-a-folder-for-changes-in-ios-dc3f8614f902
     func observeDirectory() {
-        let descriptor = open(directory.path, O_EVTONLY)
-        let observer = DispatchSource.makeFileSystemObjectSource(fileDescriptor: descriptor, eventMask: .write, queue: .global(qos: .utility))
-        observer.setEventHandler { [weak self] in
-            Logger.shared.log("[Backups] Handling Event")
-            self?.refresh()
-        }
-
-        observer.setRegistrationHandler { [weak self] in
-            Logger.shared.log("[Backups] Observing Directory")
-            self?.refresh()
-        }
-
-        observer.setCancelHandler {
-            Logger.shared.log("[Buckups] Closing Observer")
-            close(descriptor)
-        }
-        
-        observer.resume()
-        self.observer = observer
+//        let descriptor = open(directory.path, O_EVTONLY)
+//        let observer = DispatchSource.makeFileSystemObjectSource(fileDescriptor: descriptor, eventMask: .write, queue: .global(qos: .utility))
+//        observer.setEventHandler { [weak self] in
+//            Logger.shared.log("[Backups] Handling Event")
+//            self?.refresh()
+//        }
+//
+//        observer.setRegistrationHandler { [weak self] in
+//            Logger.shared.log("[Backups] Observing Directory")
+//            self?.refresh()
+//        }
+//
+//        observer.setCancelHandler {
+//            Logger.shared.log("[Buckups] Closing Observer")
+//            close(descriptor)
+//        }
+//
+//        observer.resume()
+//        self.observer = observer
     }
     
     func stopObserving() {
