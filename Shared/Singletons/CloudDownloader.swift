@@ -29,7 +29,7 @@ class DirectoryObserver {
     func stopObserving() {
         metadataQuery.disableUpdates()
         metadataQuery.stop()
-        path.stopAccessingSecurityScopedResource()
+        
     }
     deinit {
         stopObserving()
@@ -42,11 +42,9 @@ class DirectoryObserver {
         metadataQuery.notificationBatchingInterval = 1
         metadataQuery.operationQueue = .main
         metadataQuery.searchScopes = [ NSMetadataQueryUbiquitousDocumentsScope]
-        let predicateString = "(%K BEGINSWITH %@) AND NOT (%K CONTAINS %@)"
-        let parentPath = path.path.appending("/") // Make sure path ends with a slash
-        print(parentPath)
-        let predicate = NSPredicate(format: predicateString, NSMetadataItemPathKey, parentPath, NSMetadataItemPathKey, parentPath.appending("/"))
-        metadataQuery.predicate = predicate
+        let escapedPath = NSRegularExpression.escapedPattern(for: path.path)
+        let predicateString = "%K MATCHES '^" + escapedPath + "/[^/]*$'"
+        metadataQuery.predicate = NSPredicate(format: predicateString, NSMetadataItemPathKey)
         metadataQuery.sortDescriptors = [NSSortDescriptor(key: NSMetadataItemFSNameKey, ascending: true)]
         
         NotificationCenter.default.addObserver(self, selector: #selector(queryDidStartGathering(notification:)), name: NSNotification.Name.NSMetadataQueryDidStartGathering, object: metadataQuery)
@@ -56,9 +54,7 @@ class DirectoryObserver {
         
         // This notification is posted after the initial query gathering is complete.
         NotificationCenter.default.addObserver(self, selector: #selector(queryDidFinishGathering(notification:)), name: NSNotification.Name.NSMetadataQueryDidFinishGathering, object: metadataQuery)
-        
     }
-    
     
     @objc func queryDidStartGathering(notification: NSNotification) {
         print("Started Gathering")
@@ -68,6 +64,7 @@ class DirectoryObserver {
     @objc func queryDidUpdate(notification: NSNotification) {
         print("Update Recieved")
         metadataQuery.disableUpdates()
+        handleQueryDidUpdate(notification as Notification)
         parseList()
     }
     
@@ -92,24 +89,63 @@ class DirectoryObserver {
             return
         }
         
-        var rootFolder = Folder(url: path)
+//        var rootFolder = Folder(url: path)
         for item in items {
             guard let url = item.value(forAttribute: NSMetadataItemURLKey) as? URL else { continue }
             guard url.deletingLastPathComponent() == path else {continue }
             
             if url.hasDirectoryPath { // Folder
-                print("Folder", url.lastPathComponent)
+                print("Folder:", url.lastPathComponent)
                 continue
             }
             
             guard extensions.contains(url.pathExtension) else { continue }
             
             
-            print("File", url.lastPathComponent)
+            print("File  :", url.lastPathComponent)
         }
         
-        callback?(rootFolder)
+        callback?(.init(url: path))
     }
+    
+    // Handle query's update notification
+        private func handleQueryDidUpdate(_ notification: Notification) {
+            print("Query Did Update")
+            guard let query = notification.object as? NSMetadataQuery else { return }
+
+            query.disableUpdates()
+
+            // Process the query update
+            let addedItems = notification.userInfo?[NSMetadataQueryUpdateAddedItemsKey] as? [NSMetadataItem] ?? []
+            let changedItems = notification.userInfo?[NSMetadataQueryUpdateChangedItemsKey] as? [NSMetadataItem] ?? []
+            let removedItems = notification.userInfo?[NSMetadataQueryUpdateRemovedItemsKey] as? [NSMetadataItem] ?? []
+
+            // Handle added items
+            for item in addedItems {
+                if let path = item.value(forAttribute: NSMetadataItemPathKey) as? String {
+                    // Handle the added item path
+                    print("Added item path: \(path)")
+                }
+            }
+
+            // Handle changed items
+            for item in changedItems {
+                if let path = item.value(forAttribute: NSMetadataItemPathKey) as? String {
+                    // Handle the changed item path
+                    print("Changed item path: \(path)")
+                }
+            }
+
+            // Handle removed items
+            for item in removedItems {
+                if let path = item.value(forAttribute: NSMetadataItemPathKey) as? String {
+                    // Handle the removed item path
+                    print("Removed item path: \(path)")
+                }
+            }
+
+            query.enableUpdates()
+        }
 }
 
 

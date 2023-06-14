@@ -14,7 +14,6 @@ final class LocalContentManager: ObservableObject {
     @Published var isSelecting = false
     @Published var idHash: [Int64: Book] = [:]
 
-    private var observer: DirectoryObserver
     static var shared = LocalContentManager()
     let directory = CloudDataManager
         .shared
@@ -23,15 +22,16 @@ final class LocalContentManager: ObservableObject {
     internal let zipClient = ZipClient()
     internal let rarClient = RarClient()
     @Published var downloads: [DownloadObject] = []
+    private var observer: DirectoryObserver
     
     init() {
         directory.createDirectory()
-        observer = DirectoryObserver(extensions: ["cbr", "cbz", "epub"], url: directory)
+        observer = .init(extensions: ["cbr"], url: directory)
     }
     
     func observe() {
-        observer.observe { folder in
-            print(folder)
+        observer.observe { test in
+            print(test)
         }
     }
     

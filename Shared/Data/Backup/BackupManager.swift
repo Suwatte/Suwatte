@@ -9,7 +9,6 @@ import Foundation
 import RealmSwift
 class BackupManager: ObservableObject {
     private var observer: DispatchSourceFileSystemObject?
-    private var test: DirectoryObserver
     static let shared = BackupManager()
     let directory = CloudDataManager.shared.getDocumentDiretoryURL().appendingPathComponent("Backups", isDirectory: true)
     @Published var urls: [URL]
@@ -17,7 +16,6 @@ class BackupManager: ObservableObject {
     init() {
         directory.createDirectory()
         urls = directory.contents.sorted(by: \.lastModified, descending: true)
-        test = .init(directoryURL: directory)
     }
     
     deinit {
