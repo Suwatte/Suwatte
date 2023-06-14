@@ -50,13 +50,9 @@ struct MoreView: View {
         
         Section {
             Link("Support on KoFi", destination: URL(string: "https://ko-fi.com/mantton")!)
-                .badge("\(Image(systemName: "link"))")
             Link("Support on Patreon", destination: URL(string: "https://patreon.com/mantton")!)
-                .badge("\(Image(systemName: "link"))")
             Link("Discord Server", destination: URL(string: "https://discord.gg/8wmkXsT6h5")!)
-                .badge("\(Image(systemName: "link"))")
             Link("About Suwatte", destination: STTHost.root)
-                .badge("\(Image(systemName: "link"))")
         } header: {
             Text("Links")
         }
