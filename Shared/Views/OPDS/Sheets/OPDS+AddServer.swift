@@ -22,7 +22,7 @@ extension OPDSView {
                     }
                     HStack(alignment: .center, spacing: 0) {
                         Text("Host: ")
-                        TextField("Host", text: $entry.host, prompt: Text("https://media.mantton.com/opds"))
+                        TextField("Host", text: $entry.host, prompt: Text("https://"))
                             .autocapitalization(.none)
                             .keyboardType(.URL)
                             .focused($isFocused)
@@ -62,6 +62,8 @@ extension OPDSView {
                         guard serverURL != nil else {
                             return
                         }
+                        
+                        ToastManager.shared.loading = true
 
                         let auth = hasAuthentication ? (entry.userName, entry.password) : nil
                         let client = OPDSClient(base: entry.host, auth: auth)
@@ -79,6 +81,7 @@ extension OPDSView {
                                 ToastManager.shared.error("Server Connection Failed")
                                 Logger.shared.error("[OPDS] \(error.localizedDescription)")
                             }
+                            ToastManager.shared.loading = false
                         }
                     }
                     .disabled(!isValidInput)
