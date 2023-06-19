@@ -27,8 +27,19 @@ struct LibraryView: View {
             .navigationTitle("Library")
             .toolbar(content: {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("\(Image(systemName: "ellipsis.circle"))") {
-                        presentOrderSheet.toggle()
+                    Menu {
+                        Button {
+                            presentOrderSheet.toggle()
+                        } label: {
+                            Label("Manage Sections", systemImage: "tray.2")
+                        }
+                        Button {
+                            presentCollectionSheet.toggle()
+                        } label: {
+                            Label("Manage Collections", systemImage: "tray.full")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
                     }
                     .disabled(requireAuth && AuthProvider.isExpired)
                 }
@@ -153,12 +164,7 @@ extension LibraryView {
                     }
                 }
             } header: {
-                HStack {
-                    Text("Collections")
-                    Spacer()
-                    Button { presentCollections.toggle() }
-                label: { Image(systemName: "ellipsis") }
-                }
+                Text("Collections")
             }
             .headerProminence(.increased)
             .sheet(isPresented: $presentCollections) {
