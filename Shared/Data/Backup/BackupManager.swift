@@ -17,10 +17,11 @@ class BackupManager: ObservableObject {
         directory.createDirectory()
         urls = directory.contents.sorted(by: \.lastModified, descending: true)
     }
-    
+
     deinit {
         observer?.cancel()
     }
+
     // Reference: https://medium.com/over-engineering/monitoring-a-folder-for-changes-in-ios-dc3f8614f902
     func observeDirectory() {
 //        let descriptor = open(directory.path, O_EVTONLY)
@@ -43,19 +44,16 @@ class BackupManager: ObservableObject {
 //        observer.resume()
 //        self.observer = observer
     }
-    
+
     func stopObserving() {
         observer?.cancel()
     }
 
-
-
-    
     func refresh() {
-        let urls =  directory
+        let urls = directory
             .contents
             .sorted(by: \.lastModified, descending: true)
-            .filter({ ["json", "icloud" ].contains($0.pathExtension) })
+            .filter { ["json", "icloud"].contains($0.pathExtension) }
         Task { @MainActor in
             self.urls = urls
         }
@@ -119,7 +117,6 @@ class BackupManager: ObservableObject {
             if let collections = backup.collections {
                 realm.add(collections, update: .all)
             }
-
 
             if let readLater = backup.savedForLater {
                 realm.add(readLater, update: .all)

@@ -148,7 +148,7 @@ extension LibraryView {
     }
 
     struct CollectionsSectionView: View {
-        @ObservedResults(LibraryCollection.self,where: { $0.isDeleted == false } , sortDescriptor: SortDescriptor(keyPath: "order", ascending: true)) var collections
+        @ObservedResults(LibraryCollection.self, where: { $0.isDeleted == false }, sortDescriptor: SortDescriptor(keyPath: "order", ascending: true)) var collections
 
         @Binding var isActive: Bool
         @Binding var presentCollections: Bool

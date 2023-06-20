@@ -76,46 +76,47 @@ extension CollectionManagementView {
             TitlesSection
             Section {
                 // MARK: Content Status
+
                 ContentStatusSection
 
                 // MARK: Reading Flag
+
                 ReadingFlagSection
 
                 // MARK: Content Type
-                ContentTypeSection
 
+                ContentTypeSection
             }
             SourcesSection
 
-            .onChange(of: adultContent) { _ in
-                saveAll()
-            }
-            .onChange(of: sourceSelections) { _ in
-                saveAll()
-            }
-            .onChange(of: flagSelections) { _ in
-                saveAll()
-            }
-            .onChange(of: contentSelections) { _ in
-                saveAll()
-            }
+                .onChange(of: adultContent) { _ in
+                    saveAll()
+                }
+                .onChange(of: sourceSelections) { _ in
+                    saveAll()
+                }
+                .onChange(of: flagSelections) { _ in
+                    saveAll()
+                }
+                .onChange(of: contentSelections) { _ in
+                    saveAll()
+                }
 
-            .onChange(of: tagContains) { _ in
-                saveAll()
-            }
-            .onChange(of: titleContains) { _ in
-                saveAll()
-            }
-            .onChange(of: contentStatuses) { _ in
-                saveAll()
-            }
+                .onChange(of: tagContains) { _ in
+                    saveAll()
+                }
+                .onChange(of: titleContains) { _ in
+                    saveAll()
+                }
+                .onChange(of: contentStatuses) { _ in
+                    saveAll()
+                }
         }
-
     }
 }
 
 extension CollectionManagementView.FilterSections {
-    var AdultContentSection : some View {
+    var AdultContentSection: some View {
         Section {
             NavigationLink {
                 List {
@@ -145,7 +146,7 @@ extension CollectionManagementView.FilterSections {
             }
         }
     }
-    
+
     var TitlesSection: some View {
         Section {
             NavigationLink {
@@ -198,9 +199,8 @@ extension CollectionManagementView.FilterSections {
             }
         }
     }
-    
+
     var ContentStatusSection: some View {
-        
         NavigationLink {
             List {
                 ForEach(ContentStatus.allCases, id: \.hashValue) { c in
@@ -229,7 +229,7 @@ extension CollectionManagementView.FilterSections {
             Text("Content Status")
         }
     }
-    
+
     var ReadingFlagSection: some View {
         NavigationLink {
             List {
@@ -259,9 +259,8 @@ extension CollectionManagementView.FilterSections {
         } label: {
             Text("Reading Flags")
         }
-
     }
-    
+
     var ContentTypeSection: some View {
         NavigationLink {
             List {
@@ -291,9 +290,8 @@ extension CollectionManagementView.FilterSections {
             Text("Content Type")
         }
     }
-    
+
     var SourcesSection: some View {
-        
         Section {
             NavigationLink {
                 List {
@@ -339,7 +337,7 @@ extension CollectionManagementView.FilterSections {
         let realm = try! Realm()
         let collection = realm.objects(LibraryCollection.self).first(where: { $0.id == collectionId })
         let filter = LibraryCollectionFilter()
-        
+
         if let f = collection?.filter {
             filter.id = f.id
         }
@@ -358,11 +356,10 @@ extension CollectionManagementView.FilterSections {
 }
 
 extension CollectionManagementView {
-
     func handleToggleFilterEnabled(_ value: Bool) {
         let realm = try! Realm()
         let collection = collection.thaw()
-        
+
         try! realm.safeWrite {
             if value {
                 if collection?.filter == nil {

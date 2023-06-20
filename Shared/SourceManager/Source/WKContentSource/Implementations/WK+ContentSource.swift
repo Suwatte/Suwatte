@@ -56,13 +56,13 @@ extension C: ContentSource {
 
     func resolveExplorePageCollection(_ excerpt: DSKCommon.CollectionExcerpt) async throws -> DSKCommon.ExploreCollection {
         let body = "return resolveExploreCollection(e);"
-        let arguments = ["e": try excerpt.asDictionary()]
+        let arguments = try ["e": excerpt.asDictionary()]
         return try await eval(body, arguments, to: DSKCommon.ExploreCollection.self)
     }
 
     func getSearchResults(_ query: DSKCommon.SearchRequest) async throws -> DSKCommon.PagedResult {
         let body = "return getSearchResults(q);"
-        let arguments = ["q": try query.asDictionary()]
+        let arguments = try ["q": query.asDictionary()]
         return try await eval(body, arguments, to: DSKCommon.PagedResult.self)
     }
 

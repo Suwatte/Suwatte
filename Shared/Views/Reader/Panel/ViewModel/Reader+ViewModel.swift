@@ -25,8 +25,8 @@ extension ReaderView {
                 .store(in: &cancellables)
             }
         }
-        
-        var scrollingChapter : ReaderChapter
+
+        var scrollingChapter: ReaderChapter
 
         var chapterList: [ThreadSafeChapter]
         @Published var contentTitle: String?
@@ -42,7 +42,7 @@ extension ReaderView {
         var chapterCache: [String: ReaderChapter] = [:]
         var chapterSectionCache: [String: Int] = [:]
         var scrollTask: Task<Void, Never>?
-        
+
         var content: StoredContent?
         var isInLibrary: Bool = false
         // Combine
@@ -57,14 +57,14 @@ extension ReaderView {
             let sourceIndexAcc = chapterList.map { $0.index }.reduce(0, +)
             let sortedChapters = sourceIndexAcc > 0 ? chapterList.sorted(by: { $0.index > $1.index }) : chapterList.sorted(by: { $0.number > $1.number })
             self.chapterList = sortedChapters.map { $0.toThreadSafe() }
-            
+
             // Update Content
             let chapter = chapter
-            self.content = DataManager.shared.getStoredContent(chapter.sourceId, chapter.contentId)
-            if let content  {
-                self.isInLibrary = DataManager.shared.isInLibrary(content: content)
+            content = DataManager.shared.getStoredContent(chapter.sourceId, chapter.contentId)
+            if let content {
+                isInLibrary = DataManager.shared.isInLibrary(content: content)
             }
-            
+
             contentTitle = title
             let c: ReaderChapter = .init(chapter: chapter.toThreadSafe())
             activeChapter = c
@@ -104,7 +104,7 @@ extension ReaderView {
             let cData = await STTHelpers.getChapterData(chapter)
             switch cData {
             case let .loaded(t):
-                    readerChapter.data = .loaded(t.toReadableChapterData())
+                readerChapter.data = .loaded(t.toReadableChapterData())
             case let .failed(error):
                 readerChapter.data = .failed(error)
             default: break
@@ -138,14 +138,13 @@ extension ReaderView {
             } else {
                 insertPublisher.send(asNextChapter ? sections.count - 1 : 0)
             }
-            
+
             Task { @MainActor in
                 containerReady = true
             }
             if pages.isEmpty {
                 loadNextChapter()
             }
-            
         }
 
         func buildSection(chapter: ThreadSafeChapter, pages: [ReaderPage]) -> [AnyObject] {
@@ -182,11 +181,10 @@ extension ReaderView {
             reloadSectionPublisher.send(section)
         }
 
-
         func getObject(atPath path: IndexPath) -> AnyObject {
             sections[path.section][path.item]
         }
-        
+
         func getChapter(at index: Int) -> ReaderChapter? {
             readerChapterList.get(index: index)
         }
@@ -353,7 +351,7 @@ extension ReaderView.ViewModel {
         guard let chapter = chapterCache[page.chapterId], canMark(sourceId: chapter.chapter.sourceId) else {
             return
         }
-        
+
         DataManager.shared.updateContentProgress(for: contentIdentifier.id, chapter: chapter.chapter, lastPageRead: chapter.requestedPageIndex + 1, totalPageCount: chapter.pages?.count ?? 1, lastPageOffset: chapter.requestedPageOffset.flatMap(Double.init))
     }
 
@@ -401,17 +399,17 @@ extension ReaderView.ViewModel {
         let id = contentIdentifier.id
         Task.detached { [weak self] in
             // Mark As Completed & Update Unread Count
-            
+
             DataManager.shared.didCompleteChapter(for: id, chapter: lastChapter.chapter)
 
             // Anilist Sync
             await self?.handleTrackerSync(number: lastChapter.chapter.number,
-                              volume: lastChapter.chapter.volume)
+                                          volume: lastChapter.chapter.volume)
 
             // Source Sync
             await self?.handleSourceSync(contentId: lastChapter.chapter.contentId,
-                             sourceId: lastChapter.chapter.sourceId,
-                             chapterId: lastChapter.chapter.chapterId)
+                                         sourceId: lastChapter.chapter.sourceId,
+                                         chapterId: lastChapter.chapter.chapterId)
         }
     }
 
@@ -433,7 +431,7 @@ extension ReaderView.ViewModel {
         let id = ContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId).id
         // Anilist
         Task {
-            let alId = STTHelpers.getAnilistID(id: id).flatMap({ String($0) })
+            let alId = STTHelpers.getAnilistID(id: id).flatMap { String($0) }
             do {
                 try await STTHelpers.syncToAnilist(mediaID: alId, progress: chapterNumber, progressVolume: chapterVolume)
             } catch {
@@ -503,14 +501,14 @@ extension ReaderView.ViewModel {
         guard let value = value as? Int else {
             return false
         }
-        let mode = PanelReadingModes(rawValue:value)
+        let mode = PanelReadingModes(rawValue: value)
         guard let mode else {
             return false
         }
         updateViewerMode(with: mode)
         return true
     }
-    
+
     func updateViewerMode(with mode: PanelReadingModes) {
         let preferences = Preferences.standard
 
@@ -539,12 +537,12 @@ extension ReaderView.ViewModel {
             preferences.isPagingVertically = true
         }
     }
-    
+
     func setReadingModeForContent(_ value: PanelReadingModes) {
         let id = contentIdentifier
         let container = UserDefaults.standard
         let key = STTKeys.ReaderType + "%%" + id.id
-        
+
         container.setValue(value.rawValue, forKey: key)
     }
 

@@ -201,7 +201,6 @@ extension ReaderView {
                         .foregroundColor(.primary.opacity(0.75))
                     ChapterStatusView
                         .frame(width: 15, height: 15, alignment: .center)
-
                 }
             }
 
@@ -224,9 +223,9 @@ extension ReaderView {
                     case .idle, .loading:
                         ProgressView()
                     case .loaded:
-                            Image(systemName: SYSTEM_IMAGE)
-                                .resizable()
-                                .foregroundColor(.green)
+                        Image(systemName: SYSTEM_IMAGE)
+                            .resizable()
+                            .foregroundColor(.green)
                     }
                 }
             }

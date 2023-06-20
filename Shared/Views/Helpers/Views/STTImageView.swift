@@ -5,11 +5,11 @@
 //  Created by Mantton on 2022-04-10.
 //
 
+import Alamofire
 import Nuke
 import NukeUI
 import RealmSwift
 import SwiftUI
-import Alamofire
 struct STTImageView: View {
     var url: URL?
     var identifier: ContentIdentifier
@@ -55,13 +55,12 @@ struct STTImageView: View {
         loader.priority = .normal
         loader.transaction = .init(animation: .easeInOut(duration: 0.25))
         loader.processors = [NukeDownsampleProcessor(size: size)]
-        
+
         if let customThumbanailURL {
             loader.load(customThumbanailURL)
             return
         }
         Task {
-            
             if identifier.sourceId == STTHelpers.OPDS_CONTENT_ID {
                 let pub = DataManager.shared.getPublication(id: identifier.contentId)
                 let value = pub?.client?.toClient().authHeader
@@ -84,7 +83,7 @@ struct STTImageView: View {
                     if let source = source as? any ModifiableSource, source.config.hasThumbnailInterceptor {
                         let dskRequest = DSKCommon.Request(url: url?.absoluteString ?? "")
                         let dskResponse = try await source.willRequestImage(request: dskRequest)
-                        let imageRequest = ImageRequest(urlRequest: try dskResponse.toURLRequest())
+                        let imageRequest = try ImageRequest(urlRequest: dskResponse.toURLRequest())
                         loader.load(imageRequest)
                         return
                     } else {
@@ -99,7 +98,7 @@ struct STTImageView: View {
     }
 
     var customThumbanailURL: URL? {
-        thumbnails.where({ $0.id == identifier.id }).first?.file?.filePath
+        thumbnails.where { $0.id == identifier.id }.first?.file?.filePath
     }
 }
 
@@ -127,7 +126,6 @@ struct BaseImageView: View {
             .onDisappear {
                 loader.reset()
                 loader.priority = .low
-                
             }
             .frame(width: proxy.size.width, height: proxy.size.width * 1.5, alignment: .center)
             .background(Color.gray.opacity(0.25))
@@ -150,7 +148,7 @@ struct BaseImageView: View {
                 if let sourceId, let source = SourceManager.shared.getSource(id: sourceId) as? any ModifiableSource, source.config.hasThumbnailInterceptor {
                     let dskRequest = DSKCommon.Request(url: url.absoluteString)
                     let dskResponse = try await source.willRequestImage(request: dskRequest)
-                    let imageRequest = ImageRequest(urlRequest: try dskResponse.toURLRequest())
+                    let imageRequest = try ImageRequest(urlRequest: dskResponse.toURLRequest())
                     loader.load(imageRequest)
                 } else {
                     loader.load(url)
@@ -159,7 +157,6 @@ struct BaseImageView: View {
                 Logger.shared.error(error.localizedDescription)
                 loader.load(url)
             }
-
         }
     }
 }
@@ -180,12 +177,12 @@ struct DisabledNavLink: ViewModifier {
 }
 
 private struct ImageShimmerKey: EnvironmentKey {
-  static let defaultValue = true
+    static let defaultValue = true
 }
 
 extension EnvironmentValues {
-  var placeholderImageShimmer: Bool {
-    get { self[ImageShimmerKey.self] }
-    set { self[ImageShimmerKey.self] = newValue }
-  }
+    var placeholderImageShimmer: Bool {
+        get { self[ImageShimmerKey.self] }
+        set { self[ImageShimmerKey.self] = newValue }
+    }
 }

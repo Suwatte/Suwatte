@@ -6,12 +6,10 @@
 //
 
 import Foundation
-import RealmSwift
 import IceCream
-
+import RealmSwift
 
 final class ProgressMarker: Object, Identifiable, CKRecordConvertible, CKRecordRecoverable {
-    
     @Persisted(primaryKey: true) var id: String
     @Persisted var readChapters: MutableSet<Double>
     @Persisted var currentChapter: ChapterReference?
@@ -19,9 +17,9 @@ final class ProgressMarker: Object, Identifiable, CKRecordConvertible, CKRecordR
     @Persisted var lastPageRead: Int?
     @Persisted var totalPageCount: Int?
     @Persisted var lastPageOffset: Double?
-    
+
     @Persisted var isDeleted: Bool = false
-    
+
     var isCompleted: Bool {
         guard let lastPageRead, let totalPageCount, totalPageCount >= 1, lastPageRead >= 1 else {
             return false
@@ -36,19 +34,17 @@ extension ProgressMarker {
         guard let lastPageRead, let totalPageCount else {
             return nil
         }
-        return  Double(lastPageRead) / Double(totalPageCount)
-        
+        return Double(lastPageRead) / Double(totalPageCount)
     }
-    
+
     var pctProgress: Double? {
         if let progress {
             return progress * 100.0
         }
         return nil
     }
-    
+
     var maxReadChapter: Double? {
         readChapters.max()
     }
-    
 }

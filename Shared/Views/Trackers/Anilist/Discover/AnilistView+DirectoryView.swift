@@ -248,7 +248,7 @@ extension AnilistView.DirectoryView {
             BaseImageView(url: URL(string: data.coverImage.extraLarge))
                 .blur(radius: BLUR_CONTENT ? 50 : 0)
         }
-        
+
         var BLUR_CONTENT: Bool {
             blurNSFWContent && data.isAdult && data.genres.contains("Hentai")
         }

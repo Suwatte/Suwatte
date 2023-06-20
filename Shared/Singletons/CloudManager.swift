@@ -9,28 +9,26 @@ import Foundation
 
 // Reference: https://stackoverflow.com/a/42950366
 class CloudDataManager {
-
     static let shared = CloudDataManager()
-    
-    struct DocumentsDirectory {
+
+    enum DocumentsDirectory {
         static let localDocumentsURL = FileManager.default.documentDirectory
         static let iCloudDocumentsURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents")
     }
-
 
     // Return the Document directory (Cloud OR Local)
     // To do in a background thread
 
     func getDocumentDiretoryURL() -> URL {
-        if isCloudEnabled  {
+        if isCloudEnabled {
             return DocumentsDirectory.iCloudDocumentsURL!
         } else {
             return DocumentsDirectory.localDocumentsURL
         }
     }
-    
+
     // Return true if iCloud is enabled
-    var isCloudEnabled : Bool {
+    var isCloudEnabled: Bool {
         return DocumentsDirectory.iCloudDocumentsURL != nil
     }
 
@@ -39,7 +37,6 @@ class CloudDataManager {
         let fileManager = FileManager.default
         let enumerator = fileManager.enumerator(atPath: url!.path)
         while let file = enumerator?.nextObject() as? String {
-
             do {
                 try fileManager.removeItem(at: url!.appendingPathComponent(file))
                 print("Files deleted")
@@ -78,7 +75,6 @@ class CloudDataManager {
             let fileManager = FileManager.default
             let enumerator = fileManager.enumerator(atPath: DocumentsDirectory.iCloudDocumentsURL!.path)
             while let file = enumerator?.nextObject() as? String {
-
                 do {
                     try fileManager.copyItem(at: DocumentsDirectory.iCloudDocumentsURL!.appendingPathComponent(file), to: DocumentsDirectory.localDocumentsURL.appendingPathComponent(file))
 

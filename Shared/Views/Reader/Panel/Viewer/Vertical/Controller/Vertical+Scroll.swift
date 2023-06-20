@@ -80,7 +80,7 @@ extension Controller {
             let currentOffset = collectionNode.contentOffset.y
             model.activeChapter.requestedPageOffset = currentOffset - pageOffset
         }
-        
+
         Task {
             model.didScrollTo(path: path)
         }
@@ -101,12 +101,11 @@ extension Controller {
         if currentPath.section != lastViewedSection {
             STTHelpers.triggerHaptic()
             lastViewedSection = currentPath.section
-            
+
             if let chapter = model.getChapter(at: currentPath.section), chapter !== model.scrollingChapter {
                 model.scrollingChapter = chapter
             }
         }
-        
     }
 
     func getCurrentChapterScrollRange() -> (min: CGFloat, max: CGFloat) {

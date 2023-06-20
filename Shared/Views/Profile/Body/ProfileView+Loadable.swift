@@ -5,9 +5,9 @@
 //  Created by Mantton on 2022-03-07.
 //
 
+import Nuke
 import RealmSwift
 import SwiftUI
-import Nuke
 
 extension ProfileView {
     struct StateGate: View {

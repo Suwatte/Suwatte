@@ -5,8 +5,8 @@
 //  Created by Mantton on 2022-04-06.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 
 struct BackupsView: View {
     @StateObject var manager = BackupManager.shared
@@ -40,7 +40,6 @@ struct BackupsView: View {
                         manager.remove(url: url)
                     }
                 }
-
             }
         }
         .task {
@@ -130,9 +129,9 @@ extension BackupsView {
         KEY_WINDOW?.rootViewController!.present(activityController, animated: true, completion: nil)
     }
 
-    func handleRestore(url: URL)  {
+    func handleRestore(url: URL) {
         ToastManager.shared.loading = true
-        
+
         restoreTask = Task {
             do {
                 if !ICDM.shared.isIdle {

@@ -6,9 +6,8 @@
 //
 
 import Foundation
-import RealmSwift
 import IceCream
-
+import RealmSwift
 
 final class StreamableOPDSContent: Object, CKRecordConvertible, CKRecordRecoverable {
     @Persisted(primaryKey: true) var id: String
@@ -21,10 +20,8 @@ final class StreamableOPDSContent: Object, CKRecordConvertible, CKRecordRecovera
     @Persisted var isDeleted: Bool
 }
 
-
 extension StreamableOPDSContent {
     func toStoredChapter() -> StoredChapter {
-        
         let chapter = StoredChapter()
         chapter.sourceId = STTHelpers.OPDS_CONTENT_ID
         chapter.contentId = id.components(separatedBy: "||").last ?? id

@@ -70,8 +70,8 @@ extension Anilist {
     func search(_ req: SearchRequest) async throws -> Page {
         var req = req
         req.isAdult = StateManager.shared.ShowNSFWContent && Preferences.standard.includeNSFWInAnilistSearchResult ? nil : false
-        var data = try await request(query: Self.FS_QUERY + Queries.SEARCH_RESULT_FRAGMENT, variables: try req.asDictionary(), to: PageResponse.self).data.Page
-        data.media = data.media.filter({ !($0.genres.count == 1 && $0.genres.contains("Hentai") && $0.countryOfOrigin == "JP") }) // Hard Filter Out Strictly hentai
+        var data = try await request(query: Self.FS_QUERY + Queries.SEARCH_RESULT_FRAGMENT, variables: req.asDictionary(), to: PageResponse.self).data.Page
+        data.media = data.media.filter { !($0.genres.count == 1 && $0.genres.contains("Hentai") && $0.countryOfOrigin == "JP") } // Hard Filter Out Strictly hentai
         return data
     }
 

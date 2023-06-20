@@ -54,7 +54,7 @@ extension DataManager {
 
         let target = realm
             .objects(ContentLink.self)
-            .where { $0.ids.containsAny(in: [child.id, from.id]) && $0.isDeleted == false}
+            .where { $0.ids.containsAny(in: [child.id, from.id]) && $0.isDeleted == false }
             .first
 
         guard let target else {

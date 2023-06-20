@@ -254,7 +254,6 @@ extension ExploreView.HighlightTile {
             })
             .animation(.easeOut(duration: 0.25), value: loader.image)
             .animation(.easeOut(duration: 0.25), value: loader.isLoading)
-
         }
 
         func load(url: URL?) async {
@@ -265,7 +264,7 @@ extension ExploreView.HighlightTile {
                 if let source = source as? any ModifiableSource, source.config.hasThumbnailInterceptor {
                     let dskRequest = DSKCommon.Request(url: url.absoluteString)
                     let dskResponse = try await source.willRequestImage(request: dskRequest)
-                    let imageRequest = ImageRequest(urlRequest: try dskResponse.toURLRequest())
+                    let imageRequest = try ImageRequest(urlRequest: dskResponse.toURLRequest())
                     loader.load(imageRequest)
                     return
                 }

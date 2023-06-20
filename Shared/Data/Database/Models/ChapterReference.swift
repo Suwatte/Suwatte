@@ -6,13 +6,12 @@
 //
 
 import Foundation
-import RealmSwift
 import IceCream
-
+import RealmSwift
 
 protocol STTChapter {
     var number: Double { get set }
-    var volume: Double? { get set}
+    var volume: Double? { get set }
 }
 
 extension STTChapter {
@@ -24,13 +23,13 @@ extension STTChapter {
         str += " Chapter \(number.clean)"
         return str.trimmingCharacters(in: .whitespacesAndNewlines)
     }
-    
+
     var chapterName: String {
         "Chapter \(number.clean)"
     }
 }
 
-final class ChapterReference: Object, CKRecordConvertible , CKRecordRecoverable, STTChapter  {
+final class ChapterReference: Object, CKRecordConvertible, CKRecordRecoverable, STTChapter {
     @Persisted(primaryKey: true) var id: String
     @Persisted var chapterId: String
     @Persisted var number: Double
@@ -38,5 +37,4 @@ final class ChapterReference: Object, CKRecordConvertible , CKRecordRecoverable,
     @Persisted var content: StoredContent?
     @Persisted var opds: StreamableOPDSContent?
     @Persisted var isDeleted: Bool = false
-
 }

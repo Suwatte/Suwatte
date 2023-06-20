@@ -48,7 +48,7 @@ struct LCV_Download: View {
         let size = CGFloat(80)
         var body: some View {
             HStack {
-                GeometryReader { proxy in
+                GeometryReader { _ in
                     AsyncImage(url: URL(string: download.cover))
                 }
                 .frame(minWidth: 0, idealWidth: size, maxWidth: size, minHeight: 0, idealHeight: size * 1.5, maxHeight: size * 1.5, alignment: .center)

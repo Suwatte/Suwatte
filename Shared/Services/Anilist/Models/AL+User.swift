@@ -20,7 +20,7 @@ extension Anilist {
         static func == (lhs: Anilist.User, rhs: Anilist.User) -> Bool {
             lhs.id == rhs.id
         }
-        
+
         var id: Int
         var name: String
         var about: String?
@@ -34,7 +34,7 @@ extension Anilist {
     struct Avatar: Decodable {
         var large: String?
     }
-    
+
     struct UserOptions: Decodable {
         var displayAdultContent: Bool
         var profileColor: String

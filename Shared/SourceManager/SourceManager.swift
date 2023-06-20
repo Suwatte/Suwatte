@@ -22,7 +22,7 @@ final class SourceManager {
             .appendingPathComponent("common.js")
     }
 
-    var sources: [String:AnyContentSource] = [:]
+    var sources: [String: AnyContentSource] = [:]
     private let vm: JSVirtualMachine
     init() {
         // Create Directory
@@ -37,51 +37,48 @@ final class SourceManager {
 // MARK: - Public
 
 extension SourceManager {
-    
     func getSource(id: String) -> AnyContentSource? {
         try? sources[id] ?? startSource(id: id)
     }
+
     func getContentSource(id: String) throws -> AnyContentSource {
         let initialized = sources[id]
-        
+
         if let initialized {
             return initialized
         }
-        
+
         return try startSource(id: id)
     }
-    
+
     func startSource(id: String) throws -> AnyContentSource {
-        
         let realm = try Realm()
         let runner = realm
             .objects(StoredRunnerObject.self)
-            .where { $0.id == id && $0.isDeleted == false && $0.enabled  == true }
+            .where { $0.id == id && $0.isDeleted == false && $0.enabled == true }
             .first
-        
+
         let path = runner?.executable?.filePath
         guard let path else {
-            
             let source = try locateAndSave(id: id, listUrl: runner?.listURL)
-            
+
             if let source {
                 return source
             }
             throw DSK.Errors.NamedError(name: "SourceManager", message: "unable to locate runner executable. Please ensure you have this source installed.")
         }
-    
-        
+
         let source = try JSCContentSource(path: path)
         sources[id] = source
         return source
     }
-    
+
     func locateAndSave(id: String, listUrl: String?) throws -> AnyContentSource? {
         let url = try? FileManager
             .default
             .contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
             .filter { $0.isFileURL }
-            .filter({ $0.lastPathComponent.contains(".stt") })
+            .filter { $0.lastPathComponent.contains(".stt") }
             .first(where: { $0.lastPathComponent == "\(id).stt" })
         guard let url else {
             return nil
@@ -89,11 +86,9 @@ extension SourceManager {
 
         let source = try JSCContentSource(path: url)
         sources[id] = source
-        DataManager.shared.saveRunner(source.info, listURL: listUrl.flatMap({ URL(string: $0) }), url: url)
+        DataManager.shared.saveRunner(source.info, listURL: listUrl.flatMap { URL(string: $0) }, url: url)
         return source
     }
-    
-    
 }
 
 // MARK: - Log
@@ -121,7 +116,6 @@ extension SourceManager {
         }
     }
 
-
     func getDependencies() async throws {
         await MainActor.run(body: {
             ToastManager.shared.loading = true
@@ -137,12 +131,10 @@ extension SourceManager {
     }
 
     private func getCommons() async throws {
-        
         if commons.exists && !StateManager.shared.NetworkStateHigh { // Commons Exists & Device is offline
             return
         }
-        
-        
+
         let base = URL(string: "https://suwatte.github.io/Common")!
         var url = base.appendingPathComponent("versioning.json")
 
@@ -169,7 +161,7 @@ extension SourceManager {
         }
         let request = AF.download(req, to: destination)
         let downloadURL = try await request.serializingDownloadedFileURL().result.get()
-        let _ = try FileManager.default.replaceItemAt(commons, withItemAt: downloadURL)
+        _ = try FileManager.default.replaceItemAt(commons, withItemAt: downloadURL)
         try? FileManager.default.removeItem(at: downloadURL)
         UserDefaults.standard.set(data.version, forKey: STTKeys.JSCommonsVersion)
         await MainActor.run(body: {
@@ -182,12 +174,12 @@ extension SourceManager {
     func startSource(at url: URL) throws -> JSCContentSource {
         try JSCC(path: url)
     }
-    
+
     @MainActor
     func addSource(_ src: AnyContentSource, listURL: URL? = nil, executable: URL) {
         sources.removeValue(forKey: src.id)
         sources[src.id] = src
-        DataManager.shared.saveRunner(src.info,listURL: listURL, url: executable)
+        DataManager.shared.saveRunner(src.info, listURL: listURL, url: executable)
     }
 }
 
@@ -222,7 +214,7 @@ extension SourceManager {
         try await handleNetworkRunnerImport(from: path, with: url)
     }
 
-    private func validateRunnerVersion(runner: AnyContentSource) throws {
+    private func validateRunnerVersion(runner _: AnyContentSource) throws {
         // Validate that the incoming runner has a higher version
 //        let current = getSource(id: runner.id)
 //
@@ -235,7 +227,7 @@ extension SourceManager {
         let runner = try startSource(at: url)
         try validateRunnerVersion(runner: runner)
         let validRunnerPath = directory.appendingPathComponent("\(runner.id).stt")
-        let _ = try FileManager.default.replaceItemAt(validRunnerPath, withItemAt: url)
+        _ = try FileManager.default.replaceItemAt(validRunnerPath, withItemAt: url)
         Task { @MainActor in
             addSource(runner, executable: validRunnerPath)
         }
@@ -259,7 +251,7 @@ extension SourceManager {
 
         try validateRunnerVersion(runner: runner)
         let validRunnerPath = directory.appendingPathComponent("\(runner.id).stt")
-        let _ = try FileManager.default.replaceItemAt(validRunnerPath, withItemAt: downloadURL)
+        _ = try FileManager.default.replaceItemAt(validRunnerPath, withItemAt: downloadURL)
         try? FileManager.default.removeItem(at: downloadURL)
         await addSource(runner, listURL: list, executable: validRunnerPath)
     }
@@ -288,7 +280,7 @@ extension SourceManager {
 // MARK: - URL Events
 
 extension SourceManager {
-    func handleGetIdentifier(for url: String) async -> [ContentIdentifier] {
+    func handleGetIdentifier(for _: String) async -> [ContentIdentifier] {
         var results = [ContentIdentifier]()
         for source in sources {
 //            do {
@@ -353,21 +345,20 @@ extension SourceManager {
 // MARK: - Updates
 
 extension SourceManager {
-    
     func fetchLibraryUpdates() async -> Int {
         let realm = try! Realm(queue: nil)
 
         // Get Sources
         let sources = realm
             .objects(StoredRunnerObject.self)
-            .where({ $0.isDeleted == false })
-            .where({ $0.enabled == true })
+            .where { $0.isDeleted == false }
+            .where { $0.enabled == true }
             .sorted(by: \.dateAdded)
             .compactMap { try? self.getContentSource(id: $0.id) }
-        
+
         // Fetch Update For Each Source
         let result = await withTaskGroup(of: Int.self) { group in
-            
+
             for source in sources {
                 group.addTask { [weak self] in
                     do {
@@ -379,20 +370,19 @@ extension SourceManager {
                     return 0
                 }
             }
-            
+
             var total = 0
             for await result in group {
                 total += result
             }
             return total
         }
-        
+
         UserDefaults.standard.set(Date(), forKey: STTKeys.LastFetchedUpdates)
         return result
     }
 
     private func fetchUpdatesForSource(source: AnyContentSource) async throws -> Int {
-        
         let realm = try! Realm(queue: nil)
         let date = UserDefaults.standard.object(forKey: STTKeys.LastFetchedUpdates) as! Date
         let skipConditions = Preferences.standard.skipConditions
@@ -477,15 +467,14 @@ extension SourceManager {
                     entry.linkedHasUpdates = true
                 }
             }
-            
-            
+
             guard let chapters = chapters else {
                 DataManager.shared.updateUnreadCount(for: entry.content!.ContentIdentifier, realm)
                 continue
             }
             let sourceId = source.id
             Task {
-                let stored = chapters.map { $0.toStoredChapter(withSource: sourceId )}
+                let stored = chapters.map { $0.toStoredChapter(withSource: sourceId) }
                 DataManager.shared.storeChapters(stored)
                 DataManager.shared.updateUnreadCount(for: entry.content!.ContentIdentifier, realm)
             }

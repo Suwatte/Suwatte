@@ -163,20 +163,18 @@ struct ChapterList: View {
             model.setupObservers()
         }
     }
-    
+
     func genId(_ id: String, _ completed: Bool, _ download: ICDMDownloadObject?) -> String {
-        
         var id = id
-        
+
         id += completed.description
-        
-        if let download , !download.isInvalidated {
-            
+
+        if let download, !download.isInvalidated {
             id += download.status.rawValue.description
         } else {
             id += "none"
         }
-        
+
         return id
     }
 
@@ -203,7 +201,6 @@ struct ChapterList: View {
                 Color.clear
                     .contextMenu {
                         Button {
-    
                             DataManager.shared.bulkMarkChapters(for: model.sttIdentifier(), chapters: chapters, markAsRead: !completed)
                             didMark()
                         } label: {
@@ -238,9 +235,9 @@ extension ChapterList {
 
     func filterChapters(ids: [String]) {
         let realm = try! Realm()
-        
-        let chapters = realm.objects(StoredChapter.self).where({ $0.id.in(ids) }).toArray()
-        
+
+        let chapters = realm.objects(StoredChapter.self).where { $0.id.in(ids) }.toArray()
+
         // Filter Language, Providers, Downloads
         var base = chapters
             .filter(filterDownloads(_:))
@@ -270,8 +267,8 @@ extension ChapterList {
             base = base
                 .sorted(by: \.index, descending: !sortDesc) // Reverese Source Index
         }
-        
-        let data = base.map({ $0.freeze() })
+
+        let data = base.map { $0.freeze() }
         Task { @MainActor in
             withAnimation {
                 visibleChapters = data

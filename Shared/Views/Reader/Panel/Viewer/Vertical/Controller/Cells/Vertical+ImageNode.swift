@@ -7,8 +7,8 @@
 
 import AsyncDisplayKit
 import Combine
-import UIKit
 import Nuke
+import UIKit
 
 private typealias Controller = VerticalViewer.Controller
 extension Controller {
@@ -53,11 +53,11 @@ extension Controller {
         func setImage() {
             guard ratio == nil, !working, image == nil else { return }
             working = true
-            
+
             Task.detached { [weak self] in
                 do {
                     let task = try await self?.page.load()
-                    
+
                     guard let task else {
                         return
                     }
@@ -67,13 +67,13 @@ extension Controller {
                             self?.handleProgressBlock(progress.fraction)
                         }
                     }
-                    
+
                     let image = try await task.image
                     await MainActor.run { [weak self] in
                         self?.didLoadImage(image)
                         self?.nukeTask = nil
                     }
-                    
+
                 } catch {
                     await MainActor.run { [weak self] in
                         self?.didFailToLoadImage(error)
@@ -111,7 +111,7 @@ extension Controller {
                 return
             }
             savedOffset = nil
-            self.delegate?.consumedInitialPosition = true
+            delegate?.consumedInitialPosition = true
             manager.contentOffset.y += offset
         }
 
@@ -142,13 +142,13 @@ extension Controller {
             }
         }
 
-        
         func didLoadImage(_ image: UIImage) {
             self.image = image
             if isNodeLoaded {
                 displayImage()
             }
         }
+
         func didFailToLoadImage(_ error: Error) {
             handleImageFailure(error)
         }
@@ -185,7 +185,7 @@ extension Controller {
             (progressNode.view as? CircularProgressBar)?.setProgress(to: Double(progress), withAnimation: false)
         }
 
-        func handleImageFailure(_ error: Error) {
+        func handleImageFailure(_: Error) {
             progressNode.isHidden = false
         }
 

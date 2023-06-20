@@ -65,7 +65,7 @@ extension VerticalViewer {
             collectionNode.view.contentInsetAdjustmentBehavior = .never
             collectionNode.view.scrollsToTop = false
             collectionNode.leadingScreensForBatching = 2
-            
+
             guard let rChapter = model.readerChapterList.first else {
                 return
             }
@@ -74,7 +74,6 @@ extension VerticalViewer {
                 .sections
                 .first?
                 .firstIndex(where: { ($0 as? ReaderPage)?.page.index == requestedIndex }) ?? requestedIndex
-            
 
             Task { @MainActor in
                 model.slider.setRange(0, 1)
@@ -86,9 +85,10 @@ extension VerticalViewer {
         }
 
         // MARK: View DidAppear
+
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
-            
+
             if model.IN_ZOOM_VIEW {
                 model.IN_ZOOM_VIEW = false
                 return
@@ -96,6 +96,7 @@ extension VerticalViewer {
             let path: IndexPath = .init(item: openingIndex, section: 0)
             collectionNode.scrollToItem(at: path, at: .top, animated: false)
         }
+
         override func viewDidAppear(_ animated: Bool) {
             super.viewDidAppear(animated)
 
@@ -108,7 +109,8 @@ extension VerticalViewer {
 
             UIView.animate(withDuration: 0.2,
                            delay: 0.0,
-                           options: [.transitionCrossDissolve, .allowUserInteraction]) {
+                           options: [.transitionCrossDissolve, .allowUserInteraction])
+            {
                 self.collectionNode.alpha = 1
             }
         }

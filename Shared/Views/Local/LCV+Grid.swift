@@ -67,7 +67,7 @@ extension LocalContentView {
 }
 
 extension LocalContentView.Grid {
-    func isRead(id: Int64) -> Bool {
+    func isRead(id _: Int64) -> Bool {
         false
     }
 }
@@ -77,7 +77,8 @@ extension LocalContentView.Grid {
         ASSection(id: 0,
                   data: data,
                   selectionMode: .selectMultiple($selectedIndexes),
-                  contextMenuProvider: contextMenuProvider) { cellData, cellContext in
+                  contextMenuProvider: contextMenuProvider)
+        { cellData, cellContext in
             let isContentRead = isRead(id: cellData.id)
             ZStack(alignment: .topTrailing) {
                 Button {
@@ -280,7 +281,6 @@ extension LocalContentView {
                 let imageWidth = proxy.size.width
                 let imageHeight = imageWidth * 1.5
                 VStack(alignment: .leading, spacing: 5) {
-                    
                     ZStack {
                         Rectangle().fill(Color.fadedPrimary)
                             .task {
@@ -293,14 +293,13 @@ extension LocalContentView {
                         imageView
                             .image?
                             .resizable()
-
                     }
-                        .frame(width: imageWidth, height: imageHeight)
-                        .cornerRadius(5)
-                        .opacity(libraryIsSelecting ? 0.8 : 1)
-                        .onDisappear {
-                            imageView.priority = .low
-                        }
+                    .frame(width: imageWidth, height: imageHeight)
+                    .cornerRadius(5)
+                    .opacity(libraryIsSelecting ? 0.8 : 1)
+                    .onDisappear {
+                        imageView.priority = .low
+                    }
 
                     if imageWidth >= 100, !showOnlyThumbs {
                         titleView

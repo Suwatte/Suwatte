@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import RealmSwift
 import IceCream
+import RealmSwift
 
 enum RunnerType: Int, PersistableEnum {
     case API_RUNNER, FILE_RUNNER, PUBLIC_RUNNER
@@ -40,7 +40,7 @@ final class StoredRunnerList: Object, ObjectKeyIdentifiable, CKRecordConvertible
     @Persisted var isDeleted = false
 }
 
-final class StoredRunnerObject: Object, Identifiable,  CKRecordConvertible, CKRecordRecoverable  {
+final class StoredRunnerObject: Object, Identifiable, CKRecordConvertible, CKRecordRecoverable {
     @Persisted(primaryKey: true) var id: String
     @Persisted var name: String
     @Persisted var version: Double
@@ -52,7 +52,7 @@ final class StoredRunnerObject: Object, Identifiable,  CKRecordConvertible, CKRe
     @Persisted var listURL: String
     @Persisted var thumbnail: String
     @Persisted var isDeleted = false
-    
+
     static let RUNNER_KEY = "bundle"
     @Persisted var executable: CreamAsset?
 }
@@ -111,7 +111,7 @@ extension DataManager {
         if let listURL {
             obj.listURL = listURL.absoluteString
         }
-        
+
         obj.executable = CreamAsset.create(object: obj, propName: StoredRunnerObject.RUNNER_KEY, url: url)
 
         if let thumbnail = info.thumbnail {
@@ -129,7 +129,7 @@ extension DataManager {
             realm.add(obj)
         }
     }
-    
+
     func getSavedAndEnabledRunners() -> Results<StoredRunnerObject> {
         let realm = try! Realm()
 

@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import RealmSwift
 import IceCream
+import RealmSwift
 
 enum ContentSelectionType: Int, PersistableEnum, CaseIterable, Identifiable, Codable {
     case none, only, both
@@ -89,16 +89,16 @@ extension DataManager {
             collection.name = name
         }
     }
-    
+
     func deleteCollection(id: String) {
         let realm = try! Realm()
-        
+
         let collection = realm
             .objects(LibraryCollection.self)
             .first(where: { $0.isDeleted == false && $0.id == id })
-        
+
         guard let collection else { return }
-        
+
         try! realm.safeWrite {
             collection.isDeleted = true
             collection.filter?.isDeleted = true

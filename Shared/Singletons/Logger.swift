@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 
-
 final class Logger {
     var logs: [Entry] = []
     static let shared = Logger()
@@ -106,7 +105,7 @@ extension Logger {
     func error(_ message: String, _ context: String = "") {
         log(level: .error, message, context)
     }
-    
+
     func error(_ error: Error, _ context: String = "") {
         self.error("\(error)", context)
     }

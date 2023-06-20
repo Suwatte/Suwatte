@@ -31,7 +31,7 @@ extension WKContentSource: AuthSource {
 
     func didReceiveAuthenticationCookieFromWebView(cookie: DSKCommon.Cookie) async throws -> Bool {
         let body = "return didReceiveAuthenticationCookieFromWebView(cookie);"
-        let arguments = ["cookie": try cookie.asDictionary()]
+        let arguments = try ["cookie": cookie.asDictionary()]
         let value = try await eval(body, arguments, to: [String: Bool].self)
         let out = value["didReceive"] ?? false
         return out

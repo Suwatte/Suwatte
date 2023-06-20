@@ -8,7 +8,7 @@
 import RealmSwift
 import SwiftUI
 
-fileprivate let threeMonths = Calendar.current.date(
+private let threeMonths = Calendar.current.date(
     byAdding: .month,
     value: -3,
     to: .now
@@ -50,31 +50,30 @@ struct HistoryView: View {
 
 extension HistoryView {
     @MainActor
-    final class ViewModel : ObservableObject {
+    final class ViewModel: ObservableObject {
         @Published var csSelection: HighlightIndentier?
         @Published var markers: Results<ProgressMarker>?
-        
+
         private var notificationToken: NotificationToken?
         func observe() {
             let realm = try! Realm()
             let collection = realm
                 .objects(ProgressMarker.self)
-                .where({
+                .where {
                     $0.isDeleted == false &&
-                    $0.currentChapter != nil &&
-                    $0.dateRead != nil &&
-                    $0.dateRead >= threeMonths &&
-                    ($0.currentChapter.content != nil || $0.currentChapter.opds != nil)
-                })
+                        $0.currentChapter != nil &&
+                        $0.dateRead != nil &&
+                        $0.dateRead >= threeMonths &&
+                        ($0.currentChapter.content != nil || $0.currentChapter.opds != nil)
+                }
                 .distinct(by: ["id"])
                 .sorted(by: \.dateRead, ascending: false)
             notificationToken = collection
                 .observe { _ in
                     self.markers = collection
                 }
-            
         }
-        
+
         func disconnect() {
             notificationToken?.invalidate()
             notificationToken = nil
@@ -83,7 +82,6 @@ extension HistoryView {
 }
 
 extension HistoryView {
-    
     func action(_ marker: ProgressMarker) {
         if let content = marker.currentChapter?.content {
             model.csSelection = (content.sourceId, content.toHighlight())
@@ -91,6 +89,7 @@ extension HistoryView {
             chapter = content.toStoredChapter()
         }
     }
+
     struct Cell: View {
         var marker: ProgressMarker
         var body: some View {
@@ -136,8 +135,7 @@ extension HistoryView {
                 .frame(width: 40, height: 40, alignment: .center)
         }
     }
-    
-    
+
     struct DeleteModifier: ViewModifier {
         var id: String
         func body(content: Content) -> some View {
@@ -151,6 +149,7 @@ extension HistoryView {
                     .tint(.red)
                 })
         }
+
         private func handleRemoveMarker() {
             DataManager.shared.removeFromHistory(id: id)
         }

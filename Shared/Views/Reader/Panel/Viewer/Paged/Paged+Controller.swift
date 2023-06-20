@@ -6,8 +6,8 @@
 //
 
 import Combine
-import UIKit
 import Nuke
+import UIKit
 
 extension UICollectionView {
     var currentPoint: CGPoint {
@@ -500,7 +500,7 @@ extension PagedController: UICollectionViewDataSourcePrefetching {
 
                 for page in pages {
                     group.addTask {
-                        return try? await page.getImageRequest()
+                        try? await page.getImageRequest()
                     }
                 }
 
@@ -516,7 +516,7 @@ extension PagedController: UICollectionViewDataSourcePrefetching {
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+    func collectionView(_: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
         let pages = indexPaths.compactMap { path -> ReaderView.Page? in
             guard let page = self.model.sections[path.section][path.item] as? ReaderPage else {
                 return nil
@@ -529,7 +529,7 @@ extension PagedController: UICollectionViewDataSourcePrefetching {
 
                 for page in pages {
                     group.addTask {
-                        return try? await page.getImageRequest()
+                        try? await page.getImageRequest()
                     }
                 }
 

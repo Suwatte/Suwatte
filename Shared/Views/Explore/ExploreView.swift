@@ -14,13 +14,12 @@ struct ExploreView: View {
     var id: String
     var name: String
     var body: some View {
-        
         LoadableView(getSource, loadable) { source in
             SourceView(model: .init(source: source))
         }
         .navigationTitle(name)
     }
-    
+
     func getSource() {
         loadable = .loading
         do {
@@ -33,15 +32,14 @@ struct ExploreView: View {
 }
 
 extension ExploreView {
-    
     struct SourceView: View {
         @StateObject var model: ViewModel
         @Preference(\.useDirectory) var useDirectory
         var hasExplorePage: Bool {
             model.source.config.hasExplorePage
         }
+
         var body: some View {
-            
             Group {
                 if hasExplorePage && !useDirectory {
                     ExploreCollectionViewRepresentable()
@@ -64,12 +62,12 @@ extension ExploreView {
             .modifier(InteractableContainer(selection: $model.selection))
             .environmentObject(model)
         }
-        
     }
+
     class ViewModel: ObservableObject {
         @Published var selection: HighlightIndentier?
         var source: AnyContentSource
-        
+
         init(source: AnyContentSource) {
             self.source = source
         }

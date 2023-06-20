@@ -6,15 +6,14 @@
 //
 
 import Foundation
-import RealmSwift
 import IceCream
-
+import RealmSwift
 
 final class UpdatedSearchHistory: Object, Identifiable, Codable, CKRecordConvertible, CKRecordRecoverable {
     @Persisted var sourceId: String?
     @Persisted var data: String // JSON String of SearchRequest
     @Persisted var displayText: String
     @Persisted var date: Date = .now
-    @Persisted(primaryKey: true) var id =  UUID().uuidString
+    @Persisted(primaryKey: true) var id = UUID().uuidString
     @Persisted var isDeleted = false
 }

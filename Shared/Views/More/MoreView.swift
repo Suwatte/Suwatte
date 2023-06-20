@@ -47,7 +47,7 @@ struct MoreView: View {
         } header: {
             Text("Info")
         }
-        
+
         Section {
             Link("Support on KoFi", destination: URL(string: "https://ko-fi.com/mantton")!)
             Link("Support on Patreon", destination: URL(string: "https://patreon.com/mantton")!)

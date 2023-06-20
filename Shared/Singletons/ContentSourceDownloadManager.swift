@@ -135,7 +135,7 @@ extension ICDM {
 
     func fire() {
         let queue = queue
-        if isIdle && !queue.isEmpty {
+        if isIdle, !queue.isEmpty {
             Task {
                 await start()
             }

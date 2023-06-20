@@ -42,10 +42,9 @@ extension AnilistView {
         @Environment(\.presentationMode) var presentationMode
 
         var body: some View {
-            ScrollView (showsIndicators: false) {
+            ScrollView(showsIndicators: false) {
                 Header
-                VStack  {
-                    
+                VStack {
                     About
                         .padding(.horizontal)
                         .padding(.top)
@@ -68,9 +67,7 @@ extension AnilistView {
             .environment(\.profileColor, profileColor)
             .animation(.default, value: profileColor)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    
-                }
+                ToolbarItem(placement: .navigationBarTrailing) {}
             }
             .tint(Color.primary)
             .accentColor(profileColor)
@@ -83,7 +80,7 @@ extension AnilistView {
                 let size = proxy.size
                 let height = max(size.height + minY, size.height)
                 let url = URL(string: account.bannerImage ?? account.avatar.large ?? "")
-                
+
                 LazyImage(url: url, transaction: .init(animation: .easeInOut(duration: 0.25))) { state in
                     if let image = state.image {
                         image
@@ -94,7 +91,7 @@ extension AnilistView {
                 }
                 .frame(width: size.width, height: height, alignment: .top)
                 .overlay {
-                    ZStack ( alignment: .bottom) {
+                    ZStack(alignment: .bottom) {
                         LinearGradient(colors: [.clear, Color(uiColor: UIColor.systemBackground)], startPoint: .top, endPoint: .bottom)
                         VStack(spacing: 0) {
                             HStack(alignment: .bottom) {
@@ -111,8 +108,8 @@ extension AnilistView {
                                 }
                             }
                             .frame(height: KEY_WINDOW?.safeAreaInsets.top ?? 0)
-                            
-                           Spacer()
+
+                            Spacer()
                             VStack {
                                 LazyImage(url: URL(string: account.avatar.large ?? ""), transaction: .init(animation: .easeInOut(duration: 0.25))) { state in
                                     if let image = state.image {
@@ -127,15 +124,14 @@ extension AnilistView {
                                             }
                                             .transition(.opacity)
                                     }
-
                                 }
                                 .frame(width: 100, height: 100, alignment: .center)
-                                    .clipShape(Circle())
-                                    .shadow(radius: 3)
-                                    .overlay(Circle().stroke(Color.accentColor, lineWidth: 1))
-                                    .shadow(radius: 5)
-                                    .overlay(Circle().stroke(profileColor, lineWidth: 2))
-                                    .shadow(color: profileColor, radius: 7)
+                                .clipShape(Circle())
+                                .shadow(radius: 3)
+                                .overlay(Circle().stroke(Color.accentColor, lineWidth: 1))
+                                .shadow(radius: 5)
+                                .overlay(Circle().stroke(profileColor, lineWidth: 2))
+                                .shadow(color: profileColor, radius: 7)
                                 Text(account.name)
                                     .font(.title)
                                     .fontWeight(.bold)
@@ -145,7 +141,6 @@ extension AnilistView {
                         .padding(.top, KEY_WINDOW?.safeAreaInsets.top ?? 0)
                         .padding(.bottom, 25)
                     }
-
                 }
                 .offset(y: minY > 0 ? -minY : 0)
             }

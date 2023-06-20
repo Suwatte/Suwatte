@@ -5,9 +5,9 @@
 //  Created by Mantton on 2023-01-04.
 //
 
+import Nuke
 import RealmSwift
 import SwiftUI
-import Nuke
 
 struct SettingsView: View {
     var body: some View {
@@ -186,7 +186,7 @@ enum SkipCondition: Int, CaseIterable, Identifiable, UserDefaultsSerializable {
 extension SettingsView {
     struct LibrarySection: View {
         @AppStorage(STTKeys.AlwaysAskForLibraryConfig) private var alwaysAsk = true
-        @ObservedResults(LibraryCollection.self,where: { $0.isDeleted == false }, sortDescriptor: .init(keyPath: "order", ascending: true)) private var collections
+        @ObservedResults(LibraryCollection.self, where: { $0.isDeleted == false }, sortDescriptor: .init(keyPath: "order", ascending: true)) private var collections
         @AppStorage(STTKeys.DefaultCollection) var defaultCollection: String = ""
         @AppStorage(STTKeys.DefaultReadingFlag) var defaultFlag = LibraryFlag.unknown
         var body: some View {
@@ -223,7 +223,6 @@ extension SettingsView {
 }
 
 extension SettingsView {
-    
     struct CacheSection: View {
         var body: some View {
             Section {

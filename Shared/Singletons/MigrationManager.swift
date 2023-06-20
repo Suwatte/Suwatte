@@ -7,5 +7,4 @@
 
 import Foundation
 
-
 class MigrationManager {}

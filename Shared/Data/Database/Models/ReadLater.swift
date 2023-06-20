@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import RealmSwift
 import IceCream
+import RealmSwift
 
 final class ReadLater: Object, Identifiable, CKRecordConvertible, CKRecordRecoverable {
     @Persisted var dateAdded = Date()

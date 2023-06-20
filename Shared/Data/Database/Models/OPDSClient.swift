@@ -6,9 +6,9 @@
 //
 
 import Foundation
+import IceCream
 import KeychainSwift
 import RealmSwift
-import IceCream
 
 final class StoredOPDSServer: Object, CKRecordConvertible, CKRecordRecoverable, Identifiable {
     @Persisted(primaryKey: true) var id = UUID().uuidString

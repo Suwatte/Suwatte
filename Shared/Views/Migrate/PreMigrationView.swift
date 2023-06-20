@@ -16,12 +16,12 @@ struct PreMigrationView: View {
         NavigationView {
             List {
                 ForEach(sources, id: \.id) { source in
-                    var scopedLibrary = library.where({ $0.content.sourceId == source.id })
+                    var scopedLibrary = library.where { $0.content.sourceId == source.id }
                     NavigationLink {
                         MigrationView(contents: scopedLibrary.compactMap(\.content))
                     } label: {
                         HStack {
-                            STTThumbView(url:URL(string: source.thumbnail))
+                            STTThumbView(url: URL(string: source.thumbnail))
                                 .frame(width: 32.0, height: 32.0)
                                 .cornerRadius(5)
                             Text(source.name)

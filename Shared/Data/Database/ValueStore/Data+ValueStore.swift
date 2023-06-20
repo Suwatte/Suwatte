@@ -9,7 +9,6 @@ import Foundation
 import KeychainSwift
 import RealmSwift
 
-
 extension DataManager {
     func setStoreValue(for id: String, key: String, value: String) {
         let realm = try! Realm()

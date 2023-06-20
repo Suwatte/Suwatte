@@ -127,15 +127,15 @@ extension FilterSheet {
                 }
             }
         }
-        
-        var processed_data : [String] {
+
+        var processed_data: [String] {
             var canShowAdult = StateManager.shared.ShowNSFWContent && includeNSFW
-            
+
             if canShowAdult {
                 return data
             }
-            
-            return data.filter({ $0 != "Hentai" })
+
+            return data.filter { $0 != "Hentai" }
         }
 
         func cellColor(_ selection: String) -> Color {
@@ -210,7 +210,7 @@ extension FilterSheet {
         var body: some View {
             let grouped = groupedData
             List {
-                ForEach(Array(grouped.keys.filter({ !$0.contains("Sexual") })).sorted(by: { $0 < $1 })) { key in
+                ForEach(Array(grouped.keys.filter { !$0.contains("Sexual") }).sorted(by: { $0 < $1 })) { key in
                     CategorySection(key, grouped[key]!)
                 }
             }
@@ -228,17 +228,16 @@ extension FilterSheet {
 
         func CategorySection(_ key: String, _ data: [Anilist.Tag]) -> some View {
             Section {
-                ForEach(data.filter({ !$0.isAdult }), id: \.name) {
+                ForEach(data.filter { !$0.isAdult }, id: \.name) {
                     Cell($0)
                 }
             } header: {
-                Text(formatKey(key:key))
+                Text(formatKey(key: key))
             }
             .headerProminence(.increased)
         }
-        
+
         func formatKey(key: String) -> String {
-            
             let matches = key.groups(for: "^(?:Theme|Cast|Setting|Other)-(.*)$")
             guard let tag = matches.first?.last else {
                 return key
@@ -283,7 +282,6 @@ extension FilterSheet {
         }
     }
 }
-
 
 extension Anilist.SearchRequest {
     var GenreLabel: String {

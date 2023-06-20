@@ -53,7 +53,7 @@ struct BrowseView: View {
                     ExploreView(id: runner.id, name: runner.name)
                 } label: {
                     HStack(spacing: 15) {
-                        STTThumbView(url:URL(string: runner.thumbnail))
+                        STTThumbView(url: URL(string: runner.thumbnail))
                             .frame(width: 32.0, height: 32.0)
                             .cornerRadius(5)
                         Text(runner.name)

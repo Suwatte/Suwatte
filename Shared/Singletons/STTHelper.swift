@@ -40,23 +40,23 @@ class STTHelpers {
         guard let marker = DataManager.shared.getContentMarker(for: id), let chapter = marker.currentChapter else {
             return (0, nil) // No Marker, Start from beginning
         }
-        
+
         guard chapter.chapterId == chapterId else {
             return (0, nil) // Chapter is not the last read chapter, restart from beginnig
         }
-        
+
         guard let lastPageRead = marker.lastPageRead else { // Marker has last page
             return (0, nil)
         }
-        
-        guard lastPageRead <= limit && lastPageRead > 0 else { // Marker is within bounds
+
+        guard lastPageRead <= limit, lastPageRead > 0 else { // Marker is within bounds
             return (0, nil)
         }
-        
+
         if lastPageRead == limit { // Chapter is completed, restart
             return (0, nil)
         }
-        
+
         return (lastPageRead - 1, marker.lastPageOffset.flatMap(CGFloat.init))
     }
 
@@ -128,7 +128,7 @@ class STTHelpers {
                     page.url = baseLink.replacingOccurrences(of: "STT_PAGE_NUMBER_PLACEHOLDER", with: num.description)
                     return page
                 }
-                
+
                 let info = OPDSInfo(clientId: client.id, userName: client.userName)
                 obj.pages.append(objectsIn: pages)
                 obj.opdsInfo = info

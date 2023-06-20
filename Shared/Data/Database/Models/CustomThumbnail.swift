@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import RealmSwift
 import IceCream
+import RealmSwift
 
 final class CustomThumbnail: Object, Identifiable, CKRecordConvertible, CKRecordRecoverable {
     @Persisted(primaryKey: true) var id: String

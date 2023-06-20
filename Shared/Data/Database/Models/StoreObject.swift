@@ -6,9 +6,9 @@
 //
 
 import Foundation
+import IceCream
 import KeychainSwift
 import RealmSwift
-import IceCream
 
 final class InteractorStoreObject: Object, Identifiable, CKRecordConvertible, CKRecordRecoverable {
     @Persisted(primaryKey: true) var id: String

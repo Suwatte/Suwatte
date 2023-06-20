@@ -140,85 +140,85 @@ struct SearchView: View {
                 return bCount < aCount
             })
             .map { key, value in
-            let source = model.sources.first(where: { $0.id == key })
-            switch value {
-            case let .loaded(data):
+                let source = model.sources.first(where: { $0.id == key })
+                switch value {
+                case let .loaded(data):
 
-                return ASCollectionViewSection(id: key, data: data.results) { cellData, _ in
-                    let isInLibrary = inLibrary(cellData, key)
-                    let isSavedForLater = savedForLater(cellData, key)
-                    ZStack(alignment: .topTrailing) {
-                        NavigationLink {
-                            ProfileView(entry: cellData, sourceId: key)
-                        } label: {
-                            ExploreView.HighlightTile(entry: cellData, style: .NORMAL, sourceId: key)
-                        }
-                        .buttonStyle(NeutralButtonStyle())
-
-                        if isInLibrary || isSavedForLater {
-                            ColoredBadge(color: isInLibrary ? .accentColor : .yellow)
-                        }
-                    }
-                }
-                .sectionHeader {
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(source?.name ?? "Source Not Found")
-                                .font(.headline.weight(.semibold))
-                            if let count = data.totalResultCount {
-                                Text(count.description + " Results")
-                                    .font(.subheadline.weight(.light))
-                            }
-                        }
-                        Spacer()
-                        if data.results.count < data.totalResultCount ?? 0, let source = source {
+                    return ASCollectionViewSection(id: key, data: data.results) { cellData, _ in
+                        let isInLibrary = inLibrary(cellData, key)
+                        let isSavedForLater = savedForLater(cellData, key)
+                        ZStack(alignment: .topTrailing) {
                             NavigationLink {
-                                EmptyView()
-//                                ExploreView.SearchView(model: .init(request: .init(query: model.query), source: source))
+                                ProfileView(entry: cellData, sourceId: key)
                             } label: {
-                                Text("View More \(Image(systemName: "chevron.right"))")
-                                    .font(.subheadline)
+                                ExploreView.HighlightTile(entry: cellData, style: .NORMAL, sourceId: key)
                             }
-                            .buttonStyle(.plain)
-                        }
-                    }
-                    .padding(.vertical)
-                }
-            case let .failed(error):
-                return ASCollectionViewSection(id: key + "::FAILED", data: ["FAILED"]) { _, _ in
-                    ErrorView(error: error, action: {
-                        model.loadForSource(id: key)
-                    })
-                }
-                .sectionHeader {
-                    HStack {
-                        Text(source?.name ?? "Source Not Found")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                        Spacer()
-                    }
-                }
+                            .buttonStyle(NeutralButtonStyle())
 
-            default:
-                return ASCollectionViewSection(id: key, data: DaisukeEngine.Structs.Highlight.placeholders()) { cellData, _ in
-                    ExploreView.HighlightTile(entry: cellData, style: .NORMAL, sourceId: key)
-                        .shimmering()
-                        .redacted(reason: .placeholder)
-                }
-                .sectionHeader {
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(source?.name ?? "Source Not Found")
-                                .font(.headline.weight(.semibold))
-                            Text("...")
-                                .font(.subheadline.weight(.light))
-                                .foregroundColor(.gray)
+                            if isInLibrary || isSavedForLater {
+                                ColoredBadge(color: isInLibrary ? .accentColor : .yellow)
+                            }
                         }
-                        Spacer()
+                    }
+                    .sectionHeader {
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text(source?.name ?? "Source Not Found")
+                                    .font(.headline.weight(.semibold))
+                                if let count = data.totalResultCount {
+                                    Text(count.description + " Results")
+                                        .font(.subheadline.weight(.light))
+                                }
+                            }
+                            Spacer()
+                            if data.results.count < data.totalResultCount ?? 0, let source = source {
+                                NavigationLink {
+                                    EmptyView()
+//                                ExploreView.SearchView(model: .init(request: .init(query: model.query), source: source))
+                                } label: {
+                                    Text("View More \(Image(systemName: "chevron.right"))")
+                                        .font(.subheadline)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                        .padding(.vertical)
+                    }
+                case let .failed(error):
+                    return ASCollectionViewSection(id: key + "::FAILED", data: ["FAILED"]) { _, _ in
+                        ErrorView(error: error, action: {
+                            model.loadForSource(id: key)
+                        })
+                    }
+                    .sectionHeader {
+                        HStack {
+                            Text(source?.name ?? "Source Not Found")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                            Spacer()
+                        }
+                    }
+
+                default:
+                    return ASCollectionViewSection(id: key, data: DaisukeEngine.Structs.Highlight.placeholders()) { cellData, _ in
+                        ExploreView.HighlightTile(entry: cellData, style: .NORMAL, sourceId: key)
+                            .shimmering()
+                            .redacted(reason: .placeholder)
+                    }
+                    .sectionHeader {
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text(source?.name ?? "Source Not Found")
+                                    .font(.headline.weight(.semibold))
+                                Text("...")
+                                    .font(.subheadline.weight(.light))
+                                    .foregroundColor(.gray)
+                            }
+                            Spacer()
+                        }
                     }
                 }
             }
-        }
     }
 
     var HISTORY_VIEW: some View {
@@ -227,7 +227,7 @@ struct SearchView: View {
                 Button {
                     didSelectHistory(entry)
                 }
-                    label: {
+                label: {
                     HStack {
                         Text(entry.displayText)
                             .font(.headline)

@@ -6,11 +6,10 @@
 //
 
 import Foundation
-import RealmSwift
 import IceCream
+import RealmSwift
 
-
-final class LibraryEntry: Object, Identifiable, CKRecordConvertible, CKRecordRecoverable{
+final class LibraryEntry: Object, Identifiable, CKRecordConvertible, CKRecordRecoverable {
     // Core
     @Persisted(primaryKey: true) var id: String
     @Persisted var content: StoredContent? {
@@ -38,4 +37,3 @@ final class LibraryEntry: Object, Identifiable, CKRecordConvertible, CKRecordRec
     @Persisted var unreadCount: Int
     @Persisted var isDeleted = false
 }
-

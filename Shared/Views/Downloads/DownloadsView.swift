@@ -128,14 +128,14 @@ extension DownloadsView {
         }
     }
 
-    func downloadCount(for entry: StoredContent) -> Int {
+    func downloadCount(for _: StoredContent) -> Int {
 //        downloads
 //            .filter { $0.chapter?.sourceId == entry.sourceId && $0.chapter?.contentId == entry.contentId }
 //            .count
         0
     }
 
-    func earliestDownload(for entry: StoredContent) -> ICDMDownloadObject? {
+    func earliestDownload(for _: StoredContent) -> ICDMDownloadObject? {
 //        downloads
 //            .last(where: { $0.chapter?.sourceId == entry.sourceId && $0.chapter?.contentId == entry.contentId })
         nil

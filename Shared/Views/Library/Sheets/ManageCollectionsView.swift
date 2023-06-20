@@ -11,7 +11,7 @@ import SwiftUI
 extension LibraryView {
     struct ManageCollectionsView: View {
         @Environment(\.presentationMode) var presentationMode
-        @ObservedResults(LibraryCollection.self, where: { $0.isDeleted == false } ,sortDescriptor: SortDescriptor(keyPath: "order", ascending: true)) var collections
+        @ObservedResults(LibraryCollection.self, where: { $0.isDeleted == false }, sortDescriptor: SortDescriptor(keyPath: "order", ascending: true)) var collections
 
         var body: some View {
             NavigationView {
@@ -57,15 +57,13 @@ extension MCV {
         arr.move(fromOffsets: source, toOffset: destination)
         DataManager.shared.reorderCollections(arr)
     }
-    
+
     func delete(from idxs: IndexSet) {
-        let ids = idxs.compactMap({ collections.getOrNil($0)?.id })
+        let ids = idxs.compactMap { collections.getOrNil($0)?.id }
         ids.forEach { id in
             DataManager.shared.deleteCollection(id: id)
         }
     }
-    
-
 }
 
 extension MCV {

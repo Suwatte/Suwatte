@@ -12,7 +12,7 @@ extension DataManager {
     func linkContentToTracker(id: String, al: String? = nil, kt: String? = nil, mal: String? = nil) {
         let realm = try! Realm()
 
-        if let tracker = realm.objects(TrackerLink.self).first(where: { $0.id == id && $0.isDeleted == false  }) {
+        if let tracker = realm.objects(TrackerLink.self).first(where: { $0.id == id && $0.isDeleted == false }) {
             try! realm.safeWrite {
                 if let al = al {
                     tracker.trackerInfo?.al = al

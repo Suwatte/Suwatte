@@ -16,9 +16,9 @@ extension AnilistView {
             var title: String
             var webUrl: URL?
         }
-        
+
         var entry: BasicEntry
-        
+
         var onStatusUpdated: (_ id: Int, _ status: Anilist.MediaListStatus) -> Void
         @State var loadable = Loadable<Anilist.Media>.idle
         @State var scoreFormat: Anilist.MediaListOptions.ScoreFormat?
@@ -35,13 +35,12 @@ extension AnilistView {
             }
             .navigationBarHidden(true)
             .animation(.default, value: loadable)
-
         }
-        
+
         func load() {
             loadable = .loading
             Task { @MainActor in
-                
+
                 do {
                     let data = try await Anilist.shared.getProfile(entry.id)
                     loadable = .loaded(data)
@@ -70,13 +69,11 @@ extension AnilistView.ProfileView {
 
         var body: some View {
             ScrollView(showsIndicators: false) {
-                VStack (spacing: 5) {
+                VStack(spacing: 5) {
                     StickyHeader
                     HeaderView
                 }
-                VStack (spacing: 20) {
-                    
-                    
+                VStack(spacing: 20) {
                     MediaListView
 
                     // Genres
@@ -126,7 +123,7 @@ extension AnilistView.ProfileView {
                     }
                 }
             }
-            
+
             .tint(Color.primary)
             .hiddenNav(presenting: $presentGlobalSearch) {
                 SearchView(initialQuery: data.title.userPreferred)
@@ -142,14 +139,13 @@ extension AnilistView.ProfileView.DataView {
             let minY = frame.minY
             let size = proxy.size
             let height = max(size.height + minY, size.height)
-            LazyImage(url: data.bannerImage.flatMap({ URL(string: $0) }) ?? URL(string: data.coverImage.extraLarge)) { state in
+            LazyImage(url: data.bannerImage.flatMap { URL(string: $0) } ?? URL(string: data.coverImage.extraLarge)) { state in
                 if let image = state.image {
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .blur(radius: 2.5)
                         .offset(x: 0, y: -4)
-
                 }
             }
             .frame(width: size.width, height: height, alignment: .top)
@@ -169,22 +165,19 @@ extension AnilistView.ProfileView.DataView {
                                 } label: {
                                     Label("Find on Source", systemImage: "magnifyingglass")
                                 }
-                                
+
                                 Link(destination: data.webUrl ?? STTHost.notFound) {
                                     Label("Share", systemImage: "square.and.arrow.up")
                                 }
-                                
                             }
-                            
                         }
                         .frame(height: KEY_WINDOW?.safeAreaInsets.top ?? 0)
-                        
-                       Spacer()
+
+                        Spacer()
                         BaseImageView(url: URL(string: data.coverImage.large))
                             .frame(width: 120, height: 180, alignment: .center)
                             .cornerRadius(7)
                             .shadow(radius: 2.5)
-                    
                     }
                     .padding(.horizontal)
                     .padding(.top, KEY_WINDOW?.safeAreaInsets.top ?? 0)
@@ -194,15 +187,15 @@ extension AnilistView.ProfileView.DataView {
             .offset(y: minY > 0 ? -minY : 0)
         }
         .frame(width: UIScreen.main.bounds.width, height: 300, alignment: .center)
-
     }
+
     var HeaderView: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
                 Text(data.title.userPreferred)
                     .font(.title3)
                     .fontWeight(.semibold)
-                
+
                 if let summary = data.description {
                     HTMLStringView(text: summary)
                         .font(.body.weight(.light))
@@ -219,7 +212,6 @@ extension AnilistView.ProfileView.DataView {
             Divider()
         }
         .padding(.horizontal)
-
     }
 }
 
@@ -243,7 +235,7 @@ extension PView {
         }
         .padding(.horizontal)
     }
-    
+
     var TagsView: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text("Tags")
@@ -257,14 +249,14 @@ extension PView {
         }
         .padding(.horizontal)
     }
-    
-    var tags : [Anilist.Media.MediaTag] {
-        let base = data.tags.filter({ $0.category != "Sexual Content"}).sorted(by: { $0.name < $1.name })
-        
+
+    var tags: [Anilist.Media.MediaTag] {
+        let base = data.tags.filter { $0.category != "Sexual Content" }.sorted(by: { $0.name < $1.name })
+
         if base.count <= 8 {
             return base
         }
-        return Array(base[0...8])
+        return Array(base[0 ... 8])
     }
 }
 
@@ -275,10 +267,10 @@ extension PView {
         if let color = data.coverImage.color {
             return Color(hex: color)
         }
-        
+
         return .anilistBlue
     }
-    
+
     func updateStatus(option: Anilist.MediaListStatus) async {
         do {
             let updated = try await Anilist.shared.updateMediaListEntry(mediaId: data.id,
@@ -290,7 +282,7 @@ extension PView {
             ToastManager.shared.display(.error(error))
         }
     }
-    
+
     var MediaListView: some View {
         HStack {
             Button { !Anilist.signedIn() ? presentAuthSheet.toggle() : presentTrackingOptions.toggle() } label: {
@@ -302,7 +294,7 @@ extension PView {
                     .cornerRadius(7)
                     .foregroundColor(EntryColor.isDark ? .white : .black)
             }
-            
+
             if mediaList != nil {
                 Button { presentTrackerEdit.toggle() } label: {
                     Image(systemName: "pencil")
@@ -317,7 +309,7 @@ extension PView {
                 }
                 .transition(.slide)
             }
-            
+
             Button { data.isFavourite.toggle() } label: {
                 Image(systemName: "heart.fill")
                     .resizable()
@@ -350,6 +342,7 @@ struct FieldLabel: View {
         }
     }
 }
+
 extension UINavigationController {
     override open func viewDidLoad() {
         super.viewDidLoad()

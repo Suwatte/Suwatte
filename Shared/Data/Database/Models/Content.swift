@@ -6,15 +6,13 @@
 //
 
 import Foundation
-import RealmSwift
 import IceCream
-
+import RealmSwift
 
 extension ContentStatus: PersistableEnum, Codable {}
 extension ReadingMode: PersistableEnum, Codable {}
 
-
-final class StoredContent: Object, Identifiable, CKRecordConvertible, CKRecordRecoverable  {
+final class StoredContent: Object, Identifiable, CKRecordConvertible, CKRecordRecoverable {
     // Identifiers
     @Persisted(primaryKey: true) var id: String
     @Persisted(indexed: true) var sourceId: String {
@@ -45,7 +43,7 @@ final class StoredContent: Object, Identifiable, CKRecordConvertible, CKRecordRe
     @Persisted var recommendedReadingMode: ReadingMode = .PAGED_MANGA
     @Persisted var contentType: ExternalContentType = .unknown
     @Persisted var trackerInfo: Map<String, String>
-    
+
     var SourceName: String {
         SourceManager.shared.getSource(id: sourceId)?.name ?? "Unrecognized : \(sourceId)"
     }
@@ -53,14 +51,13 @@ final class StoredContent: Object, Identifiable, CKRecordConvertible, CKRecordRe
     var ContentIdentifier: ContentIdentifier {
         return .init(contentId: contentId, sourceId: sourceId)
     }
-    
+
     @Persisted var isDeleted = false // Required For Sync
-    
+
     fileprivate func updateId() {
         id = "\(sourceId)||\(contentId)"
     }
 }
-
 
 final class StoredProperty: Object, CKRecordConvertible, CKRecordRecoverable, Identifiable {
     @Persisted(primaryKey: true) var ckId = UUID().uuidString
@@ -69,7 +66,6 @@ final class StoredProperty: Object, CKRecordConvertible, CKRecordRecoverable, Id
     @Persisted var tags: List<StoredTag>
     @Persisted var isDeleted = false
 }
-
 
 final class StoredTag: Object, CKRecordConvertible, CKRecordRecoverable, Identifiable {
     @Persisted(primaryKey: true) var ckId = UUID().uuidString

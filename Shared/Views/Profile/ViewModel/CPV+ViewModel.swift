@@ -77,7 +77,7 @@ extension ProfileView {
             disconnect()
             removeNotifier()
         }
-        
+
         func disconnect() {
             currentMarkerToken?.invalidate()
             progressToken?.invalidate()
@@ -89,7 +89,6 @@ extension ProfileView {
 }
 
 extension ProfileView.ViewModel {
-    
     func setupObservers() {
         let realm = try! Realm()
 
@@ -97,7 +96,7 @@ extension ProfileView.ViewModel {
         let _r1 = realm
             .objects(ProgressMarker.self)
             .where { $0.id == contentIdentifier && $0.isDeleted == false }
-        
+
         progressToken = _r1.observe { [weak self] _ in
             let target = _r1.first
             guard let target else {
@@ -270,11 +269,10 @@ extension ProfileView.ViewModel {
                 .shared
                 .getContentMarker(for: id.id)?
                 .freeze()
-            
-            Task {  @MainActor [weak self] in
+
+            Task { @MainActor [weak self] in
                 self?.calculateActionState(obj)
             }
-            
         }
         Task.detached { [weak self] in
             await self?.handleSync()
@@ -298,11 +296,11 @@ extension ProfileView.ViewModel {
             .sorted(by: \.index, ascending: true)
             .map { $0.freeze() } as [StoredChapter]
         if storedChapters.isEmpty { return }
-        
+
         Task { @MainActor in
             chapters = .loaded(storedChapters)
         }
-        
+
         let id = sttIdentifier()
 
         Task.detached {
@@ -310,25 +308,23 @@ extension ProfileView.ViewModel {
                 .shared
                 .getContentMarker(for: id.id)?
                 .freeze()
-            
-            Task {  @MainActor [weak self] in
+
+            Task { @MainActor [weak self] in
                 self?.calculateActionState(obj)
             }
-            
         }
     }
-
 
     func calculateActionState(_ marker: ProgressMarker?) {
         guard let chapters = chapters.value else {
             actionState = .init(state: .none)
             return
         }
-        
+
         guard content.contentId == entry.contentId else {
             return
         }
-        
+
         guard let marker, let chapterRef = marker.currentChapter else {
             // Marker DNE, user has not started reading
 
@@ -339,14 +335,13 @@ extension ProfileView.ViewModel {
             }
             actionState = .init(state: .none)
             return
-            
         }
-        
+
         let info = ActionState.ChapterInfo(name: chapterRef.chapterName, id: chapterRef.id)
-        
+
         if !marker.isCompleted {
 //            // Marker Exists, Chapter has not been completed, resume
-            actionState = .init(state: .resume, chapter: info, marker: .init(progress: marker.progress ?? 0.0 ,date: marker.dateRead))
+            actionState = .init(state: .resume, chapter: info, marker: .init(progress: marker.progress ?? 0.0, date: marker.dateRead))
             return
         }
         // Chapter has been completed, Get Current Index
@@ -374,7 +369,7 @@ extension ProfileView.ViewModel {
         // index not 0, decrement, sourceIndex moves inverted
         index -= 1
         let next = chapters.get(index: index)
-        actionState = .init(state: .upNext, chapter: next.flatMap({ .init(name: $0.chapterName, id: $0.id )}), marker: nil)
+        actionState = .init(state: .upNext, chapter: next.flatMap { .init(name: $0.chapterName, id: $0.id) }, marker: nil)
     }
 
     func loadContentFromDatabase() async {
@@ -396,9 +391,8 @@ extension ProfileView.ViewModel {
 
             } catch {}
         }
-        
-        
-        if StateManager.shared.NetworkStateHigh || target == nil  { // Connected To Network OR The Content is not saved thus has to be fetched regardless
+
+        if StateManager.shared.NetworkStateHigh || target == nil { // Connected To Network OR The Content is not saved thus has to be fetched regardless
             Task {
                 await loadContentFromNetwork()
             }
@@ -449,20 +443,19 @@ extension ProfileView.ViewModel {
         guard let entry else { return }
         let progress = entry.progress
         let targets = chapters.filter { $0.number <= Double(progress) }.map(\.number)
-        
+
         DataManager.shared.markChaptersByNumber(for: sttIdentifier(), chapters: Set(targets))
         let highestMarkedChapter = DataManager.shared.getContentMarker(for: contentIdentifier)?.maxReadChapter
-        
+
         guard let highestMarkedChapter, Double(progress) < highestMarkedChapter else {
             return
         }
-        
+
         do {
             let _ = try await Anilist.shared.updateMediaListEntry(mediaId: id, data: ["progress": highestMarkedChapter])
         } catch {
             Logger.shared.error("[ProfileView] [Anilist] \(error.localizedDescription)")
         }
-        
     }
 
     private func handleReadMarkers() async throws {
@@ -482,19 +475,19 @@ extension ProfileView.ViewModel {
         })
 
         // Get Read Chapters on Source
-        let readChapterIds = Set(try await source.getReadChapterMarkers(contentId: entry.id))
+        let readChapterIds = try Set(await source.getReadChapterMarkers(contentId: entry.id))
 
         // Get Chapter Numbers of Read Chapters
         let targets = chapters
             .filter { readChapterIds.contains($0.chapterId) }
             .map(\.number)
-        
+
 //        // Mark Chapters As Read
         DataManager.shared.markChaptersByNumber(for: sttIdentifier(), chapters: Set(targets))
-        
+
 //        // Get Chapters that are out of sync
         let markers = getOutOfSyncMarkers(with: Array(readChapterIds))
-        
+
 //        // Sync to Source
         try? await source.onChaptersMarked(contentId: entry.id, chapterIds: markers, completed: true)
         await MainActor.run(body: {
@@ -503,20 +496,19 @@ extension ProfileView.ViewModel {
     }
 
     // Gets ID's of chapters that are completed but have not been syned to the source.
-    private func getOutOfSyncMarkers(with ids: [String]) -> [String] {
+    private func getOutOfSyncMarkers(with _: [String]) -> [String] {
         guard let threadSafeChapters else {
-            
             return []
         }
         let marker = DataManager.shared.getContentMarker(for: contentIdentifier)?.readChapters
-        
+
         guard let marker else {
             return []
         }
         let marked = Set(marker)
-        
-        let results = threadSafeChapters.filter({ !marked.contains($0.number) }).map(\.chapterId)
-        
+
+        let results = threadSafeChapters.filter { !marked.contains($0.number) }.map(\.chapterId)
+
         return results
     }
 }
@@ -526,12 +518,13 @@ extension ProfileView.ViewModel {
         var state: ProgressState
         var chapter: ChapterInfo?
         var marker: Marker?
-        
+
         struct ChapterInfo: Hashable {
             var name: String
             var id: String
         }
-        struct Marker : Hashable {
+
+        struct Marker: Hashable {
             var progress: Double
             var date: Date?
         }

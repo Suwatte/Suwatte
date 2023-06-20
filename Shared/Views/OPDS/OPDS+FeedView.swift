@@ -201,7 +201,7 @@ extension Target {
         @State var presentDialog = false
         @State var presentAlert = false
         @Binding var chapter: StoredChapter?
-        
+
         var request: URLRequest? {
             var headers = HTTPHeaders()
             if let auth = client.authHeader {
@@ -209,14 +209,14 @@ extension Target {
             }
             return try? URLRequest(url: publication.thumbnailURL ?? "", method: HTTPMethod.get, headers: headers)
         }
-        
+
         var body: some View {
             GeometryReader { proxy in
                 let imageWidth = proxy.size.width
                 let imageHeight = imageWidth * 1.5
                 VStack(alignment: .leading, spacing: 5) {
                     Group {
-                        if let image = image.image  {
+                        if let image = image.image {
                             image
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
@@ -230,7 +230,7 @@ extension Target {
                     .frame(width: imageWidth, height: imageHeight)
                     .background(Color.fadedPrimary)
                     .cornerRadius(5)
-                    
+
                     VStack(alignment: .leading, spacing: 1.5) {
                         Text(STTHelpers.getComicTitle(from: publication.metadata.title))
                             .font(.footnote)
@@ -243,14 +243,14 @@ extension Target {
                                     .foregroundColor(color)
                                     .font(.footnote.weight(.bold))
                             }
-                            
+
                             if let pages = publication.streamLink?.properties["count"] as? String ?? publication.metadata.numberOfPages?.description {
                                 Text(pages + " Pages")
                                     .font(.footnote.weight(.thin))
                             }
                         }
                     }
-                    
+
                     .frame(alignment: .topLeading)
                 }
             }
@@ -271,13 +271,13 @@ extension Target {
             }, message: {
                 Text(PublicationDescription)
             })
-            
+
             .confirmationDialog("Actions", isPresented: $presentDialog) {
                 if publication.isStreamable {
                     Button("Info") {
                         presentAlert.toggle()
                     }
-                    
+
                     if let link = publication.acquisitionLink.flatMap({ URL(string: $0) }) {
                         if LocalContentManager.shared.hasFile(fileName: link.lastPathComponent) {
                             Button("Read") {
@@ -305,14 +305,14 @@ extension Target {
                 }
             }
         }
-        
+
         var PublicationDescription: String {
             let title = publication.metadata.title
             let other = publication.metadata.description ?? ""
-            
+
             return "\(title)\n\(other)"
         }
-        
+
         func handleStreamSelection(publication: Publication) {
             do {
                 try DataManager.shared.savePublication(publication, client.id)

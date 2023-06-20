@@ -54,7 +54,7 @@ extension ReaderView {
             Button {
                 model.menuControl.toggleChapterList()
             }
-        label: {
+            label: {
                 HStack {
                     VStack(alignment: .leading) {
                         Text(model.activeChapter.chapter.displayName)

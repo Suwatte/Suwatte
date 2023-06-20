@@ -22,7 +22,8 @@ extension LibraryView {
                     ASCollectionView {
                         ASCollectionViewSection(id: 0,
                                                 data: readLater,
-                                                contextMenuProvider: contextMenuProvider) { data, _ in
+                                                contextMenuProvider: contextMenuProvider)
+                        { data, _ in
                             let isInLibrary = inLibrary(data)
                             let highlight = data.content!.toHighlight()
                             NavigationLink {
@@ -56,7 +57,6 @@ extension LibraryView {
                     .ignoresSafeArea(.keyboard, edges: .all)
                 } else {
                     ProgressView()
-
                 }
             }
             .animation(.default, value: model.library)
@@ -72,15 +72,15 @@ extension LibraryView {
                         Picker("Sort Titles", selection: $model.sort) {
                             ForEach(ContentSort.allCases, id: \.rawValue) { val in
                                 Text(val.description)
-                                .tag(val)
+                                    .tag(val)
                             }
                         }
                         .pickerStyle(.menu)
                         Picker("Order Titles", selection: $model.ascending) {
-                           Text("Ascending")
-                            .tag(true)
+                            Text("Ascending")
+                                .tag(true)
                             Text("Descending")
-                            .tag(false)
+                                .tag(false)
                         }
                         .pickerStyle(.menu)
                         Divider()

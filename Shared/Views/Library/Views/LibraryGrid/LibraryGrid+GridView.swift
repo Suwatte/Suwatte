@@ -23,7 +23,8 @@ extension LibraryView.LibraryGrid {
                 ASCollectionViewSection(id: 0,
                                         data: entries,
                                         selectionMode: model.isSelecting ? .selectMultiple($model.selectedIndexes) : .none,
-                                        contextMenuProvider: contextMenuProvider) { entry, state in
+                                        contextMenuProvider: contextMenuProvider)
+                { entry, state in
 
                     ZStack(alignment: .topTrailing) {
                         Button {

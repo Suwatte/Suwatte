@@ -39,7 +39,7 @@ struct ErrorView: View {
             Button {
                 action()
             }
-        label: {
+            label: {
                 Text("Retry")
                     .font(.headline)
                     .fontWeight(.semibold)

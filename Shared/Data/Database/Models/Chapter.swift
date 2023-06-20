@@ -6,9 +6,8 @@
 //
 
 import Foundation
-import RealmSwift
 import IceCream
-
+import RealmSwift
 
 final class StoredChapter: Object, Identifiable {
     @Persisted(primaryKey: true) var id: String
@@ -16,7 +15,6 @@ final class StoredChapter: Object, Identifiable {
     @Persisted var contentId: String
     @Persisted var chapterId: String
 
-    
     @Persisted var index: Int
     @Persisted var number: Double
     @Persisted var volume: Double?
@@ -26,7 +24,7 @@ final class StoredChapter: Object, Identifiable {
     @Persisted var webUrl: String?
     @Persisted var thumbnail: String?
     @Persisted var providers: List<ChapterProvider>
-    
+
     var displayName: String {
         var str = ""
         if let volume = volume, volume != 0 {
@@ -39,10 +37,8 @@ final class StoredChapter: Object, Identifiable {
     var chapterName: String {
         "Chapter \(number.clean)"
     }
-    
+
     var contentIdentifier: ContentIdentifier {
         .init(contentId: contentId, sourceId: sourceId)
     }
 }
-
-

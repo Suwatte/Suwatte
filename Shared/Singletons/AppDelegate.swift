@@ -5,17 +5,17 @@
 //  Created by Mantton on 2022-04-03.
 //
 
+import CloudKit
 import FirebaseCore
 import Foundation
+import IceCream
 import Nuke
 import RealmSwift
 import UIKit
-import IceCream
-import CloudKit
 
 class STTAppDelegate: NSObject, UIApplicationDelegate {
     var syncEngine: SyncEngine?
-    func application(_ application : UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         // Register BG Tasks
         STTScheduler.shared.registerTasks()
 
@@ -38,9 +38,9 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
             $0.imageCache = imageCache
             $0.dataCache = dataCache
         }
-        
+
         ImagePipeline.shared = pipeline
-        
+
         // Notification Center
         let center = UNUserNotificationCenter.current()
 
@@ -59,7 +59,7 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
         }
         config.fileURL = directory.appendingPathComponent("suwatte_db.realm")
         Realm.Configuration.defaultConfiguration = config
-        
+
         // Sync Engine
         syncEngine = SyncEngine(objects: [
             SyncObject(type: StoredTag.self),
@@ -75,9 +75,9 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
             SyncObject(type: TrackerLink.self),
             SyncObject(type: StoredOPDSServer.self),
             SyncObject(type: LibraryCollectionFilter.self),
-            SyncObject(type: LibraryCollection.self)
+            SyncObject(type: LibraryCollection.self),
         ])
-        
+
         application.registerForRemoteNotifications()
 
         // Analytics
@@ -85,14 +85,12 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
 
         return true
     }
-    
+
     // Reference: https://github.com/leoz/IceCream/blob/master/Example/IceCream_Example/AppDelegate.swift
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        
+    func application(_: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         if let dict = userInfo as? [String: NSObject], let notification = CKNotification(fromRemoteNotificationDictionary: dict), let subscriptionID = notification.subscriptionID, IceCreamSubscription.allIDs.contains(subscriptionID) {
             NotificationCenter.default.post(name: Notifications.cloudKitDataDidChangeRemotely.name, object: nil, userInfo: userInfo)
             completionHandler(.newData)
         }
-        
     }
 }

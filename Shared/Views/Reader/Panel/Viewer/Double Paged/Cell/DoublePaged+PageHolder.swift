@@ -6,9 +6,9 @@
 //
 
 import Combine
+import Nuke
 import SwiftUI
 import UIKit
-import Nuke
 
 class DoublePagedDisplayHolder: UIView {
     // Core Properties
@@ -26,10 +26,10 @@ class DoublePagedDisplayHolder: UIView {
 
     // State
     var subscriptions = Set<AnyCancellable>()
-    
+
     var firstImageTask: AsyncImageTask?
     var secondImageTask: AsyncImageTask?
-    
+
     var firstPageImage: UIImage?
     var secondPageImage: UIImage?
     // Init
@@ -133,7 +133,6 @@ extension DoublePagedDisplayHolder {
             do {
                 page.page.targetWidth = await self?.secondPage != nil ? size.width / 2 : size.width
 
-                
                 let task = try await page.page.load()
                 await MainActor.run { [weak self] in
                     if page === self?.firstPage {
@@ -149,12 +148,12 @@ extension DoublePagedDisplayHolder {
                         self?.setProgress(p)
                     }
                 }
-                
+
                 let image = try await task.image
                 await MainActor.run { [weak self] in
-                    self?.onPageLoadSuccess(image: image, target:page)
+                    self?.onPageLoadSuccess(image: image, target: page)
                 }
-                
+
             } catch {
                 await MainActor.run { [weak self] in
                     self?.setError(error)
@@ -165,18 +164,17 @@ extension DoublePagedDisplayHolder {
 }
 
 extension DoublePagedDisplayHolder {
-
     func onPageLoadSuccess(image: UIImage, target: ReaderPage) {
         let isWide = image.size.ratio > 1
         target.widePage = isWide
 
         // Target Is Wide and Is the Second Page, Mark the Primary Page as Isolated
-        if target.widePage && target === secondPage {
+        if target.widePage, target === secondPage {
             firstPage.isolatedPage = true
         }
 
         // Target Is Wide And This is the Primary Page, Cancel Other Ongoing tasks
-        if target.widePage && target === firstPage {
+        if target.widePage, target === firstPage {
             secondImageTask?.cancel()
             secondImageTask = nil
         }
@@ -266,7 +264,7 @@ extension DoublePagedDisplayHolder {
     }
 
     func setProgress(for page: ReaderPage, value: Double) {
-        if page === self.firstImageTask {
+        if page === firstImageTask {
             progress.0 = value
         } else {
             progress.1 = value

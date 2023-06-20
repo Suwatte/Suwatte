@@ -15,7 +15,7 @@ extension WKContentSource: ModifiableSource {
 
     func willRequestImage(request: DSKCommon.Request) async throws -> DSKCommon.Request {
         let body = "return willRequestImage(request);"
-        let arguments = ["request": try request.asDictionary()]
+        let arguments = try ["request": request.asDictionary()]
         return try await eval(body, arguments, to: DSKCommon.Request.self)
     }
 }

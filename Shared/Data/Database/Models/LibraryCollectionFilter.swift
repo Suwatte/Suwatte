@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import RealmSwift
 import IceCream
+import RealmSwift
 
 final class LibraryCollectionFilter: Object, CKRecordConvertible, CKRecordRecoverable {
     @Persisted(primaryKey: true) var id: String = UUID().uuidString
@@ -20,4 +20,3 @@ final class LibraryCollectionFilter: Object, CKRecordConvertible, CKRecordRecove
     @Persisted var contentType: List<ExternalContentType>
     @Persisted var isDeleted: Bool
 }
-

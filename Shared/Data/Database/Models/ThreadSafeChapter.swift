@@ -21,7 +21,6 @@ struct ThreadSafeChapter: Hashable {
     var webUrl: String?
     var thumbnail: String?
 
-
     func toStored() -> StoredChapter {
         let obj = StoredChapter()
         obj.id = id
@@ -42,7 +41,7 @@ struct ThreadSafeChapter: Hashable {
     var sttId: String {
         ContentIdentifier(contentId: contentId, sourceId: sourceId).id
     }
-    
+
     var chapterType: ReaderView.ReaderChapter.ChapterType {
         if sourceId == STTHelpers.LOCAL_CONTENT_ID { return .LOCAL }
         else if sourceId == STTHelpers.OPDS_CONTENT_ID { return .OPDS }
@@ -58,5 +57,3 @@ struct ThreadSafeChapter: Hashable {
         return str.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
-
-

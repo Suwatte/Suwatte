@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import RealmSwift
 import IceCream
+import RealmSwift
 
 final class Bookmark: Object, CKRecordConvertible, CKRecordRecoverable, Identifiable {
     @Persisted var page: Int

@@ -7,8 +7,8 @@
 
 import Alamofire
 import Foundation
-import UIKit
 import Nuke
+import UIKit
 
 final class LocalContentManager: ObservableObject {
     @Published var isSelecting = false
@@ -23,22 +23,22 @@ final class LocalContentManager: ObservableObject {
     internal let rarClient = RarClient()
     @Published var downloads: [DownloadObject] = []
     private var observer: DirectoryObserver
-    
+
     init() {
         directory.createDirectory()
         observer = .init(extensions: ["cbr"], url: directory)
     }
-    
+
     func observe() {
         observer.observe { test in
             print(test)
         }
     }
-    
+
     func stopObserving() {
         observer.stopObserving()
     }
-    
+
     enum Errors: Error {
         case FileExists
         case DNE
@@ -162,7 +162,7 @@ final class LocalContentManager: ObservableObject {
 //        }
         return
         for file in directory.contents.sorted(by: \.lastModified, descending: true) {
-             if let book = generateBook(at: file) {
+            if let book = generateBook(at: file) {
                 DispatchQueue.main.async { [weak self] in
                     self?.idHash.updateValue(book, forKey: book.id)
                 }
@@ -227,10 +227,10 @@ extension LocalContentManager {
         }
 
         func getThumbnailRequest() -> ImageRequest? {
-            guard let thumb = thumbnail , let path = thumb.path else {
+            guard let thumb = thumbnail, let path = thumb.path else {
                 return nil
             }
-            var request = ImageRequest(id: self.hashValue.description) {
+            var request = ImageRequest(id: hashValue.description) {
                 try LocalContentManager.shared.getImageData(for: String(id), ofName: path)
             }
             request.options = .disableDiskCache
@@ -358,7 +358,7 @@ extension LocalContentManager {
 
     func startDownload(_ download: DownloadObject) {
         if download.status != .queued {
-            let _ = downloads.popFirst()
+            _ = downloads.popFirst()
             didFinishLastDownload()
         }
 

@@ -7,8 +7,8 @@
 
 import Combine
 import Foundation
-import UIKit
 import Nuke
+import UIKit
 
 extension DoublePagedViewer {
     final class Controller: UICollectionViewController {
@@ -23,13 +23,13 @@ extension DoublePagedViewer {
         var pendingUpdates = false
         var lastViewedSection = 0
         private let prefetcher = ImagePrefetcher()
-
     }
 }
 
 private typealias Controller = DoublePagedViewer.Controller
 private typealias DoublePageCell = DoublePagedViewer.ImageCell
 private typealias SinglePageCell = PagedViewer.ImageCell
+
 // MARK: DataSource
 
 extension Controller {
@@ -162,7 +162,7 @@ extension Controller: UICollectionViewDataSourcePrefetching {
 
                 for page in pages {
                     group.addTask {
-                        return try? await page.getImageRequest()
+                        try? await page.getImageRequest()
                     }
                 }
 
@@ -178,7 +178,7 @@ extension Controller: UICollectionViewDataSourcePrefetching {
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+    func collectionView(_: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
         let pages = indexPaths.compactMap { path -> ReaderView.Page? in
             guard let page = self.model.sections[path.section][path.item] as? ReaderPage else {
                 return nil
@@ -191,7 +191,7 @@ extension Controller: UICollectionViewDataSourcePrefetching {
 
                 for page in pages {
                     group.addTask {
-                        return try? await page.getImageRequest()
+                        try? await page.getImageRequest()
                     }
                 }
 
@@ -264,9 +264,8 @@ extension Controller {
             cell.set(primary: target, secondary: secondary, delegate: self) // SetUp
             cell.setImage() // Set Image
             return cell
-
         }
-        
+
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SinglePageCell.identifier, for: indexPath) as! SinglePageCell
         cell.set(page: target, delegate: self)
         cell.setImage()

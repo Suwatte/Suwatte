@@ -531,29 +531,28 @@ enum URLHelper {
     }
 }
 
-extension Publication {
-
-    public var thumbnailURL: String? {
+public extension Publication {
+    var thumbnailURL: String? {
         links.first(withRel: .opdsImageThumbnail)?.href
     }
 
-    public var acquisitionLink: String? {
+    var acquisitionLink: String? {
         links.first(withRel: .opdsAcquisition)?.href
     }
 
-    public var streamLink: R2Shared.Link? {
+    var streamLink: R2Shared.Link? {
         links.first(withRel: .init("http://vaemendis.net/opds-pse/stream"))
     }
 
-    public var isStreamable: Bool {
+    var isStreamable: Bool {
         streamLink != nil
     }
 
-    func toStoredChapter(clientID: String) throws -> StoredChapter {
+    internal func toStoredChapter(clientID: String) throws -> StoredChapter {
         guard let link = streamLink, let id = metadata.identifier else {
             throw OPDSParserError.documentNotFound
         }
-            
+
         let chapter = StoredChapter()
         chapter.sourceId = STTHelpers.OPDS_CONTENT_ID
         chapter.contentId = id

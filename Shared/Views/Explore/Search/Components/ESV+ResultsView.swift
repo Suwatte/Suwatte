@@ -28,7 +28,8 @@ extension ExploreView.SearchView {
         var body: some View {
             ASCollectionView {
                 ASCollectionViewSection(id: 0,
-                                        data: entries) { data, state in
+                                        data: entries)
+                { data, state in
                     let isInLibrary = DataManager.shared.contentInLibrary(s: sourceId, c: data.contentId)
                     let isSavedForLater = DataManager.shared.contentSavedForLater(s: sourceId, c: data.contentId)
 

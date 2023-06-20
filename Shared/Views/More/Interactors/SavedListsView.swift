@@ -31,7 +31,6 @@ struct RunnerListsView: View {
                                 .opacity(0.65)
                         }
                     }
-                    
                 }
             }
             .onDelete(perform: $runnerLists.remove(atOffsets:))

@@ -6,9 +6,8 @@
 //
 
 import Foundation
-import RealmSwift
 import IceCream
-
+import RealmSwift
 
 extension StoredChapter {
     func toThreadSafe() -> ThreadSafeChapter {
@@ -16,39 +15,36 @@ extension StoredChapter {
     }
 }
 
-
 extension DataManager {
-    
     func validateChapterReference(id: String, _ realm: Realm? = nil) {
         let realm = try! realm ?? Realm()
         let target = realm
             .objects(ChapterReference.self)
-            .where({ $0.id == id && $0.isDeleted == false  })
+            .where { $0.id == id && $0.isDeleted == false }
             .first
-        
+
         guard let target else {
             return
         }
-        
+
         // Check if it has any references
         let hasBookmarks = !realm
             .objects(Bookmark.self)
-            .where({ $0.isDeleted == false && $0.chapter.id == id })
+            .where { $0.isDeleted == false && $0.chapter.id == id }
             .isEmpty
-        
+
         let hasMarker = !realm
             .objects(ProgressMarker.self)
-            .where({ $0.isDeleted == false && $0.currentChapter.id == id })
+            .where { $0.isDeleted == false && $0.currentChapter.id == id }
             .isEmpty
-        
-        guard !hasBookmarks && !hasMarker else {
+
+        guard !hasBookmarks, !hasMarker else {
             return
         }
         // Has no references, delete.
         try! realm.safeWrite {
             target.isDeleted = true
         }
-        
     }
 }
 
@@ -118,7 +114,7 @@ extension DataManager {
 
         return realm.objects(StoredChapter.self).where {
             $0.contentId == content &&
-            $0.sourceId == source
+                $0.sourceId == source
         }
         .sorted(by: \.index, ascending: true)
     }

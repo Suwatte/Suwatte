@@ -7,8 +7,6 @@
 import Foundation
 import RealmSwift
 
-
-
 extension DataManager {
     func toggleReadLater(_ source: String, _ content: String) {
         let id = ContentIdentifier(contentId: content, sourceId: source).id

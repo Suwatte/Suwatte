@@ -34,7 +34,7 @@ struct CloudFlareErrorView: View {
                 self.showSheet.toggle()
                 Logger.shared.debug("[ErrorView] [CloudFlare] Resolve for \(sourceID)")
             }
-                label: {
+            label: {
                 Text("Resolve & Retry")
                     .font(.headline)
                     .fontWeight(.semibold)

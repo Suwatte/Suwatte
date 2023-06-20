@@ -62,7 +62,7 @@ extension OPDSView {
                         guard serverURL != nil else {
                             return
                         }
-                        
+
                         ToastManager.shared.loading = true
 
                         let auth = hasAuthentication ? (entry.userName, entry.password) : nil

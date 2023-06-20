@@ -6,11 +6,10 @@
 //
 
 import Foundation
-import RealmSwift
 import IceCream
+import RealmSwift
 
 extension StoredContent {
-    
     func toHighlight() -> DaisukeEngine.Structs.Highlight {
         .init(contentId: contentId, cover: cover, title: title)
     }
@@ -28,8 +27,6 @@ extension StoredContent {
         return try DaisukeEngine.decode(data: data, to: DSKCommon.Content.self)
     }
 }
-
-
 
 extension DaisukeEngine.Structs.Content {
     func toStoredContent(withSource source: String) throws -> StoredContent {
@@ -57,16 +54,15 @@ extension DataManager {
             .where { $0.contentId == contentId && $0.sourceId == sourceId }
             .first
     }
-    
+
     func getStoredContent(_ id: String) -> StoredContent? {
         let realm = try! Realm()
 
         return realm
             .objects(StoredContent.self)
-            .where { $0.id == id  }
+            .where { $0.id == id }
             .first
     }
-
 
     func getStoredContents(ids: [String]) -> Results<StoredContent> {
         let realm = try! Realm()

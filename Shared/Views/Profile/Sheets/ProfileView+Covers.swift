@@ -5,8 +5,8 @@
 //  Created by Mantton on 2022-03-07.
 //
 
-import SwiftUI
 import Nuke
+import SwiftUI
 
 extension ProfileView {
     struct CoversSheet: View {
@@ -22,7 +22,7 @@ extension ProfileView {
                             .contextMenu {
                                 Button {
                                     Task {
-                                       await handleSaveEvent(for: cover)
+                                        await handleSaveEvent(for: cover)
                                     }
                                 } label: {
                                     Label("Save Image", systemImage: "square.and.arrow.down")
@@ -52,11 +52,11 @@ extension ProfileView {
             guard let url, let source = try? SourceManager.shared.getContentSource(id: model.source.id) as? any ModifiableSource else {
                 return
             }
-            
+
             var request = URLRequest(url: url)
             if source.config.hasThumbnailInterceptor {
                 do {
-                    let dskResponse = try await source.willRequestImage(request: try request.toDaisukeNetworkRequest())
+                    let dskResponse = try await source.willRequestImage(request: request.toDaisukeNetworkRequest())
                     request = try dskResponse.toURLRequest()
                 } catch {
                     Logger.shared.error("\(error)")

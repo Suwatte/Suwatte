@@ -21,13 +21,13 @@ extension DataManager {
 
     func toggleBookmark(chapter: StoredChapter, page: Int, offset: Double? = nil) {
         let realm = try! Realm()
-        
+
         let bookmark = realm.objects(Bookmark.self)
             .where { $0.isDeleted == false }
             .where { $0.chapter.id == chapter.id }
             .where { $0.page == page }
             .first
-        
+
         if let bookmark {
             try! realm.safeWrite {
                 bookmark.isDeleted = true

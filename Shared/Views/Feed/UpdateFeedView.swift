@@ -8,7 +8,6 @@
 import RealmSwift
 import SwiftUI
 
-
 struct UpdateFeedView: View {
     typealias Grouped = [String: [LibraryEntry]]
     @State var selection: HighlightIndentier?
@@ -20,7 +19,6 @@ struct UpdateFeedView: View {
                     SectionGroup(title: $0.header, entries: $0.content)
                 }
             }
-            
         }
         .refreshable {
             await handleRefresh()
@@ -68,16 +66,15 @@ struct UpdateFeedView: View {
     }
 }
 
-
 extension UpdateFeedView {
-    
-    struct GroupedData : Hashable {
+    struct GroupedData: Hashable {
         var header: String
         var content: [LibraryEntry]
     }
+
     final class ViewModel: ObservableObject {
         private var token: NotificationToken?
-        @Published var data : [GroupedData]?
+        @Published var data: [GroupedData]?
         func observe() {
             let queue = DispatchQueue(label: "com.ceres.suwatte.feed")
             queue.async { [weak self] in
@@ -85,25 +82,25 @@ extension UpdateFeedView {
                 let realm = try! Realm()
                 let library = realm
                     .objects(LibraryEntry.self)
-                    .where({ $0.content != nil })
-                    .where({ $0.updateCount > 0 })
-                    .where({ $0.lastUpdated >= date })
+                    .where { $0.content != nil }
+                    .where { $0.updateCount > 0 }
+                    .where { $0.lastUpdated >= date }
                     .sorted(by: \.lastUpdated, ascending: false)
 
                 self?.token = library
-                    .observe(on: queue , {[weak self] notification in
+                    .observe(on: queue) { [weak self] notification in
                         switch notification {
-                            case .initial(let results):
-                                self?.generate(entries: results.freeze())
-                            case .update(let results, _, _, _):
-                                self?.generate(entries: results.freeze())
-                            case .error(let error):
-                                Logger.shared.error("\(error)")
+                        case let .initial(results):
+                            self?.generate(entries: results.freeze())
+                        case let .update(results, _, _, _):
+                            self?.generate(entries: results.freeze())
+                        case let .error(error):
+                            Logger.shared.error("\(error)")
                         }
-                    })
+                    }
             }
         }
-        
+
         func generate(entries: Results<LibraryEntry>) {
             let grouped = Dictionary(grouping: entries, by: { $0.lastUpdated.timeAgoGrouped() })
             let sortedKeys = grouped.keys.sorted(by: { grouped[$0]![0].lastUpdated > grouped[$1]![0].lastUpdated })
@@ -111,18 +108,16 @@ extension UpdateFeedView {
             sortedKeys.forEach {
                 prepared.append(.init(header: $0, content: grouped[$0] ?? []))
             }
-            
+
             let out = prepared
             Task { @MainActor in
                 data = out
             }
         }
-        
+
         func disconnect() {
             token?.invalidate()
             token = nil
         }
-        
     }
-    
 }

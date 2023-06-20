@@ -90,36 +90,30 @@ struct InstalledRunnersView: View {
     }
 }
 
-
 extension InstalledRunnersView {
-    
     final class ViewModel: ObservableObject {
-        
         @Published var runners: Results<StoredRunnerObject>?
-        
-        private var token : NotificationToken?
-        
+
+        private var token: NotificationToken?
+
         func observe() {
             token?.invalidate()
             token = nil
             let realm = try! Realm()
-            
-            
+
             let results = realm
                 .objects(StoredRunnerObject.self)
                 .where { $0.isDeleted == false }
                 .sorted(by: [SortDescriptor(keyPath: "enabled", ascending: true), SortDescriptor(keyPath: "name", ascending: true)])
-            
-            
-            token = results.observe({ [weak self] _ in
+
+            token = results.observe { [weak self] _ in
                 self?.runners = results.freeze()
-            })
+            }
         }
-        
+
         func disconnect() {
             token?.invalidate()
             token = nil
         }
-        
     }
 }

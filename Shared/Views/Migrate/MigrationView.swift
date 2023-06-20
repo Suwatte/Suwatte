@@ -158,7 +158,7 @@ extension MigrationView {
                 Task.detached(priority: .userInitiated) {
                     await start()
                 }
-                
+
             } label: {
                 Label("Begin Searches", systemImage: "magnifyingglass")
             }
@@ -220,7 +220,7 @@ extension MigrationView {
     }
 
     private func getAvailableSources() -> [AnyContentSource] {
-        return runners.filter({ !preferredDestinations.map(\.id).contains($0.id) }).compactMap({ try? SourceManager.shared.getContentSource(id: $0.id) })
+        return runners.filter { !preferredDestinations.map(\.id).contains($0.id) }.compactMap { try? SourceManager.shared.getContentSource(id: $0.id) }
     }
 
     private func move(from source: IndexSet, to destination: Int) {
@@ -231,7 +231,6 @@ extension MigrationView {
 // MARK: Functions
 
 extension MigrationView {
-
     func cancelOperations() {
         operationsTask?.cancel()
         operationsTask = nil
@@ -268,7 +267,7 @@ extension MigrationView {
 extension MigrationView {
     @ViewBuilder
     func ItemCell(_ content: StoredContent, _ state: ItemState) -> some View {
-        let name = runners.where({ $0.id == content.sourceId }).first?.name ?? ""
+        let name = runners.where { $0.id == content.sourceId }.first?.name ?? ""
         VStack {
             // Warning
             HStack {
@@ -352,7 +351,7 @@ extension MigrationView {
         await MainActor.run(body: {
             operationState = .searching
         })
-        
+
         for content in contents {
             let id = content.id
             let lastChapter = DataManager.shared.getLatestStoredChapter(content.sourceId, content.contentId)?.number
@@ -505,7 +504,7 @@ extension MigrationView {
             ToastManager.shared.loading = true
             ToastManager.shared.info("Migration In Progress\nYour Data has been backed up.")
         }
-        
+
         do {
             try BackupManager.shared.save(name: "PreMigration")
         } catch {
@@ -539,7 +538,7 @@ extension MigrationView {
                 obj.flag = target.flag
                 obj.dateAdded = target.dateAdded
                 realm.add(obj, update: .modified)
-                    
+
                 if target.id != obj.id {
                     target.isDeleted = true
                 }
@@ -550,7 +549,7 @@ extension MigrationView {
                 let target = realm
                     .objects(LibraryEntry.self)
                     .where { $0.id == id }
-                    .where({ $0.isDeleted == false })
+                    .where { $0.isDeleted == false }
                     .first
                 guard let target else { continue }
                 switch state {

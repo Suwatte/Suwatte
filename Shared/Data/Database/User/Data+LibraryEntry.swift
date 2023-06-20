@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import RealmSwift
 import IceCream
+import RealmSwift
 enum LibraryFlag: Int, PersistableEnum, CaseIterable, Identifiable, Codable {
     case reading, planned, completed, dropped, reReading, paused, unknown
 
@@ -34,8 +34,6 @@ enum LibraryFlag: Int, PersistableEnum, CaseIterable, Identifiable, Codable {
         hashValue
     }
 }
-
-
 
 extension DataManager {
     func setReadingFlag(for object: LibraryEntry, to flag: LibraryFlag) {
@@ -278,10 +276,10 @@ extension DataManager {
         // Get Max Read Chapter
         let maxRead = realm
             .objects(ProgressMarker.self)
-            .where({ $0.id == id.id })
+            .where { $0.id == id.id }
             .first?
             .maxReadChapter ?? -1
-        
+
         // Get Total Chapter Count
         let unread = realm
             .objects(StoredChapter.self)
@@ -309,14 +307,14 @@ extension DataManager {
             target.unreadCount = count
         }
     }
-    
+
     func decrementUnreadCount(for id: String, _ realm: Realm? = nil) {
         let realm = try! realm ?? Realm()
         let target = realm
             .objects(LibraryEntry.self)
             .where { $0.content.id == id }
             .first
-        
+
         guard let target else { return }
         try! realm.safeWrite {
             target.unreadCount -= 1

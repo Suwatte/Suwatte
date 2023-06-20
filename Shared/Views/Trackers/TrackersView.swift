@@ -32,11 +32,11 @@ struct TrackersView: View {
                             presentAlert.toggle()
                         }
                 }
-                
+
                 Toggle(isOn: $showNSFWContentInSearch) {
                     Text("Include NSFW Content In Search Results")
                 }
-                
+
                 Toggle(isOn: $blurNSFWContentInSearch) {
                     Text("Blur NSFW Content In Search Results")
                 }

@@ -37,8 +37,8 @@ extension LibraryView {
                 }
             }
         }
-        
-        func observe(_ n: Any? = nil) {
+
+        func observe(_: Any? = nil) {
             model.observe(downloadsOnly: showDownloadsOnly, key: sortKey, order: sortOrder)
         }
 

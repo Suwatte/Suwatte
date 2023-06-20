@@ -96,7 +96,7 @@ struct LocalContentView: View {
         date ?? .distantPast
     }
 
-    func dateOfMarker(id: Int64) -> Date {
+    func dateOfMarker(id _: Int64) -> Date {
         .distantPast
     }
 

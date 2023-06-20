@@ -7,8 +7,8 @@
 
 import Combine
 import Foundation
-import UIKit
 import Nuke
+import UIKit
 
 extension VerticalPager {
     final class Controller: UICollectionViewController {
@@ -23,7 +23,6 @@ extension VerticalPager {
         var enableInteractions: Bool = Preferences.standard.imageInteractions
         var lastViewedSection = 0
         private let prefetcher = ImagePrefetcher()
-
     }
 }
 
@@ -147,7 +146,7 @@ extension Controller: UICollectionViewDataSourcePrefetching {
 
                 for page in pages {
                     group.addTask {
-                        return try? await page.getImageRequest()
+                        try? await page.getImageRequest()
                     }
                 }
 
@@ -163,7 +162,7 @@ extension Controller: UICollectionViewDataSourcePrefetching {
         }
     }
 
-    func collectionView(_ collectionView: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
+    func collectionView(_: UICollectionView, cancelPrefetchingForItemsAt indexPaths: [IndexPath]) {
         let pages = indexPaths.compactMap { path -> ReaderView.Page? in
             guard let page = self.model.sections[path.section][path.item] as? ReaderPage else {
                 return nil
@@ -176,7 +175,7 @@ extension Controller: UICollectionViewDataSourcePrefetching {
 
                 for page in pages {
                     group.addTask {
-                        return try? await page.getImageRequest()
+                        try? await page.getImageRequest()
                     }
                 }
 

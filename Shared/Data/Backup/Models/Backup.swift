@@ -55,7 +55,6 @@ extension DataManager {
         let librarySources = Set(libraryEntries.compactMap { $0.content?.sourceId })
         let libraryIds = Set(libraryEntries.compactMap { $0.content?.contentId })
 
-
         let collections = realm
             .objects(LibraryCollection.self)
 

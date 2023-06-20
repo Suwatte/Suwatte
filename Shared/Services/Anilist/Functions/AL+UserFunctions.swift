@@ -102,7 +102,7 @@ extension Anilist {
     func getUser() async throws -> User {
         return try await request(query: CurrentViewerQuery, to: UserResponse.self).data.Viewer
     }
-    
+
     func nsfwEnabled() async -> Bool {
         do {
             let user = try await getUser()

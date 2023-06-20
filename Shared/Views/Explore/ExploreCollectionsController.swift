@@ -114,7 +114,6 @@ final class ExploreCollectionsController: UICollectionViewController {
             guard let section else {
                 let supplementaryView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "DefaultSupplementaryView", for: indexPath)
                 return supplementaryView
-                
             }
             if let section = section as? String, section == TAG_SECTION_ID {
                 let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "tagHeaderCell", for: indexPath)
@@ -262,7 +261,7 @@ extension CTR {
     func updateOrder() {
         for elem in snapshot.sectionIdentifiers {
             guard let elem = elem as? CollectionExcerpt else { continue }
-            if elem.style == .UPDATE_LIST && !snapshot.sectionIdentifiers.isEmpty && snapshot.indexOfSection(elem) != (snapshot.sectionIdentifiers.count - 1) {
+            if elem.style == .UPDATE_LIST, !snapshot.sectionIdentifiers.isEmpty, snapshot.indexOfSection(elem) != (snapshot.sectionIdentifiers.count - 1) {
                 snapshot.moveSection(elem, afterSection: snapshot.sectionIdentifiers.last!)
             }
         }
@@ -557,16 +556,16 @@ extension CTR {
                 if loader.image != nil || loader.isLoading { return }
                 loader.transaction = .init(animation: .easeInOut(duration: 0.25))
                 loader.onCompletion = { result in
-                    
+
                     guard let result = try? result.get() else {
                         return
                     }
-                    
+
                     if let avgColor = result.image.averageColor {
                         color = Color(uiColor: avgColor)
                     }
                 }
-  
+
                 if let str = tag.imageUrl, let url = URL(string: str) {
                     loader.load(url)
                 }
