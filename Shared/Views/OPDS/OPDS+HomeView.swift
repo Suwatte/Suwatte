@@ -9,7 +9,9 @@ import RealmSwift
 import SwiftUI
 
 struct OPDSView: View {
-    @State var presentAddNewServer = false
+    @State private var presentAddNewServer = false
+    @State private var presentRenameAlert = false
+    @State private var server: StoredOPDSServer? = nil
     @ObservedResults(StoredOPDSServer.self, where: { $0.isDeleted == false }, sortDescriptor: .init(keyPath: "alias", ascending: true)) var servers
     var body: some View {
         List {
@@ -18,12 +20,17 @@ struct OPDSView: View {
                     LoadableFeedView(url: server.host)
                         .environmentObject(server.toClient())
                 }
-            }
-            .onDelete { indexSet in
-                guard let index = indexSet.first, let server = servers.getOrNil(index) else {
-                    return
+                .swipeActions {
+                    Button("Delete") {
+                        DataManager.shared.removeOPDServer(id: server.id)
+                    }
+                    .tint(.red)
+                    Button("Rename") {
+                        renamePrompt(server: server)
+                    }
+                    .tint(.blue)
+
                 }
-                DataManager.shared.removeOPDServer(id: server.id)
             }
         }
         .toolbar {
@@ -41,5 +48,22 @@ struct OPDSView: View {
 
         })
         .navigationTitle("OPDS")
+        .animation(.default, value: servers)
+    }
+    
+    func renamePrompt(server: StoredOPDSServer) {
+        let ac = UIAlertController(title: "Rename \(server.alias)", message: nil, preferredStyle: .alert)
+        ac.addTextField()
+
+        let submitAction = UIAlertAction(title: "Rename", style: .default) { [unowned ac] _ in
+            let text = ac.textFields![0].text
+            
+            guard let text else { return }
+            
+            DataManager.shared.renameOPDSServer(id: server.id, name: text)
+        }
+        ac.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        ac.addAction(submitAction)
+        KEY_WINDOW?.rootViewController?.present(ac, animated: true)
     }
 }

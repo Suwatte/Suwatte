@@ -93,4 +93,16 @@ extension DataManager {
             target.isDeleted = true
         }
     }
+    
+    func renameOPDSServer(id: String, name: String) {
+        let realm = try! Realm()
+
+        guard let target = realm.objects(StoredOPDSServer.self).where({ $0.id == id && $0.isDeleted == false }).first else {
+            return
+        }
+        
+        try! realm.safeWrite {
+            target.alias = name
+        }
+    }
 }
