@@ -36,7 +36,7 @@ final class ChapterReference: Object, CKRecordConvertible , CKRecordRecoverable,
     @Persisted var number: Double
     @Persisted var volume: Double?
     @Persisted var content: StoredContent?
-    @Persisted var opds: StoredOPDSContent?
+    @Persisted var opds: StreamableOPDSContent?
     @Persisted var isDeleted: Bool = false
 
 }

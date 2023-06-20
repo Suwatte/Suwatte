@@ -9,7 +9,7 @@ import Nuke
 import NukeUI
 import RealmSwift
 import SwiftUI
-
+import Alamofire
 struct STTImageView: View {
     var url: URL?
     var identifier: ContentIdentifier
@@ -61,21 +61,40 @@ struct STTImageView: View {
             return
         }
         Task {
-            let source = SourceManager.shared.getSource(id: identifier.sourceId)
-
-            do {
-                if let source = source as? any ModifiableSource, source.config.hasThumbnailInterceptor {
-                    let dskRequest = DSKCommon.Request(url: url?.absoluteString ?? "")
-                    let dskResponse = try await source.willRequestImage(request: dskRequest)
-                    let imageRequest = ImageRequest(urlRequest: try dskResponse.toURLRequest())
-                    loader.load(imageRequest)
+            
+            if identifier.sourceId == STTHelpers.OPDS_CONTENT_ID {
+                let pub = DataManager.shared.getPublication(id: identifier.contentId)
+                let value = pub?.client?.toClient().authHeader
+                guard let url, let value else {
+                    loader.load(url)
                     return
                 }
-            } catch {
-                Logger.shared.error(error.localizedDescription)
-            }
+                do {
+                    let req = try URLRequest(url: url, method: .get, headers: .init([.init(name: "Authorization", value: value)]))
+                    let nukeReq = ImageRequest(urlRequest: req)
+                    loader.load(nukeReq)
+                } catch {
+                    Logger.shared.error(error)
+                    loader.load(url)
+                }
+            } else {
+                let source = SourceManager.shared.getSource(id: identifier.sourceId)
 
-            loader.load(url)
+                do {
+                    if let source = source as? any ModifiableSource, source.config.hasThumbnailInterceptor {
+                        let dskRequest = DSKCommon.Request(url: url?.absoluteString ?? "")
+                        let dskResponse = try await source.willRequestImage(request: dskRequest)
+                        let imageRequest = ImageRequest(urlRequest: try dskResponse.toURLRequest())
+                        loader.load(imageRequest)
+                        return
+                    } else {
+                        loader.load(url)
+                    }
+                } catch {
+                    Logger.shared.error(error.localizedDescription)
+                    loader.load(url)
+                }
+            }
         }
     }
 
@@ -138,9 +157,9 @@ struct BaseImageView: View {
                 }
             } catch {
                 Logger.shared.error(error.localizedDescription)
+                loader.load(url)
             }
 
-            loader.load(url)
         }
     }
 }

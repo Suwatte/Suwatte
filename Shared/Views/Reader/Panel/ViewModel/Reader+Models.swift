@@ -7,7 +7,8 @@
 
 import SwiftUI
 import Nuke
-
+import Alamofire
+import KeychainSwift
 // MARK: Protocols
 
 protocol ReaderTransitionManager {
@@ -38,6 +39,10 @@ protocol ReaderChapterLoader {
     func loadChapterData(for chapter: ReaderView.ReaderChapter, setMarker: Bool)
 }
 
+struct OPDSInfo: Hashable {
+    var clientId: String
+    var userName: String
+}
 // MARK: Structs
 
 extension ReaderView {
@@ -109,6 +114,7 @@ extension ReaderView {
 
         var urls: [URL] = []
         var archivePaths: [String] = []
+        var opdsInfo: OPDSInfo?
     }
 
     class ReaderChapter: Equatable, ObservableObject {
@@ -154,7 +160,7 @@ extension ReaderView {
                     let arr = zip(images.indices, images)
 
                     pages = arr.map {
-                        .init(page: Page(index: $0, chapterId: chapterId, contentId: chapter.contentId, sourceId: chapter.sourceId, hostedURL: $1))
+                        .init(page: Page(index: $0, chapterId: chapterId, contentId: chapter.contentId, sourceId: chapter.sourceId, hostedURL: $1, opds: chapterData.opdsInfo))
                     }
                 }
             }
@@ -196,6 +202,8 @@ extension ReaderView {
         var rawData: String? = nil
         var archivePath: String? = nil
         var archiveFile: String? = nil
+        
+        var opds: OPDSInfo? = nil
         
         var targetWidth: CGFloat = UIScreen.mainScreen.bounds.width
 
@@ -241,7 +249,27 @@ extension StoredChapter {
 
 extension ReaderView.Page {
     private func prepareImageURL(_ url: URL) async throws -> URLRequest {
+        let base = URLRequest(url: url)
         let sourceId = sourceId
+        
+        // Handle OPDS Content Authorization Header
+        if sourceId == STTHelpers.OPDS_CONTENT_ID {
+            guard let opds else {
+                return base
+            }
+            let keychain = KeychainSwift()
+            keychain.synchronizable = true
+            let pw = keychain.get("OPDS_\(opds.clientId)")
+            guard let pw else {
+                return base
+            }
+            var headers = HTTPHeaders()
+            let merge = "\(opds.userName):\(pw)"
+            let value =  "Basic \(merge.toBase64())"
+            headers.add(.init(name: "Authorization", value: value))
+            return try .init(url: url, method: .get, headers: headers)
+        }
+        // Handle External Sources
         guard let source = try SourceManager.shared.getContentSource(id: sourceId) as? any ModifiableSource, source.config.hasThumbnailInterceptor  else {
             return .init(url: url)
         }
@@ -351,7 +379,8 @@ extension StoredChapterData {
               pages: pages.map { .init(url: $0.url, raw: $0.raw) },
               text: text,
               urls: urls,
-              archivePaths: archivePaths)
+              archivePaths: archivePaths,
+              opdsInfo: opdsInfo)
     }
 }
  

@@ -33,6 +33,7 @@ class StoredChapterData: Object {
 
     var urls: [URL] = []
     var archivePaths: [String] = []
+    var opdsInfo: OPDSInfo?
 }
 
 class StoredChapterPage: EmbeddedObject, Parsable {

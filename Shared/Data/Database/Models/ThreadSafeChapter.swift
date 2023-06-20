@@ -25,6 +25,9 @@ struct ThreadSafeChapter: Hashable {
     func toStored() -> StoredChapter {
         let obj = StoredChapter()
         obj.id = id
+        obj.contentId = contentId
+        obj.sourceId = sourceId
+        obj.chapterId = chapterId
         obj.index = index
         obj.number = number
         obj.volume = volume

@@ -118,16 +118,21 @@ class STTHelpers {
                 let obj = StoredChapterData()
                 obj.chapter = chapter.toStored()
                 let baseLink = chapter.chapterId
-  
-                let pages = Array(0 ..< 10).map { num -> StoredChapterPage in
+                let publication = DataManager.shared.getPublication(id: chapter.contentId)
+                guard let publication, let client = publication.client else {
+                    throw DSK.Errors.NamedError(name: "OPDS", message: "Unable to fetch OPDS Content")
+                }
+                let pageCount = publication.pageCount
+                let pages = Array(0 ..< pageCount).map { num -> StoredChapterPage in
                     let page = StoredChapterPage()
                     page.url = baseLink.replacingOccurrences(of: "STT_PAGE_NUMBER_PLACEHOLDER", with: num.description)
                     return page
                 }
-
+                
+                let info = OPDSInfo(clientId: client.id, userName: client.userName)
                 obj.pages.append(objectsIn: pages)
+                obj.opdsInfo = info
                 return .loaded(obj)
-
             } catch {
                 return .failed(error)
             }

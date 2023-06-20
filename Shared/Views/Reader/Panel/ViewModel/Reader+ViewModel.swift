@@ -145,6 +145,7 @@ extension ReaderView {
             if pages.isEmpty {
                 loadNextChapter()
             }
+            
         }
 
         func buildSection(chapter: ThreadSafeChapter, pages: [ReaderPage]) -> [AnyObject] {

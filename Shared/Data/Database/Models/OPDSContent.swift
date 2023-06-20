@@ -10,9 +10,28 @@ import RealmSwift
 import IceCream
 
 
-final class StoredOPDSContent: Object {
-    @Persisted(primaryKey: true) var contentLink: String
+final class StreamableOPDSContent: Object, CKRecordConvertible, CKRecordRecoverable {
+    @Persisted(primaryKey: true) var id: String
     @Persisted var contentTitle: String
     @Persisted var contentThumbnail: String
+    @Persisted var streamLink: String
+    @Persisted var pageCount: Int
+    @Persisted var lastRead: Int
     @Persisted var client: StoredOPDSServer?
+    @Persisted var isDeleted: Bool
+}
+
+
+extension StreamableOPDSContent {
+    func toStoredChapter() -> StoredChapter {
+        
+        let chapter = StoredChapter()
+        chapter.sourceId = STTHelpers.OPDS_CONTENT_ID
+        chapter.contentId = id.components(separatedBy: "||").last ?? id
+        chapter.chapterId = streamLink
+        chapter.id = id
+        chapter.title = contentTitle
+        chapter.thumbnail = contentThumbnail
+        return chapter
+    }
 }

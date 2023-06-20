@@ -15,7 +15,7 @@ fileprivate let threeMonths = Calendar.current.date(
 )!
 struct HistoryView: View {
     @StateObject var model = ViewModel()
-    
+    @State var chapter: StoredChapter?
     var body: some View {
         Group {
             if let markers = model.markers {
@@ -42,6 +42,9 @@ struct HistoryView: View {
             model.observe()
         }
         .onDisappear(perform: model.disconnect)
+        .fullScreenCover(item: $chapter) { chapter in
+            ReaderGateWay(readingMode: .PAGED_COMIC, chapterList: [chapter], openTo: chapter)
+        }
     }
 }
 
@@ -84,6 +87,8 @@ extension HistoryView {
     func action(_ marker: ProgressMarker) {
         if let content = marker.currentChapter?.content {
             model.csSelection = (content.sourceId, content.toHighlight())
+        } else if let content = marker.currentChapter?.opds {
+            chapter = content.toStoredChapter()
         }
     }
     struct Cell: View {
@@ -93,6 +98,8 @@ extension HistoryView {
                 if let reference = marker.currentChapter {
                     if let content = reference.content {
                         ContentSourceCell(marker: marker, content: content, chapter: reference)
+                    } else if let content = reference.opds {
+                        OPDSCell(marker: marker, content: content, chapter: reference)
                     }
                 }
             }
@@ -149,26 +156,3 @@ extension HistoryView {
         }
     }
 }
-
-
-//
-//extension HistoryView {
-//    struct CellGateWay: View {
-//        var marker: ProgressMarker
-//        var chapter: ChapterReference {
-//            marker.currentChapter! // Can Not Fail due to query in viewmodel
-//        }
-//        var body: some View {
-//            Group {
-//                if let content = chapter.content {
-//                    ExternalContentTile(marker: marker, excerpt: content.toHighlight())
-//                } else if chapter.isOPDS {
-//                    OPDSContentTile(marker: marker)
-//                } else if chapter.isLocal {
-//                    LocalContentTile(marker: marker)
-//                }
-//            }
-//            .modifier(DeleteModifier(marker: marker))
-//        }
-//    }
-//}

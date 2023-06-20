@@ -153,7 +153,7 @@ extension Target {
         }
 
         var AS_SECTION: ASSection<Int> {
-            return ASSection(id: 0, data: feed.publications) { publication, _ in
+            return ASSection(id: 0, data: feed.publications, dataID: \.metadata.identifier) { publication, _ in
                 ZStack(alignment: .topTrailing) {
                     Tile(publication: publication, chapter: $chapter)
                     if let url = publication.acquisitionLink.flatMap({ URL(string: $0) }) {
@@ -201,7 +201,7 @@ extension Target {
         @State var presentDialog = false
         @State var presentAlert = false
         @Binding var chapter: StoredChapter?
-
+        
         var request: URLRequest? {
             var headers = HTTPHeaders()
             if let auth = client.authHeader {
@@ -209,7 +209,7 @@ extension Target {
             }
             return try? URLRequest(url: publication.thumbnailURL ?? "", method: HTTPMethod.get, headers: headers)
         }
-
+        
         var body: some View {
             GeometryReader { proxy in
                 let imageWidth = proxy.size.width
@@ -230,7 +230,7 @@ extension Target {
                     .frame(width: imageWidth, height: imageHeight)
                     .background(Color.fadedPrimary)
                     .cornerRadius(5)
-
+                    
                     VStack(alignment: .leading, spacing: 1.5) {
                         Text(STTHelpers.getComicTitle(from: publication.metadata.title))
                             .font(.footnote)
@@ -243,14 +243,14 @@ extension Target {
                                     .foregroundColor(color)
                                     .font(.footnote.weight(.bold))
                             }
-
+                            
                             if let pages = publication.streamLink?.properties["count"] as? String ?? publication.metadata.numberOfPages?.description {
                                 Text(pages + " Pages")
                                     .font(.footnote.weight(.thin))
                             }
                         }
                     }
-
+                    
                     .frame(alignment: .topLeading)
                 }
             }
@@ -271,13 +271,13 @@ extension Target {
             }, message: {
                 Text(PublicationDescription)
             })
-
+            
             .confirmationDialog("Actions", isPresented: $presentDialog) {
                 if publication.isStreamable {
                     Button("Info") {
                         presentAlert.toggle()
                     }
-
+                    
                     if let link = publication.acquisitionLink.flatMap({ URL(string: $0) }) {
                         if LocalContentManager.shared.hasFile(fileName: link.lastPathComponent) {
                             Button("Read") {
@@ -297,63 +297,30 @@ extension Target {
                             }
                         }
                     }
-                    if publication.isStreamable && !publication.isProtected {
+                    if publication.isStreamable && !publication.isProtected && !publication.isRestricted {
                         Button("Stream") {
-                            do {
-                                chapter = try publication.toStoredChapter()
-                            } catch {
-                                ToastManager.shared.error(error)
-                            }
+                            handleStreamSelection(publication: publication)
                         }
                     }
                 }
             }
         }
-
+        
         var PublicationDescription: String {
             let title = publication.metadata.title
             let other = publication.metadata.description ?? ""
-
+            
             return "\(title)\n\(other)"
         }
-    }
-}
-
-extension Publication: Identifiable {
-    public var id: Int {
-        metadata.hashValue
-    }
-
-    public var thumbnailURL: String? {
-        links.first(withRel: .opdsImageThumbnail)?.href
-    }
-
-    public var acquisitionLink: String? {
-        links.first(withRel: .opdsAcquisition)?.href
-    }
-
-    public var streamLink: R2Shared.Link? {
-        links.first(withRel: .init("http://vaemendis.net/opds-pse/stream"))
-    }
-
-    public var isStreamable: Bool {
-        streamLink != nil
-    }
-
-    func toStoredChapter() throws -> StoredChapter {
-        guard let link = streamLink else {
-            throw OPDSParserError.documentNotFound
+        
+        func handleStreamSelection(publication: Publication) {
+            do {
+                try DataManager.shared.savePublication(publication, client.id)
+                chapter = try publication.toStoredChapter(clientID: client.id)
+            } catch {
+                ToastManager.shared.error(error)
+                Logger.shared.error(error, "OPDS")
+            }
         }
-        let chapter = StoredChapter()
-        chapter.id = STTHelpers.OPDS_CONTENT_ID + "||\(metadata.identifier ?? link.href)"
-        chapter.chapterId = link.href
-        chapter.title = metadata.title
-        chapter.thumbnail = thumbnailURL
-        
-        
-//        let d = Map<String, String>()
-//        d.setValue(count, forKey: "opds_page_count")
-//        d.setValue(lastRead, forKey: "opds_last_read")
-        return chapter
     }
 }

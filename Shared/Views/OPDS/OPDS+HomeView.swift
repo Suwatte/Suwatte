@@ -10,7 +10,7 @@ import SwiftUI
 
 struct OPDSView: View {
     @State var presentAddNewServer = false
-    @ObservedResults(StoredOPDSServer.self, where: { $0.isDeleted == false },sortDescriptor: .init(keyPath: "alias", ascending: true)) var servers
+    @ObservedResults(StoredOPDSServer.self, where: { $0.isDeleted == false }, sortDescriptor: .init(keyPath: "alias", ascending: true)) var servers
     var body: some View {
         List {
             ForEach(servers) { server in

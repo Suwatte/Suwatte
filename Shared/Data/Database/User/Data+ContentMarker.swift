@@ -40,18 +40,18 @@ extension DataManager {
             case STTHelpers.LOCAL_CONTENT_ID:
                 break
             case STTHelpers.OPDS_CONTENT_ID:
-                break
-            default:
-                let storedChapter = realm
-                    .objects(StoredChapter.self)
+                let content = realm
+                    .objects(StreamableOPDSContent.self)
                     .where({ $0.id == chapter.id })
                     .first
-                
-                guard let storedChapter else {
-                    return
-                }
-                
-                reference = storedChapter.generateReference()
+                reference = chapter.toStored().generateReference()
+                reference?.opds = content
+                break
+            default:
+                reference = chapter.toStored().generateReference()
+                reference?.content = DataManager.shared.getStoredContent(id)
+                break
+
         }
         
         // Ensure Chapter Reference has been generated, Save Reference
@@ -110,18 +110,17 @@ extension DataManager {
             case STTHelpers.LOCAL_CONTENT_ID:
                 break
             case STTHelpers.OPDS_CONTENT_ID:
-                break
-            default:
-                let storedChapter = realm
-                    .objects(StoredChapter.self)
+                let content = realm
+                    .objects(StreamableOPDSContent.self)
                     .where({ $0.id == chapter.id })
                     .first
-                
-                guard let storedChapter else {
-                    return
-                }
-                reference = storedChapter.generateReference()
+                reference = chapter.toStored().generateReference()
+                reference?.opds = content
+                break
+            default:
+                reference = chapter.toStored().generateReference()
                 reference?.content = DataManager.shared.getStoredContent(id)
+                break
         }
         
         // Ensure Chapter Reference has been generated, Save Reference

@@ -18,13 +18,14 @@ struct MimeTypeParameters {
 
 class OPDSClient: ObservableObject {
     var baseUrl: String
+    var id: String
 
     var authHeader: String?
 
-    init(base: String, auth: (username: String, password: String)?) {
+    init(id: String, base: String, auth: (username: String, password: String)?) {
+        self.id = id
         authHeader = nil
         baseUrl = base
-
         if let auth = auth {
             authHeader = generateAuthHeader(username: auth.username, password: auth.password)
         }
@@ -39,7 +40,6 @@ class OPDSClient: ObservableObject {
     private func request(url: URL) async throws -> Data {
         try await withUnsafeThrowingContinuation { continuation in
             var headers: HTTPHeaders = [:]
-
             if let auth = authHeader {
                 headers.add(.init(name: "Authorization", value: auth))
             }
@@ -53,7 +53,7 @@ class OPDSClient: ObservableObject {
                     continuation.resume(throwing: err)
                     return
                 }
-                fatalError("Invalid Path, Should Never Reach \(#file), \(#function), \(#line)")
+                fatalError("Invalid Path, Should Never Reach")
             }
         }
     }
@@ -325,7 +325,7 @@ class OPDSLocalParser: Loggable {
             )
         }
 
-        var metadata = Metadata(
+        let metadata = Metadata(
             identifier: tag("identifier") ?? tag("id"),
             title: title,
             modified: tag("updated")?.dateFromISO8601,
@@ -528,5 +528,40 @@ enum URLHelper {
         }
 
         return absolute
+    }
+}
+
+extension Publication {
+
+    public var thumbnailURL: String? {
+        links.first(withRel: .opdsImageThumbnail)?.href
+    }
+
+    public var acquisitionLink: String? {
+        links.first(withRel: .opdsAcquisition)?.href
+    }
+
+    public var streamLink: R2Shared.Link? {
+        links.first(withRel: .init("http://vaemendis.net/opds-pse/stream"))
+    }
+
+    public var isStreamable: Bool {
+        streamLink != nil
+    }
+
+    func toStoredChapter(clientID: String) throws -> StoredChapter {
+        guard let link = streamLink, let id = metadata.identifier else {
+            throw OPDSParserError.documentNotFound
+        }
+            
+        let chapter = StoredChapter()
+        chapter.sourceId = STTHelpers.OPDS_CONTENT_ID
+        chapter.contentId = id
+        chapter.chapterId = link.href
+        chapter.id = "\(clientID)||\(id)"
+        chapter.title = metadata.title
+        chapter.thumbnail = thumbnailURL
+        // Save To Realm
+        return chapter
     }
 }

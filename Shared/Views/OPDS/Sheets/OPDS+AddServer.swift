@@ -66,7 +66,7 @@ extension OPDSView {
                         ToastManager.shared.loading = true
 
                         let auth = hasAuthentication ? (entry.userName, entry.password) : nil
-                        let client = OPDSClient(base: entry.host, auth: auth)
+                        let client = OPDSClient(id: "", base: entry.host, auth: auth) // client only used to test if server works
                         // Test
                         Task { @MainActor in
                             do {

@@ -18,8 +18,9 @@
 		DF15F59229677DEF0085DB1F /* FCS+Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF15F59129677DEF0085DB1F /* FCS+Options.swift */; };
 		DF15F5952967D3DD0085DB1F /* UIHostingConfigurationBackport in Frameworks */ = {isa = PBXBuildFile; productRef = DF15F5942967D3DD0085DB1F /* UIHostingConfigurationBackport */; };
 		DF15F5982967D4E80085DB1F /* SwiftUIBackports in Frameworks */ = {isa = PBXBuildFile; productRef = DF15F5972967D4E80085DB1F /* SwiftUIBackports */; };
-		DF15F59B2967DF790085DB1F /* SkeletonView in Frameworks */ = {isa = PBXBuildFile; productRef = DF15F59A2967DF790085DB1F /* SkeletonView */; };
 		DF15F59D2969377C0085DB1F /* LCV+Download.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF15F59C2969377C0085DB1F /* LCV+Download.swift */; };
+		DF1BE5F32A40AB3400E48572 /* R2Shared in Frameworks */ = {isa = PBXBuildFile; productRef = DF1BE5F22A40AB3400E48572 /* R2Shared */; };
+		DF1BE5F52A40AB3400E48572 /* ReadiumOPDS in Frameworks */ = {isa = PBXBuildFile; productRef = DF1BE5F42A40AB3400E48572 /* ReadiumOPDS */; };
 		DF1FD5C2284B31AB00A67F0E /* DoublePaged+Representable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1FD5C1284B31AB00A67F0E /* DoublePaged+Representable.swift */; };
 		DF248F0828137F7A00818300 /* TrackersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF248F0728137F7A00818300 /* TrackersView.swift */; };
 		DF248F0C2813844C00818300 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DF248F0B2813844C00818300 /* KeychainSwift */; };
@@ -260,6 +261,8 @@
 		DF9BD64A2891D837006628D0 /* DSK+Chapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BD6492891D837006628D0 /* DSK+Chapter.swift */; };
 		DF9BD64C2891DE47006628D0 /* DSK+Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BD64B2891DE47006628D0 /* DSK+Search.swift */; };
 		DF9BD64E2891DF23006628D0 /* DSK+Explore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BD64D2891DF23006628D0 /* DSK+Explore.swift */; };
+		DF9BFDE42A421E46005D0B63 /* Data+OPDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BFDE32A421E46005D0B63 /* Data+OPDS.swift */; };
+		DF9BFDE62A423741005D0B63 /* History+OPDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BFDE52A423741005D0B63 /* History+OPDS.swift */; };
 		DF9C9EF0297AE3A9004A3BC5 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = DF9C9EEF297AE3A9004A3BC5 /* FirebaseAnalytics */; };
 		DF9C9EF2297AE410004A3BC5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DF9C9EF1297AE40F004A3BC5 /* GoogleService-Info.plist */; };
 		DFA6264C28ED1EA500914B1C /* Vertical+ASController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA6264B28ED1EA500914B1C /* Vertical+ASController.swift */; };
@@ -273,12 +276,10 @@
 		DFADB58D29D7F19900CBE22F /* STT+URLRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFADB58C29D7F19900CBE22F /* STT+URLRequest.swift */; };
 		DFAEE13028B9D0A200B11484 /* ExploreCollectionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAEE12F28B9D0A200B11484 /* ExploreCollectionsController.swift */; };
 		DFB47EEE2880928C0040A1BD /* RefreshableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB47EED2880928C0040A1BD /* RefreshableScrollView.swift */; };
-		DFB47EF12880C0B30040A1BD /* R2Shared in Frameworks */ = {isa = PBXBuildFile; productRef = DFB47EF02880C0B30040A1BD /* R2Shared */; };
-		DFB47EF32880C0B30040A1BD /* ReadiumOPDS in Frameworks */ = {isa = PBXBuildFile; productRef = DFB47EF22880C0B30040A1BD /* ReadiumOPDS */; };
 		DFB47EF72880C1FB0040A1BD /* STT+OPDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB47EF62880C1FB0040A1BD /* STT+OPDS.swift */; };
 		DFB47EFA2880C3DA0040A1BD /* OPDS+HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB47EF92880C3D90040A1BD /* OPDS+HomeView.swift */; };
 		DFB47EFD2880E9C90040A1BD /* OPDS+AddServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB47EFC2880E9C90040A1BD /* OPDS+AddServer.swift */; };
-		DFB47F002881013A0040A1BD /* Data+OPDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB47EFF2881013A0040A1BD /* Data+OPDS.swift */; };
+		DFB47F002881013A0040A1BD /* OPDSClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB47EFF2881013A0040A1BD /* OPDSClient.swift */; };
 		DFB47F02288107D00040A1BD /* OPDS+FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB47F01288107CF0040A1BD /* OPDS+FeedView.swift */; };
 		DFB7FAFE297B162D00599097 /* ProfileView+AnilistRecommendations.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB7FAFD297B162D00599097 /* ProfileView+AnilistRecommendations.swift */; };
 		DFB7FB03297B965D00599097 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = DFB7FB02297B965D00599097 /* OrderedCollections */; };
@@ -577,6 +578,8 @@
 		DF9BD6492891D837006628D0 /* DSK+Chapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Chapter.swift"; sourceTree = "<group>"; };
 		DF9BD64B2891DE47006628D0 /* DSK+Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Search.swift"; sourceTree = "<group>"; };
 		DF9BD64D2891DF23006628D0 /* DSK+Explore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Explore.swift"; sourceTree = "<group>"; };
+		DF9BFDE32A421E46005D0B63 /* Data+OPDS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+OPDS.swift"; sourceTree = "<group>"; };
+		DF9BFDE52A423741005D0B63 /* History+OPDS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "History+OPDS.swift"; sourceTree = "<group>"; };
 		DF9C9EF1297AE40F004A3BC5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		DFA6264B28ED1EA500914B1C /* Vertical+ASController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+ASController.swift"; sourceTree = "<group>"; };
 		DFAC77932814D1BA00AF6394 /* AnilistView+DirectoryView+FilterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnilistView+DirectoryView+FilterSheet.swift"; sourceTree = "<group>"; };
@@ -592,7 +595,7 @@
 		DFB47EF62880C1FB0040A1BD /* STT+OPDS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+OPDS.swift"; sourceTree = "<group>"; };
 		DFB47EF92880C3D90040A1BD /* OPDS+HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OPDS+HomeView.swift"; sourceTree = "<group>"; };
 		DFB47EFC2880E9C90040A1BD /* OPDS+AddServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OPDS+AddServer.swift"; sourceTree = "<group>"; };
-		DFB47EFF2881013A0040A1BD /* Data+OPDS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+OPDS.swift"; sourceTree = "<group>"; };
+		DFB47EFF2881013A0040A1BD /* OPDSClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPDSClient.swift; sourceTree = "<group>"; };
 		DFB47F01288107CF0040A1BD /* OPDS+FeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OPDS+FeedView.swift"; sourceTree = "<group>"; };
 		DFB7FAFD297B162D00599097 /* ProfileView+AnilistRecommendations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProfileView+AnilistRecommendations.swift"; sourceTree = "<group>"; };
 		DFBBB7482974A894001DAAE9 /* DoublePaged+ImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DoublePaged+ImageCell.swift"; sourceTree = "<group>"; };
@@ -654,22 +657,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				DF15F5982967D4E80085DB1F /* SwiftUIBackports in Frameworks */,
-				DF15F59B2967DF790085DB1F /* SkeletonView in Frameworks */,
 				DF47DDE128B5608D00D779E5 /* PartialSheet in Frameworks */,
 				DF59C988285054670027F19D /* Unrar in Frameworks */,
 				DF248F0C2813844C00818300 /* KeychainSwift in Frameworks */,
 				DF2DA77327CF11C50046FE20 /* Alamofire in Frameworks */,
 				DF9C9EF0297AE3A9004A3BC5 /* FirebaseAnalytics in Frameworks */,
 				DFB7FB03297B965D00599097 /* OrderedCollections in Frameworks */,
-				DFB47EF12880C0B30040A1BD /* R2Shared in Frameworks */,
+				DF1BE5F32A40AB3400E48572 /* R2Shared in Frameworks */,
 				DF70234F29DA852A0076AAD0 /* Nuke in Frameworks */,
-				DFB47EF32880C0B30040A1BD /* ReadiumOPDS in Frameworks */,
 				DF36E6D0285D08D700FB8B67 /* BetterSafariView in Frameworks */,
 				DF15F5952967D3DD0085DB1F /* UIHostingConfigurationBackport in Frameworks */,
 				DF730CD329411F1B00C62C71 /* FlagKit in Frameworks */,
 				DF52FBBA28947031008FAD3A /* ASCollectionView in Frameworks */,
 				DF482F012955A56F002D3308 /* RealmSwift in Frameworks */,
 				DF0D96062824892C00E592D9 /* Realm in Frameworks */,
+				DF1BE5F52A40AB3400E48572 /* ReadiumOPDS in Frameworks */,
 				DFF1043E28A9963D00E2C3A4 /* AnyCodable in Frameworks */,
 				DF70235129DA852A0076AAD0 /* NukeUI in Frameworks */,
 				DF2D842D2A212E72006B17F0 /* IceCream in Frameworks */,
@@ -942,6 +944,7 @@
 			isa = PBXGroup;
 			children = (
 				DFBE48592A26CE84000ABA16 /* History+ContentSource.swift */,
+				DF9BFDE52A423741005D0B63 /* History+OPDS.swift */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -1143,6 +1146,7 @@
 				DF8D0A0D2800EE47003E4C3E /* Data+StoredChapterData.swift */,
 				DF8D0A0F2800EE47003E4C3E /* Data+StoredChapter.swift */,
 				DF8D0A102800EE47003E4C3E /* Data+StoredContent.swift */,
+				DF9BFDE32A421E46005D0B63 /* Data+OPDS.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -1790,7 +1794,6 @@
 		DFB47EFE288101250040A1BD /* OPDS */ = {
 			isa = PBXGroup;
 			children = (
-				DFB47EFF2881013A0040A1BD /* Data+OPDS.swift */,
 			);
 			path = OPDS;
 			sourceTree = "<group>";
@@ -1826,6 +1829,7 @@
 				DFBE48352A25BAD5000ABA16 /* Content.swift */,
 				DFBE48372A25BB53000ABA16 /* Chapter.swift */,
 				DFBE48392A25BBC1000ABA16 /* ChapterReference.swift */,
+				DFB47EFF2881013A0040A1BD /* OPDSClient.swift */,
 				DFBE483B2A25BC2B000ABA16 /* ThreadSafeChapter.swift */,
 				DFBE483D2A25BC88000ABA16 /* OPDSContent.swift */,
 				DFBE483F2A25BCA7000ABA16 /* StoreObject.swift */,
@@ -1934,8 +1938,6 @@
 				DF59C97C285004860027F19D /* ZIPFoundation */,
 				DF59C987285054670027F19D /* Unrar */,
 				DF36E6CF285D08D700FB8B67 /* BetterSafariView */,
-				DFB47EF02880C0B30040A1BD /* R2Shared */,
-				DFB47EF22880C0B30040A1BD /* ReadiumOPDS */,
 				DF52FBB928947031008FAD3A /* ASCollectionView */,
 				DFF1043D28A9963D00E2C3A4 /* AnyCodable */,
 				DF47DDE028B5608D00D779E5 /* PartialSheet */,
@@ -1943,12 +1945,13 @@
 				DF482F002955A56F002D3308 /* RealmSwift */,
 				DF15F5942967D3DD0085DB1F /* UIHostingConfigurationBackport */,
 				DF15F5972967D4E80085DB1F /* SwiftUIBackports */,
-				DF15F59A2967DF790085DB1F /* SkeletonView */,
 				DF9C9EEF297AE3A9004A3BC5 /* FirebaseAnalytics */,
 				DFB7FB02297B965D00599097 /* OrderedCollections */,
 				DF70234E29DA852A0076AAD0 /* Nuke */,
 				DF70235029DA852A0076AAD0 /* NukeUI */,
 				DF2D842C2A212E72006B17F0 /* IceCream */,
+				DF1BE5F22A40AB3400E48572 /* R2Shared */,
+				DF1BE5F42A40AB3400E48572 /* ReadiumOPDS */,
 			);
 			productName = "Suwatte (iOS)";
 			productReference = DFCE6EAF280108EA002E220C /* Suwatte.app */;
@@ -1985,18 +1988,17 @@
 				DF59C97B285004850027F19D /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 				DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar" */,
 				DF36E6CE285D08D700FB8B67 /* XCRemoteSwiftPackageReference "BetterSafariView" */,
-				DFB47EEF2880C0B30040A1BD /* XCRemoteSwiftPackageReference "swift-toolkit" */,
 				DF52FBB828947031008FAD3A /* XCRemoteSwiftPackageReference "ASCollectionView" */,
 				DFF1043C28A9963C00E2C3A4 /* XCRemoteSwiftPackageReference "AnyCodable" */,
 				DF47DDDF28B5608C00D779E5 /* XCRemoteSwiftPackageReference "PartialSheet" */,
 				DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit" */,
 				DF15F5932967D3DD0085DB1F /* XCRemoteSwiftPackageReference "UIHostingConfigurationBackport" */,
 				DF15F5962967D4E70085DB1F /* XCRemoteSwiftPackageReference "SwiftUIBackports" */,
-				DF15F5992967DF780085DB1F /* XCRemoteSwiftPackageReference "SkeletonView" */,
 				DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections" */,
 				DF70234D29DA852A0076AAD0 /* XCRemoteSwiftPackageReference "Nuke" */,
 				DF2D842B2A212E72006B17F0 /* XCRemoteSwiftPackageReference "IceCream" */,
+				DF1BE5F12A40AB3400E48572 /* XCRemoteSwiftPackageReference "swift-toolkit" */,
 			);
 			productRefGroup = DF2DA6FF27CD82430046FE20;
 			projectDirPath = "";
@@ -2068,6 +2070,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DF9BFDE62A423741005D0B63 /* History+OPDS.swift in Sources */,
 				DF8D0B7A2800EE48003E4C3E /* LibraryGrid+ViewModel.swift in Sources */,
 				DFD1F9BA28F7B0C2000766C1 /* Vertical+ImageNode.swift in Sources */,
 				DF356D8829C5846C000B605C /* JSCC+Logging.swift in Sources */,
@@ -2276,6 +2279,7 @@
 				DF8D0B8D2800EE48003E4C3E /* ESV+NotFoundView.swift in Sources */,
 				DF8D0BB12800EE48003E4C3E /* ViewHeightReader.swift in Sources */,
 				DFBE485C2A2FA20E000ABA16 /* ReadLater+ViewModel.swift in Sources */,
+				DF9BFDE42A421E46005D0B63 /* Data+OPDS.swift in Sources */,
 				DF3264692802A0AF0066EB08 /* ImagePicker.swift in Sources */,
 				DFBD202C28554ECB0042B4A6 /* CollectionFilter.swift in Sources */,
 				DF8D0B5C2800EE47003E4C3E /* Reader+ViewModel.swift in Sources */,
@@ -2313,7 +2317,7 @@
 				DFC39E9328A093C900450EC4 /* InstalledRunnersView.swift in Sources */,
 				DF8D0B442800EE47003E4C3E /* Data+StoredContent.swift in Sources */,
 				DF8D0B572800EE47003E4C3E /* Backup+ReadLater.swift in Sources */,
-				DFB47F002881013A0040A1BD /* Data+OPDS.swift in Sources */,
+				DFB47F002881013A0040A1BD /* OPDSClient.swift in Sources */,
 				DF8D0B932800EE48003E4C3E /* BookmarksView.swift in Sources */,
 				DF8D0B792800EE48003E4C3E /* LibraryGrid+ProfileModifier.swift in Sources */,
 				DF8D0B8C2800EE48003E4C3E /* ESV+FiltersSheet.swift in Sources */,
@@ -2633,12 +2637,12 @@
 				kind = branch;
 			};
 		};
-		DF15F5992967DF780085DB1F /* XCRemoteSwiftPackageReference "SkeletonView" */ = {
+		DF1BE5F12A40AB3400E48572 /* XCRemoteSwiftPackageReference "swift-toolkit" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Juanpe/SkeletonView";
+			repositoryURL = "https://github.com/readium/swift-toolkit.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				branch = main;
+				kind = branch;
 			};
 		};
 		DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
@@ -2729,14 +2733,6 @@
 				kind = branch;
 			};
 		};
-		DFB47EEF2880C0B30040A1BD /* XCRemoteSwiftPackageReference "swift-toolkit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/readium/swift-toolkit";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
-			};
-		};
 		DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-collections.git";
@@ -2771,10 +2767,15 @@
 			package = DF15F5962967D4E70085DB1F /* XCRemoteSwiftPackageReference "SwiftUIBackports" */;
 			productName = SwiftUIBackports;
 		};
-		DF15F59A2967DF790085DB1F /* SkeletonView */ = {
+		DF1BE5F22A40AB3400E48572 /* R2Shared */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF15F5992967DF780085DB1F /* XCRemoteSwiftPackageReference "SkeletonView" */;
-			productName = SkeletonView;
+			package = DF1BE5F12A40AB3400E48572 /* XCRemoteSwiftPackageReference "swift-toolkit" */;
+			productName = R2Shared;
+		};
+		DF1BE5F42A40AB3400E48572 /* ReadiumOPDS */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF1BE5F12A40AB3400E48572 /* XCRemoteSwiftPackageReference "swift-toolkit" */;
+			productName = ReadiumOPDS;
 		};
 		DF248F0B2813844C00818300 /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -2840,16 +2841,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAnalytics;
-		};
-		DFB47EF02880C0B30040A1BD /* R2Shared */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DFB47EEF2880C0B30040A1BD /* XCRemoteSwiftPackageReference "swift-toolkit" */;
-			productName = R2Shared;
-		};
-		DFB47EF22880C0B30040A1BD /* ReadiumOPDS */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DFB47EEF2880C0B30040A1BD /* XCRemoteSwiftPackageReference "swift-toolkit" */;
-			productName = ReadiumOPDS;
 		};
 		DFB7FB02297B965D00599097 /* OrderedCollections */ = {
 			isa = XCSwiftPackageProductDependency;

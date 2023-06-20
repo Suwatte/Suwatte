@@ -20,10 +20,11 @@ struct ReaderGateWay: View {
             switch readingMode {
                 case .NOVEL:
                     EmptyView()
+                    .closeButton()
                 case .WEB:
                     WebReader(chapter: openTo)
                 default:
-                    ReaderView(model: .init(chapterList: chapterList, openTo: openTo,title: title, pageIndex: pageIndex ,readingMode: readingMode))
+                    ReaderView(model: .init(chapterList: chapterList, openTo: openTo,title: title, pageIndex: pageIndex, readingMode: readingMode))
             }
         }
         .tint(accentColor)
