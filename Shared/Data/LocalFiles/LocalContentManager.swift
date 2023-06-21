@@ -22,21 +22,34 @@ final class LocalContentManager: ObservableObject {
     internal let zipClient = ZipClient()
     internal let rarClient = RarClient()
     @Published var downloads: [DownloadObject] = []
-    private var observer: DirectoryObserver
+    private var observer: DirectoryObserver?
 
     init() {
         directory.createDirectory()
-        observer = .init(extensions: ["cbr"], url: directory)
     }
 
     func observe() {
-        observer.observe { test in
-            print(test)
+        observer?.stop()
+        let cloudEnabled = CloudDataManager.shared.isCloudEnabled
+        observer = CloudObserver(extensions: ["cbr"], url: directory)
+        guard let observer else { return }
+        observer.observe { folder in
+            print("\nRecieved Callback")
+            print("Folders: ")
+            folder.folders.forEach { f in
+                print(f.url.lastPathComponent)
+            }
+            
+            print("\nFiles: ")
+            folder.files.forEach { f in
+                print(f.url.lastPathComponent)
+            }
         }
     }
 
     func stopObserving() {
-        observer.stopObserving()
+        observer?.stop()
+        observer = nil
     }
 
     enum Errors: Error {
@@ -70,7 +83,7 @@ final class LocalContentManager: ObservableObject {
             return nil
         }
         let type = path.pathExtension
-        if !["cbz", "cbr", "epub", "rar", "zip"].contains(type) {
+        if !["cbz", "cbr"].contains(type) {
             return nil
         }
         var title = String(path.lastPathComponent.split(separator: ".").first!)

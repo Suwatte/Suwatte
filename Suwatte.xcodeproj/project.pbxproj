@@ -263,6 +263,11 @@
 		DF9BD64E2891DF23006628D0 /* DSK+Explore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BD64D2891DF23006628D0 /* DSK+Explore.swift */; };
 		DF9BFDE42A421E46005D0B63 /* Data+OPDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BFDE32A421E46005D0B63 /* Data+OPDS.swift */; };
 		DF9BFDE62A423741005D0B63 /* History+OPDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BFDE52A423741005D0B63 /* History+OPDS.swift */; };
+		DF9BFDEB2A425A38005D0B63 /* DO+Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BFDEA2A425A38005D0B63 /* DO+Protocol.swift */; };
+		DF9BFDED2A425B9E005D0B63 /* CloudObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BFDEC2A425B9E005D0B63 /* CloudObserver.swift */; };
+		DF9BFDF02A425BBB005D0B63 /* LocalObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BFDEF2A425BBB005D0B63 /* LocalObserver.swift */; };
+		DF9BFDF32A42753B005D0B63 /* DirectoryViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BFDF22A42753B005D0B63 /* DirectoryViewer.swift */; };
+		DF9BFDF52A42754B005D0B63 /* DV+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BFDF42A42754B005D0B63 /* DV+ViewModel.swift */; };
 		DF9C9EF0297AE3A9004A3BC5 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = DF9C9EEF297AE3A9004A3BC5 /* FirebaseAnalytics */; };
 		DF9C9EF2297AE410004A3BC5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DF9C9EF1297AE40F004A3BC5 /* GoogleService-Info.plist */; };
 		DFA6264C28ED1EA500914B1C /* Vertical+ASController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA6264B28ED1EA500914B1C /* Vertical+ASController.swift */; };
@@ -580,6 +585,11 @@
 		DF9BD64D2891DF23006628D0 /* DSK+Explore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Explore.swift"; sourceTree = "<group>"; };
 		DF9BFDE32A421E46005D0B63 /* Data+OPDS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+OPDS.swift"; sourceTree = "<group>"; };
 		DF9BFDE52A423741005D0B63 /* History+OPDS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "History+OPDS.swift"; sourceTree = "<group>"; };
+		DF9BFDEA2A425A38005D0B63 /* DO+Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DO+Protocol.swift"; sourceTree = "<group>"; };
+		DF9BFDEC2A425B9E005D0B63 /* CloudObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudObserver.swift; sourceTree = "<group>"; };
+		DF9BFDEF2A425BBB005D0B63 /* LocalObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalObserver.swift; sourceTree = "<group>"; };
+		DF9BFDF22A42753B005D0B63 /* DirectoryViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryViewer.swift; sourceTree = "<group>"; };
+		DF9BFDF42A42754B005D0B63 /* DV+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DV+ViewModel.swift"; sourceTree = "<group>"; };
 		DF9C9EF1297AE40F004A3BC5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		DFA6264B28ED1EA500914B1C /* Vertical+ASController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+ASController.swift"; sourceTree = "<group>"; };
 		DFAC77932814D1BA00AF6394 /* AnilistView+DirectoryView+FilterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnilistView+DirectoryView+FilterSheet.swift"; sourceTree = "<group>"; };
@@ -1056,6 +1066,7 @@
 		DF8D09EA2800EE47003E4C3E /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				DF9BFDE92A425A28005D0B63 /* DirectoryObserver */,
 				DF8D09E32800EE47003E4C3E /* Queue.swift */,
 			);
 			path = Models;
@@ -1211,6 +1222,8 @@
 		DF8D0A2D2800EE47003E4C3E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				DF9BFDF12A427525005D0B63 /* DirectoryViewer */,
+				DF8D0A502800EE47003E4C3E /* Loadable */,
 				DF67EB9728E7B05C00076FF5 /* ContentLink */,
 				DF67EB8D28E4053C00076FF5 /* Log */,
 				DF68249D28A5D2BB00AB30A1 /* Daisuke */,
@@ -1220,7 +1233,6 @@
 				DF7B18862830B467006A54C9 /* Reader */,
 				DF248F0628137F6A00818300 /* Trackers */,
 				DF72E4902813226E00E40E52 /* ImageSearch */,
-				DF8D0A502800EE47003E4C3E /* Loadable */,
 				DF8D0A552800EE47003E4C3E /* Library */,
 				DF8D0A662800EE47003E4C3E /* More */,
 				DF8D0A722800EE47003E4C3E /* Explore */,
@@ -1756,6 +1768,33 @@
 			path = Structs;
 			sourceTree = "<group>";
 		};
+		DF9BFDE92A425A28005D0B63 /* DirectoryObserver */ = {
+			isa = PBXGroup;
+			children = (
+				DF9BFDEE2A425BA2005D0B63 /* Observers */,
+				DF9BFDEA2A425A38005D0B63 /* DO+Protocol.swift */,
+			);
+			path = DirectoryObserver;
+			sourceTree = "<group>";
+		};
+		DF9BFDEE2A425BA2005D0B63 /* Observers */ = {
+			isa = PBXGroup;
+			children = (
+				DF9BFDEC2A425B9E005D0B63 /* CloudObserver.swift */,
+				DF9BFDEF2A425BBB005D0B63 /* LocalObserver.swift */,
+			);
+			path = Observers;
+			sourceTree = "<group>";
+		};
+		DF9BFDF12A427525005D0B63 /* DirectoryViewer */ = {
+			isa = PBXGroup;
+			children = (
+				DF9BFDF22A42753B005D0B63 /* DirectoryViewer.swift */,
+				DF9BFDF42A42754B005D0B63 /* DV+ViewModel.swift */,
+			);
+			path = DirectoryViewer;
+			sourceTree = "<group>";
+		};
 		DFAC779928161A1B00AF6394 /* Profile */ = {
 			isa = PBXGroup;
 			children = (
@@ -2109,6 +2148,7 @@
 				DFC39E9728A0B0BC00450EC4 /* Runner.swift in Sources */,
 				DF6824A528A5FD6100AB30A1 /* DRV+Preferences.swift in Sources */,
 				DF67EB8F28E4054C00076FF5 /* LogsView.swift in Sources */,
+				DF9BFDF32A42753B005D0B63 /* DirectoryViewer.swift in Sources */,
 				DF8D0B692800EE48003E4C3E /* Paged+Representable.swift in Sources */,
 				DFB47F02288107D00040A1BD /* OPDS+FeedView.swift in Sources */,
 				DF8D0B492800EE47003E4C3E /* Data+SearchHistory.swift in Sources */,
@@ -2132,6 +2172,7 @@
 				DF482EF2295554E8002D3308 /* VerticalPaged+Representable.swift in Sources */,
 				DF44FA7E29ABE38700BAFA74 /* WK+Store.swift in Sources */,
 				DFBBB7492974A894001DAAE9 /* DoublePaged+ImageCell.swift in Sources */,
+				DF9BFDF52A42754B005D0B63 /* DV+ViewModel.swift in Sources */,
 				DF7B188A2830B4B1006A54C9 /* ReaderGateWay.swift in Sources */,
 				DF8D0B6A2800EE48003E4C3E /* ReaderMenuOverlay.swift in Sources */,
 				DF8D0B302800EE47003E4C3E /* STT+Date.swift in Sources */,
@@ -2186,6 +2227,7 @@
 				DF8D0B662800EE47003E4C3E /* ReaderNavigation.swift in Sources */,
 				DF356D8629C5845C000B605C /* JSCC+Store.swift in Sources */,
 				DF8D0B632800EE47003E4C3E /* VerticalImage+Zoomable.swift in Sources */,
+				DF9BFDED2A425B9E005D0B63 /* CloudObserver.swift in Sources */,
 				DF248F24281393B300818300 /* Anilist+SignInView.swift in Sources */,
 				DF8D0B782800EE48003E4C3E /* LibraryGrid+SelectionModifier.swift in Sources */,
 				DF248F2E2813B90F00818300 /* AnilistView+DirectoryView.swift in Sources */,
@@ -2267,6 +2309,7 @@
 				DF8D0B652800EE47003E4C3E /* ReaderView.swift in Sources */,
 				DF59C98028500E200027F19D /* LocalFileModifier.swift in Sources */,
 				DF8D0B7B2800EE48003E4C3E /* LibraryGrid+GridView.swift in Sources */,
+				DF9BFDF02A425BBB005D0B63 /* LocalObserver.swift in Sources */,
 				DFBE48542A25BEA0000ABA16 /* TrackerLink.swift in Sources */,
 				DF8D0BB02800EE48003E4C3E /* CloseButton.swift in Sources */,
 				DF8D0B8B2800EE48003E4C3E /* ESV+SearchHistoryView.swift in Sources */,
@@ -2353,6 +2396,7 @@
 				DF8D0BA92800EE48003E4C3E /* SuwatteApp.swift in Sources */,
 				DF8D0B982800EE48003E4C3E /* ProfileView+Header.swift in Sources */,
 				DF8D0B4E2800EE47003E4C3E /* Data+Collection.swift in Sources */,
+				DF9BFDEB2A425A38005D0B63 /* DO+Protocol.swift in Sources */,
 				DF52FBAF28939745008FAD3A /* PagingScrollView.swift in Sources */,
 				DF8D0B5D2800EE47003E4C3E /* Reader+SettingsView.swift in Sources */,
 				DF67EB8828E3674900076FF5 /* LG+MoveFlag.swift in Sources */,

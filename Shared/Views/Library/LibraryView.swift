@@ -99,7 +99,7 @@ extension LibraryView {
             switch self {
             case .local:
                 Section {
-                    NavigationLink(destination: LocalContentView()) {
+                    NavigationLink(destination: DirectoryViewer(model: .init())) {
                         Label("On My \(UIDevice.current.model)", systemImage: UIDevice.current.model.lowercased())
                     }
                     NavigationLink(destination: OPDSView()) {

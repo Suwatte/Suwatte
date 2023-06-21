@@ -12,6 +12,7 @@ import SwiftUI
 struct SettingsView: View {
     var body: some View {
         Form {
+            OnMyDeviceSection()
             MiscSection()
             LibrarySection()
             ReaderSection()
@@ -39,7 +40,7 @@ extension SettingsView {
                 Toggle("Open Default Collection", isOn: $openAllOnAppear)
 
             } header: {
-                Text("Tab")
+                Text("Tabs")
             }
             .buttonStyle(.plain)
         }
@@ -253,6 +254,23 @@ extension SettingsView {
                 }
             } header: {
                 Text("Cache")
+            }
+        }
+    }
+}
+
+// MARK: On My Device
+extension SettingsView {
+    
+    struct OnMyDeviceSection: View {
+        @Preference(\.useCloudForLocal) var useCloud
+        var body: some View {
+            Section {
+                Toggle("Store on iCloud Drive", isOn: $useCloud)
+            } header: {
+                Text("On My \(UIDevice.current.model)")
+            } footer: {
+                Text("When enabled, your library will be available across all your devices using iCloud Drive.")
             }
         }
     }

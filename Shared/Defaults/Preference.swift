@@ -134,6 +134,9 @@ final class Preferences {
 
     @UserDefault(STTKeys.BlurNSFWContent)
     var blurNSFWContentInSearch = true
+    
+    @UserDefault(STTKeys.LocalStorageUsesICloud)
+    var useCloudForLocal = true
 }
 
 @propertyWrapper

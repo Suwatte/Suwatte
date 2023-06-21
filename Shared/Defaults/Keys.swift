@@ -134,4 +134,6 @@ enum STTKeys {
 
     static let BlurNSFWContent = "APP.blur_nsfw"
     static let ShowNSFWContentInSearch = "APP.filter_nsfw"
+    
+    static let LocalStorageUsesICloud = "APP.local_use_icloud"
 }

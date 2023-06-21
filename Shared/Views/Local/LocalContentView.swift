@@ -21,8 +21,14 @@ struct LocalContentView: View {
     @State var isSelecting = false
 
     var body: some View {
-        Grid(data: filteredAndSorted, isSelecting: $isSelecting)
-            .environment(\.libraryIsSelecting, isSelecting)
+//        Grid(data: filteredAndSorted, isSelecting: $isSelecting)
+//            .environment(\.libraryIsSelecting, isSelecting)
+        List {
+            
+            Section {
+                
+            }
+        }
 
             .navigationTitle("Local Library")
             .toolbar {

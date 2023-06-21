@@ -38,6 +38,7 @@ let STTUserDefaults: [String: Any] = [
     STTKeys.HideNSFWRunners: true,
     STTKeys.DefaultUserAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0",
     STTKeys.DownsampleImages: true,
+    STTKeys.LocalStorageUsesICloud: FileManager.default.ubiquityIdentityToken != nil
 ]
 
 let SCHEMA_VERSION = 10

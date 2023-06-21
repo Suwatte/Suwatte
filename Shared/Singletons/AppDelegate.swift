@@ -76,6 +76,11 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
             SyncObject(type: StoredOPDSServer.self),
             SyncObject(type: LibraryCollectionFilter.self),
             SyncObject(type: LibraryCollection.self),
+            SyncObject(type: ChapterReference.self),
+            SyncObject(type: ProgressMarker.self),
+            SyncObject(type: Bookmark.self),
+            SyncObject(type: ReadLater.self),
+            SyncObject(type: StreamableOPDSContent.self)
         ])
 
         application.registerForRemoteNotifications()
