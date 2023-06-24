@@ -17,7 +17,6 @@ final class ArchiveHelper {
     private let zipController = ZipController()
     private let rarController = RarController()
     func getThumbnail(for path: URL) throws -> UIImage {
-
         switch path.pathExtension {
             case "zip", "cbz":
                 return try zipController.getThumbnailImage(for: path)

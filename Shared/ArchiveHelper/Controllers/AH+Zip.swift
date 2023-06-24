@@ -92,7 +92,7 @@ extension ArchiveHelper {
         }
         
         func getImageData(for url: URL, at path: String) throws -> Data {
-            guard let archive = Archive(url: url, accessMode: .read), let file = archive.first(where: { $0.path == path }) else {
+            guard let archive = Archive(url: url, accessMode: .read), let file = archive[path] else {
                 throw ArchiveHelper.Errors.ArchiveNotFound
             }
 
