@@ -75,6 +75,7 @@ class CloudObserver: DirectoryObserver {
         }
         
         var rootFolder = Folder(url: path)
+        var files: [File] = []
         for item in items {
             guard let url = item.value(forAttribute: NSMetadataItemURLKey) as? URL else { continue } // Get URL
             guard url.deletingLastPathComponent() == path else { continue } // Is File in this directory
@@ -97,16 +98,20 @@ class CloudObserver: DirectoryObserver {
             let fileSize = (item.value(forAttribute: NSMetadataItemFSSizeKey) as? NSNumber).flatMap(Int64.init) ?? .zero
             let creationDate = item.value(forAttribute: NSMetadataItemFSCreationDateKey) as? Date ?? .now
             let contentChangeDate = item.value(forAttribute: NSMetadataItemFSContentChangeDateKey) as? Date ?? .now
+            let addedToDirectoryDate = (try? url.resourceValues(forKeys: [.addedToDirectoryDateKey]).addedToDirectoryDate) ?? .now
             let id = STTHelpers.generateFileIdentifier(size: fileSize, created: creationDate, modified: contentChangeDate)
             
             var pageCount: Int? = nil
             if isDownloaded {
                 pageCount = try? ArchiveHelper().getItemCount(for: url)
             }
-            let file = File(url: url, isOnDevice: isDownloaded, id: id, name: url.fileName, created: creationDate, size: fileSize, pageCount: pageCount)
-            rootFolder.files.append(file)
+            let file = File(url: url, isOnDevice: isDownloaded, id: id, name: url.fileName, created: creationDate, addedToDirectory: addedToDirectoryDate, size: fileSize, pageCount: pageCount)
+            files.append(file)
         }
         
+        STTHelpers.sortFiles(files: &files)
+                
+        rootFolder.files = files
         DispatchQueue.main.async { [weak self] in
             self?.callback?(rootFolder)
         }
@@ -114,4 +119,25 @@ class CloudObserver: DirectoryObserver {
     }
     
     
+}
+
+extension STTHelpers {
+    
+    static func sortFiles(files: inout [File]) {
+        let sortKey = Preferences.standard.directoryViewSortKey
+        let orderKey = Preferences.standard.directoryViewOrderKey
+        
+        switch sortKey {
+        case .creationDate:
+            files = files.sorted(by: \.created, descending: orderKey)
+        case .size:
+            files = files.sorted(by: \.size, descending: orderKey)
+        case .title:
+            files = files.sorted(by: \.name, descending: orderKey)
+        case .dateAdded:
+            files = files.sorted(by: \.addedToDirectory, descending: orderKey)
+        case .lastRead:
+            files = files.sorted(by: \.dateRead, descending: orderKey)
+        }
+    }
 }

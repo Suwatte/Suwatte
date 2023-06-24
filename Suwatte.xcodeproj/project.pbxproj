@@ -50,6 +50,8 @@
 		DF32646528029BA80066EB08 /* Data+CustomThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF32646428029BA80066EB08 /* Data+CustomThumbnail.swift */; };
 		DF3264692802A0AF0066EB08 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3264682802A0AE0066EB08 /* ImagePicker.swift */; };
 		DF32646B2802A6C70066EB08 /* STTImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF32646A2802A6C70066EB08 /* STTImageView.swift */; };
+		DF3318512A479346000B092B /* DV+Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3318502A479346000B092B /* DV+Settings.swift */; };
+		DF3318532A47934E000B092B /* DV+DownloadQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3318522A47934E000B092B /* DV+DownloadQueue.swift */; };
 		DF356D7529BFFE9F000B605C /* WK+AuthSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF356D7429BFFE9E000B605C /* WK+AuthSource.swift */; };
 		DF356D7729C179C4000B605C /* WK+ModifiableSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF356D7629C179C4000B605C /* WK+ModifiableSource.swift */; };
 		DF356D7A29C57AC7000B605C /* JSCContentSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF356D7929C57AC7000B605C /* JSCContentSource.swift */; };
@@ -421,6 +423,8 @@
 		DF32646428029BA80066EB08 /* Data+CustomThumbnail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+CustomThumbnail.swift"; sourceTree = "<group>"; };
 		DF3264682802A0AE0066EB08 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		DF32646A2802A6C70066EB08 /* STTImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STTImageView.swift; sourceTree = "<group>"; };
+		DF3318502A479346000B092B /* DV+Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DV+Settings.swift"; sourceTree = "<group>"; };
+		DF3318522A47934E000B092B /* DV+DownloadQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DV+DownloadQueue.swift"; sourceTree = "<group>"; };
 		DF356D7429BFFE9E000B605C /* WK+AuthSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WK+AuthSource.swift"; sourceTree = "<group>"; };
 		DF356D7629C179C4000B605C /* WK+ModifiableSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WK+ModifiableSource.swift"; sourceTree = "<group>"; };
 		DF356D7929C57AC7000B605C /* JSCContentSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSCContentSource.swift; sourceTree = "<group>"; };
@@ -907,6 +911,15 @@
 				DF30193828BFCBD00024AA8B /* ZoomingScrollView.swift */,
 			);
 			path = Zooming;
+			sourceTree = "<group>";
+		};
+		DF33184F2A47933A000B092B /* Sheets */ = {
+			isa = PBXGroup;
+			children = (
+				DF3318502A479346000B092B /* DV+Settings.swift */,
+				DF3318522A47934E000B092B /* DV+DownloadQueue.swift */,
+			);
+			path = Sheets;
 			sourceTree = "<group>";
 		};
 		DF356D7829C57764000B605C /* JSCContentSource */ = {
@@ -1851,6 +1864,7 @@
 		DF9BFDF12A427525005D0B63 /* DirectoryViewer */ = {
 			isa = PBXGroup;
 			children = (
+				DF33184F2A47933A000B092B /* Sheets */,
 				DF457DD52A43B5A7002B5350 /* DV+CollectionView.swift */,
 				DF9BFDF22A42753B005D0B63 /* DirectoryViewer.swift */,
 				DF9BFDF42A42754B005D0B63 /* DV+ViewModel.swift */,
@@ -2511,6 +2525,7 @@
 				DF8D0B9D2800EE48003E4C3E /* ProfileView+Loadable.swift in Sources */,
 				DF248F292813941100818300 /* Anilist+GatewayView.swift in Sources */,
 				DFADB58B29D7D04E00CBE22F /* JSCC+Network.swift in Sources */,
+				DF3318532A47934E000B092B /* DV+DownloadQueue.swift in Sources */,
 				DF8D0BAE2800EE48003E4C3E /* InteractableContent.swift in Sources */,
 				DF8D0B222800EE47003E4C3E /* STTScheduler.swift in Sources */,
 				DF8D0BA82800EE48003E4C3E /* ContentView.swift in Sources */,
@@ -2542,6 +2557,7 @@
 				DF8D0B4E2800EE47003E4C3E /* Data+Collection.swift in Sources */,
 				DF9BFDEB2A425A38005D0B63 /* DO+Protocol.swift in Sources */,
 				DF52FBAF28939745008FAD3A /* PagingScrollView.swift in Sources */,
+				DF3318512A479346000B092B /* DV+Settings.swift in Sources */,
 				DF8D0B5D2800EE47003E4C3E /* Reader+SettingsView.swift in Sources */,
 				DF67EB8828E3674900076FF5 /* LG+MoveFlag.swift in Sources */,
 				DF8D0B952800EE48003E4C3E /* ProfileView+LibrarySheet.swift in Sources */,

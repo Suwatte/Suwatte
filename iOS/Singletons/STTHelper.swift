@@ -210,3 +210,8 @@ extension STTHelpers {
         return hashed.compactMap { String(format: "%02x", $0) }.joined()
     }
 }
+
+extension STTHelpers {
+    static let LOCAL_CONTENT_ID = "7348b86c-ec52-47bf-8069-d30bd8382bf7"
+    static let OPDS_CONTENT_ID = "c9d560ee-c4ff-4977-8cdf-fe9473825b8b"
+}

@@ -50,6 +50,11 @@ extension DirectoryViewer {
                 }
             }
         }
+        
+        func restart() {
+            stop()
+            observe()
+        }
 
         func stop() {
             observer?.stop()
@@ -62,6 +67,23 @@ extension DirectoryViewer {
                     self?.searchResultsDirectory = folder
                 }
             }
+        }
+        
+        func createDirectory() {
+            let ac = UIAlertController(title: "Create New Folder", message: nil, preferredStyle: .alert)
+            ac.addTextField()
+
+            let submitAction = UIAlertAction(title: "OK", style: .default) { [unowned self, unowned ac] _ in
+                let text = ac.textFields![0].text?.trimmingCharacters(in: .whitespacesAndNewlines)
+                
+                guard let text else { return }
+                let newFolderPath = path.appendingPathComponent(text, isDirectory: true)
+                newFolderPath.createDirectory()
+            }
+            ac.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            ac.addAction(submitAction)
+            KEY_WINDOW?.rootViewController?.present(ac, animated: true)
+            
         }
     }
 }

@@ -18,11 +18,16 @@ struct File: Identifiable, Hashable {
     // Properties
     let name: String
     let created: Date
+    let addedToDirectory: Date
     let size: Int64
     var pageCount: Int?
     
     func sizeToString() -> String {
         ByteCountFormatter.string(fromByteCount: size, countStyle: .file)
+    }
+    
+    var dateRead: Date {
+        DataManager.shared.getArchiveDateRead(id)
     }
 }
 
@@ -36,6 +41,26 @@ struct Folder: Hashable {
         let url: URL
         let id: String
         let name: String
+    }
+}
+
+
+enum DirectorySortOption: Int, CaseIterable, UserDefaultsSerializable {
+    case creationDate, size, title, dateAdded, lastRead
+
+    var description: String {
+        switch self {
+        case .title:
+            return "Title"
+        case .size:
+            return "File Size"
+        case .creationDate:
+            return "Creation Date"
+        case .dateAdded:
+            return "Date Added"
+        case .lastRead:
+            return "Last Read"
+        }
     }
 }
 
@@ -75,7 +100,7 @@ extension File {
 extension URL {
     
     func convertToSTTFile() throws -> File {
-        let resources = try? resourceValues(forKeys: [.fileContentIdentifierKey, .fileSizeKey, .creationDateKey, .contentModificationDateKey, .ubiquitousItemDownloadingStatusKey])
+        let resources = try? resourceValues(forKeys: [.fileContentIdentifierKey, .fileSizeKey, .addedToDirectoryDateKey, .creationDateKey, .contentModificationDateKey, .ubiquitousItemDownloadingStatusKey])
         var isOnDevice = true
         
         if let status = resources?.ubiquitousItemDownloadingStatus {
@@ -87,8 +112,9 @@ extension URL {
         let fileSize = resources?.fileSize.flatMap(Int64.init) ?? .zero
         let creationDate = resources?.creationDate ?? .now
         let modificationDate = resources?.contentModificationDate ?? .now
+        let addedDirectoryDate = resources?.addedToDirectoryDate ?? .now
         let fileId = STTHelpers.generateFileIdentifier(size: fileSize, created: creationDate, modified: modificationDate)
-        return .init(url: self, isOnDevice: isOnDevice, id: fileId, name: fileName, created: creationDate, size: fileSize, pageCount: nil)
+        return .init(url: self, isOnDevice: isOnDevice, id: fileId, name: fileName, created: creationDate, addedToDirectory: addedDirectoryDate, size: fileSize, pageCount: nil)
     }
 }
 

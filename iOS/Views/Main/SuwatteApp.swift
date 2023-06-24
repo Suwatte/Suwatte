@@ -94,39 +94,7 @@ extension SuwatteApp {
             }
 
         default:
-            let validExtensions = ["cbz", "cbr", "rar", "zip"]
-            let canHandle = validExtensions.contains(url.pathExtension)
-            guard canHandle else { return }
-            let directory = CloudDataManager.shared.getDocumentDiretoryURL().appendingPathComponent("Library")
-            
-            let inDirectory = url.path.hasPrefix(directory.path)
-            
-            if !inDirectory {
-                ToastManager.shared.loading = true
-                // Move to Library
-                let location = directory.appendingPathComponent(url.lastPathComponent)
-                if location.exists {
-                    StateManager.shared.alert(title: "Import", message: "This file already exists in your library")
-                }
-                guard url.startAccessingSecurityScopedResource() else {
-                    return
-                }
-                defer {
-                    url.stopAccessingSecurityScopedResource()
-                }
-                do {
-                    try FileManager.default.copyItem(at: url, to: location)
-                } catch {
-                    Logger.shared.error(error)
-                    ToastManager.shared.error(error)
-                }
-                ToastManager.shared.loading = false
-                
-                print("READY: ", location)
-            } else {
-                print("READY: ", url)
-
-            }
+            STTHelpers.importArchiveFie(at: url)
             
                         
         }
@@ -142,3 +110,37 @@ final class NavigationModel: ObservableObject {
 }
 
 extension ContentIdentifier: Identifiable {}
+extension STTHelpers {
+    
+    static func importArchiveFie(at url: URL) {
+        let validExtensions = ["cbz", "cbr", "rar", "zip"]
+        let canHandle = validExtensions.contains(url.pathExtension)
+        guard canHandle else { return }
+        let directory = CloudDataManager.shared.getDocumentDiretoryURL().appendingPathComponent("Library")
+        let inDirectory = url.path.hasPrefix(directory.path)
+        
+        if !inDirectory {
+            ToastManager.shared.loading = true
+            // Move to Library
+            let location = directory.appendingPathComponent(url.lastPathComponent)
+            if location.exists {
+                StateManager.shared.alert(title: "Import", message: "This file already exists in your library")
+            }
+            guard url.startAccessingSecurityScopedResource() else {
+                return
+            }
+            defer {
+                url.stopAccessingSecurityScopedResource()
+            }
+            do {
+                try FileManager.default.copyItem(at: url, to: location)
+            } catch {
+                Logger.shared.error(error)
+                ToastManager.shared.error(error)
+            }
+            ToastManager.shared.loading = false
+        } else {
+            print("READY: ", url)
+        }
+    }
+}

@@ -63,16 +63,17 @@ final class DirectorySearcher {
                 
                 // File
                 guard extensions.contains(url.pathExtension) else { continue } // File Type Guard
-                let resourceValues = try? url.resourceValues(forKeys: [.fileSizeKey, .creationDateKey, .contentModificationDateKey])
+                let resourceValues = try? url.resourceValues(forKeys: [.fileSizeKey, .creationDateKey, .contentModificationDateKey, .addedToDirectoryDateKey])
                 
                 // Generate Unique Identifier
                 let fileSize = resourceValues?.fileSize.flatMap(Int64.init) ?? .zero
                 let creationDate = resourceValues?.creationDate ?? .now
                 let contentChangeDate = resourceValues?.contentModificationDate ?? .now
+                let addedToDirectory = resourceValues?.addedToDirectoryDate ?? .now
                 let id = STTHelpers.generateFileIdentifier(size: fileSize, created: creationDate, modified: contentChangeDate)
                 
                 let pageCount = try? ArchiveHelper().getItemCount(for: url)
-                let file = File(url: url, isOnDevice: true, id: id, name: url.fileName, created: creationDate, size: fileSize, pageCount: pageCount)
+                let file = File(url: url, isOnDevice: true, id: id, name: url.fileName, created: creationDate, addedToDirectory: addedToDirectory, size: fileSize, pageCount: pageCount)
                 rootFolder.files.append(file)
             }
         }
@@ -144,13 +145,16 @@ final class DirectorySearcher {
             let fileSize = (item.value(forAttribute: NSMetadataItemFSSizeKey) as? NSNumber).flatMap(Int64.init) ?? .zero
             let creationDate = item.value(forAttribute: NSMetadataItemFSCreationDateKey) as? Date ?? .now
             let contentChangeDate = item.value(forAttribute: NSMetadataItemFSContentChangeDateKey) as? Date ?? .now
+            
+            let addedToDirectoryDate = (try? url.resourceValues(forKeys: [.addedToDirectoryDateKey]).addedToDirectoryDate) ?? .now
+
             let id = STTHelpers.generateFileIdentifier(size: fileSize, created: creationDate, modified: contentChangeDate)
             
             var pageCount: Int? = nil
             if isDownloaded {
                 pageCount = try? ArchiveHelper().getItemCount(for: url)
             }
-            let file = File(url: url, isOnDevice: isDownloaded, id: id, name: url.fileName, created: creationDate, size: fileSize, pageCount: pageCount)
+            let file = File(url: url, isOnDevice: isDownloaded, id: id, name: url.fileName, created: creationDate, addedToDirectory: addedToDirectoryDate, size: fileSize, pageCount: pageCount)
             rootFolder.files.append(file)
         }
         

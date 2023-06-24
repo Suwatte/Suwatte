@@ -36,4 +36,14 @@ extension DataManager {
             .where({ $0.id == id && !$0.isDeleted })
             .first
     }
+    
+    func getArchiveDateRead(_ id: String) -> Date {
+        
+        let realm = try! Realm()
+        
+        return realm.objects(ProgressMarker.self)
+            .where({ $0.currentChapter.archive.id == id && !$0.isDeleted })
+            .first?
+            .dateRead ?? .distantPast
+    }
 }

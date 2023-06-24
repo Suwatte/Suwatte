@@ -57,8 +57,6 @@ extension LibraryView.LibraryGrid {
             .layout(createCustomLayout: {
                 DynamicGridLayout()
             }, configureCustomLayout: { layout in
-                layout.collectionView?.allowsMultipleSelection = true
-                layout.collectionView?.allowsMultipleSelectionDuringEditing = true
                 layout.invalidateLayout()
             })
             .alwaysBounceVertical()

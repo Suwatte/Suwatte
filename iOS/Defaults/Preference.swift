@@ -137,6 +137,12 @@ final class Preferences {
     
     @UserDefault(STTKeys.LocalStorageUsesICloud)
     var useCloudForLocal = true
+    
+    @UserDefault(STTKeys.LocalSortLibrary)
+    var directoryViewSortKey = DirectorySortOption.dateAdded
+    
+    @UserDefault(STTKeys.LocalOrderLibrary)
+    var directoryViewOrderKey = true // Default to Descending
 }
 
 @propertyWrapper

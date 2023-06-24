@@ -10,7 +10,6 @@ import SwiftUI
 
 struct LocalContentView: View {
     @ObservedObject var model = LocalContentManager.shared
-    @AppStorage(STTKeys.LocalSortLibrary) var sortSelection = LocalContentManager.Book.sortOptions.creationDate
     @AppStorage(STTKeys.LocalOrderLibrary) var isDescending = true
 
     @State var text = ""
@@ -66,30 +65,29 @@ struct LocalContentView: View {
             .animation(.default, value: model.idHash)
             .animation(.default, value: text)
             .animation(.default, value: isDescending)
-            .animation(.default, value: sortSelection)
     }
 
     var filteredAndSorted: [LocalContentManager.Book] {
         let results = model.idHash.values.compactMap { $0 }
             .filter { text.isEmpty ? true : $0.title.lowercased().contains(text.lowercased()) }
-            .sorted { lhs, rhs in
-                switch sortSelection {
-                case .creationDate:
-                    return nullableDate(lhs.fileCreationDate) < nullableDate(rhs.fileCreationDate)
-                case .size:
-                    return STTHelpers.optionalCompare(firstVal: lhs.fileSize, secondVal: rhs.fileSize)
-                case .title:
-                    return lhs.title < rhs.title
-                case .type:
-                    return lhs.fileExt < rhs.fileExt
-                case .year:
-                    return STTHelpers.optionalCompare(firstVal: lhs.year, secondVal: rhs.year)
-                case .dateAdded:
-                    return nullableDate(lhs.dateAdded) < nullableDate(rhs.dateAdded)
-                case .lastRead:
-                    return dateOfMarker(id: lhs.id) < dateOfMarker(id: rhs.id)
-                }
-            }
+//            .sorted { lhs, rhs in
+//                switch sortSelection {
+//                case .creationDate:
+//                    return nullableDate(lhs.fileCreationDate) < nullableDate(rhs.fileCreationDate)
+//                case .size:
+//                    return STTHelpers.optionalCompare(firstVal: lhs.fileSize, secondVal: rhs.fileSize)
+//                case .title:
+//                    return lhs.title < rhs.title
+//                case .type:
+//                    return lhs.fileExt < rhs.fileExt
+//                case .year:
+//                    return STTHelpers.optionalCompare(firstVal: lhs.year, secondVal: rhs.year)
+//                case .dateAdded:
+//                    return nullableDate(lhs.dateAdded) < nullableDate(rhs.dateAdded)
+//                case .lastRead:
+//                    return dateOfMarker(id: lhs.id) < dateOfMarker(id: rhs.id)
+//                }
+//            }
 
         if isDescending {
             return results.reversed()
@@ -121,17 +119,17 @@ struct LocalContentView: View {
             //            }
 
             Divider()
-            Picker("Sort Library", selection: $sortSelection) {
-                ForEach(LocalContentManager.Book.sortOptions.allCases, id: \.hashValue) { option in
-
-                    HStack {
-                        Text(option.description)
-                        Spacer()
-                    }
-                    .tag(option)
-                }
-            }
-            .pickerStyle(.menu)
+//            Picker("Sort Library", selection: $sortSelection) {
+//                ForEach(LocalContentManager.Book.sortOptions.allCases, id: \.hashValue) { option in
+//
+//                    HStack {
+//                        Text(option.description)
+//                        Spacer()
+//                    }
+//                    .tag(option)
+//                }
+//            }
+//            .pickerStyle(.menu)
 
             Picker("Order Library", selection: $isDescending) {
                 Text("Ascending")
@@ -141,16 +139,7 @@ struct LocalContentView: View {
             }
             .pickerStyle(.menu)
             Divider()
-            Button {
-                presentDownloadQueue.toggle()
-            } label: {
-                Label("Download Queue", systemImage: "square.and.arrow.down")
-            }
-            Button {
-                presentSettings.toggle()
-            } label: {
-                Label("Settings", systemImage: "gearshape")
-            }
+
 
         } label: {
             Image(systemName: "ellipsis.circle")

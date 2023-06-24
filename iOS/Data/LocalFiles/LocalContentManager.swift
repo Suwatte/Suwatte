@@ -248,28 +248,7 @@ extension LocalContentManager {
             lhs.id == rhs.id
         }
 
-        enum sortOptions: Int, CaseIterable {
-            case creationDate, size, title, type, year, dateAdded, lastRead
-
-            var description: String {
-                switch self {
-                case .title:
-                    return "Title"
-                case .year:
-                    return "Year"
-                case .size:
-                    return "File Size"
-                case .creationDate:
-                    return "Creation Date"
-                case .type:
-                    return "Type"
-                case .dateAdded:
-                    return "Date Added"
-                case .lastRead:
-                    return "Last Read"
-                }
-            }
-        }
+        
 
         func sizeToString() -> String? {
             guard let fileSize = fileSize else {
@@ -288,10 +267,7 @@ extension STTHelpers {
     }
 }
 
-extension STTHelpers {
-    static let LOCAL_CONTENT_ID = "7348b86c-ec52-47bf-8069-d30bd8382bf7"
-    static let OPDS_CONTENT_ID = "c9d560ee-c4ff-4977-8cdf-fe9473825b8b"
-}
+
 
 extension LocalContentManager {
     class DownloadObject: ObservableObject {

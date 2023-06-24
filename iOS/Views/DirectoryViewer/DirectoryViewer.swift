@@ -6,16 +6,20 @@
 //
 
 import SwiftUI
-
 import QuickLook
 import QuickLookThumbnailing
 import NukeUI
 
 struct DirectoryViewer: View {
     @StateObject var model: ViewModel
-    @EnvironmentObject var coreModel: CoreModel
-    @Environment(\.scenePhase) var scenePhase
+    @EnvironmentObject private var coreModel: CoreModel
+    @Environment(\.scenePhase) private var scenePhase
     @State private var isActive = false
+    @State private var presentImportSheet = false
+    @State private var presentSettingsSheet = false
+    @State private var presentDownloadQueueSheet = false
+    @Preference(\.directoryViewSortKey) private var directorySortKey
+    @Preference(\.directoryViewOrderKey) private var directoryOrderKey
     var title: String?
     var body: some View {
         Group {
@@ -78,21 +82,63 @@ struct DirectoryViewer: View {
                 model.observe()
             }
         }
+        .onChange(of: directorySortKey, perform: { sortKey in
+            guard isActive else { return }
+            model.restart()
+        })
+        .onChange(of: directoryOrderKey, perform: { orderKey in
+            guard isActive else { return }
+            model.restart()
+        })
+        
         .toolbar {
             ToolbarItemGroup {
                 ProgressView()
                     .opacity(model.working ? 1 : 0)
                 
                 Menu {
-                    Text("Import")
-                    Text("New Folder")
+                    Button {
+                        presentImportSheet.toggle()
+                    } label: {
+                        Label("Import Comics", systemImage: "plus")
+                    }
+                    Button {
+                        model.createDirectory()
+                    } label: {
+                        Label("New Folder", systemImage: "folder.badge.plus")
+                    }
+
                     Text("Select")
                     Divider()
-                    Text("Sort")
-                    Text("Order")
+                    Picker("Sort Library", selection: $directorySortKey) {
+                        ForEach(DirectorySortOption.allCases, id: \.hashValue) { option in
+                            HStack {
+                                Text(option.description)
+                                Spacer()
+                            }
+                            .tag(option)
+                        }
+                    }
+                    .pickerStyle(.menu)
+
+                    Picker("Order Library", selection: $directoryOrderKey) {
+                        Text("Ascending")
+                            .tag(false)
+                        Text("Descending")
+                            .tag(true)
+                    }
+                    .pickerStyle(.menu)
                     Divider()
-                    Text("Queue")
-                    Text("Settings")
+                    Button {
+                        presentDownloadQueueSheet.toggle()
+                    } label: {
+                        Label("Download Queue", systemImage: "square.and.arrow.down")
+                    }
+                    Button {
+                        presentSettingsSheet.toggle()
+                    } label: {
+                        Label("Settings", systemImage: "gearshape")
+                    }
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }
@@ -100,14 +146,20 @@ struct DirectoryViewer: View {
             }
         }
         .searchable(text: $model.query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Library")
-        
+        .modifier(OpenLocalModifier(isPresenting: $presentImportSheet))
+        .sheet(isPresented: $presentSettingsSheet) {
+            SettingsSheet()
+        }
+        .sheet(isPresented: $presentDownloadQueueSheet) {
+            DownloadQueueSheet()
+        }
     }
     
     var EmptyDirectoryView: some View {
         VStack(alignment: .center, spacing: 15) {
             Text("(━┳━｡ Д ｡━┳━)")
                 .font(.title)
-            Text("No results found")
+            Text("it's empty here")
                 .font(.footnote)
         }
         .foregroundColor(.gray)
@@ -117,7 +169,7 @@ struct DirectoryViewer: View {
         VStack(alignment: .center, spacing: 15) {
             Text("(━┳━｡ Д ｡━┳━)")
                 .font(.title)
-            Text("it's empty here")
+            Text("No results found")
                 .font(.footnote)
         }
         .foregroundColor(.gray)
