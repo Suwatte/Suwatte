@@ -52,6 +52,8 @@
 		DF32646B2802A6C70066EB08 /* STTImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF32646A2802A6C70066EB08 /* STTImageView.swift */; };
 		DF3318512A479346000B092B /* DV+Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3318502A479346000B092B /* DV+Settings.swift */; };
 		DF3318532A47934E000B092B /* DV+DownloadQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3318522A47934E000B092B /* DV+DownloadQueue.swift */; };
+		DF3318552A47A631000B092B /* DV+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3318542A47A631000B092B /* DV+CollectionView.swift */; };
+		DF3318572A47A63E000B092B /* CloudDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3318562A47A63E000B092B /* CloudDownloader.swift */; };
 		DF356D7529BFFE9F000B605C /* WK+AuthSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF356D7429BFFE9E000B605C /* WK+AuthSource.swift */; };
 		DF356D7729C179C4000B605C /* WK+ModifiableSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF356D7629C179C4000B605C /* WK+ModifiableSource.swift */; };
 		DF356D7A29C57AC7000B605C /* JSCContentSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF356D7929C57AC7000B605C /* JSCContentSource.swift */; };
@@ -62,7 +64,6 @@
 		DF356D8629C5845C000B605C /* JSCC+Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF356D8529C5845C000B605C /* JSCC+Store.swift */; };
 		DF356D8829C5846C000B605C /* JSCC+Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF356D8729C5846C000B605C /* JSCC+Logging.swift */; };
 		DF36E6D0285D08D700FB8B67 /* BetterSafariView in Frameworks */ = {isa = PBXBuildFile; productRef = DF36E6CF285D08D700FB8B67 /* BetterSafariView */; };
-		DF426C332A45FBAE00B79920 /* CloudDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF426C322A45FBAE00B79920 /* CloudDownloader.swift */; };
 		DF426C352A463F4D00B79920 /* DirectorySearcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF426C342A463F4D00B79920 /* DirectorySearcher.swift */; };
 		DF44FA7C29ABD27800BAFA74 /* Bridge.js in Resources */ = {isa = PBXBuildFile; fileRef = DF44FA7B29ABD27800BAFA74 /* Bridge.js */; };
 		DF44FA7E29ABE38700BAFA74 /* WK+Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF44FA7D29ABE38700BAFA74 /* WK+Store.swift */; };
@@ -70,7 +71,6 @@
 		DF457DD02A439F5C002B5350 /* ArchivedContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF457DCF2A439F5C002B5350 /* ArchivedContent.swift */; };
 		DF457DD22A43A072002B5350 /* Data+ArchivedContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF457DD12A43A072002B5350 /* Data+ArchivedContent.swift */; };
 		DF457DD42A43B216002B5350 /* History+Archive.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF457DD32A43B216002B5350 /* History+Archive.swift */; };
-		DF457DD62A43B5A7002B5350 /* DV+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF457DD52A43B5A7002B5350 /* DV+CollectionView.swift */; };
 		DF46C3572A22A04B002762C4 /* CloudManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF46C3562A22A04B002762C4 /* CloudManager.swift */; };
 		DF47DDDC28B5542D00D779E5 /* AV+EntryEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF47DDDB28B5542D00D779E5 /* AV+EntryEditor.swift */; };
 		DF47DDDE28B55BA600D779E5 /* AdaptiveSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF47DDDD28B55BA500D779E5 /* AdaptiveSheet.swift */; };
@@ -83,7 +83,6 @@
 		DF482F012955A56F002D3308 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DF482F002955A56F002D3308 /* RealmSwift */; };
 		DF49415929F4B20800DE9EDC /* ColoredBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF49415829F4B20800DE9EDC /* ColoredBadge.swift */; };
 		DF52FBAF28939745008FAD3A /* PagingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF52FBAE28939745008FAD3A /* PagingScrollView.swift */; };
-		DF52FBBA28947031008FAD3A /* ASCollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = DF52FBB928947031008FAD3A /* ASCollectionView */; };
 		DF52FBBE289487C6008FAD3A /* STTGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF52FBBD289487C6008FAD3A /* STTGridView.swift */; };
 		DF52FBC22896F762008FAD3A /* CollectionManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF52FBC12896F761008FAD3A /* CollectionManagementView.swift */; };
 		DF52FBC7289C7EBB008FAD3A /* LCV+SettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF52FBC6289C7EBA008FAD3A /* LCV+SettingsSheet.swift */; };
@@ -289,6 +288,7 @@
 		DF9BFE272A4295FD005D0B63 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = DF9BFE262A4295FD005D0B63 /* ZIPFoundation */; };
 		DF9C9EF0297AE3A9004A3BC5 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = DF9C9EEF297AE3A9004A3BC5 /* FirebaseAnalytics */; };
 		DF9C9EF2297AE410004A3BC5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DF9C9EF1297AE40F004A3BC5 /* GoogleService-Info.plist */; };
+		DFA17F662A4916C300179850 /* ASCollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = DFA17F652A4916C300179850 /* ASCollectionView */; };
 		DFA6264C28ED1EA500914B1C /* Vertical+ASController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA6264B28ED1EA500914B1C /* Vertical+ASController.swift */; };
 		DFAC77942814D1BA00AF6394 /* AnilistView+DirectoryView+FilterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAC77932814D1BA00AF6394 /* AnilistView+DirectoryView+FilterSheet.swift */; };
 		DFAC77962815B3DA00AF6394 /* AL+Genre.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAC77952815B3DA00AF6394 /* AL+Genre.swift */; };
@@ -425,6 +425,8 @@
 		DF32646A2802A6C70066EB08 /* STTImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STTImageView.swift; sourceTree = "<group>"; };
 		DF3318502A479346000B092B /* DV+Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DV+Settings.swift"; sourceTree = "<group>"; };
 		DF3318522A47934E000B092B /* DV+DownloadQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DV+DownloadQueue.swift"; sourceTree = "<group>"; };
+		DF3318542A47A631000B092B /* DV+CollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DV+CollectionView.swift"; sourceTree = "<group>"; };
+		DF3318562A47A63E000B092B /* CloudDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudDownloader.swift; sourceTree = "<group>"; };
 		DF356D7429BFFE9E000B605C /* WK+AuthSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WK+AuthSource.swift"; sourceTree = "<group>"; };
 		DF356D7629C179C4000B605C /* WK+ModifiableSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WK+ModifiableSource.swift"; sourceTree = "<group>"; };
 		DF356D7929C57AC7000B605C /* JSCContentSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSCContentSource.swift; sourceTree = "<group>"; };
@@ -434,7 +436,6 @@
 		DF356D8229C5825D000B605C /* JSCC+AuthSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCC+AuthSource.swift"; sourceTree = "<group>"; };
 		DF356D8529C5845C000B605C /* JSCC+Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCC+Store.swift"; sourceTree = "<group>"; };
 		DF356D8729C5846C000B605C /* JSCC+Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCC+Logging.swift"; sourceTree = "<group>"; };
-		DF426C322A45FBAE00B79920 /* CloudDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudDownloader.swift; path = ../../../../../.Trash/CloudDownloader.swift; sourceTree = "<group>"; };
 		DF426C342A463F4D00B79920 /* DirectorySearcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectorySearcher.swift; sourceTree = "<group>"; };
 		DF44FA7B29ABD27800BAFA74 /* Bridge.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = Bridge.js; sourceTree = "<group>"; };
 		DF44FA7D29ABE38700BAFA74 /* WK+Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WK+Store.swift"; sourceTree = "<group>"; };
@@ -442,7 +443,6 @@
 		DF457DCF2A439F5C002B5350 /* ArchivedContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedContent.swift; sourceTree = "<group>"; };
 		DF457DD12A43A072002B5350 /* Data+ArchivedContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+ArchivedContent.swift"; sourceTree = "<group>"; };
 		DF457DD32A43B216002B5350 /* History+Archive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "History+Archive.swift"; sourceTree = "<group>"; };
-		DF457DD52A43B5A7002B5350 /* DV+CollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "DV+CollectionView.swift"; path = "../../../../../../.Trash/DV+CollectionView.swift"; sourceTree = "<group>"; };
 		DF46C3562A22A04B002762C4 /* CloudManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudManager.swift; sourceTree = "<group>"; };
 		DF47DDDB28B5542D00D779E5 /* AV+EntryEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AV+EntryEditor.swift"; sourceTree = "<group>"; };
 		DF47DDDD28B55BA500D779E5 /* AdaptiveSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveSheet.swift; sourceTree = "<group>"; };
@@ -731,12 +731,12 @@
 				DF2DA77327CF11C50046FE20 /* Alamofire in Frameworks */,
 				DF9C9EF0297AE3A9004A3BC5 /* FirebaseAnalytics in Frameworks */,
 				DFB7FB03297B965D00599097 /* OrderedCollections in Frameworks */,
+				DFA17F662A4916C300179850 /* ASCollectionView in Frameworks */,
 				DF1BE5F32A40AB3400E48572 /* R2Shared in Frameworks */,
 				DF70234F29DA852A0076AAD0 /* Nuke in Frameworks */,
 				DF36E6D0285D08D700FB8B67 /* BetterSafariView in Frameworks */,
 				DF15F5952967D3DD0085DB1F /* UIHostingConfigurationBackport in Frameworks */,
 				DF730CD329411F1B00C62C71 /* FlagKit in Frameworks */,
-				DF52FBBA28947031008FAD3A /* ASCollectionView in Frameworks */,
 				DF482F012955A56F002D3308 /* RealmSwift in Frameworks */,
 				DF0D96062824892C00E592D9 /* Realm in Frameworks */,
 				DF1BE5F52A40AB3400E48572 /* ReadiumOPDS in Frameworks */,
@@ -918,6 +918,7 @@
 			children = (
 				DF3318502A479346000B092B /* DV+Settings.swift */,
 				DF3318522A47934E000B092B /* DV+DownloadQueue.swift */,
+				DF3318542A47A631000B092B /* DV+CollectionView.swift */,
 			);
 			path = Sheets;
 			sourceTree = "<group>";
@@ -1118,8 +1119,8 @@
 				DF67EB9028E4CB6500076FF5 /* ToastManager.swift */,
 				DF67EB9228E7A62D00076FF5 /* MigrationManager.swift */,
 				DF977E152A0ECB3900AA1E90 /* StateManager.swift */,
+				DF3318562A47A63E000B092B /* CloudDownloader.swift */,
 				DF46C3562A22A04B002762C4 /* CloudManager.swift */,
-				DF426C322A45FBAE00B79920 /* CloudDownloader.swift */,
 				DF426C342A463F4D00B79920 /* DirectorySearcher.swift */,
 			);
 			path = Singletons;
@@ -1865,7 +1866,6 @@
 			isa = PBXGroup;
 			children = (
 				DF33184F2A47933A000B092B /* Sheets */,
-				DF457DD52A43B5A7002B5350 /* DV+CollectionView.swift */,
 				DF9BFDF22A42753B005D0B63 /* DirectoryViewer.swift */,
 				DF9BFDF42A42754B005D0B63 /* DV+ViewModel.swift */,
 				DF457DCA2A438DE0002B5350 /* DV+Base.swift */,
@@ -2094,7 +2094,6 @@
 				DF59C97C285004860027F19D /* ZIPFoundation */,
 				DF59C987285054670027F19D /* Unrar */,
 				DF36E6CF285D08D700FB8B67 /* BetterSafariView */,
-				DF52FBB928947031008FAD3A /* ASCollectionView */,
 				DFF1043D28A9963D00E2C3A4 /* AnyCodable */,
 				DF47DDE028B5608D00D779E5 /* PartialSheet */,
 				DF730CD229411F1B00C62C71 /* FlagKit */,
@@ -2108,6 +2107,7 @@
 				DF2D842C2A212E72006B17F0 /* IceCream */,
 				DF1BE5F22A40AB3400E48572 /* R2Shared */,
 				DF1BE5F42A40AB3400E48572 /* ReadiumOPDS */,
+				DFA17F652A4916C300179850 /* ASCollectionView */,
 			);
 			productName = "Suwatte (iOS)";
 			productReference = DFCE6EAF280108EA002E220C /* Suwatte.app */;
@@ -2168,7 +2168,6 @@
 				DF59C97B285004850027F19D /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 				DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar" */,
 				DF36E6CE285D08D700FB8B67 /* XCRemoteSwiftPackageReference "BetterSafariView" */,
-				DF52FBB828947031008FAD3A /* XCRemoteSwiftPackageReference "ASCollectionView" */,
 				DFF1043C28A9963C00E2C3A4 /* XCRemoteSwiftPackageReference "AnyCodable" */,
 				DF47DDDF28B5608C00D779E5 /* XCRemoteSwiftPackageReference "PartialSheet" */,
 				DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit" */,
@@ -2179,6 +2178,7 @@
 				DF70234D29DA852A0076AAD0 /* XCRemoteSwiftPackageReference "Nuke" */,
 				DF2D842B2A212E72006B17F0 /* XCRemoteSwiftPackageReference "IceCream" */,
 				DF1BE5F12A40AB3400E48572 /* XCRemoteSwiftPackageReference "swift-toolkit" */,
+				DFA17F642A4916C300179850 /* XCRemoteSwiftPackageReference "ASCollectionView" */,
 			);
 			productRefGroup = DF2DA6FF27CD82430046FE20;
 			projectDirPath = "";
@@ -2308,7 +2308,6 @@
 				DF553CCB29726F86004C3428 /* PageInfo.swift in Sources */,
 				DF8D0B502800EE47003E4C3E /* BackupManager.swift in Sources */,
 				DF8D0B5B2800EE47003E4C3E /* Reader+Models.swift in Sources */,
-				DF457DD62A43B5A7002B5350 /* DV+CollectionView.swift in Sources */,
 				DFADB58D29D7F19900CBE22F /* STT+URLRequest.swift in Sources */,
 				DF8D0B8A2800EE48003E4C3E /* ExploreSearchView.swift in Sources */,
 				DF32646328029A380066EB08 /* STTImageProvider.swift in Sources */,
@@ -2417,6 +2416,7 @@
 				DF30193928BFCBD00024AA8B /* ZoomingScrollView.swift in Sources */,
 				DF8D0B4B2800EE47003E4C3E /* Data+LibraryEntry.swift in Sources */,
 				DFBE484C2A25BDEF000ABA16 /* LibraryCollection.swift in Sources */,
+				DF3318572A47A63E000B092B /* CloudDownloader.swift in Sources */,
 				DFD1F9AD28F7AF3D000766C1 /* Vertical+Scroll.swift in Sources */,
 				DF8D0B9C2800EE48003E4C3E /* ProfileView+Skeleton.swift in Sources */,
 				DF8D0B712800EE48003E4C3E /* ManageCollectionsView.swift in Sources */,
@@ -2458,7 +2458,6 @@
 				DFBE484E2A25BE10000ABA16 /* LibraryCollectionFilter.swift in Sources */,
 				DF8D0B8E2800EE48003E4C3E /* ESV+ViewModel.swift in Sources */,
 				DF2D842A2A1EFB4D006B17F0 /* STT+Nuke.swift in Sources */,
-				DF426C332A45FBAE00B79920 /* CloudDownloader.swift in Sources */,
 				DF52FBC7289C7EBB008FAD3A /* LCV+SettingsSheet.swift in Sources */,
 				DF8D0B652800EE47003E4C3E /* ReaderView.swift in Sources */,
 				DF59C98028500E200027F19D /* LocalFileModifier.swift in Sources */,
@@ -2576,6 +2575,7 @@
 				DF9BD6462891C16D006628D0 /* DSK+Tag.swift in Sources */,
 				DFBE48482A25BD87000ABA16 /* ReadLater.swift in Sources */,
 				DFAC77A02817AD5200AF6394 /* AL+MediaFunctions.swift in Sources */,
+				DF3318552A47A631000B092B /* DV+CollectionView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2978,14 +2978,6 @@
 				kind = branch;
 			};
 		};
-		DF52FBB828947031008FAD3A /* XCRemoteSwiftPackageReference "ASCollectionView" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apptekstudios/ASCollectionView";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
 		DF59C97B285004850027F19D /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
@@ -3021,6 +3013,14 @@
 		DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		DFA17F642A4916C300179850 /* XCRemoteSwiftPackageReference "ASCollectionView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Mantton/ASCollectionView";
 			requirement = {
 				branch = master;
 				kind = branch;
@@ -3100,11 +3100,6 @@
 			package = DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;
 		};
-		DF52FBB928947031008FAD3A /* ASCollectionView */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DF52FBB828947031008FAD3A /* XCRemoteSwiftPackageReference "ASCollectionView" */;
-			productName = ASCollectionView;
-		};
 		DF59C97C285004860027F19D /* ZIPFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DF59C97B285004850027F19D /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
@@ -3144,6 +3139,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAnalytics;
+		};
+		DFA17F652A4916C300179850 /* ASCollectionView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DFA17F642A4916C300179850 /* XCRemoteSwiftPackageReference "ASCollectionView" */;
+			productName = ASCollectionView;
 		};
 		DFB7FB02297B965D00599097 /* OrderedCollections */ = {
 			isa = XCSwiftPackageProductDependency;

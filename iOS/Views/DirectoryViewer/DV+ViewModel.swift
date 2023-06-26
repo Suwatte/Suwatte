@@ -78,7 +78,14 @@ extension DirectoryViewer {
                 
                 guard let text else { return }
                 let newFolderPath = path.appendingPathComponent(text, isDirectory: true)
-                newFolderPath.createDirectory()
+                guard !newFolderPath.exists else { return }
+                do {
+                    try FileManager.default.createDirectory(at: newFolderPath, withIntermediateDirectories: true, attributes: nil)
+                    ToastManager.shared.info("Created!")
+                } catch {
+                    ToastManager.shared.error(error)
+                    Logger.shared.error(error)
+                }
             }
             ac.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             ac.addAction(submitAction)

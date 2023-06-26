@@ -30,10 +30,10 @@
     {
       "identity" : "ascollectionview",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apptekstudios/ASCollectionView",
+      "location" : "https://github.com/Mantton/ASCollectionView",
       "state" : {
         "branch" : "master",
-        "revision" : "561ee73a16508868f2448caba1da2d72dbf662b2"
+        "revision" : "f0de589a010a65292670ffed63bef475e8b3af50"
       }
     },
     {

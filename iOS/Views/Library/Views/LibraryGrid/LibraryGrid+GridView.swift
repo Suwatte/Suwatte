@@ -54,6 +54,9 @@ extension LibraryView.LibraryGrid {
                     EmptyView()
                 })
             }
+//            .layout(customLayout: {
+//                DynamicGridLayout()
+//            })
             .layout(createCustomLayout: {
                 DynamicGridLayout()
             }, configureCustomLayout: { layout in

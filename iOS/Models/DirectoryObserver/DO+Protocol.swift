@@ -21,6 +21,7 @@ struct File: Identifiable, Hashable {
     let addedToDirectory: Date
     let size: Int64
     var pageCount: Int?
+    var metaData: Metadata?
     
     func sizeToString() -> String {
         ByteCountFormatter.string(fromByteCount: size, countStyle: .file)
@@ -28,6 +29,12 @@ struct File: Identifiable, Hashable {
     
     var dateRead: Date {
         DataManager.shared.getArchiveDateRead(id)
+    }
+    
+    struct Metadata: Hashable {
+        var number: Double?
+        var title: String?
+        var releaseYear: Int?
     }
 }
 
@@ -118,3 +125,17 @@ extension URL {
     }
 }
 
+
+
+extension STTHelpers {
+    func parseFileInfo(_ title: String) -> File.Metadata {
+        let groups = title.groups(for: "([\\w-\\s]+)\\s(\\d+)(?:\\s\\(of \\d+\\))?\\s\\((\\d{4})\\)(?:\\s\\([Dd]igital\\))?\\s\\(([\\w-s\\s]+)\\)")
+        let title = groups.get(index: 0)?.get(index: 1)
+        let chapter = Double(groups.get(index: 0)?.get(index: 2) ?? "1.0")
+        let yearStr = groups.get(index: 0)?.get(index: 3)
+        let year = yearStr.flatMap(Int.init)
+        
+        return .init(number: chapter, title: title, releaseYear: year)
+    }
+    
+}

@@ -11,9 +11,6 @@ import QuickLookThumbnailing
 class ThumbnailProvider: QLThumbnailProvider {
     
     override func provideThumbnail(for request: QLFileThumbnailRequest, _ handler: @escaping (QLThumbnailReply?, Error?) -> Void) {
-        Task { @MainActor in
-            print("DO", request.fileURL.lastPathComponent)
-        }
         let url = request.fileURL
         
         do {
@@ -27,7 +24,6 @@ class ThumbnailProvider: QLThumbnailProvider {
             let aspectWidth = min(maximumSize.width, maximumSize.height * aspectRatio)
             let aspectHeight = min(maximumSize.height, maximumSize.width / aspectRatio)
             let contextSize = CGSize(width: aspectWidth, height: aspectHeight)
-            print(contextSize)
             // Prepare Reply
             let reply = QLThumbnailReply(contextSize: contextSize) {
                 image.draw(in: CGRect(origin: .zero, size: contextSize))
@@ -41,7 +37,6 @@ class ThumbnailProvider: QLThumbnailProvider {
             
         } catch {
             Task { @MainActor in
-                print(error)
                 handler(nil, error)
             }
         }

@@ -18,8 +18,11 @@ struct DirectoryViewer: View {
     @State private var presentImportSheet = false
     @State private var presentSettingsSheet = false
     @State private var presentDownloadQueueSheet = false
+    @State private var isEditing = false
+
     @Preference(\.directoryViewSortKey) private var directorySortKey
     @Preference(\.directoryViewOrderKey) private var directoryOrderKey
+
     var title: String?
     var body: some View {
         Group {
@@ -28,9 +31,8 @@ struct DirectoryViewer: View {
                     EmptyDirectoryView
                         .transition(.opacity)
                 } else {
-                    
                     if model.query.isEmpty { // Not Searching
-                        CoreCollectionView(directory: directory)
+                        CoreCollectionView(directory: directory, isEditing: $isEditing)
                             .transition(.opacity)
                             .environmentObject(model)
                     } else if let results = model.searchResultsDirectory {
@@ -39,14 +41,13 @@ struct DirectoryViewer: View {
                                 .transition(.opacity)
 
                         } else {
-                            CoreCollectionView(directory: results)
+                            CoreCollectionView(directory: results, isEditing: Binding.constant(false) )
                                 .transition(.opacity)
                                 .environmentObject(model)
                         }
                     } else {
                         ProgressView() // Searching but results have not been populated
                             .transition(.opacity)
-
                     }
                 }
             } else {
@@ -96,53 +97,67 @@ struct DirectoryViewer: View {
                 ProgressView()
                     .opacity(model.working ? 1 : 0)
                 
-                Menu {
-                    Button {
-                        presentImportSheet.toggle()
-                    } label: {
-                        Label("Import Comics", systemImage: "plus")
-                    }
-                    Button {
-                        model.createDirectory()
-                    } label: {
-                        Label("New Folder", systemImage: "folder.badge.plus")
-                    }
-
-                    Text("Select")
-                    Divider()
-                    Picker("Sort Library", selection: $directorySortKey) {
-                        ForEach(DirectorySortOption.allCases, id: \.hashValue) { option in
-                            HStack {
-                                Text(option.description)
-                                Spacer()
-                            }
-                            .tag(option)
+                Group {
+                    if isEditing {
+                        Button("Done") {
+                            isEditing = false
                         }
-                    }
-                    .pickerStyle(.menu)
+                        .transition(.opacity)
+                    } else {
+                        Menu {
+                            Button {
+                                presentImportSheet.toggle()
+                            } label: {
+                                Label("Import Comics", systemImage: "plus")
+                            }
+                            Button {
+                                model.createDirectory()
+                            } label: {
+                                Label("New Folder", systemImage: "folder.badge.plus")
+                            }
 
-                    Picker("Order Library", selection: $directoryOrderKey) {
-                        Text("Ascending")
-                            .tag(false)
-                        Text("Descending")
-                            .tag(true)
+                            Button {
+                                isEditing = true
+                            } label: {
+                                Label("Select", systemImage: "checkmark.circle")
+                            }
+                            Divider()
+                            Picker("Sort Library", selection: $directorySortKey) {
+                                ForEach(DirectorySortOption.allCases, id: \.hashValue) { option in
+                                    HStack {
+                                        Text(option.description)
+                                        Spacer()
+                                    }
+                                    .tag(option)
+                                }
+                            }
+                            .pickerStyle(.menu)
+
+                            Picker("Order Library", selection: $directoryOrderKey) {
+                                Text("Ascending")
+                                    .tag(false)
+                                Text("Descending")
+                                    .tag(true)
+                            }
+                            .pickerStyle(.menu)
+                            Divider()
+                            Button {
+                                presentDownloadQueueSheet.toggle()
+                            } label: {
+                                Label("Download Queue", systemImage: "square.and.arrow.down")
+                            }
+                            Button {
+                                presentSettingsSheet.toggle()
+                            } label: {
+                                Label("Settings", systemImage: "gearshape")
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis.circle")
+                                .transition(.opacity)
+                        }
+                        
                     }
-                    .pickerStyle(.menu)
-                    Divider()
-                    Button {
-                        presentDownloadQueueSheet.toggle()
-                    } label: {
-                        Label("Download Queue", systemImage: "square.and.arrow.down")
-                    }
-                    Button {
-                        presentSettingsSheet.toggle()
-                    } label: {
-                        Label("Settings", systemImage: "gearshape")
-                    }
-                } label: {
-                    Image(systemName: "ellipsis.circle")
                 }
-
             }
         }
         .searchable(text: $model.query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Library")
@@ -153,6 +168,7 @@ struct DirectoryViewer: View {
         .sheet(isPresented: $presentDownloadQueueSheet) {
             DownloadQueueSheet()
         }
+        .animation(.default, value: isEditing)
     }
     
     var EmptyDirectoryView: some View {
