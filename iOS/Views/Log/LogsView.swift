@@ -28,6 +28,7 @@ struct LogsView: View {
                 Menu {
                     Button {
                         logger.clearSession()
+                        ToastManager.shared.info("Cleared Session Logs")
                     } label: {
                         Label("Clear Session Logs", systemImage: "xmark.bin")
                     }
@@ -42,6 +43,8 @@ struct LogsView: View {
                     }
                     Button {
                         logger.clearFile()
+                        ToastManager.shared.info("Log File Cleared")
+
                     } label: {
                         Label("Clear Log File", systemImage: "trash")
                     }
