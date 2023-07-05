@@ -22,8 +22,8 @@ extension StoredChapter: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         id = try container.decode(String.self, forKey: .id)
-//        sourceId = try container.decode(String.self, forKey: .sourceId)
-//        contentId = try container.decode(String.self, forKey: .contentId)
+        sourceId = try container.decode(String.self, forKey: .sourceId)
+        contentId = try container.decode(String.self, forKey: .contentId)
         chapterId = try container.decode(String.self, forKey: .chapterId)
         index = try (container.decodeIfPresent(Int.self, forKey: .sourceIndex) ?? container.decode(Int.self, forKey: .index))
         number = try container.decode(Double.self, forKey: .number)
@@ -40,8 +40,8 @@ extension StoredChapter: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         try container.encode(id, forKey: .id)
-//        try container.encode(sourceId, forKey: .sourceId)
-//        try container.encode(contentId, forKey: .contentId)
+        try container.encode(sourceId, forKey: .sourceId)
+        try container.encode(contentId, forKey: .contentId)
         try container.encode(chapterId, forKey: .chapterId)
 
         try container.encode(index, forKey: .index)

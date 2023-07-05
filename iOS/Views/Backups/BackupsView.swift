@@ -27,12 +27,7 @@ struct BackupsView: View {
                 Button {
                     selection = url
                 } label: {
-                    HStack {
-                        Text(url.deletingPathExtension().lastPathComponent.trimmingCharacters(in: .punctuationCharacters))
-                        Spacer()
-                        Image(systemName: "icloud")
-                            .opacity(url.pathExtension == "icloud" ? 0.7 : 0)
-                    }
+                    Text(url.deletingPathExtension().lastPathComponent.trimmingCharacters(in: .punctuationCharacters))
                 }
                 .buttonStyle(.plain)
                 .swipeActions {
@@ -41,12 +36,6 @@ struct BackupsView: View {
                     }
                 }
             }
-        }
-        .task {
-            manager.observeDirectory()
-        }
-        .onDisappear {
-            manager.stopObserving()
         }
         .confirmationDialog("Actions", isPresented: $presentActions) {
             Button("Export") {

@@ -44,13 +44,3 @@ extension LibraryEntry: Codable {
         try container.encode(linkedHasUpdates, forKey: .linkedHasUpdates)
     }
 }
-
-extension DataManager {
-    func BUResetLibraryEntries(_: [LibraryEntry]) {
-        let realm = try! Realm()
-
-        try! realm.safeWrite {
-            // Add new objects
-        }
-    }
-}

@@ -39,3 +39,5 @@ final class ChapterReference: Object, CKRecordConvertible, CKRecordRecoverable, 
     @Persisted var archive: ArchivedContent?
     @Persisted var isDeleted: Bool = false
 }
+
+

@@ -82,6 +82,7 @@ extension UpdateFeedView {
                 let realm = try! Realm()
                 let library = realm
                     .objects(LibraryEntry.self)
+                    .where { !$0.isDeleted }
                     .where { $0.content != nil }
                     .where { $0.updateCount > 0 }
                     .where { $0.lastUpdated >= date }

@@ -134,7 +134,7 @@ extension Target {
 
         @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
         @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
-        @StateObject var manager: LocalContentManager = .shared
+        @StateObject var manager: DirectoryViewer.DownloadManager = .shared
         @State var chapter: StoredChapter?
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
         var body: some View {
@@ -159,8 +159,6 @@ extension Target {
                     if let url = publication.acquisitionLink.flatMap({ URL(string: $0) }) {
                         if let download = manager.downloads.first(where: { $0.url == url }) {
                             TileOverlay(download: download)
-                        } else if LocalContentManager.shared.hasFile(fileName: url.lastPathComponent) {
-                            ColoredBadge(color: accentColor)
                         }
                     }
                 }
@@ -168,7 +166,7 @@ extension Target {
         }
 
         struct TileOverlay: View {
-            @ObservedObject var download: LocalContentManager.DownloadObject
+            @ObservedObject var download: DirectoryViewer.DownloadManager.DownloadObject
             var body: some View {
                 ZStack(alignment: .topTrailing) {
                     Group {
@@ -202,12 +200,20 @@ extension Target {
         @State var presentAlert = false
         @Binding var chapter: StoredChapter?
 
-        var request: URLRequest? {
+        var thumbnailRequest: URLRequest? {
             var headers = HTTPHeaders()
             if let auth = client.authHeader {
                 headers.add(name: "Authorization", value: auth)
             }
             return try? URLRequest(url: publication.thumbnailURL ?? "", method: HTTPMethod.get, headers: headers)
+        }
+        
+        var acquisitionRequest: URLRequest? {
+            var headers = HTTPHeaders()
+            if let auth = client.authHeader {
+                headers.add(name: "Authorization", value: auth)
+            }
+            return try? URLRequest(url: publication.acquisitionLink ?? "", method: HTTPMethod.get, headers: headers)
         }
 
         var body: some View {
@@ -232,7 +238,7 @@ extension Target {
                     .cornerRadius(5)
 
                     VStack(alignment: .leading, spacing: 1.5) {
-                        Text(STTHelpers.getComicTitle(from: publication.metadata.title))
+                        Text(publication.metadata.title)
                             .font(.footnote)
                             .fontWeight(.semibold)
                             .lineLimit(2)
@@ -255,7 +261,7 @@ extension Target {
                 }
             }
             .onAppear {
-                if let request = request {
+                if let request = thumbnailRequest {
                     image.transaction = .init(animation: .easeInOut(duration: 0.25))
                     image.load(.init(urlRequest: request))
                 }
@@ -279,22 +285,14 @@ extension Target {
                     }
 
                     if let link = publication.acquisitionLink.flatMap({ URL(string: $0) }) {
-                        if LocalContentManager.shared.hasFile(fileName: link.lastPathComponent) {
-                            Button("Read") {
-                                let path = LocalContentManager.shared.directory.appendingPathComponent(link.lastPathComponent)
-                                let book = LocalContentManager.shared.idHash.values.first(where: { $0.url == path })
-                                guard let book else {
-                                    ToastManager.shared.info("Book Not Found")
-                                    return
-                                }
-                                chapter = LocalContentManager.shared.generateStored(for: book)
+                        Button("Download") {
+                            
+                            guard let request = acquisitionRequest else {
+                                return
                             }
-                        } else {
-                            Button("Download") {
-                                let download = LocalContentManager.DownloadObject(url: link, title: publication.metadata.title, cover: publication.thumbnailURL ?? "")
-                                download.opdsClient = client
-                                LocalContentManager.shared.addToQueue(download)
-                            }
+                            let title = publication.metadata.title
+                            let download = DirectoryViewer.DownloadManager.DownloadObject.init(url: link, request: request, title: title, thumbnailReqeust: request)
+                            DirectoryViewer.DownloadManager.shared.addToQueue(download)
                         }
                     }
                     if publication.isStreamable && !publication.isProtected && !publication.isRestricted {
