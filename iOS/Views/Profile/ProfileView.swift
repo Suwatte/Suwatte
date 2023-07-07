@@ -10,22 +10,26 @@ import SwiftUI
 struct ProfileView: View {
     var entry: DaisukeEngine.Structs.Highlight
     var sourceId: String
-
-    @State var initialized = false
+    @State var source: Loadable<AnyContentSource> = .idle
+    
     var body: some View {
-        Group {
-            if let source = SourceManager.shared.getSource(id: sourceId) {
-                StateGate(viewModel: .init(entry, source))
-            } else {
-                NoMatchingIDView
-            }
-        }
+        LoadableView(loadSource, source, { value in
+            StateGate(viewModel: .init(entry, value))
+        })
         .navigationTitle(entry.title)
         .navigationBarTitleDisplayMode(.inline)
         .navigationViewStyle(.stack)
     }
-
-    var NoMatchingIDView: some View {
-        Text("No Source Matching Provided ID Found")
+    
+    func loadSource() {
+        self.source = .loading
+        do {
+            let runner = try SourceManager.shared.getContentSource(id: sourceId)
+            self.source = .loaded(runner)
+        } catch {
+            self.source = .failed(error)
+        }
     }
+
+
 }
