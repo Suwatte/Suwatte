@@ -51,6 +51,7 @@ struct STTImageView: View {
     }
 
     func load(_ size: CGSize) {
+        
         if loader.image != nil { return }
         loader.priority = .normal
         loader.transaction = .init(animation: .easeInOut(duration: 0.25))
@@ -60,11 +61,16 @@ struct STTImageView: View {
             loader.load(customThumbanailURL)
             return
         }
+        
+        
+        guard let url else { return }
+
+        
         Task {
             if identifier.sourceId == STTHelpers.OPDS_CONTENT_ID {
                 let pub = DataManager.shared.getPublication(id: identifier.contentId)
                 let value = pub?.client?.toClient().authHeader
-                guard let url, let value else {
+                guard let value else {
                     loader.load(url)
                     return
                 }
@@ -78,17 +84,15 @@ struct STTImageView: View {
                 }
             } else {
                 let source = SourceManager.shared.getSource(id: identifier.sourceId)
-
+                guard let source, source.intents.imageRequestHandler else {
+                    loader.load(url)
+                    return
+                }
+                
                 do {
-                    if let source = source as? any ModifiableSource, source.config.hasThumbnailInterceptor {
-                        let dskRequest = DSKCommon.Request(url: url?.absoluteString ?? "")
-                        let dskResponse = try await source.willRequestImage(request: dskRequest)
-                        let imageRequest = try ImageRequest(urlRequest: dskResponse.toURLRequest())
-                        loader.load(imageRequest)
-                        return
-                    } else {
-                        loader.load(url)
-                    }
+                    let response = try await source.willRequestImage(imageURL: url)
+                    let request = try ImageRequest(urlRequest: response.toURLRequest())
+                    loader.load(request)
                 } catch {
                     Logger.shared.error(error.localizedDescription)
                     loader.load(url)
@@ -154,16 +158,17 @@ struct BaseImageView: View {
             loader.load(url)
             return
         }
+        
+        guard let sourceId, let source = SourceManager.shared.getSource(id: sourceId), source.intents.imageRequestHandler else {
+            loader.load(url)
+            return
+        }
+        
         Task {
             do {
-                if let sourceId, let source = SourceManager.shared.getSource(id: sourceId) as? any ModifiableSource, source.config.hasThumbnailInterceptor {
-                    let dskRequest = DSKCommon.Request(url: url.absoluteString)
-                    let dskResponse = try await source.willRequestImage(request: dskRequest)
-                    let imageRequest = try ImageRequest(urlRequest: dskResponse.toURLRequest())
-                    loader.load(imageRequest)
-                } else {
-                    loader.load(url)
-                }
+                let response = try await source.willRequestImage(imageURL: url)
+                let request = try ImageRequest(urlRequest: response.toURLRequest())
+                loader.load(request)
             } catch {
                 Logger.shared.error(error.localizedDescription)
                 loader.load(url)

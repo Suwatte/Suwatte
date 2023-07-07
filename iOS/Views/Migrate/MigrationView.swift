@@ -220,7 +220,7 @@ extension MigrationView {
     }
 
     private func getAvailableSources() -> [AnyContentSource] {
-        return runners.filter { !preferredDestinations.map(\.id).contains($0.id) }.compactMap { try? SourceManager.shared.getContentSource(id: $0.id) }
+        return runners.filter { !preferredDestinations.map(\.id).contains($0.id) }.compactMap { SourceManager.shared.getSource(id: $0.id) }
     }
 
     private func move(from source: IndexSet, to destination: Int) {
@@ -421,7 +421,7 @@ extension MigrationView {
     }
 
     private func searchSource(query: String, chapter: Double?, source: AnyContentSource) async -> ReturnValue? {
-        let data = try? await source.getSearchResults(.init(query: query))
+        let data = try? await source.getDirectory(.init(query: query))
         let result = data?.results.first
 
         guard let result else { return nil }

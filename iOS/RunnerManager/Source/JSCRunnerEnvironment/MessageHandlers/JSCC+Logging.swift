@@ -8,8 +8,8 @@
 import Foundation
 import JavaScriptCore
 
-extension JSCC {
-    @objc class LogHandler: JSObject, JSCCHandlerProtocol {
+extension JSCHandler {
+    @objc class LogHandler: JSObject, JSCHandlerProtocol {
         func _post(_ message: JSValue) -> JSValue {
             let output = JSValue(nullIn: message.context)!
             let message = message.toDictionary() as? [String: String]
@@ -24,7 +24,7 @@ extension JSCC {
     }
 }
 
-extension JSCC.LogHandler {
+extension JSCHandler.LogHandler {
     func log(message: [String: String]) {
         guard let level = Logger.Level(rawValue: message["level"] ?? "LOG"), let msg = message["message"], let context = message["context"] else {
             Logger.shared.log("\(message)")

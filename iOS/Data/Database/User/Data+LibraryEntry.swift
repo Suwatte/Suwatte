@@ -47,7 +47,7 @@ extension DataManager {
             object.flag = flag
         }
 
-        guard let id = object.content?.contentId, let sourceId = object.content?.sourceId, let source = SourceManager.shared.getSource(id: sourceId) as? any SyncableSource else {
+        guard let id = object.content?.contentId, let sourceId = object.content?.sourceId, let source = SourceManager.shared.getSource(id: sourceId), source.intents.contentEventHandler else {
             return
         }
         Task {
@@ -72,13 +72,14 @@ extension DataManager {
                 target.flag = flag
             }
         }
+        
 
         let sourceIds = Set(targets.compactMap { $0.content?.sourceId })
         for id in sourceIds {
-            let source = SourceManager.shared.getSource(id: id) as? any SyncableSource
+            let source = try? SourceManager.shared.getSource(id: id)
 
-            guard let source else {
-                return
+            guard let source, source.intents.contentEventHandler else {
+                continue
             }
 
             let contentIds = targets
@@ -101,7 +102,7 @@ extension DataManager {
         let realm = try! Realm()
 
         let ids = content.ContentIdentifier
-        let source = SourceManager.shared.getSource(id: content.sourceId) as? any SyncableSource
+        let source = SourceManager.shared.getSource(id: content.sourceId)
         if let target = realm.objects(LibraryEntry.self).first(where: { $0.id == content.id }) {
             // Run Removal Event
             Task {
@@ -135,20 +136,17 @@ extension DataManager {
         let anilistId = content.trackerInfo["al"]
 
         // Run Addition Event
+        guard let source, source.intents.contentEventHandler else {
+            return true
+        }
+        
         Task {
             do {
-                try await source?.onContentsAddedToLibrary(ids: [ids.contentId])
+                try await source.onContentsAddedToLibrary(ids: [ids.contentId])
             } catch {
-                ToastManager.shared.info("Failed to Sync With Content Source")
+                ToastManager.shared.info("Failed to Sync With \(source.name)")
                 Logger.shared.error(error.localizedDescription)
             }
-        }
-
-        Task {
-            guard let indx = anilistId.map({ Int($0) }), let id = indx else {
-                return
-            }
-            let _ = try? await Anilist.shared.beginTracking(id: id)
         }
         return true
     }
@@ -210,12 +208,13 @@ extension DataManager {
         let grouped = Dictionary(grouping: ids, by: { $0.sourceId })
 
         for (key, value) in grouped {
-            let source = SourceManager.shared.getSource(id: key) as? any SyncableSource
+            let source = SourceManager.shared.getSource(id: key)
+            guard let source, source.intents.contentEventHandler else { continue }
             Task {
                 do {
-                    try await source?.onContentsRemovedFromLibrary(ids: value.map { $0.contentId })
+                    try await source.onContentsRemovedFromLibrary(ids: value.map { $0.contentId })
                 } catch {
-                    ToastManager.shared.info("Failed to Sync With Content Source")
+                    ToastManager.shared.info("Failed to Sync With \(source.name)")
                 }
             }
         }

@@ -1,58 +1,55 @@
 //
-//  WK+Store.swift
+//  JSCC+Store.swift
 //  Suwatte (iOS)
 //
-//  Created by Mantton on 2023-02-26.
+//  Created by Mantton on 2023-03-18.
 //
 
-import WebKit
+import Foundation
+import JavaScriptCore
 
-extension WKContentSource {
-    class StoreHandler: NSObject, WKScriptMessageHandlerWithReply {
-        internal let id: String
+@objc protocol JSCHandlerProtocol: JSExport, JSObjectProtocol {
+    @objc(post:)
+    func _post(_ message: JSValue) -> JSValue
+}
 
-        init(id: String) {
-            self.id = id
-        }
-
-        func userContentController(
-            _: WKUserContentController,
-            didReceive message: WKScriptMessage,
-            replyHandler: @escaping (Any?, String?) -> Void
-        ) {
-            let body = message.body
-            // Check JSON Validity
-            let isValidJSON = JSONSerialization.isValidJSONObject(body)
-            guard isValidJSON else {
-                replyHandler(nil, DSK.Errors.InvalidJSONObject.localizedDescription)
-                return
-            }
-            do {
-                let data = try JSONSerialization.data(withJSONObject: body)
-                let message = try JSONDecoder().decode(Message.self, from: data)
-                let value = try handle(message: message)
-                replyHandler(value, nil)
-            } catch {
-                replyHandler(nil, error.localizedDescription)
+struct JSCHandler {}
+extension JSCHandler {
+    @objc class StoreHandler: JSObject, JSCHandlerProtocol {
+        func _post(_ message: JSValue) -> JSValue {
+            .init(newPromiseIn: message.context) { resolve, reject in
+                let context = message.context
+                do {
+                    let message = try Message(value: message)
+                    let response = try self.handle(message: message)
+                    if let response {
+                        resolve?.call(withArguments: [response])
+                    } else {
+                        let jsNull = JSValue(nullIn: context)
+                        resolve?.call(withArguments: [jsNull as Any])
+                    }
+                } catch {
+                    reject?.call(withArguments: [error])
+                }
             }
         }
     }
 }
 
-private typealias H = WKContentSource.StoreHandler
+private typealias H = JSCHandler.StoreHandler
 
 extension H {
-    struct Message: Decodable {
+    struct Message: Parsable {
         var store: Store
         var action: Action
         var key: String
         var value: String?
 
-        enum Action: String, Decodable {
+        enum Action: String, Codable {
             case get, set, remove
         }
 
-        enum Store: String, Decodable {
+        enum Store: String, Codable {
             case os, ss
         }
     }
@@ -60,6 +57,7 @@ extension H {
 
 extension H {
     func handle(message: Message) throws -> String? {
+        let id = try getRunnerID()
         switch message.store {
         case .os: // ObjectStore
             switch message.action {

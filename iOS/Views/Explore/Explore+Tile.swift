@@ -259,20 +259,18 @@ extension ExploreView.HighlightTile {
         func load(url: URL?) async {
             guard let url else { return }
             let source = SourceManager.shared.getSource(id: sourceId)
-
-            do {
-                if let source = source as? any ModifiableSource, source.config.hasThumbnailInterceptor {
-                    let dskRequest = DSKCommon.Request(url: url.absoluteString)
-                    let dskResponse = try await source.willRequestImage(request: dskRequest)
-                    let imageRequest = try ImageRequest(urlRequest: dskResponse.toURLRequest())
-                    loader.load(imageRequest)
-                    return
-                }
-            } catch {
-                Logger.shared.error(error.localizedDescription)
+            
+            guard let source, source.intents.imageRequestHandler else {
+                loader.load(url)
+                return
             }
-
-            loader.load(url)
+            
+            guard let response = try? await source.willRequestImage(imageURL: url), let request = try? ImageRequest(urlRequest: response.toURLRequest()) else {
+                loader.load(url)
+                return
+            }
+            
+            loader.load(request)
         }
 
         func didAppear() {

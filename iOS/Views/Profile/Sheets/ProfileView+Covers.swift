@@ -49,14 +49,15 @@ extension ProfileView {
 
         func handleSaveEvent(for cover: String) async {
             let url = URL(string: cover)
-            guard let url, let source = try? SourceManager.shared.getContentSource(id: model.source.id) as? any ModifiableSource else {
+                
+            guard let url, let source = SourceManager.shared.getSource(id: model.source.id) else {
                 return
             }
 
             var request = URLRequest(url: url)
-            if source.config.hasThumbnailInterceptor {
+            if source.intents.imageRequestHandler {
                 do {
-                    let dskResponse = try await source.willRequestImage(request: request.toDaisukeNetworkRequest())
+                    let dskResponse = try await source.willRequestImage(imageURL: url)
                     request = try dskResponse.toURLRequest()
                 } catch {
                     Logger.shared.error("\(error)")

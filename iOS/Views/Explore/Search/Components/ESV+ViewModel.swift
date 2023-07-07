@@ -9,9 +9,9 @@ import Combine
 extension ExploreView.SearchView {
     final class ViewModel: ObservableObject {
         @Published var request: DaisukeEngine.Structs.SearchRequest
-        @Published var sorters = [DaisukeEngine.Structs.SortOption]()
         @Published var query = ""
         @Published var result = Loadable<[DaisukeEngine.Structs.Highlight]>.idle
+        @Published var config: DSKCommon.DirectoryConfig?
         @Published var resultCount: Int?
         @Published var presentFilters = false
         @Published var callFromHistory = false
@@ -34,22 +34,32 @@ extension ExploreView.SearchView {
                 }
             }
         }
+        
+        var sortOptions: [DSKCommon.SortOption] {
+            config?.sortOptions ?? []
+        }
+        
+        var filters: [DSKCommon.Filter] {
+            config?.filters ?? []
+        }
 
         @Published var paginationStatus = PaginationStatus.IDLE
 
         init(request: DaisukeEngine.Structs.SearchRequest = .init(), source: AnyContentSource) {
             self.request = request
             self.source = source
+            self.fetchConfig()
+            fetchConfig()
+        }
+        
+        func fetchConfig() {
             Task {
-                guard let res = try? await source.getSearchSortOptions() else {
-                    return
+                do {
+                    self.config = try await source.getDirectoryConfig()
+                } catch {
+                    Logger.shared.error(error)
+                    ToastManager.shared.error(error)
                 }
-                await MainActor.run(body: {
-                    sorters = res
-                    if !sorters.isEmpty, self.request.sort == nil {
-                        self.request.sort = sorters.first?.id
-                    }
-                })
             }
         }
 
@@ -57,7 +67,7 @@ extension ExploreView.SearchView {
             request = .init()
             request.page = 1
             request.query = nil
-            request.sort = sorters.first?.id
+            request.sort = config?.sortOptions?.first?.id
         }
 
         func makeRequest() async {
@@ -65,7 +75,7 @@ extension ExploreView.SearchView {
                 result = .loading
             })
             do {
-                let data = try await source.getSearchResults(request)
+                let data = try await source.getDirectory(request)
 
                 await MainActor.run(body: {
                     self.result = .loaded(data.results)
@@ -92,7 +102,7 @@ extension ExploreView.SearchView {
             })
 
             do {
-                let response = try await source.getSearchResults(request)
+                let response = try await source.getDirectory(request)
                 if response.results.isEmpty {
                     await MainActor.run(body: {
                         self.paginationStatus = .END

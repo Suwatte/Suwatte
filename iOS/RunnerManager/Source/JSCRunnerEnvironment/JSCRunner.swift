@@ -1,8 +1,8 @@
 //
-//  JSCContentSource.swift
+//  JSCRunner.swift
 //  Suwatte (iOS)
 //
-//  Created by Mantton on 2023-03-18.
+//  Created by Mantton on 2023-07-06.
 //
 
 import Foundation
@@ -20,50 +20,91 @@ protocol DaisukeInterface: Codable, Hashable, Identifiable {}
 
 class JSObject: NSObject, JSObjectProtocol {
     var this: JSManagedValue?
-
+    
     override init() {
         super.init()
     }
-
+    
     var setThisValue: (@convention(block) (JSValue) -> Void)? {
         return { [unowned self] (value: JSValue) in
             self.this = JSManagedValue(value: value)
         }
     }
-
+    
     func getRunnerID() throws -> String {
         guard let runner = this?.value.context.daisukeRunner() else {
             throw DaisukeEngine.Errors.RunnerNotFoundOnContainedObject
         }
-
+        
         guard let id = runner.forProperty("info")?.forProperty("id")?.toString() else {
             throw DaisukeEngine.Errors.UnableToFetchRunnerIDInContainedObject
         }
-
+        
         return id
     }
 }
 
-final class JSCContentSource: JSCContextProtocol {
-    var info: SourceInfo
-    var config: SourceConfig
-    var runnerClass: JSValue
+// MARK: - Runner Info Model
+protocol RunnerInfo: Parsable {
+    var id: String { get }
+    var name: String { get }
+    var version: Double { get }
+    var minSupportedAppVersion: String? { get }
+    var thumbnail: String? { get }
+}
 
-    required init(path: URL) throws {
-        runnerClass = try Self.build(for: path)
-        guard let dictionary = runnerClass.forProperty("info") else {
-            throw DSK.Errors.RunnerInfoInitFailed
-        }
-        info = try SourceInfo(value: dictionary)
-        config = info.config ?? .init()
+// MARK: - Runner Intents
+struct RunnerIntents: Parsable {
+    let preferenceMenuBuilder: Bool
+    let authenticatable: Bool
+    let authenticationMethod: AuthenticationMethod?
+    let basicAuthLabel: BasicAuthenticationUIIdentifier?
+    let chapterEventHandler: Bool
+    let contentEventHandler: Bool
+    let chapterSyncHandler: Bool
+    let librarySyncHandler: Bool
+    let imageRequestHandler: Bool
+    let explorePageHandler: Bool
+    let hasRecommendedTags: Bool
+    let hasFullTagList: Bool
+    let advancedTracker: Bool
+    let libraryTabProvider: Bool
+    let browseTabProvider: Bool
+    
+    enum AuthenticationMethod: String, Codable {
+        case webview, basic
+    }
+    enum BasicAuthenticationUIIdentifier: Int, Codable {
+      case EMAIL
+      case USERNAME
     }
 }
 
-typealias JSCC = JSCContentSource
+// MARK: - JSC Runner
+protocol JSCRunner: JSCContextProtocol {
+    var info:  RunnerInfo { get }
+    var intents: RunnerIntents { get }
+    
+    init(executablePath: URL) throws
 
+}
+
+extension JSCRunner {
+    var id: String {
+        info.id
+    }
+    
+    var name: String {
+        info.name
+    }
+    
+    var version: Double {
+        info.version
+    }
+}
 // MARK: - Paths
 
-private extension JSCC {
+extension JSCRunner {
     static var commonsPath: URL {
         FileManager
             .default
@@ -71,48 +112,20 @@ private extension JSCC {
             .appendingPathComponent("Runners", isDirectory: true)
             .appendingPathComponent("common.js")
     }
-
-    static var bridgePath: URL {
-        Bundle
-            .main
-            .url(forResource: "Bridge", withExtension: "js")!
-    }
-}
-
-extension JSCC {
-    static func build(for path: URL) throws -> JSValue {
-        // Generate New Context
-        let context = SourceManager.shared.newJSCContext()
-
-        // Evaluate Commons Script
-        var content = try String(contentsOf: Self.commonsPath, encoding: .utf8)
-        _ = context.evaluateScript(content)
-
-        // Inject Handlers
-        SourceManager.shared.add(class: JSCC.LogHandler.self, name: "LogHandler", context: context)
-        SourceManager.shared.add(class: JSCC.StoreHandler.self, name: "StoreHandler", context: context)
-        SourceManager.shared.add(class: JSCC.NetworkHandler.self, name: "NetworkHandler", context: context)
-
-        // Evalutate Runner Script
-        content = try String(contentsOf: path, encoding: .utf8)
-        _ = context.evaluateScript(content)
-
-        // Evaluate Bridge Script
-        content = try String(contentsOf: Self.bridgePath, encoding: .utf8)
-        _ = context.evaluateScript(content)
-
-        let runner = context.daisukeRunner()
-        guard let runner, runner.isObject else {
-            throw DSK.Errors.RunnerClassInitFailed
-        }
-
-        return runner
+    
+    
+    static var bridgeFiles: [URL] {
+        [
+            Bundle.main.url(forResource: "store", withExtension: "js")!,
+            Bundle.main.url(forResource: "log", withExtension: "js")!,
+            Bundle.main.url(forResource: "network", withExtension: "js")!,
+            Bundle.main.url(forResource: "bridge", withExtension: "js")!
+        ]
     }
 }
 
 // MARK: - JS Method Callers
-
-extension JSCContentSource {
+extension JSCRunner {
     func methodExists(method: String) -> Bool {
         runnerClass.hasProperty(method)
     }

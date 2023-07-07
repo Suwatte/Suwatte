@@ -209,17 +209,15 @@ extension CTR {
     }
 
     func loadTags() {
-        guard source.config.hasExplorePageTags else {
+        guard source.intents.hasRecommendedTags else {
             return
         }
         let task = Task {
             do {
-                let data = try await source.getExplorePageTags()
+                let data = try await source.getRecommendedTags()
                 errorCache.removeValue(forKey: TAG_SECTION_ID)
-                if let data {
-                    addTagSection()
-                    snapshot.appendItems(data.map { .init(section: TAG_SECTION_ID, content: $0) }, toSection: TAG_SECTION_ID)
-                }
+                addTagSection()
+                snapshot.appendItems(data.map { .init(section: TAG_SECTION_ID, content: $0) }, toSection: TAG_SECTION_ID)
             } catch {
                 addTagSection()
                 snapshot.appendItems([.init(section: TAG_SECTION_ID, content: Err(description: error.localizedDescription))], toSection: TAG_SECTION_ID)
@@ -472,7 +470,7 @@ extension CTR {
                         .fontWeight(.semibold)
                 }
                 Spacer()
-                if model.source.config.hasSourceTags {
+                if model.source.intents.hasFullTagList {
                     NavigationLink(destination: ExploreView.AllTagsView(source: model.source)) {
                         Text("View All")
                             .foregroundColor(color)

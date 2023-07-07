@@ -63,7 +63,7 @@ extension ExploreView.AllTagsView {
         properties = .loading
         Task {
             do {
-                let data = try await source.getSourceTags()
+                let data = try await source.getAllTags()
                 properties = .loaded(data)
             } catch {
                 properties = .failed(error)

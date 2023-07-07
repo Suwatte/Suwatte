@@ -284,7 +284,7 @@ extension DataManager {
     }
 
     func notifySourceOfMarkState(identifier: ContentIdentifier, chapters: [String], completed: Bool) {
-        guard let source = SourceManager.shared.getSource(id: identifier.sourceId) as? (any SyncableSource), source.config.canSyncWithSource else {
+        guard let source = SourceManager.shared.getSource(id: identifier.sourceId), source.intents.chapterEventHandler else {
             return
         }
 

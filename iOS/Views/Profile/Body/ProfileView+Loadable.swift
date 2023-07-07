@@ -60,7 +60,7 @@ extension ProfileView {
 
                          .toolbar {
                              ToolbarItemGroup(placement: .navigationBarTrailing) {
-                                 if viewModel.source.config.canSyncWithSource {
+                                 if viewModel.source.intents.chapterSyncHandler {
                                      SyncView()
                                          .transition(.opacity)
                                  }

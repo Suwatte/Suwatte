@@ -10,7 +10,7 @@ import SwiftUI
 import UIKit
 
 struct ExploreView: View {
-    @State var loadable = Loadable<AnyContentSource>.idle
+    @State var loadable = Loadable<JSCContentSource>.idle
     var id: String
     var name: String
     var body: some View {
@@ -35,8 +35,9 @@ extension ExploreView {
     struct SourceView: View {
         @StateObject var model: ViewModel
         @Preference(\.useDirectory) var useDirectory
+        
         var hasExplorePage: Bool {
-            model.source.config.hasExplorePage
+            model.source.intents.explorePageHandler
         }
 
         var body: some View {

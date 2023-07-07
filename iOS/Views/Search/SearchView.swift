@@ -283,7 +283,7 @@ extension SearchView {
                 Task { @MainActor in
                     do {
                         let controller = try SourceManager.shared.getContentSource(id: source.id)
-                        let data = try await controller.getSearchResults(request)
+                        let data = try await controller.getDirectory(request)
                         results[source.id] = .loaded(data)
                     } catch {
                         results[source.id] = .failed(error)
@@ -300,7 +300,7 @@ extension SearchView {
                 do {
                     let request = DSKCommon.SearchRequest(query: query)
                     let controller = try SourceManager.shared.getContentSource(id: source.id)
-                    let data = try await controller.getSearchResults(request)
+                    let data = try await controller.getDirectory(request)
                     results[source.id] = .loaded(data)
                 } catch {
                     results[source.id] = .failed(error)

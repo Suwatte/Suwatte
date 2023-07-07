@@ -14,7 +14,7 @@ struct ProfileView: View {
     @State var initialized = false
     var body: some View {
         Group {
-            if let source = try? SourceManager.shared.getContentSource(id: sourceId) {
+            if let source = SourceManager.shared.getSource(id: sourceId) {
                 StateGate(viewModel: .init(entry, source))
             } else {
                 NoMatchingIDView

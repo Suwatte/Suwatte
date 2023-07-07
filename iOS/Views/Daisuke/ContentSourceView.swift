@@ -21,11 +21,11 @@ struct ContentSourceView: View {
             HeaderSection
             InfoSection
 
-            if let method = source.config.authenticationMethod {
+            if source.intents.authenticatable, let method = source.intents.authenticationMethod {
                 AuthSection(method: method)
             }
 
-            if source.config.hasPreferences {
+            if source.intents.preferenceMenuBuilder {
                 Section {
                     NavigationLink("Preferences") {
                         PreferencesView(source: source)
@@ -84,10 +84,10 @@ struct ContentSourceView: View {
 
     var InfoSection: some View {
         Section {
-            if source.info.supportedLanguages.count > 1 {
+            if source.sourceInfo.supportedLanguages.count > 1 {
                 NavigationLink {
                     List {
-                        ForEach(source.info.supportedLanguages.sorted(by: { Locale.current.localizedString(forIdentifier: $0) ?? "" < Locale.current.localizedString(forIdentifier: $1) ?? "" })) {
+                        ForEach(source.sourceInfo.supportedLanguages.sorted(by: { Locale.current.localizedString(forIdentifier: $0) ?? "" < Locale.current.localizedString(forIdentifier: $1) ?? "" })) {
                             LanguageCellView(language: $0)
                         }
                     }
@@ -99,12 +99,12 @@ struct ContentSourceView: View {
                 HStack {
                     Text("Supported Language")
                     Spacer()
-                    LanguageCellView(language: source.info.supportedLanguages.first ?? "Unknown")
+                    LanguageCellView(language: source.sourceInfo.supportedLanguages.first ?? "Unknown")
                         .foregroundColor(.gray)
                 }
             }
 
-            Link(destination: URL(string: source.info.website) ?? STTHost.notFound) {
+            Link(destination: URL(string: source.sourceInfo.website) ?? STTHost.notFound) {
                 HStack {
                     Text("Visit Website")
                     Spacer()

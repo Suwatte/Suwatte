@@ -14,14 +14,14 @@ import WebKit
 extension ContentSourceView {
     struct AuthSection: View {
         @EnvironmentObject var model: ContentSourceView.ViewModel
-        var method: DSKCommon.AuthMethod
+        var method: RunnerIntents.AuthenticationMethod
         @State var presentBasicAuthSheet = false
         @State var presentWebViewSignIn = false
         @State var presentWebViewSignOut = false
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
-        var source: any AuthSource {
-            model.source as! any AuthSource
+        var source: JSCContentSource {
+            model.source
         }
 
         var body: some View {
@@ -30,7 +30,7 @@ extension ContentSourceView {
             }
             .sheet(isPresented: $presentBasicAuthSheet, onDismiss: model.loadUser) {
                 NavigationView {
-                    SignInSheet(usesEmail: method == .email_pw, source: source)
+                    SignInSheet(usesEmail: source.intents.basicAuthLabel == .EMAIL, source: source)
                         .navigationTitle("Sign In")
                         .closeButton()
                         .tint(accentColor)
@@ -80,11 +80,10 @@ extension ContentSourceView {
             Section {
                 Button {
                     switch method {
-                    case .email_pw, .username_pw:
+                    case .basic:
                         presentBasicAuthSheet.toggle()
-                    case .oauth:
                         break
-                    case .web:
+                    case .webview:
                         presentWebViewSignIn.toggle()
                     }
                 } label: {
@@ -111,7 +110,7 @@ extension ContentSourceView {
             user = .loading
             Task {
                 do {
-                    let data = try await(source as! any AuthSource).getAuthenticatedUser()
+                    let data = try await source.getAuthenticatedUser()
                     await MainActor.run {
                         self.user = .loaded(data)
                     }
@@ -133,7 +132,7 @@ extension ContentSourceView {
         @State var password: String = ""
         @State var loginStatus: Loadable<Bool> = .idle
         @Environment(\.presentationMode) var presentationMode
-        var source: any AuthSource
+        var source: AnyContentSource
 
         var body: some View {
             VStack {
@@ -286,15 +285,15 @@ extension ContentSourceView {
                 Button("Sign Out", role: .destructive) {
                     Task {
                         do {
-                            guard let authMethod = source.config.authenticationMethod else {
+                            guard let authMethod = source.intents.authenticationMethod else {
                                 return
                             }
                             switch authMethod {
-                            case .username_pw, .email_pw, .oauth:
-                                try await(source as? any AuthSource)?.handleUserSignOut()
+                            case .basic:
+                                try await source.handleUserSignOut()
                                 model.loadUser()
 
-                            case .web:
+                            case .webview:
                                 presentWebView.toggle()
                             }
                         } catch {
@@ -305,7 +304,7 @@ extension ContentSourceView {
                 }
             }
 
-            if source.config.canSyncWithSource {
+            if source.intents.librarySyncHandler {
                 Section {
                     Button {
                         presentShouldSync.toggle()
@@ -341,8 +340,8 @@ extension ContentSourceView {
             await MainActor.run(body: {
                 ToastManager.shared.loading.toggle()
             })
-            guard let source = source as? any SyncableSource else {
-                throw DSK.Errors.NamedError(name: "Daisuke", message: "Source Cannot Sync")
+            guard source.intents.librarySyncHandler else {
+                return
             }
             let library = DataManager.shared.getUpSync(for: source.id)
             let downSynced = try await source.syncUserLibrary(library: library)
@@ -357,7 +356,7 @@ extension ContentSourceView {
 // MARK: WebView
 
 struct WebAuthWebView: UIViewControllerRepresentable {
-    var source: any AuthSource
+    var source: JSCContentSource
     var isSignIn: Bool = true
     func makeUIViewController(context _: Context) -> some Controller {
         let view = Controller()
@@ -373,7 +372,7 @@ extension WebAuthWebView {
     class Controller: UIViewController, WKUIDelegate {
         var webView: WKWebView!
         var isSignIn: Bool!
-        var source: (any AuthSource)!
+        var source: JSCContentSource!
 
         override func viewDidLoad() {
             super.viewDidLoad()

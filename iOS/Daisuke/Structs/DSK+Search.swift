@@ -30,6 +30,11 @@ extension DaisukeEngine.Structs {
         var isLastPage: Bool
         var totalResultCount: Int?
     }
+    
+    struct DirectoryConfig: Parsable, Hashable, Codable {
+        var filters: [Filter]?
+        var sortOptions: [SortOption]?
+    }
 
     struct Filter: Parsable, Identifiable, Hashable {
         var id: String

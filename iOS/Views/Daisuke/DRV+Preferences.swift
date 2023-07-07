@@ -36,7 +36,7 @@ extension ContentSourceView {
                 loadable = .loading
             })
             do {
-                let data = try await source.getSourcePreferences()
+                let data = try await source.buildPreferenceMenu()
                 await MainActor.run(body: {
                     loadable = .loaded(data)
                 })

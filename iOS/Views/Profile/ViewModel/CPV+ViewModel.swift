@@ -22,17 +22,17 @@ extension ProfileView {
     final class ViewModel: ObservableObject {
         @Published var entry: DaisukeEngine.Structs.Highlight
         var source: AnyContentSource
-
+        
         @Published var content: DSKCommon.Content = .placeholder
         @Published var loadableContent: Loadable<Bool> = .idle
         var storedContent: StoredContent {
             try! content.toStoredContent(withSource: source.id)
         }
-
+        
         @Published var chapters: Loadable<[StoredChapter]> = .idle
         @Published var working = false
         @Published var linkedHasUpdate = false
-
+        
         @Published var presentCollectionsSheet = false
         @Published var presentTrackersSheet = false
         @Published var presentSafariView = false
@@ -46,38 +46,38 @@ extension ProfileView {
         @Published var threadSafeChapters: [DSKCommon.Chapter]?
         // Tokens
         var currentMarkerToken: NotificationToken?
-
+        
         // Download Tracking Variables
         var downloadTrackingToken: NotificationToken?
         @Published var downloads: [String: ICDMDownloadObject] = [:]
         // Chapter Marking Variables
         var progressToken: NotificationToken?
         @Published var readChapters = Set<Double>()
-
+        
         // Library Tracking Token
         var libraryTrackingToken: NotificationToken?
         var readLaterToken: NotificationToken?
         @Published var savedForLater: Bool = false
         @Published var inLibrary: Bool = false
-
+        
         // ReadLater Tracking Token
         var syncTask: Task<Void, Error>?
-
+        
         // Anilist ID
         lazy var anilistId: Int? = STTHelpers.getAnilistID(id: sttIdentifier().id)
-
+        
         init(_ entry: DaisukeEngine.Structs.Highlight, _ source: AnyContentSource) {
             self.entry = entry
             self.source = source
         }
-
+        
         @Published var selection: String?
         // De Init
         deinit {
             disconnect()
             removeNotifier()
         }
-
+        
         func disconnect() {
             currentMarkerToken?.invalidate()
             progressToken?.invalidate()
@@ -91,12 +91,12 @@ extension ProfileView {
 extension ProfileView.ViewModel {
     func setupObservers() {
         let realm = try! Realm()
-
+        
         // Get Read Chapters
         let _r1 = realm
             .objects(ProgressMarker.self)
             .where { $0.id == contentIdentifier && $0.isDeleted == false }
-
+        
         progressToken = _r1.observe { [weak self] _ in
             let target = _r1.first
             guard let target else {
@@ -106,52 +106,52 @@ extension ProfileView.ViewModel {
             self?.readChapters = Set(target.readChapters)
             self?.calculateActionState(target.freeze())
         }
-
+        
         // Get Download
         let _r2 = realm
             .objects(ICDMDownloadObject.self)
             .where { $0.chapter.contentId == entry.contentId }
             .where { $0.chapter.sourceId == source.id }
-
+        
         downloadTrackingToken = _r2.observe { [weak self] _ in
             self?.downloads = Dictionary(uniqueKeysWithValues: _r2.map { ($0._id, $0) })
         }
-
+        
         // Get Library
         let id = sttIdentifier().id
-
+        
         let _r3 = realm
             .objects(LibraryEntry.self)
             .where { $0.id == id }
-
+        
         libraryTrackingToken = _r3.observe { [weak self] _ in
             self?.inLibrary = !_r3.isEmpty
         }
-
+        
         // Read Later
         let _r4 = realm
             .objects(ReadLater.self)
             .where { $0.id == id }
             .where { $0.isDeleted == false }
-
+        
         readLaterToken = _r4.observe { [weak self] _ in
             self?.savedForLater = !_r4.isEmpty
         }
     }
-
+    
     func removeNotifier() {
         currentMarkerToken?.invalidate()
         currentMarkerToken = nil
-
+        
         progressToken?.invalidate()
         progressToken = nil
-
+        
         downloadTrackingToken?.invalidate()
         downloadTrackingToken = nil
-
+        
         libraryTrackingToken?.invalidate()
         libraryTrackingToken = nil
-
+        
         readLaterToken?.invalidate()
         readLaterToken = nil
     }
@@ -169,12 +169,12 @@ extension ProfileView.ViewModel {
             }
             try Task.checkCancellation()
             try await Task.sleep(seconds: 0.1)
-
+            
             // Load Chapters
             Task.detached { [weak self] in
                 await self?.loadChapters(parsed.chapters)
             }
-
+            
             // Save to Realm
             Task.detached { [weak self] in
                 if let source = self?.source, let stored = try? parsed.toStoredContent(withSource: source.id) {
@@ -185,7 +185,7 @@ extension ProfileView.ViewModel {
             Task.detached { [weak self] in
                 await self?.loadChapters()
             }
-
+            
             Task { @MainActor [weak self] in
                 if self?.loadableContent.LOADED ?? false {
                     ToastManager.shared.error("Failed to Update Profile")
@@ -197,7 +197,7 @@ extension ProfileView.ViewModel {
             }
         }
     }
-
+    
     func loadChapters(_ parsedChapters: [DSKCommon.Chapter]? = nil) async {
         await MainActor.run { [weak self] in
             self?.working = true
@@ -256,20 +256,20 @@ extension ProfileView.ViewModel {
             }
         }
     }
-
+    
     var contentIdentifier: String {
         sttIdentifier().id
     }
-
+    
     func didLoadChapters() async {
         let id = sttIdentifier()
-
+        
         Task.detached {
             let obj = DataManager
                 .shared
                 .getContentMarker(for: id.id)?
                 .freeze()
-
+            
             Task { @MainActor [weak self] in
                 self?.calculateActionState(obj)
             }
@@ -286,7 +286,7 @@ extension ProfileView.ViewModel {
             await self?.checkLinkedForUpdates()
         }
     }
-
+    
     func setChaptersFromDB() {
         let realm = try! Realm()
         let storedChapters = realm
@@ -296,38 +296,38 @@ extension ProfileView.ViewModel {
             .sorted(by: \.index, ascending: true)
             .map { $0.freeze() } as [StoredChapter]
         if storedChapters.isEmpty { return }
-
+        
         Task { @MainActor in
             chapters = .loaded(storedChapters)
         }
-
+        
         let id = sttIdentifier()
-
+        
         Task.detached {
             let obj = DataManager
                 .shared
                 .getContentMarker(for: id.id)?
                 .freeze()
-
+            
             Task { @MainActor [weak self] in
                 self?.calculateActionState(obj)
             }
         }
     }
-
+    
     func calculateActionState(_ marker: ProgressMarker?) {
         guard let chapters = chapters.value else {
             actionState = .init(state: .none)
             return
         }
-
+        
         guard content.contentId == entry.contentId else {
             return
         }
-
+        
         guard let marker, let chapterRef = marker.currentChapter else {
             // Marker DNE, user has not started reading
-
+            
             if let chapter = chapters.last {
                 // Chapter not found in chapter list, return first chapter
                 actionState = .init(state: .start, chapter: .init(name: chapter.chapterName, id: chapter.id), marker: nil)
@@ -336,11 +336,11 @@ extension ProfileView.ViewModel {
             actionState = .init(state: .none)
             return
         }
-
+        
         let info = ActionState.ChapterInfo(name: chapterRef.chapterName, id: chapterRef.id)
-
+        
         if !marker.isCompleted {
-//            // Marker Exists, Chapter has not been completed, resume
+            //            // Marker Exists, Chapter has not been completed, resume
             actionState = .init(state: .resume, chapter: info, marker: .init(progress: marker.progress ?? 0.0, date: marker.dateRead))
             return
         }
@@ -365,22 +365,22 @@ extension ProfileView.ViewModel {
             actionState = .init(state: .reRead, chapter: info, marker: nil)
             return
         }
-
+        
         // index not 0, decrement, sourceIndex moves inverted
         index -= 1
         let next = chapters.get(index: index)
         actionState = .init(state: .upNext, chapter: next.flatMap { .init(name: $0.chapterName, id: $0.id) }, marker: nil)
     }
-
+    
     func loadContentFromDatabase() async {
         await MainActor.run(body: {
             withAnimation {
                 self.loadableContent = .loading
             }
         })
-
+        
         let target = DataManager.shared.getStoredContent(source.id, entry.id)
-
+        
         if let target = target {
             do {
                 let c = try target.toDSKContent()
@@ -388,10 +388,10 @@ extension ProfileView.ViewModel {
                     content = c
                     loadableContent = .loaded(true)
                 })
-
+                
             } catch {}
         }
-
+        
         if StateManager.shared.NetworkStateHigh || target == nil { // Connected To Network OR The Content is not saved thus has to be fetched regardless
             Task {
                 await loadContentFromNetwork()
@@ -400,7 +400,7 @@ extension ProfileView.ViewModel {
             setChaptersFromDB()
         }
     }
-
+    
     func sttIdentifier() -> ContentIdentifier {
         .init(contentId: entry.id, sourceId: source.id)
     }
@@ -410,7 +410,7 @@ extension ProfileView.ViewModel {
     enum SyncState: Hashable {
         case idle, syncing, failure, done
     }
-
+    
     func handleSync() async {
         do {
             try await handleReadMarkers()
@@ -422,93 +422,102 @@ extension ProfileView.ViewModel {
             })
         }
     }
-
+    
     func handleAnilistSync() async throws {
         guard let chapters = threadSafeChapters else {
             return
         }
-
+        
         var id: Int?
-
+        
         if let idStr = content.trackerInfo?["al"], let x = Int(idStr) {
             id = x
         } else {
             id = STTHelpers.getAnilistID(id: sttIdentifier().id)
         }
-
+        
         guard let id = id else { return }
-
+        
         let entry = try await Anilist.shared.getProfile(id).mediaListEntry
-
+        
         guard let entry else { return }
         let progress = entry.progress
         let targets = chapters.filter { $0.number <= Double(progress) }.map(\.number)
-
+        
         DataManager.shared.markChaptersByNumber(for: sttIdentifier(), chapters: Set(targets))
         let highestMarkedChapter = DataManager.shared.getContentMarker(for: contentIdentifier)?.maxReadChapter
-
+        
         guard let highestMarkedChapter, Double(progress) < highestMarkedChapter else {
             return
         }
-
+        
         do {
             let _ = try await Anilist.shared.updateMediaListEntry(mediaId: id, data: ["progress": highestMarkedChapter])
         } catch {
             Logger.shared.error("[ProfileView] [Anilist] \(error.localizedDescription)")
         }
     }
-
+    
     private func handleReadMarkers() async throws {
-        guard let source = source as? JSCC else { return }
         // Check if Syncable
-        if !source.config.canSyncWithSource { return }
+        guard source.intents.chapterSyncHandler else {
+            return
+        }
         let user = try? await source.getAuthenticatedUser()
-
+        
         guard let _ = user else { return }
         guard let chapters = threadSafeChapters else { return }
-
+        
         // Set State as Syncing
         await MainActor.run(body: {
             withAnimation {
                 syncState = .syncing
             }
         })
-
+        
+        defer {
+            Task {
+                await MainActor.run(body: {
+                    syncState = .done
+                })
+            }
+        }
+        
         // Get Read Chapters on Source
         let readChapterIds = try Set(await source.getReadChapterMarkers(contentId: entry.id))
-
+        
         // Get Chapter Numbers of Read Chapters
         let targets = chapters
             .filter { readChapterIds.contains($0.chapterId) }
             .map(\.number)
-
-//        // Mark Chapters As Read
+        
+        // Mark Chapters As Read
         DataManager.shared.markChaptersByNumber(for: sttIdentifier(), chapters: Set(targets))
-
-//        // Get Chapters that are out of sync
+        
+        guard source.intents.chapterEventHandler else {
+            return
+        }
+        // Get Chapters that are out of sync
         let markers = getOutOfSyncMarkers(with: Array(readChapterIds))
-
-//        // Sync to Source
+        // Sync to Source
         try? await source.onChaptersMarked(contentId: entry.id, chapterIds: markers, completed: true)
-        await MainActor.run(body: {
-            syncState = .done
-        })
+        
     }
-
+    
     // Gets ID's of chapters that are completed but have not been syned to the source.
     private func getOutOfSyncMarkers(with _: [String]) -> [String] {
         guard let threadSafeChapters else {
             return []
         }
         let marker = DataManager.shared.getContentMarker(for: contentIdentifier)?.readChapters
-
+        
         guard let marker else {
             return []
         }
         let marked = Set(marker)
-
+        
         let results = threadSafeChapters.filter { !marked.contains($0.number) }.map(\.chapterId)
-
+        
         return results
     }
 }
@@ -518,21 +527,21 @@ extension ProfileView.ViewModel {
         var state: ProgressState
         var chapter: ChapterInfo?
         var marker: Marker?
-
+        
         struct ChapterInfo: Hashable {
             var name: String
             var id: String
         }
-
+        
         struct Marker: Hashable {
             var progress: Double
             var date: Date?
         }
     }
-
+    
     enum ProgressState: Int, Hashable {
         case none, start, resume, bad_path, reRead, upNext, restart
-
+        
         var description: String {
             switch self {
             case .none:
@@ -561,28 +570,28 @@ extension ProfileView.ViewModel {
         let linked = DataManager.shared.getLinkedContent(for: sttIdentifier().id)
         let identifiers: [HighlightIndentier] = linked.map(({ ($0.sourceId, $0.toHighlight()) }))
         let lastChapter = threadSafeChapters?.first
-
+        
         guard let lastChapter, !linked.isEmpty else {
             return
         }
-
+        
         let updates = await withTaskGroup(of: (Bool, HighlightIndentier).self, returning: [HighlightIndentier].self, body: { group -> [HighlightIndentier] in
             for entry in identifiers {
-                guard let src = try? SourceManager.shared.getContentSource(id: entry.sourceId) else {
+                guard let src = SourceManager.shared.getSource(id: entry.sourceId) else {
                     continue
                 }
-
+                
                 group.addTask {
                     let chapters = try? await src.getContentChapters(contentId: entry.entry.contentId)
                     guard let target = chapters?.first else {
                         return (false, entry)
                     }
-
+                    
                     let hasChapterOfHigherNumber = target.number > lastChapter.number
                     return (hasChapterOfHigherNumber, entry)
                 }
             }
-
+            
             var matches: [HighlightIndentier] = []
             for await result in group {
                 if result.0 {
@@ -591,7 +600,7 @@ extension ProfileView.ViewModel {
             }
             return matches
         })
-
+        
         Task { @MainActor in
             self.linkedUpdates = updates
         }

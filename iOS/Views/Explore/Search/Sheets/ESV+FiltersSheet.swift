@@ -11,26 +11,12 @@ extension ExploreView.SearchView {
     struct FilterSheet: View {
         @EnvironmentObject var model: ExploreView.SearchView.ViewModel
         typealias Filter = DaisukeEngine.Structs.Filter
-        @State var filters: Loadable<[Filter]> = .idle
+        var filters = [DSKCommon.Filter]()
         @State var populated: [DSKCommon.PopulatedFilter]?
         @State var query = ""
         var body: some View {
             NavigationView {
-                LoadableView(loadable: filters, {
-                    ProgressView().task {
-                        await loadFilters()
-                    }
-                }, {
-                    ProgressView()
-                }, { error in
-                    ErrorView(error: error) {
-                        Task {
-                            await loadFilters()
-                        }
-                    }
-                }, { value in
-                    LoadedFiltersView(filters: value, populated: $populated, query: $query)
-                })
+                LoadedFiltersView(filters: filters, populated: $populated, query: $query)
                 .animation(.default, value: query)
                 .navigationTitle("Filters")
                 .navigationBarTitleDisplayMode(.inline)
@@ -44,7 +30,7 @@ extension ExploreView.SearchView {
                     ToolbarItemGroup(placement: .bottomBar) {
                         Button("Reset") {
                             model.request = .init(page: 1)
-                            model.request.sort = model.sorters.first?.id
+                            model.request.sort = model.config?.sortOptions?.first?.id
                             model.presentFilters.toggle()
                         }
 
@@ -63,15 +49,6 @@ extension ExploreView.SearchView {
             }
         }
 
-        func loadFilters() async {
-            do {
-                let response = try await model.source.getSearchFilters()
-                filters = .loaded(response)
-            } catch {
-                filters = .failed(error)
-            }
-        }
-
         func didSubmitSearch() {
             do {
                 try DataManager.shared.saveSearch(model.request, sourceId: model.source.id, display: prepareSearch())
@@ -84,9 +61,7 @@ extension ExploreView.SearchView {
 
         func prepareSearch() -> String {
             var texts: [String] = []
-            guard let filters = filters.value else {
-                return ""
-            }
+            
 
             for populated in model.request.filters ?? [] {
                 // Get Filter

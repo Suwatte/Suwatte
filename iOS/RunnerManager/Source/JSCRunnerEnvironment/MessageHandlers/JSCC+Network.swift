@@ -9,8 +9,8 @@ import Alamofire
 import Foundation
 import JavaScriptCore
 
-extension JSCC {
-    @objc class NetworkHandler: JSObject, JSCCHandlerProtocol {
+extension JSCHandler {
+    @objc class NetworkHandler: JSObject, JSCHandlerProtocol {
         lazy var session: Alamofire.Session = {
             let configuration = URLSessionConfiguration.af.default
             configuration.headers.add(.userAgent(Preferences.standard.userAgent))
@@ -34,7 +34,7 @@ extension JSCC {
     }
 }
 
-private typealias H = JSCC.NetworkHandler
+private typealias H = JSCHandler.NetworkHandler
 
 extension H {
     typealias Message = DSKCommon.Request

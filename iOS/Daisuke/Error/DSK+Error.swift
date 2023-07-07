@@ -13,6 +13,9 @@ extension DaisukeEngine {
         case MethodNotImplemented // PlaceHolder Error
         case RunnerClassInitFailed
         case RunnerInfoInitFailed
+        case FailedToParseRunnerIntents
+        case FailedToParseRunnerConfig
+
         case RunnerNotFoundOnContainedObject
         case UnableToFetchRunnerIDInContainedObject
 
@@ -57,6 +60,8 @@ extension DaisukeEngine.Errors: LocalizedError {
         case .RunnerInfoInitFailed: return .init("Runner Class Info Object Could Not Be Parsed")
         case .RunnerNotFoundOnContainedObject: return .init("Runner Class Not Found in Contained context")
         case .UnableToFetchRunnerIDInContainedObject: return .init("Unable to Fetch Runner Class ID in contained context")
+        case .FailedToParseRunnerIntents: return .init("Failed to Parse Runner Intents")
+        case .FailedToParseRunnerConfig: return .init("Failed to Parse Runner Config")
 
         case .ValueStoreErrorValueNotFound: return .init("[Value Store] NF")
         case .ValueStoreErrorKeyIsNotString: return .init("[Value Store] Key is not String")

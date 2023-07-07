@@ -45,11 +45,8 @@ extension ExploreView.SearchView {
                 }
                 .cacheCells()
                 .sectionHeader {
-                    Group {
-                        if model.resultCount != nil || !model.sorters.isEmpty {
-                            Header
-                        } else { EmptyView() }
-                    }
+                    GridHeader(sortOptions: model.sortOptions, resultCount: model.resultCount)
+
                 }
                 .sectionFooter {
                     PaginationView
@@ -68,20 +65,7 @@ extension ExploreView.SearchView {
             .onChange(of: style, perform: { _ in })
             .onChange(of: PortraitPerRow, perform: { _ in })
             .onChange(of: LSPerRow, perform: { _ in })
-            .confirmationDialog("Sort", isPresented: $presentSortDialog) {
-                ForEach(model.sorters) { sorter in
-                    Button(sorter.label) {
-                        withAnimation {
-                            model.request.sort = sorter.id
-                            model.request.page = 1
-                            Task {
-                                await model.makeRequest()
-                            }
-                        }
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
+            
         }
     }
 }
@@ -116,36 +100,64 @@ extension ExploreView.SearchView.ResultsView {
 }
 
 extension ExploreView.SearchView.ResultsView {
+    
+    struct GridHeader: View {
+        @EnvironmentObject var model: ExploreView.SearchView.ViewModel
+
+        var sortOptions: [DSKCommon.SortOption]
+        var resultCount: Int?
+        
+        @State var dialog = false
+        
+        var body: some View {
+            HStack {
+                if let resultCount = resultCount {
+                    Text("\(resultCount) Results")
+                }
+                Spacer()
+                if !sortOptions.isEmpty {
+                    Button {
+                        dialog.toggle()
+                    } label: {
+                        HStack {
+                            Text(title)
+                            Image(systemName: "chevron.down")
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .multilineTextAlignment(.trailing)
+                }
+            }
+            .font(.subheadline.weight(.light))
+            .foregroundColor(Color.primary.opacity(0.7))
+            .confirmationDialog("Sort", isPresented: $dialog) {
+                ForEach(sortOptions) { sorter in
+                    Button(sorter.label) {
+                        withAnimation {
+                            model.request.sort = sorter.id
+                            model.request.page = 1
+                            Task {
+                                await model.makeRequest()
+                            }
+                        }
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        
+        var title: String {
+            ""
+        }
+    }
     var SORT_TITLE: String {
-        if let sortId = model.request.sort, let sorter = model.sorters.first(where: { $0.id == sortId }) {
+        let current = model.request.sort
+        if let current, let sorter = model.config?.sortOptions?.first(where: { $0.id == current }) {
             return sorter.label
         }
         return "Order"
     }
 
-    var Header: some View {
-        HStack {
-            if let resultCount = model.resultCount {
-                Text("\(resultCount) Results")
-            }
-            Spacer()
-
-            if !model.sorters.isEmpty {
-                Button {
-                    presentSortDialog.toggle()
-                } label: {
-                    HStack {
-                        Text(SORT_TITLE)
-                        Image(systemName: "chevron.down")
-                    }
-                }
-                .buttonStyle(.plain)
-                .multilineTextAlignment(.trailing)
-            }
-        }
-        .font(.subheadline.weight(.light))
-        .foregroundColor(Color.primary.opacity(0.7))
-    }
 
     @ViewBuilder
     var PaginationView: some View {

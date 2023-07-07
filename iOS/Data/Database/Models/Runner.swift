@@ -88,7 +88,7 @@ extension DataManager {
             .first
     }
 
-    func saveRunner(_ info: SourceInfo, listURL: URL? = nil, url: URL) {
+    func saveRunner(_ info: RunnerInfo, listURL: URL? = nil, url: URL) {
         let realm = try! Realm()
 
         let target = realm

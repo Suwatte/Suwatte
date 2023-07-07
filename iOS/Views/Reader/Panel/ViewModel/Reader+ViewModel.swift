@@ -441,11 +441,12 @@ extension ReaderView.ViewModel {
     }
 
     private func handleSourceSync(contentId: String, sourceId: String, chapterId: String) {
+        guard let source = SourceManager.shared.getSource(id: sourceId), source.intents.chapterSyncHandler else { return }
+        
         // Services
-        let source = SourceManager.shared.getSource(id: sourceId) as? any SyncableSource
         Task {
             do {
-                try await source?.onChapterRead(contentId: contentId, chapterId: chapterId)
+                try await source.onChapterRead(contentId: contentId, chapterId: chapterId)
 
             } catch {
                 ToastManager.shared.info("Failed to Sync Read Marker")

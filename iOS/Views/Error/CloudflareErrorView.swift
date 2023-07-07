@@ -73,7 +73,7 @@ extension CloudFlareErrorView {
     class CloudFlareWebViewViewController: UIViewController, WKUIDelegate {
         var webView: WKWebView!
         var sourceID: String!
-
+        var triggered = false
         override func viewDidLoad() {
             super.viewDidLoad()
             let webConfiguration = WKWebViewConfiguration()
@@ -88,25 +88,13 @@ extension CloudFlareErrorView {
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
             Task { @MainActor in
-                guard let source = try? SourceManager.shared.getContentSource(id: sourceID) as? any ModifiableSource else {
+                guard let source = SourceManager.shared.getSource(id: sourceID), let url = source.cloudflareResolutionURL, url.isHTTP else {
+                    StateManager.shared.alert(title: "Invalid Resolution URL", message: "The source failed to provide a valid url.")
                     return
                 }
-
-                do {
-                    if !source.config.hasCustomCloudflareRequest {
-                        throw DSK.Errors.NamedError(name: "Daisuke Warning", message: "Source Has not provided a bypass url. Defaulting to source provided website.")
-                    }
-                    let request = try await source.getCloudflareVerificationRequest().toURLRequest()
-                    let _ = self.webView.load(request)
-
-                } catch {
-                    let url = URL(string: source.info.website)
-                    if let url {
-                        let _ = self.webView.load(.init(url: url))
-                    }
-                    ToastManager.shared.error(error)
-                    Logger.shared.error("\(error)")
-                }
+        
+                let request = URLRequest(url: url)
+                let _ = self.webView.load(request)
             }
         }
     }

@@ -272,10 +272,10 @@ extension ReaderView.Page {
             return try .init(url: url, method: .get, headers: headers)
         }
         // Handle External Sources
-        guard let source = try SourceManager.shared.getContentSource(id: sourceId) as? any ModifiableSource, source.config.hasThumbnailInterceptor else {
+        guard let source = SourceManager.shared.getSource(id: sourceId), source.intents.imageRequestHandler else {
             return .init(url: url)
         }
-        let response = try await source.willRequestImage(request: .init(url: url.absoluteString))
+        let response = try await source.willRequestImage(imageURL: url)
         let request = try response.toURLRequest()
         return request
     }

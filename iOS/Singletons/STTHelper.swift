@@ -108,13 +108,13 @@ class STTHelpers {
                 return .loaded(data.freeze())
             }
             // Get from source
-            guard let source = try? SourceManager.shared.getContentSource(id: chapter.sourceId) else {
+            guard let source = SourceManager.shared.getSource(id: chapter.sourceId) else {
                 return .failed(DaisukeEngine.Errors.NamedError(name: "SourceManager", message: "Source Not Found"))
             }
             do {
                 let data = try await source.getChapterData(contentId: chapter.contentId, chapterId: chapter.chapterId)
                 let stored = data.toStored(withStoredChapter: chapter.toStored())
-                if !source.config.chapterDataCachingDisabled {
+                if !(source.config.chapterDataCachingDisabled ?? false) {
                     DataManager.shared.saveChapterData(data: stored)
                 }
                 return .loaded(stored.realm == nil ? stored : stored.freeze())
