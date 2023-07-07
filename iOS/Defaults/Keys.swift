@@ -136,4 +136,8 @@ enum STTKeys {
     static let ShowNSFWContentInSearch = "APP.filter_nsfw"
     
     static let LocalStorageUsesICloud = "APP.local_use_icloud"
+    
+    static func RunnerOverridesImageRequest(_ id: String) -> String {
+        return "RUNNER.IRH:\(id)"
+    }
 }

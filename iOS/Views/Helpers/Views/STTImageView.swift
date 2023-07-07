@@ -83,6 +83,12 @@ struct STTImageView: View {
                     loader.load(url)
                 }
             } else {
+                // Source Has Image Request Handler, prevents sources from being initialized unecessarily
+                guard UserDefaults.standard.bool(forKey: STTKeys.RunnerOverridesImageRequest(identifier.sourceId)) else {
+                    loader.load(url)
+                    return
+                }
+                
                 let source = SourceManager.shared.getSource(id: identifier.sourceId)
                 guard let source, source.intents.imageRequestHandler else {
                     loader.load(url)
@@ -158,8 +164,12 @@ struct BaseImageView: View {
             loader.load(url)
             return
         }
-        
-        guard let sourceId, let source = SourceManager.shared.getSource(id: sourceId), source.intents.imageRequestHandler else {
+        // Source Has Image Request Handler, prevents sources from being initialized unecessarily
+        guard let sourceId, UserDefaults.standard.bool(forKey: STTKeys.RunnerOverridesImageRequest(sourceId)) else {
+            loader.load(url)
+            return
+        }
+        guard let source = SourceManager.shared.getSource(id: sourceId), source.intents.imageRequestHandler else {
             loader.load(url)
             return
         }

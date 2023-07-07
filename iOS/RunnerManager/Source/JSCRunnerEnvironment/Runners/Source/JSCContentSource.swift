@@ -42,6 +42,8 @@ class JSCContentSource: JSCRunner {
         }
         
         self.config = try SourceConfig(value: dictionary)
+        
+        saveState()
     }
     
     var sourceInfo: SourceInfo {
@@ -91,6 +93,10 @@ extension JSCC {
 extension JSCC {
     var cloudflareResolutionURL: URL? {
         config.cloudflareResolutionURL.flatMap(URL.init(string:)) ?? URL.init(string: sourceInfo.website)
+    }
+    
+    func saveState() {
+        UserDefaults.standard.set(intents.imageRequestHandler, forKey: STTKeys.RunnerOverridesImageRequest(id))
     }
 }
 
