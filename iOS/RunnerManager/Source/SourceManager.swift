@@ -172,7 +172,7 @@ extension SourceManager {
 
 extension SourceManager {
     func startSource(at url: URL) throws -> JSCContentSource {
-        try JSCC(executablePath: url)
+        return try JSCC(executablePath: url)
     }
 
     @MainActor
@@ -214,17 +214,18 @@ extension SourceManager {
         try await handleNetworkRunnerImport(from: path, with: url)
     }
 
-    private func validateRunnerVersion(runner _: JSCContentSource) throws {
-        // Validate that the incoming runner has a higher version
-//        let current = getSource(id: runner.id)
-//
-//        if let current = current, current.version > runner.version {
-//            throw DSK.Errors.NamedError(name: "Validation", message: "An updated version is already installed.")
-//        }
+    private func validateRunnerVersion(runner: JSCRunner) throws {
+//         Validate that the incoming runner has a higher version
+        let current = getSource(id: runner.id)
+
+        if let current = current, current.version > runner.version {
+            throw DSK.Errors.NamedError(name: "Validation", message: "An updated version is already installed.")
+        }
     }
 
     private func handleFileRunnerImport(from url: URL) throws {
         let runner = try startSource(at: url)
+        
         try validateRunnerVersion(runner: runner)
         let validRunnerPath = directory.appendingPathComponent("\(runner.id).stt")
         _ = try FileManager.default.replaceItemAt(validRunnerPath, withItemAt: url)

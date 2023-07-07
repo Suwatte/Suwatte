@@ -11,12 +11,11 @@ extension ExploreView.SearchView {
     struct FilterSheet: View {
         @EnvironmentObject var model: ExploreView.SearchView.ViewModel
         typealias Filter = DaisukeEngine.Structs.Filter
-        var filters = [DSKCommon.Filter]()
         @State var populated: [DSKCommon.PopulatedFilter]?
         @State var query = ""
         var body: some View {
             NavigationView {
-                LoadedFiltersView(filters: filters, populated: $populated, query: $query)
+                LoadedFiltersView(filters: model.filters, populated: $populated, query: $query)
                 .animation(.default, value: query)
                 .navigationTitle("Filters")
                 .navigationBarTitleDisplayMode(.inline)
@@ -65,7 +64,7 @@ extension ExploreView.SearchView {
 
             for populated in model.request.filters ?? [] {
                 // Get Filter
-                let filter = filters.first(where: { $0.id == populated.id })
+                let filter = model.filters.first(where: { $0.id == populated.id })
                 guard let filter else {
                     continue
                 }

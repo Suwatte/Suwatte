@@ -126,6 +126,7 @@ extension ExploreView.SearchView.ResultsView {
                     }
                     .buttonStyle(.plain)
                     .multilineTextAlignment(.trailing)
+                    .disabled(sortOptions.isEmpty) // Redundant
                 }
             }
             .font(.subheadline.weight(.light))
@@ -147,17 +148,11 @@ extension ExploreView.SearchView.ResultsView {
         }
         
         var title: String {
-            ""
+            let current = model.request.sort
+            let label = sortOptions.first(where: { $0.id == current })?.label
+            return label ?? sortOptions.first?.label ?? "Default"
         }
     }
-    var SORT_TITLE: String {
-        let current = model.request.sort
-        if let current, let sorter = model.config?.sortOptions?.first(where: { $0.id == current }) {
-            return sorter.label
-        }
-        return "Order"
-    }
-
 
     @ViewBuilder
     var PaginationView: some View {

@@ -21,6 +21,7 @@ extension ExploreView {
             LoadableView(loadable: model.result) {
                 ProgressView()
                     .task {
+                        model.fetchConfig()
                         await model.makeRequest()
                     }
             } _: {
@@ -52,7 +53,6 @@ extension ExploreView {
                 }
 
             })
-
             // MARK: Navigation
 
             .searchable(text: $model.query, placement: .navigationBarDrawer(displayMode: .always))
@@ -67,7 +67,7 @@ extension ExploreView {
                     if !IS_TAG_VIEW {
                         Button { model.presentFilters.toggle() } label: {
                             Image(systemName: "line.3.horizontal.decrease")
-                        }
+                        }.disabled(model.filters.isEmpty)
 
                         Button { presentSearchHistory.toggle() } label: {
                             Image(systemName: "clock.arrow.circlepath")

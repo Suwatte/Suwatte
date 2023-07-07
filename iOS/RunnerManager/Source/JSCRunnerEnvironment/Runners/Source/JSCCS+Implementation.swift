@@ -23,7 +23,7 @@ extension JSCContentSource: ContentSource {
     
     func getDirectory(_ request: DSKCommon.SearchRequest) async throws -> DSKCommon.PagedResult {
         let request = try request.asDictionary()
-        return try await callMethodReturningObject(method: "getSearchResults", arguments: [request], resolvesTo: DaisukeEngine.Structs.PagedResult.self)
+        return try await callMethodReturningObject(method: "getDirectory", arguments: [request], resolvesTo: DaisukeEngine.Structs.PagedResult.self)
     }
     
     func getDirectoryConfig() async throws -> DSKCommon.DirectoryConfig {
@@ -44,7 +44,7 @@ extension JSCContentSource: ContentSource {
     }
     
     func getAllTags() async throws -> [DaisukeEngine.Structs.Property] {
-        try await callMethodReturningDecodable(method: "getSourceTags", arguments: [], resolvesTo: [DSKCommon.Property].self)
+        try await callMethodReturningDecodable(method: "getAllTags", arguments: [], resolvesTo: [DSKCommon.Property].self)
     }
     
     func getRecommendedTags() async throws -> [DaisukeEngine.Structs.ExploreTag] {
@@ -86,7 +86,7 @@ extension JSCContentSource: ContentSource {
     }
     
     func buildPreferenceMenu() async throws -> [DSKCommon.PreferenceGroup] {
-        return try await callContextMethod(method: "getSourcePreferences", resolvesTo: [DSKCommon.PreferenceGroup].self)
+        return try await callContextMethod(method: "generatePreferenceMenu", resolvesTo: [DSKCommon.PreferenceGroup].self)
     }
     
     func getAuthenticatedUser() async throws -> DSKCommon.User? {

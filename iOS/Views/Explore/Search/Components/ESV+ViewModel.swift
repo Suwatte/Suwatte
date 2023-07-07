@@ -48,14 +48,15 @@ extension ExploreView.SearchView {
         init(request: DaisukeEngine.Structs.SearchRequest = .init(), source: AnyContentSource) {
             self.request = request
             self.source = source
-            self.fetchConfig()
-            fetchConfig()
         }
         
         func fetchConfig() {
             Task {
                 do {
-                    self.config = try await source.getDirectoryConfig()
+                    let config = try await source.getDirectoryConfig()
+                    await MainActor.run {
+                        self.config = config
+                    }
                 } catch {
                     Logger.shared.error(error)
                     ToastManager.shared.error(error)
@@ -73,8 +74,11 @@ extension ExploreView.SearchView {
         func makeRequest() async {
             await MainActor.run(body: {
                 result = .loading
+                if request.sort == nil {
+                    request.sort = sortOptions.first?.id
+                }
             })
-            do {
+            do {                
                 let data = try await source.getDirectory(request)
 
                 await MainActor.run(body: {

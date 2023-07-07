@@ -18,6 +18,6 @@ final class DaisukeEngine: ObservableObject {
 
 extension JSContext {
     func daisukeRunner() -> JSValue? {
-        return evaluateScript("(function(){ return DAISUKE_RUNNER })()")
+        return evaluateScript("(function(){ return RunnerObject })()")
     }
 }

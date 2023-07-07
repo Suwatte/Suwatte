@@ -1,7 +1,4 @@
-var global = global || window;
-
 // Initialize Global Handlers
-let IDENTIFIER;
 let RunnerObject;
 let RunnerEnvironment = "unknown";
 let RunnerIntents = {
@@ -24,8 +21,14 @@ let RunnerIntents = {
   libraryTabProvider: false,
   browseTabProvider: false,
 };
+
 const ObjectStore = new STTStore("os");
 const SecureStore = new STTStore("ss");
+
+// Reference:
+function isClass(v) {
+  return typeof v === "function" && /^\s*class\s+/.test(v.toString());
+}
 
 const evaluateEnvironment = () => {
   if (!RunnerObject) return "unknown";
@@ -65,24 +68,24 @@ const evaluateEnvironment = () => {
   return "unknown";
 };
 
-const main = () => {
+const bootstrap = () => {
   // Set JSON Date Format
   const moment = require("moment");
   Date.prototype.toJSON = function () {
     return moment(this).format();
   };
 
-  // Initialize Runner & Make Global
-  try {
-    RunnerObject = new STTPackage.Target(); // Target is a class
-  } catch {
-    RunnerObject = STTPackage.Target; // Target is an object
+  const T = STTPackage.Target;
+
+  if (isClass(T)) {
+    RunnerObject = new T();
+  } else {
+    RunnerObject = T;
   }
 
   IDENTIFIER = RunnerObject.info.id;
   RunnerEnvironment = evaluateEnvironment();
   // Required Set Up Methods
-  overrideConsole(IDENTIFIER);
   setupSourceConfig();
 
   // Run Post Initialization Methods
@@ -94,11 +97,6 @@ const main = () => {
   console.log(`Ready!`);
 };
 
-try {
-  main();
-} catch (err) {
-  console.log(err);
-}
 //
 function setupSourceConfig() {
   try {
@@ -154,8 +152,9 @@ function setupSourceConfig() {
 }
 
 // Helper Methods
-const getSourcePreferences = async () => {
-  const data = await RunnerObject.getSourcePreferences();
+const generatePreferenceMenu = async () => {
+    
+  const data = await RunnerObject.buildPreferenceMenu();
   for (const [index, group] of data.entries()) {
     const populated = await Promise.all(
       group.children.map(async (v) => ({
@@ -169,7 +168,7 @@ const getSourcePreferences = async () => {
 };
 
 const updateSourcePreferences = async (key, value) => {
-  const groups = await RunnerObject.getSourcePreferences();
+  const groups = await RunnerObject.buildPreferenceMenu();
   const pref = groups.flatMap((v) => v.children).find((v) => v.key === key);
   if (!pref) return;
   if (pref.action) {
@@ -178,3 +177,9 @@ const updateSourcePreferences = async (key, value) => {
     return pref.value.set(value);
   }
 };
+
+try {
+  bootstrap();
+} catch (err) {
+  console.log("Failed to boostrap runner object.", err.message);
+}

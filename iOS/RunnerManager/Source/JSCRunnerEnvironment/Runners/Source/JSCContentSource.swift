@@ -12,36 +12,34 @@ class JSCContentSource: JSCRunner {
     let intents: RunnerIntents
     var runnerClass: JSValue
 
-    var config: SourceConfig
+    var config: SourceConfig?
 
     required init(executablePath: URL) throws {
         runnerClass = try Self.build(for: executablePath)
         let ctx = runnerClass.context
-        
         // Prepare Runner Info
-        guard let ctx, let dictionary = runnerClass.forProperty("info") else {
+        guard let ctx, let dictionary = runnerClass.forProperty("info"), dictionary.isObject else {
             throw DSK.Errors.RunnerInfoInitFailed
         }
-        
+
         self.info = try SourceInfo(value: dictionary)
-        
+
         // Get Intents
         let intents = try ctx
             .evaluateScript("(function(){ return RunnerIntents })()")
             .flatMap { try RunnerIntents(value: $0) }
         
+
         guard let intents else {
             throw DSK.Errors.FailedToParseRunnerIntents
         }
         
         self.intents = intents
-        
+
         // Get Config
-        guard let dictionary = runnerClass.forProperty("config") else {
-            throw DSK.Errors.FailedToParseRunnerConfig
+        if let dictionary = runnerClass.forProperty("config"), dictionary.isObject {
+            self.config = try SourceConfig(value: dictionary)
         }
-        
-        self.config = try SourceConfig(value: dictionary)
         
         saveState()
     }
@@ -61,6 +59,8 @@ extension JSCC {
         // Generate New Context
         let context = SourceManager.shared.newJSCContext()
 
+        // Declare Intial ID
+        context.globalObject.setValue(path.fileName, forProperty: "IDENTIFIER")
         // Evaluate Commons Script
         var content = try String(contentsOf: Self.commonsPath, encoding: .utf8)
         _ = context.evaluateScript(content)
@@ -74,12 +74,17 @@ extension JSCC {
         content = try String(contentsOf: path, encoding: .utf8)
         _ = context.evaluateScript(content)
 
-        // Evaluate Bridge Scripts
-        for url in Self.bridgeFiles {
+        // Evaluate Message Handler Scripts
+        for url in Self.messageHandlerFiles {
             content = try String(contentsOf: url, encoding: .utf8)
             _ = context.evaluateScript(content)
         }
-
+                
+        // Evaluate Bootstrap Script
+        content = try String(contentsOf: Self.bootstrapFile, encoding: .utf8)
+        _ = context.evaluateScript(content)
+        
+        
         let runner = context.daisukeRunner()
         guard let runner, runner.isObject else {
             throw DSK.Errors.RunnerClassInitFailed
@@ -92,7 +97,7 @@ extension JSCC {
 
 extension JSCC {
     var cloudflareResolutionURL: URL? {
-        config.cloudflareResolutionURL.flatMap(URL.init(string:)) ?? URL.init(string: sourceInfo.website)
+        config?.cloudflareResolutionURL.flatMap(URL.init(string:)) ?? URL.init(string: sourceInfo.website)
     }
     
     func saveState() {

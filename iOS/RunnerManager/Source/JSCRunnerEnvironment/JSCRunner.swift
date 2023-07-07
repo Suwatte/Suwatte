@@ -114,13 +114,16 @@ extension JSCRunner {
     }
     
     
-    static var bridgeFiles: [URL] {
+    static var messageHandlerFiles: [URL] {
         [
-            Bundle.main.url(forResource: "store", withExtension: "js")!,
             Bundle.main.url(forResource: "log", withExtension: "js")!,
+            Bundle.main.url(forResource: "store", withExtension: "js")!,
             Bundle.main.url(forResource: "network", withExtension: "js")!,
-            Bundle.main.url(forResource: "bridge", withExtension: "js")!
         ]
+    }
+    
+    static var bootstrapFile: URL {
+        Bundle.main.url(forResource: "bridge", withExtension: "js")!
     }
 }
 
