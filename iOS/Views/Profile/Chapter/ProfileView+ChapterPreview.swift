@@ -147,7 +147,7 @@ struct LinkedUpdatesView: View {
             Text("Linked Titles Containing More Chapters")
             Divider()
             ForEach(data, id: \.entry.hashValue) { id in
-                Button("\(id.entry.title) [\(SourceManager.shared.getSource(id: id.sourceId)!.name)]") {
+                Button("\(id.entry.title) [\(DSK.shared.getSource(id: id.sourceId)!.name)]") {
                     STTHelpers.triggerHaptic()
                     selection = id
                 }
@@ -167,6 +167,6 @@ struct LinkedUpdatesView: View {
     }
 
     func filtered() -> [HighlightIndentier] {
-        model.linkedUpdates.filter { SourceManager.shared.getSource(id: $0.sourceId) != nil }
+        model.linkedUpdates.filter { DSK.shared.getSource(id: $0.sourceId) != nil }
     }
 }

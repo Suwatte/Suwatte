@@ -436,7 +436,7 @@ extension WebAuthWebView.Controller: WKNavigationDelegate {
 
 extension DataManager {
     func getUpSync(for id: String) -> [DSKCommon.UpSyncedContent] {
-        let realm = try! Realm(queue: nil)
+        let realm = try! Realm()
 
         let library: [DSKCommon.UpSyncedContent] = realm
             .objects(LibraryEntry.self)

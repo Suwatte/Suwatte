@@ -196,7 +196,7 @@ extension ICDM {
 //
 extension ICDM {
     private func getImages(of ids: ChapterIndentifier) async throws -> (urls: [URL], raws: [Data], text: String) {
-        let source = try SourceManager.shared.getContentSource(id: ids.source)
+        let source = try DSK.shared.getContentSource(id: ids.source)
 
         let data = try await source.getChapterData(contentId: ids.content, chapterId: ids.chapter)
 

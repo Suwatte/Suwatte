@@ -272,7 +272,7 @@ extension ReaderView.Page {
             return try .init(url: url, method: .get, headers: headers)
         }
         // Handle External Sources
-        guard let source = SourceManager.shared.getSource(id: sourceId), source.intents.imageRequestHandler else {
+        guard let source = DSK.shared.getSource(id: sourceId), source.intents.imageRequestHandler else {
             return .init(url: url)
         }
         let response = try await source.willRequestImage(imageURL: url)

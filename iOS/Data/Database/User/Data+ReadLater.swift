@@ -48,7 +48,7 @@ extension DataManager {
             return
         }
 
-        guard let source = SourceManager.shared.getSource(id: sourceID) else {
+        guard let source = DSK.shared.getSource(id: sourceID) else {
             ToastManager.shared.error("[ReadLater] Source not Found")
             return
         }

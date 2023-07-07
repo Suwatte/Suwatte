@@ -93,7 +93,7 @@ extension DataManager {
 
         let target = realm
             .objects(StoredRunnerObject.self)
-            .where { $0.id == info.id }
+            .where { $0.id == info.id && !$0.isDeleted }
             .first
 
         guard target == nil else {
@@ -126,8 +126,19 @@ extension DataManager {
         }
 
         try! realm.safeWrite {
-            realm.add(obj)
+            realm.add(obj, update: .modified)
         }
+    }
+    
+    func getRunnerExecutable(id: String) -> URL? {
+        let realm = try! Realm()
+        
+        let target = realm
+            .objects(StoredRunnerObject.self)
+            .where({ $0.id == id && !$0.isDeleted })
+            .first
+        
+        return target?.executable?.filePath
     }
 
     func getSavedAndEnabledRunners() -> Results<StoredRunnerObject> {

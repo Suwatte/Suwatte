@@ -246,7 +246,7 @@ extension DownloadsQueueView {
                 VStack(alignment: .leading) {
                     Text(entry.title)
                         .font(.headline)
-                    Text((SourceManager.shared.getSource(id: entry.sourceId)?.name) ?? "Unrecognized Source")
+                    Text((DSK.shared.getSource(id: entry.sourceId)?.name) ?? "Unrecognized Source")
                         .font(.subheadline)
                         .fontWeight(.light)
                 }

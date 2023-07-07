@@ -15,6 +15,8 @@ extension DaisukeEngine {
         case RunnerInfoInitFailed
         case FailedToParseRunnerIntents
         case FailedToParseRunnerConfig
+        case InvalidRunnerEnvironment
+        case RunnerExecutableNotFound
 
         case RunnerNotFoundOnContainedObject
         case UnableToFetchRunnerIDInContainedObject
@@ -62,11 +64,14 @@ extension DaisukeEngine.Errors: LocalizedError {
         case .UnableToFetchRunnerIDInContainedObject: return .init("Unable to Fetch Runner Class ID in contained context")
         case .FailedToParseRunnerIntents: return .init("Failed to Parse Runner Intents")
         case .FailedToParseRunnerConfig: return .init("Failed to Parse Runner Config")
-
+        case .InvalidRunnerEnvironment: return .init("The Requested Runner is not available in the evironment specified")
+        case .RunnerExecutableNotFound: return .init("Runner Script was not found")
+            
         case .ValueStoreErrorValueNotFound: return .init("[Value Store] NF")
         case .ValueStoreErrorKeyIsNotString: return .init("[Value Store] Key is not String")
         case .ValueStoreErrorKeyValuePairInvalid: return .init("[Value Store] Value is not valid")
 
+            
         case .NetworkErrorFailedToConvertRequestObject: return .init("Request Object Is not valid")
         case .NetworkErrorInvalidRequestURL: return .init("Reqeust URL is invalid")
         case let .NamedError(name, message): return .init("[\(name)] \(message)")

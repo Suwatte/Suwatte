@@ -220,7 +220,7 @@ extension MigrationView {
     }
 
     private func getAvailableSources() -> [AnyContentSource] {
-        return runners.filter { !preferredDestinations.map(\.id).contains($0.id) }.compactMap { SourceManager.shared.getSource(id: $0.id) }
+        return runners.filter { !preferredDestinations.map(\.id).contains($0.id) }.compactMap { DSK.shared.getSource(id: $0.id) }
     }
 
     private func move(from source: IndexSet, to destination: Int) {

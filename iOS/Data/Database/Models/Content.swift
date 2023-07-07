@@ -45,7 +45,7 @@ final class StoredContent: Object, Identifiable, CKRecordConvertible, CKRecordRe
     @Persisted var trackerInfo: Map<String, String>
 
     var SourceName: String {
-        SourceManager.shared.getSource(id: sourceId)?.name ?? "Unrecognized : \(sourceId)"
+        DSK.shared.getSource(id: sourceId)?.name ?? "Unrecognized : \(sourceId)"
     }
 
     var ContentIdentifier: ContentIdentifier {

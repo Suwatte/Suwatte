@@ -73,7 +73,7 @@ extension DataManager {
     }
 
     func refreshStored(contentId: String, sourceId: String) async {
-        guard let source = SourceManager.shared.getSource(id: sourceId) else {
+        guard let source = DSK.shared.getSource(id: sourceId) else {
             return
         }
 

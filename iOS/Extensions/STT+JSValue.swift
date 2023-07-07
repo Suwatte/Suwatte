@@ -8,6 +8,12 @@
 import Foundation
 import JavaScriptCore
 
+extension JSContext {
+    func daisukeRunner() -> JSValue? {
+        return evaluateScript("(function(){ return RunnerObject })()")
+    }
+}
+
 extension JSValue {
     func daisukeCall(method: String? = nil, arguments: [Any] = [], onSuccess: @escaping (JSValue) throws -> Void, onFailure: @escaping (Error) -> Void) {
         // Rejector Block

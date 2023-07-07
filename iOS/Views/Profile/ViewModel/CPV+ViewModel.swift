@@ -577,7 +577,7 @@ extension ProfileView.ViewModel {
         
         let updates = await withTaskGroup(of: (Bool, HighlightIndentier).self, returning: [HighlightIndentier].self, body: { group -> [HighlightIndentier] in
             for entry in identifiers {
-                guard let src = SourceManager.shared.getSource(id: entry.sourceId) else {
+                guard let src = DSK.shared.getSource(id: entry.sourceId) else {
                     continue
                 }
                 

@@ -181,5 +181,5 @@ const updateSourcePreferences = async (key, value) => {
 try {
   bootstrap();
 } catch (err) {
-  console.log("Failed to boostrap runner object.", err.message);
+  console.error("Failed to boostrap runner object.", err.message);
 }

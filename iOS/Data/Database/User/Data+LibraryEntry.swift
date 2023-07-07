@@ -47,7 +47,7 @@ extension DataManager {
             object.flag = flag
         }
 
-        guard let id = object.content?.contentId, let sourceId = object.content?.sourceId, let source = SourceManager.shared.getSource(id: sourceId), source.intents.contentEventHandler else {
+        guard let id = object.content?.contentId, let sourceId = object.content?.sourceId, let source = DSK.shared.getSource(id: sourceId), source.intents.contentEventHandler else {
             return
         }
         Task {
@@ -76,7 +76,7 @@ extension DataManager {
 
         let sourceIds = Set(targets.compactMap { $0.content?.sourceId })
         for id in sourceIds {
-            let source = try? SourceManager.shared.getSource(id: id)
+            let source = try? DSK.shared.getSource(id: id)
 
             guard let source, source.intents.contentEventHandler else {
                 continue
@@ -102,7 +102,7 @@ extension DataManager {
         let realm = try! Realm()
 
         let ids = content.ContentIdentifier
-        let source = SourceManager.shared.getSource(id: content.sourceId)
+        let source = DSK.shared.getSource(id: content.sourceId)
         if let target = realm.objects(LibraryEntry.self).first(where: { $0.id == content.id }) {
             // Run Removal Event
             Task {
@@ -208,7 +208,7 @@ extension DataManager {
         let grouped = Dictionary(grouping: ids, by: { $0.sourceId })
 
         for (key, value) in grouped {
-            let source = SourceManager.shared.getSource(id: key)
+            let source = DSK.shared.getSource(id: key)
             guard let source, source.intents.contentEventHandler else { continue }
             Task {
                 do {

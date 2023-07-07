@@ -85,7 +85,7 @@ protocol JSCRunner: JSCContextProtocol {
     var info:  RunnerInfo { get }
     var intents: RunnerIntents { get }
     
-    init(executablePath: URL) throws
+    init(value: JSValue) throws
 
 }
 
@@ -103,29 +103,6 @@ extension JSCRunner {
     }
 }
 // MARK: - Paths
-
-extension JSCRunner {
-    static var commonsPath: URL {
-        FileManager
-            .default
-            .applicationSupport
-            .appendingPathComponent("Runners", isDirectory: true)
-            .appendingPathComponent("common.js")
-    }
-    
-    
-    static var messageHandlerFiles: [URL] {
-        [
-            Bundle.main.url(forResource: "log", withExtension: "js")!,
-            Bundle.main.url(forResource: "store", withExtension: "js")!,
-            Bundle.main.url(forResource: "network", withExtension: "js")!,
-        ]
-    }
-    
-    static var bootstrapFile: URL {
-        Bundle.main.url(forResource: "bridge", withExtension: "js")!
-    }
-}
 
 // MARK: - JS Method Callers
 extension JSCRunner {

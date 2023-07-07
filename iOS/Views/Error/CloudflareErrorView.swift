@@ -88,7 +88,7 @@ extension CloudFlareErrorView {
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
             Task { @MainActor in
-                guard let source = SourceManager.shared.getSource(id: sourceID), let url = source.cloudflareResolutionURL, url.isHTTP else {
+                guard let source = DSK.shared.getSource(id: sourceID), let url = source.cloudflareResolutionURL, url.isHTTP else {
                     StateManager.shared.alert(title: "Invalid Resolution URL", message: "The source failed to provide a valid url.")
                     return
                 }

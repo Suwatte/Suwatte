@@ -441,7 +441,7 @@ extension ReaderView.ViewModel {
     }
 
     private func handleSourceSync(contentId: String, sourceId: String, chapterId: String) {
-        guard let source = SourceManager.shared.getSource(id: sourceId), source.intents.chapterSyncHandler else { return }
+        guard let source = DSK.shared.getSource(id: sourceId), source.intents.chapterSyncHandler else { return }
         
         // Services
         Task {

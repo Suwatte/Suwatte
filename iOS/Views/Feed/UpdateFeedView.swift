@@ -35,7 +35,7 @@ struct UpdateFeedView: View {
     }
 
     func handleRefresh() async {
-        let count = await SourceManager.shared.fetchLibraryUpdates()
+        let count = await DSK.shared.fetchLibraryUpdates()
         if count == 0 {
             ToastManager.shared.display(.info("No Updates in your library."))
         } else {

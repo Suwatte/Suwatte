@@ -24,7 +24,7 @@ struct ProfileView: View {
     func loadSource() {
         self.source = .loading
         do {
-            let runner = try SourceManager.shared.getContentSource(id: sourceId)
+            let runner = try DSK.shared.getContentSource(id: sourceId)
             self.source = .loaded(runner)
         } catch {
             self.source = .failed(error)

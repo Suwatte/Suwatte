@@ -89,7 +89,7 @@ struct STTImageView: View {
                     return
                 }
                 
-                let source = SourceManager.shared.getSource(id: identifier.sourceId)
+                let source = DSK.shared.getSource(id: identifier.sourceId)
                 guard let source, source.intents.imageRequestHandler else {
                     loader.load(url)
                     return
@@ -169,7 +169,7 @@ struct BaseImageView: View {
             loader.load(url)
             return
         }
-        guard let source = SourceManager.shared.getSource(id: sourceId), source.intents.imageRequestHandler else {
+        guard let source = DSK.shared.getSource(id: sourceId), source.intents.imageRequestHandler else {
             loader.load(url)
             return
         }

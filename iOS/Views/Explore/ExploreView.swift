@@ -23,7 +23,7 @@ struct ExploreView: View {
     func getSource() {
         loadable = .loading
         do {
-            let source = try SourceManager.shared.getContentSource(id: id)
+            let source = try DSK.shared.getContentSource(id: id)
             loadable = .loaded(source)
         } catch {
             loadable = .failed(error)

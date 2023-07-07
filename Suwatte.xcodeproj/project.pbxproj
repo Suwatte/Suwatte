@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		C3423ED4E5A2EFB664586F1B /* Pods_Suwatte__iOS_.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C120369C705B6397F32D3640 /* Pods_Suwatte__iOS_.framework */; };
+		DF01DEEA2A587A5D0025700B /* Engine+LibraryUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF01DEE92A587A5D0025700B /* Engine+LibraryUpdate.swift */; };
+		DF01DEEC2A587A680025700B /* Engine+URLHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF01DEEB2A587A680025700B /* Engine+URLHandler.swift */; };
 		DF03F73A2846FAB800602E59 /* ReaderButtonModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF03F7392846FAB800602E59 /* ReaderButtonModifier.swift */; };
 		DF0D96062824892C00E592D9 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = DF0D96052824892C00E592D9 /* Realm */; };
 		DF13892228BDCAEF0035BDBB /* STT+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF13892128BDCAEF0035BDBB /* STT+URL.swift */; };
@@ -106,7 +108,7 @@
 		DF6824A728A5FD8000AB30A1 /* DRV+Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6824A628A5FD8000AB30A1 /* DRV+Auth.swift */; };
 		DF6A896828834AC40045529D /* Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6A896728834AC40045529D /* Orientation.swift */; };
 		DF6A896D28835E150045529D /* Tiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6A896C28835E150045529D /* Tiles.swift */; };
-		DF6B5754288F42D6007C6B78 /* Daisuke.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6B5753288F42D6007C6B78 /* Daisuke.swift */; };
+		DF6B5754288F42D6007C6B78 /* Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6B5753288F42D6007C6B78 /* Engine.swift */; };
 		DF6B5759288F453D007C6B78 /* DSK+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6B5758288F453D007C6B78 /* DSK+Error.swift */; };
 		DF6B8CA428629CCE00DD079D /* Data+ContentLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6B8CA328629CCE00DD079D /* Data+ContentLink.swift */; };
 		DF6C25CB282D97EB002BE1AA /* STT+Parsable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6C25CA282D97EB002BE1AA /* STT+Parsable.swift */; };
@@ -245,7 +247,6 @@
 		DF8D0BB92800EE48003E4C3E /* MSLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0AC42800EE47003E4C3E /* MSLabelView.swift */; };
 		DF91D9742859ADD60099D864 /* CloudflareErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF91D9732859ADD50099D864 /* CloudflareErrorView.swift */; };
 		DF977E162A0ECB3900AA1E90 /* StateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF977E152A0ECB3900AA1E90 /* StateManager.swift */; };
-		DF99004A29A948F3006EB29A /* SourceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF99004929A948F3006EB29A /* SourceManager.swift */; };
 		DF99004D29A94A49006EB29A /* JSCCS+Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF99004C29A94A48006EB29A /* JSCCS+Protocol.swift */; };
 		DF9BD6462891C16D006628D0 /* DSK+Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BD6452891C16D006628D0 /* DSK+Tag.swift */; };
 		DF9BD6482891D5B4006628D0 /* DSK+Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BD6472891D5B3006628D0 /* DSK+Content.swift */; };
@@ -370,6 +371,8 @@
 		4B9078FD307212D843E59BA5 /* Pods-Suwatte (iOS).debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Suwatte (iOS).debug.xcconfig"; path = "Target Support Files/Pods-Suwatte (iOS)/Pods-Suwatte (iOS).debug.xcconfig"; sourceTree = "<group>"; };
 		C120369C705B6397F32D3640 /* Pods_Suwatte__iOS_.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Suwatte__iOS_.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2C64E4EA8CA62D2029277CC /* Pods-Suwatte (iOS).release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Suwatte (iOS).release.xcconfig"; path = "Target Support Files/Pods-Suwatte (iOS)/Pods-Suwatte (iOS).release.xcconfig"; sourceTree = "<group>"; };
+		DF01DEE92A587A5D0025700B /* Engine+LibraryUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Engine+LibraryUpdate.swift"; sourceTree = "<group>"; };
+		DF01DEEB2A587A680025700B /* Engine+URLHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Engine+URLHandler.swift"; sourceTree = "<group>"; };
 		DF03F7392846FAB800602E59 /* ReaderButtonModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderButtonModifier.swift; sourceTree = "<group>"; };
 		DF13892128BDCAEF0035BDBB /* STT+URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+URL.swift"; sourceTree = "<group>"; };
 		DF13892328BE9E7E0035BDBB /* Explore+Tile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Explore+Tile.swift"; sourceTree = "<group>"; };
@@ -456,7 +459,7 @@
 		DF6824A628A5FD8000AB30A1 /* DRV+Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DRV+Auth.swift"; sourceTree = "<group>"; };
 		DF6A896728834AC40045529D /* Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Orientation.swift; sourceTree = "<group>"; };
 		DF6A896C28835E150045529D /* Tiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tiles.swift; sourceTree = "<group>"; };
-		DF6B5753288F42D6007C6B78 /* Daisuke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Daisuke.swift; sourceTree = "<group>"; };
+		DF6B5753288F42D6007C6B78 /* Engine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Engine.swift; sourceTree = "<group>"; };
 		DF6B5758288F453D007C6B78 /* DSK+Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Error.swift"; sourceTree = "<group>"; };
 		DF6B8CA328629CCE00DD079D /* Data+ContentLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+ContentLink.swift"; sourceTree = "<group>"; };
 		DF6C25CA282D97EB002BE1AA /* STT+Parsable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+Parsable.swift"; sourceTree = "<group>"; };
@@ -593,7 +596,6 @@
 		DF8D0AC42800EE47003E4C3E /* MSLabelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MSLabelView.swift; sourceTree = "<group>"; };
 		DF91D9732859ADD50099D864 /* CloudflareErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudflareErrorView.swift; sourceTree = "<group>"; };
 		DF977E152A0ECB3900AA1E90 /* StateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateManager.swift; sourceTree = "<group>"; };
-		DF99004929A948F3006EB29A /* SourceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceManager.swift; sourceTree = "<group>"; };
 		DF99004C29A94A48006EB29A /* JSCCS+Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCCS+Protocol.swift"; sourceTree = "<group>"; };
 		DF9BD6452891C16D006628D0 /* DSK+Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Tag.swift"; sourceTree = "<group>"; };
 		DF9BD6472891D5B3006628D0 /* DSK+Content.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Content.swift"; sourceTree = "<group>"; };
@@ -741,6 +743,32 @@
 				DF9BFDFD2A4285BC005D0B63 /* QuickLookThumbnailing.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DF01DEE52A5877690025700B /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				DF01DEE82A587A450025700B /* Helpers */,
+				DF6B5753288F42D6007C6B78 /* Engine.swift */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
+		DF01DEE82A587A450025700B /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				DF01DEE92A587A5D0025700B /* Engine+LibraryUpdate.swift */,
+				DF01DEEB2A587A680025700B /* Engine+URLHandler.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		DF01DEED2A587B630025700B /* Environments */ = {
+			isa = PBXGroup;
+			children = (
+				DF356D7829C57764000B605C /* JSCRunnerEnvironment */,
+			);
+			path = Environments;
 			sourceTree = "<group>";
 		};
 		DF15F58E296621B10085DB1F /* Settings */ = {
@@ -1005,9 +1033,10 @@
 		DF6B5751288F41E9007C6B78 /* Daisuke */ = {
 			isa = PBXGroup;
 			children = (
+				DF01DEED2A587B630025700B /* Environments */,
+				DF01DEE52A5877690025700B /* Engine */,
 				DF9BD6442891C15A006628D0 /* Structs */,
 				DF6B5757288F4529007C6B78 /* Error */,
-				DF6B5753288F42D6007C6B78 /* Daisuke.swift */,
 			);
 			path = Daisuke;
 			sourceTree = "<group>";
@@ -1057,7 +1086,6 @@
 			isa = PBXGroup;
 			children = (
 				DF8D09E72800EE47003E4C3E /* Resources */,
-				DF99004829A948DF006EB29A /* RunnerManager */,
 				DF6B5751288F41E9007C6B78 /* Daisuke */,
 				DFB47EF52880C1E70040A1BD /* OPDS */,
 				DF248F10281385F400818300 /* Services */,
@@ -1743,23 +1771,6 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		DF99004829A948DF006EB29A /* RunnerManager */ = {
-			isa = PBXGroup;
-			children = (
-				DF99004B29A94A35006EB29A /* Source */,
-			);
-			path = RunnerManager;
-			sourceTree = "<group>";
-		};
-		DF99004B29A94A35006EB29A /* Source */ = {
-			isa = PBXGroup;
-			children = (
-				DF99004929A948F3006EB29A /* SourceManager.swift */,
-				DF356D7829C57764000B605C /* JSCRunnerEnvironment */,
-			);
-			path = Source;
-			sourceTree = "<group>";
-		};
 		DF9BD6442891C15A006628D0 /* Structs */ = {
 			isa = PBXGroup;
 			children = (
@@ -2281,7 +2292,7 @@
 				DF248F24281393B300818300 /* Anilist+SignInView.swift in Sources */,
 				DF8D0B782800EE48003E4C3E /* LibraryGrid+SelectionModifier.swift in Sources */,
 				DF248F2E2813B90F00818300 /* AnilistView+DirectoryView.swift in Sources */,
-				DF6B5754288F42D6007C6B78 /* Daisuke.swift in Sources */,
+				DF6B5754288F42D6007C6B78 /* Engine.swift in Sources */,
 				DFAC77962815B3DA00AF6394 /* AL+Genre.swift in Sources */,
 				DF9BFE1A2A428A5B005D0B63 /* AH+Zip.swift in Sources */,
 				DF6C25CD282DC110002BE1AA /* STT+Conditional.swift in Sources */,
@@ -2371,10 +2382,10 @@
 				DF8D0BB12800EE48003E4C3E /* ViewHeightReader.swift in Sources */,
 				DFBE485C2A2FA20E000ABA16 /* ReadLater+ViewModel.swift in Sources */,
 				DF9BFDE42A421E46005D0B63 /* Data+OPDS.swift in Sources */,
+				DF01DEEC2A587A680025700B /* Engine+URLHandler.swift in Sources */,
 				DF3264692802A0AF0066EB08 /* ImagePicker.swift in Sources */,
 				DFBD202C28554ECB0042B4A6 /* CollectionFilter.swift in Sources */,
 				DF8D0B5C2800EE47003E4C3E /* Reader+ViewModel.swift in Sources */,
-				DF99004A29A948F3006EB29A /* SourceManager.swift in Sources */,
 				DF248F322814657200818300 /* AL+FullSearchFunctions.swift in Sources */,
 				DF8D0B512800EE47003E4C3E /* Backup+Collection.swift in Sources */,
 				DF6C25CB282D97EB002BE1AA /* STT+Parsable.swift in Sources */,
@@ -2385,6 +2396,7 @@
 				DF1FD5C2284B31AB00A67F0E /* DoublePaged+Representable.swift in Sources */,
 				DF8D0BA22800EE48003E4C3E /* UpdateFeedTile.swift in Sources */,
 				DF482EF829555A43002D3308 /* VerticalPaged+ContextMenu.swift in Sources */,
+				DF01DEEA2A587A5D0025700B /* Engine+LibraryUpdate.swift in Sources */,
 				DF8D0B772800EE48003E4C3E /* Library+CollectionView.swift in Sources */,
 				DF248F132813861200818300 /* Anilist.swift in Sources */,
 				DF2D84302A21C4B2006B17F0 /* Data+ContentMarker.swift in Sources */,

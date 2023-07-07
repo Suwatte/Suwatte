@@ -258,7 +258,7 @@ extension ExploreView.HighlightTile {
 
         func load(url: URL?) async {
             guard let url else { return }
-            let source = SourceManager.shared.getSource(id: sourceId)
+            let source = DSK.shared.getSource(id: sourceId)
             
             guard let source, source.intents.imageRequestHandler else {
                 loader.load(url)

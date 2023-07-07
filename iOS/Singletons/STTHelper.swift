@@ -108,8 +108,8 @@ class STTHelpers {
                 return .loaded(data.freeze())
             }
             // Get from source
-            guard let source = SourceManager.shared.getSource(id: chapter.sourceId) else {
-                return .failed(DaisukeEngine.Errors.NamedError(name: "SourceManager", message: "Source Not Found"))
+            guard let source = DSK.shared.getSource(id: chapter.sourceId) else {
+                return .failed(DaisukeEngine.Errors.NamedError(name: "Daisuke", message: "Source Not Found"))
             }
             do {
                 let data = try await source.getChapterData(contentId: chapter.contentId, chapterId: chapter.chapterId)

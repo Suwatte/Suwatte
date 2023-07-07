@@ -295,7 +295,7 @@ extension CollectionManagementView.FilterSections {
         Section {
             NavigationLink {
                 List {
-                    ForEach(Array(SourceManager.shared.sources.values), id: \.id) { source in
+                    ForEach(Array(DataManager.shared.getSavedAndEnabledRunners()), id: \.id) { source in
                         Button {
                             if sourceSelections.contains(source.id) { sourceSelections.removeAll(where: { $0 == source.id }) } else {
                                 sourceSelections.append(source.id)

@@ -11,12 +11,12 @@ import SwiftUI
 struct PreMigrationView: View {
     @ObservedResults(StoredRunnerObject.self, where: { $0.isDeleted == false && $0.enabled == true }, sortDescriptor: SortDescriptor(keyPath: "name", ascending: true)) private var sources
     @ObservedResults(LibraryEntry.self, where: { $0.isDeleted == false && $0.content != nil }, sortDescriptor: .init(keyPath: "content.title", ascending: false)) private var library
-    private let manager = SourceManager.shared
+    private let manager = DSK.shared
     var body: some View {
         NavigationView {
             List {
                 ForEach(sources, id: \.id) { source in
-                    var scopedLibrary = library.where { $0.content.sourceId == source.id }
+                    let scopedLibrary = library.where { $0.content.sourceId == source.id }
                     NavigationLink {
                         MigrationView(contents: scopedLibrary.compactMap(\.content))
                     } label: {

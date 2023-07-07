@@ -116,7 +116,7 @@ extension Logger {
 extension Logger.Entry {
     var OutputMessage: String {
         var out = ""
-        out += "[\(level.rawValue)] [\(timestamp.description)] "
+        out += "[\(level.rawValue)] [\(timestamp.formatted())] "
         if !context.isEmpty {
             out += "[\(context)] "
         }

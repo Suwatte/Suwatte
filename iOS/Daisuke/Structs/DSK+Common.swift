@@ -11,6 +11,10 @@ extension DSKCommon {
     struct JSCommon: Codable {
         var version: String
     }
+    
+    enum RunnerEnvironment: String, Decodable {
+        case unknown, source, tracker, plugin
+    }
 }
 
 extension DSKCommon {
@@ -20,5 +24,5 @@ extension DSKCommon {
         var avatar: String?
         var info: [String]?
     }
-    
 }
+

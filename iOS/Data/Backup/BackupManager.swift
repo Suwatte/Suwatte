@@ -144,7 +144,7 @@ class BackupManager: ObservableObject {
                 guard let url = URL(string: runner.1) else { return }
                 group.addTask {
                     do {
-                        try await SourceManager.shared.importRunner(from: url, with: runner.0)
+                        try await DSK.shared.importRunner(from: url, with: runner.0)
                     } catch {
                         Logger.shared.error("Failed to install runner of \(runner.0). \(error)")
                     }

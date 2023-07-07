@@ -59,10 +59,6 @@ struct SearchView: View {
         .init(rawValue: UserDefaults.standard.string(forKey: STTKeys.SourcesHiddenFromGlobalSearch) ?? "") ?? []
     }
 
-    var sources: [AnyContentSource] {
-        SourceManager.shared.sources.values.filter { !disabledSourceIds.contains($0.id) }
-    }
-
     var RESULT_VIEW: some View {
         ASCollectionView(sections: RESULT_SECTIONS)
             .alwaysBounceVertical()
@@ -171,10 +167,10 @@ struct SearchView: View {
                                 }
                             }
                             Spacer()
-                            if data.results.count < data.totalResultCount ?? 0, let source = source {
+                            if data.results.count < data.totalResultCount ?? 0, let dskSrc = DSK.shared.getSource(id: key) {
                                 NavigationLink {
                                     EmptyView()
-//                                ExploreView.SearchView(model: .init(request: .init(query: model.query), source: source))
+                                ExploreView.SearchView(model: .init(request: .init(query: model.query), source: dskSrc))
                                 } label: {
                                     Text("View More \(Image(systemName: "chevron.right"))")
                                         .font(.subheadline)
@@ -282,7 +278,7 @@ extension SearchView {
                 results[source.id] = .loading
                 Task { @MainActor in
                     do {
-                        let controller = try SourceManager.shared.getContentSource(id: source.id)
+                        let controller = try DSK.shared.getContentSource(id: source.id)
                         let data = try await controller.getDirectory(request)
                         results[source.id] = .loaded(data)
                     } catch {
@@ -299,7 +295,7 @@ extension SearchView {
             Task { @MainActor in
                 do {
                     let request = DSKCommon.SearchRequest(query: query)
-                    let controller = try SourceManager.shared.getContentSource(id: source.id)
+                    let controller = try DSK.shared.getContentSource(id: source.id)
                     let data = try await controller.getDirectory(request)
                     results[source.id] = .loaded(data)
                 } catch {

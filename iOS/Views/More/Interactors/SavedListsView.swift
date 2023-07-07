@@ -59,7 +59,7 @@ extension RunnerListsView {
     func handleSubmit(url: String) async {
         if url.isEmpty { return }
         do {
-            try await SourceManager.shared.saveRunnerList(at: url)
+            try await DSK.shared.saveRunnerList(at: url)
             DispatchQueue.main.async {
                 ToastManager.shared.display(.info("Saved List!"))
             }
@@ -131,7 +131,7 @@ extension RunnerListsView {
                 guard let url = URL(string: listURL) else {
                     throw DaisukeEngine.Errors.NamedError(name: "Parse Error", message: "Invalid URL")
                 }
-                let data = try await SourceManager.shared.getRunnerList(at: url)
+                let data = try await DSK.shared.getRunnerList(at: url)
 
                 loadable = .loaded(data)
                 DataManager.shared.saveRunnerList(data, at: url)
@@ -250,7 +250,7 @@ extension RunnerListsView {
 extension RunnerListsView.RunnerListInfo {
     struct RunnerListCell: View {
         @State var isLoading = false
-        private let engine = SourceManager.shared
+        private let engine = DSK.shared
         var listURL: String
         var list: RunnerList
         var runner: Runner
@@ -312,7 +312,7 @@ extension RunnerListsView.RunnerListInfo {
             let base = URL(string: listURL)!
 
             do {
-                try await SourceManager.shared.importRunner(from: base, with: runner.id)
+                try await DSK.shared.importRunner(from: base, with: runner.id)
                 ToastManager.shared.info("\(runner.name) Saved!")
             } catch {
                 ToastManager.shared.display(.error(error))
@@ -401,7 +401,7 @@ extension RunnerListsView {
         func handleSubmit(url: String) async {
             if url.isEmpty { return }
             do {
-                try await SourceManager.shared.saveRunnerList(at: url)
+                try await DSK.shared.saveRunnerList(at: url)
                 DispatchQueue.main.async {
                     ToastManager.shared.display(.info("Saved Runner!"))
                     presenting.toggle()

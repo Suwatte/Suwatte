@@ -9,7 +9,7 @@ import RealmSwift
 import SwiftUI
 
 struct InstalledRunnersView: View {
-    private let manager = SourceManager.shared
+    private let manager = DSK.shared
     @StateObject var model = ViewModel()
     @State var showAddSheet = false
 
@@ -18,7 +18,7 @@ struct InstalledRunnersView: View {
             if let runners = model.runners {
                 Section {
                     ForEach(runners, id: \.id) { runner in
-                        if let source = SourceManager.shared.getSource(id: runner.id) {
+                        if let source = manager.getSource(id: runner.id) {
                             NavigationLink {
                                 ContentSourceView(model: .init(s: source))
                             } label: {
@@ -37,7 +37,7 @@ struct InstalledRunnersView: View {
                             }
                             .swipeActions {
                                 Button {
-                                    SourceManager.shared.deleteSource(with: runner.id)
+                                    manager.removeRunner(runner.id)
                                 } label: {
                                     Label("Delete", systemImage: "trash")
                                 }
@@ -74,7 +74,7 @@ struct InstalledRunnersView: View {
             if path.startAccessingSecurityScopedResource() {
                 Task {
                     do {
-                        try await SourceManager.shared.importRunner(from: path)
+                        try await manager.importRunner(from: path)
                         await MainActor.run {
                             ToastManager.shared.info("Added!")
                         }

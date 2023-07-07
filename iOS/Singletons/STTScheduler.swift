@@ -104,7 +104,7 @@ class STTScheduler {
         }
 
         let updateTask = Task { [weak self] in
-            let updates = await SourceManager.shared.fetchLibraryUpdates()
+            let updates = await DSK.shared.fetchLibraryUpdates()
 
             if updates > 0 {
                 STTNotifier.shared.scheduleUpdateNotification(count: updates)
