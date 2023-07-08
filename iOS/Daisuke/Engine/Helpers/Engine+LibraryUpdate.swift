@@ -13,7 +13,7 @@ extension DSK {
         let engine = DSK.shared
         let sources = DataManager
             .shared
-            .getSavedAndEnabledRunners()
+            .getSavedAndEnabledSources()
             .compactMap { engine.getSource(id: $0.id)  }
 
         // Fetch Update For Each Source

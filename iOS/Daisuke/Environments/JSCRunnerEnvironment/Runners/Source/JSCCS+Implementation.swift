@@ -85,44 +85,8 @@ extension JSCContentSource: ContentSource {
         return try await callMethodReturningDecodable(method: "syncUserLibrary", arguments: [library], resolvesTo: [DSKCommon.DownSyncedContent].self)
     }
     
-    func buildPreferenceMenu() async throws -> [DSKCommon.PreferenceGroup] {
-        return try await callContextMethod(method: "generatePreferenceMenu", resolvesTo: [DSKCommon.PreferenceGroup].self)
-    }
-    
-    func getAuthenticatedUser() async throws -> DSKCommon.User? {
-        return try await callMethodReturningDecodable(method: "getAuthenticatedUser", arguments: [], resolvesTo: DSKCommon.User?.self)
-    }
-    
-    func handleUserSignOut() async throws {
-        try await callOptionalVoidMethod(method: "handleUserSignOut", arguments: [])
-    }
-    
-    func handleBasicAuthentication(id: String, password: String) async throws {
-        try await callOptionalVoidMethod(method: "handleBasicAuth", arguments: [id, password])
-    }
-    
-    func willRequestAuthenticationWebView() async throws -> DSKCommon.Request {
-        return try await callMethodReturningObject(method: "willRequestWebViewAuth", arguments: [], resolvesTo: DSKCommon.Request.self)
-    }
-    
-    func didReceiveAuthenticationCookieFromWebView(cookie: DSKCommon.Cookie) async throws -> Bool {
-        return try await callMethodReturningDecodable(method: "didReceiveAuthenticationCookieFromWebView", arguments: [cookie.name], resolvesTo: Bool.self)
-    }
-    
-    func updateSourcePreference(key: String, value: Any) async {
-        let context = runnerClass.context!
-        let function = context.evaluateScript("updateSourcePreferences")
-        function?.daisukeCall(arguments: [key, value], onSuccess: { _ in
-            context.evaluateScript("console.log('[\(key)] Preference Updated')")
-        }, onFailure: { error in
-            context.evaluateScript("console.error('[\(key)] Preference Failed To Update: \(error)')")
-            
-        })
-    }
-    
     func getIdentifiers(for id: String) async throws -> DaisukeEngine.Structs.URLContentIdentifer? {
         return try await callMethodReturningDecodable(method: "getIdentifierForURL", arguments: [id], resolvesTo: DSKCommon.URLContentIdentifer?.self)
     }
-    
     
 }

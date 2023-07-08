@@ -234,10 +234,6 @@ extension RunnerListsView {
                 base = base.filter { $0.name.lowercased().contains(t) }
             }
 
-            if hideNSFW {
-                base = base.filter { !($0.nsfw ?? false) }
-            }
-
             if !selectedLanguages.isEmpty {
                 base = base.filter { !Set($0.supportedLanguages).intersection(selectedLanguages).isEmpty }
             }
@@ -350,13 +346,13 @@ extension RunnerListsView.RunnerListInfo {
                     HStack {
                         Text("v\(runner.version.description)")
 
-                        if runner.nsfw ?? false {
-                            Text("18+")
-                                .bold()
-                                .padding(.all, 2)
-                                .background(Color.red.opacity(0.3))
-                                .cornerRadius(5)
-                        }
+//                        if runner.nsfw ?? false {
+//                            Text("18+")
+//                                .bold()
+//                                .padding(.all, 2)
+//                                .background(Color.red.opacity(0.3))
+//                                .cornerRadius(5)
+//                        }
                     }
                     .font(.footnote.weight(.light))
                     Text("Content Source")

@@ -17,10 +17,16 @@ extension Anilist {
         }
     }
 
-    struct Page: Decodable {
+    struct Page: Decodable, Equatable {
+        static func == (lhs: Anilist.Page, rhs: Anilist.Page) -> Bool {
+            lhs.id == rhs.id
+        }
+        
         var pageInfo: PageInfo
         var media: [SearchResult]
+        let id : String? = UUID().uuidString
 
+        
         struct PageInfo: Decodable {
             var total: Int
             var perPage: Int

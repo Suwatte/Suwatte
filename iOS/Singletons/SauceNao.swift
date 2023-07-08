@@ -44,22 +44,22 @@ final class SauceNao {
 }
 
 extension SauceNao {
-    struct Response: Decodable {
+    struct Response: Decodable, Hashable {
         var results: [Entry]
     }
 
-    struct Entry: Decodable {
+    struct Entry: Decodable, Hashable {
         var header: EntryHeader
         var data: EntryData
     }
 
-    struct EntryHeader: Decodable {
+    struct EntryHeader: Decodable, Hashable {
         var similarity: String
         var thumbnail: String
         var index_name: String
     }
 
-    struct EntryData: Decodable {
+    struct EntryData: Decodable, Hashable {
         var ext_urls: [String]
         var md_id: String
         var mu_id: Int?

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct LoadableView<Value, Idle, Loading, Failure, Content>: View where Idle: View,
+struct LoadableView<Value: Equatable, Idle, Loading, Failure, Content>: View where Idle: View,
     Loading: View,
     Failure: View,
     Content: View
@@ -33,23 +33,25 @@ struct LoadableView<Value, Idle, Loading, Failure, Content>: View where Idle: Vi
     }
 
     var body: some View {
-        Group {}
-        switch loadable {
-        case .idle:
-            idle()
-                .transition(.opacity)
-        case .loading:
-            loading()
-                .transition(.opacity)
+        Group {
+            switch loadable {
+            case .idle:
+                idle()
+                    .transition(.opacity)
+            case .loading:
+                loading()
+                    .transition(.opacity)
 
-        case let .loaded(value):
-            content(value)
-                .transition(.opacity)
+            case let .loaded(value):
+                content(value)
+                    .transition(.opacity)
 
-        case let .failed(error):
-            failure(error)
-                .transition(.opacity)
+            case let .failed(error):
+                failure(error)
+                    .transition(.opacity)
+            }
         }
+        .animation(.default, value: loadable)
     }
 }
 

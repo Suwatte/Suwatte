@@ -7,11 +7,15 @@
 import Foundation
 import JavaScriptCore
 
-class JSCContentSource: JSCRunner {
+class JSCContentSource: JSCRunner, Equatable {
+    static func == (lhs: JSCContentSource, rhs: JSCContentSource) -> Bool {
+        lhs.info.id == rhs.info.id
+    }
+    
     var info: RunnerInfo
     let intents: RunnerIntents
     var runnerClass: JSValue
-
+    let environment: RunnerEnvironment = .tracker
     var config: SourceConfig?
 
     required init(value: JSValue) throws {

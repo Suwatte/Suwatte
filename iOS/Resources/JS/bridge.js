@@ -5,7 +5,7 @@ let RunnerIntents = {
   // Core
   preferenceMenuBuilder: false,
   authenticatable: false,
-  authenticationMethod: null,
+  authenticationMethod: "unknown",
   // Content Source
   chapterEventHandler: false,
   contentEventHandler: false,
@@ -107,14 +107,24 @@ function setupSourceConfig() {
     // Authentication
     const RunnerAuthenticatable =
       ctx.getAuthenticatedUser && ctx.handleUserSignOut;
+
+    const basicAuthenticatable = !!ctx.handleBasicAuth;
+    const webViewAuthenticatable =
+      !!ctx.getWebAuthRequestURL &&
+      !!ctx.didReceiveSessionCookieFromWebAuthResponse;
+    const oAuthAuthenticatable =
+      !!ctx.getOAuthRequest && !!ctx.handleOAuthCallback;
     const authenticatable =
-      !!ctx.handleBasicAuth ||
-      (!!ctx.willRequestWebViewAuth && !!ctx.didReceiveWebAuthCookie);
+      basicAuthenticatable || webViewAuthenticatable || oAuthAuthenticatable;
     if (RunnerAuthenticatable && authenticatable) {
       RunnerIntents.authenticatable = true;
-      RunnerIntents.authenticationMethod = !!ctx.handleBasicAuth
+      RunnerIntents.authenticationMethod = basicAuthenticatable
         ? "basic"
-        : "webview";
+        : webViewAuthenticatable
+        ? "webview"
+        : oAuthAuthenticatable
+        ? "oauth"
+        : "unknown";
       RunnerIntents.basicAuthLabel = ctx.BasicAuthUIIdentifier;
     }
 
@@ -153,7 +163,6 @@ function setupSourceConfig() {
 
 // Helper Methods
 const generatePreferenceMenu = async () => {
-    
   const data = await RunnerObject.buildPreferenceMenu();
   for (const [index, group] of data.entries()) {
     const populated = await Promise.all(

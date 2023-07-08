@@ -104,8 +104,7 @@
 		DF67EBA428EA34DE00076FF5 /* DSK+Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EBA328EA34DE00076FF5 /* DSK+Common.swift */; };
 		DF68249C28A5CF6D00AB30A1 /* DSK+Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */; };
 		DF68249F28A5D2CF00AB30A1 /* ContentSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249E28A5D2CF00AB30A1 /* ContentSourceView.swift */; };
-		DF6824A528A5FD6100AB30A1 /* DRV+Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6824A428A5FD6100AB30A1 /* DRV+Preferences.swift */; };
-		DF6824A728A5FD8000AB30A1 /* DRV+Auth.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6824A628A5FD8000AB30A1 /* DRV+Auth.swift */; };
+		DF6824A728A5FD8000AB30A1 /* DSKAuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6824A628A5FD8000AB30A1 /* DSKAuthView.swift */; };
 		DF6A896828834AC40045529D /* Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6A896728834AC40045529D /* Orientation.swift */; };
 		DF6A896D28835E150045529D /* Tiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6A896C28835E150045529D /* Tiles.swift */; };
 		DF6B5754288F42D6007C6B78 /* Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6B5753288F42D6007C6B78 /* Engine.swift */; };
@@ -335,6 +334,15 @@
 		DFD1F9BC28F7B0D0000766C1 /* Vertical+TransitionNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD1F9BB28F7B0D0000766C1 /* Vertical+TransitionNode.swift */; };
 		DFD1F9BE28F7B191000766C1 /* Vertical+ProgressNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD1F9BD28F7B191000766C1 /* Vertical+ProgressNode.swift */; };
 		DFE179342A4CF80900CB535E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DFE179332A4CF80900CB535E /* GoogleService-Info.plist */; };
+		DFF09B452A58BABC00C5CA5E /* JSCContentTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B442A58BABC00C5CA5E /* JSCContentTracker.swift */; };
+		DFF09B472A58BB0200C5CA5E /* JSCCT+Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B462A58BB0200C5CA5E /* JSCCT+Protocol.swift */; };
+		DFF09B4A2A58C13900C5CA5E /* +WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B492A58C13900C5CA5E /* +WebView.swift */; };
+		DFF09B4C2A58C14300C5CA5E /* +Basic.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B4B2A58C14300C5CA5E /* +Basic.swift */; };
+		DFF09B4E2A58C14A00C5CA5E /* +OAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B4D2A58C14A00C5CA5E /* +OAuth.swift */; };
+		DFF09B502A58C33800C5CA5E /* +ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B4F2A58C33800C5CA5E /* +ViewModel.swift */; };
+		DFF09B522A58CE8600C5CA5E /* +UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B512A58CE8600C5CA5E /* +UserView.swift */; };
+		DFF09B542A58D2FD00C5CA5E /* +LibrarySyncView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B532A58D2FD00C5CA5E /* +LibrarySyncView.swift */; };
+		DFF09B582A58D54100C5CA5E /* DSKPreferenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B572A58D54100C5CA5E /* DSKPreferenceView.swift */; };
 		DFF1043E28A9963D00E2C3A4 /* AnyCodable in Frameworks */ = {isa = PBXBuildFile; productRef = DFF1043D28A9963D00E2C3A4 /* AnyCodable */; };
 		DFF1044028A9A6B800E2C3A4 /* DSK+Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF1043F28A9A6B800E2C3A4 /* DSK+Networking.swift */; };
 		DFF1044228A9A89700E2C3A4 /* STT+JSValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF1044128A9A89700E2C3A4 /* STT+JSValue.swift */; };
@@ -455,8 +463,7 @@
 		DF67EBA328EA34DE00076FF5 /* DSK+Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Common.swift"; sourceTree = "<group>"; };
 		DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Preferences.swift"; sourceTree = "<group>"; };
 		DF68249E28A5D2CF00AB30A1 /* ContentSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentSourceView.swift; sourceTree = "<group>"; };
-		DF6824A428A5FD6100AB30A1 /* DRV+Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DRV+Preferences.swift"; sourceTree = "<group>"; };
-		DF6824A628A5FD8000AB30A1 /* DRV+Auth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DRV+Auth.swift"; sourceTree = "<group>"; };
+		DF6824A628A5FD8000AB30A1 /* DSKAuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DSKAuthView.swift; sourceTree = "<group>"; };
 		DF6A896728834AC40045529D /* Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Orientation.swift; sourceTree = "<group>"; };
 		DF6A896C28835E150045529D /* Tiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tiles.swift; sourceTree = "<group>"; };
 		DF6B5753288F42D6007C6B78 /* Engine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Engine.swift; sourceTree = "<group>"; };
@@ -678,6 +685,15 @@
 		DFD1F9BB28F7B0D0000766C1 /* Vertical+TransitionNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+TransitionNode.swift"; sourceTree = "<group>"; };
 		DFD1F9BD28F7B191000766C1 /* Vertical+ProgressNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+ProgressNode.swift"; sourceTree = "<group>"; };
 		DFE179332A4CF80900CB535E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		DFF09B442A58BABC00C5CA5E /* JSCContentTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSCContentTracker.swift; sourceTree = "<group>"; };
+		DFF09B462A58BB0200C5CA5E /* JSCCT+Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCCT+Protocol.swift"; sourceTree = "<group>"; };
+		DFF09B492A58C13900C5CA5E /* +WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+WebView.swift"; sourceTree = "<group>"; };
+		DFF09B4B2A58C14300C5CA5E /* +Basic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+Basic.swift"; sourceTree = "<group>"; };
+		DFF09B4D2A58C14A00C5CA5E /* +OAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+OAuth.swift"; sourceTree = "<group>"; };
+		DFF09B4F2A58C33800C5CA5E /* +ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+ViewModel.swift"; sourceTree = "<group>"; };
+		DFF09B512A58CE8600C5CA5E /* +UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+UserView.swift"; sourceTree = "<group>"; };
+		DFF09B532A58D2FD00C5CA5E /* +LibrarySyncView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+LibrarySyncView.swift"; sourceTree = "<group>"; };
+		DFF09B572A58D54100C5CA5E /* DSKPreferenceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DSKPreferenceView.swift; sourceTree = "<group>"; };
 		DFF1043F28A9A6B800E2C3A4 /* DSK+Networking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Networking.swift"; sourceTree = "<group>"; };
 		DFF1044128A9A89700E2C3A4 /* STT+JSValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+JSValue.swift"; sourceTree = "<group>"; };
 		DFF363252863E4AF006D02C5 /* MigrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationView.swift; sourceTree = "<group>"; };
@@ -957,6 +973,7 @@
 		DF3DA8F62A5740B000E8E3BD /* Runners */ = {
 			isa = PBXGroup;
 			children = (
+				DFF09B432A58BAA600C5CA5E /* Tracker */,
 				DF3DA8F72A5740BB00E8E3BD /* Source */,
 			);
 			path = Runners;
@@ -1013,9 +1030,9 @@
 		DF68249D28A5D2BB00AB30A1 /* Daisuke */ = {
 			isa = PBXGroup;
 			children = (
-				DF68249E28A5D2CF00AB30A1 /* ContentSourceView.swift */,
-				DF6824A428A5FD6100AB30A1 /* DRV+Preferences.swift */,
-				DF6824A628A5FD8000AB30A1 /* DRV+Auth.swift */,
+				DFF09B562A58D53400C5CA5E /* Preferences */,
+				DFF09B552A58D52B00C5CA5E /* Runners */,
+				DFF09B482A58C12500C5CA5E /* Auth */,
 			);
 			path = Daisuke;
 			sourceTree = "<group>";
@@ -1505,7 +1522,7 @@
 				DF15F58E296621B10085DB1F /* Settings */,
 				DF8D0A672800EE47003E4C3E /* MoreView.swift */,
 				DF8D0A682800EE47003E4C3E /* General */,
-				DF8D0A6B2800EE47003E4C3E /* Interactors */,
+				DF8D0A6B2800EE47003E4C3E /* Runners */,
 			);
 			path = More;
 			sourceTree = "<group>";
@@ -1518,13 +1535,13 @@
 			path = General;
 			sourceTree = "<group>";
 		};
-		DF8D0A6B2800EE47003E4C3E /* Interactors */ = {
+		DF8D0A6B2800EE47003E4C3E /* Runners */ = {
 			isa = PBXGroup;
 			children = (
 				DFC39E9228A093C900450EC4 /* InstalledRunnersView.swift */,
 				DFC39E9428A093D700450EC4 /* SavedListsView.swift */,
 			);
-			path = Interactors;
+			path = Runners;
 			sourceTree = "<group>";
 		};
 		DF8D0A722800EE47003E4C3E /* Explore */ = {
@@ -1963,6 +1980,45 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
+		DFF09B432A58BAA600C5CA5E /* Tracker */ = {
+			isa = PBXGroup;
+			children = (
+				DFF09B442A58BABC00C5CA5E /* JSCContentTracker.swift */,
+				DFF09B462A58BB0200C5CA5E /* JSCCT+Protocol.swift */,
+			);
+			path = Tracker;
+			sourceTree = "<group>";
+		};
+		DFF09B482A58C12500C5CA5E /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				DF6824A628A5FD8000AB30A1 /* DSKAuthView.swift */,
+				DFF09B532A58D2FD00C5CA5E /* +LibrarySyncView.swift */,
+				DFF09B4F2A58C33800C5CA5E /* +ViewModel.swift */,
+				DFF09B492A58C13900C5CA5E /* +WebView.swift */,
+				DFF09B4B2A58C14300C5CA5E /* +Basic.swift */,
+				DFF09B4D2A58C14A00C5CA5E /* +OAuth.swift */,
+				DFF09B512A58CE8600C5CA5E /* +UserView.swift */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		DFF09B552A58D52B00C5CA5E /* Runners */ = {
+			isa = PBXGroup;
+			children = (
+				DF68249E28A5D2CF00AB30A1 /* ContentSourceView.swift */,
+			);
+			path = Runners;
+			sourceTree = "<group>";
+		};
+		DFF09B562A58D53400C5CA5E /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				DFF09B572A58D54100C5CA5E /* DSKPreferenceView.swift */,
+			);
+			path = Preferences;
+			sourceTree = "<group>";
+		};
 		DFF363242863E496006D02C5 /* Migrate */ = {
 			isa = PBXGroup;
 			children = (
@@ -2212,7 +2268,6 @@
 				DF8D0B322800EE47003E4C3E /* STT+Filemanager.swift in Sources */,
 				DFC39E9728A0B0BC00450EC4 /* Runner.swift in Sources */,
 				DF457DD42A43B216002B5350 /* History+Archive.swift in Sources */,
-				DF6824A528A5FD6100AB30A1 /* DRV+Preferences.swift in Sources */,
 				DF67EB8F28E4054C00076FF5 /* LogsView.swift in Sources */,
 				DF9BFDF32A42753B005D0B63 /* DirectoryViewer.swift in Sources */,
 				DF8D0B692800EE48003E4C3E /* Paged+Representable.swift in Sources */,
@@ -2252,6 +2307,7 @@
 				DFF363262863E4AF006D02C5 /* MigrationView.swift in Sources */,
 				DF79D273281100EB0052470D /* ReaderNavigationOverlay.swift in Sources */,
 				DFD1F9BC28F7B0D0000766C1 /* Vertical+TransitionNode.swift in Sources */,
+				DFF09B4E2A58C14A00C5CA5E /* +OAuth.swift in Sources */,
 				DF8D0B382800EE47003E4C3E /* STT+Array.swift in Sources */,
 				DFB7FAFE297B162D00599097 /* ProfileView+AnilistRecommendations.swift in Sources */,
 				DF8D0BAF2800EE48003E4C3E /* BadgeModifier.swift in Sources */,
@@ -2300,12 +2356,13 @@
 				DFD1F9B328F7B065000766C1 /* Vertical+ContextMenu.swift in Sources */,
 				DF8D0B2F2800EE47003E4C3E /* STT+ContentStatus.swift in Sources */,
 				DF8D0BB62800EE48003E4C3E /* ProgressCircleView.swift in Sources */,
+				DFF09B542A58D2FD00C5CA5E /* +LibrarySyncView.swift in Sources */,
 				DFD1EE1229B7CE2600AFAA47 /* PreMigrationView.swift in Sources */,
 				DF8D0B722800EE48003E4C3E /* ReadLaterView.swift in Sources */,
 				DF8D0B552800EE47003E4C3E /* Backup+Chapter.swift in Sources */,
 				DF8D0B562800EE47003E4C3E /* Backup+Content.swift in Sources */,
 				DF482EF429555708002D3308 /* VerticalPaged+Scroll.swift in Sources */,
-				DF6824A728A5FD8000AB30A1 /* DRV+Auth.swift in Sources */,
+				DF6824A728A5FD8000AB30A1 /* DSKAuthView.swift in Sources */,
 				DF8D0B232800EE47003E4C3E /* Queue.swift in Sources */,
 				DF83DD3528224E710021575B /* Data+TrackerLink.swift in Sources */,
 				DF8D0B2A2800EE47003E4C3E /* TabBar.swift in Sources */,
@@ -2345,6 +2402,7 @@
 				DF8D0BAD2800EE48003E4C3E /* BackupsView.swift in Sources */,
 				DFBE483C2A25BC2B000ABA16 /* ThreadSafeChapter.swift in Sources */,
 				DFB47EFD2880E9C90040A1BD /* OPDS+AddServer.swift in Sources */,
+				DFF09B4A2A58C13900C5CA5E /* +WebView.swift in Sources */,
 				DF553CCD297276E3004C3428 /* Paged+Holder.swift in Sources */,
 				DF8D0B432800EE47003E4C3E /* Data+StoredChapter.swift in Sources */,
 				DF8D0BB22800EE48003E4C3E /* MarkDownView.swift in Sources */,
@@ -2357,7 +2415,9 @@
 				DF03F73A2846FAB800602E59 /* ReaderButtonModifier.swift in Sources */,
 				DFBE48442A25BD07000ABA16 /* SearchHistory.swift in Sources */,
 				DF8D0B902800EE48003E4C3E /* LocalAuthGateway.swift in Sources */,
+				DFF09B4C2A58C14300C5CA5E /* +Basic.swift in Sources */,
 				DF13892628BE9F400035BDBB /* Explore+Layout.swift in Sources */,
+				DFF09B452A58BABC00C5CA5E /* JSCContentTracker.swift in Sources */,
 				DF8D0B312800EE47003E4C3E /* STT+UIImage.swift in Sources */,
 				DF8D0B4C2800EE47003E4C3E /* Data+ReadLater.swift in Sources */,
 				DF67EBA428EA34DE00076FF5 /* DSK+Common.swift in Sources */,
@@ -2368,6 +2428,7 @@
 				DF8D0B652800EE47003E4C3E /* ReaderView.swift in Sources */,
 				DF59C98028500E200027F19D /* LocalFileModifier.swift in Sources */,
 				DF426C352A463F4D00B79920 /* DirectorySearcher.swift in Sources */,
+				DFF09B502A58C33800C5CA5E /* +ViewModel.swift in Sources */,
 				DF8D0B7B2800EE48003E4C3E /* LibraryGrid+GridView.swift in Sources */,
 				DF9BFDF02A425BBB005D0B63 /* LocalObserver.swift in Sources */,
 				DFBE48542A25BEA0000ABA16 /* TrackerLink.swift in Sources */,
@@ -2375,6 +2436,7 @@
 				DF8D0B8B2800EE48003E4C3E /* ESV+SearchHistoryView.swift in Sources */,
 				DF83DD3328223B680021575B /* ProfileView+TrackersSheet.swift in Sources */,
 				DF553CC929726F48004C3428 /* ReaderPage.swift in Sources */,
+				DFF09B582A58D54100C5CA5E /* DSKPreferenceView.swift in Sources */,
 				DF68249F28A5D2CF00AB30A1 /* ContentSourceView.swift in Sources */,
 				DF248F34281466A500818300 /* AL+SearchResult.swift in Sources */,
 				DF79D26C2810AE960052470D /* RPV+Protocols.swift in Sources */,
@@ -2387,6 +2449,7 @@
 				DFBD202C28554ECB0042B4A6 /* CollectionFilter.swift in Sources */,
 				DF8D0B5C2800EE47003E4C3E /* Reader+ViewModel.swift in Sources */,
 				DF248F322814657200818300 /* AL+FullSearchFunctions.swift in Sources */,
+				DFF09B522A58CE8600C5CA5E /* +UserView.swift in Sources */,
 				DF8D0B512800EE47003E4C3E /* Backup+Collection.swift in Sources */,
 				DF6C25CB282D97EB002BE1AA /* STT+Parsable.swift in Sources */,
 				DF3DA8F52A57320100E8E3BD /* JSCRunner.swift in Sources */,
@@ -2448,6 +2511,7 @@
 				DF248F22281393A400818300 /* AnilistView.swift in Sources */,
 				DF67EB9928E7B07700076FF5 /* AddContentLink.swift in Sources */,
 				DFAC779E28165FA400AF6394 /* AL+Data.swift in Sources */,
+				DFF09B472A58BB0200C5CA5E /* JSCCT+Protocol.swift in Sources */,
 				DF67EB9B28E7B08400076FF5 /* ManageContentLinks.swift in Sources */,
 				DF8D0B3D2800EE47003E4C3E /* Preference.swift in Sources */,
 				DFBE48502A25BE4A000ABA16 /* Bookmark.swift in Sources */,

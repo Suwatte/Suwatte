@@ -8,7 +8,7 @@
 import Foundation
 
 extension Anilist {
-    struct Tag: Decodable {
+    struct Tag: Decodable, Hashable {
         var category: String
         var description: String
         var isAdult: Bool
@@ -18,7 +18,7 @@ extension Anilist {
     struct GenreResponse: Decodable {
         var data: NestedVal
 
-        struct NestedVal: Decodable {
+        struct NestedVal: Decodable, Hashable {
             var genres: [String]
             var tags: [Tag]
         }

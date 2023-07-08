@@ -9,14 +9,26 @@ import Foundation
 import IceCream
 import RealmSwift
 
-enum RunnerType: Int, PersistableEnum {
-    case API_RUNNER, FILE_RUNNER, PUBLIC_RUNNER
+enum RunnerEnvironment: String, PersistableEnum, Codable {
+    case tracker, source, plugin, unknown
+    
+    var description: String {
+        switch self {
+        case .tracker:
+            return "Trackers"
+        case .source:
+            return "Content Sources"
+        case .plugin:
+            return "Plugins"
+        case .unknown:
+            return "Unknown"
+        }
+    }
 }
 
 struct RunnerList: Codable, Hashable {
     var listName: String?
     var runners: [Runner]
-    var hosted: Bool?
 }
 
 struct Runner: Codable, Hashable {
@@ -26,10 +38,8 @@ struct Runner: Codable, Hashable {
     var website: String
     var supportedLanguages: [String]
     var path: String
-
-    var authors: [String]?
+    var environment: RunnerEnvironment
     var thumbnail: String?
-    var nsfw: Bool?
     var minSupportedAppVersion: String?
 }
 
@@ -44,7 +54,7 @@ final class StoredRunnerObject: Object, Identifiable, CKRecordConvertible, CKRec
     @Persisted(primaryKey: true) var id: String
     @Persisted var name: String
     @Persisted var version: Double
-    @Persisted var type: RunnerType
+    @Persisted var environment: RunnerEnvironment
 
     @Persisted var dateAdded: Date = .init()
     @Persisted var enabled: Bool
@@ -63,7 +73,6 @@ extension DataManager {
         let obj = StoredRunnerList()
         obj.listName = data.listName
         obj.url = url.absoluteString
-        obj.hosted = data.hosted ?? false
         try! realm.safeWrite {
             realm.add(obj, update: .modified)
         }
@@ -88,7 +97,7 @@ extension DataManager {
             .first
     }
 
-    func saveRunner(_ info: RunnerInfo, listURL: URL? = nil, url: URL) {
+    func saveRunner(_ info: RunnerInfo, listURL: URL? = nil, url: URL, environment: RunnerEnvironment) {
         let realm = try! Realm()
 
         let target = realm
@@ -107,6 +116,7 @@ extension DataManager {
         obj.id = info.id
         obj.version = info.version
         obj.enabled = true
+        obj.environment = environment
 
         if let listURL {
             obj.listURL = listURL.absoluteString
@@ -140,13 +150,13 @@ extension DataManager {
         
         return target?.executable?.filePath
     }
-
-    func getSavedAndEnabledRunners() -> Results<StoredRunnerObject> {
+    
+    func getSavedAndEnabledSources() -> Results<StoredRunnerObject> {
         let realm = try! Realm()
 
         return realm
             .objects(StoredRunnerObject.self)
-            .where { $0.enabled == true }
+            .where { $0.enabled == true && $0.isDeleted == false && $0.environment == .source }
             .sorted(by: [SortDescriptor(keyPath: "name", ascending: true)])
     }
 }

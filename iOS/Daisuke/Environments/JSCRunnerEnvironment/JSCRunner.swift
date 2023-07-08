@@ -57,7 +57,7 @@ protocol RunnerInfo: Parsable {
 struct RunnerIntents: Parsable {
     let preferenceMenuBuilder: Bool
     let authenticatable: Bool
-    let authenticationMethod: AuthenticationMethod?
+    let authenticationMethod: AuthenticationMethod
     let basicAuthLabel: BasicAuthenticationUIIdentifier?
     let chapterEventHandler: Bool
     let contentEventHandler: Bool
@@ -72,7 +72,7 @@ struct RunnerIntents: Parsable {
     let browseTabProvider: Bool
     
     enum AuthenticationMethod: String, Codable {
-        case webview, basic
+        case webview, basic, oauth, unknown
     }
     enum BasicAuthenticationUIIdentifier: Int, Codable {
       case EMAIL
@@ -81,14 +81,15 @@ struct RunnerIntents: Parsable {
 }
 
 // MARK: - JSC Runner
-protocol JSCRunner: JSCContextProtocol {
+protocol JSCRunner: JSCContextProtocol  {
     var info:  RunnerInfo { get }
     var intents: RunnerIntents { get }
-    
+    var environment: RunnerEnvironment { get }
     init(value: JSValue) throws
-
 }
 
+
+typealias AnyJSCRunner = (any JSCRunner)
 extension JSCRunner {
     var id: String {
         info.id
@@ -100,6 +101,10 @@ extension JSCRunner {
     
     var version: Double {
         info.version
+    }
+    
+    var thumbnailURL: URL? {
+        DataManager.shared.getRunner(id).flatMap { URL(string: $0.thumbnail) }
     }
 }
 // MARK: - Paths
@@ -222,4 +227,59 @@ extension JSCRunner {
             }
         }
     }
+}
+
+
+extension JSCRunner {
+    
+    // Preference
+    func buildPreferenceMenu() async throws -> [DSKCommon.PreferenceGroup] {
+        return try await callContextMethod(method: "generatePreferenceMenu", resolvesTo: [DSKCommon.PreferenceGroup].self)
+    }
+    
+    func updateSourcePreference(key: String, value: Any) async {
+        let context = runnerClass.context!
+        let function = context.evaluateScript("updateSourcePreferences")
+        function?.daisukeCall(arguments: [key, value], onSuccess: { _ in
+            context.evaluateScript("console.log('[\(key)] Preference Updated')")
+        }, onFailure: { error in
+            context.evaluateScript("console.error('[\(key)] Preference Failed To Update: \(error)')")
+            
+        })
+    }
+    
+    // Auth
+    func getAuthenticatedUser() async throws -> DSKCommon.User? {
+        return try await callMethodReturningDecodable(method: "getAuthenticatedUser", arguments: [], resolvesTo: DSKCommon.User?.self)
+    }
+    
+    func handleUserSignOut() async throws {
+        try await callOptionalVoidMethod(method: "handleUserSignOut", arguments: [])
+    }
+    
+    // Basic Auth
+    func handleBasicAuthentication(id: String, password: String) async throws {
+        try await callOptionalVoidMethod(method: "handleBasicAuth", arguments: [id, password])
+    }
+    
+    
+    // Web Auth
+    func getWebAuthRequestURL() async throws -> DSKCommon.BasicURL {
+        return try await callMethodReturningObject(method: "getWebAuthRequestURL", arguments: [], resolvesTo: DSKCommon.BasicURL.self)
+    }
+    
+    func didReceiveCookieFromWebAuthResponse(name: String) async throws -> Bool {
+        return try await callMethodReturningDecodable(method: "didReceiveSessionCookieFromWebAuthResponse", arguments: [name], resolvesTo: Bool.self)
+    }
+    
+    
+    // OAuth
+    func getOAuthRequestURL() async throws -> DSKCommon.BasicURL {
+        return try await callMethodReturningObject(method: "getOAuthRequestURL", arguments: [], resolvesTo: DSKCommon.BasicURL.self)
+    }
+    
+    func handleOAuthCallback(response: String) async throws {
+        try await callOptionalVoidMethod(method: "handleOAuthCallback", arguments: [response])
+    }
+
 }

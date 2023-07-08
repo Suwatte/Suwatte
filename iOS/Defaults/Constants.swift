@@ -41,8 +41,8 @@ let STTUserDefaults: [String: Any] = [
     STTKeys.LocalStorageUsesICloud: FileManager.default.ubiquityIdentityToken != nil
 ]
 
-let SCHEMA_VERSION = 12
-let STT_BRIDGE_VERSION = "2.0.1"
+let SCHEMA_VERSION = 13
+let STT_BRIDGE_VERSION = "2.1.0"
 
 let KEY_WINDOW = UIApplication
     .shared

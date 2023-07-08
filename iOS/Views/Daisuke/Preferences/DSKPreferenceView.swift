@@ -1,57 +1,39 @@
 //
-//  DRV+Preferences.swift
+//  DSKPreferenceView.swift
 //  Suwatte (iOS)
 //
-//  Created by Mantton on 2022-08-11.
+//  Created by Mantton on 2023-07-07.
 //
 
 import SwiftUI
 
-extension ContentSourceView {
-    struct PreferencesView: View {
-        var source: AnyContentSource
-        @State var loadable = Loadable<[DSKCommon.PreferenceGroup]>.idle
-        var body: some View {
-            LoadableView(loadable: loadable) {
-                ProgressView()
-                    .task {
-                        await load()
-                    }
-            } _: {
-                ProgressView()
-            } _: { error in
-                ErrorView(error: error) {
-                    Task {
-                        await load()
-                    }
-                }
-            } _: { value in
-                ContentSourceSettingsView(source: source, preferences: value)
-            }
-            .animation(.default, value: loadable)
+
+struct DSKPreferenceView : View {
+    var runner: JSCRunner
+    @State private var loadable = Loadable<[DSKCommon.PreferenceGroup]>.idle
+    
+    var body: some View {
+        LoadableView(load, loadable) { value in
+            ContentSourceSettingsView(runner: runner, preferences: value)
         }
-
-        func load() async {
-            await MainActor.run(body: {
-                loadable = .loading
-            })
+    }
+    
+    func load() {
+        Task {
+            loadable = .loading
             do {
-                let data = try await source.buildPreferenceMenu()
-                await MainActor.run(body: {
-                    loadable = .loaded(data)
-                })
-
+                let data = try await runner.buildPreferenceMenu()
+                loadable = .loaded(data)
             } catch {
-                await MainActor.run(body: {
-                    loadable = .failed(error)
-                })
+                loadable = .failed(error)
             }
         }
     }
 }
 
+
 struct ContentSourceSettingsView: View {
-    var source: AnyContentSource
+    var runner: JSCRunner
     var preferences: [DSKCommon.PreferenceGroup]
     var body: some View {
         Form {
@@ -77,12 +59,12 @@ struct ContentSourceSettingsView: View {
     @ViewBuilder
     func TYPE_SWITCH(pref: DSKCommon.Preference) -> some View {
         switch pref.type {
-        case .select: SelectionView(source: source, pref: pref)
-        case .multiSelect: MultiSelectView(source: source, pref: pref)
-        case .stepper: StepperView(source: source, pref: pref)
-        case .textfield: TextFieldView(source: source, pref: pref)
-        case .toggle: ToggleView(source: source, pref: pref)
-        case .button: ButtoNView(source: source, pref: pref)
+        case .select: SelectionView(runner: runner, pref: pref)
+        case .multiSelect: MultiSelectView(runner: runner, pref: pref)
+        case .stepper: StepperView(runner: runner, pref: pref)
+        case .textfield: TextFieldView(runner: runner, pref: pref)
+        case .toggle: ToggleView(runner: runner, pref: pref)
+        case .button: ButtonView(runner: runner, pref: pref)
         }
     }
 }
@@ -91,12 +73,12 @@ struct ContentSourceSettingsView: View {
 
 extension ContentSourceSettingsView {
     struct SelectionView: View {
-        var source: AnyContentSource
+        var runner: JSCRunner
         var pref: DSKCommon.Preference
         @State var selection: String
 
-        init(source: AnyContentSource, pref: DSKCommon.Preference) {
-            self.source = source
+        init(runner: JSCRunner, pref: DSKCommon.Preference) {
+            self.runner = runner
             self.pref = pref
             let value = (pref.value.value as? String) ?? pref.options?.first?.value ?? ""
             _selection = State(initialValue: value)
@@ -111,7 +93,7 @@ extension ContentSourceSettingsView {
             }
             .onChange(of: selection) { _ in
                 Task {
-                    await source.updateSourcePreference(key: pref.key, value: selection)
+                    await runner.updateSourcePreference(key: pref.key, value: selection)
                 }
             }
         }
@@ -122,12 +104,12 @@ extension ContentSourceSettingsView {
 
 extension ContentSourceSettingsView {
     struct ToggleView: View {
-        var source: AnyContentSource
+        var runner: JSCRunner
         var pref: DSKCommon.Preference
         @State var isOn: Bool
 
-        init(source: AnyContentSource, pref: DSKCommon.Preference) {
-            self.source = source
+        init(runner: JSCRunner, pref: DSKCommon.Preference) {
+            self.runner = runner
             self.pref = pref
 
             let value = (pref.value.value as? Bool) ?? false
@@ -138,7 +120,7 @@ extension ContentSourceSettingsView {
             Toggle(pref.label, isOn: $isOn)
                 .onChange(of: isOn) { value in
                     Task {
-                        await source.updateSourcePreference(key: pref.key, value: value)
+                        await runner.updateSourcePreference(key: pref.key, value: value)
                     }
                 }
         }
@@ -149,11 +131,11 @@ extension ContentSourceSettingsView {
 
 extension ContentSourceSettingsView {
     struct TextFieldView: View {
-        var source: AnyContentSource
+        var runner: JSCRunner
         var pref: DSKCommon.Preference
         @State var text: String
-        init(source: AnyContentSource, pref: DSKCommon.Preference) {
-            self.source = source
+        init(runner: JSCRunner, pref: DSKCommon.Preference) {
+            self.runner = runner
             self.pref = pref
             let value = (pref.value.value as? String) ?? ""
             _text = State(initialValue: value)
@@ -163,7 +145,7 @@ extension ContentSourceSettingsView {
             TextField(pref.label, text: $text)
                 .onSubmit {
                     Task {
-                        await source.updateSourcePreference(key: pref.key, value: text)
+                        await runner.updateSourcePreference(key: pref.key, value: text)
                     }
                 }
         }
@@ -174,11 +156,11 @@ extension ContentSourceSettingsView {
 
 extension ContentSourceSettingsView {
     struct StepperView: View {
-        var source: AnyContentSource
+        var runner: JSCRunner
         var pref: DSKCommon.Preference
         @State var value: Int
-        init(source: AnyContentSource, pref: DSKCommon.Preference) {
-            self.source = source
+        init(runner: JSCRunner, pref: DSKCommon.Preference) {
+            self.runner = runner
             self.pref = pref
             let cValue = (pref.value.value as? Int) ?? pref.minStepper
             _value = State(initialValue: cValue)
@@ -190,7 +172,7 @@ extension ContentSourceSettingsView {
             }
             .onChange(of: value) { value in
                 Task {
-                    await source.updateSourcePreference(key: pref.key, value: value)
+                    await runner.updateSourcePreference(key: pref.key, value: value)
                 }
             }
         }
@@ -201,11 +183,11 @@ extension ContentSourceSettingsView {
 
 extension ContentSourceSettingsView {
     struct MultiSelectView: View {
-        var source: AnyContentSource
+        var runner: JSCRunner
         var pref: DSKCommon.Preference
         @State var selections: [String]
-        init(source: AnyContentSource, pref: DSKCommon.Preference) {
-            self.source = source
+        init(runner: JSCRunner, pref: DSKCommon.Preference) {
+            self.runner = runner
             self.pref = pref
 
             let value = (pref.value.value as? [String]) ?? []
@@ -231,7 +213,7 @@ extension ContentSourceSettingsView {
             }
             .onChange(of: selections) { newValue in
                 Task {
-                    await source.updateSourcePreference(key: pref.key, value: newValue)
+                    await runner.updateSourcePreference(key: pref.key, value: newValue)
                 }
             }
         }
@@ -263,11 +245,11 @@ extension ContentSourceSettingsView {
 // MARK: Button
 
 extension ContentSourceSettingsView {
-    struct ButtoNView: View {
-        var source: AnyContentSource
+    struct ButtonView: View {
+        var runner: JSCRunner
         var pref: DSKCommon.Preference
-        init(source: AnyContentSource, pref: DSKCommon.Preference) {
-            self.source = source
+        init(runner: JSCRunner, pref: DSKCommon.Preference) {
+            self.runner = runner
             self.pref = pref
         }
 
@@ -278,7 +260,7 @@ extension ContentSourceSettingsView {
         var body: some View {
             Button(role: destructive ? .destructive : nil) {
                 Task {
-                    await source.updateSourcePreference(key: pref.key, value: "")
+                    await runner.updateSourcePreference(key: pref.key, value: "")
                 }
             } label: {
                 if let image = pref.systemImage {

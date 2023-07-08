@@ -7,28 +7,24 @@
 
 import SwiftUI
 
-struct ContentSourceView: View {
-    @StateObject var model: ViewModel
+struct ContentSourceInfoView: View {
+    var source: AnyContentSource
     @AppStorage(STTKeys.SourcesDisabledFromHistory) var sourcesDisabledFromHistory: [String] = []
     @AppStorage(STTKeys.SourcesHiddenFromGlobalSearch) var sourcesHiddenFromGlobalSearch: [String] = []
-
-    var source: AnyContentSource {
-        model.source
-    }
 
     var body: some View {
         List {
             HeaderSection
             InfoSection
 
-            if source.intents.authenticatable, let method = source.intents.authenticationMethod {
-                AuthSection(method: method)
+            if source.intents.authenticatable, source.intents.authenticationMethod != .unknown {
+                DSKAuthView(model: .init(runner: source))
             }
 
             if source.intents.preferenceMenuBuilder {
                 Section {
                     NavigationLink("Preferences") {
-                        PreferencesView(source: source)
+                        DSKPreferenceView(runner: source)
                             .navigationTitle("Preferences")
                     }
                 } header: {
@@ -62,8 +58,6 @@ struct ContentSourceView: View {
             }
         }
         .navigationTitle(source.name)
-        .environmentObject(model)
-        .animation(.default, value: model.user)
     }
 
     var HeaderSection: some View {

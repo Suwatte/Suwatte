@@ -9,44 +9,69 @@ import RealmSwift
 import SwiftUI
 
 struct InstalledRunnersView: View {
-    private let manager = DSK.shared
+    private let engine = DSK.shared
     @StateObject var model = ViewModel()
     @State var showAddSheet = false
-
     var body: some View {
         List {
-            if let runners = model.runners {
-                Section {
-                    ForEach(runners, id: \.id) { runner in
-                        if let source = manager.getSource(id: runner.id) {
+            if let r = model.runners  {
+                let grouped = Dictionary(grouping: r, by: \.environment)
+                let keys = grouped.filter({ !$0.value.isEmpty }).keys.sorted(by: \.description)
+                ForEach(Array(keys), id: \.description) { key in
+                    let runners = grouped[key] ?? []
+                    
+                    Section {
+                        ForEach(runners, id: \.id) { runner in
+                            
+                            let dskRunner = engine.getRunner(runner.id)
+                            let isActive = dskRunner != nil
                             NavigationLink {
-                                ContentSourceView(model: .init(s: source))
+                                
+                                if let dskRunner {
+                                    if let source = dskRunner as? JSCC {
+                                        ContentSourceInfoView(source: source)
+                                    }
+                                } else {
+                                    EmptyView()
+                                }
                             } label: {
                                 HStack(spacing: 15) {
                                     STTThumbView(url: URL(string: runner.thumbnail))
                                         .frame(width: 44, height: 44, alignment: .center)
                                         .cornerRadius(7)
                                     VStack(alignment: .leading, spacing: 2.5) {
-                                        Text(source.name)
+                                        Text(runner.name)
                                             .fontWeight(.semibold)
-                                        Text(source.version.clean)
+                                        Text(runner.version.clean)
                                             .font(.footnote.weight(.light))
                                             .foregroundColor(.secondary)
                                     }
+                                    
+                                    if !isActive {
+                                        Spacer()
+                                        Image(systemName: "exclamationmark.triangle")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(height: 15)
+                                            .foregroundColor(.red)
+                                    }
+                                
                                 }
                             }
+                            .disabled(!isActive)
                             .swipeActions {
                                 Button {
-                                    manager.removeRunner(runner.id)
+                                    engine.removeRunner(runner.id)
                                 } label: {
                                     Label("Delete", systemImage: "trash")
                                 }
                                 .tint(.red)
                             }
+                            
                         }
+                    } header: {
+                        Text(key.description)
                     }
-                } header: {
-                    Text("Content Sources")
                 }
                 .transition(.opacity)
             }
@@ -74,7 +99,7 @@ struct InstalledRunnersView: View {
             if path.startAccessingSecurityScopedResource() {
                 Task {
                     do {
-                        try await manager.importRunner(from: path)
+                        try await engine.importRunner(from: path)
                         await MainActor.run {
                             ToastManager.shared.info("Added!")
                         }

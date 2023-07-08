@@ -267,7 +267,7 @@ extension SearchView {
         }
 
         var sources: [StoredRunnerObject] {
-            DataManager.shared.getSavedAndEnabledRunners().filter { !disabledSourceIds.contains($0.id) }
+            DataManager.shared.getSavedAndEnabledSources().filter { !disabledSourceIds.contains($0.id) }
         }
 
         func makeRequests() {

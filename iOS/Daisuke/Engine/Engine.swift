@@ -10,7 +10,7 @@ import Foundation
 import JavaScriptCore
 import RealmSwift
 
-final class DaisukeEngine {
+final class DaisukeEngine: NSObject {
     // MARK: Singleton
     static let shared = DaisukeEngine()
     
@@ -27,7 +27,7 @@ final class DaisukeEngine {
     private var runners: [String: JSCRunner] = [:]
     private let vm: JSVirtualMachine
     
-    init() {
+    override init() {
         // Create Directory if required
         if !directory.exists {
             directory.createDirectory()
@@ -173,6 +173,8 @@ extension DaisukeEngine {
         switch environment {
         case .source:
             runner = try JSCC(value: runnerObject)
+        case .tracker:
+            runner = try JSCContentTracker(value: runnerObject)
         default:
             break
         }
@@ -198,7 +200,7 @@ extension DaisukeEngine {
     func addRunner(_ rnn: JSCRunner, listURL: URL? = nil) {
         runners.removeValue(forKey: rnn.id)
         runners[rnn.id] = rnn
-        DataManager.shared.saveRunner(rnn.info, listURL: listURL, url: executeableURL(for: rnn.id))
+        DataManager.shared.saveRunner(rnn.info, listURL: listURL, url: executeableURL(for: rnn.id), environment: rnn.environment)
     }
     
     func didStartRunner(_ runner: JSCRunner) {
@@ -377,7 +379,7 @@ extension DaisukeEngine {
     func getActiveSources() -> [AnyContentSource] {
         DataManager
             .shared
-            .getSavedAndEnabledRunners()
+            .getSavedAndEnabledSources()
             .compactMap { DSK.shared.getSource(id: $0.id) }
     }
 }

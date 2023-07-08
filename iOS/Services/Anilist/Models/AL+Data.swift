@@ -259,9 +259,16 @@ extension Anilist {
             var recommendations: PathObject
         }
 
-        struct PathObject: Decodable {
+        struct PathObject: Decodable, Equatable {
+            static func == (lhs: Anilist.RecommendationResponse.PathObject, rhs: Anilist.RecommendationResponse.PathObject) -> Bool {
+                lhs.id == rhs.id
+            }
+            
             var pageInfo: PageInfo
             var nodes: [InternalNodeObject]
+            var id = UUID().uuidString
+            
+            
         }
 
         struct PageInfo: Decodable {

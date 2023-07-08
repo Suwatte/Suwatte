@@ -46,6 +46,32 @@ extension DSKCommon {
             .init(url: url, method: method.rawValue, params: params, body: body, headers: headers, cookies: cookies, timeout: timeout, maxRetries: maxRetries)
         }
     }
+    
+    struct BasicURL: Parsable {
+        var url: String
+        var params: CodableDict?
+        
+        
+        func toURL() throws -> URL {
+            guard let url = URL(string: url) else {
+                throw DSK.Errors.NetworkErrorInvalidRequestURL
+            }
+
+            var request = URLRequest(url: url)
+
+            // Params
+            if let p = params {
+                let params = try p.asDictionary()
+                request = try URLEncoding(destination: .queryString).encode(request, with: params)
+            }
+            
+            guard let out = request.url else {
+                throw DSK.Errors.NetworkErrorInvalidRequestURL
+            }
+            
+            return out
+        }
+    }
 }
 
 // MARK: Response

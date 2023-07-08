@@ -68,23 +68,7 @@ protocol ContentSource {
     // Library Sync Handler
     func syncUserLibrary(library: [DSKCommon.UpSyncedContent]) async throws -> [DSKCommon.DownSyncedContent]
 
-    // User Preference Handler
-    func buildPreferenceMenu() async throws -> [DSKCommon.PreferenceGroup]
-    
-    // Core Authentication Hanlders
-    func getAuthenticatedUser() async throws -> DSKCommon.User?
-    func handleUserSignOut() async throws
-
-    // Basic Authentication Hanlder
-    func handleBasicAuthentication(id: String, password: String) async throws
-    
-    // WebView Authentication Handler
-    func willRequestAuthenticationWebView() async throws -> DSKCommon.Request
-    func didReceiveAuthenticationCookieFromWebView(cookie: DSKCommon.Cookie) async throws -> Bool
-
-    // Bridged Methods
-    func updateSourcePreference(key: String, value: Any) async
-    
+    // Deep Link
     func getIdentifiers(for id: String) async throws -> DaisukeEngine.Structs.URLContentIdentifer?
 }
  
