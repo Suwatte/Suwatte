@@ -35,8 +35,8 @@ struct Runner: Codable, Hashable {
     var id: String
     var name: String
     var version: Double
-    var website: String
-    var supportedLanguages: [String]
+    var website: String?
+    var supportedLanguages: [String]?
     var path: String
     var environment: RunnerEnvironment
     var thumbnail: String?

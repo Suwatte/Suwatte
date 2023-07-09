@@ -44,7 +44,7 @@ struct InstalledRunnersView: View {
                                     VStack(alignment: .leading, spacing: 2.5) {
                                         Text(runner.name)
                                             .fontWeight(.semibold)
-                                        Text(runner.version.clean)
+                                        Text("v" + runner.version.description)
                                             .font(.footnote.weight(.light))
                                             .foregroundColor(.secondary)
                                     }

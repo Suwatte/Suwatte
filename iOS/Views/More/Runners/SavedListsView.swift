@@ -22,11 +22,12 @@ struct RunnerListsView: View {
                         .navigationTitle(list.listName ?? list.url)
                         .navigationBarTitleDisplayMode(.inline)
                 } label: {
-                    VStack(alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 5) {
                         Text(list.listName ?? list.url)
+                            .font(.headline)
                         if list.listName != nil {
-                            Text(list.url)
-                                .font(.caption)
+                            Text(URL(string: list.url)?.sttBase?.absoluteString ?? list.url)
+                                .font(.subheadline)
                                 .fontWeight(.light)
                                 .opacity(0.65)
                         }
@@ -214,7 +215,7 @@ extension RunnerListsView {
         }
 
         var languages: [String] {
-            let langs = Set(list.runners.flatMap { $0.supportedLanguages })
+            let langs = Set(list.runners.flatMap { $0.supportedLanguages ?? []})
             return Array(langs).filter { langSearchText.isEmpty || $0.lowercased().contains(langSearchText.lowercased()) }
         }
 
@@ -235,7 +236,7 @@ extension RunnerListsView {
             }
 
             if !selectedLanguages.isEmpty {
-                base = base.filter { !Set($0.supportedLanguages).intersection(selectedLanguages).isEmpty }
+                base = base.filter { !Set($0.supportedLanguages ?? []).intersection(selectedLanguages).isEmpty }
             }
 
             return base.sorted(by: \.name, descending: false)

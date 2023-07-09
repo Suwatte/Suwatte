@@ -9,7 +9,7 @@ import RealmSwift
 import SwiftUI
 
 struct BrowseView: View {
-    @ObservedResults(StoredRunnerObject.self, where: { $0.isDeleted == false }) var runners
+    @ObservedResults(StoredRunnerObject.self, where: { $0.isDeleted == false && $0.environment == .source }) var runners
     @State var presentImporter = false
     var body: some View {
         NavigationView {
