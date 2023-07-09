@@ -8,6 +8,17 @@
 import Foundation
 import JavaScriptCore
 
+struct TrackerInfo: RunnerInfo {
+    var id: String
+    var name: String
+    var version: Double
+    var minSupportedAppVersion: String?
+    var thumbnail: String?
+    
+    var website: String
+}
+
+
 class JSCContentTracker: JSCRunner {
     var info: RunnerInfo
     let intents: RunnerIntents

@@ -60,7 +60,10 @@ const evaluateEnvironment = () => {
     RunnerObject.getLatestReadChapter &&
     RunnerObject.getResultsForTitles &&
     RunnerObject.getTrackState &&
-    RunnerObject.updateTrackState
+    RunnerObject.getEntryForm &&
+    RunnerObject.didSubmitEntryForm &&
+    RunnerObject.beginTracking &&
+    RunnerObject.stopTracking
   )
     return "tracker";
 
@@ -113,7 +116,7 @@ function setupSourceConfig() {
       !!ctx.getWebAuthRequestURL &&
       !!ctx.didReceiveSessionCookieFromWebAuthResponse;
     const oAuthAuthenticatable =
-      !!ctx.getOAuthRequest && !!ctx.handleOAuthCallback;
+      !!ctx.getOAuthRequestURL && !!ctx.handleOAuthCallback;
     const authenticatable =
       basicAuthenticatable || webViewAuthenticatable || oAuthAuthenticatable;
     if (RunnerAuthenticatable && authenticatable) {
@@ -190,5 +193,5 @@ const updateSourcePreferences = async (key, value) => {
 try {
   bootstrap();
 } catch (err) {
-  console.error("Failed to boostrap runner object.", err.message);
+  console.error("Failed to bootstrap runner object.", err.message);
 }

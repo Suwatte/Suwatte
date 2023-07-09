@@ -32,6 +32,7 @@ final class DaisukeEngine: NSObject {
         if !directory.exists {
             directory.createDirectory()
         }
+        
         // Start VM
         let queue = DispatchQueue(label: "com.ceres.suwatte.daisuke", attributes: .concurrent)
         vm = queue.sync { JSVirtualMachine()! }
@@ -153,7 +154,12 @@ extension DaisukeEngine {
         let file = DataManager.shared.getRunnerExecutable(id: id)
         
         guard let file, file.exists else {
-            throw DSK.Errors.RunnerExecutableNotFound
+            let standardLocation = executeableURL(for: id)
+            if standardLocation.exists {
+                return try startRunner(standardLocation)
+            } else {
+                throw DSK.Errors.RunnerExecutableNotFound
+            }
         }
         
         return try startRunner(file)
@@ -194,7 +200,12 @@ extension DaisukeEngine {
     }
     
     func getRunner(_ id: String) -> JSCRunner? {
-        return try? getJSCRunner(id)
+        do {
+            return try getJSCRunner(id)
+        } catch {
+            Logger.shared.error("[\(id)] [Requested] \(error.localizedDescription)")
+            return nil
+        }
     }
     
     func addRunner(_ rnn: JSCRunner, listURL: URL? = nil) {

@@ -335,7 +335,6 @@
 		DFD1F9BE28F7B191000766C1 /* Vertical+ProgressNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD1F9BD28F7B191000766C1 /* Vertical+ProgressNode.swift */; };
 		DFE179342A4CF80900CB535E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DFE179332A4CF80900CB535E /* GoogleService-Info.plist */; };
 		DFF09B452A58BABC00C5CA5E /* JSCContentTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B442A58BABC00C5CA5E /* JSCContentTracker.swift */; };
-		DFF09B472A58BB0200C5CA5E /* JSCCT+Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B462A58BB0200C5CA5E /* JSCCT+Protocol.swift */; };
 		DFF09B4A2A58C13900C5CA5E /* +WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B492A58C13900C5CA5E /* +WebView.swift */; };
 		DFF09B4C2A58C14300C5CA5E /* +Basic.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B4B2A58C14300C5CA5E /* +Basic.swift */; };
 		DFF09B4E2A58C14A00C5CA5E /* +OAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B4D2A58C14A00C5CA5E /* +OAuth.swift */; };
@@ -343,6 +342,12 @@
 		DFF09B522A58CE8600C5CA5E /* +UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B512A58CE8600C5CA5E /* +UserView.swift */; };
 		DFF09B542A58D2FD00C5CA5E /* +LibrarySyncView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B532A58D2FD00C5CA5E /* +LibrarySyncView.swift */; };
 		DFF09B582A58D54100C5CA5E /* DSKPreferenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B572A58D54100C5CA5E /* DSKPreferenceView.swift */; };
+		DFF09B5A2A58ED0500C5CA5E /* ContentTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B592A58ED0500C5CA5E /* ContentTrackerView.swift */; };
+		DFF09B5C2A59FE7600C5CA5E /* DSK+Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B5B2A59FE7600C5CA5E /* DSK+Tracker.swift */; };
+		DFF09B5E2A5A04C600C5CA5E /* JSCCT+Implementation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B5D2A5A04C600C5CA5E /* JSCCT+Implementation.swift */; };
+		DFF09B612A5A0BAC00C5CA5E /* TrackerEntryFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B602A5A0BAC00C5CA5E /* TrackerEntryFormView.swift */; };
+		DFF09B642A5A847500C5CA5E /* +UIStepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B632A5A847500C5CA5E /* +UIStepper.swift */; };
+		DFF09B662A5A8EF500C5CA5E /* +UITextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B652A5A8EF500C5CA5E /* +UITextField.swift */; };
 		DFF1043E28A9963D00E2C3A4 /* AnyCodable in Frameworks */ = {isa = PBXBuildFile; productRef = DFF1043D28A9963D00E2C3A4 /* AnyCodable */; };
 		DFF1044028A9A6B800E2C3A4 /* DSK+Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF1043F28A9A6B800E2C3A4 /* DSK+Networking.swift */; };
 		DFF1044228A9A89700E2C3A4 /* STT+JSValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF1044128A9A89700E2C3A4 /* STT+JSValue.swift */; };
@@ -686,7 +691,6 @@
 		DFD1F9BD28F7B191000766C1 /* Vertical+ProgressNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+ProgressNode.swift"; sourceTree = "<group>"; };
 		DFE179332A4CF80900CB535E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		DFF09B442A58BABC00C5CA5E /* JSCContentTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSCContentTracker.swift; sourceTree = "<group>"; };
-		DFF09B462A58BB0200C5CA5E /* JSCCT+Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCCT+Protocol.swift"; sourceTree = "<group>"; };
 		DFF09B492A58C13900C5CA5E /* +WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+WebView.swift"; sourceTree = "<group>"; };
 		DFF09B4B2A58C14300C5CA5E /* +Basic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+Basic.swift"; sourceTree = "<group>"; };
 		DFF09B4D2A58C14A00C5CA5E /* +OAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+OAuth.swift"; sourceTree = "<group>"; };
@@ -694,6 +698,12 @@
 		DFF09B512A58CE8600C5CA5E /* +UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+UserView.swift"; sourceTree = "<group>"; };
 		DFF09B532A58D2FD00C5CA5E /* +LibrarySyncView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+LibrarySyncView.swift"; sourceTree = "<group>"; };
 		DFF09B572A58D54100C5CA5E /* DSKPreferenceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DSKPreferenceView.swift; sourceTree = "<group>"; };
+		DFF09B592A58ED0500C5CA5E /* ContentTrackerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentTrackerView.swift; sourceTree = "<group>"; };
+		DFF09B5B2A59FE7600C5CA5E /* DSK+Tracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Tracker.swift"; sourceTree = "<group>"; };
+		DFF09B5D2A5A04C600C5CA5E /* JSCCT+Implementation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCCT+Implementation.swift"; sourceTree = "<group>"; };
+		DFF09B602A5A0BAC00C5CA5E /* TrackerEntryFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerEntryFormView.swift; sourceTree = "<group>"; };
+		DFF09B632A5A847500C5CA5E /* +UIStepper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+UIStepper.swift"; sourceTree = "<group>"; };
+		DFF09B652A5A8EF500C5CA5E /* +UITextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+UITextField.swift"; sourceTree = "<group>"; };
 		DFF1043F28A9A6B800E2C3A4 /* DSK+Networking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Networking.swift"; sourceTree = "<group>"; };
 		DFF1044128A9A89700E2C3A4 /* STT+JSValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+JSValue.swift"; sourceTree = "<group>"; };
 		DFF363252863E4AF006D02C5 /* MigrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationView.swift; sourceTree = "<group>"; };
@@ -1030,6 +1040,7 @@
 		DF68249D28A5D2BB00AB30A1 /* Daisuke */ = {
 			isa = PBXGroup;
 			children = (
+				DFF09B5F2A5A0B2B00C5CA5E /* ContentTracker */,
 				DFF09B562A58D53400C5CA5E /* Preferences */,
 				DFF09B552A58D52B00C5CA5E /* Runners */,
 				DFF09B482A58C12500C5CA5E /* Auth */,
@@ -1308,6 +1319,7 @@
 		DF8D0A2D2800EE47003E4C3E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				DFF09B622A5A844C00C5CA5E /* Representables */,
 				DF9BFDF12A427525005D0B63 /* DirectoryViewer */,
 				DF8D0A502800EE47003E4C3E /* Loadable */,
 				DF67EB9728E7B05C00076FF5 /* ContentLink */,
@@ -1800,6 +1812,7 @@
 				DFF1043F28A9A6B800E2C3A4 /* DSK+Networking.swift */,
 				DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */,
 				DF67EBA328EA34DE00076FF5 /* DSK+Common.swift */,
+				DFF09B5B2A59FE7600C5CA5E /* DSK+Tracker.swift */,
 			);
 			path = Structs;
 			sourceTree = "<group>";
@@ -1984,7 +1997,7 @@
 			isa = PBXGroup;
 			children = (
 				DFF09B442A58BABC00C5CA5E /* JSCContentTracker.swift */,
-				DFF09B462A58BB0200C5CA5E /* JSCCT+Protocol.swift */,
+				DFF09B5D2A5A04C600C5CA5E /* JSCCT+Implementation.swift */,
 			);
 			path = Tracker;
 			sourceTree = "<group>";
@@ -2007,6 +2020,7 @@
 			isa = PBXGroup;
 			children = (
 				DF68249E28A5D2CF00AB30A1 /* ContentSourceView.swift */,
+				DFF09B592A58ED0500C5CA5E /* ContentTrackerView.swift */,
 			);
 			path = Runners;
 			sourceTree = "<group>";
@@ -2017,6 +2031,23 @@
 				DFF09B572A58D54100C5CA5E /* DSKPreferenceView.swift */,
 			);
 			path = Preferences;
+			sourceTree = "<group>";
+		};
+		DFF09B5F2A5A0B2B00C5CA5E /* ContentTracker */ = {
+			isa = PBXGroup;
+			children = (
+				DFF09B602A5A0BAC00C5CA5E /* TrackerEntryFormView.swift */,
+			);
+			path = ContentTracker;
+			sourceTree = "<group>";
+		};
+		DFF09B622A5A844C00C5CA5E /* Representables */ = {
+			isa = PBXGroup;
+			children = (
+				DFF09B632A5A847500C5CA5E /* +UIStepper.swift */,
+				DFF09B652A5A8EF500C5CA5E /* +UITextField.swift */,
+			);
+			path = Representables;
 			sourceTree = "<group>";
 		};
 		DFF363242863E496006D02C5 /* Migrate */ = {
@@ -2247,6 +2278,7 @@
 				DF8D0BA02800EE48003E4C3E /* ProfileView+ChapterListTile.swift in Sources */,
 				DF8D0B972800EE48003E4C3E /* ProfileView.swift in Sources */,
 				DF32646B2802A6C70066EB08 /* STTImageView.swift in Sources */,
+				DFF09B662A5A8EF500C5CA5E /* +UITextField.swift in Sources */,
 				DF248F162813897200818300 /* AL+Interceptor.swift in Sources */,
 				DFB47EEE2880928C0040A1BD /* RefreshableScrollView.swift in Sources */,
 				DF30193B28C045E30024AA8B /* Backup+Runner.swift in Sources */,
@@ -2279,6 +2311,7 @@
 				DF553CCB29726F86004C3428 /* PageInfo.swift in Sources */,
 				DF8D0B502800EE47003E4C3E /* BackupManager.swift in Sources */,
 				DF8D0B5B2800EE47003E4C3E /* Reader+Models.swift in Sources */,
+				DFF09B642A5A847500C5CA5E /* +UIStepper.swift in Sources */,
 				DFADB58D29D7F19900CBE22F /* STT+URLRequest.swift in Sources */,
 				DF8D0B8A2800EE48003E4C3E /* ExploreSearchView.swift in Sources */,
 				DF32646328029A380066EB08 /* STTImageProvider.swift in Sources */,
@@ -2375,6 +2408,7 @@
 				DFBE485A2A26CE84000ABA16 /* History+ContentSource.swift in Sources */,
 				DF79D268281092870052470D /* Shimmer.swift in Sources */,
 				DF8D0B942800EE48003E4C3E /* CPV+ViewModel.swift in Sources */,
+				DFF09B5C2A59FE7600C5CA5E /* DSK+Tracker.swift in Sources */,
 				DFAC779B28161A4F00AF6394 /* AnilistView+ProfileView.swift in Sources */,
 				DF8D0B6F2800EE48003E4C3E /* Loadable+View.swift in Sources */,
 				DF8D0B532800EE47003E4C3E /* Backup.swift in Sources */,
@@ -2426,6 +2460,7 @@
 				DF8D0B8E2800EE48003E4C3E /* ESV+ViewModel.swift in Sources */,
 				DF2D842A2A1EFB4D006B17F0 /* STT+Nuke.swift in Sources */,
 				DF8D0B652800EE47003E4C3E /* ReaderView.swift in Sources */,
+				DFF09B5E2A5A04C600C5CA5E /* JSCCT+Implementation.swift in Sources */,
 				DF59C98028500E200027F19D /* LocalFileModifier.swift in Sources */,
 				DF426C352A463F4D00B79920 /* DirectorySearcher.swift in Sources */,
 				DFF09B502A58C33800C5CA5E /* +ViewModel.swift in Sources */,
@@ -2435,6 +2470,7 @@
 				DF8D0BB02800EE48003E4C3E /* CloseButton.swift in Sources */,
 				DF8D0B8B2800EE48003E4C3E /* ESV+SearchHistoryView.swift in Sources */,
 				DF83DD3328223B680021575B /* ProfileView+TrackersSheet.swift in Sources */,
+				DFF09B612A5A0BAC00C5CA5E /* TrackerEntryFormView.swift in Sources */,
 				DF553CC929726F48004C3428 /* ReaderPage.swift in Sources */,
 				DFF09B582A58D54100C5CA5E /* DSKPreferenceView.swift in Sources */,
 				DF68249F28A5D2CF00AB30A1 /* ContentSourceView.swift in Sources */,
@@ -2498,6 +2534,7 @@
 				DF8D0B9A2800EE48003E4C3E /* ProfileView+BottomBar.swift in Sources */,
 				DF99004D29A94A49006EB29A /* JSCCS+Protocol.swift in Sources */,
 				DFF1044228A9A89700E2C3A4 /* STT+JSValue.swift in Sources */,
+				DFF09B5A2A58ED0500C5CA5E /* ContentTrackerView.swift in Sources */,
 				DF8D0B2E2800EE47003E4C3E /* STT+Data.swift in Sources */,
 				DF8D0B342800EE47003E4C3E /* STT+Bundle.swift in Sources */,
 				DF8D0B742800EE48003E4C3E /* LibraryGrid+GridTile.swift in Sources */,
@@ -2511,7 +2548,6 @@
 				DF248F22281393A400818300 /* AnilistView.swift in Sources */,
 				DF67EB9928E7B07700076FF5 /* AddContentLink.swift in Sources */,
 				DFAC779E28165FA400AF6394 /* AL+Data.swift in Sources */,
-				DFF09B472A58BB0200C5CA5E /* JSCCT+Protocol.swift in Sources */,
 				DF67EB9B28E7B08400076FF5 /* ManageContentLinks.swift in Sources */,
 				DF8D0B3D2800EE47003E4C3E /* Preference.swift in Sources */,
 				DFBE48502A25BE4A000ABA16 /* Bookmark.swift in Sources */,

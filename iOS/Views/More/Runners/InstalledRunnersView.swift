@@ -30,6 +30,8 @@ struct InstalledRunnersView: View {
                                 if let dskRunner {
                                     if let source = dskRunner as? JSCC {
                                         ContentSourceInfoView(source: source)
+                                    } else if let tracker = dskRunner as? JSCContentTracker {
+                                        ContentTrackerInfoView(tracker: tracker)
                                     }
                                 } else {
                                     EmptyView()

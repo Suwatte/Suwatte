@@ -10,7 +10,9 @@ import Foundation
 
 extension Encodable {
     func asDictionary() throws -> [String: Any] {
-        let data = try JSONEncoder().encode(self)
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let data = try encoder.encode(self)
         guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
             throw NSError()
         }
@@ -18,7 +20,9 @@ extension Encodable {
     }
 
     func asAnyCodableDict() throws -> [String: AnyCodable] {
-        let data = try JSONEncoder().encode(self)
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let data = try encoder.encode(self)
         guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: AnyCodable] else {
             throw NSError()
         }

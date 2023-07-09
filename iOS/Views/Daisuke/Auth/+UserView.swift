@@ -28,7 +28,7 @@ extension DSKAuthView {
                         .frame(width: 75, height: 75)
                         .padding(.all, 7)
                     
-                    Text(user.username)
+                    Text(user.name)
                         .font(.title3)
                         .fontWeight(.bold)
                 }

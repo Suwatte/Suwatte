@@ -19,10 +19,18 @@ extension DSKCommon {
 
 extension DSKCommon {
     struct User: Parsable, Hashable {
-        var id: String
-        var username: String
+        var handle: String
+        var displayName: String?
+        
         var avatar: String?
+        var bannerImage: String?
+        
         var info: [String]?
+        
+        
+        var name : String {
+            displayName ?? handle
+        }
     }
 }
 

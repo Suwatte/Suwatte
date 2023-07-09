@@ -113,16 +113,19 @@ struct MultiSelectionView<A: RandomAccessCollection, Content: View>: View where 
                     .contentShape(Rectangle())
                 }
                 .tag(selectable.id)
+                .buttonStyle(.plain)
             }
         }
         .animation(.default, value: selected)
     }
 
     private func toggleSelection(selectable: A.Element) {
-        if let existingIndex = selected.firstIndex(where: { $0.id == selectable.id }) {
-            selected.remove(at: existingIndex)
-        } else {
-            selected.insert(selectable)
+        withAnimation {
+            if let existingIndex = selected.firstIndex(where: { $0.id == selectable.id }) {
+                selected.remove(at: existingIndex)
+            } else {
+                selected.insert(selectable)
+            }
         }
     }
 }
