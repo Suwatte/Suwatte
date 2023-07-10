@@ -19,4 +19,15 @@ extension JSCContentTracker {
         let object = try form.asDictionary()
         try await callOptionalVoidMethod(method: "didSubmitEntryForm", arguments: [id, object])
     }
+    
+    /// Called to an item in the trackers database,
+    func getTrackItem(id: String) async throws -> DSKCommon.TrackItem {
+        try await callMethodReturningDecodable(method: "getTrackItem", arguments: [id], resolvesTo: DSKCommon.TrackItem.self)
+    }
+    
+    func didUpdateLastReadChapter(id: String, chapter: DSKCommon.TrackProgress) async throws {
+        let object = try chapter.asDictionary()
+        try await callOptionalVoidMethod(method: "didUpdateLastReadChapter", arguments: [id, object])
+
+    }
 }

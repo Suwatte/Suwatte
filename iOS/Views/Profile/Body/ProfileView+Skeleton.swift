@@ -94,10 +94,6 @@ private extension ProfileView.Skeleton {
                     if let collections = viewModel.content.includedCollections, !collections.isEmpty {
                         RelatedContentView(collections: collections)
                     }
-
-                    if let id = viewModel.anilistId {
-                        ProfileView.AnilistRecommendationSection(id: id)
-                    }
                 }
                 .padding(.top, 5)
             }

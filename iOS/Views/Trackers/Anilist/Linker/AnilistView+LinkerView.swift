@@ -44,10 +44,6 @@ extension AnilistView {
                             Section {
                                 LinkerCell(data: media)
                                     .contentShape(Rectangle())
-                                    .onTapGesture {
-                                        DataManager.shared.linkContentToTracker(id: ContentIdentifier(contentId: entry.contentId, sourceId: sourceId).id, al: media.id.description)
-                                        presentationMode.wrappedValue.dismiss()
-                                    }
                             } header: {
                                 if media.id == data.media.first?.id {
                                     Text("Results")

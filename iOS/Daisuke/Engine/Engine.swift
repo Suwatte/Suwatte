@@ -179,8 +179,10 @@ extension DaisukeEngine {
         switch environment {
         case .source:
             runner = try JSCC(value: runnerObject)
+            break
         case .tracker:
             runner = try JSCContentTracker(value: runnerObject)
+            break
         default:
             break
         }
@@ -392,5 +394,49 @@ extension DaisukeEngine {
             .shared
             .getSavedAndEnabledSources()
             .compactMap { DSK.shared.getSource(id: $0.id) }
+    }
+}
+
+
+// MARK: - Tracker Management
+
+extension DaisukeEngine {
+    
+    func getTracker(id: String) -> JSCCT? {
+        let runner = getRunner(id)
+        
+        guard let runner, let tracker = runner as? JSCCT else { return nil }
+        return tracker
+    }
+    
+    func getActiveTrackers() -> [JSCCT] {
+        DataManager
+            .shared
+            .getEnabledRunners(for: .tracker)
+            .compactMap { DSK.shared.getTracker(id: $0.id) }
+    }
+    
+    func getTrackersHandling(key: String) -> [JSCCT] {
+        getActiveTrackers()
+            .filter { $0.config?.linkKeys?.contains(key) ?? false }
+    }
+    
+    /// Gets a map of  TrackerLInkKey:MediaID and coverts it to a TrackerID:MediaID dict
+    func getTrackerHandleMap(values: [String: String]) -> [String: String] {
+        var matches: [String: String] = [:]
+        
+        // Loop through links and get matching sources
+        for (key, value) in values {
+            let trackers = getActiveTrackers()
+                .filter { $0.links.contains(key) }
+            
+            // Trackers that can handle this link
+            for tracker in trackers {
+                guard matches[tracker.id] == nil else { continue }
+                matches[tracker.id] = value
+            }
+        }
+        
+        return matches
     }
 }

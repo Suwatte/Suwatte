@@ -193,7 +193,8 @@ struct ChapterList: View {
                                 isCompleted: completed,
                                 isNewChapter: newChapter,
                                 progress: progress,
-                                download: download)
+                                download: download,
+                                isLinked: chapter.sourceId != model.source.id)
             }
             .buttonStyle(.plain)
 
@@ -201,7 +202,7 @@ struct ChapterList: View {
                 Color.clear
                     .contextMenu {
                         Button {
-                            DataManager.shared.bulkMarkChapters(for: model.sttIdentifier(), chapters: chapters, markAsRead: !completed)
+                            DataManager.shared.bulkMarkChapters(for: model.sttIdentifier(), chapters: [chapter], markAsRead: !completed)
                             didMark()
                         } label: {
                             Label(completed ? "Mark as Unread" : "Mark as Read", systemImage: completed ? "eye.slash.circle" : "eye.circle")
@@ -227,25 +228,25 @@ struct ChapterList: View {
 extension ChapterList {
     func doFilter() {
         guard let chapters = model.chapters.value else { return }
-        let ids = chapters.map(\.id)
         DispatchQueue.global(qos: .background).async {
-            filterChapters(ids: ids)
+            filterChapters(chapters: chapters)
         }
     }
-
-    func filterChapters(ids: [String]) {
-        let realm = try! Realm()
-
-        let chapters = realm.objects(StoredChapter.self).where { $0.id.in(ids) }.toArray()
-
-        // Filter Language, Providers, Downloads
+    
+    func filterChapters(chapters: [StoredChapter]) {
+        // Core filters
         var base = chapters
             .filter(filterDownloads(_:))
             .filter(filterProviders(_:))
             .filter(filterLanguages(_:))
-
-        // Sort
+        
         switch sortKey {
+        case .date:
+            base = base
+                .sorted(by: \.date, descending: sortDesc)
+        case .source:
+            base = base
+                .sorted(by: \.index, descending: !sortDesc) // Reverese Source Index
         case .number:
             var sortedV = base.sorted { lhs, rhs in
                 if lhs.volume == rhs.volume {
@@ -260,21 +261,15 @@ extension ChapterList {
 
             if sortDesc { sortedV = sortedV.reversed() }
             base = sortedV
-        case .date:
-            base = base
-                .sorted(by: \.date, descending: sortDesc)
-        case .source:
-            base = base
-                .sorted(by: \.index, descending: !sortDesc) // Reverese Source Index
         }
-
-        let data = base.map { $0.freeze() }
+        
         Task { @MainActor in
             withAnimation {
-                visibleChapters = data
+                visibleChapters = base
             }
         }
     }
+
 
     func filterDownloads(_ chapter: StoredChapter) -> Bool {
         if !showOnlyDownloads { return true }
@@ -508,9 +503,17 @@ extension ChapterList {
         deselectAll()
     }
 
-    func didMark() {
+    func didMark() { // This is called before the notification is delivered to for model `readChapters` property to update
+        
+        let maxRead = DataManager
+            .shared
+            .getContentMarker(for: model.contentIdentifier)?
+            .readChapters
+            .max()
+        guard let maxRead else { return }
         Task.detached {
-            try? await model.handleAnilistSync()
+            let position = DSKCommon.TrackProgress(lastReadChapter: maxRead, lastReadVolume: nil, maxAvailableChapter: nil) // TODO: Probably Want to get the volume here
+            await DataManager.shared.updateTrackProgress(for: model.contentIdentifier, position: position)
         }
     }
 }

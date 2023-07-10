@@ -134,7 +134,9 @@ extension InstalledRunnersView {
                 .sorted(by: [SortDescriptor(keyPath: "enabled", ascending: true), SortDescriptor(keyPath: "name", ascending: true)])
 
             token = results.observe { [weak self] _ in
-                self?.runners = results.freeze()
+                DispatchQueue.main.async {
+                    self?.runners = results.freeze()
+                }
             }
         }
 

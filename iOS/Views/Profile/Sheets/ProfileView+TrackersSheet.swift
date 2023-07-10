@@ -15,28 +15,28 @@ extension ProfileView.Sheets {
         var body: some View {
             NavigationView {
                 List {
-                    // Anilist, This will be changed around when others are added
-                    Section {
-                        // ID is Linked
-                        if let strId = model.content.trackerInfo?["al"] ?? linkedTracker?.trackerInfo?.al, let id = Int(strId) {
-                            AnilistView.TrackerExcerptView(id: id)
-                        } else {
-                            NavigationLink(destination: AnilistView.LinkerView(entry: model.content, sourceId: model.source.id)) {
-                                MSLabelView(title: "Link Content", imageName: "anilist")
-                            }
-                        }
-                    } header: {
-                        if let linkedTracker = linkedTracker {
-                            HStack {
-                                Spacer()
-                                Button("Unlink") {
-                                    withAnimation {
-                                        DataManager.shared.unlinkContentToTracker(linkedTracker)
-                                    }
-                                }
-                            }
-                        }
-                    }
+//                    // Anilist, This will be changed around when others are added
+//                    Section {
+//                        // ID is Linked
+//                        if let strId = model.content.trackerInfo?["al"] ?? linkedTracker?.trackerInfo?.al, let id = Int(strId) {
+//                            AnilistView.TrackerExcerptView(id: id)
+//                        } else {
+//                            NavigationLink(destination: AnilistView.LinkerView(entry: model.content, sourceId: model.source.id)) {
+//                                MSLabelView(title: "Link Content", imageName: "anilist")
+//                            }
+//                        }
+//                    } header: {
+//                        if let linkedTracker = linkedTracker {
+//                            HStack {
+//                                Spacer()
+//                                Button("Unlink") {
+//                                    withAnimation {
+//                                        DataManager.shared.unlinkContentToTracker(linkedTracker)
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
                 }
                 .navigationTitle("Trackers")
                 .navigationBarTitleDisplayMode(.inline)

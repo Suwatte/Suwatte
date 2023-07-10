@@ -14,16 +14,24 @@ struct ChapterListTile: View {
     var isNewChapter: Bool
     var progress: Double?
     var download: ICDMDownloadObject?
-
+    var isLinked: Bool
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             HStack {
                 DisplayNameView
                 Spacer()
 
-                IsNewView
-                ProgressSubview
-                DownloadIndicatorView
+                HStack {
+                    
+                    ProgressSubview
+                    DownloadIndicatorView
+                    IsNewView
+                    LinkedIndicator
+                }
+                .font(.body.weight(.light))
+
+                
             }
 
             HStack {
@@ -73,10 +81,21 @@ struct ChapterListTile: View {
 
     @ViewBuilder
     var IsNewView: some View {
-        if isNewChapter {
+        if isNewChapter && progress == nil && download == nil  {
             Circle()
                 .foregroundColor(.blue)
-                .frame(width: 10, height: 10, alignment: .center)
+                .frame(width: 8, height: 8, alignment: .center)
+        }
+    }
+    
+    @ViewBuilder
+    var LinkedIndicator: some View {
+        if isLinked {
+            Image(systemName: "link")
+                .resizable()
+                .scaledToFit()
+                .foregroundColor(.primary.opacity(0.5))
+                .frame(width: 15, height: 15, alignment: .center)
         }
     }
 
@@ -88,7 +107,7 @@ struct ChapterListTile: View {
                 .stroke(ProgressColor(progress), style: .init(lineWidth: 2.5, lineCap: .round))
                 .rotationEffect(.degrees(-90))
                 .background(Circle().stroke(ProgressColor(progress).opacity(0.2), style: .init(lineWidth: 2.5, lineCap: .round)))
-                .frame(width: 22, height: 22, alignment: .center)
+                .frame(width: 15, height: 15, alignment: .center)
         }
     }
 
@@ -100,7 +119,6 @@ struct ChapterListTile: View {
     var DownloadIndicatorView: some View {
         if let download = download {
             DownloadIndicator(download: download)
-                .frame(width: 22, height: 22, alignment: .center)
         }
     }
 
@@ -117,35 +135,40 @@ struct DownloadIndicator: View {
     @ObservedRealmObject var download: ICDMDownloadObject
     @State var state: ICDM.ActiveDownloadState?
 
+    var size: CGFloat {
+        download.status == .completed ? 8 : 15
+    }
     @ViewBuilder
     var ACTIVE_VIEW: some View {
-        if let state = state {
-            switch state {
-            case .fetchingImages:
-                Image(systemName: "icloud.and.arrow.down")
+
+        Group {
+            if let state = state {
+                switch state {
+                case .fetchingImages:
+                    Image(systemName: "icloud.and.arrow.down")
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundColor(.gray)
+                        .shimmering()
+                case .finalizing:
+                    Image(systemName: "folder")
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundColor(.green)
+                        .shimmering()
+                case let .downloading(progress: progress):
+                    ProgressCircle(progress: progress)
+                }
+
+            } else {
+                Image(systemName: "ellipsis")
                     .resizable()
                     .scaledToFit()
                     .foregroundColor(.gray)
                     .shimmering()
-            case .finalizing:
-                Image(systemName: "folder")
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundColor(.green.opacity(0.5))
-                    .shimmering()
-            case let .downloading(progress: progress):
-                ProgressCircle(progress: progress)
             }
-
-        } else {
-            Image(systemName: "ellipsis")
-                .resizable()
-                .scaledToFit()
-                .foregroundColor(.gray)
-                .shimmering()
         }
     }
-
     var body: some View {
         Group {
             switch download.status {
@@ -162,10 +185,9 @@ struct DownloadIndicator: View {
                     .scaledToFit()
                     .foregroundColor(.red)
             case .completed:
-                Image(systemName: "folder.circle")
-                    .resizable()
-                    .scaledToFit()
+                Circle()
                     .foregroundColor(.green)
+
             case .cancelled:
                 Image(systemName: "x.circle")
                     .resizable()
@@ -178,7 +200,8 @@ struct DownloadIndicator: View {
                     .foregroundColor(.yellow)
             }
         }
-
+        .frame(width: size, height: size, alignment: .center)
+        .opacity(0.80)
         .onReceive(ICDM.shared.activeDownloadPublisher) { val in
             guard let val = val else {
                 state = nil

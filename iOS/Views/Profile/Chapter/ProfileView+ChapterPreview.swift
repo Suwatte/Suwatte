@@ -59,7 +59,6 @@ extension ProfileView.Skeleton.ChapterView {
                         .font(.title3)
                         .fontWeight(.bold)
                     Spacer()
-                    LinkedUpdatesView()
                 }
 
                 VStack(alignment: .leading, spacing: 6) {
@@ -73,7 +72,8 @@ extension ProfileView.Skeleton.ChapterView {
                                             isCompleted: completed,
                                             isNewChapter: newChapter,
                                             progress: progress,
-                                            download: download)
+                                            download: download,
+                                            isLinked: chapter.sourceId != model.source.id)
                             if chapter.chapterId != preview(chapters).last?.chapterId {
                                 Divider().padding(.top, 6)
                             }
@@ -135,38 +135,5 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
 
     func getDownload(_ chapter: StoredChapter) -> ICDMDownloadObject? {
         model.downloads[chapter.id]
-    }
-}
-
-struct LinkedUpdatesView: View {
-    @EnvironmentObject var model: ProfileView.ViewModel
-    @State var selection: HighlightIndentier?
-    var body: some View {
-        let data = filtered()
-        Menu {
-            Text("Linked Titles Containing More Chapters")
-            Divider()
-            ForEach(data, id: \.entry.hashValue) { id in
-                Button("\(id.entry.title) [\(DSK.shared.getSource(id: id.sourceId)!.name)]") {
-                    STTHelpers.triggerHaptic()
-                    selection = id
-                }
-            }
-        } label: {
-            ZStack {
-                Image(systemName: "link.circle")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 20)
-                ColoredBadge(color: .blue, bodySize: 13, internalSize: 8)
-            }
-            .frame(height: 20)
-        }
-        .opacity(data.isEmpty ? 0 : 1)
-        .modifier(InteractableContainer(selection: $selection))
-    }
-
-    func filtered() -> [HighlightIndentier] {
-        model.linkedUpdates.filter { DSK.shared.getSource(id: $0.sourceId) != nil }
     }
 }

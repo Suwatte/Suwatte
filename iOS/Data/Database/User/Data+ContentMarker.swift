@@ -21,6 +21,20 @@ extension DataManager {
 
         return target
     }
+    
+    func getLatestLinkedMarker(for id: String) -> ProgressMarker?  {
+        let maxedMarker = DataManager
+            .shared
+            .getLinkedContent(for: id)
+            .map { DataManager.shared.getContentMarker(for: $0.id) }
+            .appending(DataManager.shared.getContentMarker(for: id))
+            .compactMap( { $0 })
+            .max { lhs, rhs in
+                (lhs.currentChapter?.number ?? 0.0) < (rhs.currentChapter?.number ?? 0.0)
+            }
+        
+        return maxedMarker
+    }
 
     func didCompleteChapter(for id: String, chapter: ThreadSafeChapter) {
         let realm = try! Realm()
@@ -207,9 +221,9 @@ extension DataManager {
                 if markAsRead { // Insert Into Set
                     target.readChapters.insert(objectsIn: nums)
                 } else {
-                    let set = MutableSet<Double>()
-                    set.insert(objectsIn: nums)
-                    target.readChapters.subtract(set)
+                    nums.forEach {
+                        target.readChapters.remove($0)
+                    }
                 }
             }
 
@@ -234,7 +248,7 @@ extension DataManager {
         let realm = try! Realm()
 
         defer {
-            Task {
+            Task.detached { [unowned self] in
                 let realm = try! Realm()
 
                 // Get Chapters
@@ -259,10 +273,15 @@ extension DataManager {
             try! realm.safeWrite {
                 if markAsRead { // Insert Into Set
                     target.readChapters.insert(objectsIn: chapters)
+                    
+                    // Update Progress if more
+                    guard let chapter = target.currentChapter, let maxRead = chapters.max(), maxRead >= chapter.number else { return }
+                    target.totalPageCount = 1
+                    target.lastPageRead = 1
                 } else {
-                    let set = MutableSet<Double>()
-                    set.insert(objectsIn: chapters)
-                    target.readChapters.subtract(set)
+                    chapters.forEach {
+                        target.readChapters.remove($0)
+                    }
                 }
             }
 
@@ -292,9 +311,22 @@ extension DataManager {
             do {
                 try await source.onChaptersMarked(contentId: identifier.contentId, chapterIds: chapters, completed: completed)
             } catch {
-                Logger.shared.error("\(error)", source.name)
+                Logger.shared.error("\(error)", source.id)
                 ToastManager.shared.error(DSK.Errors.NamedError(name: source.name, message: "Failed to sync progress markers."))
             }
         }
+    }
+}
+
+
+extension DataManager {
+    /// Fetches the highest marked chapter with respect to content links
+    func getHighestMarkedChapter(id: String) -> Double {
+        let maxReadOnTarget = DataManager.shared.getContentMarker(for: id)?.maxReadChapter ?? 0.0
+        let maxReadOnLinked = DataManager.shared.getLinkedContent(for: id)
+            .map { DataManager.shared.getContentMarker(for: $0.id)?.maxReadChapter ?? 0.0 }
+            .max() ?? 0.0
+        
+        return max(maxReadOnTarget, maxReadOnLinked)
     }
 }

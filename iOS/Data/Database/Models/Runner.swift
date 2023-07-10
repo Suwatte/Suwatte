@@ -10,7 +10,7 @@ import IceCream
 import RealmSwift
 
 enum RunnerEnvironment: String, PersistableEnum, Codable {
-    case tracker, source, plugin, unknown
+    case unknown, tracker, source, plugin
     
     var description: String {
         switch self {
@@ -54,7 +54,7 @@ final class StoredRunnerObject: Object, Identifiable, CKRecordConvertible, CKRec
     @Persisted(primaryKey: true) var id: String
     @Persisted var name: String
     @Persisted var version: Double
-    @Persisted var environment: RunnerEnvironment
+    @Persisted var environment: RunnerEnvironment = .unknown
 
     @Persisted var dateAdded: Date = .init()
     @Persisted var enabled: Bool
@@ -100,42 +100,37 @@ extension DataManager {
     func saveRunner(_ info: RunnerInfo, listURL: URL? = nil, url: URL, environment: RunnerEnvironment) {
         let realm = try! Realm()
 
-        let target = realm
+        let obj = realm
             .objects(StoredRunnerObject.self)
             .where { $0.id == info.id && !$0.isDeleted }
-            .first
-
-        guard target == nil else {
-            try! realm.safeWrite {
-                target?.enabled = true
-            }
-            return
-        }
-        let obj = StoredRunnerObject()
-        obj.name = info.name
-        obj.id = info.id
-        obj.version = info.version
-        obj.enabled = true
-        obj.environment = environment
-
-        if let listURL {
-            obj.listURL = listURL.absoluteString
-        }
-
-        obj.executable = CreamAsset.create(object: obj, propName: StoredRunnerObject.RUNNER_KEY, url: url)
-
-        if let thumbnail = info.thumbnail {
-            if thumbnail.contains("http") {
-                if URL(string: thumbnail) != nil {
-                    obj.thumbnail = thumbnail
-                }
-            } else if let listURL {
-                let path = listURL.appendingPathComponent("assets").appendingPathComponent(thumbnail)
-                obj.thumbnail = path.absoluteString
-            }
-        }
-
+            .first ?? StoredRunnerObject()
+        
+        
         try! realm.safeWrite {
+            obj.name = info.name
+            if obj.id.isEmpty {
+                obj.id = info.id
+            }
+            obj.version = info.version
+            obj.enabled = true
+            obj.environment = environment
+            obj.isDeleted = false
+            if let listURL {
+                obj.listURL = listURL.absoluteString
+            }
+
+            obj.executable = CreamAsset.create(object: obj, propName: StoredRunnerObject.RUNNER_KEY, url: url)
+
+            if let thumbnail = info.thumbnail {
+                if thumbnail.contains("http") {
+                    if URL(string: thumbnail) != nil {
+                        obj.thumbnail = thumbnail
+                    }
+                } else if let listURL {
+                    let path = listURL.appendingPathComponent("assets").appendingPathComponent(thumbnail)
+                    obj.thumbnail = path.absoluteString
+                }
+            }
             realm.add(obj, update: .modified)
         }
     }
@@ -157,6 +152,15 @@ extension DataManager {
         return realm
             .objects(StoredRunnerObject.self)
             .where { $0.enabled == true && $0.isDeleted == false && $0.environment == .source }
+            .sorted(by: [SortDescriptor(keyPath: "name", ascending: true)])
+    }
+    
+    func getEnabledRunners(for environment: RunnerEnvironment) -> Results<StoredRunnerObject> {
+        let realm = try! Realm()
+
+        return realm
+            .objects(StoredRunnerObject.self)
+            .where { $0.enabled == true && $0.isDeleted == false && $0.environment == environment }
             .sorted(by: [SortDescriptor(keyPath: "name", ascending: true)])
     }
 }

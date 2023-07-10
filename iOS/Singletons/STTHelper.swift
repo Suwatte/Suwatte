@@ -154,31 +154,6 @@ class STTHelpers {
             return firstVal == nil && secondVal == nil
         }
     }
-
-    static func getAnilistID(id: String) -> Int? {
-        let realm = try! Realm()
-
-        guard let content = realm
-            .objects(StoredContent.self)
-            .where({ $0.id == id })
-            .first
-        else { return nil }
-
-        if let value = content.trackerInfo["al"].flatMap(Int.init) {
-            return value
-        }
-
-        if let value = DataManager.shared.getTrackerInfo(id)?.al.flatMap(Int.init) {
-            return value
-        }
-
-        if let value = try? DataManager.shared.getPossibleTrackerInfo(for: id)?["al"]?.flatMap(Int.init) {
-            return value
-        }
-
-        return nil
-    }
-
     static func triggerHaptic(_ overrride: Bool = false) {
         if Preferences.standard.enableReaderHaptics || overrride {
             let haptic = UIImpactFeedbackGenerator(style: .medium)

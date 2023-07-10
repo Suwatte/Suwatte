@@ -94,18 +94,6 @@ extension ProfileView {
         @State var isRotated = false
         var body: some View {
             switch model.syncState {
-            case .failure:
-                Image(systemName: "exclamationmark.arrow.triangle.2.circlepath")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 15, height: 15, alignment: .center)
-                    .foregroundColor(.red)
-                    .transition(.opacity)
-                    .onTapGesture {
-                        Task {
-                            await model.handleSync()
-                        }
-                    }
 
             case .syncing:
                 Image(systemName: "arrow.triangle.2.circlepath")

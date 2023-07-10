@@ -75,13 +75,6 @@ final class StoredTag: Object, CKRecordConvertible, CKRecordRecoverable, Identif
     @Persisted var isDeleted = false
 }
 
-final class StoredTrackerInfo: EmbeddedObject, Parsable {
-    @Persisted var al: String?
-    @Persisted var mal: String?
-    @Persisted var kt: String?
-    @Persisted var mu: String?
-}
-
 final class ChapterProvider: EmbeddedObject, Parsable, Identifiable {
     @Persisted var id: String
     @Persisted var name: String

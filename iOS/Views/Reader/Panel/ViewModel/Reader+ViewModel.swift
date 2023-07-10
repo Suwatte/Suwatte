@@ -402,9 +402,6 @@ extension ReaderView.ViewModel {
 
             DataManager.shared.didCompleteChapter(for: id, chapter: lastChapter.chapter)
 
-            // Anilist Sync
-            await self?.handleTrackerSync(number: lastChapter.chapter.number,
-                                          volume: lastChapter.chapter.volume)
 
             // Source Sync
             await self?.handleSourceSync(contentId: lastChapter.chapter.contentId,
@@ -413,32 +410,6 @@ extension ReaderView.ViewModel {
         }
     }
 
-    private func getStoredTrackerInfo() -> StoredTrackerInfo? {
-        let id = ContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId).id
-        return DataManager.shared.getTrackerInfo(id)
-    }
-
-    private func getLinkedTrackerInfo() -> [String: String?]? {
-        let identifier = ContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId)
-        return try? DataManager.shared.getPossibleTrackerInfo(for: identifier.id)
-    }
-
-    private func handleTrackerSync(number: Double, volume: Double?) {
-        let chapterNumber = Int(number)
-        let chapterVolume = volume.map { Int($0) }
-
-        // Ids
-        let id = ContentIdentifier(contentId: activeChapter.chapter.contentId, sourceId: activeChapter.chapter.sourceId).id
-        // Anilist
-        Task {
-            let alId = STTHelpers.getAnilistID(id: id).flatMap { String($0) }
-            do {
-                try await STTHelpers.syncToAnilist(mediaID: alId, progress: chapterNumber, progressVolume: chapterVolume)
-            } catch {
-                ToastManager.shared.error("Anilist Sync Failed")
-            }
-        }
-    }
 
     private func handleSourceSync(contentId: String, sourceId: String, chapterId: String) {
         guard let source = DSK.shared.getSource(id: sourceId), source.intents.chapterSyncHandler else { return }

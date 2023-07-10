@@ -11,6 +11,6 @@ import RealmSwift
 
 final class TrackerLink: Object, Identifiable, CKRecordConvertible, CKRecordRecoverable {
     @Persisted(primaryKey: true) var id: String
-    @Persisted var trackerInfo: StoredTrackerInfo?
+    @Persisted var data: Map<String, String>
     @Persisted var isDeleted: Bool = false
 }

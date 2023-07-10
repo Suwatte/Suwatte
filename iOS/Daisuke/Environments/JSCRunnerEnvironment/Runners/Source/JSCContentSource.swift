@@ -15,7 +15,7 @@ class JSCContentSource: JSCRunner, Equatable {
     var info: RunnerInfo
     let intents: RunnerIntents
     var runnerClass: JSValue
-    let environment: RunnerEnvironment = .tracker
+    let environment: RunnerEnvironment = .source
     var config: SourceConfig?
 
     required init(value: JSValue) throws {
@@ -62,9 +62,6 @@ extension JSCC {
         config?.cloudflareResolutionURL.flatMap(URL.init(string:)) ?? URL.init(string: sourceInfo.website)
     }
     
-    func saveState() {
-        UserDefaults.standard.set(intents.imageRequestHandler, forKey: STTKeys.RunnerOverridesImageRequest(id))
-    }
 }
 
 

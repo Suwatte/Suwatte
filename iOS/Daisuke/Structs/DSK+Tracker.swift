@@ -9,6 +9,39 @@ import Foundation
 import AnyCodable
 
 
+// MARK: - Core
+
+extension DSKCommon {
+    
+    enum TrackStatus: String, Codable {
+        case CURRENT, PLANNING, COMPLETED, PAUSED, DROPPED, REREADING
+    }
+    
+    struct TrackForm: Parsable, Hashable {
+        let sections: [UISection<TrackFormComponent>]
+    }
+    
+    struct TrackItem: Parsable, Hashable, Identifiable {
+        let id: String
+        let title: String
+        let thumbnail: String
+        let entry: TrackEntry?
+    }
+    
+    struct TrackProgress: Parsable, Hashable {
+        let lastReadChapter: Double
+        let lastReadVolume: Double?
+        let maxAvailableChapter: Double?
+    }
+    
+    struct TrackEntry: Parsable, Hashable {
+        let status: TrackStatus
+        let progress: TrackProgress
+    }
+}
+
+
+// MARK: - Form
 extension DSKCommon {
     struct IOption : Parsable, Hashable, Identifiable {
         let key: String
@@ -28,11 +61,6 @@ extension DSKCommon {
         let footer: String?
         let children: [T]
     }
-    
-    struct TrackForm: Parsable, Hashable {
-        let sections: [UISection<TrackFormComponent>]
-    }
-    
    
     struct TrackFormComponent: Parsable, Hashable {
         let key: String
@@ -68,3 +96,4 @@ extension DSKCommon {
         
     }
 }
+

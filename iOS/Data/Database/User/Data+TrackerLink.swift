@@ -8,55 +8,93 @@
 import Foundation
 import RealmSwift
 
+
 extension DataManager {
-    func linkContentToTracker(id: String, al: String? = nil, kt: String? = nil, mal: String? = nil) {
+    
+
+    
+    func setTrackerLink(for id: String, key: String,  value: String) {
         let realm = try! Realm()
-
-        if let tracker = realm.objects(TrackerLink.self).first(where: { $0.id == id && $0.isDeleted == false }) {
+        
+        let target = realm
+            .objects(TrackerLink.self)
+            .where { $0.id == id && !$0.isDeleted }
+            .first
+        
+        if let target {
             try! realm.safeWrite {
-                if let al = al {
-                    tracker.trackerInfo?.al = al
-                }
-
-                if let mal = mal {
-                    tracker.trackerInfo?.mal = mal
-                }
-
-                if let kt = kt {
-                    tracker.trackerInfo?.kt = kt
-                }
+                target.setValue(value, forKey: key)
             }
-        } else {
-            let obj = TrackerLink()
-
-            obj.id = id
-            let info = StoredTrackerInfo()
-            info.al = al
-            info.mal = mal
-            info.kt = kt
-
-            obj.trackerInfo = info
-
-            try! realm.safeWrite {
-                realm.add(obj, update: .modified)
-            }
-        }
-    }
-
-    func unlinkContentToTracker(_ obj: TrackerLink) {
-        guard let obj = obj.thaw() else {
             return
         }
-        let realm = try! Realm()
-
+        
+        let obj = TrackerLink()
+        obj.id = id
+        obj.setValue(value, forKey: key)
         try! realm.safeWrite {
-            obj.isDeleted = true
+            realm.add(obj,update: .modified)
         }
     }
-
-    func getTrackerInfo(_ id: String) -> StoredTrackerInfo? {
+    
+    func getTrackerLinks(for id: String) -> [String:String] {
+        let content = DataManager.shared.getStoredContent(id)
+        guard let content else { return [:] }
+        let linked = DataManager.shared.getLinkedContent(for: id)
+        let targets = linked.map(\.id).appending(id)
+        
         let realm = try! Realm()
-
-        return realm.objects(TrackerLink.self).first(where: { $0.id == id && $0.isDeleted == false })?.trackerInfo
+        let trackerLinkData =  realm
+            .objects(TrackerLink.self)
+            .where { $0.id.in(targets) }
+            .flatMap { $0.data.asKeyValueSequence() }
+        
+        // Add Values from TrackerLinks
+        var dict: [String: String] = [:]
+        for (key, value) in trackerLinkData {
+            dict[key] = value
+        }
+        
+        // Add Values from Stored Content
+        let contentTrackerData = linked
+            .appending(content)
+            .flatMap { $0.trackerInfo.asKeyValueSequence() }
+            
+        for (key, value) in contentTrackerData  {
+            dict[key] = value
+        }
+        
+        var matches : Dictionary<String, String> = [:]
+        
+        for (key, value) in dict {
+            let trackers = DSK
+                .shared
+                .getActiveTrackers()
+                .filter { $0.links.contains(key) }
+            
+            // Trackers that can handle this link
+            for tracker in trackers {
+                guard matches[tracker.id] == nil else { continue }
+                matches[tracker.id] = value
+            }
+        }
+        
+        return matches
+        
+    }
+    
+    func updateTrackProgress(`for` id: String, `position`: DSKCommon.TrackProgress) {
+        let links = getTrackerLinks(for: id)
+        
+        for (trackerId, mediaId) in links {
+            guard let tracker = DSK.shared.getTracker(id: trackerId) else { continue }
+            Task.detached {
+                do {
+                    try await tracker.didUpdateLastReadChapter(id: mediaId, chapter: position)
+                } catch {
+                    Logger.shared.error(error, trackerId)
+                }
+            }
+            
+        }
     }
 }

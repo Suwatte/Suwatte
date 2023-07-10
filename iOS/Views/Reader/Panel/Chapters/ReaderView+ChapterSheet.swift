@@ -14,7 +14,7 @@ extension ReaderView {
             ScrollViewReader { proxy in
                 List {
                     Section {
-                        ChapterListTile(chapter: model.activeChapter.chapter.toStored(), isCompleted: false, isNewChapter: false)
+                        ChapterListTile(chapter: model.activeChapter.chapter.toStored(), isCompleted: false, isNewChapter: false, isLinked: false)
                     } header: {
                         Text("Currently Reading")
                     }
@@ -22,7 +22,7 @@ extension ReaderView {
                     Section {
                         ForEach(model.chapterList, id: \.hashValue) { chapter in
                             Button { didSelect(chapter) } label: {
-                                ChapterListTile(chapter: chapter.toStored(), isCompleted: false, isNewChapter: false)
+                                ChapterListTile(chapter: chapter.toStored(), isCompleted: false, isNewChapter: false, isLinked: false)
                             }
                             .listRowBackground(model.activeChapter.chapter.id == chapter.id ? Color.accentColor.opacity(0.05) : nil)
                             .id(chapter.id)

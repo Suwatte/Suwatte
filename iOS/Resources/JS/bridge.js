@@ -56,14 +56,13 @@ const evaluateEnvironment = () => {
   // Runner Has Implemented all methods required of a "Tracker Source"
 
   if (
-    RunnerObject.getTrackState &&
-    RunnerObject.getLatestReadChapter &&
+    RunnerObject.didUpdateLastReadChapter &&
     RunnerObject.getResultsForTitles &&
-    RunnerObject.getTrackState &&
-    RunnerObject.getEntryForm &&
-    RunnerObject.didSubmitEntryForm &&
+    RunnerObject.getTrackItem &&
     RunnerObject.beginTracking &&
-    RunnerObject.stopTracking
+    RunnerObject.stopTracking &&
+    RunnerObject.getEntryForm &&
+    RunnerObject.didSubmitEntryForm
   )
     return "tracker";
 
@@ -144,7 +143,6 @@ function setupSourceConfig() {
       RunnerIntents.imageRequestHandler = !!ctx.willRequestImage;
       RunnerIntents.explorePageHandler =
         !!ctx.createExploreCollections &&
-        !!ctx.willResolveExploreCollections &&
         !!ctx.resolveExploreCollection;
     }
 

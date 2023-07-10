@@ -14,13 +14,17 @@ struct TrackerInfo: RunnerInfo {
     var version: Double
     var minSupportedAppVersion: String?
     var thumbnail: String?
-    
     var website: String
 }
 
 
+struct TrackerConfig: Parsable {
+    let linkKeys: [String]?
+}
+
 class JSCContentTracker: JSCRunner {
     var info: RunnerInfo
+    var config: TrackerConfig?
     let intents: RunnerIntents
     var runnerClass: JSValue
     let environment: RunnerEnvironment = .tracker
@@ -48,9 +52,19 @@ class JSCContentTracker: JSCRunner {
         
         self.intents = intents
         
+        // Get Config
+        if let dictionary = runnerClass.forProperty("config"), dictionary.isObject {
+            self.config = try TrackerConfig(value: dictionary)
+        }
+        saveState()
     }
     
     var trackerInfo: TrackerInfo {
         info as! TrackerInfo
+    }
+    
+    var links: [String] {
+        let def = config?.linkKeys ?? []
+        return def.appending(id)
     }
 }

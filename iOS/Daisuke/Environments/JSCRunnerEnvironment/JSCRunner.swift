@@ -231,7 +231,9 @@ extension JSCRunner {
 
 
 extension JSCRunner {
-    
+    func saveState() {
+        UserDefaults.standard.set(intents.imageRequestHandler, forKey: STTKeys.RunnerOverridesImageRequest(id))
+    }
     // Preference
     func buildPreferenceMenu() async throws -> [DSKCommon.PreferenceGroup] {
         return try await callContextMethod(method: "generatePreferenceMenu", resolvesTo: [DSKCommon.PreferenceGroup].self)
