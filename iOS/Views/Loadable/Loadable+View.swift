@@ -77,7 +77,11 @@ struct DefaultNotRequestedView: View {
 
 struct DefaultLoadingView: View {
     var body: some View {
-        ProgressView()
-            .padding()
+        HStack {
+            Spacer()
+            ProgressView()
+                .padding()
+            Spacer()
+        }
     }
 }

@@ -34,40 +34,46 @@ extension JSValue {
             }
         }
 
-        var promise: JSValue?
+        var execution: JSValue?
 
         if let method = method {
-            promise = invokeMethod(method, withArguments: arguments)
+            execution = invokeMethod(method, withArguments: arguments)
         } else {
-            promise = call(withArguments: arguments)
+            execution = call(withArguments: arguments)
         }
 
-        guard let promise = promise else {
-            onFailure(DaisukeEngine.Errors.NamedError(name: "[Method Error]", message: "Method Call Returned Null"))
+        guard let execution = execution else {
+            onFailure(DaisukeEngine.Errors.NamedError(name: "[Engine Error]", message: "execution did not return a result."))
+            return
+        }
+        
+        // Method Executed and threw error before we could check for properties
+        if execution.isUndefined, let exception = context.exception {
+            rejector(exception)
             return
         }
 
-        guard promise.hasProperty("then") else {
+        let isPromise = execution.hasProperty("then")
+        if  isPromise {
+            execution.invokeMethod("then", withArguments: [
+                JSValue(object: resolver, in: context) as Any,
+            ])
+
+            execution.invokeMethod("catch", withArguments: [
+                JSValue(object: rejector, in: context) as Any,
+            ])
+        } else {
+
             if let exception = context.exception {
                 rejector(exception)
                 return
             }
             do {
-                try onSuccess(promise)
+                try onSuccess(execution)
             } catch {
                 onFailure(error)
             }
-
-            return
         }
 
-        // Async Method
-        promise.invokeMethod("then", withArguments: [
-            JSValue(object: resolver, in: context) as Any,
-        ])
-
-        promise.invokeMethod("catch", withArguments: [
-            JSValue(object: rejector, in: context) as Any,
-        ])
     }
 }

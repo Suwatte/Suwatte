@@ -11,6 +11,9 @@ import SwiftUI
 
 struct TrackerManagementView: View  {
     @StateObject var model: ViewModel
+    @State var presentSheet = false
+    @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -35,15 +38,34 @@ struct TrackerManagementView: View  {
             }
             .task {
                 model.prepare()
-                await model.load()
             }
             .navigationTitle("Trackers")
             .navigationBarTitleDisplayMode(.inline)
             .closeButton()
+            .toolbar {
+                ToolbarItem (placement: .navigationBarTrailing) {
+                    Button("\(Image(systemName: "plus"))") {
+                        presentSheet.toggle()
+                    }
+                }
+            }
+            .fullScreenCover(isPresented: $presentSheet, onDismiss: {
+                model.prepare()
+            }) {
+                let titles = model.getTitles()
+                let trackers = model.getTrackersWithoutLinks()
+                AddTrackerLinkView(contentId: model.contentID , titles: titles, trackers: trackers)
+                    .accentColor(accentColor)
+                    .tint(accentColor) // For Invalid Tint on Appear
+                    
+            }
+            .environmentObject(model)
         }
         .toast()
         
     }
+    
+    
     
 }
 
@@ -51,7 +73,7 @@ extension TrackerManagementView {
     final class ViewModel: ObservableObject {
         typealias TrackItem = DSKCommon.TrackItem
 
-        private var contentID: String
+        var contentID: String
         @Published var dict: [String: Loadable<TrackItem>] = [:]
         
         private var matches: [String: String] = [:]
@@ -67,17 +89,19 @@ extension TrackerManagementView {
         
         func prepare() {
             matches = DataManager.shared.getTrackerLinks(for: contentID)
-            
             for (key, _) in matches {
                 guard DSK.shared.getTracker(id: key) != nil else { continue }
                 dict[key] = .idle
+            }
+            
+            Task {
+                await load()
             }
         }
         
         func load() async {
             await withTaskGroup(of: Void.self, body: { group in
                 for (key, value) in matches {
-                    print(key, value)
                     guard let tracker = DSK.shared.getTracker(id: key) else { continue }
                     Task { @MainActor in
                         self.dict[key] = .loading
@@ -108,12 +132,35 @@ extension TrackerManagementView {
             })
         }
         
+        func getTitles() -> [String] {
+            guard let content = DataManager.shared.getStoredContent(contentID) else { return [] }
+            
+            return content
+                .additionalTitles
+                .toArray()
+                .appending(content.title)
+        }
         
+        func getTrackersWithoutLinks() -> [JSCCT] {
+            DSK
+                .shared
+                .getActiveTrackers()
+                .filter { !matches.keys.contains($0.id) }
+        }
+        
+        func unlink(tracker: JSCCT) {
+            let keys = tracker.links
+            keys.forEach { DataManager.shared.removeLinkKey(for: contentID, key: $0) }
+            matches.removeAll()
+            dict.removeAll()
+            prepare()
+        }
     }
 }
 
 extension TrackerManagementView {
     struct TrackerItemCell: View {
+        @EnvironmentObject var model: ViewModel
         @State var item: DSKCommon.TrackItem
         let tracker: JSCCT
         @State var status: DSKCommon.TrackStatus = .CURRENT
@@ -144,6 +191,7 @@ extension TrackerManagementView {
                     HStack {
                         Text(item.title)
                             .font(.headline.weight(.semibold))
+                            .lineLimit(2)
                         Spacer()
                         Menu {
                             if let entry = item.entry {
@@ -176,25 +224,34 @@ extension TrackerManagementView {
                                 Button { presentEntryFormView.toggle() } label: {
                                     Label("Edit Tracker Entry", systemImage: "pencil")
                                 }
-                                Divider()
                                 
                             } else {
-                                Button("Start Tracking") {
+                                Button {
                                     trackerAction {
                                         try await tracker.beginTracking(id: item.id, status: .CURRENT)
+                                        model.prepare()
                                     }
+                                } label: {
+                                    Label("Start Tracking", systemImage: "pin")
                                 }
                             }
-                            
+                            Divider()
+                            Divider()
+                            Button(role: .destructive) {
+                                model.unlink(tracker: tracker)
+                            } label: {
+                                Label("Remove Link", systemImage: "trash")
+                            }
                             if let url = URL(string: item.webUrl) {
                                 Link(destination: url) {
                                     Label("View on \(tracker.name)", systemImage: "square.and.arrow.up")
                                 }
                             }
-                                                       
                         } label: {
-                            Image(systemName: "ellipsis")
+                            Image(systemName: "ellipsis.circle")
                                 .rotationEffect(.degrees(90))
+                                .contentShape(Rectangle())
+                                .padding(.leading)
                         }
 
                     }
@@ -239,8 +296,129 @@ extension TrackerManagementView {
     }
 }
 
-extension Anilist.Media {
-    func toSearchResult() -> Anilist.SearchResult {
-        .init(id: id, type: type, status: status, isAdult: isAdult, title: .init(userPreferred: title.userPreferred), coverImage: .init(large: coverImage.large, extraLarge: coverImage.extraLarge, color: coverImage.color), genres: genres, countryOfOrigin: countryOfOrigin)
+// MARK: - Add Tracker Views
+
+extension TrackerManagementView {
+    struct AddTrackerLinkView: View {
+        let contentId: String
+        let titles: [String]
+        let trackers: [JSCCT]
+        @State private var selections: [String: String] = [:]
+        @Environment(\.presentationMode) var presentationMode
+        var body: some View {
+            NavigationView {
+                ScrollView {
+                    VStack(alignment: .center) {
+                        ForEach(trackers, id: \.id) {
+                            TrackerResultsSection(tracker: $0, titles: titles, selections: $selections)
+                        }
+                    }
+                }
+                
+                .navigationBarTitle("Add Trackers")
+                .navigationBarTitleDisplayMode(.inline)
+                .closeButton()
+                .toolbar {
+                    ToolbarItem {
+                        Button("Add") {
+                            DataManager.shared.setTrackerLink(for: contentId, values: selections)
+                            presentationMode.wrappedValue.dismiss()
+                        }
+                        .disabled(selections.isEmpty)
+                    }
+                }
+            }
+            .navigationViewStyle(.stack)
+        }
+    }
+    
+    struct TrackerResultsSection: View {
+        var tracker: JSCCT
+        var titles: [String]
+        @State private var loadable: Loadable<[DSKCommon.TrackItem]> = .idle
+        @Binding var selections: [String: String]
+
+        var body: some View {
+            // Header
+            VStack {
+                HStack {
+                    STTThumbView(url: tracker.thumbnailURL)
+                        .frame(width: 25, height: 25, alignment: .center)
+                    Text(tracker.name)
+                        .font(.headline)
+                    Spacer()
+                }
+                .padding(.horizontal)
+            }
+            
+            // Resullts
+            LoadableView(load, loadable) { results in
+                Group {
+                    if results.isEmpty {
+                        Text("No Matches")
+                            .font(.headline)
+                            .fontWeight(.light)
+                    } else {
+                        ScrollableResultView(results)
+                    }
+                }
+            }
+            .frame(alignment: .center)
+        }
+        
+        // MARK: Views
+        func ScrollableResultView(_ results: [DSKCommon.TrackItem]) -> some View {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    ForEach(results) { item in
+                        Cell(item)
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.top, 5)
+            }
+        }
+        
+        
+        func Cell(_ item: DSKCommon.TrackItem) -> some View {
+            ZStack(alignment: .topTrailing) {
+                DefaultTile(entry: .init(contentId: item.id, cover: item.thumbnail, title: item.title))
+                    .frame(width: 120, height: 230)
+                ColoredBadge(color: .accentColor)
+                    .opacity(selections[linkKey] == item.id ? 1 : 0)
+            }
+            .onTapGesture {
+                handleSelection(item.id)
+            }
+        }
+        
+        
+        // MARK: Methods
+        var linkKey : String {
+            tracker.config?.linkKeys?.first ?? tracker.id
+        }
+        
+        func load() {
+            loadable = .loading
+            Task {
+                do {
+                    let data = try await tracker.getResultsForTitles(titles: titles)
+                    loadable = .loaded(data)
+                } catch {
+                    Logger.shared.error(error, tracker.id)
+                    loadable = .failed(error)
+                }
+            }
+        }
+        
+        func handleSelection(_ item: String) {
+            withAnimation {
+                let current = selections[linkKey]
+                if current == item { selections.removeValue(forKey: linkKey) }
+                else { selections.updateValue(item, forKey: linkKey) }
+            }
+        }
+        
+        
     }
 }
