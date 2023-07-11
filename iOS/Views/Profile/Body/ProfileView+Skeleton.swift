@@ -21,7 +21,7 @@ extension ProfileView {
                         .accentColor(accentColor)
                 })
                 .fullScreenCover(isPresented: $viewModel.presentTrackersSheet, content: {
-                    ProfileView.Sheets.TrackersSheet()
+                    TrackerManagementView(model: .init(id: viewModel.contentIdentifier))
                         .tint(accentColor)
                         .accentColor(accentColor)
                 })

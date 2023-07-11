@@ -8,79 +8,212 @@
 import RealmSwift
 import SwiftUI
 
-extension ProfileView.Sheets {
-    struct TrackersSheet: View {
-        @EnvironmentObject var model: ProfileView.ViewModel
-        @ObservedResults(TrackerLink.self, where: { $0.isDeleted == false }) var trackerLinks
-        var body: some View {
-            NavigationView {
-                List {
-//                    // Anilist, This will be changed around when others are added
-//                    Section {
-//                        // ID is Linked
-//                        if let strId = model.content.trackerInfo?["al"] ?? linkedTracker?.trackerInfo?.al, let id = Int(strId) {
-//                            AnilistView.TrackerExcerptView(id: id)
-//                        } else {
-//                            NavigationLink(destination: AnilistView.LinkerView(entry: model.content, sourceId: model.source.id)) {
-//                                MSLabelView(title: "Link Content", imageName: "anilist")
-//                            }
-//                        }
-//                    } header: {
-//                        if let linkedTracker = linkedTracker {
-//                            HStack {
-//                                Spacer()
-//                                Button("Unlink") {
-//                                    withAnimation {
-//                                        DataManager.shared.unlinkContentToTracker(linkedTracker)
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
+
+struct TrackerManagementView: View  {
+    @StateObject var model: ViewModel
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                ForEach(model.trackers, id: \.id) { tracker in
+                    let loadable = model.dict[tracker.id]!
+                    VStack {
+                        HStack {
+                            STTThumbView(url: tracker.thumbnailURL)
+                                .frame(width: 25, height: 25, alignment: .center)
+                            Text(tracker.name)
+                                .font(.headline)
+                            Spacer()
+                        }
+                        LoadableView({}, loadable) { value in
+                            TrackerItemCell(item: value, tracker: tracker)
+                        }
+                        .modifier(HistoryView.StyleModifier())
+                        
+                    }
+                    .padding(.all)
                 }
-                .navigationTitle("Trackers")
-                .navigationBarTitleDisplayMode(.inline)
-                .closeButton()
+            }
+            .task {
+                model.prepare()
+                await model.load()
+            }
+            .navigationTitle("Trackers")
+            .navigationBarTitleDisplayMode(.inline)
+            .closeButton()
+        }
+        .toast()
+        
+    }
+    
+}
+
+extension TrackerManagementView {
+    final class ViewModel: ObservableObject {
+        typealias TrackItem = DSKCommon.TrackItem
+
+        private var contentID: String
+        @Published var dict: [String: Loadable<TrackItem>] = [:]
+        
+        private var matches: [String: String] = [:]
+        var trackers: [JSCCT] {
+            dict
+                .keys
+                .compactMap({ DSK.shared.getTracker(id: $0) })
+                .sorted(by: \.name, descending: false)
+        }
+        init(id: String) {
+            self.contentID = id
+        }
+        
+        func prepare() {
+            matches = DataManager.shared.getTrackerLinks(for: contentID)
+            
+            for (key, _) in matches {
+                guard DSK.shared.getTracker(id: key) != nil else { continue }
+                dict[key] = .idle
             }
         }
-
-        var linkedTracker: TrackerLink? {
-            trackerLinks.first(where: { model.sttIdentifier().id == $0.id && $0.isDeleted == false })
+        
+        func load() async {
+            await withTaskGroup(of: Void.self, body: { group in
+                for (key, value) in matches {
+                    print(key, value)
+                    guard let tracker = DSK.shared.getTracker(id: key) else { continue }
+                    Task { @MainActor in
+                        self.dict[key] = .loading
+                    }
+                    
+                    group.addTask {
+                        do {
+                            let trackItem = try await tracker.getTrackItem(id: value)
+                            await MainActor.run {
+                                withAnimation {
+                                    self.dict[key] = .loaded(trackItem)
+                                }
+                            }
+                        } catch {
+                            Logger.shared.error(error, tracker.id)
+                            await MainActor.run {
+                                withAnimation {
+                                    self.dict[key] = .failed(error)
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                for await _ in group {
+                    
+                }
+            })
         }
+        
+        
     }
 }
 
-extension AnilistView {
-    struct TrackerExcerptTile: View {
-        var data: Anilist.Media
+extension TrackerManagementView {
+    struct TrackerItemCell: View {
+        @State var item: DSKCommon.TrackItem
+        let tracker: JSCCT
+        @State var status: DSKCommon.TrackStatus = .CURRENT
+        private let size = 140.0
+        @State var presentEntryFormView = false
+        func trackerAction(_ action: @escaping () async throws -> Void) {
+            let prev = item
+            Task {
+                do {
+                    try await action()
+                } catch {
+                    self.item = prev // reset of failure
+                    Logger.shared.error(error, tracker.id)
+                    ToastManager.shared.error("Failed to Sync")
+                }
+            }
+        }
         var body: some View {
             HStack {
-                ZStack(alignment: .topLeading) {
-                    BaseImageView(url: URL(string: data.coverImage.large))
-                        .frame(width: 100, height: 150, alignment: .center)
-                        .cornerRadius(7)
-                        .shadow(radius: 2.5)
-
-                    Image("anilist")
-                        .resizable()
-                        .frame(width: 27, height: 27, alignment: .center)
-                        .cornerRadius(7)
-                        .padding(.all, 3)
-                }
+                BaseImageView(url: URL(string: item.thumbnail))
+                    .frame(minWidth: 0, idealWidth: size, maxWidth: size, minHeight: 0, idealHeight: size * 1.5, maxHeight: size * 1.5, alignment: .center)
+                    .scaledToFit()
+                    .cornerRadius(5)
+                    .shadow(radius: 3)
+                
 
                 VStack(alignment: .leading, spacing: 10) {
-                    Text(data.title.userPreferred)
-                        .font(.headline.weight(.semibold))
-                    if let entry = data.mediaListEntry {
+                    HStack {
+                        Text(item.title)
+                            .font(.headline.weight(.semibold))
+                        Spacer()
+                        Menu {
+                            if let entry = item.entry {
+                                Button {
+                                    trackerAction {
+                                        await MainActor.run {
+                                            item.entry?.progress.lastReadChapter += 1
+                                        }
+                                        try await tracker.didUpdateLastReadChapter(id: item.id, progress: .init(chapter: entry.progress.lastReadChapter + 1, volume: nil))
+                                    }
+                                } label: {
+                                    Label("Increment Chapter", systemImage: "plus")
+                                }
+                                Button {
+                                    let volume =  entry.progress.lastReadVolume ?? 0
+                                    trackerAction {
+                                        try await tracker.didUpdateLastReadChapter(id: item.id, progress: .init(chapter: nil, volume: volume + 1))
+                                    }
+                                } label: {
+                                    Label("Increment Volume", systemImage: "plus")
+                                }
+                                Divider()
+                                Picker("Update Status", selection: $status) {
+                                    ForEach(DSKCommon.TrackStatus.allCases, id: \.hashValue) { s in
+                                        Label(s.description, systemImage: s.systemImage)
+                                            .tag(s)
+                                    }
+                                }
+                                .pickerStyle(.menu)
+                                Button { presentEntryFormView.toggle() } label: {
+                                    Label("Edit Tracker Entry", systemImage: "pencil")
+                                }
+                                Divider()
+                                
+                            } else {
+                                Button("Start Tracking") {
+                                    trackerAction {
+                                        try await tracker.beginTracking(id: item.id, status: .CURRENT)
+                                    }
+                                }
+                            }
+                            
+                            if let url = URL(string: item.webUrl) {
+                                Link(destination: url) {
+                                    Label("View on \(tracker.name)", systemImage: "square.and.arrow.up")
+                                }
+                            }
+                                                       
+                        } label: {
+                            Image(systemName: "ellipsis")
+                                .rotationEffect(.degrees(90))
+                        }
+
+                    }
+                    if let entry = item.entry {
                         HStack {
                             Image(systemName: entry.status.systemImage)
-                            Text(entry.status.description(for: data.type))
+                            Text(entry.status.description)
                         }
                         .foregroundColor(entry.status.color)
                         .font(.subheadline)
 
-                        Text(" \(entry.progress) / \(data.chapters?.description ?? "-") Chapters")
+                        Text("Progress: ")
                             .font(.subheadline)
+                            .fontWeight(.light)
+                        +
+                        Text("\(entry.progress.lastReadChapter.clean) / \(entry.progress.maxAvailableChapter?.clean ?? "-")")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                        
                     } else {
                         Text("Not Tracking")
                             .font(.subheadline.weight(.light))
@@ -90,41 +223,17 @@ extension AnilistView {
                 }
                 Spacer()
             }
-            .padding(.vertical, 3)
-        }
-    }
-
-    struct TrackerExcerptView: View {
-        @State var loadable = Loadable<Anilist.Media>.idle
-        var id: Int
-        @State var markedForRefresh: Bool = false
-        var body: some View {
-            LoadableView(load, loadable) { data in
-                NavigationLink(destination: AnilistView.ProfileView(entry: .init(id: data.id, title: data.title.userPreferred, webUrl: data.webUrl), onStatusUpdated: { _, _ in })) {
-                    TrackerExcerptTile(data: data)
-                }
-                .onDisappear {
-                    markedForRefresh.toggle()
-                }
-                .onAppear {
-                    if markedForRefresh {
-                        loadable = .idle
+            .animation(.default, value: item.entry)
+            .onChange(of: status) { newValue in
+                trackerAction {
+                    await MainActor.run {
+                        item.entry?.status = newValue
                     }
+                    try await tracker.didUpdateStatus(id: item.id, status: newValue)
                 }
-                .animation(.default, value: loadable)
             }
-        }
-
-        func load() {
-            loadable = .loading
-            Task { @MainActor in
-
-                do {
-                    let response = try await Anilist.shared.getProfile(id)
-                    loadable = .loaded(response)
-                } catch {
-                    loadable = .failed(error)
-                }
+            .hiddenNav(presenting: $presentEntryFormView) {
+                TrackerEntryFormView(model: .init(tracker: tracker, id: item.id), title: item.title)
             }
         }
     }

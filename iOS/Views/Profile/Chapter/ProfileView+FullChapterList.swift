@@ -512,8 +512,8 @@ extension ChapterList {
             .max()
         guard let maxRead else { return }
         Task.detached {
-            let position = DSKCommon.TrackProgress(lastReadChapter: maxRead, lastReadVolume: nil, maxAvailableChapter: nil) // TODO: Probably Want to get the volume here
-            await DataManager.shared.updateTrackProgress(for: model.contentIdentifier, position: position)
+            let progress = DSKCommon.TrackProgressUpdate(chapter: maxRead, volume: nil) // TODO: Probably Want to get the volume here
+            await DataManager.shared.updateTrackProgress(for: model.contentIdentifier,progress: progress)
         }
     }
 }

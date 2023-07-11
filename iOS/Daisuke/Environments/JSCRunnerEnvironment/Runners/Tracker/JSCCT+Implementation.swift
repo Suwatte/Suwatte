@@ -25,9 +25,30 @@ extension JSCContentTracker {
         try await callMethodReturningDecodable(method: "getTrackItem", arguments: [id], resolvesTo: DSKCommon.TrackItem.self)
     }
     
-    func didUpdateLastReadChapter(id: String, chapter: DSKCommon.TrackProgress) async throws {
-        let object = try chapter.asDictionary()
+    /// Called to update an entries progress.
+    func didUpdateLastReadChapter(id: String, progress: DSKCommon.TrackProgressUpdate) async throws {
+        let object = try progress.asDictionary()
         try await callOptionalVoidMethod(method: "didUpdateLastReadChapter", arguments: [id, object])
+    }
+    
+    func getResultsForTitles(titles: [String]) async throws -> [DSKCommon.TrackItem] {
+        try await callMethodReturningDecodable(method: "getResultsForTitles", arguments: [titles], resolvesTo: [DSKCommon.TrackItem].self)
+
+    }
+    
+    // Called to begin tracking an entry
+    func beginTracking(id: String, status: DSKCommon.TrackStatus) async throws {
+        try await callOptionalVoidMethod(method: "beginTracking", arguments: [id, status.rawValue])
+    }
+    
+    // Called to stop tracking an entry
+    func stopTracking(id: String) async throws {
+        try await callOptionalVoidMethod(method: "stopTracking", arguments: [id])
+    }
+    
+    // Called to update the status of an entry
+    func didUpdateStatus(id: String, status: DSKCommon.TrackStatus) async throws {
+        try await callOptionalVoidMethod(method: "didUpdateStatus", arguments: [id, status.rawValue])
 
     }
 }

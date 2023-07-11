@@ -82,14 +82,14 @@ extension DataManager {
         
     }
     
-    func updateTrackProgress(`for` id: String, `position`: DSKCommon.TrackProgress) {
+    func updateTrackProgress(`for` id: String, `progress`: DSKCommon.TrackProgressUpdate) {
         let links = getTrackerLinks(for: id)
         
         for (trackerId, mediaId) in links {
             guard let tracker = DSK.shared.getTracker(id: trackerId) else { continue }
             Task.detached {
                 do {
-                    try await tracker.didUpdateLastReadChapter(id: mediaId, chapter: position)
+                    try await tracker.didUpdateLastReadChapter(id: mediaId, progress: progress)
                 } catch {
                     Logger.shared.error(error, trackerId)
                 }

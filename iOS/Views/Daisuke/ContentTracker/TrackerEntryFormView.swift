@@ -11,7 +11,7 @@ import AnyCodable
 // MARK: - Core Form
 struct TrackerEntryFormView: View {
     @StateObject var model: ViewModel
-    
+    var title: String
     var body: some View {
         LoadableView(model.load, model.loadable) { value in
             Form {
@@ -40,6 +40,7 @@ struct TrackerEntryFormView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
         .environmentObject(model)
+        .navigationBarTitle(title)
     }
     
 

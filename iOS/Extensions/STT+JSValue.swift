@@ -43,16 +43,15 @@ extension JSValue {
         }
 
         guard let promise = promise else {
-            onFailure(DaisukeEngine.Errors.NamedError(name: "[Method Error]", message: "Method Call Returned a Null Promise"))
-            return
-        }
-
-        if let exception = context.exception {
-            rejector(exception)
+            onFailure(DaisukeEngine.Errors.NamedError(name: "[Method Error]", message: "Method Call Returned Null"))
             return
         }
 
         guard promise.hasProperty("then") else {
+            if let exception = context.exception {
+                rejector(exception)
+                return
+            }
             do {
                 try onSuccess(promise)
             } catch {

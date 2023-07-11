@@ -537,7 +537,7 @@ extension ProfileView.ViewModel {
                 guard let tracker = DSK.shared.getTracker(id: key), maxRead > value, let entryId = matches[key] else { return }
                 group.addTask {
                     do {
-                        try await tracker.didUpdateLastReadChapter(id: entryId, chapter: .init(lastReadChapter: maxRead, lastReadVolume: nil, maxAvailableChapter: nil))
+                        try await tracker.didUpdateLastReadChapter(id: entryId, progress: .init(chapter: maxRead, volume: nil))
                         return tracker.id
                     } catch {
                         Logger.shared.error(error, tracker.id)
