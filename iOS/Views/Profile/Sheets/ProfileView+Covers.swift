@@ -17,7 +17,7 @@ extension ProfileView {
             NavigationView {
                 TabView {
                     ForEach(covers, id: \.self) { cover in
-                        BaseImageView(url: .init(string: cover), sourceId: model.source.id)
+                        BaseImageView(url: .init(string: cover), runnerId: model.source.id)
                             .cornerRadius(5)
                             .contextMenu {
                                 Button {

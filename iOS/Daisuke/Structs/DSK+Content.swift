@@ -55,34 +55,10 @@ extension DaisukeEngine.Structs {
     struct Highlight: Parsable, Identifiable, Hashable {
         var contentId: String
         var cover: String
-        var additionalCovers: [String]?
         var title: String
 
-        var subtitle: String?
-        var tags: [String]?
-        var stats: Stats?
-        var updates: Updates?
         var id: String {
             contentId
-        }
-
-        var covers: [String] {
-            var covers = additionalCovers ?? []
-            covers.removeAll(where: { $0 == cover })
-            covers.insert(cover, at: 0)
-            return covers
-        }
-
-        struct Stats: Parsable, Hashable {
-            var views: Int?
-            var follows: Int?
-            var rating: Double?
-        }
-
-        struct Updates: Parsable, Hashable {
-            var label: String
-            var date: Date?
-            var count: Int?
         }
     }
 }
@@ -98,7 +74,7 @@ extension DaisukeEngine.Structs {
         var status: ContentStatus?
         var creators: [String]?
         var summary: String?
-        var adultContent: Bool?
+        var nsfw: Bool?
         var additionalTitles: [String]?
         var properties: [Property]?
         var contentType: ExternalContentType?
@@ -124,10 +100,7 @@ extension DaisukeEngine.Structs.Highlight {
         (0 ... 30).map { _ in
             .init(contentId: .random(length: 10),
                   cover: .random(),
-                  title: .random(length: 20),
-                  tags: (0 ... 5)
-                      .map { "\(String.random(length: 10))\($0)" },
-                  stats: .init(Stats(views: 100, follows: 100_000, rating: 10)))
+                  title: .random(length: 20))
         }
     }
 

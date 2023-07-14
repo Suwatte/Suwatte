@@ -20,7 +20,7 @@ struct STTImageView: View {
     @StateObject private var loader = FetchImage()
     var body: some View {
         GeometryReader { proxy in
-            let size: CGSize = .init(width: proxy.size.width, height: proxy.size.width * 1.5)
+            let size: CGSize = .init(width: proxy.size.width, height: proxy.size.width * 1.6)
             Group {
                 if let view = loader.image {
                     view
@@ -36,7 +36,7 @@ struct STTImageView: View {
             .onDisappear {
                 loader.priority = .low
             }
-            .frame(width: proxy.size.width, height: proxy.size.width * 1.5, alignment: .center)
+            .frame(width: proxy.size.width, height: proxy.size.width * 1.6, alignment: .center)
             .background(Color.gray.opacity(0.25))
 //            .modifier(DisabledNavLink())
             .animation(.easeOut(duration: 0.25), value: loader.image)
@@ -89,14 +89,14 @@ struct STTImageView: View {
                     return
                 }
                 
-                let source = DSK.shared.getSource(id: identifier.sourceId)
-                guard let source, source.intents.imageRequestHandler else {
+                let runner = DSK.shared.getRunner(identifier.sourceId)
+                guard let runner, runner.intents.imageRequestHandler else {
                     loader.load(url)
                     return
                 }
                 
                 do {
-                    let response = try await source.willRequestImage(imageURL: url)
+                    let response = try await runner.willRequestImage(imageURL: url)
                     let request = try ImageRequest(urlRequest: response.toURLRequest())
                     loader.load(request)
                 } catch {
@@ -115,7 +115,7 @@ struct STTImageView: View {
 struct BaseImageView: View {
     var url: URL?
     var request: ImageRequest?
-    var sourceId: String?
+    var runnerId: String?
     var mode: SwiftUI.ContentMode = .fill
     @StateObject private var loader = FetchImage()
     @State var isVisible = false
@@ -123,7 +123,7 @@ struct BaseImageView: View {
 
     var body: some View {
         GeometryReader { proxy in
-            let size: CGSize = .init(width: proxy.size.width, height: proxy.size.width * 1.5)
+            let size: CGSize = .init(width: proxy.size.width, height: proxy.size.width * 1.6)
             Group {
                 if let view = loader.image {
                     view
@@ -141,7 +141,7 @@ struct BaseImageView: View {
                 loader.priority = .low
                 isVisible = false
             }
-            .frame(width: proxy.size.width, height: proxy.size.width * 1.5, alignment: .center)
+            .frame(width: proxy.size.width, height: proxy.size.width * 1.6, alignment: .center)
             .background(Color.gray.opacity(0.25))
             .animation(.easeOut(duration: 0.25), value: loader.image)
             .animation(.easeOut(duration: 0.25), value: loader.isLoading)
@@ -165,18 +165,18 @@ struct BaseImageView: View {
             return
         }
         // Source Has Image Request Handler, prevents sources from being initialized unecessarily
-        guard let sourceId, UserDefaults.standard.bool(forKey: STTKeys.RunnerOverridesImageRequest(sourceId)) else {
+        guard let runnerId, UserDefaults.standard.bool(forKey: STTKeys.RunnerOverridesImageRequest(runnerId)) else {
             loader.load(url)
             return
         }
-        guard let source = DSK.shared.getSource(id: sourceId), source.intents.imageRequestHandler else {
+        guard let runner = DSK.shared.getRunner(runnerId), runner.intents.imageRequestHandler else {
             loader.load(url)
             return
         }
         
         Task {
             do {
-                let response = try await source.willRequestImage(imageURL: url)
+                let response = try await runner.willRequestImage(imageURL: url)
                 let request = try ImageRequest(urlRequest: response.toURLRequest())
                 loader.load(request)
             } catch {

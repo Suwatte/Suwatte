@@ -28,7 +28,7 @@ struct InstalledRunnersView: View {
                             NavigationLink {
                                 
                                 if let dskRunner {
-                                    if let source = dskRunner as? JSCC {
+                                    if let source = dskRunner as? JSCCS {
                                         ContentSourceInfoView(source: source)
                                     } else if let tracker = dskRunner as? JSCContentTracker {
                                         ContentTrackerInfoView(tracker: tracker)

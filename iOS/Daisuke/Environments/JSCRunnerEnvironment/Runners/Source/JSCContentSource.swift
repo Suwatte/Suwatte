@@ -7,7 +7,9 @@
 import Foundation
 import JavaScriptCore
 
-class JSCContentSource: JSCRunner, Equatable {
+class JSCContentSource: NSObject, JSCRunner {
+
+    
     static func == (lhs: JSCContentSource, rhs: JSCContentSource) -> Bool {
         lhs.info.id == rhs.info.id
     }
@@ -17,6 +19,9 @@ class JSCContentSource: JSCRunner, Equatable {
     var runnerClass: JSValue
     let environment: RunnerEnvironment = .source
     var config: SourceConfig?
+    
+    var directoryConfig: DSKCommon.DirectoryConfig?
+    var directoryTags: [DSKCommon.Property]?
 
     required init(value: JSValue) throws {
         self.runnerClass = value
@@ -44,7 +49,7 @@ class JSCContentSource: JSCRunner, Equatable {
         if let dictionary = runnerClass.forProperty("config"), dictionary.isObject {
             self.config = try SourceConfig(value: dictionary)
         }
-        
+        super.init()
         saveState()
     }
     
@@ -53,11 +58,11 @@ class JSCContentSource: JSCRunner, Equatable {
     }
 }
 
-typealias JSCC = JSCContentSource
-typealias AnyContentSource = JSCC
+typealias JSCCS = JSCContentSource
+typealias AnyContentSource = JSCCS
 
 
-extension JSCC {
+extension JSCCS {
     var cloudflareResolutionURL: URL? {
         config?.cloudflareResolutionURL.flatMap(URL.init(string:)) ?? URL.init(string: sourceInfo.website)
     }

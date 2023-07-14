@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct LoadableView<Value: Equatable, Idle, Loading, Failure, Content>: View where Idle: View,
+struct LoadableView<Value, Idle, Loading, Failure, Content>: View where Idle: View,
     Loading: View,
     Failure: View,
     Content: View
@@ -51,7 +51,6 @@ struct LoadableView<Value: Equatable, Idle, Loading, Failure, Content>: View whe
                     .transition(.opacity)
             }
         }
-        .animation(.default, value: loadable)
     }
 }
 
@@ -85,3 +84,5 @@ struct DefaultLoadingView: View {
         }
     }
 }
+
+

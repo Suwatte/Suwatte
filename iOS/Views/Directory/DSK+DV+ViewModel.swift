@@ -5,7 +5,7 @@
 //  Created by Mantton on 2023-07-12.
 //
 
-import Foundation
+import SwiftUI
 
 extension DirectoryView {
     final class ViewModel: ObservableObject {
@@ -41,22 +41,27 @@ extension DirectoryView {
 
 extension DirectoryView.ViewModel {
     func getConfig() {
+        guard config == nil else {
+            return
+        }
         Task {
-//            do {
-//                let config = try await runner.getDirectoryConfig()
-//                await MainActor.run {
-//                    self.config = config
-//                }
-//            } catch {
-//                Logger.shared.error(error, runner.id)
-//            }
+            do {
+                let config = try await runner.getDirectoryConfig()
+                await MainActor.run {
+                    withAnimation {
+                        self.config = config
+                    }
+                }
+            } catch {
+                Logger.shared.error(error, runner.id)
+            }
         }
     }
 
     func reset() {
-//        request = .init(page: 1)
-//        request.query = nil
-//        request.sortKey = sortOptions.first?.key
+        request = .init(page: 1)
+        request.query = nil
+        request.sortKey = sortOptions.first?.key
     }
 }
 
@@ -64,69 +69,78 @@ extension DirectoryView.ViewModel {
     func makeRequest() async {
         
         // Update State
-//        await MainActor.run {
-//            result = .loading
-//            if request.sortKey == nil, let firstKey = sortOptions.first?.key {
-//                request.sortKey = firstKey
-//            }
-//
-//        }
-//        do {
-//            let data: DSKCommon.PagedResult<T> = try await runner.getDirectory(request: request)
-//
-//            await MainActor.run {
-//                self.result = .loaded(data.results)
-//                self.resultCount = data.totalResultCount
-//            }
-//
-//        } catch {
-//            await MainActor.run {
-//                self.result = .failed(error)
-//            }
-//            Logger.shared.error(error, runner.id)
-//        }
+        await MainActor.run {
+            result = .loading
+            if request.sortKey == nil, let firstKey = sortOptions.first?.key {
+                request.sortKey = firstKey
+            }
+
+        }
+        
+        do {
+            let data: DSKCommon.PagedResult<T> = try await runner.getDirectory(request: request)
+
+            await MainActor.run {
+                withAnimation {
+                    self.result = .loaded(data.results)
+                    self.resultCount = data.totalResultCount
+                }
+            }
+
+        } catch {
+            await MainActor.run {
+                withAnimation {
+                    self.result = .failed(error)
+                }
+            }
+            Logger.shared.error(error, runner.id)
+        }
     }
 
     func paginate() async {
-//        switch pagination {
-//        case .IDLE, .ERROR:
-//            break
-//        default: return
-//        }
-//
-//        await MainActor.run {
-//            request.page += 1
-//            pagination = .LOADING
-//        }
-//
-//        do {
-//            let data: DSKCommon.PagedResult<T> = try await runner.getDirectory(request: request)
-//            if data.results.isEmpty {
-//                await MainActor.run {
-//                    self.pagination = .END
-//                }
-//                return
-//            }
-//
-//            await MainActor.run {
-//                var currentEntries = self.result.value ?? []
-//                currentEntries.append(contentsOf: data.results)
-//                self.result = .loaded(currentEntries)
-//
-//                if data.isLastPage {
-//                    self.pagination = .END
-//                    return
-//                }
-//
-//                self.pagination = .IDLE
-//            }
-//
-//        } catch {
-//            await MainActor.run{
-//                self.pagination = .ERROR(error: error)
-//                self.request.page -= 1
-//            }
-//        }
+        switch pagination {
+        case .IDLE, .ERROR:
+            break
+        default:
+            return
+        }
+        
+
+        await MainActor.run {
+            request.page += 1
+            pagination = .LOADING
+        }
+
+        do {
+            let data: DSKCommon.PagedResult<T> = try await runner.getDirectory(request: request)
+            if data.results.isEmpty {
+                await MainActor.run {
+                    self.pagination = .END
+                }
+                return
+            }
+
+            await MainActor.run {
+                var currentEntries = self.result.value ?? []
+                currentEntries.append(contentsOf: data.results)
+                withAnimation {
+                    self.result = .loaded(currentEntries)
+                }
+                
+                if data.isLastPage {
+                    self.pagination = .END
+                    return
+                }
+
+                self.pagination = .IDLE
+            }
+
+        } catch {
+            await MainActor.run{
+                self.pagination = .ERROR(error: error)
+                self.request.page -= 1
+            }
+        }
     }
 }
 

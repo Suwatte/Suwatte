@@ -10,6 +10,7 @@ import JavaScriptCore
 
 protocol Parsable: Codable {
     init(value: JSValue) throws
+    init(dict: [String: Any]) throws
 }
 
 extension Parsable {
@@ -19,6 +20,12 @@ extension Parsable {
         }
         let jsonData = str.data(using: .utf8, allowLossyConversion: false)!
         self = try DaisukeEngine.decode(data: jsonData, to: Self.self)
+    }
+    
+    init(dict: [String: Any]) throws {
+        let data = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
+        let decoder = JSONDecoder()
+        self = try decoder.decode(Self.self, from: data)
     }
 }
 

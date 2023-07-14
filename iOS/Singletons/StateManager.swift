@@ -42,9 +42,6 @@ final class StateManager: ObservableObject {
         guard NetworkStateHigh else {
             return
         }
-        Task {
-            ShowNSFWContent = await Anilist.shared.nsfwEnabled()
-        }
     }
 
     var NetworkStateHigh: Bool {

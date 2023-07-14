@@ -130,7 +130,7 @@ extension ProfileView.ViewModel {
         
         let _r3 = realm
             .objects(LibraryEntry.self)
-            .where { $0.id == id }
+            .where { $0.id == id && !$0.isDeleted }
         
         libraryTrackingToken = _r3.observe { [weak self] _ in
             self?.inLibrary = !_r3.isEmpty
@@ -469,14 +469,9 @@ extension ProfileView.ViewModel {
     
     func syncWithAllParties() async {
         let identifier = sttIdentifier()
-        let kvSeq = content.trackerInfo ?? [:]
-        let chapterNumbers = Set(threadSafeChapters?.map(\.number) ?? [])
-        // Tracker Links
-        let links = DataManager.shared.getTrackerLinks(for: identifier.id)
-            .merging(kvSeq) { (_, new) in new }
-        
+        let chapterNumbers = Set(threadSafeChapters?.map(\.number) ?? [])        
         // gets tracker matches in a [TrackerID:EntryID] format
-        var matches: [String: String] = DataManager.shared.getTrackerLinks(for: contentIdentifier)
+        let matches: [String: String] = DataManager.shared.getTrackerLinks(for: contentIdentifier)
                
         
         // Get A Dictionary representing the trackers and the current max read chapter on each tracker

@@ -22,7 +22,10 @@ struct TrackerConfig: Parsable {
     let linkKeys: [String]?
 }
 
-class JSCContentTracker: JSCRunner {
+class JSCContentTracker: NSObject, JSCRunner  {
+    var directoryConfig: DSKCommon.DirectoryConfig?
+    
+    
     var info: RunnerInfo
     var config: TrackerConfig?
     let intents: RunnerIntents
@@ -56,6 +59,8 @@ class JSCContentTracker: JSCRunner {
         if let dictionary = runnerClass.forProperty("config"), dictionary.isObject {
             self.config = try TrackerConfig(value: dictionary)
         }
+        
+        super.init()
         saveState()
     }
     

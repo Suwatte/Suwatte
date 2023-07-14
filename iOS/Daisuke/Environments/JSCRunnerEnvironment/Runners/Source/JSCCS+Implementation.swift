@@ -8,7 +8,7 @@
 import Foundation
 
 
-extension JSCContentSource: ContentSource {
+extension JSCContentSource  {
     func getContent(id: String) async throws -> DSKCommon.Content {
         try await callMethodReturningObject(method: "getContent", arguments: [id], resolvesTo: DSKCommon.Content.self)
     }
@@ -20,40 +20,17 @@ extension JSCContentSource: ContentSource {
     func getChapterData(contentId: String, chapterId: String) async throws -> DSKCommon.ChapterData {
         try await callMethodReturningObject(method: "getChapterData", arguments: [contentId, chapterId], resolvesTo: DaisukeEngine.Structs.ChapterData.self)
     }
-    
-    func getDirectory(_ request: DSKCommon.SearchRequest) async throws -> DSKCommon.PagedResult {
-        let request = try request.asDictionary()
-        return try await callMethodReturningObject(method: "getDirectory", arguments: [request], resolvesTo: DaisukeEngine.Structs.PagedResult.self)
-    }
-    
-    func getDirectoryConfig() async throws -> DSKCommon.DirectoryConfig {
-        try await callMethodReturningDecodable(method: "getDirectoryConfig", arguments: [], resolvesTo: DSKCommon.DirectoryConfig.self)
-    }
-    
-    func createExplorePageCollections() async throws -> [DSKCommon.CollectionExcerpt] {
-        try await callMethodReturningDecodable(method: "createExploreCollections", arguments: [], resolvesTo: [DSKCommon.CollectionExcerpt].self)
-    }
-    
-    func resolveExplorePageCollection(_ excerpt: DSKCommon.CollectionExcerpt) async throws -> DSKCommon.ExploreCollection {
-        let excerpt = try excerpt.asDictionary()
-        return try await callMethodReturningDecodable(method: "resolveExploreCollection", arguments: [excerpt], resolvesTo: DSKCommon.ExploreCollection.self)
-    }
-    
-    func willResolveExploreCollections() async throws {
-        try await callOptionalVoidMethod(method: "willResolveExploreCollections", arguments: [])
-    }
+
     
     func getAllTags() async throws -> [DaisukeEngine.Structs.Property] {
-        try await callMethodReturningDecodable(method: "getAllTags", arguments: [], resolvesTo: [DSKCommon.Property].self)
+        if let directoryTags {
+            return directoryTags
+        }
+        let data: [DaisukeEngine.Structs.Property] = try await callMethodReturningDecodable(method: "getTags", arguments: [], resolvesTo: [DSKCommon.Property].self)
+        self.directoryTags = data
+        return data
     }
-    
-    func getRecommendedTags() async throws -> [DaisukeEngine.Structs.ExploreTag] {
-        return try await callMethodReturningDecodable(method: "getRecommendedTags", arguments: [], resolvesTo: [DaisukeEngine.Structs.ExploreTag].self)
-    }
-    
-    func willRequestImage(imageURL: URL) async throws -> DSKCommon.Request {
-        return try await callMethodReturningDecodable(method: "willRequestImage", arguments: [imageURL.absoluteString], resolvesTo: DSKCommon.Request.self)
-    }
+
     
     func onChaptersMarked(contentId: String, chapterIds: [String], completed: Bool) async throws {
         try await callOptionalVoidMethod(method: "onChaptersMarked", arguments: [contentId, chapterIds, completed])

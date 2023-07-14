@@ -12,7 +12,7 @@ extension DSKAuthView {
     struct UserView : View {
         @EnvironmentObject var model: ViewModel
         var user: DSKCommon.User
-        var runner: any JSCRunner {
+        var runner: JSCRunner {
             model.runner
         }
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault

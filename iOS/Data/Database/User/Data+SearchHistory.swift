@@ -9,7 +9,7 @@ import Foundation
 import RealmSwift
 
 extension DataManager {
-    func saveSearch(_ request: DSKCommon.SearchRequest, sourceId: String?, display: String) throws {
+    func saveSearch(_ request: DSKCommon.DirectoryRequest, sourceId: String?, display: String) throws {
         let incognito = Preferences.standard.incognitoMode
         if incognito { return }
 

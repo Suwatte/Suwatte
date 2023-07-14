@@ -9,16 +9,17 @@ import RealmSwift
 import SwiftUI
 
 struct BrowseView: View {
-    @ObservedResults(StoredRunnerObject.self, where: { $0.isDeleted == false && $0.environment == .source }) var runners
+    @ObservedResults(StoredRunnerObject.self, where: { $0.isDeleted == false }) var runners
     @State var presentImporter = false
     var body: some View {
         NavigationView {
             List {
                 SearchSection
-                if !FilteredRunners.isEmpty {
+                if !sources.isEmpty {
                     InstalledSourcesSection
                 }
-                AnilistSection
+                
+                TrackersSection
             }
             .listStyle(.insetGrouped)
             .navigationTitle("Browse")
@@ -29,7 +30,7 @@ struct BrowseView: View {
     var SearchSection: some View {
         Section {
             NavigationLink("Search All Sources") {
-                SearchView()
+                Text("Placeholder")
             }
             NavigationLink("Image Search") {
                 ImageSearchView()
@@ -44,13 +45,21 @@ struct BrowseView: View {
             .sorted(by: [SortDescriptor(keyPath: "enabled", ascending: true),
                          SortDescriptor(keyPath: "name", ascending: true)])
     }
+}
+
+// MARK: Cotnent Source
+extension BrowseView {
+    var sources: Results<StoredRunnerObject> {
+        FilteredRunners
+            .where { $0.environment == .source }
+    }
 
     @ViewBuilder
     var InstalledSourcesSection: some View {
         Section {
-            ForEach(FilteredRunners) { runner in
+            ForEach(sources) { runner in
                 NavigationLink {
-                    ExploreView(id: runner.id, name: runner.name)
+                    SourceLandingPage(sourceID: runner.id)
                 } label: {
                     HStack(spacing: 15) {
                         STTThumbView(url: URL(string: runner.thumbnail))
@@ -66,17 +75,121 @@ struct BrowseView: View {
             Text("Content Sources")
         }
     }
+}
 
-    var AnilistSection: some View {
-        Section {
-            NavigationLink(destination: AnilistView.DirectoryView(model: .init(.defaultMangaRequest))) {
-                MSLabelView(title: "Browse Manga", imageName: "anilist")
+// MARK: Trackers with Pages
+extension BrowseView {
+    var trackers: [StoredRunnerObject] {
+        FilteredRunners
+            .where { $0.environment == .tracker }
+            .toArray()
+    }
+    
+    @ViewBuilder
+    var TrackersSection: some View {
+        let plain = trackers.filter { !UserDefaults.standard.bool(forKey: STTKeys.PageLinkProvider($0.id)) }
+        let advanced = trackers.filter { UserDefaults.standard.bool(forKey: STTKeys.PageLinkProvider($0.id)) }
+
+        if !plain.isEmpty {
+            Section {
+                ForEach(plain) { runner in
+                    NavigationLink {
+                        TrackerLandingPage(trackerID: runner.id)
+                    } label: {
+                        HStack(spacing: 15) {
+                            STTThumbView(url: URL(string: runner.thumbnail))
+                                .frame(width: 32.0, height: 32.0)
+                                .cornerRadius(5)
+                            Text(runner.name)
+                            Spacer()
+                        }
+                    }
+                    .disabled(!runner.enabled)
+                }
             }
-            NavigationLink(destination: AnilistView.DirectoryView(model: .init(.defaultAnimeRequest))) {
-                MSLabelView(title: "Browse Anime", imageName: "anilist")
+        }
+        if !advanced.isEmpty {
+            ForEach(advanced) { runner in
+                Section {
+                    PageLinkProviderView(runnerID: runner.id)
+                } header: {
+                    Text(runner.name)
+                }
             }
-        } header: {
-            Text("Anilist")
+        }
+    }
+}
+
+
+struct PageLinkProviderView: View {
+    var runnerID: String
+    @State private var loadable: Loadable<[DSKCommon.PageLink]> = .idle
+    @State private var runner: Loadable<JSCRunner> = .idle
+    
+    var body: some View {
+        LoadableView(startRunner, runner) { initializedRunner in
+            LoadableView({ loadLinks(initializedRunner) }, loadable) { value in
+                LinksView(value, initializedRunner)
+            }
+        }
+    }
+    
+    func startRunner() {
+        runner = .loading
+        Task {
+            do {
+                let data = try DSK.shared.getJSCRunner(runnerID)
+                withAnimation {
+                    runner = .loaded(data)
+                }
+            } catch {
+                Logger.shared.error(error)
+                withAnimation {
+                    runner = .failed(error)
+                }
+            }
+        }
+    }
+    func loadLinks(_ runner: JSCRunner) {
+        loadable = .loading
+
+        Task {
+            do {
+                let data = try await runner.getBrowsePageLinks()
+                withAnimation {
+                    loadable = .loaded(data)
+                }
+            } catch {
+                Logger.shared.error(error)
+                withAnimation {
+                    loadable = .failed(error)
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    func LinksView(_ links: [DSKCommon.PageLink], _ runner: JSCRunner) -> some View {
+        ForEach(links, id: \.hashValue) { pageLink in
+            NavigationLink {
+                Group {
+                    if pageLink.link.isPageLink {
+                        RunnerPageView(runner: runner, pageKey: pageLink.link.getPageKey())
+                            .navigationBarTitle(pageLink.label)
+                    } else {
+                        RunnerDirectoryView(runner: runner, request: pageLink.link.getDirectoryRequest())
+                            .navigationBarTitle(pageLink.label)
+                    }
+                }
+            } label: {
+                HStack {
+                    STTThumbView(url: URL(string: pageLink.cover ?? "") ?? runner.thumbnailURL)
+                        .frame(width: 32.0, height: 32.0)
+                        .cornerRadius(5)
+                    Text(pageLink.label)
+                    Spacer()
+                }
+            }
         }
     }
 }

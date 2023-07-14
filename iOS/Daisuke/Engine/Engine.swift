@@ -178,7 +178,7 @@ extension DaisukeEngine {
         var runner: JSCRunner? = nil
         switch environment {
         case .source:
-            runner = try JSCC(value: runnerObject)
+            runner = try JSCCS(value: runnerObject)
             break
         case .tracker:
             runner = try JSCContentTracker(value: runnerObject)
@@ -375,14 +375,14 @@ extension DaisukeEngine {
     func getSource(id: String) -> JSCContentSource? {
         let runner = getRunner(id)
         
-        guard let runner, let source = runner as? JSCC else { return nil }
+        guard let runner, let source = runner as? JSCCS else { return nil }
         return source
     }
 
     func getContentSource(id: String) throws -> JSCContentSource {
         let runner = try getJSCRunner(id)
         
-        guard let source = runner as? JSCC else {
+        guard let source = runner as? JSCCS else {
             throw DSK.Errors.InvalidRunnerEnvironment
         }
         
@@ -406,6 +406,16 @@ extension DaisukeEngine {
         let runner = getRunner(id)
         
         guard let runner, let tracker = runner as? JSCCT else { return nil }
+        return tracker
+    }
+    
+    func getContentTracker(id: String) throws -> JSCCT {
+        let runner = try getJSCRunner(id)
+        
+        guard let tracker = runner as? JSCCT else {
+            throw DSK.Errors.InvalidRunnerEnvironment
+        }
+        
         return tracker
     }
     

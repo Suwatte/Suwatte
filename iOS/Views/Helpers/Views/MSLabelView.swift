@@ -36,7 +36,7 @@ struct STTThumbView: View {
                 if let systemName = systemName {
                     Image(systemName: systemName)
                         .resizable()
-                } else if let url = url {
+                } else if url != nil {
                     if let image = imageFetcher.image {
                         image
                             .resizable()
@@ -76,6 +76,20 @@ struct STTLabelView: View {
             Spacer()
             Text(label)
                 .foregroundColor(.gray)
+        }
+    }
+}
+
+struct FieldLabel: View {
+    var primary: String
+    var secondary: String
+    var body: some View {
+        HStack {
+            Text(primary)
+            Spacer()
+            Text(secondary)
+                .fontWeight(.light)
+                .foregroundColor(.primary.opacity(0.5))
         }
     }
 }

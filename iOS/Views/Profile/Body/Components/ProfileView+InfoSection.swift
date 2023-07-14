@@ -60,16 +60,18 @@ extension ProfileView.Skeleton {
         var source: AnyContentSource
         var body: some View {
             InteractiveTagView(property.tags) { tag in
-                NavigationLink(destination: ExploreView.SearchView(model: .init(request: generateSearchRequest(tagId: tag.id, propertyId: property.id), source: source), tagLabel: tag.label)) {
+                NavigationLink {
+                    ContentSourceDirectoryView(source: source, request: generateSearchRequest(tagId: tag.id, propertyId: property.id))
+                        .navigationBarTitle(tag.label)
+                } label: {
                     Text(tag.label)
                         .modifier(ProfileTagStyle())
                 }
                 .buttonStyle(.plain)
             }
         }
-
-        fileprivate func generateSearchRequest(tagId: String, propertyId: String) -> DaisukeEngine.Structs.SearchRequest {
-            .init(page: 1, filters: [.init(id: propertyId, included: [tagId])])
+        fileprivate func generateSearchRequest(tagId: String, propertyId: String) -> DSKCommon.DirectoryRequest {
+            .init(page: 1, tag: .init(tagId: tagId, propertyId: propertyId))
         }
     }
 }

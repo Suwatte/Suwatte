@@ -27,18 +27,7 @@ extension DaisukeEngine.Structs {
     struct Tag: Parsable, Hashable, Identifiable {
         var id: String
         var label: String
-        var adultContent: Bool?
-    }
-
-    struct ExploreTag: Parsable, Hashable, Identifiable {
-        var id: String
-        var label: String
-        var request: SearchRequest
-        var imageUrl: String?
-    }
-
-    struct Option: Parsable, Hashable, Identifiable {
-        var id: String
-        var label: String
+        var nsfw: Bool?
+        var image: String?
     }
 }

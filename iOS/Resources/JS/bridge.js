@@ -6,20 +6,18 @@ let RunnerIntents = {
   preferenceMenuBuilder: false,
   authenticatable: false,
   authenticationMethod: "unknown",
+  pageLinkResolver: false,
+  pageLinkProvider: false,
+  imageRequestHandler: false,
+
   // Content Source
   chapterEventHandler: false,
   contentEventHandler: false,
   chapterSyncHandler: false,
   librarySyncHandler: false,
-  imageRequestHandler: false,
-  explorePageHandler: false,
-  hasRecommendedTags: false,
-  hasFullTagList: false,
-
+  hasTagsView: false,
   // Content Tracker
   advancedTracker: false,
-  libraryTabProvider: false,
-  browseTabProvider: false,
 };
 
 const ObjectStore = new STTStore("os");
@@ -37,21 +35,13 @@ const evaluateEnvironment = () => {
   if (
     RunnerObject.getContent &&
     RunnerObject.getChapters &&
-    RunnerObject.getChapterData &&
-    RunnerObject.getDirectory &&
-    RunnerObject.getDirectoryConfig
+    RunnerObject.getChapterData
   )
     return "source";
 
   // Runner Has Implemented all methods required of a "Content Plugin"
 
-  if (
-    RunnerObject.getHomeFeed &&
-    RunnerObject.getFeed &&
-    RunnerObject.getDirectory &&
-    RunnerObject.getDirectoryConfig
-  )
-    return "plugin";
+  if (RunnerObject.getHomeFeed && RunnerObject.getFeed) return "plugin";
 
   // Runner Has Implemented all methods required of a "Tracker Source"
 
@@ -106,9 +96,17 @@ function setupSourceConfig() {
     // Preference menu
     RunnerIntents.preferenceMenuBuilder = !!ctx.buildPreferenceMenu;
 
+    //Image Handler
+    RunnerIntents.imageRequestHandler = !!ctx.willRequestImage;
+
+    // PageLink
+    RunnerIntents.pageLinkResolver =
+      !!ctx.getPage && !!ctx.willResolvePage && !!ctx.resolvePageSection;
+    RunnerIntents.pageLinkProvider =
+      !!ctx.getLibraryPageLinks && !!ctx.getBrowsePageLinks;
     // Authentication
     const RunnerAuthenticatable =
-      ctx.getAuthenticatedUser && ctx.handleUserSignOut;
+      !!ctx.getAuthenticatedUser && !!ctx.handleUserSignOut;
 
     const basicAuthenticatable = !!ctx.handleBasicAuth;
     const webViewAuthenticatable =
@@ -140,10 +138,9 @@ function setupSourceConfig() {
         !!ctx.onContentsReadingFlagChanged;
       RunnerIntents.chapterSyncHandler = !!ctx.getReadChapterMarkers;
       RunnerIntents.librarySyncHandler = !!ctx.syncUserLibrary;
-      RunnerIntents.imageRequestHandler = !!ctx.willRequestImage;
       RunnerIntents.explorePageHandler =
-        !!ctx.createExploreCollections &&
-        !!ctx.resolveExploreCollection;
+        !!ctx.createExploreCollections && !!ctx.resolveExploreCollection;
+      RunnerIntents.hasTagsView = !!ctx.getTags;
     }
 
     // Content Tracker Intents

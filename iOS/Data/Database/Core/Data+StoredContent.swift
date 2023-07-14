@@ -16,7 +16,7 @@ extension StoredContent {
 
     func convertProperties() -> [DSKCommon.Property] {
         properties.map { prop in
-            let tags: [DSKCommon.Tag] = prop.tags.map { .init(id: $0.id, label: $0.label, adultContent: $0.adultContent) }
+            let tags: [DSKCommon.Tag] = prop.tags.map { .init(id: $0.id, label: $0.label, nsfw: $0.adultContent) }
 
             return .init(id: UUID().uuidString, label: prop.label, tags: tags)
         }

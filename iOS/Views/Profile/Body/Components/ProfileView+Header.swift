@@ -36,7 +36,7 @@ extension Skeleton {
                     Text(model.source.name)
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                    if let ac = entry.adultContent, ac {
+                    if let ac = entry.nsfw, ac {
                         Text("18+")
                             .font(.caption)
                             .fontWeight(.light)

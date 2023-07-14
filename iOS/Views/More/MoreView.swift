@@ -82,9 +82,6 @@ struct MoreView: View {
                 NavigationLink("Appearance") {
                     AppearanceView()
                 }
-                NavigationLink("Trackers") {
-                    TrackersView()
-                }
             } header: {
                 Text("General")
             }

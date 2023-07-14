@@ -140,4 +140,12 @@ enum STTKeys {
     static func RunnerOverridesImageRequest(_ id: String) -> String {
         return "RUNNER.IRH:\(id)"
     }
+    
+    static func PageLinkProvider(_ id: String) -> String {
+        return "RUNNER.PLP:\(id)"
+    }
+    
+    static func PageLinkResolver(_ id: String) -> String {
+        return "RUNNER.PLR:\(id)"
+    }
 }

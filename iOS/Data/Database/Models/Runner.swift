@@ -38,7 +38,7 @@ struct Runner: Codable, Hashable {
     var website: String?
     var supportedLanguages: [String]?
     var path: String
-    var environment: RunnerEnvironment
+    var environment: RunnerEnvironment = .unknown
     var thumbnail: String?
     var minSupportedAppVersion: String?
 }

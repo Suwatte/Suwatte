@@ -8,7 +8,7 @@
 import Foundation
 import JavaScriptCore
 
-protocol JSCContextProtocol {
+protocol JSCContextProtocol : NSObject {
     var runnerClass: JSValue { get }
 }
 
@@ -56,40 +56,43 @@ protocol RunnerInfo: Parsable {
 // MARK: - Runner Intents
 struct RunnerIntents: Parsable {
     let preferenceMenuBuilder: Bool
+    
     let authenticatable: Bool
     let authenticationMethod: AuthenticationMethod
     let basicAuthLabel: BasicAuthenticationUIIdentifier?
+    let imageRequestHandler: Bool
+    let pageLinkResolver: Bool
+    let pageLinkProvider: Bool
+    
+    // JSCCS
     let chapterEventHandler: Bool
     let contentEventHandler: Bool
     let chapterSyncHandler: Bool
     let librarySyncHandler: Bool
-    let imageRequestHandler: Bool
-    let explorePageHandler: Bool
-    let hasRecommendedTags: Bool
-    let hasFullTagList: Bool
+    let hasTagsView: Bool
+
+    // JSC CT
     let advancedTracker: Bool
-    let libraryTabProvider: Bool
-    let browseTabProvider: Bool
     
     enum AuthenticationMethod: String, Codable {
         case webview, basic, oauth, unknown
     }
     enum BasicAuthenticationUIIdentifier: Int, Codable {
-      case EMAIL
-      case USERNAME
+        case EMAIL
+        case USERNAME
     }
 }
 
 // MARK: - JSC Runner
-protocol JSCRunner: JSCContextProtocol  {
+protocol JSCRunner: JSCContextProtocol {
     var info:  RunnerInfo { get }
     var intents: RunnerIntents { get }
     var environment: RunnerEnvironment { get }
+    var directoryConfig: DSKCommon.DirectoryConfig? { get set }
     init(value: JSValue) throws
 }
 
 
-typealias AnyJSCRunner = (any JSCRunner)
 extension JSCRunner {
     var id: String {
         info.id
@@ -107,6 +110,8 @@ extension JSCRunner {
         DataManager.shared.getRunner(id).flatMap { URL(string: $0.thumbnail) }
     }
 }
+
+
 // MARK: - Paths
 
 // MARK: - JS Method Callers
@@ -114,7 +119,7 @@ extension JSCRunner {
     func methodExists(method: String) -> Bool {
         runnerClass.hasProperty(method)
     }
-
+    
     func callOptionalVoidMethod(method: String, arguments: [Any]) async throws {
         try await withUnsafeThrowingContinuation { handler in
             guard runnerClass.hasProperty(method) else {
@@ -128,7 +133,7 @@ extension JSCRunner {
             }
         } as Void
     }
-
+    
     func callMethodReturningDecodable<T: Decodable>(method: String, arguments: [Any], resolvesTo _: T.Type) async throws -> T? {
         try await withCheckedThrowingContinuation { handler in
             guard runnerClass.hasProperty(method) else {
@@ -136,7 +141,7 @@ extension JSCRunner {
                 return
             }
             runnerClass.daisukeCall(method: method, arguments: arguments) { value in
-
+                
                 if value.isNull || value.isUndefined {
                     handler.resume(returning: nil)
                     return
@@ -158,15 +163,15 @@ extension JSCRunner {
             }
         }
     }
-
+    
     func callMethodReturningObject<T: Parsable>(method: String, arguments: [Any], resolvesTo _: T.Type) async throws -> T {
         try await withCheckedThrowingContinuation { handler in
-
+            
             guard runnerClass.hasProperty(method) else {
                 handler.resume(throwing: DaisukeEngine.Errors.MethodNotFound(name: method))
                 return
             }
-
+            
             runnerClass.daisukeCall(method: method, arguments: arguments) { value in
                 do {
                     let object = try T(value: value)
@@ -174,13 +179,13 @@ extension JSCRunner {
                 } catch {
                     handler.resume(throwing: error)
                 }
-
+                
             } onFailure: { error in
                 handler.resume(throwing: error)
             }
         }
     }
-
+    
     func callMethodReturningDecodable<T: Decodable>(method: String, arguments: [Any], resolvesTo _: T.Type) async throws -> T {
         try await withCheckedThrowingContinuation { handler in
             guard runnerClass.hasProperty(method) else {
@@ -188,7 +193,7 @@ extension JSCRunner {
                 return
             }
             runnerClass.daisukeCall(method: method, arguments: arguments) { value in
-
+                
                 let str = DaisukeEngine.stringify(val: value)
                 guard let str = str else {
                     handler.resume(throwing: DaisukeEngine.Errors.NamedError(name: "Invalid Return", message: "Returned Array Object cannot be converted to JSON String"))
@@ -206,7 +211,7 @@ extension JSCRunner {
             }
         }
     }
-
+    
     func callContextMethod<T: Decodable>(method: String, arguments _: [Any]? = nil, resolvesTo _: T.Type) async throws -> T {
         try await withCheckedThrowingContinuation { handler in
             runnerClass.context!.evaluateScript(method).daisukeCall { value in
@@ -233,6 +238,8 @@ extension JSCRunner {
 extension JSCRunner {
     func saveState() {
         UserDefaults.standard.set(intents.imageRequestHandler, forKey: STTKeys.RunnerOverridesImageRequest(id))
+        UserDefaults.standard.set(intents.pageLinkProvider, forKey: STTKeys.PageLinkProvider(id))
+        UserDefaults.standard.set(intents.pageLinkResolver, forKey: STTKeys.PageLinkResolver(id))
     }
     // Preference
     func buildPreferenceMenu() async throws -> [DSKCommon.PreferenceGroup] {
@@ -283,5 +290,50 @@ extension JSCRunner {
     func handleOAuthCallback(response: String) async throws {
         try await callOptionalVoidMethod(method: "handleOAuthCallback", arguments: [response])
     }
+    
+}
 
+// MARK: - Directory Handler
+extension JSCRunner {
+    func getDirectory<T: Codable>(request: DSKCommon.DirectoryRequest) async throws -> DSKCommon.PagedResult<T> {
+        let object = try request.asDictionary()
+        return try await callMethodReturningDecodable(method: "getDirectory", arguments: [object], resolvesTo: DSKCommon.PagedResult<T>.self)
+    }
+    
+    func getDirectoryConfig() async throws -> DSKCommon.DirectoryConfig {
+        if let directoryConfig {
+            return directoryConfig
+        }
+        let data: DSKCommon.DirectoryConfig = try await callMethodReturningDecodable(method: "getDirectoryConfig", arguments: [], resolvesTo: DSKCommon.DirectoryConfig.self)
+        directoryConfig = data
+        return data
+    }
+}
+
+
+extension JSCRunner {
+    func willRequestImage(imageURL: URL) async throws -> DSKCommon.Request {
+        return try await callMethodReturningDecodable(method: "willRequestImage", arguments: [imageURL.absoluteString], resolvesTo: DSKCommon.Request.self)
+    }
+    func getPage(key: String) async throws -> DSKCommon.Page {
+        try await callMethodReturningDecodable(method: "getPage", arguments: [key], resolvesTo: DSKCommon.Page.self)
+    }
+    
+    func willResolvePage(key: String) async throws  {
+        try await callOptionalVoidMethod(method: "willResolvePage", arguments: [key])
+        
+    }
+    func resolvePageSection(page: String, section: String) async throws -> DSKCommon.ResolvedPageSection {
+        try await callMethodReturningDecodable(method: "resolvePageSection", arguments: [page, section], resolvesTo: DSKCommon.ResolvedPageSection.self)
+    }
+}
+
+
+extension JSCRunner {
+    func getLibraryPageLinks() async throws -> [DSKCommon.PageLink] {
+        try await callMethodReturningDecodable(method: "getLibraryPageLinks", arguments: [], resolvesTo: [DSKCommon.PageLink].self)
+    }
+    func getBrowsePageLinks() async throws -> [DSKCommon.PageLink] {
+        try await callMethodReturningDecodable(method: "getBrowsePageLinks", arguments: [], resolvesTo: [DSKCommon.PageLink].self)
+    }
 }

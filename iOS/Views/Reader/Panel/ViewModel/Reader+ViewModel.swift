@@ -426,37 +426,6 @@ extension ReaderView.ViewModel {
     }
 }
 
-// MARK: Tracker
-
-extension STTHelpers {
-    static func syncToAnilist(mediaID: String?, progress: Int, progressVolume: Int?) async throws {
-        guard let mediaID = mediaID, let mediaID = Int(mediaID), Anilist.signedIn() else {
-            return
-        }
-        // Get Media
-
-        let media = try await Anilist.shared.getProfile(mediaID)
-
-        var entry = media.mediaListEntry
-
-        if entry == nil, Preferences.standard.nonSelectiveSync {
-            entry = try await Anilist.shared.beginTracking(id: mediaID)
-        }
-
-        guard let mediaListEntry = entry else {
-            return
-        }
-
-        // Progress is above current point
-        if mediaListEntry.progress > progress {
-            return
-        }
-
-        let data = ["progress": progress, "progressVolume": progressVolume]
-
-        _ = try await Anilist.shared.updateMediaListEntry(mediaId: mediaID, data: data as Anilist.JSON)
-    }
-}
 
 // MARK: Reading Mode
 

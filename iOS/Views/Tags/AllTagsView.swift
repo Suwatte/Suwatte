@@ -8,13 +8,65 @@
 import SwiftUI
 
 struct AllTagsView: View {
+    var source: AnyContentSource
+    @State var properties: Loadable<[DaisukeEngine.Structs.Property]> = .idle
+    @State var selectedTag: String?
+    @State var text: String = ""
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        LoadableView(loadData, properties) {
+            DataLoadedView($0)
+        }
+        .searchable(text: $text, placement: .navigationBarDrawer(displayMode: .always))
+        .transition(.opacity)
+        .animation(.default, value: properties)
+        .animation(.default, value: text)
+        .navigationTitle("Tags")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
-struct AllTagsView_Previews: PreviewProvider {
-    static var previews: some View {
-        AllTagsView()
+
+extension AllTagsView {
+    func DataLoadedView(_ data: [DSKCommon.Property]) -> some View {
+        List {
+            ForEach(data) { property in
+                let tags = tagsForProperty(property)
+                if !tags.isEmpty {
+                    Section {
+                        ForEach(tags) {
+                            Cell(for: $0, propertyId: property.id)
+                        }
+                    } header: {
+                        Text(property.label)
+                    }
+                }
+            }
+        }
+    }
+
+    func tagsForProperty(_ property: DaisukeEngine.Structs.Property) -> [DSKCommon.Tag] {
+        property.tags.sorted(by: { $0.label < $1.label }).filter { text.isEmpty ? true : $0.label.lowercased().contains(text.lowercased()) }
+    }
+
+    func Cell(for tag: DaisukeEngine.Structs.Tag, propertyId: String) -> some View {
+        NavigationLink(tag.label) {
+            let request = DSKCommon.DirectoryRequest(page: 1, tag: .init(tagId: tag.id, propertyId: propertyId))
+            ContentSourceDirectoryView(source: source, request: request)
+                .navigationBarTitle("\(tag.label)")
+        }
+    }
+}
+
+extension AllTagsView {
+    func loadData() {
+        properties = .loading
+        Task {
+            do {
+                let data = try await source.getAllTags()
+                properties = .loaded(data)
+            } catch {
+                properties = .failed(error)
+            }
+        }
     }
 }

@@ -9,12 +9,12 @@ import SwiftUI
 
 struct ErrorView: View {
     var error: Error
-    var sourceID: String?
+    var runnerID: String?
     var action: () -> Void
     var body: some View {
         Group {
-            if case DaisukeEngine.Errors.NamedError(name: let name, message: _) = error, name == "CloudflareError", let sourceID = sourceID {
-                CloudFlareErrorView(sourceID: sourceID, action: action)
+            if case DaisukeEngine.Errors.NamedError(name: let name, message: _) = error, name == "CloudflareError", let runnerID = runnerID {
+                CloudFlareErrorView(sourceID: runnerID, action: action)
             } else {
                 BaseErrorView
             }

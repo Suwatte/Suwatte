@@ -284,7 +284,7 @@ extension DoublePagedDisplayHolder {
         errorView?.removeFromSuperview()
         errorView = nil
 
-        let display = ErrorView(error: error, sourceID: firstPage.page.sourceId, action: reload)
+        let display = ErrorView(error: error, runnerID: firstPage.page.sourceId, action: reload)
         errorView = UIHostingController(rootView: display).view
 
         guard let errorView else { return }
