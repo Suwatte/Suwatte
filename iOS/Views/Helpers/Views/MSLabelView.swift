@@ -30,6 +30,7 @@ struct STTThumbView: View {
     @State var systemName: String? = nil
     @State var url: URL? = nil
     @StateObject var imageFetcher = FetchImage()
+    @Preference(\.accentColor) var color
     var body: some View {
         GeometryReader { proxy in
             Group {
@@ -40,13 +41,20 @@ struct STTThumbView: View {
                     if let image = imageFetcher.image {
                         image
                             .resizable()
+
                     } else {
-                        Image(assetName ?? "stt_icon")
+                        Image(assetName ?? "stt")
                             .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundColor(color)
+                            .padding(.all, 3)
                     }
                 } else {
-                    Image(assetName ?? "stt_icon")
+                    Image(assetName ?? "stt")
                         .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .foregroundColor(color)
+                        .padding(.all, 3)
                 }
             }
             .task {

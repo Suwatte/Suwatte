@@ -48,6 +48,7 @@ extension ProfileView.Skeleton.BottomBar {
             }
             .disabled(!model.chapters.LOADED)
             .buttonStyle(.plain)
+            .foregroundColor(.accentColor)
         }
     }
 }
@@ -77,12 +78,12 @@ extension ProfileView.Skeleton.BottomBar {
                 }
                 .padding(.horizontal)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.fadedPrimary)
-                .cornerRadius(7)
-                .padding(.vertical, 5)
             }
             .disabled(!model.chapters.LOADED || actionState.state == .none)
-            .buttonStyle(.plain)
+            .buttonStyle(.bordered)
+            .padding(.vertical, 5)
+            .padding(.leading, 5)
+
         }
 
         @ViewBuilder
@@ -91,7 +92,7 @@ extension ProfileView.Skeleton.BottomBar {
                 Text(" - ")
             } else {
                 LabelForMarker()
-                    .transition(.move(edge: .bottom))
+                    .transition(.opacity)
             }
         }
 
@@ -170,7 +171,7 @@ extension ProfileView.Skeleton.BottomBar {
                 Image(systemName: "ellipsis")
                     .font(Font.title3.weight(.semibold))
                     .frame(maxWidth: .infinity)
-                    .foregroundColor(Color.primary)
+                    .foregroundColor(.accentColor)
                     .padding()
             }
             .buttonStyle(.plain)

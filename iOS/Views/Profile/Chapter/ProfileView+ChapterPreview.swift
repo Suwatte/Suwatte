@@ -96,12 +96,10 @@ extension ProfileView.Skeleton.ChapterView {
                         Text(chapters.count >= 5 ? "View All Chapters" : "Manage Chapters")
                             .font(.headline)
                             .fontWeight(.semibold)
-                            .padding(.vertical, 15)
+                            .padding(.vertical, 12.5)
                             .frame(maxWidth: .infinity)
-                            .background(Color.fadedPrimary)
-                            .cornerRadius(10)
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .buttonStyle(.bordered)
                 }
 
                 Divider()

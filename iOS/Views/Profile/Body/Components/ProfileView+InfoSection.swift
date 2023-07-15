@@ -79,7 +79,7 @@ extension ProfileView.Skeleton {
 struct ProfileTagStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .font(.callout.weight(.semibold))
+            .font(.callout.weight(.light))
             .padding(.vertical, 5)
             .padding(.horizontal, 8)
             .background(Color.primary.opacity(0.1))

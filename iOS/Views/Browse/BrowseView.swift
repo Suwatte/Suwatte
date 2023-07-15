@@ -68,7 +68,7 @@ extension BrowseView {
                     } label: {
                         HStack(spacing: 15) {
                             STTThumbView(url: URL(string: runner.thumbnail))
-                                .frame(width: 44, height: 44)
+                                .frame(width: 40, height: 40)
                                 .cornerRadius(5)
                             Text(runner.name)
                                 .font(.headline)
@@ -104,7 +104,7 @@ extension BrowseView {
                     } label: {
                         HStack(spacing: 15) {
                             STTThumbView(url: URL(string: runner.thumbnail))
-                                .frame(width: 44, height: 44)
+                                .frame(width: 40, height: 40)
                                 .cornerRadius(5)
                             Text(runner.name)
                             Spacer()
@@ -145,7 +145,7 @@ extension BrowseView {
                 } label: {
                     HStack {
                         STTThumbView(url: URL(string: pageLink.thumbnail ?? "") ?? runner.thumbnailURL)
-                            .frame(width: 44, height: 44)
+                            .frame(width: 40, height: 40)
                             .cornerRadius(5)
                         Text(pageLink.label)
                         Spacer()

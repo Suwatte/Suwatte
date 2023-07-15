@@ -49,6 +49,8 @@ extension MCV {
             }
             .onDelete(perform: delete)
             .onMove(perform: move)
+        } header: {
+            Text("Collections")
         }
     }
 
@@ -76,16 +78,15 @@ extension MCV {
                     .onSubmit {
                         addCollection()
                     }
-                Button { addCollection() }
-                    label: {
-                        HStack {
-                            Spacer()
-                            Text("Add Collection")
-                            Spacer()
-                        }
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(NeutralButtonStyle())
+                HStack {
+                    Spacer()
+                    Button("Add Collection") { addCollection() }
+                        .buttonStyle(.bordered)
+                    Spacer()
+                }
+                
+            } header: {
+                Text("New Collection")
             }
         }
 
