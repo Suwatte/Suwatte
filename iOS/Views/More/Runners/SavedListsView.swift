@@ -153,10 +153,43 @@ extension RunnerListsView {
         @State var langSearchText = ""
         var body: some View {
             List {
-                ForEach(filteredRunners, id: \.self) { runner in
-                    RunnerListInfo.RunnerListCell(listURL: listURL, list: list, runner: runner)
-                        .frame(height: 75)
+                let sources = filteredRunners.filter { $0.environment == .source }
+                let trackers = filteredRunners.filter { $0.environment == .tracker }
+                let plugins = filteredRunners.filter { $0.environment == .plugin }
+                
+                if !sources.isEmpty {
+                    Section {
+                        ForEach(sources) { source in
+                            RunnerListInfo.RunnerListCell(listURL: listURL, list: list, runner: source)
+                                .frame(height: 60)
+                        }
+                    } header: {
+                        Text("Sources")
+                    }
                 }
+                
+                if !trackers.isEmpty {
+                    Section {
+                        ForEach(trackers) { tracker in
+                            RunnerListInfo.RunnerListCell(listURL: listURL, list: list, runner: tracker)
+                                .frame(height: 60)
+                        }
+                    } header: {
+                        Text("Trackers")
+                    }
+                }
+                
+                if !plugins.isEmpty {
+                    Section {
+                        ForEach(plugins) { plugin in
+                            RunnerListInfo.RunnerListCell(listURL: listURL, list: list, runner: plugin)
+                                .frame(height: 60)
+                        }
+                    }  header: {
+                        Text("Plugins")
+                    }
+                }
+                
             }
             .animation(.default, value: text)
             .toolbar(content: {
@@ -272,12 +305,9 @@ extension RunnerListsView.RunnerListInfo {
                         }
                     }
                     .font(.footnote.weight(.bold))
-                    .padding(.all, 5)
-                    .foregroundColor(.primary)
-                    .background(Color.fadedPrimary)
-                    .cornerRadius(5)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.bordered)
+                .controlSize(.small)
                 .disabled(runnerState.noInstall)
             }
         }
@@ -323,7 +353,7 @@ extension RunnerListsView.RunnerListInfo {
                     return .appOutDated
                 }
             }
-            guard let installed = engine.getSource(id: runner.id) else {
+            guard let installed = DataManager.shared.getRunner(runner.id) else {
                 return .notInstalled
             }
             if installed.version > runner.version {
@@ -336,31 +366,32 @@ extension RunnerListsView.RunnerListInfo {
         }
 
         func RunnerHeader(runner: Runner) -> some View {
-            HStack {
+            HStack (spacing: 7) {
                 let url = runner.thumbnail.flatMap { URL(string: listURL)!.appendingPathComponent("assets").appendingPathComponent($0) }
                 STTThumbView(url: url)
                     .frame(width: 44, height: 44, alignment: .center)
                     .cornerRadius(7)
                 VStack(alignment: .leading, spacing: 5) {
-                    Text(runner.name)
-                        .fontWeight(.semibold)
-                    HStack {
+                    HStack(alignment: .bottom, spacing: 3.5){
+                        Text(runner.name)
+                            .font(.headline)
+                            .fontWeight(.semibold)
                         Text("v\(runner.version.description)")
-
-//                        if runner.nsfw ?? false {
-//                            Text("18+")
-//                                .bold()
-//                                .padding(.all, 2)
-//                                .background(Color.red.opacity(0.3))
-//                                .cornerRadius(5)
-//                        }
+                            .font(.subheadline)
+                            .fontWeight(.thin)
+                    }
+                    HStack {
+                        if runner.nsfw ?? false {
+                            Text("18+")
+                                .padding(.all, 2)
+                                .background(Color.red.opacity(0.3))
+                                .cornerRadius(5)
+                        }
                     }
                     .font(.footnote.weight(.light))
-                    Text("Content Source")
-                        .font(.footnote.weight(.ultraLight))
                 }
             }
-            .frame(height: 70, alignment: .center)
+            .frame(height: 60, alignment: .center)
         }
     }
 }

@@ -44,7 +44,7 @@ const evaluateEnvironment = () => {
 
   if (RunnerObject.getHomeFeed && RunnerObject.getFeed) return "plugin";
 
-  // Runner Has Implemented all methods required of a "Tracker Source"
+  // Runner Has Implemented all methods required of a "Content Tracker"
 
   if (
     RunnerObject.didUpdateLastReadChapter &&

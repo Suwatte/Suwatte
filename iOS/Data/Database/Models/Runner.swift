@@ -31,13 +31,14 @@ struct RunnerList: Codable, Hashable {
     var runners: [Runner]
 }
 
-struct Runner: Codable, Hashable {
+struct Runner: Codable, Hashable, Identifiable {
     var id: String
     var name: String
     var version: Double
     var website: String?
     var supportedLanguages: [String]?
     var path: String
+    var nsfw: Bool? 
     var environment: RunnerEnvironment = .unknown
     var thumbnail: String?
     var minSupportedAppVersion: String?
