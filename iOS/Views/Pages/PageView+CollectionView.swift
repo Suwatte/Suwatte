@@ -33,7 +33,6 @@ extension DSKPageView {
                     model.loadable = .idle
                     endRefreshing()
                 })
-                .navigationBarTitle(page.title)
                 .task { loadAll() }
                 .onChange(of: tileStyle) { _ in } // Triggers view Update when key is updated
                 
@@ -59,7 +58,7 @@ extension DSKPageView.CollectionView {
 // MARK: - Layout
 extension DSKPageView.CollectionView {
     var layout: ASCollectionLayout<String> {
-        let cache = Dictionary(uniqueKeysWithValues: page.sections.map { ($0.key, $0.style) })
+        let cache = Dictionary(uniqueKeysWithValues: page.sections.map { ($0.key, $0.sectionStyle) })
         let errors = model.errors
         return ASCollectionLayout { sectionID in
             // Errored Out, Show Error Layout
@@ -123,7 +122,7 @@ extension DSKPageView.CollectionView {
 
 extension DSKPageView.CollectionView {
     func buildHeader(_ title: String,_ subtitle: String?, _ link: DSKCommon.Linkable?) -> some View {
-        HStack(alignment: .bottom) {
+        HStack(alignment: .center) {
             VStack(alignment: .leading) {
                 Text(title)
                     .font(.headline)
@@ -138,7 +137,7 @@ extension DSKPageView.CollectionView {
             }
             Spacer()
             if let link {
-                NavigationLink("More") {
+                NavigationLink("View More \(Image(systemName: "chevron.right"))") {
                     Group {
                         if link.isPageLink, let pageLink = link.pageKey {
                             RunnerPageView(runner: runner, pageKey: pageLink)
@@ -146,7 +145,12 @@ extension DSKPageView.CollectionView {
                             RunnerDirectoryView(runner: runner, request: link.getDirectoryRequest())
                         }
                     }
+                    .navigationBarTitle(title)
                 }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+                .tint(.accentColor)
+                .font(.caption)
             }
         }
     }
@@ -199,7 +203,7 @@ extension DSKPageView.CollectionView {
                     tileModifier(data)
                 }
             }
-                .environment(\.pageSectionStyle, section.style)
+                .environment(\.pageSectionStyle, section.sectionStyle)
         }
         .sectionHeader {
             buildHeader(resolved?.updatedTitle ?? section.title,

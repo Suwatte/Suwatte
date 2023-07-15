@@ -58,7 +58,6 @@ extension DSKCommon {
     
     struct PagedResult<T>: Codable, Hashable where T: Codable, T: Hashable {
         var results: [T]
-        var page: Int
         var isLastPage: Bool
         var totalResultCount: Int?
     }

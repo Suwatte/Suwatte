@@ -15,7 +15,7 @@ struct ContentSourceDirectoryView: View {
     @State var selection: HighlightIndentier?
     @StateObject var model = ViewModel()
     var body: some View {
-        DirectoryView<DSKCommon.Highlight, Cell>(model: .init(runner: source, request: request), fullSearch: fullSearch) { data in
+        DirectoryView<DSKCommon.Highlight, Cell>(model: .init(runner: source, request: request)) { data in
             let inLibrary = model.library.contains(data.contentId)
             let inReadLater = model.readLater.contains(data.contentId)
             Cell(data: data, sourceID: source.id, inLibrary: inLibrary, readLater: inReadLater, selection: $selection)
@@ -27,9 +27,7 @@ struct ContentSourceDirectoryView: View {
         .onDisappear(perform: model.stop)
     }
     
-    var fullSearch: Bool {
-        request.custom == nil && request.tag == nil
-    }
+
 }
 
 // MARK: - Cell

@@ -12,15 +12,18 @@ struct DirectoryView<T: Codable & Hashable, C: View>: View {
     @StateObject var model: ViewModel
     @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
     var title: String?
-    var fullSearch: Bool = true
     var content: (T) -> C
     @State var firstCall = false
 
-    init(model: ViewModel, fullSearch: Bool = true, @ViewBuilder _ content: @escaping (T) -> C) {
+    init(model: ViewModel, @ViewBuilder _ content: @escaping (T) -> C) {
         self._model = StateObject(wrappedValue: model)
         self.content = content
-        self.fullSearch = fullSearch
     }
+    
+    var fullSearch: Bool {
+        model.request.custom == nil && model.request.tag == nil
+    }
+    
     var body: some View {
         LoadableView(load, model.result) { value in
             if value.isEmpty {

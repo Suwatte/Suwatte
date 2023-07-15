@@ -28,12 +28,14 @@ extension DaisukeEngine {
         case NetworkErrorFailedToConvertRequestObject
         case NetworkErrorInvalidRequestURL
         case NamedError(name: String, message: String)
+        case NetworkError(message: String, response: String)
         case MethodNotFound(name: String)
         case ObjectConversionFailed
         case InvalidJSONObject
         case RealmThawFailure
         case NetworkErrorCloudflareProtected
         case LocalFilePathNotFound
+        case Cloudflare
 //        case ConversionFailed()
 
         static func nativeError(for errorValue: JSValue) -> Error {
@@ -49,6 +51,19 @@ extension DaisukeEngine {
             if let value = errorValue.objectForKeyedSubscript("message"), !value.isUndefined, !value.isNull {
                 message = value.toString() ?? message
             }
+            
+            if name == "NetworkError" {
+                var response = ""
+                if let res = errorValue.objectForKeyedSubscript("res"), let val = try? DSKCommon.Response(value: res).data {
+                    response = val
+                }
+                return DSK.Errors.NetworkError(message: message, response: response)
+            }
+            
+            if name == "CloudflareError" {
+                return DSK.Errors.Cloudflare
+            }
+            
             return DaisukeEngine.Errors.NamedError(name: name, message: message)
         }
     }
@@ -66,11 +81,11 @@ extension DaisukeEngine.Errors: LocalizedError {
         case .FailedToParseRunnerConfig: return .init("Failed to Parse Runner Config")
         case .InvalidRunnerEnvironment: return .init("The Requested Runner is not available in the evironment specified")
         case .RunnerExecutableNotFound: return .init("Runner Script was not found")
-            
+        case let .NetworkError(message, _): return .init("[Network Error] \(message)")
         case .ValueStoreErrorValueNotFound: return .init("[Value Store] NF")
         case .ValueStoreErrorKeyIsNotString: return .init("[Value Store] Key is not String")
         case .ValueStoreErrorKeyValuePairInvalid: return .init("[Value Store] Value is not valid")
-
+        case .Cloudflare: return .init("Cloudflare Protected Resource")
             
         case .NetworkErrorFailedToConvertRequestObject: return .init("Request Object Is not valid")
         case .NetworkErrorInvalidRequestURL: return .init("Reqeust URL is invalid")

@@ -13,7 +13,7 @@ struct ErrorView: View {
     var action: () -> Void
     var body: some View {
         Group {
-            if case DaisukeEngine.Errors.NamedError(name: let name, message: _) = error, name == "CloudflareError", let runnerID = runnerID {
+            if case DaisukeEngine.Errors.Cloudflare = error, let runnerID = runnerID {
                 CloudFlareErrorView(sourceID: runnerID, action: action)
             } else {
                 BaseErrorView
@@ -62,6 +62,10 @@ struct ErrorView: View {
             return "JSON Decoding Error (Corrupted Data): \(context.debugDescription)"
         } else if case let DecodingError.keyNotFound(_, context) = error {
             return "JSON Decoding Error (Key Not Found): \(context.debugDescription)"
+        } else if case let DSK.Errors.NetworkError(message, _) = error{
+            return "Network Error: \(message)"
+        } else if case let DSK.Errors.NamedError(name, message) = error {
+            return "JS \(name): \(message)"
         } else {
             return error.localizedDescription
         }

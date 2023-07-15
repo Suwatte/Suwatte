@@ -127,7 +127,7 @@ extension LibraryView {
                         PageLinkView(pageLink: pageLink, runner: runner)
                     } label: {
                         HStack {
-                            STTThumbView(url: URL(string: pageLink.cover ?? "") ?? runner.thumbnailURL)
+                            STTThumbView(url: URL(string: pageLink.thumbnail ?? "") ?? runner.thumbnailURL)
                                 .frame(width: 32, height: 32)
                                 .cornerRadius(5)
                             Text(pageLink.label)
@@ -322,6 +322,7 @@ extension LibraryView {
 // MARK: - Load Page Links
 extension LibraryView {
     func loadPageLinks() {
+        triggeredLoad = true
         // Get Links
         let runnerIDs = runners.map(\.id)
         // Remove All

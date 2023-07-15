@@ -19,8 +19,9 @@ struct PageViewTile: View {
             entry.title ?? entry.label ?? ""
         }
         
+        /// Only Used in imageview
         var id: String {
-            entry.id ?? entry.key ?? ""
+            entry.id ?? ""
         }
         
         var body: some View {

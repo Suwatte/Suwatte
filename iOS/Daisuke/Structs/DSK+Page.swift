@@ -46,7 +46,6 @@ extension DSKCommon {
         
     struct Page: Parsable, Hashable {
         let key: String
-        let title: String
         let sections: [PageSection]
         
     }
@@ -54,10 +53,14 @@ extension DSKCommon {
     struct PageSection: Parsable, Hashable {
         let key: String
         var title: String
-        let style: SectionStyle
+        let style: SectionStyle?
         var subtitle: String?
         var viewMoreLink: Linkable?
         var items: [PageSectionItem]?
+        
+        var sectionStyle: SectionStyle {
+            style ?? .NORMAL
+        }
     }
     
     struct ResolvedPageSection: Parsable, Hashable {
@@ -68,9 +71,8 @@ extension DSKCommon {
     }
     
     struct PageLink: Parsable, Hashable {
-        let key: String
         let label: String
-        let cover: String?
+        let thumbnail: String?
         let link: Linkable
     }
     
@@ -119,24 +121,28 @@ extension DSKCommon {
         let id: String?
         let title: String?
         let cover: String?
+        let thumbnail: String?
         let additionalCovers: [String]?
         let info: [String]?
-        let key: String?
         let label: String?
         let link: Linkable?
         let trackStatus: DSKCommon.TrackStatus?
         let badgeColor: String?
         
         var isPageLink : Bool {
-            key != nil
+            link != nil
         }
         
         func toPageLink() -> PageLink {
-            .init(key: key ?? "", label: label ?? "", cover: cover, link: link ?? .init(pageKey: ""))
+            .init(label: label ?? "", thumbnail: thumbnail, link: link ?? .init(pageKey: ""))
         }
         
         func toPageItem() -> PageItem {
             .init(id: id ?? "", title: title ?? "", cover: cover ?? "", additionalCovers: additionalCovers, info: info, trackStatus: trackStatus, badgeColor: badgeColor)
+        }
+        
+        var imageUrl : String {
+            cover ?? thumbnail ?? ""
         }
     }
 }

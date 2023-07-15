@@ -84,6 +84,9 @@ extension DirectoryView.ViewModel {
                 withAnimation {
                     self.result = .loaded(data.results)
                     self.resultCount = data.totalResultCount
+                    if data.isLastPage {
+                        self.pagination = .END
+                    }
                 }
             }
 
@@ -125,14 +128,12 @@ extension DirectoryView.ViewModel {
                 currentEntries.append(contentsOf: data.results)
                 withAnimation {
                     self.result = .loaded(currentEntries)
+                    if data.isLastPage {
+                        self.pagination = .END
+                        return
+                    }
+                    self.pagination = .IDLE
                 }
-                
-                if data.isLastPage {
-                    self.pagination = .END
-                    return
-                }
-
-                self.pagination = .IDLE
             }
 
         } catch {

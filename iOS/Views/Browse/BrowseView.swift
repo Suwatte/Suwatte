@@ -36,6 +36,7 @@ struct BrowseView: View {
 
         .task {
             guard !triggeredLoad else { return }
+            triggeredLoad = true
             loadPageLinks()
         }
     }
@@ -143,7 +144,7 @@ extension BrowseView {
                     PageLinkView(pageLink: pageLink, runner: runner)
                 } label: {
                     HStack {
-                        STTThumbView(url: URL(string: pageLink.cover ?? "") ?? runner.thumbnailURL)
+                        STTThumbView(url: URL(string: pageLink.thumbnail ?? "") ?? runner.thumbnailURL)
                             .frame(width: 44, height: 44)
                             .cornerRadius(5)
                         Text(pageLink.label)
