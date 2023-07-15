@@ -24,7 +24,7 @@ struct BrowseView: View {
             .toolbar {
                 ToolbarItem {
                     NavigationLink {
-                        Text("placeholder")
+                        SearchView()
                     } label: {
                         Image(systemName: "magnifyingglass")
                     }
