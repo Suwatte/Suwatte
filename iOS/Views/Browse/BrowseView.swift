@@ -140,15 +140,7 @@ extension BrowseView {
         Section {
             ForEach(links, id: \.hashValue) { pageLink in
                 NavigationLink {
-                    Group {
-                        if pageLink.link.isPageLink {
-                            RunnerPageView(runner: runner, pageKey: pageLink.link.getPageKey())
-                                .navigationBarTitle(pageLink.label)
-                        } else {
-                            RunnerDirectoryView(runner: runner, request: pageLink.link.getDirectoryRequest())
-                                .navigationBarTitle(pageLink.label)
-                        }
-                    }
+                    PageLinkView(pageLink: pageLink, runner: runner)
                 } label: {
                     HStack {
                         STTThumbView(url: URL(string: pageLink.cover ?? "") ?? runner.thumbnailURL)
@@ -198,6 +190,23 @@ extension BrowseView {
                     }
                 }
             })
+        }
+    }
+}
+
+
+struct PageLinkView: View {
+    let pageLink: DSKCommon.PageLink
+    let runner: JSCRunner
+    var body: some View {
+        Group {
+            if pageLink.link.isPageLink {
+                RunnerPageView(runner: runner, pageKey: pageLink.link.getPageKey())
+                    .navigationBarTitle(pageLink.label)
+            } else {
+                RunnerDirectoryView(runner: runner, request: pageLink.link.getDirectoryRequest())
+                    .navigationBarTitle(pageLink.label)
+            }
         }
     }
 }

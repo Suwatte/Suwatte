@@ -19,6 +19,7 @@ enum STTHost {
 
     static var coverNotFound = notFound.appendingPathComponent("thumb.png")
 }
+let DEFAULT_LIBRARY_SECTIONS = ["library.local", "library.lists", "library.collections", "library.flags"]
 
 let STTUserDefaults: [String: Any] = [
     STTKeys.PagedDirection: true,
@@ -33,7 +34,7 @@ let STTUserDefaults: [String: Any] = [
     STTKeys.GridItemsPerRow_P: Int((2 * UIScreen.main.bounds.width) / 375), // IPhone 13 Mini
     STTKeys.GridItemsPerRow_LS: Int((6 * UIScreen.main.bounds.height) / 812),
     STTKeys.TimeoutDuration: LocalAuthManager.TimeoutDuration.immediately.rawValue,
-    STTKeys.LibrarySections: LibraryView.LibrarySectionOrder.allCases.map { $0.rawValue },
+    STTKeys.LibrarySections: DEFAULT_LIBRARY_SECTIONS,
     STTKeys.UpdateInterval: STTUpdateInterval.oneHour.rawValue, // 1 Hour,
     STTKeys.HideNSFWRunners: true,
     STTKeys.DefaultUserAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0",

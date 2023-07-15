@@ -161,6 +161,15 @@ extension DataManager {
             .sorted(by: [SortDescriptor(keyPath: "name", ascending: true)])
     }
     
+    func getLibraryPageProviders() -> [StoredRunnerObject] {
+        let realm = try! Realm()
+        
+        return realm
+            .objects(StoredRunnerObject.self)
+            .where { $0.isLibraryPageLinkProvider && $0.enabled && !$0.isDeleted }
+            .map { $0.freeze() }
+    }
+    
     func getEnabledRunners(for environment: RunnerEnvironment) -> Results<StoredRunnerObject> {
         let realm = try! Realm()
 

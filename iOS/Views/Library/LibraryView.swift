@@ -9,18 +9,22 @@ import RealmSwift
 import SwiftUI
 
 struct LibraryView: View {
-    @AppStorage(STTKeys.LibrarySections) var sections: [LibrarySectionOrder] = [.local, .lists, .collections, .flags]
+    @ObservedResults(StoredRunnerObject.self, where: { !$0.isDeleted && $0.isLibraryPageLinkProvider }) var runners
+    @AppStorage(STTKeys.LibrarySections) var sections: [String] = DEFAULT_LIBRARY_SECTIONS
     @StateObject var AuthProvider = LocalAuthManager.shared
     @State var presentCollectionSheet = false
     @State var presentOrderSheet = false
-    @State var isActive = false
+    @State var openFirstCollection = false
     @AppStorage(STTKeys.OpenAllTitlesOnAppear) var openAllOnAppear = false
     @AppStorage(STTKeys.LibraryAuth) var requireAuth = false
+    @State var pageLinks: [String: [DSKCommon.PageLink]] = [:]
+    @State var triggeredLoad = false
+
     var body: some View {
         NavigationView {
             List {
-                ForEach(sections, id: \.rawValue) { section in
-                    section.sectionView(firstCollection: $isActive, presentCollections: $presentCollectionSheet)
+                ForEach(sections) { section in
+                    LibrarySectionBuilder(key: section, openFirstCollection: $openFirstCollection, links: $pageLinks)
                 }
             }
             .listStyle(.insetGrouped)
@@ -43,7 +47,7 @@ struct LibraryView: View {
                     }
                     .disabled(requireAuth && AuthProvider.isExpired)
                 }
-
+                
             })
             .sheet(isPresented: $presentOrderSheet, content: {
                 NavigationView {
@@ -54,105 +58,161 @@ struct LibraryView: View {
                         .closeButton()
                 }
                 .navigationViewStyle(.stack)
-
+                
             })
         }
-        .onAppear {
+        .task {
             if requireAuth && !LocalAuthManager.shared.isExpired {
                 return
             }
-
+            
             if openAllOnAppear {
-                isActive.toggle()
+                openFirstCollection.toggle()
             }
         }
-
         .protectContent()
         .navigationViewStyle(.stack)
+        .sheet(isPresented: $presentCollectionSheet) {
+            ManageCollectionsView()
+        }
+        .task {
+            guard !triggeredLoad else { return }
+            loadPageLinks()
+        }
+        .onChange(of: sections) { _ in
+            loadPageLinks()
+        }
+        
+        
     }
 }
 
+// MARK: - Section Builder
 extension LibraryView {
-    enum LibrarySectionOrder: Int, CaseIterable, Codable {
-        case local, lists, collections, flags
-        //        case anilist, mal
-
-        var description: String {
-            switch self {
-            case .local:
-                return "Local Content"
-            case .lists:
-                return "Lists"
-            case .collections:
-                return "Collections"
-            case .flags:
-                return "Reading Flags"
-                //                case .anilist:
-                //                    return "Anilist"
-                //                case .mal:
-                //                    return "MyAnimeList"
-            }
-        }
-
-        @ViewBuilder
-        func sectionView(firstCollection: Binding<Bool>, presentCollections: Binding<Bool>) -> some View {
-            switch self {
-            case .local:
-                Section {
-                    NavigationLink(destination: DirectoryViewer.Coreview()) {
-                        Label("On My \(UIDevice.current.model)", systemImage: UIDevice.current.model.lowercased())
+    struct LibrarySectionBuilder: View {
+        let key: String
+        @Binding var openFirstCollection: Bool
+        @Binding var links: [String: [DSKCommon.PageLink]]
+        var body: some View {
+            Group {
+                switch key {
+                case "library.local":
+                    LibrarySectionView()
+                case "library.lists":
+                    ListsSectionView()
+                case "library.collections":
+                    CollectionsSectionView(isActive: $openFirstCollection)
+                case "library.flags":
+                    FlagsSectionView()
+                default:
+                    if let pageLinks = links[key], let runner = DSK.shared.getRunner(key) {
+                        PageLinkSectionView(runner: runner, pageLinks: pageLinks)
                     }
-                    NavigationLink(destination: OPDSView()) {
-                        Label("OPDS", systemImage: "server.rack")
-                    }
-                } header: {
-                    Text("Local")
                 }
-                .headerProminence(.increased)
-            case .lists:
-                Section {
-                    NavigationLink(destination: ReadLaterView()) {
-                        Label("Saved For Later", systemImage: "clock.arrow.circlepath")
-                    }
-                    NavigationLink(destination: HistoryView()) {
-                        Label("Reading History", systemImage: "clock")
-                    }
-                    NavigationLink(destination: UpdateFeedView()) {
-                        Label("Your Feed", systemImage: "bell")
-                    }
-                    NavigationLink(destination: DownloadsView()) {
-                        Label("Downloads", systemImage: "square.and.arrow.down")
-                    }
-
-                } header: {
-                    Text("Lists")
-                }
-                .headerProminence(.increased)
-            case .collections:
-                CollectionsSectionView(isActive: firstCollection, presentCollections: presentCollections)
-            case .flags:
-                Section {
-                    ForEach(LibraryFlag.allCases) { flag in
-                        NavigationLink {
-                            LibraryGrid(model: .init(readingFlag: flag))
-                        } label: {
-                            Label(flag.description, systemImage: "flag")
-                        }
-                    }
-                } header: {
-                    Text("Reading Flags")
-                }
-                .headerProminence(.increased)
             }
         }
     }
+}
 
+// MARK: PageLink Section
+extension LibraryView {
+    struct PageLinkSectionView: View {
+        let runner: JSCRunner
+        let pageLinks: [DSKCommon.PageLink]
+        
+        var body: some View {
+            Section {
+                ForEach(pageLinks, id: \.hashValue) { pageLink in
+                    NavigationLink {
+                        PageLinkView(pageLink: pageLink, runner: runner)
+                    } label: {
+                        HStack {
+                            STTThumbView(url: URL(string: pageLink.cover ?? "") ?? runner.thumbnailURL)
+                                .frame(width: 32, height: 32)
+                                .cornerRadius(5)
+                            Text(pageLink.label)
+                            Spacer()
+                        }
+                    }
+                }
+            } header: {
+                Text(runner.name)
+            }
+            .headerProminence(.increased)
+        }
+    }
+}
+
+// MARK: - Flags Section
+extension LibraryView {
+    struct FlagsSectionView: View {
+        var body: some View {
+            Section {
+                ForEach(LibraryFlag.allCases) { flag in
+                    NavigationLink {
+                        LibraryGrid(model: .init(readingFlag: flag))
+                    } label: {
+                        Label(flag.description, systemImage: "flag")
+                    }
+                }
+            } header: {
+                Text("Reading Flags")
+            }
+            .headerProminence(.increased)
+        }
+    }
+}
+
+// MARK: - Lists Section
+extension LibraryView {
+    struct ListsSectionView: View {
+        var body: some View {
+            Section {
+                NavigationLink(destination: ReadLaterView()) {
+                    Label("Saved For Later", systemImage: "clock.arrow.circlepath")
+                }
+                NavigationLink(destination: HistoryView()) {
+                    Label("Reading History", systemImage: "clock")
+                }
+                NavigationLink(destination: UpdateFeedView()) {
+                    Label("Your Feed", systemImage: "bell")
+                }
+                NavigationLink(destination: DownloadsView()) {
+                    Label("Downloads", systemImage: "square.and.arrow.down")
+                }
+                
+            } header: {
+                Text("Lists")
+            }
+            .headerProminence(.increased)
+        }
+    }
+}
+
+// MARK: - Library Section
+extension LibraryView {
+    struct LibrarySectionView: View {
+        var body: some View {
+            Section {
+                NavigationLink(destination: DirectoryViewer.Coreview()) {
+                    Label("On My \(UIDevice.current.model)", systemImage: UIDevice.current.model.lowercased())
+                }
+                NavigationLink(destination: OPDSView()) {
+                    Label("OPDS", systemImage: "server.rack")
+                }
+            } header: {
+                Text("Local")
+            }
+            .headerProminence(.increased)
+        }
+    }
+}
+
+// MARK: - Collections Section
+extension LibraryView {
     struct CollectionsSectionView: View {
         @ObservedResults(LibraryCollection.self, where: { $0.isDeleted == false }, sortDescriptor: SortDescriptor(keyPath: "order", ascending: true)) var collections
-
         @Binding var isActive: Bool
-        @Binding var presentCollections: Bool
-
         var body: some View {
             Section {
                 NavigationLink(destination: LibraryGrid(model: .init()), isActive: $isActive) {
@@ -167,26 +227,24 @@ extension LibraryView {
                 Text("Collections")
             }
             .headerProminence(.increased)
-            .sheet(isPresented: $presentCollections) {
-                ManageCollectionsView()
-            }
         }
     }
 }
 
+// MARK: - Order Sheet
 extension LibraryView {
     struct LibrarySectionOrderSheet: View {
-        @AppStorage(STTKeys.LibrarySections) var sections = LibraryView.LibrarySectionOrder.allCases
-
-        var availableSections: [LibraryView.LibrarySectionOrder] {
-            LibraryView.LibrarySectionOrder.allCases.filter { !sections.contains($0) }
+        @AppStorage(STTKeys.LibrarySections) var sections = DEFAULT_LIBRARY_SECTIONS
+        @State var priviledgedRunners = [StoredRunnerObject]()
+        var availableSections: [String] {
+            getAvailableSections()
         }
-
+        
         var body: some View {
             List {
                 Section {
                     ForEach(sections, id: \.hashValue) { section in
-                        Text(section.description)
+                        Cell(section)
                     }
                     .onMove(perform: { source, destination in
                         sections.move(fromOffsets: source, toOffset: destination)
@@ -197,7 +255,7 @@ extension LibraryView {
                 } header: {
                     Text("Active")
                 }
-
+                
                 Section {
                     ForEach(availableSections, id: \.hashValue) { section in
                         HStack {
@@ -211,8 +269,8 @@ extension LibraryView {
                                     .padding(.leading, 0)
                                     .font(.system(size: 18))
                             }
-
-                            Text(section.description)
+                            
+                            Cell(section)
                                 .padding(.leading, 8.0)
                         }.onTapGesture(count: 1, perform: {
                             withAnimation {
@@ -221,11 +279,76 @@ extension LibraryView {
                         })
                         .frame(height: 32.0)
                     }
-
+                    
                 } header: {
                     Text("Available Sections")
                 }
             }
+            .task {
+                priviledgedRunners = DataManager.shared.getLibraryPageProviders()
+            }
+        }
+        
+        @ViewBuilder
+        func Cell(_ key: String) -> some View {
+            Group {
+                switch key {
+                case "library.local":
+                    Text("On My \(UIDevice.current.model)")
+                case "library.lists":
+                    Text("Lists")
+                case "library.collections":
+                    Text("Collections")
+                case "library.flags":
+                    Text("Reading Flags")
+                default:
+                    if let name = priviledgedRunners.first(where: { $0.id == key})?.name {
+                        Text(name)
+                    }
+                }
+            }
+            
+        }
+        
+        func getAvailableSections() -> [String] {
+            let all = DEFAULT_LIBRARY_SECTIONS + priviledgedRunners.map(\.id)
+            return all
+                .filter { !sections.contains($0) }
+            
+        }
+    }
+}
+
+// MARK: - Load Page Links
+extension LibraryView {
+    func loadPageLinks() {
+        // Get Links
+        let runnerIDs = runners.map(\.id)
+        // Remove All
+        withAnimation {
+            pageLinks.removeAll()
+        }
+        // Load all links, log errors
+        Task {
+            await withTaskGroup(of: Void.self, body: { group in
+                for id in runnerIDs {
+                    group.addTask {
+                        do {
+                            let runner = try DSK.shared.getJSCRunner(id)
+                            guard runner.intents.libraryPageLinkProvider else { return }
+                            let links = try await runner.getLibraryPageLinks()
+                            guard !links.isEmpty else { return }
+                            Task { @MainActor in
+                                withAnimation {
+                                    pageLinks.updateValue(links , forKey: runner.id)
+                                }
+                            }
+                        } catch {
+                            Logger.shared.error(error, id)
+                        }
+                    }
+                }
+            })
         }
     }
 }

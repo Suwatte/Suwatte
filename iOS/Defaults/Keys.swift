@@ -99,7 +99,7 @@ enum STTKeys {
     static var GridItemsPerRow_P = "APP.grid_items_per_row_potrait"
     static var GridItemsPerRow_LS = "APP.grid_items_per_row_landscape"
 
-    static var LibrarySections = "LIBRARY.sections"
+    static var LibrarySections = "LIBRARY.sections_1"
     static var NonSelectiveSync = "TRACKER.non_selective"
 
     static var SelectiveUpdates = "APP.selective_updates"
