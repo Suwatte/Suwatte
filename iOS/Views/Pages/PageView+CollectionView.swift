@@ -13,14 +13,14 @@ import ASCollectionView
 extension DSKPageView {
     
     struct CollectionView: View {
-        let page: DSKCommon.Page
+        let page: DSKCommon.Page<T>
         let runner: JSCRunner
         let tileModifier: PageItemModifier
         @State var locked = false
         @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
         @EnvironmentObject var model: ViewModel
         
-        init(page: DSKCommon.Page, runner: JSCRunner, @ViewBuilder _ tileModifier: @escaping PageItemModifier) {
+        init(page: DSKCommon.Page<T>, runner: JSCRunner, @ViewBuilder _ tileModifier: @escaping PageItemModifier) {
             self.page = page
             self.runner = runner
             self.tileModifier = tileModifier
@@ -159,7 +159,7 @@ extension DSKPageView.CollectionView {
 // MARK: - Section Builders
 
 extension DSKPageView.CollectionView {
-    func PageNotFoundSection(_ section: DSKCommon.PageSection) -> ASCollectionViewSection<String> {
+    func PageNotFoundSection(_ section: DSKCommon.PageSection<T>) -> ASCollectionViewSection<String> {
         ASCollectionViewSection(id: section.key) {
             Text("Section not found.")
         }
@@ -172,7 +172,7 @@ extension DSKPageView.CollectionView {
             EmptyView()
         }
     }
-    func ErrorSection(_ section: DSKCommon.PageSection, error: Error) -> ASCollectionViewSection<String> {
+    func ErrorSection(_ section: DSKCommon.PageSection<T>, error: Error) -> ASCollectionViewSection<String> {
         ASCollectionViewSection(id: section.key) {
             ErrorView(error: error, runnerID: runner.id) {
                 Task.detached {
@@ -189,21 +189,20 @@ extension DSKPageView.CollectionView {
             EmptyView()
         }
     }
-    func LoadedSection(_ section: DSKCommon.PageSection , _ items: [DSKCommon.PageSectionItem], _ resolved: DSKCommon.ResolvedPageSection? = nil) -> ASCollectionViewSection<String> {
+    func LoadedSection(_ section: DSKCommon.PageSection<T> , _ items: [DSKCommon.PageItem<T>], _ resolved: DSKCommon.ResolvedPageSection<T>? = nil) -> ASCollectionViewSection<String> {
         ASCollectionViewSection(id: section.key, data: items, dataID: \.hashValue) { data, context in
             Group {
-                if data.isPageLink, let pageKey = data.toPageLink().link.pageKey {
+                if let link = data.link {
                     NavigationLink {
-                        RunnerPageView(runner: runner, pageKey: pageKey)
+                        PageLinkView(pageLink: link, runner: runner)
                     } label: {
-                        PageViewTile(entry: data, runnerID: runner.id)
+                        PageViewTile(runnerID: runner.id, id: link.hashValue.description, title: link.label, cover: link.thumbnail ?? "", additionalCovers: nil, info: nil)
                     }
-                    .buttonStyle(NeutralButtonStyle())
-                } else {
-                    tileModifier(data)
+                } else if let item = data.item {
+                    tileModifier(item)
                 }
             }
-                .environment(\.pageSectionStyle, section.sectionStyle)
+            .environment(\.pageSectionStyle, section.sectionStyle)
         }
         .sectionHeader {
             buildHeader(resolved?.updatedTitle ?? section.title,
@@ -215,7 +214,7 @@ extension DSKPageView.CollectionView {
         }
     }
     
-    func LoadingSection(_ section: DSKCommon.PageSection) -> ASCollectionViewSection<String>  {
+    func LoadingSection(_ section: DSKCommon.PageSection<T>) -> ASCollectionViewSection<String>  {
         ASCollectionViewSection(id: section.key) {
             ProgressView()
         }

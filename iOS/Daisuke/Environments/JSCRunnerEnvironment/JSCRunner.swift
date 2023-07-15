@@ -315,16 +315,16 @@ extension JSCRunner {
     func willRequestImage(imageURL: URL) async throws -> DSKCommon.Request {
         return try await callMethodReturningDecodable(method: "willRequestImage", arguments: [imageURL.absoluteString], resolvesTo: DSKCommon.Request.self)
     }
-    func getPage(key: String) async throws -> DSKCommon.Page {
-        try await callMethodReturningDecodable(method: "getPage", arguments: [key], resolvesTo: DSKCommon.Page.self)
+    func getPage<T: JSCObject>(key: String) async throws -> DSKCommon.Page<T> {
+        try await callMethodReturningDecodable(method: "getPage", arguments: [key], resolvesTo: DSKCommon.Page<T>.self)
     }
     
     func willResolvePage(key: String) async throws  {
         try await callOptionalVoidMethod(method: "willResolvePage", arguments: [key])
         
     }
-    func resolvePageSection(page: String, section: String) async throws -> DSKCommon.ResolvedPageSection {
-        try await callMethodReturningDecodable(method: "resolvePageSection", arguments: [page, section], resolvesTo: DSKCommon.ResolvedPageSection.self)
+    func resolvePageSection<T: JSCObject>(page: String, section: String) async throws -> DSKCommon.ResolvedPageSection<T> {
+        try await callMethodReturningDecodable(method: "resolvePageSection", arguments: [page, section], resolvesTo: DSKCommon.ResolvedPageSection<T>.self)
     }
 }
 

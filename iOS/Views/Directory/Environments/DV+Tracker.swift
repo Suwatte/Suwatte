@@ -25,7 +25,7 @@ extension ContentTrackerDirectoryView {
         var data: DSKCommon.TrackItem
         var body: some View {
             ZStack(alignment: .topTrailing) {
-                DefaultTile(entry: .init(contentId: data.id, cover: data.thumbnail, title: data.title))
+                DefaultTile(entry: .init(contentId: data.id, cover: data.cover, title: data.title))
                 if let entry = data.entry {
                     ColoredBadge(color: entry.status.color)
                 }

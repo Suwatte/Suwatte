@@ -180,7 +180,7 @@ extension TrackerManagementView {
         }
         var body: some View {
             HStack {
-                BaseImageView(url: URL(string: item.thumbnail))
+                BaseImageView(url: URL(string: item.cover))
                     .frame(minWidth: 0, idealWidth: size, maxWidth: size, minHeight: 0, idealHeight: size * 1.5, maxHeight: size * 1.5, alignment: .center)
                     .scaledToFit()
                     .cornerRadius(5)
@@ -382,7 +382,7 @@ extension TrackerManagementView {
         
         func Cell(_ item: DSKCommon.TrackItem) -> some View {
             ZStack(alignment: .topTrailing) {
-                DefaultTile(entry: .init(contentId: item.id, cover: item.thumbnail, title: item.title))
+                DefaultTile(entry: .init(contentId: item.id, cover: item.cover, title: item.title))
                     .frame(width: 120, height: 230)
                 ColoredBadge(color: .accentColor)
                     .opacity(selections[linkKey] == item.id ? 1 : 0)

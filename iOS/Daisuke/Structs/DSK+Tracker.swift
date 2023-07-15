@@ -24,9 +24,10 @@ extension DSKCommon {
     struct TrackItem: Parsable, Hashable, Identifiable {
         let id: String
         let title: String
-        let thumbnail: String
+        let cover: String
         let webUrl: String
         var entry: TrackEntry?
+        let info: [String]?
     }
     
     struct TrackProgress: Parsable, Hashable {

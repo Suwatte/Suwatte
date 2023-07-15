@@ -12,8 +12,8 @@ struct ContentTrackerPageView: View {
     let tracker: JSCCT
     var pageKey: String = "home"
     var body: some View {
-        DSKPageView(model: .init(runner: tracker, key: pageKey)) { item in
-            Cell(item)
+        DSKPageView<DSKCommon.TrackItem, Cell>(model: .init(runner: tracker, key: pageKey)) { item in
+            Cell(tracker: tracker, item: item)
         }
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
@@ -28,25 +28,17 @@ struct ContentTrackerPageView: View {
         }
     }
     
-    @ViewBuilder
-    func Cell( _ item : DSKCommon.PageSectionItem) -> some View {
-        ZStack(alignment: .topTrailing) {
-            PageViewTile(entry: item, runnerID: tracker.id)
-            if let color = badgeColor(item.trackStatus ,item.badgeColor){
-                ColoredBadge(color: color)
-                    .transition(.opacity)
+    struct Cell: View {
+        let tracker: JSCCT
+        let item : DSKCommon.TrackItem
+        var body: some View {
+            ZStack(alignment: .topTrailing) {
+                PageViewTile(runnerID: tracker.id, id: item.id, title: item.title, cover: item.cover, additionalCovers: nil, info: nil)
+                if let color = item.entry?.status.color {
+                    ColoredBadge(color: color)
+                        .transition(.opacity)
+                }
             }
         }
-    }
-    
-    func badgeColor(_ status: DSKCommon.TrackStatus? , _ badge: String?) -> Color? {
-        if let status {
-            return status.color
-        }
-        if let badge {
-            return Color.init(hex: badge)
-        }
-        
-        return nil
     }
 }

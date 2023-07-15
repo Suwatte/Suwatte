@@ -57,6 +57,8 @@ extension DaisukeEngine.Structs {
         var cover: String
         var title: String
 
+        var additionalCovers: [String]?
+        var info: [String]?
         var id: String {
             contentId
         }

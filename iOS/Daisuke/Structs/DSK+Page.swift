@@ -42,63 +42,58 @@ extension DSKCommon {
         }
     }
 }
+
+typealias JSCObject = Parsable & Hashable
 extension DSKCommon {
         
-    struct Page: Parsable, Hashable {
+    struct Page<T: JSCObject>: JSCObject{
         let key: String
-        let sections: [PageSection]
+        let sections: [PageSection<T>]
         
     }
     
-    struct PageSection: Parsable, Hashable {
+    struct PageSection<T: JSCObject>: JSCObject {
         let key: String
         var title: String
         let style: SectionStyle?
         var subtitle: String?
         var viewMoreLink: Linkable?
-        var items: [PageSectionItem]?
+        var items: [PageItem<T>]?
         
         var sectionStyle: SectionStyle {
             style ?? .NORMAL
         }
     }
     
-    struct ResolvedPageSection: Parsable, Hashable {
-        let items: [PageSectionItem]
+    struct ResolvedPageSection<T: JSCObject> :JSCObject{
+        let items: [PageItem<T>]
         let viewMoreLink: Linkable?
         let updatedTitle: String?
         let updatedSubtitle: String?
     }
     
-    struct PageLink: Parsable, Hashable {
+    struct PageLink: JSCObject {
         let label: String
         let thumbnail: String?
         let link: Linkable
     }
     
-    struct PageItem : Parsable, Hashable {
-        let id: String
-        let title: String
-        let cover: String
-        let additionalCovers: [String]?
-        let info: [String]?
-        let trackStatus: DSKCommon.TrackStatus?
-        let badgeColor: String?
+    struct PageItem<T: JSCObject>: JSCObject {
+        let link: PageLink?
+        let item: T?
+        var isValidItem: Bool {
+            link != nil || item != nil
+        }
     }
 }
 
 
 
 extension DSKCommon {
-    struct Linkable: Parsable , Hashable { // Combination of DirectoryRequest && { pageKey: String }
+    struct Linkable: Parsable , Hashable {
         let pageKey: String?
-        var query: String?
-        var page: Int?
-        var sortKey: String?
-        var filters: [String: AnyCodable]?
-        var tag: DirectoryRequest.RequestTag?
-        var custom: [String: AnyCodable]?
-        
+        let request: DirectoryRequest?
+
         var isPageLink: Bool {
             pageKey != nil
         }
@@ -108,41 +103,7 @@ extension DSKCommon {
         }
         
         func getDirectoryRequest() -> DirectoryRequest {
-            .init(query: query, page: page ?? 1, sortKey: sortKey, filters: filters, tag: tag, custom: custom)
-        }
-    }
-}
-
-
-extension DSKCommon {
-    
-    /// This struct is a combination of a PageLInk and a PageItem, as the JS Equivalent allows both to be passed and rendered as seen fit
-    struct PageSectionItem: Parsable, Hashable {
-        let id: String?
-        let title: String?
-        let cover: String?
-        let thumbnail: String?
-        let additionalCovers: [String]?
-        let info: [String]?
-        let label: String?
-        let link: Linkable?
-        let trackStatus: DSKCommon.TrackStatus?
-        let badgeColor: String?
-        
-        var isPageLink : Bool {
-            link != nil
-        }
-        
-        func toPageLink() -> PageLink {
-            .init(label: label ?? "", thumbnail: thumbnail, link: link ?? .init(pageKey: ""))
-        }
-        
-        func toPageItem() -> PageItem {
-            .init(id: id ?? "", title: title ?? "", cover: cover ?? "", additionalCovers: additionalCovers, info: info, trackStatus: trackStatus, badgeColor: badgeColor)
-        }
-        
-        var imageUrl : String {
-            cover ?? thumbnail ?? ""
+            request!
         }
     }
 }

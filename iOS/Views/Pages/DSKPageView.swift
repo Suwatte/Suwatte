@@ -8,9 +8,9 @@
 import SwiftUI
 import RealmSwift
 
-struct DSKPageView<T: View> : View {
+struct DSKPageView<T: JSCObject, C: View> : View {
     @StateObject var model: ViewModel
-    typealias PageItemModifier = (DSKCommon.PageSectionItem) -> T
+    typealias PageItemModifier = (T) -> C
     let modifier: PageItemModifier
     
     init(model: ViewModel, @ViewBuilder _ modifier: @escaping PageItemModifier) {
@@ -32,8 +32,8 @@ extension DSKPageView {
     final class ViewModel : ObservableObject {
         let runner: JSCRunner
         let key: String
-        @Published var loadable = Loadable<DSKCommon.Page>.idle
-        @Published var loadables: [String: Loadable<DSKCommon.ResolvedPageSection>] = [:]
+        @Published var loadable = Loadable<DSKCommon.Page<T>>.idle
+        @Published var loadables: [String: Loadable<DSKCommon.ResolvedPageSection<T>>] = [:]
         @Published var errors = Set<String>()
         
         init(runner: JSCRunner, key: String) {
@@ -45,7 +45,7 @@ extension DSKPageView {
             loadable = .loading
             Task {
                 do {
-                    let data = try await runner.getPage(key: key) // Load Page
+                    let data: DSKCommon.Page<T> = try await runner.getPage(key: key) // Load Page
                     if !data.sections.allSatisfy({ $0.items != nil }) {
                         try await runner.willResolvePage(key: key) // Tell Runner that suwatte will begin resolution of page sections
                     }
@@ -68,7 +68,7 @@ extension DSKPageView {
             loadables[sectionID] = .loading
             errors.remove(sectionID)
             do {
-                let data = try await runner.resolvePageSection(page: loadable.value!.key, section: sectionID)
+                let data: DSKCommon.ResolvedPageSection<T> = try await runner.resolvePageSection(page: loadable.value!.key, section: sectionID)
                 await MainActor.run {
                     loadables[sectionID] = .loaded(data)
                 }
@@ -99,5 +99,15 @@ struct RunnerPageView: View {
                 EmptyView()
             }
         }
+    }
+}
+
+
+struct LinkableView: View {
+    let link: DSKCommon.Linkable
+    let runner: JSCRunner
+    
+    var body: some View {
+        Text("LINK")
     }
 }
