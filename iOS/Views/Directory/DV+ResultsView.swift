@@ -33,7 +33,14 @@ extension DirectoryView {
                 }
                 .cacheCells()
                 .sectionHeader {
-                    GridHeader()
+                    Group {
+                        if hasHeader {
+                            GridHeader()
+                        } else {
+                            EmptyView()
+                        }
+                    }
+                    
                 }
                 .sectionFooter {
                     PaginationView()
@@ -41,7 +48,7 @@ extension DirectoryView {
             }
             
             .layout(createCustomLayout: {
-                DynamicGridLayout(header: .estimated(hasHeader ? 44: 0), footer: .estimated(44))
+                DynamicGridLayout(header: .estimated(hasHeader ? 32: 0), footer: .estimated(44))
             }, configureCustomLayout: { layout in
                 layout.invalidateLayout()
             })

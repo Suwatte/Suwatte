@@ -101,13 +101,3 @@ struct RunnerPageView: View {
         }
     }
 }
-
-
-struct LinkableView: View {
-    let link: DSKCommon.Linkable
-    let runner: JSCRunner
-    
-    var body: some View {
-        Text("LINK")
-    }
-}
