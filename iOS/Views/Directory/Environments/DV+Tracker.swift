@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-// MARK: -View
+// MARK: - View
 struct ContentTrackerDirectoryView: View {
     let tracker: JSCCT
     let request: DSKCommon.DirectoryRequest
     var body: some View {
         DirectoryView<DSKCommon.TrackItem, Cell>(model: .init(runner: tracker, request: request)) { data in
-            Cell(data: data)
+            Cell(data: data, tracker: tracker)
         }
 
     }
@@ -22,7 +22,8 @@ struct ContentTrackerDirectoryView: View {
 // MARK: - Cell
 extension ContentTrackerDirectoryView {
     struct Cell: View {
-        var data: DSKCommon.TrackItem
+        @State var data: DSKCommon.TrackItem
+        let tracker: JSCCT
         var body: some View {
             ZStack(alignment: .topTrailing) {
                 DefaultTile(entry: .init(contentId: data.id, cover: data.cover, title: data.title))
@@ -30,6 +31,7 @@ extension ContentTrackerDirectoryView {
                     ColoredBadge(color: entry.status.color)
                 }
             }
+            .modifier(TrackerContextModifier(tracker: tracker, item: $data, status: data.entry?.status ?? .CURRENT))
         }
     }
 }

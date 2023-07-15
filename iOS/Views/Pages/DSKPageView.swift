@@ -55,6 +55,7 @@ extension DSKPageView {
                         }
                     }
                 } catch {
+                    Logger.shared.error(error, runner.id)
                     await MainActor.run {
                         withAnimation {
                             loadable = .failed(error)
@@ -73,6 +74,7 @@ extension DSKPageView {
                     loadables[sectionID] = .loaded(data)
                 }
             } catch {
+                Logger.shared.error(error, runner.id)
                 await MainActor.run {
                     loadables[sectionID] = .failed(error)
                     errors.insert(sectionID)

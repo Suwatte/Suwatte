@@ -28,7 +28,7 @@ struct TrackerManagementView: View  {
                             Spacer()
                         }
                         LoadableView({}, loadable) { value in
-                            TrackerItemCell(item: value, tracker: tracker)
+                            TrackerItemCell(item: value, tracker: tracker, status: value.entry?.status ?? .CURRENT)
                         }
                         .modifier(HistoryView.StyleModifier())
                         
@@ -163,7 +163,7 @@ extension TrackerManagementView {
         @EnvironmentObject var model: ViewModel
         @State var item: DSKCommon.TrackItem
         let tracker: JSCCT
-        @State var status: DSKCommon.TrackStatus = .CURRENT
+        @State var status: DSKCommon.TrackStatus
         private let size = 140.0
         @State var presentEntryFormView = false
         func trackerAction(_ action: @escaping () async throws -> Void) {
@@ -282,6 +282,7 @@ extension TrackerManagementView {
             }
             .animation(.default, value: item.entry)
             .onChange(of: status) { newValue in
+                print(newValue)
                 trackerAction {
                     await MainActor.run {
                         item.entry?.status = newValue
@@ -418,7 +419,5 @@ extension TrackerManagementView {
                 else { selections.updateValue(item, forKey: linkKey) }
             }
         }
-        
-        
     }
 }
