@@ -62,7 +62,8 @@ struct RunnerIntents: Parsable {
     let basicAuthLabel: BasicAuthenticationUIIdentifier?
     let imageRequestHandler: Bool
     let pageLinkResolver: Bool
-    let pageLinkProvider: Bool
+    let libraryPageLinkProvider: Bool
+    let browsePageLinkProvider: Bool
     
     // JSCCS
     let chapterEventHandler: Bool
@@ -70,7 +71,7 @@ struct RunnerIntents: Parsable {
     let chapterSyncHandler: Bool
     let librarySyncHandler: Bool
     let hasTagsView: Bool
-
+    
     // JSC CT
     let advancedTracker: Bool
     
@@ -238,7 +239,6 @@ extension JSCRunner {
 extension JSCRunner {
     func saveState() {
         UserDefaults.standard.set(intents.imageRequestHandler, forKey: STTKeys.RunnerOverridesImageRequest(id))
-        UserDefaults.standard.set(intents.pageLinkProvider, forKey: STTKeys.PageLinkProvider(id))
         UserDefaults.standard.set(intents.pageLinkResolver, forKey: STTKeys.PageLinkResolver(id))
     }
     // Preference

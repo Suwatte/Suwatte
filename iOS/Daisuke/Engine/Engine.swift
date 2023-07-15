@@ -213,7 +213,7 @@ extension DaisukeEngine {
     func addRunner(_ rnn: JSCRunner, listURL: URL? = nil) {
         runners.removeValue(forKey: rnn.id)
         runners[rnn.id] = rnn
-        DataManager.shared.saveRunner(rnn.info, listURL: listURL, url: executeableURL(for: rnn.id), environment: rnn.environment)
+        DataManager.shared.saveRunner(rnn, listURL: listURL, url: executeableURL(for: rnn.id))
     }
     
     func didStartRunner(_ runner: JSCRunner) {

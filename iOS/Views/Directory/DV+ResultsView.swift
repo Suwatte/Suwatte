@@ -89,7 +89,7 @@ extension DirectoryView.ResultsView {
             .font(.subheadline.weight(.light))
             .foregroundColor(Color.primary.opacity(0.7))
             .padding(.top)
-            .confirmationDialog("Sort", isPresented: $dialog) {
+            .confirmationDialog("Sort Results", isPresented: $dialog, titleVisibility: .visible) {
                 ForEach(model.sortOptions, id: \.key) { sorter in
                     Button(sorter.label) {
                         withAnimation {

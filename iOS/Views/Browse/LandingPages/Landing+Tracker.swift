@@ -30,19 +30,15 @@ struct TrackerLandingPage: View {
         let tracker: JSCCT
         var body: some View {
             Group {
-                if hasPageLinkResolver {
+                if tracker.intents.pageLinkResolver {
 //                    ContentSourcePageView(source: source)
-//                        .navigationTitle("Home")
                 } else {
 //                    ContentSourceDirectoryView(source: source, request: .init(page: 1))
-//                        .navigationTitle("\(source.name) Directory")
 //                        .navigationBarTitleDisplayMode(.inline)
 
                 }
             }
         }
-        var hasPageLinkResolver: Bool {
-            UserDefaults.standard.bool(forKey: STTKeys.PageLinkResolver(tracker.id))
-        }
+
     }
 }

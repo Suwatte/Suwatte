@@ -62,6 +62,9 @@ final class StoredRunnerObject: Object, Identifiable, CKRecordConvertible, CKRec
     @Persisted var listURL: String
     @Persisted var thumbnail: String
     @Persisted var isDeleted = false
+    
+    @Persisted var isLibraryPageLinkProvider = false
+    @Persisted var isBrowsePageLinkProvider = false
 
     static let RUNNER_KEY = "bundle"
     @Persisted var executable: CreamAsset?
@@ -97,15 +100,16 @@ extension DataManager {
             .first
     }
 
-    func saveRunner(_ info: RunnerInfo, listURL: URL? = nil, url: URL, environment: RunnerEnvironment) {
+    func saveRunner(_ runner: JSCRunner, listURL: URL? = nil, url: URL) {
         let realm = try! Realm()
 
         let obj = realm
             .objects(StoredRunnerObject.self)
-            .where { $0.id == info.id && !$0.isDeleted }
+            .where { $0.id == runner.id && !$0.isDeleted }
             .first ?? StoredRunnerObject()
         
         
+        let info = runner.info
         try! realm.safeWrite {
             obj.name = info.name
             if obj.id.isEmpty {
@@ -113,7 +117,9 @@ extension DataManager {
             }
             obj.version = info.version
             obj.enabled = true
-            obj.environment = environment
+            obj.environment = runner.environment
+            obj.isBrowsePageLinkProvider = runner.intents.browsePageLinkProvider
+            obj.isLibraryPageLinkProvider = runner.intents.libraryPageLinkProvider
             obj.isDeleted = false
             if let listURL {
                 obj.listURL = listURL.absoluteString

@@ -24,7 +24,7 @@ struct SourceInfo: RunnerInfo {
 }
 
 struct SourceConfig: Parsable {
-    var chapterDataCachingDisabled: Bool?;
-    var chapterDateUpdateDisabled: Bool?;
-    var cloudflareResolutionURL: String?;
+    var chapterDataCachingDisabled: Bool?
+    var chapterDateUpdateDisabled: Bool?
+    var cloudflareResolutionURL: String?
 }

@@ -30,19 +30,12 @@ struct SourceLandingPage: View {
         let source: JSCCS
         var body: some View {
             Group {
-                if hasPageLinkResolver {
+                if source.intents.pageLinkResolver {
                     ContentSourcePageView(source: source)
-                        .navigationTitle("Home")
                 } else {
                     ContentSourceDirectoryView(source: source, request: .init(page: 1))
-                        .navigationTitle("\(source.name) Directory")
-                        .navigationBarTitleDisplayMode(.inline)
-
                 }
             }
-        }
-        var hasPageLinkResolver: Bool {
-            UserDefaults.standard.bool(forKey: STTKeys.PageLinkResolver(source.id))
         }
     }
 }

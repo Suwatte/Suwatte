@@ -7,7 +7,8 @@ let RunnerIntents = {
   authenticatable: false,
   authenticationMethod: "unknown",
   pageLinkResolver: false,
-  pageLinkProvider: false,
+  libraryPageLinkProvider: false,
+browsePageLinkProvider: false,
   imageRequestHandler: false,
 
   // Content Source
@@ -102,8 +103,8 @@ function setupSourceConfig() {
     // PageLink
     RunnerIntents.pageLinkResolver =
       !!ctx.getPage && !!ctx.willResolvePage && !!ctx.resolvePageSection;
-    RunnerIntents.pageLinkProvider =
-      !!ctx.getLibraryPageLinks && !!ctx.getBrowsePageLinks;
+    RunnerIntents.libraryPageLinkProvider = !!ctx.getLibraryPageLinks;
+    RunnerIntents.browsePageLinkProvider = !!ctx.getBrowsePageLinks;
     // Authentication
     const RunnerAuthenticatable =
       !!ctx.getAuthenticatedUser && !!ctx.handleUserSignOut;
@@ -150,9 +151,6 @@ function setupSourceConfig() {
         !!ctx.getDirectory &&
         !!ctx.getDirectoryConfig &&
         !!ctx.getInfo;
-
-      RunnerIntents.libraryTabProvider = !!ctx.getLibraryTabs;
-      RunnerIntents.browseTabProvider = !!ctx.getBrowseTabs;
     }
   } catch (err) {
     console.error("[Intents]", err);
