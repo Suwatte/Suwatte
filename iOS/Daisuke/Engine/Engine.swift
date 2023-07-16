@@ -243,18 +243,20 @@ extension DaisukeEngine {
         } else {
             try await handleNetworkRunnerImport(from: url)
         }
+        StateManager.shared.runnerListPublisher.send()
     }
     
     @MainActor
     func importRunner(from url: URL, with id: String) async throws {
         let list = try await getRunnerList(at: url)
         
-        let runner = list.runners.first(where: { $0.id == id })
+        let runner = list.runners.first(where: { $0.id == id || $0.path == id })
         
         guard let runner = runner else {
             return
         }
         
+        try await DSK.shared.saveRunnerList(at: url.absoluteString)
         let path = url
             .sttBase?
             .appendingPathComponent("runners")
@@ -263,6 +265,7 @@ extension DaisukeEngine {
             throw DSK.Errors.NamedError(name: "Host", message: "Invalid Runner URL")
         }
         try await handleNetworkRunnerImport(from: path, with: url)
+        StateManager.shared.runnerListPublisher.send()
     }
     
     

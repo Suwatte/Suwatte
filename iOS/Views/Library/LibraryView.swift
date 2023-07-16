@@ -82,8 +82,9 @@ struct LibraryView: View {
         .onChange(of: sections) { _ in
             loadPageLinks()
         }
-        
-        
+        .onReceive(StateManager.shared.runnerListPublisher) { _ in
+            loadPageLinks()
+        }
     }
 }
 

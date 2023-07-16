@@ -39,6 +39,9 @@ struct BrowseView: View {
             triggeredLoad = true
             loadPageLinks()
         }
+        .onReceive(StateManager.shared.runnerListPublisher) { _ in
+            loadPageLinks()
+        }
     }
 
 

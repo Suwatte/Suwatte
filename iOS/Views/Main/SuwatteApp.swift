@@ -36,11 +36,10 @@ extension SuwatteApp {
             handleDirectoryPath(url)
         } else if url.scheme == "suwatte" {
             guard let host = url.host else { return }
+            let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 
-            ToastManager.shared.display(.info("Handling URL"))
             switch host {
             case "content": // Handle Open Content
-                let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
                 guard let contentUrl = components?.queryItems?.first(where: { $0.name == "url" })?.value, let url = URL(string: contentUrl) else {
                     ToastManager.shared.display(.error(nil, "Unable to parse URL"))
                     break
@@ -48,10 +47,7 @@ extension SuwatteApp {
                 Task {
                     await DSK.shared.handleURL(for: url)
                 }
-            case "anilist":
-                break // TODO: Open Anilist Profile
             case "list":
-                let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
                 guard let contentUrl = components?.queryItems?.first(where: { $0.name == "url" })?.value, let url = URL(string: contentUrl) else {
                     ToastManager.shared.display(.error(nil, "Unable to parse URL"))
                     break
@@ -63,6 +59,20 @@ extension SuwatteApp {
                     } catch {
                         ToastManager.shared.error("Failed to save Runner List: \(error.localizedDescription)")
                         Logger.shared.error("\(error)")
+                    }
+                }
+            case "runner":
+                print(url)
+                guard let contentUrl = components?.queryItems?.first(where: { $0.name == "url" })?.value, let url = URL(string: contentUrl), let runner = components?.queryItems?.first(where: { $0.name == "runner" })?.value else {
+                    ToastManager.shared.display(.error(nil, "Unable to parse URL"))
+                    return
+                }
+                Task {
+                    do {
+                        try await DSK.shared.importRunner(from: url , with: runner)
+                    } catch {
+                        ToastManager.shared.error("Failed to save Runner List: \(error.localizedDescription)")
+                        Logger.shared.error(error)
                     }
                 }
             default: break

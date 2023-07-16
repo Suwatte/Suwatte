@@ -16,6 +16,7 @@ final class StateManager: ObservableObject {
     var networkState = NetworkState.unknown
     var ShowNSFWContent = false
     let monitor = NWPathMonitor()
+    let runnerListPublisher = PassthroughSubject<Void, Never>()
 
     init() {
         registerNetworkObserver()
