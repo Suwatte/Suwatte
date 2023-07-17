@@ -58,13 +58,7 @@ struct ContentSourcePageView: View {
         
         
         var body: some View {
-            ZStack(alignment: .topTrailing) {
-                PageViewTile(runnerID: sourceID, id: item.contentId, title: item.title, cover: item.cover, additionalCovers: item.additionalCovers, info: item.info)
-                if let color = badgeColor() {
-                    ColoredBadge(color: color)
-                        .transition(.opacity)
-                }
-            }
+            PageViewTile(runnerID: sourceID, id: item.contentId, title: item.title, subtitle: item.subtitle, cover: item.cover, additionalCovers: item.additionalCovers, info: item.info, badge: badgeColor())
             .contextMenu {
                 Button {
                     if inReadLater {

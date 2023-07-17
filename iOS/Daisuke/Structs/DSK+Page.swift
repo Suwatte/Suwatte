@@ -29,17 +29,14 @@ struct Compose<Element1, Element2>: Codable where Element1: Codable, Element2: C
 
 extension DSKCommon {
     enum SectionStyle: Int, Codable, CaseIterable {
-        case NORMAL, INFO, GALLERY, UPDATE_LIST, TAG
-
-        var description: String {
-            switch self {
-            case .NORMAL: return "Normal"
-            case .INFO: return "Info"
-            case .GALLERY: return "Gallery"
-            case .UPDATE_LIST: return "Update"
-            case .TAG: return "Tag"
-            }
-        }
+        case   DEFAULT,
+               INFO,
+               GALLERY,
+               NAVIGATION_LIST,
+               ITEM_LIST,
+               PADDED_LIST,
+               TAG,
+               STANDARD_GRID
     }
 }
 
@@ -61,7 +58,7 @@ extension DSKCommon {
         var items: [PageItem<T>]?
         
         var sectionStyle: SectionStyle {
-            style ?? .NORMAL
+            style ?? .DEFAULT
         }
     }
     

@@ -13,9 +13,11 @@ struct PageViewTile: View {
     let runnerID: String
     let id: String
     let title: String
+    let subtitle: String?
     let cover: String
     let additionalCovers: [String]?
     let info: [String]?
+    let badge: Color?
     @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
     @Environment(\.pageSectionStyle) var style
     
@@ -23,11 +25,15 @@ struct PageViewTile: View {
     var body: some View {
         Group {
             switch style {
+            case .DEFAULT: NORMAL
             case .INFO: INFO
-            case .NORMAL: NORMAL
-            case .GALLERY: GALLERY(runnerID: runnerID, id: id, title: title, cover: cover, additionalCovers: additionalCovers, info: info)
-            case .UPDATE_LIST: LATEST
-            case .TAG: EmptyView()
+            case .GALLERY: GALLERY(runnerID: runnerID, id: id, title: title, subtitle: subtitle, cover: cover, additionalCovers: additionalCovers, info: info)
+                    .coloredBadge(badge)
+            case .PADDED_LIST: LATEST
+            case .ITEM_LIST: LIST
+            case .NAVIGATION_LIST: NAVIGATION_LIST
+            case .STANDARD_GRID: GRID
+            case .TAG: TAG(title: title, imageUrl: cover, runnerID: runnerID)
             }
         }
     }
@@ -79,56 +85,9 @@ extension PageViewTile {
 // MARK: - DEFAULT
 
 extension PageViewTile {
-    
     var NORMAL: some View {
-        Group {
-            if tileStyle == .SEPARATED {
-                NORMAL_SEP
-                    .transition(.opacity)
-            } else {
-                NORMAL_CPT
-                    .transition(.opacity)
-            }
-        }
-    }
-    var NORMAL_CPT: some View {
-        GeometryReader { reader in
-            ZStack {
-                STTImageView(url: URL(string: cover), identifier: .init(contentId: id, sourceId: runnerID))
-                    .cornerRadius(10)
-                
-                LinearGradient(gradient: Gradient(colors: [.clear, Color(red: 15 / 255, green: 15 / 255, blue: 15 / 255).opacity(0.8)]), startPoint: .center, endPoint: .bottom)
-                VStack(alignment: .leading) {
-                    Spacer()
-                    Text(title)
-                        .font(.footnote)
-                        .fontWeight(.bold)
-                        .lineLimit(2)
-                        .foregroundColor(Color.white)
-                        .shadow(radius: 2)
-                        .multilineTextAlignment(.leading)
-                        .padding(.horizontal, 7)
-                        .padding(.bottom, 10)
-                }
-                .frame(maxWidth: reader.size.width, alignment: .leading)
-            }
-            .cornerRadius(10)
-        }
-    }
-    
-    var NORMAL_SEP: some View {
-        GeometryReader { reader in
-            VStack(alignment: .leading, spacing: 5) {
-                STTImageView(url: URL(string: cover), identifier: .init(contentId: id, sourceId: runnerID))
-                    .frame(height: reader.size.width * 1.5)
-                    .cornerRadius(5)
-                
-                Text(title)
-                    .font(.subheadline)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
-            }
-        }
+        DefaultTile(entry: .init(contentId: id, cover: cover, title: title), sourceId: runnerID)
+            .coloredBadge(badge)
     }
 }
 
@@ -137,8 +96,9 @@ extension PageViewTile{
         HStack(alignment: .top, spacing: 5) {
             // Image
             STTImageView(url: URL(string: cover), identifier: .init(contentId: id, sourceId: runnerID))
-                .frame(width: 100)
+                .frame(width: 95)
                 .cornerRadius(5)
+                .coloredBadge(badge)
                 .padding(.all, 7)
                 .shadow(radius: 2.5)
             
@@ -167,6 +127,7 @@ extension PageViewTile {
         let runnerID: String
         let id: String
         let title: String
+        let subtitle: String?
         let cover: String
         let additionalCovers: [String]?
         let info: [String]?
@@ -210,18 +171,25 @@ extension PageViewTile {
                 VStack {
                     // Image Carasouel
                     Text(title)
-                        .lineLimit(2)
                         .multilineTextAlignment(.center)
-                        .font(.title3.weight(.bold))
+                        .font(.headline.weight(.semibold))
+                        .lineLimit(2)
                     
-                    VStack(alignment: .leading) {
+                    if let subtitle = subtitle {
+                        Text(subtitle)
+                            .multilineTextAlignment(.center)
+                            .font(.subheadline)
+                            .lineLimit(2)
+                    }
+                    
+                    VStack(alignment: .center) {
                         ForEach(info ?? []) {
                             Text($0)
                         }
                     }
                     .lineLimit(3)
                     .multilineTextAlignment(.leading)
-                    .font(.subheadline.weight(.thin))
+                    .font(.footnote.weight(.thin))
                     
                     
                     if covers.count > 1 {
@@ -310,5 +278,153 @@ extension PageViewTile {
                 }
             }
         }
+    }
+}
+
+
+// MARK: - Standard List
+extension PageViewTile {
+    var LIST: some View {
+        HStack(alignment: .top, spacing: 5) {
+            // Image
+            STTImageView(url: URL(string: cover), identifier: .init(contentId: id, sourceId: runnerID))
+                .frame(width: 90)
+                .cornerRadius(5)
+                .shadow(radius: 2.5)
+                .coloredBadge(badge)
+                .padding(.all, 7)
+            
+            
+            VStack(alignment: .leading) {
+                Text(title)
+                    .font(.callout)
+                    .fontWeight(.medium)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                
+                TAGS_VIEW
+            }
+            .padding(.vertical, 7)
+            .padding(.trailing, 5)
+        }
+        .frame(height: 145, alignment: .topLeading)
+        .frame(maxWidth: .infinity, alignment: .topLeading)
+        .contentShape(Rectangle())
+    }
+}
+
+// MARK: - NavigationList
+extension PageViewTile {
+    var NAVIGATION_LIST: some View {
+        HStack(alignment: .center, spacing: 5) {
+            // Image
+            STTThumbView(url: URL(string: cover))
+                .frame(width: 44, height: 44)
+                .cornerRadius(5)
+                .shadow(radius: 2.5)
+                .coloredBadge(badge)
+                .padding(.all, 7)
+            
+            VStack(alignment: .center) {
+                Text(title)
+                    .font(.callout)
+                    .fontWeight(.medium)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+            }
+            .padding(.vertical, 7)
+            .padding(.trailing, 5)
+        }
+        .frame(height: 65, alignment: .topLeading)
+        .frame(maxWidth: .infinity, alignment: .topLeading)
+        .contentShape(Rectangle())
+    }
+}
+
+extension PageViewTile {
+    var GRID: some View {
+        DefaultTile(entry: .init(contentId: id, cover: cover, title: title), sourceId: runnerID)
+            .coloredBadge(badge)
+    }
+}
+
+extension PageViewTile {
+    struct TAG: View {
+        let title: String
+        let imageUrl: String?
+        let runnerID: String
+        @State var color: Color = .fadedPrimary
+        @StateObject private var loader = FetchImage()
+        
+        var body: some View {
+            ZStack(alignment: .bottom) {
+                Group {
+                    if let view = loader.image {
+                        view
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .transition(.opacity)
+                    } else {
+                        Color.clear
+                    }
+                }
+                .frame(height: 120)
+                .background(Color.accentColor.opacity(0.80))
+                .clipped()
+                
+                Text(title)
+                    .font(.footnote)
+                    .fontWeight(.semibold)
+                    .multilineTextAlignment(.center)
+                    .padding(.all, 2.5)
+                    .frame(width: 150, height: 25, alignment: .center)
+                    .background(color)
+                    .foregroundColor(color.isDark ? .white : .black)
+            }
+            .frame(width: 150)
+            .cornerRadius(7)
+            .animation(.default, value: color)
+            .animation(.default, value: loader.image)
+            .animation(.default, value: loader.isLoading)
+            .task {
+                if loader.image != nil || loader.isLoading { return }
+                loader.transaction = .init(animation: .easeInOut(duration: 0.25))
+                loader.onCompletion = { result in
+                    
+                    guard let result = try? result.get() else {
+                        return
+                    }
+                    
+                    if let avgColor = result.image.averageColor {
+                        color = Color(uiColor: avgColor)
+                    }
+                }
+                
+                if let str = imageUrl, let url = URL(string: str) {
+                    loader.load(url)
+                }
+            }
+        }
+    }
+    
+}
+
+
+// MARK: - Colored BadgeModifier
+struct ColoredBadgeModifier: ViewModifier {
+    let color: Color?
+    func body(content: Content) -> some View {
+        ZStack(alignment: .topTrailing ) {
+            content
+            ColoredBadge(color: color ?? .sttDefault)
+                .opacity(color != nil ? 1 : 0)
+        }
+    }
+}
+
+
+extension View {
+    func coloredBadge(_ color: Color?) -> some View {
+        modifier(ColoredBadgeModifier(color: color))
     }
 }

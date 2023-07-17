@@ -32,14 +32,8 @@ struct ContentTrackerPageView: View {
         let tracker: JSCCT
         @State var item : DSKCommon.TrackItem
         var body: some View {
-            ZStack(alignment: .topTrailing) {
-                PageViewTile(runnerID: tracker.id, id: item.id, title: item.title, cover: item.cover, additionalCovers: nil, info: nil)
-                if let color = item.entry?.status.color {
-                    ColoredBadge(color: color)
-                        .transition(.opacity)
-                }
-            }
-            .modifier(TrackerContextModifier(tracker: tracker, item: $item, status: item.entry?.status ?? .CURRENT))
+            PageViewTile(runnerID: tracker.id, id: item.id, title: item.title, subtitle: nil, cover: item.cover, additionalCovers: nil, info: nil, badge: item.entry?.status.color)
+                .modifier(TrackerContextModifier(tracker: tracker, item: $item, status: item.entry?.status ?? .CURRENT))
         }
     }
 }

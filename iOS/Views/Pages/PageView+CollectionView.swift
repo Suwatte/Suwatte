@@ -77,17 +77,29 @@ extension DSKPageView.CollectionView {
                 return .init { environment in
                     InfoLayout(environment)
                 }
-            case .NORMAL:
+            case .DEFAULT:
                 return .init {
                     NormalLayout()
                 }
-            case .UPDATE_LIST:
+            case .PADDED_LIST:
                 return .init { environment in
                     LastestLayout(environment)
                 }
+            case .STANDARD_GRID:
+                return .init { environment in
+                   GridLayout(environment)
+                }
+            case .NAVIGATION_LIST:
+                return .init { environment in
+                    InsetListLayout(environment)
+                }
+            case .ITEM_LIST:
+                return .init { environment in
+                    InsetListLayout(environment)
+                }
             case .TAG:
                 return .init {
-                    NormalLayout()
+                    TagsLayout()
                 }
             }
         }
@@ -125,13 +137,14 @@ extension DSKPageView.CollectionView {
         HStack(alignment: .center) {
             VStack(alignment: .leading) {
                 Text(title)
-                    .font(.headline)
+                    .font(.title3)
                     .fontWeight(.semibold)
-                    .lineLimit(2)
+                    .lineLimit(1)
                 if let subtitle = subtitle {
                     Text(subtitle)
                         .font(.subheadline)
                         .fontWeight(.light)
+                        .lineLimit(2)
                         .opacity(0.75)
                 }
             }
@@ -196,7 +209,7 @@ extension DSKPageView.CollectionView {
                     NavigationLink {
                         PageLinkView(pageLink: link, runner: runner)
                     } label: {
-                        PageViewTile(runnerID: runner.id, id: link.hashValue.description, title: link.label, cover: link.thumbnail ?? "", additionalCovers: nil, info: nil)
+                        PageViewTile(runnerID: runner.id, id: link.hashValue.description, title: link.label, subtitle: nil, cover: link.thumbnail ?? "", additionalCovers: nil, info: nil, badge: nil)
                     }
                 } else if let item = data.item {
                     tileModifier(item)
@@ -231,7 +244,7 @@ extension DSKPageView.CollectionView {
 
 // MARK: - Define Secton Style Environment Key
 private struct PageSectionStyleKey: EnvironmentKey {
-    static let defaultValue = DSKCommon.SectionStyle.NORMAL
+    static let defaultValue = DSKCommon.SectionStyle.DEFAULT
 }
 
 extension EnvironmentValues {
