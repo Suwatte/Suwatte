@@ -60,10 +60,15 @@ extension DaisukeEngine.Structs {
         var additionalCovers: [String]?
         var info: [String]?
         var subtitle: String?
-        var badge: String?
+        var badge: Badge?
         var id: String {
             contentId
         }
+    }
+    
+    struct Badge: JSCObject {
+        let color: String?
+        let count: Double?
     }
 }
 

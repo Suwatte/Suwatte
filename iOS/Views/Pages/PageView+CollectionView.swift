@@ -13,15 +13,17 @@ import ASCollectionView
 extension DSKPageView {
     
     struct CollectionView: View {
-        let page: DSKCommon.Page<T>
+        let pageSections: [DSKCommon.PageSection<T>]
         let runner: JSCRunner
         let tileModifier: PageItemModifier
         @State var locked = false
         @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
+        @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
+        @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
         @EnvironmentObject var model: ViewModel
         
-        init(page: DSKCommon.Page<T>, runner: JSCRunner, @ViewBuilder _ tileModifier: @escaping PageItemModifier) {
-            self.page = page
+        init(sections: [DSKCommon.PageSection<T>], runner: JSCRunner, @ViewBuilder _ tileModifier: @escaping PageItemModifier) {
+            self.pageSections = sections
             self.runner = runner
             self.tileModifier = tileModifier
         }
@@ -33,9 +35,14 @@ extension DSKPageView {
                     model.loadable = .idle
                     endRefreshing()
                 })
+                .shouldInvalidateLayoutOnStateChange(true)
+                .alwaysBounceVertical()
+                .animateOnDataRefresh(true)
+                .ignoresSafeArea(.keyboard, edges: .all)
                 .task { loadAll() }
                 .onChange(of: tileStyle) { _ in } // Triggers view Update when key is updated
-                
+                .onChange(of: PortraitPerRow, perform: { _ in })
+                .onChange(of: LSPerRow, perform: { _ in })
         }
     }
 }
@@ -46,7 +53,7 @@ extension DSKPageView.CollectionView {
         
         guard !locked && !force else { return }
         locked = true // prevent from refiring
-        let unresolved = page.sections.filter({ $0.items == nil }).map(\.key)
+        let unresolved = pageSections.filter({ $0.items == nil }).map(\.key)
         unresolved.forEach { section in
             Task.detached {
                 await model.load(section)
@@ -58,7 +65,7 @@ extension DSKPageView.CollectionView {
 // MARK: - Layout
 extension DSKPageView.CollectionView {
     var layout: ASCollectionLayout<String> {
-        let cache = Dictionary(uniqueKeysWithValues: page.sections.map { ($0.key, $0.sectionStyle) })
+        let cache = Dictionary(uniqueKeysWithValues: pageSections.map { ($0.key, $0.sectionStyle ) })
         let errors = model.errors
         return ASCollectionLayout { sectionID in
             // Errored Out, Show Error Layout
@@ -87,7 +94,7 @@ extension DSKPageView.CollectionView {
                 }
             case .STANDARD_GRID:
                 return .init { environment in
-                   GridLayout(environment)
+                    GridLayout(environment)
                 }
             case .NAVIGATION_LIST:
                 return .init { environment in
@@ -111,7 +118,7 @@ extension DSKPageView.CollectionView {
 extension DSKPageView.CollectionView {
     var sections: [ASCollectionViewSection<String>] {
         let loadables = model.loadables
-        return page.sections.map { (section) -> ASCollectionViewSection<String> in
+        return pageSections.map { (section) -> ASCollectionViewSection<String> in
             let key = section.key
             // Section was preloaded
             if let data = section.items {
@@ -133,7 +140,7 @@ extension DSKPageView.CollectionView {
 }
 
 extension DSKPageView.CollectionView {
-    func buildHeader(_ title: String,_ subtitle: String?, _ link: DSKCommon.Linkable?) -> some View {
+    func buildHeader(_ title: String,_ subtitle: String?, _ linkable: DSKCommon.Linkable?) -> some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading) {
                 Text(title)
@@ -149,16 +156,10 @@ extension DSKPageView.CollectionView {
                 }
             }
             Spacer()
-            if let link {
+            if let linkable {
                 NavigationLink("View More \(Image(systemName: "chevron.right"))") {
-                    Group {
-                        if link.isPageLink, let pageLink = link.pageKey {
-                            RunnerPageView(runner: runner, pageKey: pageLink)
-                        } else {
-                            RunnerDirectoryView(runner: runner, request: link.getDirectoryRequest())
-                        }
-                    }
-                    .navigationBarTitle(title)
+                    buildLinkableView(linkable)
+                        .navigationBarTitle(title)
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.small)
@@ -204,18 +205,8 @@ extension DSKPageView.CollectionView {
     }
     func LoadedSection(_ section: DSKCommon.PageSection<T> , _ items: [DSKCommon.PageItem<T>], _ resolved: DSKCommon.ResolvedPageSection<T>? = nil) -> ASCollectionViewSection<String> {
         ASCollectionViewSection(id: section.key, data: items, dataID: \.hashValue) { data, context in
-            Group {
-                if let link = data.link {
-                    NavigationLink {
-                        PageLinkView(pageLink: link, runner: runner)
-                    } label: {
-                        PageViewTile(runnerID: runner.id, id: link.hashValue.description, title: link.label, subtitle: nil, cover: link.thumbnail ?? "", additionalCovers: nil, info: nil, badge: nil)
-                    }
-                } else if let item = data.item {
-                    tileModifier(item)
-                }
-            }
-            .environment(\.pageSectionStyle, section.sectionStyle)
+            buildPageItemView(data)
+                .environment(\.pageSectionStyle, section.sectionStyle)
         }
         .sectionHeader {
             buildHeader(resolved?.updatedTitle ?? section.title,
@@ -248,8 +239,37 @@ private struct PageSectionStyleKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
-  var pageSectionStyle: DSKCommon.SectionStyle {
-    get { self[PageSectionStyleKey.self] }
-    set { self[PageSectionStyleKey.self] = newValue }
-  }
+    var pageSectionStyle: DSKCommon.SectionStyle {
+        get { self[PageSectionStyleKey.self] }
+        set { self[PageSectionStyleKey.self] = newValue }
+    }
+}
+
+
+// MARK: - Builder
+extension DSKPageView.CollectionView {
+    func buildLinkableView(_ linkable: DSKCommon.Linkable) -> some View {
+        Group {
+            if linkable.isPageLink, let link = linkable.page {
+                RunnerPageView(runner: runner, link: link)
+            } else {
+                RunnerDirectoryView(runner: runner, request: linkable.getDirectoryRequest())
+            }
+        }
+    }
+    
+    func buildPageItemView(_ data: DSKCommon.PageItem<T>) -> some View {
+        Group {
+            if let link = data.link {
+                NavigationLink {
+                    PageLinkView(pageLink: link, runner: runner)
+                } label: {
+                    PageViewTile(runnerID: runner.id, id: link.hashValue.description, title: link.title, subtitle: link.subtitle, cover: link.cover ?? "", additionalCovers: nil, info: nil, badge: link.badge)
+                }
+                .buttonStyle(NeutralButtonStyle())
+            } else if let item = data.item {
+                tileModifier(item)
+            }
+        }
+    }
 }

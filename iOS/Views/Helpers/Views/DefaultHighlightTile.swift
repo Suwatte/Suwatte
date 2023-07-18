@@ -6,14 +6,11 @@
 //
 
 import SwiftUI
-
 struct DefaultTile: View {
     var entry: DaisukeEngine.Structs.Highlight
     var sourceId: String?
     @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
     @Environment(\.libraryIsSelecting) var libraryIsSelecting
-
-    @State var height: CGFloat?
     var body: some View {
         GeometryReader { reader in
             Group {
@@ -37,7 +34,7 @@ struct DefaultTile: View {
                 .opacity(libraryIsSelecting ? 0.8 : 1)
 
             if reader.size.width >= 100 {
-                LinearGradient(gradient: Gradient(colors: [.clear, Color(red: 15 / 255, green: 15 / 255, blue: 15 / 255).opacity(0.80)]), startPoint: .center, endPoint: .bottom)
+                LinearGradient(gradient: Gradient(colors: [.clear, Color(red: 15 / 255, green: 15 / 255, blue: 15 / 255).opacity(0.90)]), startPoint: .center, endPoint: .bottom)
                 VStack(alignment: .leading) {
                     Spacer()
                     Text(entry.title)
@@ -45,18 +42,24 @@ struct DefaultTile: View {
                         .fontWeight(.semibold)
                         .lineLimit(2)
                         .foregroundColor(Color.white)
-                        .shadow(radius: 2)
-                        .multilineTextAlignment(.leading)
-                        .padding(.all, 7)
-                        .frame(width: reader.size.width, alignment: .leading)
+                    if let subtitle = entry.subtitle {
+                        Text(subtitle)
+                            .font(.caption2)
+                            .lineLimit(1)
+                            .foregroundColor(.white.opacity(0.7))
+                    }
                 }
+                .shadow(radius: 2)
+                .multilineTextAlignment(.leading)
+                .padding(.all, 7)
+                .frame(width: reader.size.width, alignment: .leading)
             }
         }
         .cornerRadius(5)
     }
 
     func SeparatedStyle(reader: GeometryProxy) -> some View {
-        VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .leading, spacing: 0) {
             ImageV
                 .frame(height: reader.size.width * 1.5)
                 .cornerRadius(5)
@@ -67,8 +70,19 @@ struct DefaultTile: View {
                     .font(.footnote)
                     .fontWeight(.semibold)
                     .lineLimit(2)
-                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+
+
+                if let subtitle = entry.subtitle {
+                    Text(subtitle)
+                        .font(.caption2)
+                        .lineLimit(1)
+                        .foregroundColor(.primary.opacity(0.7))
+                        .fixedSize(horizontal: false, vertical: true) // Allows the subtitle to occupy the remaining vertical space
+                    
+                }
             }
         }
+        .multilineTextAlignment(.leading)
     }
 }

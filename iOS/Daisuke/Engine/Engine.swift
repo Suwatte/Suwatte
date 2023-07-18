@@ -211,8 +211,10 @@ extension DaisukeEngine {
     }
     
     func addRunner(_ rnn: JSCRunner, listURL: URL? = nil) {
-        runners.removeValue(forKey: rnn.id)
-        runners[rnn.id] = rnn
+        Task { @MainActor in
+            runners.removeValue(forKey: rnn.id)
+            runners[rnn.id] = rnn
+        }
         DataManager.shared.saveRunner(rnn, listURL: listURL, url: executeableURL(for: rnn.id))
     }
     

@@ -17,7 +17,7 @@ struct PageViewTile: View {
     let cover: String
     let additionalCovers: [String]?
     let info: [String]?
-    let badge: Color?
+    let badge: DSKCommon.Badge?
     @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
     @Environment(\.pageSectionStyle) var style
     
@@ -27,8 +27,7 @@ struct PageViewTile: View {
             switch style {
             case .DEFAULT: NORMAL
             case .INFO: INFO
-            case .GALLERY: GALLERY(runnerID: runnerID, id: id, title: title, subtitle: subtitle, cover: cover, additionalCovers: additionalCovers, info: info)
-                    .coloredBadge(badge)
+            case .GALLERY: GALLERY(runnerID: runnerID, id: id, title: title, subtitle: subtitle, cover: cover, additionalCovers: additionalCovers, info: info, badge: badge)
             case .PADDED_LIST: LATEST
             case .ITEM_LIST: LIST
             case .NAVIGATION_LIST: NAVIGATION_LIST
@@ -86,8 +85,8 @@ extension PageViewTile {
 
 extension PageViewTile {
     var NORMAL: some View {
-        DefaultTile(entry: .init(contentId: id, cover: cover, title: title), sourceId: runnerID)
-            .coloredBadge(badge)
+        DefaultTile(entry: .init(contentId: id, cover: cover, title: title, subtitle: subtitle), sourceId: runnerID)
+            .dskBadge(badge)
     }
 }
 
@@ -98,7 +97,7 @@ extension PageViewTile{
             STTImageView(url: URL(string: cover), identifier: .init(contentId: id, sourceId: runnerID))
                 .frame(width: 95)
                 .cornerRadius(5)
-                .coloredBadge(badge)
+                .dskBadge(badge)
                 .padding(.all, 7)
                 .shadow(radius: 2.5)
             
@@ -131,6 +130,8 @@ extension PageViewTile {
         let cover: String
         let additionalCovers: [String]?
         let info: [String]?
+        let badge: DSKCommon.Badge?
+
         @State private var endColor = Color.black
         @State private var timer: Timer?
         @State private var currentImageIndex = 0
@@ -291,7 +292,7 @@ extension PageViewTile {
                 .frame(width: 90)
                 .cornerRadius(5)
                 .shadow(radius: 2.5)
-                .coloredBadge(badge)
+                .dskBadge(badge)
                 .padding(.all, 7)
             
             
@@ -322,7 +323,7 @@ extension PageViewTile {
                 .frame(width: 44, height: 44)
                 .cornerRadius(5)
                 .shadow(radius: 2.5)
-                .coloredBadge(badge)
+                .dskBadge(badge)
                 .padding(.all, 7)
             
             VStack(alignment: .center) {
@@ -344,7 +345,7 @@ extension PageViewTile {
 extension PageViewTile {
     var GRID: some View {
         DefaultTile(entry: .init(contentId: id, cover: cover, title: title), sourceId: runnerID)
-            .coloredBadge(badge)
+            .dskBadge(badge)
     }
 }
 
@@ -426,5 +427,47 @@ struct ColoredBadgeModifier: ViewModifier {
 extension View {
     func coloredBadge(_ color: Color?) -> some View {
         modifier(ColoredBadgeModifier(color: color))
+    }
+}
+
+
+struct CapsuleBadgeModifier: ViewModifier {
+    let value: String
+    let color: Color
+    func body(content: Content) -> some View {
+        ZStack(alignment: .topTrailing ) {
+            content
+            CapsuleBadge(text: value, color: color)
+        }
+    }
+}
+struct DSKBadgeModifer: ViewModifier {
+    let badge: DSKCommon.Badge?
+    
+    var color: Color {
+        if let c = badge?.color {
+            return Color(hex: c)
+        } else {
+            return .accentColor
+        }
+    }
+    func body(content: Content) -> some View {
+        if let badge {
+            if let count = badge.count {
+                content
+                    .modifier(CapsuleBadgeModifier(value: count.clean, color: color))
+            } else {
+                content
+                    .coloredBadge(color)
+            }
+        } else {
+            content
+        }
+    }
+}
+
+extension View {
+    func dskBadge(_ badge: DSKCommon.Badge?) -> some View {
+        modifier(DSKBadgeModifer(badge: badge))
     }
 }

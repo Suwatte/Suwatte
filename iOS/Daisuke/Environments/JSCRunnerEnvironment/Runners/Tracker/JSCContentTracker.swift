@@ -23,6 +23,8 @@ struct TrackerConfig: Parsable {
 }
 
 class JSCContentTracker: NSObject, JSCRunner  {
+    var configCache: [String : DSKCommon.DirectoryConfig] = [:]
+    
     var directoryConfig: DSKCommon.DirectoryConfig?
     
     

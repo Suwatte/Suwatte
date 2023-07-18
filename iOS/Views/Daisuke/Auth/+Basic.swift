@@ -36,6 +36,7 @@ extension DSKAuthView.BasicAuthView {
         @Environment(\.presentationMode) var presentationMode
         @EnvironmentObject var model: DSKAuthView.ViewModel
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
+        @Preference(\.accentColor) var color
 
         var usesEmail: Bool {
             model.runner.intents.basicAuthLabel == .EMAIL
@@ -47,9 +48,11 @@ extension DSKAuthView.BasicAuthView {
                     BaseImageView(url: url)
 
                 } else {
-                    Image("stt_icon")
+                    Image("stt")
                         .resizable()
-                        .scaledToFit()
+                        .aspectRatio(contentMode: .fit)
+                        .foregroundColor(color)
+                        .padding(.all, 3)
                 }
             }
             .frame(height: 75, alignment: .center)

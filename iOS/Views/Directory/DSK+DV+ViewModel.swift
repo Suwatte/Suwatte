@@ -46,7 +46,7 @@ extension DirectoryView.ViewModel {
         }
         Task {
             do {
-                let config = try await runner.getDirectoryConfig()
+                let config = try await runner.getDirectoryConfig(key: request.configKey)
                 await MainActor.run {
                     withAnimation {
                         self.config = config
@@ -59,7 +59,8 @@ extension DirectoryView.ViewModel {
     }
 
     func reset() {
-        request = .init(page: 1)
+        let key = request.configKey
+        request = .init(page: 1, configKey: key)
         request.query = nil
         request.sortKey = sortOptions.first?.key
     }

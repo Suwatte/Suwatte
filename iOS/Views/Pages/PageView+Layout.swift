@@ -86,24 +86,26 @@ extension DSKPageView.CollectionView  {
 
     func NormalLayout() -> NSCollectionLayoutSection {
         let iSeparated = UserDefaults.standard.integer(forKey: STTKeys.TileStyle) == TileStyle.SEPARATED.rawValue
+        
+        let heightDimension: NSCollectionLayoutDimension = !iSeparated ? .absolute(160 * 1.5) : .absolute((160 * 1.5) + 48)
         let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
             heightDimension: .fractionalHeight(1)
         ))
 
-        let itemsGroup = NSCollectionLayoutGroup.vertical(
+        let itemsGroup = NSCollectionLayoutGroup.horizontal(
             layoutSize: NSCollectionLayoutSize(
                 widthDimension: .absolute(160),
-                heightDimension: .absolute((160 * 1.5) + (iSeparated ? 44 : 0))
+                heightDimension: heightDimension
             ),
             subitem: item, count: 1
         )
 
-        itemsGroup.interItemSpacing = .fixed(10)
         itemsGroup.edgeSpacing = .init(leading: .none, top: .none, trailing: .none, bottom: .fixed(10))
         let section = NSCollectionLayoutSection(group: itemsGroup)
+        itemsGroup.interItemSpacing = .fixed(10)
         section.interGroupSpacing = 7
-        section.contentInsets = NSDirectionalEdgeInsets(top: 15, leading: 20, bottom: 15, trailing: 20)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 7, leading: 20, bottom: 7, trailing: 20)
         section.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
         let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(44)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
         section.boundarySupplementaryItems = [supp]

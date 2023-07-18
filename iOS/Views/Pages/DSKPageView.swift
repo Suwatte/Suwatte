@@ -19,8 +19,8 @@ struct DSKPageView<T: JSCObject, C: View> : View {
     }
     
     var body: some View {
-        LoadableView(model.load, model.loadable) { page in
-            CollectionView(page: page, runner: model.runner, modifier)
+        LoadableView(model.load, model.loadable) { sections in
+            CollectionView(sections: sections, runner: model.runner, modifier)
         }
         .environmentObject(model)
     }
@@ -31,23 +31,23 @@ struct DSKPageView<T: JSCObject, C: View> : View {
 extension DSKPageView {
     final class ViewModel : ObservableObject {
         let runner: JSCRunner
-        let key: String
-        @Published var loadable = Loadable<DSKCommon.Page<T>>.idle
+        let link: DSKCommon.PageLink
+        @Published var loadable = Loadable<[DSKCommon.PageSection<T>]>.idle
         @Published var loadables: [String: Loadable<DSKCommon.ResolvedPageSection<T>>] = [:]
         @Published var errors = Set<String>()
         
-        init(runner: JSCRunner, key: String) {
+        init(runner: JSCRunner, link: DSKCommon.PageLink) {
             self.runner = runner
-            self.key = key
+            self.link = link
         }
         
         func load() {
             loadable = .loading
             Task {
                 do {
-                    let data: DSKCommon.Page<T> = try await runner.getPage(key: key) // Load Page
-                    if !data.sections.allSatisfy({ $0.items != nil }) {
-                        try await runner.willResolvePage(key: key) // Tell Runner that suwatte will begin resolution of page sections
+                    let data: [DSKCommon.PageSection<T>] = try await runner.getSectionsForPage(link: link) // Load Page
+                    if !data.allSatisfy({ $0.items != nil }) {
+                        try await runner.willResolveSectionsForPage(link: link) // Tell Runner that suwatte will begin resolution of page sections
                     }
                     await MainActor.run {
                         withAnimation {
@@ -66,10 +66,12 @@ extension DSKPageView {
         }
         
         func load(_ sectionID: String) async {
-            loadables[sectionID] = .loading
-            errors.remove(sectionID)
+            await MainActor.run {
+                loadables[sectionID] = .loading
+                errors.remove(sectionID)
+            }
             do {
-                let data: DSKCommon.ResolvedPageSection<T> = try await runner.resolvePageSection(page: loadable.value!.key, section: sectionID)
+                let data: DSKCommon.ResolvedPageSection<T> = try await runner.resolvePageSection(link: link, section: sectionID)
                 await MainActor.run {
                     loadables[sectionID] = .loaded(data)
                 }
@@ -87,16 +89,16 @@ extension DSKPageView {
 
 struct RunnerPageView: View {
     let runner: JSCRunner
-    let pageKey: String
+    var link: DSKCommon.PageLink
     var body: some View {
         Group {
             switch runner.environment {
             case .plugin:
                 EmptyView()
             case .tracker:
-                ContentTrackerPageView(tracker: runner as! JSCCT, pageKey: pageKey)
+                ContentTrackerPageView(tracker: runner as! JSCCT, link: link)
             case .source:
-                ContentSourcePageView(source: runner as! JSCCS, pageKey: pageKey)
+                ContentSourcePageView(source: runner as! JSCCS, link: link)
             case .unknown:
                 EmptyView()
             }

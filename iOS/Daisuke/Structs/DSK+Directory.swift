@@ -49,6 +49,7 @@ extension DSKCommon {
         var filters: [String: AnyCodable]?
         var tag: RequestTag?
         var custom: [String: AnyCodable]?
+        var configKey: String?
         
         struct RequestTag: Parsable, Hashable {
             var tagId: String

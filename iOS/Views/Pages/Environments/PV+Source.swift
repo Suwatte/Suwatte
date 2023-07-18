@@ -9,13 +9,17 @@ import SwiftUI
 
 struct ContentSourcePageView: View {
     let source: JSCCS
-    var pageKey: String = "home"
+    var link: DSKCommon.PageLink
     @StateObject private var model = ContentSourceDirectoryView.ViewModel()
     @StateObject var manager = LocalAuthManager.shared
     @Preference(\.protectContent) var protectContent
     @State private var selection: HighlightIndentier?
+    
+    var pageKey: String {
+        link.key
+    }
     var body: some View {
-        DSKPageView<DSKCommon.Highlight, Cell>(model: .init(runner: source, key: pageKey)) { item in
+        DSKPageView<DSKCommon.Highlight, Cell>(model: .init(runner: source, link: link)) { item in
             Cell(sourceID: source.id, item: item, inLibrary: model.library.contains(item.contentId), inReadLater: model.readLater.contains(item.contentId), hideLibraryBadges: hideLibrayBadges, selection: $selection)
         }
         .task {
@@ -58,7 +62,7 @@ struct ContentSourcePageView: View {
         
         
         var body: some View {
-            PageViewTile(runnerID: sourceID, id: item.contentId, title: item.title, subtitle: item.subtitle, cover: item.cover, additionalCovers: item.additionalCovers, info: item.info, badge: badgeColor())
+            PageViewTile(runnerID: sourceID, id: item.contentId, title: item.title, subtitle: item.subtitle, cover: item.cover, additionalCovers: item.additionalCovers, info: item.info, badge: item.badge)
             .contextMenu {
                 Button {
                     if inReadLater {

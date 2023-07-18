@@ -43,12 +43,6 @@ extension DSKCommon {
 typealias JSCObject = Parsable & Hashable
 extension DSKCommon {
         
-    struct Page<T: JSCObject>: JSCObject{
-        let key: String
-        let sections: [PageSection<T>]
-        
-    }
-    
     struct PageSection<T: JSCObject>: JSCObject {
         let key: String
         var title: String
@@ -69,14 +63,21 @@ extension DSKCommon {
         let updatedSubtitle: String?
     }
     
-    struct PageLink: JSCObject {
-        let label: String
-        let thumbnail: String?
+    struct PageLinkLabel: JSCObject {
+        let title: String
+        let subtitle: String?
+        let badge: Badge?
+        let cover: String?
         let link: Linkable
     }
     
+    struct PageLink: JSCObject  {
+        let key: String
+        let context: CodableDict?
+    }
+    
     struct PageItem<T: JSCObject>: JSCObject {
-        let link: PageLink?
+        let link: PageLinkLabel?
         let item: T?
         var isValidItem: Bool {
             link != nil || item != nil
@@ -88,15 +89,15 @@ extension DSKCommon {
 
 extension DSKCommon {
     struct Linkable: Parsable , Hashable {
-        let pageKey: String?
+        let page: PageLink?
         let request: DirectoryRequest?
 
         var isPageLink: Bool {
-            pageKey != nil
+            page != nil
         }
         
-        func getPageKey() -> String {
-            pageKey ?? "home"
+        func getPageLink() -> PageLink {
+            .init(key: page?.key ?? "home", context: page?.context ?? nil)
         }
         
         func getDirectoryRequest() -> DirectoryRequest {

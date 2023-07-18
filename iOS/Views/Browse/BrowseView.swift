@@ -10,7 +10,7 @@ import SwiftUI
 
 struct BrowseView: View {
     @ObservedResults(StoredRunnerObject.self, where: { $0.isDeleted == false }, sortDescriptor: .init(keyPath: "name")) var runners
-    @State var pageLinks: [String: [DSKCommon.PageLink]] = [:]
+    @State var pageLinks: [String: [DSKCommon.PageLinkLabel]] = [:]
     @State var triggeredLoad = false
     var body: some View {
         NavigationView {
@@ -36,10 +36,12 @@ struct BrowseView: View {
 
         .task {
             guard !triggeredLoad else { return }
-            triggeredLoad = true
             loadPageLinks()
         }
         .onReceive(StateManager.shared.runnerListPublisher) { _ in
+            loadPageLinks()
+        }
+        .refreshable {
             loadPageLinks()
         }
     }
@@ -140,17 +142,17 @@ extension BrowseView {
     }
     
     
-    func PageLinksView(_ runner: JSCRunner, _ links: [DSKCommon.PageLink]) -> some View {
+    func PageLinksView(_ runner: JSCRunner, _ links: [DSKCommon.PageLinkLabel]) -> some View {
         Section {
             ForEach(links, id: \.hashValue) { pageLink in
                 NavigationLink {
                     PageLinkView(pageLink: pageLink, runner: runner)
                 } label: {
                     HStack {
-                        STTThumbView(url: URL(string: pageLink.thumbnail ?? "") ?? runner.thumbnailURL)
+                        STTThumbView(url: URL(string: pageLink.cover ?? "") ?? runner.thumbnailURL)
                             .frame(width: 40, height: 40)
                             .cornerRadius(5)
-                        Text(pageLink.label)
+                        Text(pageLink.title)
                         Spacer()
                     }
                 }
@@ -165,6 +167,8 @@ extension BrowseView {
 // MARK: - Load Page Links
 extension BrowseView {
     func loadPageLinks() {
+        triggeredLoad = true
+
         // Get Links
         let runnerIDs = runners
             .where { $0.isBrowsePageLinkProvider }
@@ -200,17 +204,16 @@ extension BrowseView {
 
 
 struct PageLinkView: View {
-    let pageLink: DSKCommon.PageLink
+    let pageLink: DSKCommon.PageLinkLabel
     let runner: JSCRunner
     var body: some View {
         Group {
             if pageLink.link.isPageLink {
-                RunnerPageView(runner: runner, pageKey: pageLink.link.getPageKey())
-                    .navigationBarTitle(pageLink.label)
+                RunnerPageView(runner: runner, link: pageLink.link.getPageLink())
             } else {
                 RunnerDirectoryView(runner: runner, request: pageLink.link.getDirectoryRequest())
-                    .navigationBarTitle(pageLink.label)
             }
         }
+        .navigationBarTitle(pageLink.title)
     }
 }

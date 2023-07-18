@@ -10,9 +10,9 @@ import SwiftUI
 
 struct ContentTrackerPageView: View {
     let tracker: JSCCT
-    var pageKey: String = "home"
+    var link: DSKCommon.PageLink
     var body: some View {
-        DSKPageView<DSKCommon.TrackItem, Cell>(model: .init(runner: tracker, key: pageKey)) { item in
+        DSKPageView<DSKCommon.TrackItem, Cell>(model: .init(runner: tracker, link: link)) { item in
             Cell(tracker: tracker, item: item)
         }
         .toolbar {
@@ -23,7 +23,7 @@ struct ContentTrackerPageView: View {
                 } label: {
                     Image(systemName: "magnifyingglass")
                 }
-                .opacity(pageKey == "home" ? 1 : 0)
+                .opacity(link.key == "home" ? 1 : 0)
             }
         }
     }
@@ -32,7 +32,8 @@ struct ContentTrackerPageView: View {
         let tracker: JSCCT
         @State var item : DSKCommon.TrackItem
         var body: some View {
-            PageViewTile(runnerID: tracker.id, id: item.id, title: item.title, subtitle: nil, cover: item.cover, additionalCovers: nil, info: nil, badge: item.entry?.status.color)
+            PageViewTile(runnerID: tracker.id, id: item.id, title: item.title, subtitle: nil, cover: item.cover, additionalCovers: nil, info: nil, badge: nil)
+                .coloredBadge(item.entry?.status.color)
                 .modifier(TrackerContextModifier(tracker: tracker, item: $item, status: item.entry?.status ?? .CURRENT))
         }
     }

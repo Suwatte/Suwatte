@@ -8,6 +8,8 @@ import Foundation
 import JavaScriptCore
 
 class JSCContentSource: NSObject, JSCRunner {
+    var configCache: [String : DSKCommon.DirectoryConfig] = [:]
+    
 
     
     static func == (lhs: JSCContentSource, rhs: JSCContentSource) -> Bool {

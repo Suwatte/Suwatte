@@ -13,6 +13,7 @@ extension JSCHandler {
     @objc class NetworkHandler: JSObject, JSCHandlerProtocol {
         lazy var session: Alamofire.Session = {
             let configuration = URLSessionConfiguration.af.default
+            configuration.httpCookieStorage = HTTPCookieStorage.shared
             configuration.headers.add(.userAgent(Preferences.standard.userAgent))
             return .init(configuration: configuration)
         }()

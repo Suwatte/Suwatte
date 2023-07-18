@@ -24,12 +24,12 @@ extension DataManager {
 
     func getStoreValue(for id: String, key: String) -> String? {
         let realm = try! Realm()
-
-        guard let obj = realm.objects(InteractorStoreObject.self).first(where: { $0.id == "\(id)|\(key)" }) else {
-            return nil
-        }
-
-        return obj.value
+        return realm
+            .objects(InteractorStoreObject.self)
+            .where { $0.isDeleted == false }
+            .where { $0.id == "\(id)|\(key)" }
+            .first?
+            .value
     }
 
     func removeStoreValue(for id: String, key: String) {

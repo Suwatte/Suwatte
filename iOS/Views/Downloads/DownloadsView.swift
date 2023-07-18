@@ -162,6 +162,7 @@ extension DownloadsView {
 
 struct CapsuleBadge: View {
     var text: String
+    var color: Color = .accentColor
     private let height: CGFloat = 17
     var body: some View {
         ZStack(alignment: .center) {
@@ -169,7 +170,7 @@ struct CapsuleBadge: View {
                 .foregroundColor(.systemBackground)
             ZStack(alignment: .center) {
                 Capsule()
-                    .foregroundColor(.accentColor)
+                    .foregroundColor(color)
                 Text(text)
                     .font(.system(size: 10))
                     .fontWeight(.bold)

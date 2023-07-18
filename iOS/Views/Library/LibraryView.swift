@@ -17,7 +17,7 @@ struct LibraryView: View {
     @State var openFirstCollection = false
     @AppStorage(STTKeys.OpenAllTitlesOnAppear) var openAllOnAppear = false
     @AppStorage(STTKeys.LibraryAuth) var requireAuth = false
-    @State var pageLinks: [String: [DSKCommon.PageLink]] = [:]
+    @State var pageLinks: [String: [DSKCommon.PageLinkLabel]] = [:]
     @State var triggeredLoad = false
 
     var body: some View {
@@ -93,7 +93,7 @@ extension LibraryView {
     struct LibrarySectionBuilder: View {
         let key: String
         @Binding var openFirstCollection: Bool
-        @Binding var links: [String: [DSKCommon.PageLink]]
+        @Binding var links: [String: [DSKCommon.PageLinkLabel]]
         var body: some View {
             Group {
                 switch key {
@@ -119,7 +119,7 @@ extension LibraryView {
 extension LibraryView {
     struct PageLinkSectionView: View {
         let runner: JSCRunner
-        let pageLinks: [DSKCommon.PageLink]
+        let pageLinks: [DSKCommon.PageLinkLabel]
         
         var body: some View {
             Section {
@@ -128,10 +128,10 @@ extension LibraryView {
                         PageLinkView(pageLink: pageLink, runner: runner)
                     } label: {
                         HStack {
-                            STTThumbView(url: URL(string: pageLink.thumbnail ?? "") ?? runner.thumbnailURL)
+                            STTThumbView(url: URL(string: pageLink.cover ?? "") ?? runner.thumbnailURL)
                                 .frame(width: 32, height: 32)
                                 .cornerRadius(5)
-                            Text(pageLink.label)
+                            Text(pageLink.title)
                             Spacer()
                         }
                     }
