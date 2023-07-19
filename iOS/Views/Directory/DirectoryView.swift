@@ -21,7 +21,7 @@ struct DirectoryView<T: Codable & Hashable, C: View>: View {
     }
     
     var fullSearch: Bool {
-        model.request.custom == nil && model.request.tag == nil
+        model.request.context == nil && model.request.tag == nil
     }
     
     var body: some View {

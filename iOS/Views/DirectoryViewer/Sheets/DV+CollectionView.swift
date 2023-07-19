@@ -226,7 +226,7 @@ extension DirectoryViewer.CoreCollectionView {
                 let groupWidth = environment.container.contentSize.width - (INSET * 2) - totalSpacing
                 let estimatedItemWidth = (groupWidth / CGFloat(itemsPerRow)).rounded(.down)
                 let shouldAddTitle = (style == .SEPARATED && estimatedItemWidth >= 100) && !showOnlyThumbs
-                let titleSize: CGFloat = shouldAddTitle ? (showTitleOnly ? 44 : 65) : 0
+                let titleSize: CGFloat = shouldAddTitle ? (showTitleOnly ? 48 : 65) : 0
                 let height = (estimatedItemWidth * 1.5) + titleSize
                 // Item
                 let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(

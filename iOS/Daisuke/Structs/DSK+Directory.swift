@@ -48,7 +48,7 @@ extension DSKCommon {
         var sortKey: String?
         var filters: [String: AnyCodable]?
         var tag: RequestTag?
-        var custom: [String: AnyCodable]?
+        var context: [String: AnyCodable]?
         var configKey: String?
         
         struct RequestTag: Parsable, Hashable {

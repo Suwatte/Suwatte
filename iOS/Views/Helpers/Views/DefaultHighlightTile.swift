@@ -62,7 +62,7 @@ struct DefaultTile: View {
         VStack(alignment: .leading, spacing: 0) {
             ImageV
                 .frame(height: reader.size.width * 1.5)
-                .cornerRadius(5)
+                .cornerRadius(2.5)
                 .opacity(libraryIsSelecting ? 0.8 : 1)
 
             if reader.size.width >= 100 {

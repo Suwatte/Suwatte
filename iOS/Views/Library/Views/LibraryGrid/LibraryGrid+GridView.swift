@@ -154,13 +154,13 @@ func DynamicGridLayout(header: NSCollectionLayoutDimension? = nil, footer: NSCol
         let itemsPerRow = UserDefaults.standard.integer(forKey: viewingPotrait ? STTKeys.GridItemsPerRow_P : STTKeys.GridItemsPerRow_LS)
         let style = TileStyle(rawValue: UserDefaults.standard.integer(forKey: STTKeys.TileStyle)) ?? .COMPACT
 
-        let SPACING: CGFloat = 10
+        let SPACING: CGFloat = 8.5
         let INSET: CGFloat = 16
         let totalSpacing = SPACING * CGFloat(itemsPerRow - 1)
         let groupWidth = environment.container.contentSize.width - (INSET * 2) - totalSpacing
         let estimatedItemWidth = (groupWidth / CGFloat(itemsPerRow)).rounded(.down)
         let shouldAddTitle = style == .SEPARATED && estimatedItemWidth >= 100 || titleSize != nil
-        let titleSize: CGFloat = shouldAddTitle ? titleSize ?? 44 : 0
+        let titleSize: CGFloat = shouldAddTitle ? titleSize ?? 48 : 0
         let height = (estimatedItemWidth * 1.5) + titleSize
 
         // Item
