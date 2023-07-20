@@ -61,8 +61,16 @@ extension DaisukeEngine.Structs {
         var info: [String]?
         var subtitle: String?
         var badge: Badge?
+        var context: CodableDict?
+        var acquisitionLink: String?
+        var streamable: Bool?
+        
         var id: String {
             contentId
+        }
+        
+        var canStream: Bool {
+            streamable ?? false
         }
     }
     
@@ -92,12 +100,20 @@ extension DaisukeEngine.Structs {
         var includedCollections: [HighlightCollection]?
         var trackerInfo: [String: String]?
         var chapters: [Chapter]?
+        
+        var acquisitionLink: String?
+        var streamable: Bool?
+        
 
         var covers: [String] {
             var covers = additionalCovers ?? []
             covers.removeAll(where: { $0 == cover })
             covers.insert(cover, at: 0)
             return covers
+        }
+        
+        var canStream: Bool {
+            streamable ?? false
         }
 
         static let placeholder: Self = .init(contentId: .random(), title: .random(), cover: .random())
@@ -115,5 +131,17 @@ extension DaisukeEngine.Structs.Highlight {
 
     static func withId(id: String) -> Self {
         .init(contentId: id, cover: String.random(), title: String.random())
+    }
+}
+
+extension DSKCommon {
+    struct ReaderContext: JSCObject {
+        
+        let target: String
+        let chapters: [Chapter]
+        
+        let requestedPage: Int?
+        let readingMode: ReadingMode?
+        let content: Highlight?
     }
 }

@@ -63,23 +63,23 @@ extension Controller {
                     }
                     for await progress in task.progress {
                         // Update progress
-                        await MainActor.run { [weak self] in
+                        Task { @MainActor [weak self] in
                             self?.handleProgressBlock(progress.fraction)
                         }
                     }
 
                     let image = try await task.image
-                    await MainActor.run { [weak self] in
+                    Task { @MainActor [weak self] in
                         self?.didLoadImage(image)
                         self?.nukeTask = nil
                     }
 
                 } catch {
-                    await MainActor.run { [weak self] in
+                    Task { @MainActor [weak self] in
                         self?.didFailToLoadImage(error)
                     }
                 }
-                await MainActor.run { [weak self] in
+                Task { @MainActor [weak self] in
                     self?.working = false
                 }
             }

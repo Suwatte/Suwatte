@@ -52,6 +52,8 @@ extension ReaderView {
         let reloadPublisher = PassthroughSubject<Void, Never>()
         let scrubEndPublisher = PassthroughSubject<Void, Never>()
         let verticalTimerPublisher = PassthroughSubject<Void, Never>()
+        
+        // Additional Helpers        
         init(chapterList: [StoredChapter], openTo chapter: StoredChapter, title: String? = nil, pageIndex: Int? = nil, readingMode: ReadingMode) {
             // Sort Chapter List by either sourceIndex or chapter number
             let sourceIndexAcc = chapterList.map { $0.index }.reduce(0, +)

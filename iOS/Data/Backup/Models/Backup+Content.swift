@@ -12,6 +12,7 @@ extension StoredContent: Codable {
     enum CodingKeys: String, CodingKey {
         case id, sourceId, contentId, title, additionalTitles, additionalCovers, cover, creators, status
         case originalLanuguage, summary, adultContent, webUrl, properties, recommendedReadingMode, contentType, trackerInfo
+        case acquisitionLink, streamable
     }
 
     convenience init(from decoder: Decoder) throws {
@@ -44,6 +45,9 @@ extension StoredContent: Codable {
         if let info = try container.decodeIfPresent(Map<String, String>.self, forKey: .trackerInfo) {
             trackerInfo = info
         }
+        
+        acquisitionLink = try container.decodeIfPresent(String.self, forKey: .acquisitionLink)
+        streamable = try container.decodeIfPresent(Bool.self, forKey: .streamable) ?? false
     }
 
     func encode(to encoder: Encoder) throws {
@@ -65,6 +69,8 @@ extension StoredContent: Codable {
         try container.encode(recommendedReadingMode, forKey: .recommendedReadingMode)
         try container.encode(contentType, forKey: .contentType)
         try container.encode(trackerInfo, forKey: .trackerInfo)
+        try container.encode(streamable, forKey: .streamable)
+        try container.encode(acquisitionLink, forKey: .acquisitionLink)
     }
 }
 

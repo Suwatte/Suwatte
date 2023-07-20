@@ -8,7 +8,7 @@ let RunnerIntents = {
   authenticationMethod: "unknown",
   pageLinkResolver: false,
   libraryPageLinkProvider: false,
-browsePageLinkProvider: false,
+  browsePageLinkProvider: false,
   imageRequestHandler: false,
 
   // Content Source
@@ -16,6 +16,17 @@ browsePageLinkProvider: false,
   contentEventHandler: false,
   chapterSyncHandler: false,
   librarySyncHandler: false,
+
+  // MSB
+  pageReadHandler: false,
+  isAcquisitionEnabled: false,
+
+  // Context Provider
+providesReaderContext: false,
+  isContextMenuProvider: false,
+  canRefreshHighlight: false,
+
+  // Tags View
   hasTagsView: false,
   // Content Tracker
   advancedTracker: false,
@@ -142,6 +153,15 @@ function setupSourceConfig() {
       RunnerIntents.explorePageHandler =
         !!ctx.createExploreCollections && !!ctx.resolveExploreCollection;
       RunnerIntents.hasTagsView = !!ctx.getTags;
+
+      // MSB
+      RunnerIntents.pageReadHandler = !!ctx.onPageRead;
+      RunnerIntents.providesReaderContext = !!ctx.provideReaderContext
+
+      // Context
+      RunnerIntents.isContextMenuProvider =
+        !!ctx.getContextActions && !!ctx.didTriggerContextAction;
+      RunnerIntents.canRefreshHighlight = !!ctx.getHighlight;
     }
 
     // Content Tracker Intents
@@ -153,7 +173,7 @@ function setupSourceConfig() {
         !!ctx.getInfo;
     }
   } catch (err) {
-    console.error("[Intents]", err);
+    console.error("[Intents]", err.message);
   }
 }
 

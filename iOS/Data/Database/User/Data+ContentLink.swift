@@ -108,6 +108,8 @@ extension DSKCommon.Highlight {
         stored.contentId = contentId
         stored.sourceId = sourceId
         stored.cover = cover
+        stored.acquisitionLink = acquisitionLink
+        stored.streamable = canStream
 
         return stored
     }

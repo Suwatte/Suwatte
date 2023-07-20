@@ -43,6 +43,9 @@ final class StoredContent: Object, Identifiable, CKRecordConvertible, CKRecordRe
     @Persisted var recommendedReadingMode: ReadingMode = .PAGED_MANGA
     @Persisted var contentType: ExternalContentType = .unknown
     @Persisted var trackerInfo: Map<String, String>
+    
+    @Persisted var acquisitionLink: String?
+    @Persisted var streamable: Bool = false
 
     var SourceName: String {
         DSK.shared.getSource(id: sourceId)?.name ?? "Unrecognized : \(sourceId)"

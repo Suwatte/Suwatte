@@ -17,7 +17,6 @@ struct ContentView: View {
 
     var body: some View {
         MainContent
-//            .navigationViewStyle(.stack)
             .onChange(of: scenePhase) { phase in
                 switch phase {
                 case .background:
@@ -30,6 +29,9 @@ struct ContentView: View {
             .environmentObject(appState)
             .onAppear {
                 selection = InitialSelection
+            }
+            .fullScreenCover(item: $appState.readerState) { ctx in
+                ReaderGateWay(readingMode: ctx.readingMode ?? .PAGED_COMIC, chapterList: ctx.chapters, openTo: ctx.chapter, pageIndex: ctx.requestedPage)
             }
     }
 

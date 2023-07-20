@@ -105,3 +105,24 @@ extension DSKCommon {
         }
     }
 }
+
+
+
+extension DSKCommon {
+    struct ContextMenuAction: JSCObject {
+        let key: String
+        let label: String
+        let systemImage: String?
+        let destructive: Bool?
+        let displayAsPlainLabel: Bool?
+        
+        
+        var displayAsLabel: Bool {
+            displayAsPlainLabel ?? false
+        }
+        
+        var isDestructive: Bool {
+            destructive ?? false
+        }
+    }
+}

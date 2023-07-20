@@ -191,23 +191,25 @@ extension PagedDisplayHolder {
                 for await progress in task.progress {
                     // Update progress
                     let p = Double(progress.fraction)
-                    await MainActor.run { [weak self] in
+                    Task { @MainActor [weak self] in
                         self?.setProgress(p)
                     }
                 }
 
                 let image = try await task.image
-                await MainActor.run { [weak self] in
+                Task { @MainActor [weak self] in
                     self?.displayImage(image: image)
                     self?.nukeTask = nil
                 }
 
             } catch {
-                await MainActor.run { [weak self] in
+                Logger.shared.error(error, page.sourceId)
+                Task { @MainActor [weak self] in
                     self?.setError(error)
                 }
+
             }
-            await MainActor.run { [weak self] in
+            Task { @MainActor [weak self] in
                 self?.nukeTask = nil
             }
         }

@@ -15,7 +15,7 @@ extension View {
 }
 
 struct ToastModifier: ViewModifier {
-    @EnvironmentObject var toaster: ToastManager
+    @StateObject var toaster = ToastManager.shared
     func body(content: Content) -> some View {
         content
             .allowsHitTesting(!toaster.loading)

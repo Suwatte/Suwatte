@@ -67,3 +67,37 @@ extension JSCContentSource  {
     }
     
 }
+
+// MARK: - MediaServerBridge
+extension JSCContentSource {
+    func onPageRead(contentId: String, chapterId: String, page: Int) async throws {
+        try await callOptionalVoidMethod(method: "onPageRead",
+                                         arguments: [contentId, chapterId, page])
+    }
+    
+    func provideReaderContext(for contentId: String) async throws -> DSKCommon.ReaderContext {
+        return try await callMethodReturningObject(method: "provideReaderContext",
+                                                   arguments: [contentId],
+                                                   resolvesTo: DSKCommon.ReaderContext.self)
+    }
+}
+
+
+// MARK: - Context Handler
+extension JSCContentSource {
+    func getHighlight(highlight: DSKCommon.Highlight) async throws -> DSKCommon.Highlight {
+        try await callMethodReturningDecodable(method: "getHighlight",
+                                               arguments: [try highlight.asDictionary()],
+                                               resolvesTo: DSKCommon.Highlight.self)
+    }
+    
+    func getContextActions(highlight: DSKCommon.Highlight) throws -> [[DSKCommon.ContextMenuAction]] {
+        return try synchronousCall(method: "getContextActions", arguments: [try highlight.asDictionary()])
+    }
+    
+    func didTriggerContextActon(highlight: DSKCommon.Highlight, key: String) async throws {
+        let object = try highlight.asDictionary()
+        return try await callOptionalVoidMethod(method: "didTriggerContextAction",
+                                                arguments: [object, key])
+    }
+}

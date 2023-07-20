@@ -142,7 +142,7 @@ extension DataManager {
         }
 
         // Ensure Chapter Reference has been generated, Save Reference
-        guard let reference else { return }
+        guard let reference, reference.isValid else { return }
 
         try! realm.safeWrite {
             realm.add(reference, update: .modified)

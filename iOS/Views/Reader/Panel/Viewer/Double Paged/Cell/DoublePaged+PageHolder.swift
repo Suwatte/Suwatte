@@ -134,7 +134,7 @@ extension DoublePagedDisplayHolder {
                 page.page.targetWidth = await self?.secondPage != nil ? size.width / 2 : size.width
 
                 let task = try await page.page.load()
-                await MainActor.run { [weak self] in
+                Task { @MainActor [weak self] in
                     if page === self?.firstPage {
                         self?.firstImageTask = task
                     } else {
@@ -144,18 +144,18 @@ extension DoublePagedDisplayHolder {
                 for await progress in task.progress {
                     // Update progress
                     let p = Double(progress.fraction)
-                    await MainActor.run { [weak self] in
+                    Task { @MainActor [weak self] in
                         self?.setProgress(p)
                     }
                 }
 
                 let image = try await task.image
-                await MainActor.run { [weak self] in
+                Task { @MainActor [weak self] in
                     self?.onPageLoadSuccess(image: image, target: page)
                 }
 
             } catch {
-                await MainActor.run { [weak self] in
+                Task { @MainActor [weak self] in
                     self?.setError(error)
                 }
             }

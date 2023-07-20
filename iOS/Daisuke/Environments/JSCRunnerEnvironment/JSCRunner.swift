@@ -72,6 +72,14 @@ struct RunnerIntents: Parsable {
     let librarySyncHandler: Bool
     let hasTagsView: Bool
     
+    // MSB
+    let pageReadHandler: Bool
+    let providesReaderContext: Bool
+    let canRefreshHighlight: Bool
+    
+    // Context Menu
+    let isContextMenuProvider: Bool
+    
     // JSC CT
     let advancedTracker: Bool
     
@@ -235,7 +243,7 @@ extension JSCRunner {
     }
 }
 
-
+// MARK: - Preferences
 extension JSCRunner {
     func saveState() {
         UserDefaults.standard.set(intents.imageRequestHandler, forKey: STTKeys.RunnerOverridesImageRequest(id))
@@ -257,6 +265,9 @@ extension JSCRunner {
         })
     }
     
+}
+// MARK: - Authenticatable
+extension JSCRunner {
     // Auth
     func getAuthenticatedUser() async throws -> DSKCommon.User? {
         return try await callMethodReturningDecodable(method: "getAuthenticatedUser", arguments: [], resolvesTo: DSKCommon.User?.self)
@@ -290,7 +301,6 @@ extension JSCRunner {
     func handleOAuthCallback(response: String) async throws {
         try await callOptionalVoidMethod(method: "handleOAuthCallback", arguments: [response])
     }
-    
 }
 
 // MARK: - Directory Handler
@@ -311,6 +321,7 @@ extension JSCRunner {
 }
 
 
+//MARK: - Page Resolver
 extension JSCRunner {
     func willRequestImage(imageURL: URL) async throws -> DSKCommon.Request {
         return try await callMethodReturningDecodable(method: "willRequestImage", arguments: [imageURL.absoluteString], resolvesTo: DSKCommon.Request.self)
@@ -331,7 +342,7 @@ extension JSCRunner {
     }
 }
 
-
+// MARK: - Page Provider
 extension JSCRunner {
     func getLibraryPageLinks() async throws -> [DSKCommon.PageLinkLabel] {
         try await callMethodReturningDecodable(method: "getLibraryPageLinks", arguments: [], resolvesTo: [DSKCommon.PageLinkLabel].self)
@@ -340,3 +351,31 @@ extension JSCRunner {
         try await callMethodReturningDecodable(method: "getBrowsePageLinks", arguments: [], resolvesTo: [DSKCommon.PageLinkLabel].self)
     }
 }
+
+// MARK: - Synchronous Call
+extension JSCRunner {
+    
+    func synchronousCall<T: Decodable>(method: String, arguments: [Any]) throws -> T {
+        
+        guard runnerClass.hasProperty(method) else {
+            throw DaisukeEngine.Errors.MethodNotFound(name: method)
+        }
+        
+        let result = runnerClass.invokeMethod(method, withArguments: arguments)
+        let error = runnerClass.context!.exception
+        
+        // Error Occured in Execution
+        if let error {
+            throw DaisukeEngine.Errors.nativeError(for: error)
+        }
+        
+        guard let result, let str = DaisukeEngine.stringify(val: result) else {
+            throw DSK.Errors.ObjectConversionFailed
+        }
+        
+        let jsonData = str.data(using: .utf8, allowLossyConversion: false)!
+        let output: T = try DaisukeEngine.decode(data: jsonData, to: T.self)
+        return output
+    }
+}
+
