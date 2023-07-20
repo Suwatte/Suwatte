@@ -15,6 +15,7 @@ extension DSK {
             .shared
             .getSavedAndEnabledSources()
             .compactMap { engine.getSource(id: $0.id)  }
+            .filter { $0.ablityNotDisabled(\.disableUpdateChecks) }
 
         // Fetch Update For Each Source
         let result = await withTaskGroup(of: Int.self) { group in

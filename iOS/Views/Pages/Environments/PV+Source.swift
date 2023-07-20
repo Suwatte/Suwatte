@@ -74,9 +74,9 @@ struct ContentSourcePageView: View {
                          info: item.info,
                          badge: item.badge)
             .contextMenu {
-//                if !source.config.disableDefaultContextActions {
-//                    ReadNowButton
-//                }
+                if source.ablityNotDisabled(\.disableLibraryActions) {
+                    ReadLaterButton
+                }
                 buildActions()
             }
             .onTapGesture {
@@ -98,7 +98,7 @@ struct ContentSourcePageView: View {
 
 // MARK: - Default Actions
 extension ContentSourcePageView.Cell {
-    var ReadNowButton: some View {
+    var ReadLaterButton: some View {
         Button {
             if inReadLater {
                 DataManager.shared.removeFromReadLater(source.id, content: item.contentId)

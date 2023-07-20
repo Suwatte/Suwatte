@@ -10,11 +10,20 @@ import SwiftUI
 extension ReaderView {
     struct ChapterSheet: View {
         @EnvironmentObject var model: ReaderView.ViewModel
+        
+        var source: JSCCS? {
+            DSK.shared.getSource(id: model.content?.sourceId ?? "")
+        }
         var body: some View {
             ScrollViewReader { proxy in
                 List {
                     Section {
-                        ChapterListTile(chapter: model.activeChapter.chapter.toStored(), isCompleted: false, isNewChapter: false, isLinked: false)
+                        ChapterListTile(chapter: model.activeChapter.chapter.toStored(),
+                                        isCompleted: false,
+                                        isNewChapter: false,
+                                        isLinked: false,
+                                        showLanguageFlag: source?.ablityNotDisabled(\.disableLanguageFlags) ?? true,
+                                        showDate: source?.ablityNotDisabled(\.disableChapterDates) ?? true)
                     } header: {
                         Text("Currently Reading")
                     }
@@ -22,7 +31,12 @@ extension ReaderView {
                     Section {
                         ForEach(model.chapterList, id: \.hashValue) { chapter in
                             Button { didSelect(chapter) } label: {
-                                ChapterListTile(chapter: chapter.toStored(), isCompleted: false, isNewChapter: false, isLinked: false)
+                                ChapterListTile(chapter: chapter.toStored(),
+                                                isCompleted: false,
+                                                isNewChapter: false,
+                                                isLinked: false,
+                                                showLanguageFlag: source?.ablityNotDisabled(\.disableLanguageFlags) ?? true,
+                                                showDate: source?.ablityNotDisabled(\.disableChapterDates) ?? true)
                             }
                             .listRowBackground(model.activeChapter.chapter.id == chapter.id ? Color.accentColor.opacity(0.05) : nil)
                             .id(chapter.id)

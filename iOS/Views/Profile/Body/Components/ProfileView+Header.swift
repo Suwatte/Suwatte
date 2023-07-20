@@ -137,6 +137,8 @@ private extension Skeleton {
                         Image(systemName: action.imageName)
                     }
                     .disabled(action.option == .WEBVIEW && model.content.webUrl == nil)
+                    .disabled(action.option == .COLLECTIONS && !model.source.ablityNotDisabled(\.disableLibraryActions))
+                    .disabled(action.option == .TRACKERS && !model.source.ablityNotDisabled(\.disableTrackerLinking))
                 }
             }
 

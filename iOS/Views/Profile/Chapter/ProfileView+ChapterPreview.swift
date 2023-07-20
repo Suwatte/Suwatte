@@ -73,7 +73,9 @@ extension ProfileView.Skeleton.ChapterView {
                                             isNewChapter: newChapter,
                                             progress: progress,
                                             download: download,
-                                            isLinked: chapter.sourceId != model.source.id)
+                                            isLinked: chapter.sourceId != model.source.id,
+                                            showLanguageFlag: model.source.ablityNotDisabled(\.disableLanguageFlags),
+                                            showDate: model.source.ablityNotDisabled(\.disableChapterDates))
                             if chapter.chapterId != preview(chapters).last?.chapterId {
                                 Divider().padding(.top, 6)
                             }

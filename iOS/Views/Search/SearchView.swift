@@ -308,6 +308,12 @@ extension SearchView {
                 do {
                     let request = DSKCommon.DirectoryRequest(query: query, page: 1)
                     let controller = try DSK.shared.getContentSource(id: source.id)
+                    
+                    guard controller.ablityNotDisabled(\.disableContentLinking) else {
+                        results[source.id] = .loaded(.init(results: [], isLastPage: true))
+                        return
+                    }
+                    
                     let data: DSKCommon.PagedResult<DSKCommon.Highlight>  = try await controller.getDirectory(request: request)
                     results[source.id] = .loaded(data)
                 } catch {

@@ -23,7 +23,7 @@ struct ContentView: View {
                     STTScheduler.shared.scheduleAll()
                 default: break
                 }
-                appState.didStateChange()
+                appState.didScenePhaseChange(phase)
             }
             .environmentObject(toaster)
             .environmentObject(appState)
@@ -32,6 +32,9 @@ struct ContentView: View {
             }
             .fullScreenCover(item: $appState.readerState) { ctx in
                 ReaderGateWay(readingMode: ctx.readingMode ?? .PAGED_COMIC, chapterList: ctx.chapters, openTo: ctx.chapter, pageIndex: ctx.requestedPage)
+            }
+            .task {
+                appState.initialize()
             }
     }
 

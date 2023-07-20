@@ -22,22 +22,54 @@ extension DataManager {
     func toggleBookmark(chapter: StoredChapter, page: Int, offset: Double? = nil) {
         let realm = try! Realm()
 
-        let bookmark = realm.objects(Bookmark.self)
+        var bookmarks = realm.objects(Bookmark.self)
             .where { $0.isDeleted == false }
             .where { $0.chapter.id == chapter.id }
             .where { $0.page == page }
-            .first
-
-        if let bookmark {
+        
+        if let offset {
+            let max = offset + 250
+            let min = offset - 250
+            bookmarks = bookmarks
+                .where { $0.verticalOffset == nil || ($0.verticalOffset >= min && $0.verticalOffset <= max) }
+        }
+        
+        
+        if !bookmarks.isEmpty {
             try! realm.safeWrite {
-                bookmark.isDeleted = true
+                bookmarks.forEach {
+                    $0.isDeleted = true
+                }
             }
             validateChapterReference(id: chapter.id, realm)
-        } else {
-            let object = Bookmark()
-            object.chapter = chapter.generateReference()
-            object.page = page
-            object.verticalOffset = offset
+            return
+        }
+        
+        // Create new bookmark
+        let object = Bookmark()
+        object.chapter = chapter.generateReference()
+        object.chapter?.content = getStoredContent(chapter.contentIdentifier.id)
+        object.page = page
+        object.verticalOffset = offset
+        try! realm.safeWrite {
+            realm.add(object, update: .modified)
+        }
+    }
+    
+    func removeBookmark(_ id: String) {
+        let realm = try! Realm()
+        
+        let target = realm
+            .objects(Bookmark.self)
+            .where { $0.id == id }
+            .first
+        
+        guard let target else {
+            return
+        }
+        
+        try! realm.safeWrite {
+            target.isDeleted = false
         }
     }
 }

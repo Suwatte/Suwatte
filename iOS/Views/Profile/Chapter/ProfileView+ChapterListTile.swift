@@ -15,6 +15,8 @@ struct ChapterListTile: View {
     var progress: Double?
     var download: ICDMDownloadObject?
     var isLinked: Bool
+    var showLanguageFlag: Bool
+    var showDate: Bool
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -35,29 +37,34 @@ struct ChapterListTile: View {
             }
 
             HStack {
-                if let language = chapter.language {
-                    if let regionCode = Locale(identifier: language).regionCode, let flag = Flag(countryCode: regionCode) {
-                        Image(uiImage: flag.image(style: .none))
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 15, height: 10.7)
-                    } else if let text = Locale.current.localizedString(forLanguageCode: language) {
-                        Text(text)
-                    } else {
-                        Text("Unknown: \(language)")
-                            .italic()
+                Group {
+                    if showLanguageFlag {
+                        if let language = chapter.language {
+                            if let regionCode = Locale(identifier: language).regionCode, let flag = Flag(countryCode: regionCode) {
+                                Image(uiImage: flag.image(style: .none))
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 15, height: 10.7)
+                            } else if let text = Locale.current.localizedString(forLanguageCode: language) {
+                                Text(text)
+                            } else {
+                                Text("Unknown: \(language)")
+                                    .italic()
+                            }
+                        } else {
+                            Text("🏴‍☠️ Unknown")
+                        }
+                        
+                        if chapter.language != nil && !chapter.providers.isEmpty {
+                            Divider()
+                        }
                     }
-                } else {
-                    Text("🏴‍☠️ Unknown")
                 }
-
-                if chapter.language != nil && !chapter.providers.isEmpty {
-                    Divider()
-                }
-
                 ScanlatorView()
                 Spacer()
-                Text(chapter.date.timeAgoGrouped())
+                if showDate {
+                    Text(chapter.date.timeAgoGrouped())
+                }
             }
             .font(.footnote.weight(.semibold))
             .foregroundColor(Color.gray.opacity(0.5))

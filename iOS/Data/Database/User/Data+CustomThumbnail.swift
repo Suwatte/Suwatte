@@ -41,4 +41,10 @@ extension DataManager {
             target.isDeleted = true
         }
     }
+    
+    func getCustomThumb(id: String) -> CustomThumbnail? {
+        let realm = try! Realm()
+        let target = realm.objects(CustomThumbnail.self).where({ $0.id == id }).first
+        return target
+    }
 }

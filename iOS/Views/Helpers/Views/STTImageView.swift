@@ -15,8 +15,7 @@ struct STTImageView: View {
     var identifier: ContentIdentifier
     var mode: SwiftUI.ContentMode = .fill
     @Environment(\.placeholderImageShimmer) var shimmer
-
-    @ObservedResults(CustomThumbnail.self, where: { $0.isDeleted == false }) var thumbnails
+    @EnvironmentObject var appState: StateManager
     @StateObject private var loader = FetchImage()
     var body: some View {
         GeometryReader { proxy in
@@ -38,10 +37,9 @@ struct STTImageView: View {
             }
             .frame(width: proxy.size.width, height: proxy.size.width * 1.6, alignment: .center)
             .background(Color.gray.opacity(0.25))
-//            .modifier(DisabledNavLink())
             .animation(.easeOut(duration: 0.25), value: loader.image)
             .animation(.easeOut(duration: 0.25), value: loader.isLoading)
-            .onChange(of: customThumbanailURL) { _ in
+            .onChange(of: appState.titleHasCustomThumbs) { _ in
                 Task {
                     loader.reset()
                     load(size)
@@ -108,7 +106,11 @@ struct STTImageView: View {
     }
 
     var customThumbanailURL: URL? {
-        thumbnails.where { $0.id == identifier.id }.first?.file?.filePath
+        let id = identifier.id
+        if appState.titleHasCustomThumbs.contains(id) {
+            return DataManager.shared.getCustomThumb(id: id)?.file?.filePath
+        }
+        return nil
     }
 }
 

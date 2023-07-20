@@ -151,8 +151,6 @@ extension ProfileView.Skeleton.BottomBar {
 
 extension ProfileView.Skeleton.BottomBar {
     struct ActionsListButton: View {
-        @ObservedResults(CustomThumbnail.self, where: { $0.isDeleted == false }) var thumbnails
-        @ObservedResults(ContentLink.self, where: { $0.isDeleted == false }) var contentLinks
         @State private var inputImage: UIImage?
         @State private var presentImageSheet = false
         @State private var presentNextEntry = false
@@ -210,9 +208,7 @@ extension ProfileView.Skeleton.BottomBar {
         }
 
         var hasCustomThumb: Bool {
-            thumbnails
-                .where { $0.id == sttId.id }
-                .count >= 1
+            StateManager.shared.titleHasCustomThumbs.contains(model.contentIdentifier)
         }
 
         var SaveForLaterButton: some View {
@@ -222,6 +218,7 @@ extension ProfileView.Skeleton.BottomBar {
                 Label(isSavedForLater ? "Remove from Read Later" : "Save For Later",
                       systemImage: isSavedForLater ? "circle.slash" : "clock")
             }
+            .disabled(!model.source.ablityNotDisabled(\.disableLibraryActions))
         }
 
         @ViewBuilder
@@ -230,7 +227,10 @@ extension ProfileView.Skeleton.BottomBar {
                 Button { model.presentMigrationView.toggle() } label: {
                     Label("Migrate", systemImage: "tray.full")
                 }
+                .disabled(!model.source.ablityNotDisabled(\.disableMigrationDestination))
+
             }
+
         }
 
         @ViewBuilder
@@ -240,6 +240,8 @@ extension ProfileView.Skeleton.BottomBar {
             } label: {
                 Label("Linked Titles", systemImage: "link")
             }
+            .disabled(!model.source.ablityNotDisabled(\.disableContentLinking))
+
         }
 
         @ViewBuilder
@@ -253,6 +255,8 @@ extension ProfileView.Skeleton.BottomBar {
             } label: {
                 Label(hasCustomThumb ? "Remove Custom Thumb" : "Set Custom Thumbnail", systemImage: "photo")
             }
+            .disabled(!model.source.ablityNotDisabled(\.disableCustomThumbnails))
+
         }
     }
 }

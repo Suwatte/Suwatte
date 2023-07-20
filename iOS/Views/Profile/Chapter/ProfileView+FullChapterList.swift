@@ -108,7 +108,7 @@ struct ChapterList: View {
 
                 Menu {
                     Picker("Sort By", selection: $sortKey) {
-                        ForEach(ChapterSortOption.allCases) {
+                        ForEach(filterCases) {
                             Text($0.description)
                                 .tag($0)
                         }
@@ -158,6 +158,14 @@ struct ChapterList: View {
         }
     }
 
+    var filterCases: [ChapterSortOption] {
+        let removeDate = !model.source.ablityNotDisabled(\.disableChapterDates)
+        
+        if removeDate {
+            return ChapterSortOption.allCases.filter { $0 != .date }
+        }
+        return ChapterSortOption.allCases
+    }
     func handleReconnection() {
         DispatchQueue.main.async {
             model.setupObservers()
@@ -194,7 +202,9 @@ struct ChapterList: View {
                                 isNewChapter: newChapter,
                                 progress: progress,
                                 download: download,
-                                isLinked: chapter.sourceId != model.source.id)
+                                isLinked: chapter.sourceId != model.source.id,
+                                showLanguageFlag: model.source.ablityNotDisabled(\.disableLanguageFlags),
+                                showDate: model.source.ablityNotDisabled(\.disableChapterDates))
             }
             .buttonStyle(.plain)
 

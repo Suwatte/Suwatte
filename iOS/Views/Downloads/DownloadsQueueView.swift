@@ -284,7 +284,14 @@ extension DownloadsQueueView {
     func DefaultTile(chapter: StoredChapter, download: ICDMDownloadObject) -> some View {
         let manager = ICDM.shared
         let id = download._id
-        ListTile(chapter: chapter, isCompleted: false, isNewChapter: false, download: download, isLinked: false)
+        let source = DSK.shared.getSource(id: chapter.sourceId)
+        ListTile(chapter: chapter,
+                 isCompleted: false,
+                 isNewChapter: false,
+                 download: download,
+                 isLinked: false,
+                 showLanguageFlag: source?.ablityNotDisabled(\.disableLanguageFlags) ?? false,
+                 showDate: source?.ablityNotDisabled(\.disableChapterDates) ?? false)
             .swipeActions {
                 Button("Cancel", role: .destructive) {
                     manager.cancel(ids: [id])

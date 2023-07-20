@@ -144,4 +144,7 @@ enum STTKeys {
     static func PageLinkResolver(_ id: String) -> String {
         return "RUNNER.PLR:\(id)"
     }
+    
+    static let ContentLinkableSources = "DAISUKE.content_linkable"
+    static let MigrationAvailableSources = "DAISUKE.migration_destination"
 }

@@ -60,14 +60,20 @@ extension ProfileView.Skeleton {
         var source: AnyContentSource
         var body: some View {
             InteractiveTagView(property.tags) { tag in
-                NavigationLink {
-                    ContentSourceDirectoryView(source: source, request: generateSearchRequest(tagId: tag.id, propertyId: property.id))
-                        .navigationBarTitle(tag.label)
-                } label: {
+                if source.ablityNotDisabled(\.disableTagNavigation) {
+                    NavigationLink {
+                        ContentSourceDirectoryView(source: source, request: generateSearchRequest(tagId: tag.id, propertyId: property.id))
+                            .navigationBarTitle(tag.label)
+                    } label: {
+                        Text(tag.label)
+                            .modifier(ProfileTagStyle())
+                    }
+                    .buttonStyle(.plain)
+                } else {
                     Text(tag.label)
                         .modifier(ProfileTagStyle())
                 }
-                .buttonStyle(.plain)
+
             }
         }
         fileprivate func generateSearchRequest(tagId: String, propertyId: String) -> DSKCommon.DirectoryRequest {

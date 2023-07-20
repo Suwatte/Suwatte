@@ -220,7 +220,10 @@ extension MigrationView {
     }
 
     private func getAvailableSources() -> [AnyContentSource] {
-        return runners.filter { !preferredDestinations.map(\.id).contains($0.id) }.compactMap { DSK.shared.getSource(id: $0.id) }
+        return runners
+            .filter { !preferredDestinations.map(\.id).contains($0.id) }
+            .compactMap { DSK.shared.getSource(id: $0.id) }
+            .filter { $0.ablityNotDisabled(\.disableMigrationDestination) }
     }
 
     private func move(from source: IndexSet, to destination: Int) {
@@ -267,25 +270,25 @@ extension MigrationView {
 extension MigrationView {
     @ViewBuilder
     func ItemCell(_ content: StoredContent, _ state: ItemState) -> some View {
-        let name = runners.where { $0.id == content.sourceId }.first?.name ?? ""
         VStack {
             // Warning
             HStack {
                 Text(content.SourceName)
                 Spacer()
-                Text(name)
+                Text("Destination")
             }
             .padding(.horizontal)
             .font(.subheadline.weight(.ultraLight))
             HStack(alignment: .center) {
-                Spacer()
                 DefaultTile(entry: content.toHighlight(), sourceId: content.sourceId)
                     .frame(width: CELL_WIDTH)
+                Spacer()
                 Image(systemName: "chevron.right.circle")
                     .frame(height: CELL_WIDTH * 1.5)
                     .foregroundColor(ChevronColor(state))
-                ItemCellResult(state, content)
                 Spacer()
+
+                ItemCellResult(state, content)
             }
             .frame(height: CELL_HEIGHT)
         }
@@ -303,7 +306,7 @@ extension MigrationView {
     }
 
     private var CELL_WIDTH: CGFloat {
-        150
+        100
     }
 
     private func ChevronColor(_ state: ItemState) -> Color {
@@ -353,7 +356,6 @@ extension MigrationView {
         })
 
         for content in contents {
-            let id = content.id
             let lastChapter = DataManager.shared.getLatestStoredChapter(content.sourceId, content.contentId)?.number
             let sources = preferredDestinations
             if Task.isCancelled {

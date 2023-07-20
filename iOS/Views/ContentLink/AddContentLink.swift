@@ -16,7 +16,7 @@ struct AddContentLink: View {
     @Environment(\.presentationMode) var presentationMode
     var body: some View {
         List {
-            ForEach(model.sources.filter { $0.id != content.sourceId }, id: \.id) { source in
+            ForEach(getSources(), id: \.id) { source in
                 SourceCell(source: source)
                     .listRowInsets(.init(top: 5, leading: 0, bottom: 20, trailing: 0))
                     .listRowSeparator(.hidden)
@@ -39,9 +39,17 @@ struct AddContentLink: View {
             model.makeRequests()
         }
     }
+    
+    func getSources() -> [JSCCS] {
+         model
+            .sources
+            .filter { $0.id != content.sourceId }
+            .compactMap { try? DSK.shared.getContentSource(id: $0.id) }
+            .filter { $0.ablityNotDisabled(\.disableContentLinking) }
+    }
 
     @ViewBuilder
-    func SourceCell(source: StoredRunnerObject) -> some View {
+    func SourceCell(source: JSCCS) -> some View {
         let id = source.id
         let data = model.results[id] ?? .loading
         Section {
@@ -123,14 +131,10 @@ struct AddContentLink: View {
         HStack {
             Spacer()
             VStack(alignment: .center) {
-                Text("No Results Matching Query")
+                Text("No Results.")
                     .font(.headline)
                     .fontWeight(.light)
-                Text("Try Using a different query")
-                    .font(.subheadline)
-                    .fontWeight(.ultraLight)
             }
-
             Spacer()
         }
     }

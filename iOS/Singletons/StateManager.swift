@@ -11,6 +11,7 @@ import Network
 import Nuke
 import UIKit
 import RealmSwift
+import SwiftUI
 
 final class StateManager: ObservableObject {
     static let shared = StateManager()
@@ -18,14 +19,15 @@ final class StateManager: ObservableObject {
     let monitor = NWPathMonitor()
     let runnerListPublisher = PassthroughSubject<Void, Never>()
     @Published var readerState: ReaderState?
+    @Published var titleHasCustomThumbs: Set<String> = []
+    
+    
+    // Tokens
+    private var thumbnailToken: NotificationToken?
 
-    init() {
+    func initialize() {
         registerNetworkObserver()
-        updateAnilistNSFWSetting()
-    }
-
-    func didStateChange() {
-        updateAnilistNSFWSetting()
+        observe()
     }
 
     func registerNetworkObserver() {
@@ -37,12 +39,6 @@ final class StateManager: ObservableObject {
             } else {
                 self?.networkState = .offline
             }
-        }
-    }
-
-    func updateAnilistNSFWSetting() {
-        guard NetworkStateHigh else {
-            return
         }
     }
 
@@ -133,6 +129,29 @@ extension StateManager {
                                               message: "\(error.localizedDescription)")
                 }
                 Logger.shared.error(error, sourceId)
+            }
+        }
+    }
+    
+    func didScenePhaseChange(_ phase: ScenePhase) {
+        
+    }
+}
+
+// MARK: Custom Thumbs
+extension StateManager {
+    func observe() {
+        let realm = try! Realm()
+        let thumbnails = realm
+            .objects(CustomThumbnail.self)
+            .where { $0.isDeleted == false }
+            .where( { $0.file != nil })
+        
+        thumbnailToken = thumbnails.observe { _ in
+            let ids = thumbnails.map(\.id)
+            
+            Task { @MainActor in
+                self.titleHasCustomThumbs = Set(ids)
             }
         }
     }

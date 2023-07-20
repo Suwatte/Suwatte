@@ -143,6 +143,12 @@ final class Preferences {
     
     @UserDefault(STTKeys.LocalOrderLibrary)
     var directoryViewOrderKey = true // Default to Descending
+    
+    @UserDefault(STTKeys.ContentLinkableSources)
+    var contentLinkableSources = Set<String>()
+    
+    @UserDefault(STTKeys.MigrationAvailableSources)
+    var migrationEnabledSources = Set<String>()
 }
 
 @propertyWrapper
