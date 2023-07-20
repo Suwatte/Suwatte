@@ -13,7 +13,7 @@ struct ContentSourcePageView: View {
     @StateObject private var model = ContentSourceDirectoryView.ViewModel()
     @StateObject var manager = LocalAuthManager.shared
     @Preference(\.protectContent) var protectContent
-    @State private var selection: HighlightIndentier?
+    @State private var selection: HighlightIdentifier?
     
     var pageKey: String {
         link.key
@@ -62,7 +62,7 @@ struct ContentSourcePageView: View {
         @State var inLibrary: Bool
         @State var inReadLater: Bool
         let hideLibraryBadges: Bool
-        @Binding var selection: HighlightIndentier?
+        @Binding var selection: HighlightIdentifier?
         
         var body: some View {
             PageViewTile(runnerID: source.id,
@@ -195,22 +195,6 @@ extension ContentSourcePageView.Cell {
 // MARK: - Handle Read
 extension ContentSourcePageView.Cell {
     func handleReadContent() {
-        ToastManager.shared.loading = true
-        Task {
-            do {
-                let context = try await source.provideReaderContext(for: item.contentId)
-                Task { @MainActor in
-                    ToastManager.shared.loading = false
-                    StateManager.shared.openReader(context: context, caller: item, source: source.id)
-                }
-            } catch {
-                Task { @MainActor in
-                    ToastManager.shared.loading = false
-                    StateManager.shared.alert(title: "\(source.name)",
-                                              message: "An error occurred: \(error.localizedDescription)")
-                }
-                Logger.shared.error(error, source.id)
-            }
-        }
+        StateManager.shared.stream(item: item, sourceId: source.id)
     }
 }

@@ -10,7 +10,7 @@ import SwiftUI
 
 struct UpdateFeedView: View {
     typealias Grouped = [String: [LibraryEntry]]
-    @State var selection: HighlightIndentier?
+    @State var selection: HighlightIdentifier?
     @StateObject var model = ViewModel()
     var body: some View {
         List {
@@ -54,8 +54,15 @@ struct UpdateFeedView: View {
                         .tint(.red)
                     }
                     .onTapGesture {
-                        selection = nil
-                        selection = (entry.content!.sourceId, entry.content!.toHighlight())
+                        guard let content = entry.content else { return }
+                        let highlight = content.toHighlight()
+                        if content.streamable {
+                            StateManager.shared.stream(item: highlight, sourceId: content.sourceId)
+                        } else {
+                            selection = nil
+                            selection = (content.sourceId, highlight)
+                        }
+
                     }
                     .id(entry.hashValue)
             }

@@ -12,7 +12,7 @@ import RealmSwift
 struct ContentSourceDirectoryView: View {
     let source: JSCCS
     let request: DSKCommon.DirectoryRequest
-    @State var selection: HighlightIndentier?
+    @State var selection: HighlightIdentifier?
     @StateObject var model = ViewModel()
     var body: some View {
         DirectoryView<DSKCommon.Highlight, Cell>(model: .init(runner: source, request: request)) { data in
@@ -37,7 +37,7 @@ extension ContentSourceDirectoryView {
         var sourceID: String
         @State var inLibrary: Bool
         @State var readLater: Bool
-        @Binding var selection: HighlightIndentier?
+        @Binding var selection: HighlightIdentifier?
         var body: some View {
             ZStack(alignment: .topTrailing) {
                 DefaultTile(entry: data, sourceId: sourceID)
@@ -46,7 +46,11 @@ extension ContentSourceDirectoryView {
                 }
             }
             .onTapGesture {
-                selection = (sourceID, data)
+                if data.canStream {
+                    StateManager.shared.stream(item: data, sourceId: sourceID)
+                } else {
+                    selection = (sourceID, data)
+                }
             }
             .contextMenu {
                 Button {

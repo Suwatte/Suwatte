@@ -11,7 +11,12 @@ import RealmSwift
 
 extension StoredContent {
     func toHighlight() -> DaisukeEngine.Structs.Highlight {
-        .init(contentId: contentId, cover: cover, title: title)
+        .init(contentId: contentId,
+              cover: cover,
+              title: title,
+              additionalCovers: additionalCovers.toArray(),
+              acquisitionLink: acquisitionLink,
+              streamable: streamable)
     }
 
     func convertProperties() -> [DSKCommon.Property] {

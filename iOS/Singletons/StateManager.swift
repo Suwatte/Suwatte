@@ -115,4 +115,25 @@ extension StateManager {
         let chapter = chapters.first(where: { $0.chapterId == context.target })!
         self.readerState = .init(chapter: chapter, chapters: chapters, requestedPage: context.requestedPage, readingMode: context.readingMode)
     }
+    
+    func stream(item: DSKCommon.Highlight, sourceId: String) {
+        ToastManager.shared.loading = true
+        Task {
+            do {
+                let source = try DSK.shared.getContentSource(id: sourceId)
+                let context = try await source.provideReaderContext(for: item.contentId)
+                Task { @MainActor in
+                    ToastManager.shared.loading = false
+                    StateManager.shared.openReader(context: context, caller: item, source: sourceId)
+                }
+            } catch {
+                Task { @MainActor in
+                    ToastManager.shared.loading = false
+                    StateManager.shared.alert(title: "Error",
+                                              message: "\(error.localizedDescription)")
+                }
+                Logger.shared.error(error, sourceId)
+            }
+        }
+    }
 }

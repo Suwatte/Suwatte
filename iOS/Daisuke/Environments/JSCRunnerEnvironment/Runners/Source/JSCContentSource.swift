@@ -72,3 +72,8 @@ extension JSCCS {
 }
 
 
+extension JSCCS {
+    func ablityNotDisabled(_ path: KeyPath<SourceConfig, Bool?>) -> Bool {
+        !(self.config?[keyPath: path] ?? false)
+    }
+}

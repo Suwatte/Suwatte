@@ -53,7 +53,7 @@ struct HistoryView: View {
 extension HistoryView {
     @MainActor
     final class ViewModel: ObservableObject {
-        @Published var csSelection: HighlightIndentier?
+        @Published var csSelection: HighlightIdentifier?
         
         @Published var markers: Results<ProgressMarker>?
         @Published var chapter: StoredChapter?
@@ -108,7 +108,11 @@ extension HistoryView {
 extension HistoryView {
     func action(_ marker: ProgressMarker) {
         if let content = marker.currentChapter?.content {
-            model.csSelection = (content.sourceId, content.toHighlight())
+            if content.streamable {
+                StateManager.shared.stream(item: content.toHighlight(), sourceId: content.sourceId)
+            } else {
+                model.csSelection = (content.sourceId, content.toHighlight())
+            }
         } else if let content = marker.currentChapter?.opds {
             model.chapter = content.toStoredChapter()
         } else if let archive = marker.currentChapter?.archive {

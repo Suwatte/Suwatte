@@ -124,7 +124,7 @@ extension MigrationView {
     }
 
     enum ItemState: Equatable {
-        case idle, searching, found(_ entry: HighlightIndentier), noMatches, lowerFind(_ entry: HighlightIndentier, _ initial: Double, _ next: Double)
+        case idle, searching, found(_ entry: HighlightIdentifier), noMatches, lowerFind(_ entry: HighlightIdentifier, _ initial: Double, _ next: Double)
 
         static func == (lhs: ItemState, rhs: ItemState) -> Bool {
             switch (lhs, rhs) {
@@ -133,7 +133,7 @@ extension MigrationView {
             }
         }
 
-        func value() -> HighlightIndentier? {
+        func value() -> HighlightIdentifier? {
             switch self {
             case .searching, .idle, .noMatches: return nil
             case let .found(entry), let .lowerFind(entry, _, _):
@@ -374,7 +374,7 @@ extension MigrationView {
         })
     }
 
-    private typealias ReturnValue = (HighlightIndentier, Double)
+    private typealias ReturnValue = (HighlightIdentifier, Double)
     private func handleSourcesSearch(id: String, query: String, chapter: Double?, sources: [AnyContentSource]) async -> (String, ItemState) {
         await withTaskGroup(of: ReturnValue?.self, body: { group in
 
@@ -438,7 +438,7 @@ extension MigrationView {
 
         guard let target, let chapter, target.number >= chapter else { return nil }
 
-        let identifier: HighlightIndentier = (source.id, result)
+        let identifier: HighlightIdentifier = (source.id, result)
         return (identifier, target.number)
     }
 
@@ -516,7 +516,7 @@ extension MigrationView {
 
         let realm = try! Realm()
 
-        func doMigration(entry: HighlightIndentier, target: LibraryEntry) {
+        func doMigration(entry: HighlightIdentifier, target: LibraryEntry) {
             var stored = realm
                 .objects(StoredContent.self)
                 .where { $0.contentId == entry.entry.contentId }

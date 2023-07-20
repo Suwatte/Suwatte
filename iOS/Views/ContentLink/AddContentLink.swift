@@ -11,7 +11,7 @@ struct AddContentLink: View {
     var content: StoredContent
     @StateObject var model = SearchView.ViewModel()
     @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
-    @State private var selection: HighlightIndentier?
+    @State private var selection: HighlightIdentifier?
     @State private var isPresenting = false
     @Environment(\.presentationMode) var presentationMode
     var body: some View {
