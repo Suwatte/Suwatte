@@ -24,11 +24,7 @@ class CircularProgressBar: UIView {
         }
     }
 
-    public var safePercent: Int = 100 {
-        didSet {
-            setForegroundLayerColorForSafePercent()
-        }
-    }
+    public var safePercent: Int = 100
 
     public func setProgress(to progressConstant: Double, withAnimation: Bool) {
         var progress: Double {
@@ -53,7 +49,6 @@ class CircularProgressBar: UIView {
                 timer.invalidate()
             } else {
                 currentTime += 0.05
-                self.setForegroundLayerColorForSafePercent()
             }
         }
         timer.fire()
@@ -75,10 +70,10 @@ class CircularProgressBar: UIView {
     private func drawBackgroundLayer() {
         let path = UIBezierPath(arcCenter: pathCenter, radius: radius, startAngle: 0, endAngle: 2 * CGFloat.pi, clockwise: true)
         backgroundLayer.path = path.cgPath
-        backgroundLayer.strokeColor = UIColor.lightGray.cgColor
+        backgroundLayer.strokeColor = UIColor(Preferences.standard.accentColor).cgColor
         backgroundLayer.lineWidth = lineWidth - (lineWidth * 20 / 100)
         backgroundLayer.fillColor = UIColor.clear.cgColor
-        backgroundLayer.opacity = 0.65
+        backgroundLayer.opacity = 0.275
         layer.addSublayer(backgroundLayer)
     }
 
@@ -96,14 +91,6 @@ class CircularProgressBar: UIView {
         foregroundLayer.strokeEnd = 0
 
         layer.addSublayer(foregroundLayer)
-    }
-
-    private func setForegroundLayerColorForSafePercent() {
-//        if Int(label.text!)! >= self.safePercent {
-//            self.foregroundLayer.strokeColor = UIColor.green.cgColor
-//        } else {
-//            self.foregroundLayer.strokeColor = UIColor.red.cgColor
-//        }
     }
 
     private func setupView() {

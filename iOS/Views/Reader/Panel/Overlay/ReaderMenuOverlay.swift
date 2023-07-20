@@ -15,9 +15,10 @@ extension ReaderView {
         @Preference(\.readingLeftToRight) var readingLeftToRight
         @Preference(\.isReadingVertically) var isVertical
         @Preference(\.isPagingVertically) var isPagingVertically
-        @AppStorage(STTKeys.AppAccentColor, store: .standard) var accentColor: Color = .sttDefault
+        @Preference(\.accentColor) var accentColor
 
         var edges = KEY_WINDOW?.safeAreaInsets
+        
         var body: some View {
             ZStack(alignment: Alignment(horizontal: .trailing, vertical: .top)) {
                 VStack {
@@ -83,7 +84,6 @@ extension ReaderView {
                     HStack {
                         ActiveChapterTitleView
                         Spacer()
-                        //                        QuickActionsButton
                     }
                     .padding(.bottom, 65)
                 }
@@ -105,9 +105,6 @@ extension ReaderView {
                         .modifier(ReaderButtonModifier())
                         .foregroundColor(defaultFGColor)
                 }
-                //                .sheet(isPresented: $viewModel.config.displayComments, content: {
-                //                    Text("Comments Sheet")
-                //                })
             }
         }
 
@@ -176,11 +173,15 @@ extension ReaderView.ReaderMenuOverlay {
         @EnvironmentObject var model: ReaderView.ViewModel
         var body: some View {
             VStack(alignment: .center) {
-                PrevButton()
-                    .rotationEffect(.degrees(90))
+                if let chapter = model.PreviousChapter {
+                    ReaderNavButton(chapter: chapter, asNext: false)
+                        .rotationEffect(.degrees(90))
+                }
                 OverlaySlider
-                NextButton()
-                    .rotationEffect(.degrees(90))
+                if let chapter = model.NextChapter {
+                    ReaderNavButton(chapter: chapter)
+                        .rotationEffect(.degrees(90))
+                }
             }
             .padding()
         }
@@ -202,45 +203,26 @@ extension ReaderView.ReaderMenuOverlay {
 }
 
 extension ReaderView.ReaderMenuOverlay {
-    struct NextButton: View {
+    struct ReaderNavButton: View {
         @EnvironmentObject var model: ReaderView.ViewModel
+        let chapter: ThreadSafeChapter
+        var asNext: Bool = true
+        @Environment(\.colorScheme) var colorScheme
 
         var body: some View {
-            Button(action: {
-                       if model.NextChapter != nil {
-                           model.resetToChapter(model.NextChapter!)
-                           STTHelpers.triggerHaptic()
-                       }
-                   },
-                   label: {
-                       Text("\(Image(systemName: "chevron.right"))")
-                           .fontWeight(.semibold)
-                           .modifier(ReaderButtonModifier())
-                           .background(Color.sttGray)
-                           .clipShape(Circle())
-                           .foregroundColor(.gray)
-                   })
-                   .disabled(model.NextChapter == nil)
-        }
-    }
+            Button {
+                STTHelpers.triggerHaptic()
+                model.resetToChapter(chapter)
+            } label: {
+                Text("\(Image(systemName: "chevron.\(asNext ? "right" : "left")"))")
+                    .fontWeight(.semibold)
+                    .modifier(ReaderButtonModifier())
+                    .foregroundColor(Color(uiColor: .systemGray))
+                    .background(colorScheme == .light ? .black.opacity(0.70) : .sttGray.opacity(0.80))
+                    .clipShape(Circle())
 
-    struct PrevButton: View {
-        @EnvironmentObject var model: ReaderView.ViewModel
-
-        var body: some View {
-            Button(action: { if model.PreviousChapter != nil {
-                       STTHelpers.triggerHaptic()
-                       model.resetToChapter(model.PreviousChapter!)
-                   } },
-                   label: {
-                       Text("\(Image(systemName: "chevron.left"))")
-                           .fontWeight(.bold)
-                           .modifier(ReaderButtonModifier())
-                           .background(Color.sttGray)
-                           .clipShape(Circle())
-                           .foregroundColor(.gray)
-                   })
-                   .disabled(model.PreviousChapter == nil)
+            }
+            .disabled(model.NextChapter == nil)
         }
     }
 
@@ -259,22 +241,34 @@ extension ReaderView.ReaderMenuOverlay {
         var body: some View {
             VStack {
                 HStack {
-                    PrevButton()
+                    if let chapter = model.PreviousChapter {
+                        ReaderNavButton(chapter: chapter, asNext: false)
+                    }
                     OverlaySlider
                         .opacity(READY ? 1 : 0)
-                    NextButton()
+                    if let chapter = model.NextChapter {
+                        ReaderNavButton(chapter: chapter)
+                    }
                 }
-                .buttonStyle(.plain)
                 .rotationEffect(.degrees(readingLeftToRight ? 0 : 180), anchor: .center)
                 .opacity(isPagingVertically ? 0 : 1)
 
                 if let pageCount = model.activeChapter.pages?.last?.page.number {
                     Text("Page \(model.scrubbingPageNumber != nil ? model.scrubbingPageNumber! : model.activeChapter.requestedPageIndex + 1) of \(pageCount)")
                         .font(.footnote)
-                        .fontWeight(.bold)
+                        .fontWeight(.light)
                         .foregroundColor(.gray)
                         .padding(.bottom, edges?.bottom)
                         .opacity(READY ? 1 : 0)
+                        .transition(.opacity)
+                } else {
+                    // Placeholder to keep the ui nice n tidy
+                    Text("Page Count")
+                        .font(.footnote)
+                        .fontWeight(.bold)
+                        .foregroundColor(.gray)
+                        .padding(.bottom, edges?.bottom)
+                        .opacity(0)
                 }
             }
             .padding()
@@ -286,7 +280,7 @@ extension ReaderView.ReaderMenuOverlay {
         var OverlaySlider: some View {
             ZStack(alignment: Alignment(horizontal: .center, vertical: .center)) {
                 RoundedRectangle(cornerRadius: 100)
-                    .foregroundColor(colorScheme == .light ? .black.opacity(0.75) : .sttGray.opacity(0.80))
+                    .foregroundColor(colorScheme == .light ? .black.opacity(0.70) : .sttGray.opacity(0.80))
                     .frame(height: 25)
 
                 if model.slider.min < model.slider.max {
