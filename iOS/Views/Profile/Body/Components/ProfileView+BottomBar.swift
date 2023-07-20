@@ -48,7 +48,7 @@ extension ProfileView.Skeleton.BottomBar {
             }
             .disabled(!model.chapters.LOADED)
             .buttonStyle(.plain)
-            .foregroundColor(.accentColor)
+            .foregroundColor(.primary)
         }
     }
 }
@@ -78,9 +78,11 @@ extension ProfileView.Skeleton.BottomBar {
                 }
                 .padding(.horizontal)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.fadedPrimary)
+                .cornerRadius(7)
             }
+            .buttonStyle(.plain)
             .disabled(!model.chapters.LOADED || actionState.state == .none)
-            .buttonStyle(.bordered)
             .padding(.vertical, 5)
             .padding(.leading, 5)
 
@@ -171,7 +173,7 @@ extension ProfileView.Skeleton.BottomBar {
                 Image(systemName: "ellipsis")
                     .font(Font.title3.weight(.semibold))
                     .frame(maxWidth: .infinity)
-                    .foregroundColor(.accentColor)
+                    .foregroundColor(.primary)
                     .padding()
             }
             .buttonStyle(.plain)
