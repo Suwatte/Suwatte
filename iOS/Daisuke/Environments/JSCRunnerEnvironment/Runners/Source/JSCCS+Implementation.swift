@@ -32,26 +32,6 @@ extension JSCContentSource  {
     }
 
     
-    func onChaptersMarked(contentId: String, chapterIds: [String], completed: Bool) async throws {
-        try await callOptionalVoidMethod(method: "onChaptersMarked", arguments: [contentId, chapterIds, completed])
-    }
-    
-    func onChapterRead(contentId: String, chapterId: String) async throws {
-        try await callOptionalVoidMethod(method: "onChapterRead", arguments: [contentId, chapterId])
-    }
-    
-    func onContentsAddedToLibrary(ids: [String]) async throws {
-        try await callOptionalVoidMethod(method: "onContentsAddedToLibrary", arguments: [ids])
-    }
-    
-    func onContentsRemovedFromLibrary(ids: [String]) async throws {
-        try await callOptionalVoidMethod(method: "onContentsRemovedFromLibrary", arguments: [ids])
-    }
-    
-    func onContentsReadingFlagChanged(ids: [String], flag: LibraryFlag) async throws {
-        try await callOptionalVoidMethod(method: "onContentsReadingFlagChanged", arguments: [ids, flag.rawValue])
-    }
-    
     func getReadChapterMarkers(contentId: String) async throws -> [String] {
         return try await callMethodReturningDecodable(method: "getReadChapterMarkers", arguments: [contentId], resolvesTo: [String].self)
     }
@@ -65,15 +45,41 @@ extension JSCContentSource  {
     func getIdentifiers(for id: String) async throws -> DaisukeEngine.Structs.URLContentIdentifer? {
         return try await callMethodReturningDecodable(method: "getIdentifierForURL", arguments: [id], resolvesTo: DSKCommon.URLContentIdentifer?.self)
     }
+}
+// MARK:-  Library Event handler
+extension JSCCS {
+    func onContentsAddedToLibrary(ids: [String]) async throws {
+        try await callOptionalVoidMethod(method: "onContentsAddedToLibrary", arguments: [ids])
+    }
     
+    func onContentsRemovedFromLibrary(ids: [String]) async throws {
+        try await callOptionalVoidMethod(method: "onContentsRemovedFromLibrary", arguments: [ids])
+    }
+    
+    func onContentsReadingFlagChanged(ids: [String], flag: LibraryFlag) async throws {
+        try await callOptionalVoidMethod(method: "onContentsReadingFlagChanged", arguments: [ids, flag.rawValue])
+    }
 }
 
-// MARK: - MediaServerBridge
-extension JSCContentSource {
+// MARK: - Chapter Event Handler
+extension JSCCS {
+    func onChaptersMarked(contentId: String, chapterIds: [String], completed: Bool) async throws {
+        try await callOptionalVoidMethod(method: "onChaptersMarked", arguments: [contentId, chapterIds, completed])
+    }
+    
+    func onChapterRead(contentId: String, chapterId: String) async throws {
+        try await callOptionalVoidMethod(method: "onChapterRead", arguments: [contentId, chapterId])
+    }
+    
     func onPageRead(contentId: String, chapterId: String, page: Int) async throws {
         try await callOptionalVoidMethod(method: "onPageRead",
                                          arguments: [contentId, chapterId, page])
     }
+}
+
+// MARK: - MediaServerBridge
+extension JSCContentSource {
+
     
     func provideReaderContext(for contentId: String) async throws -> DSKCommon.ReaderContext {
         return try await callMethodReturningObject(method: "provideReaderContext",

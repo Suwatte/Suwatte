@@ -355,6 +355,17 @@ extension ReaderView.ViewModel {
         }
 
         DataManager.shared.updateContentProgress(for: contentIdentifier.id, chapter: chapter.chapter, lastPageRead: chapter.requestedPageIndex + 1, totalPageCount: chapter.pages?.count ?? 1, lastPageOffset: chapter.requestedPageOffset.flatMap(Double.init))
+        
+        let cl = chapter.chapter
+        let idx = page.index + 1
+        Task.detached {
+            guard let source = DSK.shared.getSource(id: cl.sourceId) else { return }
+            do {
+                try await source.onPageRead(contentId: cl.contentId, chapterId: cl.chapterId, page: idx)
+            } catch {
+                Logger.shared.error(error, source.id)
+            }
+        }
     }
 
     private func handleTransition(transition: ReaderView.Transition) {
@@ -415,14 +426,12 @@ extension ReaderView.ViewModel {
 
     private func handleSourceSync(contentId: String, sourceId: String, chapterId: String) {
         guard let source = DSK.shared.getSource(id: sourceId), source.intents.chapterSyncHandler else { return }
-        
         // Services
-        Task {
+        Task.detached {
             do {
                 try await source.onChapterRead(contentId: contentId, chapterId: chapterId)
-
             } catch {
-                ToastManager.shared.info("Failed to Sync Read Marker")
+                Logger.shared.error(error, source.id)
             }
         }
     }
