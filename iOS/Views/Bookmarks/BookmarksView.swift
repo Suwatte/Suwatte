@@ -38,7 +38,7 @@ struct BookmarksView: View {
             .onDisappear(perform: model.stop)
             .fullScreenCover(item: $selectedChapter, onDismiss: observe) { chapter in
                 let chapters = profileModel.chapters.value ?? [chapter]
-                ReaderGateWay(readingMode: profileModel.content.recommendedReadingMode ?? .PAGED_COMIC,
+                ReaderGateWay(readingMode: profileModel.content.recommendedReadingMode ?? .defaultPanelMode,
                               chapterList: chapters,
                               openTo: chapter,
                               pageIndex: pageIndex)

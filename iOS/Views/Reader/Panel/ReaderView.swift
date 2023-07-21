@@ -13,9 +13,6 @@ struct ReaderView: View {
     @AppStorage(STTKeys.BackgroundColor, store: .standard) var backgroundColor = Color.primary
     @AppStorage(STTKeys.UseSystemBG, store: .standard) var useSystemBG = true
     @AppStorage(STTKeys.VerticalAutoScroll, store: .standard) var verticalAutoScroll = false
-
-    @AppStorage(STTKeys.ReaderType) var readerType = PanelReadingModes.PAGED_COMIC
-
     @Preference(\.isReadingVertically) var isVertical
     @Preference(\.displayNavOverlay) var displayNavOverlay
     @Preference(\.tapSidesToNavigate) var tapSidesToNavigate

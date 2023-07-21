@@ -44,7 +44,8 @@ struct HistoryView: View {
         }
         .onDisappear(perform: model.disconnect)
         .fullScreenCover(item: $model.chapter) { chapter in
-            ReaderGateWay(readingMode: .PAGED_COMIC, chapterList: [chapter], openTo: chapter)
+            let content = DataManager.shared.getStoredContent(chapter.contentIdentifier.id)
+            ReaderGateWay(readingMode: content?.recommendedReadingMode ?? .defaultPanelMode ,chapterList: [chapter], openTo: chapter)
         }
         .environmentObject(model)
     }

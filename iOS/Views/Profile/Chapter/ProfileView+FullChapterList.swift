@@ -56,7 +56,7 @@ struct ChapterList: View {
             ChaptersView(visibleChapters)
                 .fullScreenCover(item: $selection, onDismiss: handleReconnection) { chapterId in
                     let chapter = visibleChapters.first(where: { $0.chapterId == chapterId })!
-                    ReaderGateWay(readingMode: model.content.recommendedReadingMode ?? .PAGED_COMIC, chapterList: visibleChapters, openTo: chapter)
+                    ReaderGateWay(readingMode: model.content.recommendedReadingMode ?? .defaultPanelMode, chapterList: visibleChapters, openTo: chapter)
                         .onAppear {
                             model.removeNotifier()
                         }
@@ -75,30 +75,7 @@ struct ChapterList: View {
         .toolbar {
             ToolbarItemGroup(placement: .bottomBar) {
                 if editMode?.wrappedValue == .active {
-                    Menu("Select") {
-                        Button("Select All") { selectAll() }
-                        Button("Deselect All") { deselectAll() }
-                        Divider()
-                        Button("Fill Range") { fillRange() }
-                        Button("Invert Selection") { invertSelection() }
-                        Divider()
-                        Button("Select All Below") { selectBelow() }
-                        Button("Select All Above") { selectAbove() }
-                    }
-                    Spacer()
-                    Menu("Mark") {
-                        Button("Read") { markAsRead() }
-                        Button("Unread") { markAsUnread() }
-                    }
-                    Spacer()
-                    Menu("Options") {
-                        if let readingMode = model.content.recommendedReadingMode, ![ReadingMode.NOVEL, .WEB].contains(readingMode) {
-                            Button("Download Chapter(s)") { addToDownloadQueue() }
-                            Button("Delete / Cancel Download(s)", role: .destructive) { removeDownload() }
-                        }
-
-                        Button("Reset Chapter Data", role: .destructive) { clearChapterData() }
-                    }
+                    BottomBar
                 }
             }
         }
@@ -184,6 +161,32 @@ struct ChapterList: View {
         }
 
         return id
+    }
+    
+    @ViewBuilder
+    var BottomBar: some View {
+        Menu("Select") {
+            Button("Select All") { selectAll() }
+            Button("Deselect All") { deselectAll() }
+            Divider()
+            Button("Fill Range") { fillRange() }
+            Button("Invert Selection") { invertSelection() }
+            Divider()
+            Button("Select All Below") { selectBelow() }
+            Button("Select All Above") { selectAbove() }
+        }
+        Spacer()
+        Menu("Mark") {
+            Button("Read") { markAsRead() }
+            Button("Unread") { markAsUnread() }
+        }
+        Spacer()
+        Menu("Options") {
+            Button("Download Chapter(s)") { addToDownloadQueue() }
+            Button("Delete / Cancel Download(s)", role: .destructive) { removeDownload() }
+
+            Button("Reset Chapter Data", role: .destructive) { clearChapterData() }
+        }
     }
 
     func ChaptersView(_ chapters: [StoredChapter]) -> some View {

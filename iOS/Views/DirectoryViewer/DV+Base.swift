@@ -18,7 +18,7 @@ extension DirectoryViewer {
                 .fullScreenCover(isPresented: $model.displayReader) {
                     let chapters = model.preppedChapters!
                     let target = chapters.first!
-                    ReaderGateWay(readingMode: .PAGED_COMIC, chapterList: chapters, openTo: target)
+                    ReaderGateWay(readingMode: .defaultPanelMode, chapterList: chapters, openTo: target)
                 }
                 .environmentObject(model)
         }

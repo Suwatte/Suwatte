@@ -141,9 +141,15 @@ extension SettingsView {
     struct ReaderSection: View {
         @Preference(\.forceTransitions) var forceTransitions
         @Preference(\.enableReaderHaptics) var readerHaptics
-
+        @Preference(\.defaultPanelReadingMode) var readerMode
         var body: some View {
             Section {
+                Picker("Default Panel Mode", selection: $readerMode) {
+                    ForEach(ReadingMode.PanelCases(), id: \.hashValue) { mode in
+                        Text(mode.description)
+                            .tag(mode)
+                    }
+                }
                 Toggle("Transition Pages", isOn: $forceTransitions)
                 Toggle("Haptic Feedback", isOn: $readerHaptics)
             } header: {

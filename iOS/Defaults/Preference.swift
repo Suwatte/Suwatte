@@ -144,11 +144,8 @@ final class Preferences {
     @UserDefault(STTKeys.LocalOrderLibrary)
     var directoryViewOrderKey = true // Default to Descending
     
-    @UserDefault(STTKeys.ContentLinkableSources)
-    var contentLinkableSources = Set<String>()
-    
-    @UserDefault(STTKeys.MigrationAvailableSources)
-    var migrationEnabledSources = Set<String>()
+    @UserDefault(STTKeys.DefaultPanelReadingMode)
+    var defaultPanelReadingMode = ReadingMode.PAGED_COMIC
 }
 
 @propertyWrapper

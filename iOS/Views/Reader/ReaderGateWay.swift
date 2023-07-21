@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ReaderGateWay: View {
-    var readingMode: ReadingMode
+    var readingMode: ReadingMode = .defaultPanelMode
     var chapterList: [StoredChapter]
     var openTo: StoredChapter
     var pageIndex: Int?
@@ -17,14 +17,12 @@ struct ReaderGateWay: View {
 
     var body: some View {
         Group {
-            switch readingMode {
-            case .NOVEL:
-                EmptyView()
-                    .closeButton()
-            case .WEB:
-                WebReader(chapter: openTo)
-            default:
+            if readingMode.isPanelMode {
                 ReaderView(model: .init(chapterList: chapterList, openTo: openTo, title: title, pageIndex: pageIndex, readingMode: readingMode))
+            } else if readingMode == .WEB {
+                WebReader(chapter: openTo)
+            } else {
+                Text("Novel Placeholder")
             }
         }
         .tint(accentColor)

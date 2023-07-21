@@ -31,7 +31,7 @@ struct ContentView: View {
                 selection = InitialSelection
             }
             .fullScreenCover(item: $appState.readerState) { ctx in
-                ReaderGateWay(readingMode: ctx.readingMode ?? .PAGED_COMIC, chapterList: ctx.chapters, openTo: ctx.chapter, pageIndex: ctx.requestedPage)
+                ReaderGateWay(readingMode: ctx.readingMode ?? .defaultPanelMode, chapterList: ctx.chapters, openTo: ctx.chapter, pageIndex: ctx.requestedPage)
             }
             .task {
                 appState.initialize()

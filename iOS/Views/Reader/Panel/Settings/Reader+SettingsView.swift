@@ -50,7 +50,6 @@ extension ReaderView {
                 Section {
                     // Viewer
                     ModeSelectorView()
-                        .defaultAppStorage(.init(suiteName: model.contentIdentifier.id) ?? .standard)
 
                 } header: {
                     Text("Reading Mode")
@@ -216,12 +215,12 @@ extension ReaderView {
     }
 
     struct ModeSelectorView: View {
-        @AppStorage(STTKeys.ReaderType) var mode = PanelReadingModes.PAGED_COMIC
+        @AppStorage(STTKeys.ReaderType) var mode = ReadingMode.PAGED_COMIC
         @EnvironmentObject var model: ReaderView.ViewModel
 
         var body: some View {
             Picker("Reading Mode", selection: $mode) {
-                ForEach(PanelReadingModes.allCases, id: \.rawValue) {
+                ForEach(ReadingMode.PanelCases(), id: \.rawValue) {
                     Text($0.description)
                         .tag($0)
                 }
@@ -229,29 +228,12 @@ extension ReaderView {
             .onChange(of: mode, perform: { v in
                 Task { @MainActor in
                     model.setReadingModeForContent(v)
-                    model.updateViewerMode(with: mode)
                 }
             })
         }
     }
 }
 
-extension PanelReadingModes {
-    var description: String {
-        switch self {
-        case .PAGED_MANGA:
-            return "RTL (Manga)"
-        case .PAGED_COMIC:
-            return "LTR (Comic)"
-        case .VERTICAL:
-            return "Webtoon"
-        case .VERTICAL_SEPARATED:
-            return "Webtoon Padded"
-        case .PAGED_VERTICAL:
-            return "Paged Vertical"
-        }
-    }
-}
 
 enum ReaderBlendMode: Int, CaseIterable {
     case normal, screen, multiply

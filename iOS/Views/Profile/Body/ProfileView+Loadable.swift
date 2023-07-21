@@ -45,7 +45,7 @@ extension ProfileView {
                                      let chapterList = viewModel.chapters.value ?? []
                                      let chapter = chapterList.first(where: { $0.id == id })
                                      if let chapter = chapter {
-                                         ReaderGateWay(readingMode: viewModel.content.recommendedReadingMode ?? .PAGED_COMIC, chapterList: chapterList, openTo: chapter)
+                                         ReaderGateWay(readingMode: viewModel.content.recommendedReadingMode ?? .defaultPanelMode, chapterList: chapterList, openTo: chapter)
                                              .onAppear {
                                                  viewModel.removeNotifier()
                                              }

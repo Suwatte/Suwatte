@@ -145,6 +145,5 @@ enum STTKeys {
         return "RUNNER.PLR:\(id)"
     }
     
-    static let ContentLinkableSources = "DAISUKE.content_linkable"
-    static let MigrationAvailableSources = "DAISUKE.migration_destination"
+    static let DefaultPanelReadingMode = "READER.panel_default_mode"
 }

@@ -24,26 +24,54 @@ enum ReadingMode: Int, CaseIterable, Hashable, UserDefaultsSerializable {
          PAGED_COMIC, // Page 1 ----> Page 2
          VERTICAL,
          VERTICAL_SEPARATED, // Vertical with Slight Gap Between Pages
-         NOVEL, // Opens In Novel Reader
+         PAGED_VERTICAL, // A Vertical Pager
          WEB, // Opens using the chapters WebUrl
-         PAGED_VERTICAL // A Vertical Pager
-
+        NOVEL_PAGED_MANGA,
+        NOVEL_PAGED_COMIC,
+        NOVEL_PAGED_VERTICAL,
+        NOVEL_WEBTOON
+    
     var isPanelMode: Bool {
         switch self {
-        case .NOVEL, .WEB:
+        case .NOVEL_WEBTOON, .NOVEL_PAGED_COMIC, .NOVEL_PAGED_VERTICAL, .NOVEL_PAGED_MANGA, .WEB:
             return false
         default:
             return true
         }
     }
-}
-
-enum PanelReadingModes: Int, CaseIterable, Hashable, UserDefaultsSerializable {
-    case PAGED_MANGA, // Page 2 <---- Page 1
-         PAGED_COMIC, // Page 1 ----> Page 2
-         VERTICAL,
-         VERTICAL_SEPARATED, // Vertical with Slight Gap Between Pages
-         PAGED_VERTICAL // A Vertical Pager
+        
+    static func PanelCases() -> [Self] {
+        Self.allCases.filter { $0.isPanelMode }
+    }
+    
+    static var defaultPanelMode: Self {
+        Preferences.standard.defaultPanelReadingMode
+    }
+    
+    var description: String {
+        switch self {
+        case .PAGED_MANGA:
+            return "RTL (Manga)"
+        case .PAGED_COMIC:
+            return "LTR (Comic)"
+        case .VERTICAL:
+            return "Webtoon"
+        case .VERTICAL_SEPARATED:
+            return "Webtoon Padded"
+        case .PAGED_VERTICAL:
+            return "Paged Vertical"
+        case .WEB:
+            return "WebView"
+        case .NOVEL_WEBTOON:
+            return "Vertical Scroll"
+        case .NOVEL_PAGED_COMIC:
+            return "Paged: Left to Right"
+        case .NOVEL_PAGED_MANGA:
+            return "Paged: Right to Left"
+        case .NOVEL_PAGED_VERTICAL:
+            return "Paged: Vertical"
+        }
+    }
 }
 
 extension DaisukeEngine.Structs {
