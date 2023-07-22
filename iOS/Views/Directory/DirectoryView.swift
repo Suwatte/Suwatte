@@ -21,7 +21,7 @@ struct DirectoryView<T: Codable & Hashable, C: View>: View {
     }
     
     var fullSearch: Bool {
-        model.request.context == nil && model.request.tag == nil
+        model.request.tag == nil && (model.config?.searchable ?? false)
     }
     
     var body: some View {
@@ -60,7 +60,7 @@ struct DirectoryView<T: Codable & Hashable, C: View>: View {
 
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
-                if fullSearch {
+                if fullSearch || !model.filters.isEmpty {
                     Button { model.presentFilters.toggle() } label: {
                         Image(systemName: "line.3.horizontal.decrease")
                     }

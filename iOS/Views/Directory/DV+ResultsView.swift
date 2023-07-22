@@ -48,7 +48,7 @@ extension DirectoryView {
             }
             
             .layout(createCustomLayout: {
-                DynamicGridLayout(header: .estimated(hasHeader ? 32: 0), footer: .estimated(44))
+                DynamicGridLayout(header: hasHeader ? .estimated(32) : .absolute(0), footer: .estimated(44))
             }, configureCustomLayout: { layout in
                 layout.invalidateLayout()
             })
@@ -63,7 +63,7 @@ extension DirectoryView {
         }
         
         var hasHeader: Bool {
-            model.resultCount != nil || !model.sortOptions.isEmpty
+            model.resultCount != nil || !model.configSort.options.isEmpty
         }
     }
 }
@@ -77,30 +77,36 @@ extension DirectoryView.ResultsView {
             HStack {
                 if let resultCount = model.resultCount {
                     Text("\(resultCount) Results")
+                        .foregroundColor(Color.primary.opacity(0.7))
                 }
                 Spacer()
-                if !model.sortOptions.isEmpty {
+                if !model.configSort.options.isEmpty {
                     Button {
                         dialog.toggle()
                     } label: {
                         HStack {
                             Text(title)
-                            Image(systemName: "chevron.down")
+                            Image(systemName: model.request.sortSelection?.ascending ?? false  ? "chevron.up" :  "chevron.down")
                         }
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                    .tint(.accentColor)
                     .multilineTextAlignment(.trailing)
-                    .disabled(model.sortOptions.isEmpty) // Redundant
                 }
             }
-            .font(.subheadline.weight(.light))
-            .foregroundColor(Color.primary.opacity(0.7))
+            .font(.footnote.weight(.light))
             .padding(.top)
-            .confirmationDialog("Sort Results", isPresented: $dialog, titleVisibility: .visible) {
-                ForEach(model.sortOptions, id: \.key) { sorter in
+            .confirmationDialog("Sort Options", isPresented: $dialog, titleVisibility: .visible) {
+                ForEach(model.configSort.options, id: \.key) { sorter in
                     Button(sorter.label) {
                         withAnimation {
-                            model.request.sortKey = sorter.key
+                            
+                            if let currentSelection = model.request.sortSelection, currentSelection.key == sorter.key, model.configSort.canChangeOrder {
+                                model.request.sortSelection = .init(key: sorter.key, ascending: !currentSelection.ascending)
+                            } else {
+                                model.request.sortSelection = .init(key: sorter.key, ascending: false)
+                            }
                             model.request.page = 1
                             Task {
                                 await model.makeRequest()
@@ -113,9 +119,9 @@ extension DirectoryView.ResultsView {
         }
         
         var title: String {
-            let current = model.request.sortKey
-            let label = model.sortOptions.first(where: { $0.key == current })?.label
-            return label ?? model.sortOptions.first?.label ?? "Default"
+            let current = model.request.sortSelection?.key
+            let label = model.configSort.options.first(where: { $0.key == current })?.label
+            return label ?? model.configSort.options.first?.label ?? "Default"
         }
     }
 

@@ -50,6 +50,11 @@ extension ProfileView.Skeleton {
             VStack(alignment: .leading, spacing: 0) {
                 if let properties = model.content.properties, !properties.isEmpty, let core = properties.get(index: 0) {
                     PropertyTagsView(property: core, source: model.source)
+                } else if let nonInteractive = model.content.nonInteractiveProperties, !nonInteractive.isEmpty, let core = nonInteractive.first {
+                    InteractiveTagView(core.tags) { tag in
+                        Text(tag)
+                            .modifier(ProfileTagStyle())
+                    }
                 }
             }
         }

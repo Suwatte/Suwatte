@@ -295,7 +295,7 @@ extension ChapterList {
     }
 
     func filterLanguages(_ chapter: StoredChapter) -> Bool {
-        guard let lang = chapter.language else { return false }
+        guard let lang = chapter.language else { return true }
         return !filteredLanguages.contains(lang)
     }
 }

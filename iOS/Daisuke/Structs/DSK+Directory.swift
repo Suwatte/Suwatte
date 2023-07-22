@@ -24,8 +24,27 @@ extension DSKCommon {
     }
     
     struct DirectoryConfig: Parsable, Hashable {
-        let sortOptions: [Option]?
+        let sort: Sort?
         let filters: [DirectoryFilter]?
+        var searchable: Bool?
+        var filterable: Bool?
+        var sortable: Bool?
+        
+        var canSearch: Bool {
+            searchable ?? false
+        }
+        
+        var canFilter: Bool {
+            filterable ?? false
+        }
+        
+        var canSort: Bool {
+            sortable ?? false
+        }
+        struct Sort: JSCObject {
+            let options: [Option]
+            let canChangeOrder: Bool
+        }
     }
     
     struct DirectoryFilter: Parsable, Hashable {
@@ -45,15 +64,20 @@ extension DSKCommon {
     struct DirectoryRequest: Parsable, Hashable {
         var query: String?
         var page: Int
-        var sortKey: String?
         var filters: [String: AnyCodable]?
         var tag: RequestTag?
         var context: [String: AnyCodable]?
         var configKey: String?
+        var sortSelection: SortSelection?
         
         struct RequestTag: Parsable, Hashable {
             var tagId: String
             var propertyId: String
+        }
+        
+        struct SortSelection: JSCObject {
+            let key: String
+            var ascending: Bool
         }
     }
     

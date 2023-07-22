@@ -24,8 +24,9 @@ extension DirectoryView {
         @Published var presentHistory = false
         @Published var callFromHistory = false
 
-        var sortOptions: [DSKCommon.Option] {
-            config?.sortOptions ?? []
+        let context: DSKCommon.CodableDict?
+        var configSort: DSKCommon.DirectoryConfig.Sort {
+            config?.sort ?? .init(options: [], canChangeOrder: false)
         }
         
         var filters: [DSKCommon.DirectoryFilter] {
@@ -35,6 +36,7 @@ extension DirectoryView {
         init(runner: JSCRunner, request: DSKCommon.DirectoryRequest) {
             self.runner = runner
             self.request = request
+            self.context = request.context
         }
     }
 }
@@ -62,7 +64,9 @@ extension DirectoryView.ViewModel {
         let key = request.configKey
         request = .init(page: 1, configKey: key)
         request.query = nil
-        request.sortKey = sortOptions.first?.key
+        if let option = configSort.options.first {
+            request.sortSelection = .init(key: option.key, ascending: false)
+        }
     }
 }
 
@@ -72,10 +76,10 @@ extension DirectoryView.ViewModel {
         // Update State
         await MainActor.run {
             result = .loading
-            if request.sortKey == nil, let firstKey = sortOptions.first?.key {
-                request.sortKey = firstKey
+            if request.sortSelection == nil, let option = configSort.options.first {
+                request.sortSelection = .init(key: option.key, ascending: false)
             }
-
+            request.context = context
         }
         
         do {
