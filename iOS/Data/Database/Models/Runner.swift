@@ -125,9 +125,10 @@ extension DataManager {
             if let listURL {
                 obj.listURL = listURL.absoluteString
             }
-
-            obj.executable = CreamAsset.create(object: obj, propName: StoredRunnerObject.RUNNER_KEY, url: url)
-
+            
+            if obj.executable == nil {
+                obj.executable = CreamAsset.create(object: obj, propName: StoredRunnerObject.RUNNER_KEY, url: url)
+            }
             if let thumbnail = info.thumbnail {
                 if thumbnail.contains("http") {
                     if URL(string: thumbnail) != nil {
@@ -149,7 +150,6 @@ extension DataManager {
             .objects(StoredRunnerObject.self)
             .where({ $0.id == id && !$0.isDeleted })
             .first
-        
         return target?.executable?.filePath
     }
     

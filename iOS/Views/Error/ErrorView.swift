@@ -13,12 +13,15 @@ struct ErrorView: View {
     var action: () -> Void
     var body: some View {
         Group {
-            if case DaisukeEngine.Errors.Cloudflare = error, let runnerID = runnerID {
-                CloudFlareErrorView(sourceID: runnerID, action: action)
-            } else {
-                BaseErrorView
+            VStack(alignment: .center) {
+                if case DaisukeEngine.Errors.Cloudflare = error, let runnerID = runnerID {
+                    CloudFlareErrorView(sourceID: runnerID, action: action)
+                } else {
+                    BaseErrorView
+                }
             }
         }
+        .frame(maxWidth: .infinity)
         .padding()
     }
 

@@ -40,6 +40,28 @@ final class DaisukeEngine: NSObject {
         // Simple Log Message
         Logger.shared.log(level: .log, "Engine Ready!", "DaisukeEngine")
     }
+    
+    func getCommons() {
+        if !commons.exists {
+            Task {
+                await MainActor.run {
+                    ToastManager.shared.loading = true
+                }
+                do {
+                    try await downloadCommonsIfNecessary()
+                } catch {
+                    Logger.shared.error(error, "Daisuke")
+                    Task { @MainActor in
+                        StateManager.shared.alert(title: "Error", message: "Failed to download commons library. Without this runners will not function")
+                    }
+                }
+                
+                Task { @MainActor in
+                    ToastManager.shared.loading = false
+                }
+            }
+        }
+    }
 }
 
 // MARK: - Helpers
@@ -95,7 +117,7 @@ extension DaisukeEngine {
         let context = newJSCContext()
         
         // Required File Routes
-        let commonsPath =            FileManager
+        let commonsPath = FileManager
             .default
             .applicationSupport
             .appendingPathComponent("Runners", isDirectory: true)

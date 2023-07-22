@@ -26,6 +26,9 @@ struct SuwatteApp: App {
                 .environmentObject(navModel)
                 .accentColor(accentColor)
                 .tint(accentColor)
+                .task {
+                    DSK.shared.getCommons()
+                }
         }
     }
 }
