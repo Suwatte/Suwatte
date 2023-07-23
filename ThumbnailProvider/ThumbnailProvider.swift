@@ -15,8 +15,10 @@ class ThumbnailProvider: QLThumbnailProvider {
         
         do {
             // Get Thumbnail
+            print("Called", url)
             let image = try ArchiveHelper().getThumbnail(for: url)
             
+            print("Done", url)
             let maximumSize = request.maximumSize
             let originalSize = image.size
             
@@ -36,6 +38,8 @@ class ThumbnailProvider: QLThumbnailProvider {
             }
             
         } catch {
+            print(error)
+            print("CAUGHT")
             Task { @MainActor in
                 handler(nil, error)
             }

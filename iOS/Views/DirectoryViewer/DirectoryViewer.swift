@@ -93,7 +93,7 @@ struct DirectoryViewer: View {
         })
         
         .toolbar {
-            ToolbarItemGroup {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
                 ProgressView()
                     .opacity(model.working ? 1 : 0)
                 

@@ -10,6 +10,7 @@ import ZIPFoundation
 
 extension ArchiveHelper {
     class ZipController: ArchiveController {
+        
         func getImagePaths(for path: URL) throws -> [String] {
             let archive = getZIPArchive(for: path)
             
@@ -19,7 +20,7 @@ extension ArchiveHelper {
             
             let files = archive
                 .sorted(by: { $0.path < $1.path })
-                .filter { $0.type == .file && ($0.path.hasSuffix("png") || $0.path.hasSuffix("jpg")) }
+                .filter { $0.type == .file && isImagePath($0.path) }
                 .map { $0.path }
 
             return files
@@ -31,8 +32,9 @@ extension ArchiveHelper {
             guard let archive else {
                 throw Errors.ArchiveNotFound
             }
-            
-            return archive.reversed().count
+            return archive
+                .filter { $0.type == .file && isImagePath($0.path) }
+                .count
         }
         
         func getThumbnailImage(for path: URL) throws -> UIImage {
@@ -83,7 +85,7 @@ extension ArchiveHelper {
         func getThumbnail(for archive: Archive) -> String? {
             let entry = archive
                 .sorted(by: { $0.path < $1.path })
-                .first(where: { $0.type == .file && ($0.path.hasSuffix("png") || $0.path.hasSuffix("jpg")) })
+                .first(where: { $0.type == .file && isImagePath($0.path) })
             if let entry = entry {
                 return entry.path
             }
@@ -99,7 +101,31 @@ extension ArchiveHelper {
             var out = Data()
 
             _ = try archive.extract(file) { data in
+                out.append(data)
+            }
 
+            return out
+        }
+        
+        func getComicInfo(for url: URL) throws -> Data? {
+            let archive = getZIPArchive(for: url)
+            
+            guard let archive else {
+                throw Errors.ArchiveNotFound
+            }
+            
+            let target = archive
+                .first(where: { entry in
+                    entry.type == .file && entry.path.lowercased().contains("comicinfo.xml")
+                })
+            
+            guard let target else {
+                return nil // Return nil if file does not have info.xml
+            }
+            
+            var out = Data()
+
+            _ = try archive.extract(target) { data in
                 out.append(data)
             }
 

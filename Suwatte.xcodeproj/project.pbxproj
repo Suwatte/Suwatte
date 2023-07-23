@@ -301,7 +301,7 @@
 		DFC39E9528A093D700450EC4 /* SavedListsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC39E9428A093D700450EC4 /* SavedListsView.swift */; };
 		DFC39E9728A0B0BC00450EC4 /* Runner.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC39E9628A0B0BC00450EC4 /* Runner.swift */; };
 		DFC39E9C28A164A600450EC4 /* ToastModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC39E9B28A164A500450EC4 /* ToastModifier.swift */; };
-		DFC39E9E28A1F9F000450EC4 /* ContentSourceDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC39E9D28A1F9EF00450EC4 /* ContentSourceDownloadManager.swift */; };
+		DFC39E9E28A1F9F000450EC4 /* JSCCSDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC39E9D28A1F9EF00450EC4 /* JSCCSDownloadManager.swift */; };
 		DFC9B0F7280A67A400C675EF /* Vertical+Zoomable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC9B0F6280A67A400C675EF /* Vertical+Zoomable.swift */; };
 		DFCE6EB6280148E4002E220C /* ReaderView+ChapterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFCE6EB5280148E4002E220C /* ReaderView+ChapterSheet.swift */; };
 		DFCE6EB828014F8D002E220C /* ReaderCustomOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFCE6EB728014F8D002E220C /* ReaderCustomOverlay.swift */; };
@@ -638,7 +638,7 @@
 		DFC39E9428A093D700450EC4 /* SavedListsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedListsView.swift; sourceTree = "<group>"; };
 		DFC39E9628A0B0BC00450EC4 /* Runner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Runner.swift; sourceTree = "<group>"; };
 		DFC39E9B28A164A500450EC4 /* ToastModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastModifier.swift; sourceTree = "<group>"; };
-		DFC39E9D28A1F9EF00450EC4 /* ContentSourceDownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentSourceDownloadManager.swift; sourceTree = "<group>"; };
+		DFC39E9D28A1F9EF00450EC4 /* JSCCSDownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSCCSDownloadManager.swift; sourceTree = "<group>"; };
 		DFC9B0F6280A67A400C675EF /* Vertical+Zoomable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Vertical+Zoomable.swift"; sourceTree = "<group>"; };
 		DFCE6EAF280108EA002E220C /* Suwatte.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Suwatte.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DFCE6EB5280148E4002E220C /* ReaderView+ChapterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReaderView+ChapterSheet.swift"; sourceTree = "<group>"; };
@@ -1072,7 +1072,7 @@
 				DF32646228029A380066EB08 /* STTImageProvider.swift */,
 				DF72E48E281269A900E40E52 /* SauceNao.swift */,
 				DFAC77972815D48D00AF6394 /* STTHelper.swift */,
-				DFC39E9D28A1F9EF00450EC4 /* ContentSourceDownloadManager.swift */,
+				DFC39E9D28A1F9EF00450EC4 /* JSCCSDownloadManager.swift */,
 				DF67EB8B28E3F22700076FF5 /* Logger.swift */,
 				DF67EB9028E4CB6500076FF5 /* ToastManager.swift */,
 				DF67EB9228E7A62D00076FF5 /* MigrationManager.swift */,
@@ -2214,7 +2214,7 @@
 				DFBE48522A25BE7B000ABA16 /* CustomThumbnail.swift in Sources */,
 				DF16F2B12A5F31E000D7AFBB /* DSK+Page.swift in Sources */,
 				DF67EB9328E7A62D00076FF5 /* MigrationManager.swift in Sources */,
-				DFC39E9E28A1F9F000450EC4 /* ContentSourceDownloadManager.swift in Sources */,
+				DFC39E9E28A1F9F000450EC4 /* JSCCSDownloadManager.swift in Sources */,
 				DF8D0B7C2800EE48003E4C3E /* MoreView.swift in Sources */,
 				DF8D0BAC2800EE48003E4C3E /* ErrorView.swift in Sources */,
 				DFF363262863E4AF006D02C5 /* MigrationView.swift in Sources */,
@@ -2696,7 +2696,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ceres.suwatte.ThumbnailProvider;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -2725,7 +2725,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ceres.suwatte.ThumbnailProvider;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;

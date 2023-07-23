@@ -172,3 +172,10 @@ extension File {
         return chapter
     }
 }
+
+
+extension File {
+    func parseMetaData() {
+        
+    }
+}

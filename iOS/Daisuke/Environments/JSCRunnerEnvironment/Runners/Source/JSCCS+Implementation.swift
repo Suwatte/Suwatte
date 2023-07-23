@@ -77,7 +77,7 @@ extension JSCCS {
     }
 }
 
-// MARK: - MediaServerBridge
+// MARK: - StreamContextProvider
 extension JSCContentSource {
 
     
@@ -105,5 +105,16 @@ extension JSCContentSource {
         let object = try highlight.asDictionary()
         return try await callOptionalVoidMethod(method: "didTriggerContextAction",
                                                 arguments: [object, key])
+    }
+}
+
+
+// MARK: - Acquirable
+extension JSCCS {
+    func overrrideDownloadRequest(_ url: String) async throws -> DSKCommon.Request? {
+        guard runnerClass.hasProperty("overrideDownloadRequest") else {
+            return nil
+        }
+        return try await callMethodReturningDecodable(method: "overrideDownloadRequest", arguments: [url], resolvesTo: DSKCommon.Request.self)
     }
 }

@@ -76,16 +76,28 @@ struct ContentSourcePageView: View {
             .contextMenu {
                 if source.ablityNotDisabled(\.disableLibraryActions) {
                     ReadLaterButton
+                    Divider()
+                }
+                if let acqStr = item.acquisitionLink {
+                    if let url = URL(string: acqStr) {
+                        Button {
+                            download(url)
+                        } label: {
+                            Label("Download", systemImage: "externaldrive.badge.plus")
+                        }
+                    }
+                } else {
+                    Text("Invalid URL Format for Acquisition Link")
                 }
                 buildActions()
             }
             .onTapGesture {
                 handleTap()
             }
-
+            
         }
         
-
+        
         func badgeColor() -> Color? {
             let libraryBadge = (inLibrary || inReadLater) && !hideLibraryBadges
             if libraryBadge {
@@ -196,5 +208,35 @@ extension ContentSourcePageView.Cell {
 extension ContentSourcePageView.Cell {
     func handleReadContent() {
         StateManager.shared.stream(item: item, sourceId: source.id)
+    }
+}
+
+
+// MARK: - Download
+
+extension ContentSourcePageView.Cell {
+    func download(_ url: URL) {
+        let title = item.title
+        let defaultRequest = URLRequest(url: url)
+        Task {
+            do {
+                let thumbnailURL = URL(string: item.cover)
+                var thumbnailRequest: URLRequest? = nil
+                if let thumbnailURL {
+                    if source.intents.imageRequestHandler {
+                        thumbnailRequest = try (await source.willRequestImage(imageURL: thumbnailURL)).toURLRequest()
+                    }
+                }
+                
+                let downloadRequest = try await source.overrrideDownloadRequest(url.absoluteString)?.toURLRequest() ?? defaultRequest
+                let download = DirectoryViewer.DownloadManager.DownloadObject.init(url: url, request: downloadRequest, title: title, thumbnailReqeust: thumbnailRequest)
+                DirectoryViewer.DownloadManager.shared.addToQueue(download)
+            } catch {
+                Logger.shared.error(error, source.id)
+                Task { @MainActor in
+                    StateManager.shared.alert(title: "Error", message: error.localizedDescription)
+                }
+            }
+        }
     }
 }

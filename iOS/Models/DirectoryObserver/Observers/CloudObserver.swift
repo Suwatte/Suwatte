@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Fuzi
 
 class CloudObserver: DirectoryObserver {
     private let metadataQuery = NSMetadataQuery()

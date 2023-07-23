@@ -17,8 +17,14 @@ extension DirectoryViewer {
             .shared
             .getDocumentDiretoryURL()
             .appendingPathComponent("Library", isDirectory: true)
-            .appendingPathComponent("STTDownloads", isDirectory: true)
+            .appendingPathComponent("Downloads", isDirectory: true)
         private let tempDirecotry = FileManager.default.documentDirectory.appendingPathComponent("__temp__")
+        
+        init() {
+            if !finalDirectory.exists {
+                finalDirectory.createDirectory()
+            }
+        }
         func startDownloadQueue() {
             if let first = downloads.first {
                 startDownload(first)
@@ -73,27 +79,33 @@ extension DirectoryViewer {
                 didFinishLastDownload()
             }
             
-            let downloadPath = tempDirecotry.appendingPathComponent(download.url.lastPathComponent)
-            let destination: DownloadRequest.Destination = { _, _ in
-                (downloadPath, [.removePreviousFile, .createIntermediateDirectories])
+            let downloadName = download.url.lastPathComponent
+            let destination: DownloadRequest.Destination = { [unowned self] _, response in
+                let downloadPath = tempDirecotry.appendingPathComponent(response.suggestedFilename ?? download.url.lastPathComponent)
+                return (downloadPath, [.removePreviousFile, .createIntermediateDirectories])
             }
             
-            let final = finalDirectory.appendingPathComponent(download.url.lastPathComponent)
             download.status = .active
             let req = AF
                 .download(download.request, to: destination)
                 .downloadProgress { progress in
                     download.progress = progress.fractionCompleted
                 }
-                .response { response in
+                .response {[unowned self] response in
                     do {
                         let url = try response.result.get()
+                       
                         if let url {
-                            try FileManager.default.moveItem(at: url, to: final)
+                            let finalLocation = finalDirectory
+                                .appendingPathComponent(url.lastPathComponent)
+                            try FileManager.default.moveItem(at: url, to: finalLocation)
+                        } else {
+                            throw DSK.Errors.NamedError(name: "DownloadManager", message: "Destination URL was not provided")
                         }
                         download.status = .completed
                     } catch {
                         download.status = .failing
+                        Logger.shared.error(error, "[DownloadManager]")
                     }
                     self.didFinishLastDownload()
                 }
@@ -108,14 +120,14 @@ extension DirectoryViewer.DownloadManager {
         var url: URL
         var request: URLRequest
         var title: String
-        var thumbnailReqeust: URLRequest
+        var thumbnailReqeust: URLRequest?
         var status: DownloadStatus = .queued
         var timestamp = Date.now
         var progress: Double = .zero
         
         private var downloadRequest: DownloadRequest?
         
-        init(url: URL, request: URLRequest, title: String, thumbnailReqeust: URLRequest) {
+        init(url: URL, request: URLRequest, title: String, thumbnailReqeust: URLRequest?) {
             self.url = url
             self.title = title
             self.thumbnailReqeust = thumbnailReqeust
@@ -178,8 +190,8 @@ extension DirectoryViewer.DownloadQueueSheet {
         let size = CGFloat(80)
         var body: some View {
             HStack {
-                // TODO: Change this to use the STTImageView
-                BaseImageView(request: .init(urlRequest: download.thumbnailReqeust))
+                let request = download.thumbnailReqeust.flatMap { ImageRequest(urlRequest: $0) }
+                BaseImageView(request: request)
                 .frame(minWidth: 0, idealWidth: size, maxWidth: size, minHeight: 0, idealHeight: size * 1.5, maxHeight: size * 1.5, alignment: .center)
                 .scaledToFit()
                 .background(Color.fadedPrimary)

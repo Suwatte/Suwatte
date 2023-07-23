@@ -297,7 +297,7 @@ extension Target {
                                 return
                             }
                             let title = publication.metadata.title
-                            let download = DirectoryViewer.DownloadManager.DownloadObject.init(url: link, request: request, title: title, thumbnailReqeust: request)
+                            let download = DirectoryViewer.DownloadManager.DownloadObject.init(url: link, request: request, title: title, thumbnailReqeust: thumbnailRequest)
                             DirectoryViewer.DownloadManager.shared.addToQueue(download)
                         }
                     }

@@ -10,6 +10,7 @@ import Unrar
 
 extension ArchiveHelper {
     class RarController : ArchiveController {
+        
         func getImagePaths(for path: URL) throws -> [String] {
             let archive = getRARArchive(for: path)
             
@@ -20,7 +21,7 @@ extension ArchiveHelper {
             let files = try archive
                 .entries()
                 .sorted(by: { $0.fileName < $1.fileName })
-                .filter { !$0.directory && ($0.fileName.hasSuffix("png") || $0.fileName.hasSuffix("jpg")) || $0.fileName.hasSuffix("jpeg") }
+                .filter { !$0.directory && isImagePath($0.fileName) }
                 .map { $0.fileName }
             
             return files
@@ -35,11 +36,11 @@ extension ArchiveHelper {
                 $0.fileName == path
             })
 
-            if entry == nil {
+            guard let entry else {
                 throw ArchiveHelper.Errors.ArchiveNotFound
             }
 
-            return try archive.extract(entry!)
+            return try archive.extract(entry)
         }
         
         func getItemCount(for path: URL) throws -> Int {
@@ -48,7 +49,10 @@ extension ArchiveHelper {
             guard let archive else {
                 throw Errors.ArchiveNotFound
             }
-            return try archive.entries().count
+            return try archive
+                .entries()
+                .filter { !$0.directory && isImagePath($0.fileName) }
+                .count
         }
         
         func getThumbnailImage(for path: URL) throws -> UIImage {
@@ -90,12 +94,28 @@ extension ArchiveHelper {
             }
             let entry = entries
                 .sorted(by: { $0.fileName < $1.fileName })
-                .first(where: { !$0.directory && ($0.fileName.hasSuffix("png") || $0.fileName.hasSuffix("jpg")) })
+                .first(where: { !$0.directory && isImagePath($0.fileName) })
             if let entry = entry {
                 return entry.fileName
             }
 
             return nil
+        }
+        
+        func getComicInfo(for url: URL) throws -> Data? {
+            let archive = getRARArchive(for: url)
+            
+            guard let archive else {
+                throw Errors.ArchiveNotFound
+            }
+            
+            let target = try archive
+                .entries()
+                .first(where: { !$0.directory && $0.fileName.lowercased().contains("comicinfo.xml")})
+            
+            guard let target else { return nil }
+            
+            return try archive.extract(target)
         }
     }
 }

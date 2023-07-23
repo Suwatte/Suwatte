@@ -156,7 +156,7 @@ struct BaseImageView: View {
         loader.processors = [NukeDownsampleProcessor(size: size)]
         loader.transaction = .init(animation: .easeInOut(duration: 0.25))
         loader.priority = .normal
-        
+        loader.onCompletion = onImageEvent
         if let request {
             loader.load(request)
             return
@@ -185,6 +185,15 @@ struct BaseImageView: View {
                 Logger.shared.error(error.localizedDescription)
                 loader.load(url)
             }
+        }
+    }
+    func onImageEvent(_ result: Result<ImageResponse, Error>) {
+        
+        switch result {
+        case .success(let success):
+            break
+        case .failure(let error):
+            Logger.shared.error(error, "ImageLoader")
         }
     }
 }
