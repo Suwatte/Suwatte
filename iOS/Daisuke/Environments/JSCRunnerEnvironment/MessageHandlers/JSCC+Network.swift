@@ -61,7 +61,6 @@ extension H {
             throw DaisukeEngine.Errors.NamedError(name: "Network Client", message: "Did not recieve a response")
         }
         
-        
         let headers = httpResponse.headers.dictionary
         let response = DSKCommon.Response(data: data,
                                           status: httpResponse.statusCode,

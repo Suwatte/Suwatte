@@ -93,8 +93,8 @@ const bootstrap = () => {
   setupSourceConfig();
 
   // Run Post Initialization Methods
-  RunnerObject.onRunnerLoaded?.().catch((err) => {
-    console.error(`[onRunnerLoaded]`, err);
+  RunnerObject.onEnvironmentLoaded?.().catch((err) => {
+    console.error(`[onEnvironmentLoaded]`, err);
   });
 
   // Log

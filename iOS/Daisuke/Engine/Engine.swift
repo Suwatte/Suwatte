@@ -142,16 +142,20 @@ extension DaisukeEngine {
         add(class: JSCHandler.LogHandler.self, name: "LogHandler", context: context)
         add(class: JSCHandler.StoreHandler.self, name: "StoreHandler", context: context)
         add(class: JSCHandler.NetworkHandler.self, name: "NetworkHandler", context: context)
-
-        // Evalutate Runner Script
-        content = try String(contentsOf: scriptURL, encoding: .utf8)
-        _ = context.evaluateScript(content)
+                
+        // JSExports
+        JSCTimer.register(context: context)
 
         // Evaluate Message Handler Scripts
         for url in messageHandlerFiles {
             content = try String(contentsOf: url, encoding: .utf8)
             _ = context.evaluateScript(content)
         }
+        
+        // Evalutate Runner Script
+        content = try String(contentsOf: scriptURL, encoding: .utf8)
+        _ = context.evaluateScript(content)
+
 
         // Evaluate Bootstrap Script
         content = try String(contentsOf: bootstrapFile, encoding: .utf8)
@@ -164,6 +168,7 @@ extension DaisukeEngine {
 
         return runner
     }
+    
 }
 
 // MARK: - Runner Start Up
