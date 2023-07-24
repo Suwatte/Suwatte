@@ -20,7 +20,7 @@ extension JSCHandler {
 
         func _post(_ message: JSValue) -> JSValue {
             .init(newPromiseIn: message.context) { resolve, reject in
-                Task {
+                Task.detached {
                     do {
                         let message = try Message(value: message)
                         let response = try await self.handle(message: message)
