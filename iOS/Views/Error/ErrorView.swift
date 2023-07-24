@@ -68,7 +68,7 @@ struct ErrorView: View {
         } else if case let DSK.Errors.NetworkError(message, _) = error{
             return "Network Error: \(message)"
         } else if case let DSK.Errors.NamedError(name, message) = error {
-            return "JS \(name): \(message)"
+            return "\(name): \(message)"
         } else {
             return error.localizedDescription
         }

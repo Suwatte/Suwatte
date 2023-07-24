@@ -126,7 +126,7 @@ class STTHelpers {
                 let obj = StoredChapterData()
                 obj.chapter = chapter.toStored()
                 let baseLink = chapter.chapterId
-                let publication = DataManager.shared.getPublication(id: chapter.contentId)
+                let publication = DataManager.shared.getPublication(id: chapter.id)
                 guard let publication, let client = publication.client else {
                     throw DSK.Errors.NamedError(name: "OPDS", message: "Unable to fetch OPDS Content")
                 }
