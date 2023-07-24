@@ -9,7 +9,7 @@ import Foundation
 import RealmSwift
 
 extension DataManager {
-    func saveArchivedFile(_ file: File) throws {
+    func saveArchivedFile(_ file: File) {
         let realm = try! Realm()
 
         let directory = CloudDataManager

@@ -100,23 +100,15 @@ extension DirectoryViewer {
         func read(_: [File]) {}
 
         func didTapFile(_ file: File) {
-            do {
-                // Save File
-                try DataManager.shared.saveArchivedFile(file)
+            DataManager.shared.saveArchivedFile(file)
+            // Generate Chapter
+            let chapter = file.toStoredChapter()
 
-                // Generate Chapter
-                let chapter = file.toStoredChapter()
-
-                let context = ReaderState(title: file.metaData?.title ?? file.name, chapter: chapter, chapters: [chapter], requestedPage: nil, readingMode: nil) { [weak self] in
-                    self?.currentlyReading = nil
-                }
-                StateManager.shared.openReader(state: context)
-                currentlyReading = file
-
-            } catch {
-                ToastManager.shared.error(error)
-                Logger.shared.error(error)
+            let context = ReaderState(title: file.metaData?.title ?? file.name, chapter: chapter, chapters: [chapter], requestedPage: nil, readingMode: nil) { [weak self] in
+                self?.currentlyReading = nil
             }
+            StateManager.shared.openReader(state: context)
+            currentlyReading = file
         }
 
         func downloadAndRun(_ file: File, _ callback: @escaping (File) -> Void) {
@@ -158,6 +150,7 @@ extension File {
     func read() {
         let chapter = toStoredChapter()
         let context = ReaderState(title: metaData?.title ?? name, chapter: chapter, chapters: [chapter], requestedPage: nil, readingMode: nil, dismissAction: nil)
+        DataManager.shared.saveArchivedFile(self)
         StateManager.shared.openReader(state: context)
     }
 }

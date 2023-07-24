@@ -148,14 +148,15 @@ extension STTHelpers {
     }
 
     static func indexComicInfo(for url: URL) {
-        do {
-            let data = try ArchiveHelper().getComicInfo(for: url)
-            guard let data else { return }
-            let document = try XMLDocument(data: data)
-            let info = ComicInfo.fromXML(document)
-
-        } catch {
-            Logger.shared.error(error, "CloudObserver")
-        }
+        // TODO: Indexing ComicInfo perhaps?
+//        do {
+//            let data = try ArchiveHelper().getComicInfo(for: url)
+//            guard let data else { return }
+//            let document = try XMLDocument(data: data)
+//            let info = ComicInfo.fromXML(document)
+//
+//        } catch {
+//            Logger.shared.error(error, "CloudObserver")
+//        }
     }
 }

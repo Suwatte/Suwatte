@@ -110,8 +110,6 @@ extension SuwatteApp {
             Logger.shared.info("Suwatte has not defined a handler for this file type")
         }
     }
-
-    private func handleFile(_: URL) {}
 }
 
 final class NavigationModel: ObservableObject {
@@ -128,12 +126,14 @@ extension STTHelpers {
         let directory = CloudDataManager.shared.getDocumentDiretoryURL().appendingPathComponent("Library")
         let inDirectory = url.path.hasPrefix(directory.path)
 
+        var final: URL? = nil
         if !inDirectory {
             ToastManager.shared.loading = true
             // Move to Library
             let location = directory.appendingPathComponent(url.lastPathComponent)
             if location.exists {
                 StateManager.shared.alert(title: "Import", message: "This file already exists in your library")
+                return
             }
             guard url.startAccessingSecurityScopedResource() else {
                 return
@@ -143,13 +143,17 @@ extension STTHelpers {
             }
             do {
                 try FileManager.default.copyItem(at: url, to: location)
+                Logger.shared.log("Imported \(url.fileName)")
+                final = location
             } catch {
                 Logger.shared.error(error)
                 ToastManager.shared.error(error)
             }
             ToastManager.shared.loading = false
         } else {
-            // TODO: Hanlde URL
+            final = url
         }
+        guard StateManager.shared.readerState == nil, let final else { return }
+        final.buildFileInfo().read()
     }
 }

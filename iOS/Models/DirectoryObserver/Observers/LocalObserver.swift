@@ -113,3 +113,33 @@ class LocalObserver: DirectoryObserver {
         updatesEnabled = true
     }
 }
+
+
+extension URL {
+    func buildFileInfo() -> File {
+        let resourceValues = try? resourceValues(forKeys: [.fileSizeKey, .creationDateKey, .contentModificationDateKey, .addedToDirectoryDateKey])
+        let nameParser = ComicNameParser()
+
+        // Generate Unique Identifier
+        let fileSize = resourceValues?.fileSize.flatMap(Int64.init) ?? .zero
+        let creationDate = resourceValues?.creationDate ?? .now
+        let contentChangeDate = resourceValues?.contentModificationDate ?? .now
+        let addedToDirectory = resourceValues?.addedToDirectoryDate ?? .now
+        let id = STTHelpers.generateFileIdentifier(size: fileSize, created: creationDate, modified: contentChangeDate)
+
+        let pageCount = try? ArchiveHelper().getItemCount(for: self)
+        let name = nameParser.getNameProperties(fileName)
+
+        let file = File(url: self,
+                        isOnDevice: true,
+                        id: id,
+                        name: fileName,
+                        created: creationDate,
+                        addedToDirectory: addedToDirectory,
+                        size: fileSize,
+                        pageCount: pageCount,
+                        metaData: name)
+        
+        return file
+    }
+}

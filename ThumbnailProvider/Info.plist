@@ -27,6 +27,8 @@
                 <string>public.rar-archive</string>
                 <string>public.archive.zip</string>
                 <string>public.archive.rar</string>
+                <string>com.ceres.suwatte.rar</string>
+                <string>com.ceres.suwatte.zip</string>
 			</array>
 			<key>QLThumbnailMinimumDimension</key>
 			<integer>18</integer>
