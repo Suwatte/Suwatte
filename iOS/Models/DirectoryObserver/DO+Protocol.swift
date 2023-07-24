@@ -32,9 +32,9 @@ struct File: Identifiable, Hashable {
     }
     
     struct Metadata: Hashable {
-        var number: Double?
-        var title: String?
-        var releaseYear: Int?
+        let title: String
+        let number: Double?
+        let volume: Double?
     }
 }
 
@@ -123,19 +123,4 @@ extension URL {
         let fileId = STTHelpers.generateFileIdentifier(size: fileSize, created: creationDate, modified: modificationDate)
         return .init(url: self, isOnDevice: isOnDevice, id: fileId, name: fileName, created: creationDate, addedToDirectory: addedDirectoryDate, size: fileSize, pageCount: nil)
     }
-}
-
-
-
-extension STTHelpers {
-    func parseFileInfo(_ title: String) -> File.Metadata {
-        let groups = title.groups(for: "([\\w-\\s]+)\\s(\\d+)(?:\\s\\(of \\d+\\))?\\s\\((\\d{4})\\)(?:\\s\\([Dd]igital\\))?\\s\\(([\\w-s\\s]+)\\)")
-        let title = groups.get(index: 0)?.get(index: 1)
-        let chapter = Double(groups.get(index: 0)?.get(index: 2) ?? "1.0")
-        let yearStr = groups.get(index: 0)?.get(index: 3)
-        let year = yearStr.flatMap(Int.init)
-        
-        return .init(number: chapter, title: title, releaseYear: year)
-    }
-    
 }

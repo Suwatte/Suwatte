@@ -164,7 +164,9 @@ extension File {
     func toStoredChapter(_ idx: Int? = nil) -> StoredChapter {
         let chapter = StoredChapter()
         chapter.index = idx ?? 0
-        chapter.title = name
+        chapter.number = metaData?.number ?? 0
+        chapter.volume = metaData?.volume
+        chapter.title = metaData?.title ?? name
         chapter.sourceId = STTHelpers.LOCAL_CONTENT_ID
         chapter.contentId = id
         chapter.chapterId = id

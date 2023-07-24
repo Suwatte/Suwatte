@@ -74,7 +74,7 @@ class CloudObserver: DirectoryObserver {
             metadataQuery.enableUpdates()
             return
         }
-        
+        let nameParser = ComicNameParser()
         var rootFolder = Folder(url: path)
         var files: [File] = []
         for item in items {
@@ -106,8 +106,16 @@ class CloudObserver: DirectoryObserver {
             if isDownloaded {
                 pageCount = try? ArchiveHelper().getItemCount(for: url)
             }
-            let file = File(url: url, isOnDevice: isDownloaded, id: id, name: url.fileName, created: creationDate, addedToDirectory: addedToDirectoryDate, size: fileSize, pageCount: pageCount)
+            
+            let name = nameParser.getNameProperties(url.fileName)
+            
+            let metaData: File.Metadata = .init(title: name.formattedName, number: name.issue, volume: name.volume)
+            let file = File(url: url, isOnDevice: isDownloaded, id: id, name: url.fileName, created: creationDate, addedToDirectory: addedToDirectoryDate, size: fileSize, pageCount: pageCount, metaData: metaData)
             files.append(file)
+            // Index
+            if isDownloaded {
+                STTHelpers.indexComicInfo(for: url)
+            }
         }
         
         STTHelpers.sortFiles(files: &files)
@@ -139,6 +147,21 @@ extension STTHelpers {
             files = files.sorted(by: \.addedToDirectory, descending: orderKey)
         case .lastRead:
             files = files.sorted(by: \.dateRead, descending: orderKey)
+        }
+    }
+    
+    
+    static func indexComicInfo(for url: URL) {
+        do {
+            let data = try ArchiveHelper().getComicInfo(for: url)
+            guard let data else { return }
+            let document = try XMLDocument(data: data)
+            let info = ComicInfo.fromXML(document)
+            
+            
+ 
+        } catch {
+            Logger.shared.error(error, "CloudObserver")
         }
     }
 }

@@ -67,6 +67,9 @@
 		DF46C3572A22A04B002762C4 /* CloudManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF46C3562A22A04B002762C4 /* CloudManager.swift */; };
 		DF47DDDE28B55BA600D779E5 /* AdaptiveSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF47DDDD28B55BA500D779E5 /* AdaptiveSheet.swift */; };
 		DF47DDE128B5608D00D779E5 /* PartialSheet in Frameworks */ = {isa = PBXBuildFile; productRef = DF47DDE028B5608D00D779E5 /* PartialSheet */; };
+		DF4817E42A6DF1BB00CB3A47 /* ComicInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4817E32A6DF1BB00CB3A47 /* ComicInfo.swift */; };
+		DF4817E62A6DF22700CB3A47 /* ComicInfo+Methods.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4817E52A6DF22700CB3A47 /* ComicInfo+Methods.swift */; };
+		DF4817E82A6DF83900CB3A47 /* ComicInfo+NameParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4817E72A6DF83900CB3A47 /* ComicInfo+NameParser.swift */; };
 		DF482EF0295554B9002D3308 /* VerticalPaged+Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF482EEF295554B9002D3308 /* VerticalPaged+Controller.swift */; };
 		DF482EF2295554E8002D3308 /* VerticalPaged+Representable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF482EF1295554E8002D3308 /* VerticalPaged+Representable.swift */; };
 		DF482EF429555708002D3308 /* VerticalPaged+Scroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF482EF329555708002D3308 /* VerticalPaged+Scroll.swift */; };
@@ -416,6 +419,9 @@
 		DF457DD32A43B216002B5350 /* History+Archive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "History+Archive.swift"; sourceTree = "<group>"; };
 		DF46C3562A22A04B002762C4 /* CloudManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudManager.swift; sourceTree = "<group>"; };
 		DF47DDDD28B55BA500D779E5 /* AdaptiveSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveSheet.swift; sourceTree = "<group>"; };
+		DF4817E32A6DF1BB00CB3A47 /* ComicInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComicInfo.swift; sourceTree = "<group>"; };
+		DF4817E52A6DF22700CB3A47 /* ComicInfo+Methods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ComicInfo+Methods.swift"; sourceTree = "<group>"; };
+		DF4817E72A6DF83900CB3A47 /* ComicInfo+NameParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ComicInfo+NameParser.swift"; sourceTree = "<group>"; };
 		DF482EEF295554B9002D3308 /* VerticalPaged+Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VerticalPaged+Controller.swift"; sourceTree = "<group>"; };
 		DF482EF1295554E8002D3308 /* VerticalPaged+Representable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VerticalPaged+Representable.swift"; sourceTree = "<group>"; };
 		DF482EF329555708002D3308 /* VerticalPaged+Scroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VerticalPaged+Scroll.swift"; sourceTree = "<group>"; };
@@ -914,6 +920,16 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
+		DF4817E22A6DF1AF00CB3A47 /* ComicInfo */ = {
+			isa = PBXGroup;
+			children = (
+				DF4817E32A6DF1BB00CB3A47 /* ComicInfo.swift */,
+				DF4817E52A6DF22700CB3A47 /* ComicInfo+Methods.swift */,
+				DF4817E72A6DF83900CB3A47 /* ComicInfo+NameParser.swift */,
+			);
+			path = ComicInfo;
+			sourceTree = "<group>";
+		};
 		DF482EEE29555492002D3308 /* Vertical Paged */ = {
 			isa = PBXGroup;
 			children = (
@@ -1099,6 +1115,7 @@
 		DF8D09EA2800EE47003E4C3E /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				DF4817E22A6DF1AF00CB3A47 /* ComicInfo */,
 				DF9BFDE92A425A28005D0B63 /* DirectoryObserver */,
 				DF8D09E32800EE47003E4C3E /* Queue.swift */,
 			);
@@ -2298,6 +2315,7 @@
 				DF8D0B712800EE48003E4C3E /* ManageCollectionsView.swift in Sources */,
 				DF8D0BB52800EE48003E4C3E /* LazyView.swift in Sources */,
 				DF72E492281322A000E40E52 /* ImageSearchView.swift in Sources */,
+				DF4817E42A6DF1BB00CB3A47 /* ComicInfo.swift in Sources */,
 				DF8D0B4F2800EE47003E4C3E /* Data+Bookmark.swift in Sources */,
 				DF248F2B2813B24F00818300 /* BarChartView.swift in Sources */,
 				DFD1F9B728F7B097000766C1 /* Vertical+Combine.swift in Sources */,
@@ -2386,6 +2404,7 @@
 				DF8D0B9F2800EE48003E4C3E /* ProfileView+FullChapterList.swift in Sources */,
 				DFC39E9328A093C900450EC4 /* InstalledRunnersView.swift in Sources */,
 				DF8D0B442800EE47003E4C3E /* Data+StoredContent.swift in Sources */,
+				DF4817E62A6DF22700CB3A47 /* ComicInfo+Methods.swift in Sources */,
 				DF8D0B572800EE47003E4C3E /* Backup+ReadLater.swift in Sources */,
 				DFB47F002881013A0040A1BD /* OPDSClient.swift in Sources */,
 				DF8D0B932800EE48003E4C3E /* BookmarksView.swift in Sources */,
@@ -2406,6 +2425,7 @@
 				DF68838A2A609521009B5642 /* Landing+Tracker.swift in Sources */,
 				DFF09B5A2A58ED0500C5CA5E /* ContentTrackerView.swift in Sources */,
 				DF8D0B2E2800EE47003E4C3E /* STT+Data.swift in Sources */,
+				DF4817E82A6DF83900CB3A47 /* ComicInfo+NameParser.swift in Sources */,
 				DF8D0B342800EE47003E4C3E /* STT+Bundle.swift in Sources */,
 				DF8D0B742800EE48003E4C3E /* LibraryGrid+GridTile.swift in Sources */,
 				DF67EB9F28E8FC4C00076FF5 /* ManualDestinationSelectionView.swift in Sources */,
