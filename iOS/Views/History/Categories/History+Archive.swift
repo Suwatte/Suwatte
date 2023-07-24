@@ -24,7 +24,7 @@ extension HistoryView {
                     .shadow(radius: 3)
 
                 VStack(alignment: .leading, spacing: 3.5) {
-                    Text(file.metaData?.title ?? file.name)
+                    Text(file.cName)
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .lineLimit(3)
@@ -34,7 +34,7 @@ extension HistoryView {
                         }
 
                         Group {
-                            if model.currentDownloadFileId == file.id {
+                            if let current = model.currentDownloadFileId, current == file.id {
                                 HStack(spacing: 5) {
                                     Text("Downloading")
                                     Image(systemName: "icloud.and.arrow.down")

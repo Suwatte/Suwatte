@@ -57,7 +57,6 @@ extension DirectoryViewer {
 
         func Builder(_ folder: Folder.SubFolder, _: ASCellContext) -> some View {
             Color.primary.opacity(0.10)
-                .cornerRadius(7)
                 .overlay {
                     NavigationLink {
                         DirectoryViewer(model: .init(path: folder.url), title: folder.name)
@@ -137,7 +136,7 @@ extension DirectoryViewer {
                 VStack(alignment: .leading, spacing: 5) {
                     BaseImageView(request: request(size: size))
                         .frame(width: imageWidth, height: imageHeight)
-                        .cornerRadius(7)
+                        .cornerRadius(3.5)
                         .overlay {
                             Color.black
                                 .opacity(isEditing ? 0.35 : 0)

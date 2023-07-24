@@ -29,6 +29,7 @@ struct HistoryView: View {
                         }
                 }
                 .transition(.opacity)
+                .animation(.default, value: markers)
 
             } else {
                 ProgressView()
@@ -63,7 +64,6 @@ extension HistoryView {
 
         func observe() {
             guard notificationToken == nil else { return }
-            readerLock = false
             let realm = try! Realm()
             let collection = realm
                 .objects(ProgressMarker.self)
@@ -84,6 +84,7 @@ extension HistoryView {
                         }
                     }
                 }
+            readerLock = false
         }
 
         func disconnect() {
@@ -95,14 +96,16 @@ extension HistoryView {
 
         func downloadAndOpen(file: File) {
             downloader.cancel()
-            currentDownloadFileId = file.id
+            withAnimation {
+                currentDownloadFileId = file.id
+            }
             downloader.download(file.url) { [weak self] result in
                 do {
                     let updatedFile = try result.get().convertToSTTFile()
                     try DataManager.shared.saveArchivedFile(updatedFile)
 
                     guard let self, !self.readerLock else { return }
-                    file.read()
+                    updatedFile.read()
                 } catch {
                     ToastManager.shared.error("An error occurred opening the archive.")
                     Logger.shared.error(error, "History")
@@ -159,6 +162,7 @@ extension HistoryView {
                     }
                 }
             }
+            .animation(.default, value: marker.progress)
         }
     }
 }

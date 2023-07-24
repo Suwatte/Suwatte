@@ -110,6 +110,7 @@ class CloudObserver: DirectoryObserver {
             let name = nameParser.getNameProperties(url.fileName)
             let file = File(url: url, isOnDevice: isDownloaded, id: id, name: url.fileName, created: creationDate, addedToDirectory: addedToDirectoryDate, size: fileSize, pageCount: pageCount, metaData: name)
             files.append(file)
+            print(file.id)
         }
 
         STTHelpers.sortFiles(files: &files)
@@ -122,6 +123,12 @@ class CloudObserver: DirectoryObserver {
     }
 }
 
+
+extension File {
+    var cName: String {
+        metaData?.formattedName ?? name
+    }
+}
 extension STTHelpers {
     static func sortFiles(files: inout [File]) {
         let sortKey = Preferences.standard.directoryViewSortKey
@@ -133,7 +140,7 @@ extension STTHelpers {
         case .size:
             files = files.sorted(by: \.size, descending: orderKey)
         case .title:
-            files = files.sorted(by: \.name, descending: orderKey)
+            files = files.sorted(by: \.cName, descending: orderKey)
         case .dateAdded:
             files = files.sorted(by: \.addedToDirectory, descending: orderKey)
         case .lastRead:
