@@ -22,24 +22,19 @@ extension HistoryView {
                     .cornerRadius(5)
                     .shadow(radius: 3)
 
-                VStack(alignment: .leading, spacing: 7) {
+                VStack(alignment: .leading, spacing: 3.5) {
                     Text(content.title)
-                        .font(.headline)
+                        .font(.subheadline)
                         .fontWeight(.semibold)
                         .lineLimit(3)
                     VStack(alignment: .leading) {
                         Text(chapter.chapterName)
-                            .font(.footnote)
-                            .fontWeight(.medium)
-                            .foregroundColor(.gray)
-
                         if let dateRead = marker.dateRead {
                             Text(dateRead.timeAgo())
-                                .font(.footnote)
-                                .fontWeight(.light)
-                                .foregroundColor(.gray)
                         }
                     }
+                    .font(.footnote.weight(.light))
+                    .foregroundColor(.gray)
                     Spacer()
                 }
                 .frame(minHeight: 0, idealHeight: size * 1.5, maxHeight: size * 1.5, alignment: .center)
