@@ -357,7 +357,7 @@ extension ReaderView.ViewModel {
         DataManager.shared.updateContentProgress(for: contentIdentifier.id, chapter: chapter.chapter, lastPageRead: chapter.requestedPageIndex + 1, totalPageCount: chapter.pages?.count ?? 1, lastPageOffset: chapter.requestedPageOffset.flatMap(Double.init))
         
         
-        guard  ![STTHelpers.OPDS_CONTENT_ID, STTHelpers.LOCAL_CONTENT_ID].contains(chapter.chapter.sourceId) else {
+        guard !STTHelpers.isInternalSource(chapter.chapter.sourceId) else {
             return
         }
         let cl = chapter.chapter

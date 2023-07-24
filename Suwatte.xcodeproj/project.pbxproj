@@ -857,7 +857,6 @@
 			children = (
 				DF3318502A479346000B092B /* DV+Settings.swift */,
 				DF3318522A47934E000B092B /* DV+DownloadQueue.swift */,
-				DF3318542A47A631000B092B /* DV+CollectionView.swift */,
 			);
 			path = Sheets;
 			sourceTree = "<group>";
@@ -1748,6 +1747,7 @@
 			children = (
 				DF33184F2A47933A000B092B /* Sheets */,
 				DF9BFDF22A42753B005D0B63 /* DirectoryViewer.swift */,
+				DF3318542A47A631000B092B /* DV+CollectionView.swift */,
 				DF9BFDF42A42754B005D0B63 /* DV+ViewModel.swift */,
 				DF457DCA2A438DE0002B5350 /* DV+Base.swift */,
 			);

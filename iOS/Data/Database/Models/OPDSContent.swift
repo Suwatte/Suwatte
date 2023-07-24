@@ -31,4 +31,10 @@ extension StreamableOPDSContent {
         chapter.thumbnail = contentThumbnail
         return chapter
     }
+    
+    func read(onDismiss: (() -> Void)? = nil) {
+        let chapter = toStoredChapter()
+        let state = ReaderState(title: contentTitle, chapter: chapter, chapters: [chapter], requestedPage: nil, readingMode: nil, dismissAction: onDismiss)
+        StateManager.shared.openReader(state: state)
+    }
 }

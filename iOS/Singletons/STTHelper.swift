@@ -189,4 +189,8 @@ extension STTHelpers {
 extension STTHelpers {
     static let LOCAL_CONTENT_ID = "7348b86c-ec52-47bf-8069-d30bd8382bf7"
     static let OPDS_CONTENT_ID = "c9d560ee-c4ff-4977-8cdf-fe9473825b8b"
+    
+    static func isInternalSource(_ id: String) -> Bool {
+        return id == LOCAL_CONTENT_ID || id == OPDS_CONTENT_ID
+    }
 }

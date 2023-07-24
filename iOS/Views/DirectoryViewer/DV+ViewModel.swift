@@ -22,7 +22,7 @@ extension DirectoryViewer {
             didSet {
                 if query.isEmpty {
                     withAnimation {
-                        searchResultsDirectory = nil 
+                        searchResultsDirectory = nil
                     }
                 }
                 else { search() }
@@ -32,7 +32,7 @@ extension DirectoryViewer {
         init(path: URL? = nil) {
             self.path = path ?? CloudDataManager.shared.getDocumentDiretoryURL().appendingPathComponent("Library", isDirectory: true) // If path is not provided default to the base folder
             directorySearcher = DirectorySearcher(path: self.path, extensions: extensions )
-
+            
         }
         
         func observe() {
@@ -55,7 +55,7 @@ extension DirectoryViewer {
             stop()
             observe()
         }
-
+        
         func stop() {
             observer?.stop()
             observer = nil
@@ -72,7 +72,7 @@ extension DirectoryViewer {
         func createDirectory() {
             let ac = UIAlertController(title: "Create New Folder", message: nil, preferredStyle: .alert)
             ac.addTextField()
-
+            
             let submitAction = UIAlertAction(title: "OK", style: .default) { [unowned self, unowned ac] _ in
                 let text = ac.textFields![0].text?.trimmingCharacters(in: .whitespacesAndNewlines)
                 
@@ -98,23 +98,9 @@ extension DirectoryViewer {
 
 extension DirectoryViewer {
     final class CoreModel: ObservableObject {
-        
-        var preppedChapters: [StoredChapter]? = nil {
-            didSet {
-                if preppedChapters != nil { displayReader = true }
-                downloader.cancel()
-            }
-        }
-        @Published var displayReader = false {
-            didSet {
-                if !displayReader { preppedChapters = nil }
-            }
-        }
-        
         @Published var currentDownloadFileId: String?
-        
+        @Published var currentlyReading: File?
         private let downloader = CloudDownloader()
-        
         
         func read(_ files: [File]) {
             
@@ -127,8 +113,13 @@ extension DirectoryViewer {
                 
                 // Generate Chapter
                 let chapter = file.toStoredChapter()
-                preppedChapters = [chapter]
-
+                
+                let context = ReaderState(title: file.metaData?.title ?? file.name, chapter: chapter, chapters: [chapter], requestedPage: nil, readingMode: nil) { [weak self] in
+                    self?.currentlyReading = nil
+                }
+                StateManager.shared.openReader(state: context)
+                currentlyReading = file
+                
             } catch {
                 ToastManager.shared.error(error)
                 Logger.shared.error(error)
@@ -145,7 +136,7 @@ extension DirectoryViewer {
                     let pageCount = try? ArchiveHelper().getItemCount(for: updatedFile.url)
                     updatedFile.pageCount = pageCount
                     callback(updatedFile)
-                    if self?.displayReader == false {
+                    if self?.currentlyReading == nil {
                         self?.didTapFile(updatedFile)
                     }
                 } catch {
@@ -164,20 +155,19 @@ extension File {
     func toStoredChapter(_ idx: Int? = nil) -> StoredChapter {
         let chapter = StoredChapter()
         chapter.index = idx ?? 0
-        chapter.number = metaData?.number ?? 0
+        chapter.number = metaData?.issue ?? 1
         chapter.volume = metaData?.volume
-        chapter.title = metaData?.title ?? name
+        chapter.title = metaData?.formattedName ?? name
         chapter.sourceId = STTHelpers.LOCAL_CONTENT_ID
         chapter.contentId = id
         chapter.chapterId = id
         chapter.id = "\(chapter.sourceId)||\(chapter.contentId)"
         return chapter
     }
-}
-
-
-extension File {
-    func parseMetaData() {
-        
+    
+    func read() {
+        let chapter = toStoredChapter()
+        let context = ReaderState(title: metaData?.title ?? name, chapter: chapter, chapters: [chapter], requestedPage: nil, readingMode: nil, dismissAction: nil)
+        StateManager.shared.openReader(state: context)
     }
 }

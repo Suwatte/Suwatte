@@ -27,6 +27,8 @@ struct ReaderGateWay: View {
         }
         .tint(accentColor)
         .accentColor(accentColor)
+        .onAppear(perform: StateManager.shared.readerOpenedPublisher.send)
+        .onDisappear(perform: StateManager.shared.readerClosedPublisher.send)
     }
 }
 

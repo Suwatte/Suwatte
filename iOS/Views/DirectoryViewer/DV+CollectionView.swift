@@ -162,7 +162,7 @@ extension DirectoryViewer {
         
         var TitleView: some View {
             VStack(alignment: .leading, spacing: 1.5) {
-                Text(file.metaData?.title ?? file.name)
+                Text(file.metaData?.formattedName ?? file.name)
                     .font(.footnote)
                     .fontWeight(.semibold)
                     .lineLimit(2)

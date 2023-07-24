@@ -11,7 +11,7 @@ import Foundation
 
 class ComicNameParser {
 
-    struct Name {
+    struct Name: Hashable {
         let title: String
         let issue: Double?
         let volume: Double?
@@ -44,7 +44,8 @@ class ComicNameParser {
 
         var wordList = [Substring]()
         filename.enumerateSubstrings(in: filename.startIndex..., options: .byWords) { word, range, _, _ in
-            if let word = word {
+        
+            if let word, !word.isEmpty {
                 wordList.append(filename[range])
             }
         }

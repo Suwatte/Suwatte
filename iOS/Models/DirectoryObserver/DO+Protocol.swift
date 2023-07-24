@@ -21,7 +21,7 @@ struct File: Identifiable, Hashable {
     let addedToDirectory: Date
     let size: Int64
     var pageCount: Int?
-    var metaData: Metadata?
+    var metaData: ComicNameParser.Name?
     
     func sizeToString() -> String {
         ByteCountFormatter.string(fromByteCount: size, countStyle: .file)
@@ -29,12 +29,6 @@ struct File: Identifiable, Hashable {
     
     var dateRead: Date {
         DataManager.shared.getArchiveDateRead(id)
-    }
-    
-    struct Metadata: Hashable {
-        let title: String
-        let number: Double?
-        let volume: Double?
     }
 }
 
@@ -121,6 +115,7 @@ extension URL {
         let modificationDate = resources?.contentModificationDate ?? .now
         let addedDirectoryDate = resources?.addedToDirectoryDate ?? .now
         let fileId = STTHelpers.generateFileIdentifier(size: fileSize, created: creationDate, modified: modificationDate)
-        return .init(url: self, isOnDevice: isOnDevice, id: fileId, name: fileName, created: creationDate, addedToDirectory: addedDirectoryDate, size: fileSize, pageCount: nil)
+        let metaData = ComicNameParser().getNameProperties(fileName)
+        return .init(url: self, isOnDevice: isOnDevice, id: fileId, name: fileName, created: creationDate, addedToDirectory: addedDirectoryDate, size: fileSize, pageCount: nil, metaData: metaData)
     }
 }

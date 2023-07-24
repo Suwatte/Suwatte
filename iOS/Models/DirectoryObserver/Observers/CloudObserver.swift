@@ -108,14 +108,8 @@ class CloudObserver: DirectoryObserver {
             }
             
             let name = nameParser.getNameProperties(url.fileName)
-            
-            let metaData: File.Metadata = .init(title: name.formattedName, number: name.issue, volume: name.volume)
-            let file = File(url: url, isOnDevice: isDownloaded, id: id, name: url.fileName, created: creationDate, addedToDirectory: addedToDirectoryDate, size: fileSize, pageCount: pageCount, metaData: metaData)
+            let file = File(url: url, isOnDevice: isDownloaded, id: id, name: url.fileName, created: creationDate, addedToDirectory: addedToDirectoryDate, size: fileSize, pageCount: pageCount, metaData: name)
             files.append(file)
-            // Index
-            if isDownloaded {
-                STTHelpers.indexComicInfo(for: url)
-            }
         }
         
         STTHelpers.sortFiles(files: &files)

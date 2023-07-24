@@ -18,6 +18,8 @@ final class StateManager: ObservableObject {
     var networkState = NetworkState.unknown
     let monitor = NWPathMonitor()
     let runnerListPublisher = PassthroughSubject<Void, Never>()
+    let readerOpenedPublisher = PassthroughSubject<Void, Never>()
+    let readerClosedPublisher = PassthroughSubject<Void, Never>()
     @Published var readerState: ReaderState?
     @Published var titleHasCustomThumbs: Set<String> = []
     
@@ -68,14 +70,6 @@ extension StateManager {
 // MARK: - Global Chapter Reading
 extension StateManager {
     
-    struct ReaderState : Identifiable {
-        var id: String { chapter.id }
-        let chapter: StoredChapter
-        let chapters: [StoredChapter]
-        let requestedPage: Int?
-        let readingMode: ReadingMode?
-    }
-    
     func openReader(context: DSKCommon.ReaderContext, caller: DSKCommon.Highlight, source: String) {
         
         // Ensure the chapter to be opened is in the provided chapter list
@@ -109,7 +103,18 @@ extension StateManager {
     
         // Open Reader
         let chapter = chapters.first(where: { $0.chapterId == context.target })!
-        self.readerState = .init(chapter: chapter, chapters: chapters, requestedPage: context.requestedPage, readingMode: context.readingMode)
+        self.readerState = .init(title: nil, chapter: chapter, chapters: chapters, requestedPage: context.requestedPage, readingMode: context.readingMode, dismissAction: nil)
+    }
+    
+    func openReader(state: ReaderState) {
+        // Ensure the chapter to be opened is in the provided chapter list
+        let targetInList = state.chapters.contains(state.chapter)
+        guard targetInList else {
+            alert(title: "Error", message: "Tried opening to a chapter not provided in the chapter list")
+            return
+        }
+        
+        self.readerState = state
     }
     
     func stream(item: DSKCommon.Highlight, sourceId: String) {
@@ -155,4 +160,15 @@ extension StateManager {
             }
         }
     }
+}
+
+// MARK: ReaderState
+struct ReaderState : Identifiable {
+    var id: String { chapter.id }
+    let title: String?
+    let chapter: StoredChapter
+    let chapters: [StoredChapter]
+    let requestedPage: Int?
+    let readingMode: ReadingMode?
+    let dismissAction: (() -> Void)?
 }

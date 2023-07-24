@@ -75,9 +75,9 @@ struct DirectoryViewer: View {
                 model.stop()
             }
         }
-        .onChange(of: coreModel.displayReader) { display in
+        .onChange(of: coreModel.currentlyReading) { file in
             guard isActive else { return }
-            if display {
+            if file != nil {
                 model.stop()
             } else {
                 model.observe()

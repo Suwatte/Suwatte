@@ -22,7 +22,7 @@ extension DataManager {
 
         let obj = ArchivedContent()
         obj.id = file.id
-        obj.name = file.name
+        obj.name = file.metaData?.title ?? file.name
         obj.relativePath = relativePath
         try! realm.safeWrite {
             realm.add(obj, update: .modified)

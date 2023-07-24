@@ -15,11 +15,6 @@ extension DirectoryViewer {
         @StateObject var model = DirectoryViewer.CoreModel()
         var body: some View {
             DirectoryViewer(model: .init())
-                .fullScreenCover(isPresented: $model.displayReader) {
-                    let chapters = model.preppedChapters!
-                    let target = chapters.first!
-                    ReaderGateWay(readingMode: .defaultPanelMode, chapterList: chapters, openTo: target)
-                }
                 .environmentObject(model)
         }
     }

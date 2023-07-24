@@ -24,11 +24,18 @@ extension HistoryView {
                     .shadow(radius: 3)
 
                 VStack(alignment: .leading, spacing: 7) {
-                    Text(file.name)
+                    Text(file.metaData?.title ?? file.name)
                         .font(.headline)
                         .fontWeight(.semibold)
                         .lineLimit(3)
                     VStack(alignment: .leading) {
+                        if let issue = file.metaData?.issue {
+                            Text("Issue #\(issue.issue)")
+                                .font(.footnote)
+                                .fontWeight(.medium)
+                                .foregroundColor(.gray)
+                        }
+                        
                         Group {
                             if model.currentDownloadFileId == file.id {
                                 HStack(spacing: 5) {

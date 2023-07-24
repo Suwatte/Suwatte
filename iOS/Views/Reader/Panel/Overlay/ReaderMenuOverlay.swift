@@ -53,6 +53,7 @@ extension ReaderView {
         @ViewBuilder
         var ActiveChapterTitleView: some View {
             Button {
+                guard model.chapterList.count != 1 else { return }
                 model.menuControl.toggleChapterList()
             }
             label: {
@@ -64,6 +65,7 @@ extension ReaderView {
                             .font(.subheadline)
                     }
                     Image(systemName: "chevron.down").imageScale(.medium)
+                        .opacity(model.chapterList.count != 1 ? 1 : 0)
                 }
                 .contentShape(Rectangle())
                 .padding(.trailing, 7)

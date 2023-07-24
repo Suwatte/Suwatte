@@ -73,6 +73,8 @@ class LocalObserver: DirectoryObserver {
     
     private func parseList(urls: [URL]) {
         updatesEnabled = false
+        
+        let nameParser = ComicNameParser()
         var rootFolder = Folder(url: path)
         var files: [File] = []
 
@@ -100,7 +102,9 @@ class LocalObserver: DirectoryObserver {
             let id = STTHelpers.generateFileIdentifier(size: fileSize, created: creationDate, modified: contentChangeDate)
             
             let pageCount = try? ArchiveHelper().getItemCount(for: url)
-            let file = File(url: url, isOnDevice: true, id: id, name: url.fileName, created: creationDate, addedToDirectory: addedToDirectory, size: fileSize, pageCount: pageCount)
+            let name = nameParser.getNameProperties(url.fileName)
+
+            let file = File(url: url, isOnDevice: true, id: id, name: url.fileName, created: creationDate, addedToDirectory: addedToDirectory, size: fileSize, pageCount: pageCount, metaData: name)
             files.append(file)
         }
         
