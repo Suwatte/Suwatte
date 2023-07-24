@@ -125,7 +125,7 @@ extension DataManager {
                 obj.listURL = listURL.absoluteString
             }
 
-            if obj.executable == nil {
+            if obj.executable == nil || url.exists {
                 obj.executable = CreamAsset.create(object: obj, propName: StoredRunnerObject.RUNNER_KEY, url: url)
             }
             if let thumbnail = info.thumbnail {
