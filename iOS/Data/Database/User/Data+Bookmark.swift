@@ -26,15 +26,14 @@ extension DataManager {
             .where { $0.isDeleted == false }
             .where { $0.chapter.id == chapter.id }
             .where { $0.page == page }
-        
+
         if let offset {
             let max = offset + 250
             let min = offset - 250
             bookmarks = bookmarks
                 .where { $0.verticalOffset == nil || ($0.verticalOffset >= min && $0.verticalOffset <= max) }
         }
-        
-        
+
         if !bookmarks.isEmpty {
             try! realm.safeWrite {
                 bookmarks.forEach {
@@ -44,7 +43,7 @@ extension DataManager {
             validateChapterReference(id: chapter.id, realm)
             return
         }
-        
+
         // Create new bookmark
         let object = Bookmark()
         object.chapter = chapter.generateReference()
@@ -55,19 +54,19 @@ extension DataManager {
             realm.add(object, update: .modified)
         }
     }
-    
+
     func removeBookmark(_ id: String) {
         let realm = try! Realm()
-        
+
         let target = realm
             .objects(Bookmark.self)
             .where { $0.id == id }
             .first
-        
+
         guard let target else {
             return
         }
-        
+
         try! realm.safeWrite {
             target.isDeleted = false
         }

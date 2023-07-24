@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 struct ContentTrackerPageView: View {
     let tracker: JSCCT
     var link: DSKCommon.PageLink
@@ -27,10 +26,10 @@ struct ContentTrackerPageView: View {
             }
         }
     }
-    
+
     struct Cell: View {
         let tracker: JSCCT
-        @State var item : DSKCommon.TrackItem
+        @State var item: DSKCommon.TrackItem
         var body: some View {
             PageViewTile(runnerID: tracker.id, id: item.id, title: item.title, subtitle: nil, cover: item.cover, additionalCovers: nil, info: nil, badge: nil)
                 .coloredBadge(item.entry?.status.color)
@@ -39,13 +38,12 @@ struct ContentTrackerPageView: View {
     }
 }
 
-
 struct TrackerContextModifier: ViewModifier {
     let tracker: JSCCT
     @Binding var item: DSKCommon.TrackItem
     @State var presentEntryFormView = false
     @State var status: DSKCommon.TrackStatus
-    
+
     func trackerAction(_ action: @escaping () async throws -> Void) {
         let prev = item
         Task {
@@ -58,7 +56,7 @@ struct TrackerContextModifier: ViewModifier {
             }
         }
     }
-    
+
     func body(content: Content) -> some View {
         Group {
             content
@@ -82,7 +80,7 @@ struct TrackerContextModifier: ViewModifier {
                             Label("Increment Chapter", systemImage: "plus")
                         }
                         Button {
-                            let volume =  entry.progress.lastReadVolume ?? 0
+                            let volume = entry.progress.lastReadVolume ?? 0
                             trackerAction {
                                 try await tracker.didUpdateLastReadChapter(id: item.id, progress: .init(chapter: nil, volume: volume + 1))
                             }
@@ -100,7 +98,7 @@ struct TrackerContextModifier: ViewModifier {
                         Button { presentEntryFormView.toggle() } label: {
                             Label("Edit Tracker Entry", systemImage: "pencil")
                         }
-                        
+
                     } else {
                         Button {
                             trackerAction {

@@ -60,7 +60,6 @@ struct SearchView: View {
                 } label: {
                     Image(systemName: "photo")
                 }
-
             }
         }
     }
@@ -179,7 +178,7 @@ struct SearchView: View {
                             Spacer()
                             if data.results.count < data.totalResultCount ?? 0, let dskSrc = DSK.shared.getSource(id: key) {
                                 NavigationLink {
-                                ContentSourceDirectoryView(source: dskSrc, request: .init(query: model.query ,page: 1))
+                                    ContentSourceDirectoryView(source: dskSrc, request: .init(query: model.query, page: 1))
                                 } label: {
                                     Text("View More \(Image(systemName: "chevron.right"))")
                                         .font(.subheadline)
@@ -308,13 +307,13 @@ extension SearchView {
                 do {
                     let request = DSKCommon.DirectoryRequest(query: query, page: 1)
                     let controller = try DSK.shared.getContentSource(id: source.id)
-                    
+
                     guard controller.ablityNotDisabled(\.disableContentLinking) else {
                         results[source.id] = .loaded(.init(results: [], isLastPage: true))
                         return
                     }
-                    
-                    let data: DSKCommon.PagedResult<DSKCommon.Highlight>  = try await controller.getDirectory(request: request)
+
+                    let data: DSKCommon.PagedResult<DSKCommon.Highlight> = try await controller.getDirectory(request: request)
                     results[source.id] = .loaded(data)
                 } catch {
                     results[source.id] = .failed(error)

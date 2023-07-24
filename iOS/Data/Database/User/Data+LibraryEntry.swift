@@ -72,7 +72,6 @@ extension DataManager {
                 target.flag = flag
             }
         }
-        
 
         let sourceIds = Set(targets.compactMap { $0.content?.sourceId })
         for id in sourceIds {
@@ -139,7 +138,7 @@ extension DataManager {
         guard let source, source.intents.contentEventHandler else {
             return true
         }
-        
+
         Task {
             do {
                 try await source.onContentsAddedToLibrary(ids: [ids.contentId])

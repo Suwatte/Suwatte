@@ -8,6 +8,7 @@
 import SwiftUI
 
 // MARK: - View
+
 struct ContentTrackerDirectoryView: View {
     let tracker: JSCCT
     let request: DSKCommon.DirectoryRequest
@@ -15,11 +16,11 @@ struct ContentTrackerDirectoryView: View {
         DirectoryView<DSKCommon.TrackItem, Cell>(model: .init(runner: tracker, request: request)) { data in
             Cell(data: data, tracker: tracker)
         }
-
     }
 }
 
 // MARK: - Cell
+
 extension ContentTrackerDirectoryView {
     struct Cell: View {
         @State var data: DSKCommon.TrackItem

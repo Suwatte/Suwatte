@@ -11,18 +11,17 @@ import RealmSwift
 struct Backup: Codable {
     var library: [LibraryEntry]?
     var collections: [LibraryCollection]?
-    
+
     var readLater: [ReadLater]?
     var progressMarkers: [ProgressMarker]?
-    
+
     var date: Date = .init()
     var appVersion: String = Bundle.main.releaseVersionNumber ?? "UNKNOWN"
     var schemaVersion: Int = SCHEMA_VERSION
 
     var runnerLists: [StoredRunnerList]?
     var runners: [StoredRunnerObject]?
-    
-    
+
     static func load(from url: URL) throws -> Backup {
         let json = try Data(contentsOf: url)
         let version = try DaisukeEngine.decode(data: json, to: BasicBackUpScheme.self)
@@ -43,4 +42,3 @@ struct Backup: Codable {
 struct BasicBackUpScheme: Codable {
     var schemaVersion: Int
 }
-

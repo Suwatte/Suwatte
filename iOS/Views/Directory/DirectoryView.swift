@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 struct DirectoryView<T: Codable & Hashable, C: View>: View {
     @StateObject var model: ViewModel
     @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
@@ -16,14 +15,14 @@ struct DirectoryView<T: Codable & Hashable, C: View>: View {
     @State var firstCall = false
 
     init(model: ViewModel, @ViewBuilder _ content: @escaping (T) -> C) {
-        self._model = StateObject(wrappedValue: model)
+        _model = StateObject(wrappedValue: model)
         self.content = content
     }
-    
+
     var fullSearch: Bool {
         model.request.tag == nil && (model.config?.searchable ?? false)
     }
-    
+
     var body: some View {
         LoadableView(load, model.result) { value in
             if value.isEmpty {
@@ -42,7 +41,6 @@ struct DirectoryView<T: Codable & Hashable, C: View>: View {
             FilterView(filters: model.filters)
                 .tint(accentColor)
                 .accentColor(accentColor)
-
         }
         .sheet(isPresented: $model.presentHistory) {
             HistoryView()
@@ -73,15 +71,14 @@ struct DirectoryView<T: Codable & Hashable, C: View>: View {
                 }
             }
         }
-
     }
-    
+
     func load() {
         Task {
             await model.makeRequest()
         }
     }
-    
+
     func didRecieveQuery(_ val: String) {
         if model.callFromHistory {
             model.callFromHistory.toggle()
@@ -102,16 +99,13 @@ struct DirectoryView<T: Codable & Hashable, C: View>: View {
             .trimmingCharacters(in: .whitespacesAndNewlines)
         request()
     }
-    
+
     func request() {
         Task {
             await model.makeRequest()
         }
     }
-
 }
-
-
 
 extension DirectoryView {
     struct NoResultsView: View {
@@ -125,15 +119,13 @@ extension DirectoryView {
                     .fontWeight(.light)
             }
         }
-        
     }
 }
-
 
 struct RunnerDirectoryView: View {
     let runner: JSCRunner
     let request: DSKCommon.DirectoryRequest
-    
+
     var body: some View {
         Group {
             switch runner.environment {

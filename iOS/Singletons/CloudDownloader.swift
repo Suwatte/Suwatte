@@ -26,10 +26,9 @@ class CloudDownloader {
             metadataQuery.operationQueue = queue
             NotificationCenter.default.addObserver(self, selector: #selector(updateReceived(_:)), name: .NSMetadataQueryDidUpdate, object: metadataQuery)
             NotificationCenter.default.addObserver(self, selector: #selector(updateReceived(_:)), name: .NSMetadataQueryDidFinishGathering, object: metadataQuery)
-            
-            
+
             metadataQuery.start()
-            
+
         } catch {
             callback(.failure(error))
         }
@@ -38,7 +37,7 @@ class CloudDownloader {
     @objc private func updateReceived(_: Notification) {
         checkDownloadStatus()
     }
-    
+
     func cancel() {
         metadataQuery.stop()
     }
@@ -71,4 +70,3 @@ class CloudDownloader {
         }
     }
 }
-

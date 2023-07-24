@@ -137,12 +137,13 @@ struct ChapterList: View {
 
     var filterCases: [ChapterSortOption] {
         let removeDate = !model.source.ablityNotDisabled(\.disableChapterDates)
-        
+
         if removeDate {
             return ChapterSortOption.allCases.filter { $0 != .date }
         }
         return ChapterSortOption.allCases
     }
+
     func handleReconnection() {
         DispatchQueue.main.async {
             model.setupObservers()
@@ -162,7 +163,7 @@ struct ChapterList: View {
 
         return id
     }
-    
+
     @ViewBuilder
     var BottomBar: some View {
         Menu("Select") {
@@ -245,14 +246,14 @@ extension ChapterList {
             filterChapters(chapters: chapters)
         }
     }
-    
+
     func filterChapters(chapters: [StoredChapter]) {
         // Core filters
         var base = chapters
             .filter(filterDownloads(_:))
             .filter(filterProviders(_:))
             .filter(filterLanguages(_:))
-        
+
         switch sortKey {
         case .date:
             base = base
@@ -275,14 +276,13 @@ extension ChapterList {
             if sortDesc { sortedV = sortedV.reversed() }
             base = sortedV
         }
-        
+
         Task { @MainActor in
             withAnimation {
                 visibleChapters = base
             }
         }
     }
-
 
     func filterDownloads(_ chapter: StoredChapter) -> Bool {
         if !showOnlyDownloads { return true }
@@ -517,7 +517,6 @@ extension ChapterList {
     }
 
     func didMark() { // This is called before the notification is delivered to for model `readChapters` property to update
-        
         let maxRead = DataManager
             .shared
             .getContentMarker(for: model.contentIdentifier)?
@@ -526,7 +525,7 @@ extension ChapterList {
         guard let maxRead else { return }
         Task.detached {
             let progress = DSKCommon.TrackProgressUpdate(chapter: maxRead, volume: nil) // TODO: Probably Want to get the volume here
-            await DataManager.shared.updateTrackProgress(for: model.contentIdentifier,progress: progress)
+            await DataManager.shared.updateTrackProgress(for: model.contentIdentifier, progress: progress)
         }
     }
 }

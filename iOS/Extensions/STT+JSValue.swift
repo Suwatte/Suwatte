@@ -46,7 +46,7 @@ extension JSValue {
             onFailure(DaisukeEngine.Errors.NamedError(name: "[Engine Error]", message: "execution did not return a result."))
             return
         }
-        
+
         // Method Executed and threw error before we could check for properties
         if execution.isUndefined, let exception = context.exception {
             rejector(exception)
@@ -54,7 +54,7 @@ extension JSValue {
         }
 
         let isPromise = execution.hasProperty("then")
-        if  isPromise {
+        if isPromise {
             execution.invokeMethod("then", withArguments: [
                 JSValue(object: resolver, in: context) as Any,
             ])
@@ -63,7 +63,6 @@ extension JSValue {
                 JSValue(object: rejector, in: context) as Any,
             ])
         } else {
-
             if let exception = context.exception {
                 rejector(exception)
                 return
@@ -74,6 +73,5 @@ extension JSValue {
                 onFailure(error)
             }
         }
-
     }
 }

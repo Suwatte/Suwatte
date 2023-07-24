@@ -5,22 +5,21 @@
 //  Created by Mantton on 2023-07-08.
 //
 
-import Foundation
 import AnyCodable
+import Foundation
 import SwiftUI
 
 // MARK: - Core
 
 extension DSKCommon {
-    
     enum TrackStatus: String, Codable, CaseIterable {
         case CURRENT, PLANNING, COMPLETED, PAUSED, DROPPED, REPEATING
     }
-    
+
     struct TrackForm: Parsable, Hashable {
         let sections: [UISection<TrackFormComponent>]
     }
-    
+
     struct TrackItem: Parsable, Hashable, Identifiable {
         let id: String
         let title: String
@@ -29,18 +28,18 @@ extension DSKCommon {
         var entry: TrackEntry?
         let info: [String]?
     }
-    
+
     struct TrackProgress: Parsable, Hashable {
         var lastReadChapter: Double
         var lastReadVolume: Double?
         let maxAvailableChapter: Double?
     }
-    
+
     struct TrackProgressUpdate: Parsable, Hashable {
         let chapter: Double?
         let volume: Double?
     }
-    
+
     struct TrackEntry: Parsable, Hashable {
         var status: TrackStatus
         var progress: TrackProgress
@@ -48,7 +47,7 @@ extension DSKCommon {
 }
 
 extension DSKCommon.TrackStatus {
-    var description : String {
+    var description: String {
         switch self {
         case .CURRENT:
             return "Reading"
@@ -64,7 +63,7 @@ extension DSKCommon.TrackStatus {
             return "Rereading"
         }
     }
-    
+
     var systemImage: String {
         switch self {
         case .CURRENT:
@@ -100,60 +99,58 @@ extension DSKCommon.TrackStatus {
     }
 }
 
-
 // MARK: - Form
+
 extension DSKCommon {
-    struct IOption : Parsable, Hashable, Identifiable {
+    struct IOption: Parsable, Hashable, Identifiable {
         let key: String
         let label: String
-        
+
         var id: Int {
             hashValue
         }
     }
-    
-    enum UIComponentType : String, Parsable {
-        case picker, stepper, multipicker, textfield, button, toggle , datepicker
+
+    enum UIComponentType: String, Parsable {
+        case picker, stepper, multipicker, textfield, button, toggle, datepicker
     }
-    
-    struct UISection<T: Parsable> : Parsable, Hashable where T : Hashable {
+
+    struct UISection<T: Parsable>: Parsable, Hashable where T: Hashable {
         let header: String?
         let footer: String?
         let children: [T]
     }
-   
+
     struct TrackFormComponent: Parsable, Hashable {
         let key: String
         let label: String
-        
+
         let currentValue: AnyCodable?
-        
+
         // When nil the component is required to have a current value
         let notRequired: AnyCodable?
-        
+
         let upperBound: Double?
         let lowerBound: Double?
         let allowDecimal: AnyCodable?
         let step: Double?
-        
+
         let options: [IOption]?
         let maxSelections: Int?
         let minSelections: Int?
-        
+
         let type: UIComponentType
-        
+
         var faulty: Bool {
             currentValue == nil && !isRemovable
         }
-        
+
         var isRemovable: Bool {
             notRequired != nil || notRequired?.value != nil
         }
-        
+
         var isDecimalAllowed: Bool {
             notRequired != nil || notRequired?.value != nil
         }
-        
     }
 }
-

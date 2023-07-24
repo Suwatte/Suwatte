@@ -12,20 +12,20 @@ struct SourceLandingPage: View {
     @State var loadable = Loadable<JSCCS>.idle
 
     var body: some View {
-        LoadableView(startSource,loadable) {
+        LoadableView(startSource, loadable) {
             LoadedSourceView(source: $0)
         }
     }
-    
+
     func startSource() {
         loadable = .loading
         do {
-            loadable = .loaded(try DSK.shared.getContentSource(id: sourceID))
+            loadable = try .loaded(DSK.shared.getContentSource(id: sourceID))
         } catch {
             loadable = .failed(error)
         }
     }
-    
+
     struct LoadedSourceView: View {
         let source: JSCCS
         var body: some View {

@@ -12,10 +12,10 @@ struct BookmarksView: View {
     @EnvironmentObject var profileModel: ProfileView.ViewModel
     @StateObject var model: ViewModel = .init()
     typealias SectionGroup = SectionedResults<String, Bookmark>
-    
+
     @State var pageIndex: Int?
     @State var selectedChapter: StoredChapter?
-    
+
     var body: some View {
         NavigationView {
             Group {
@@ -27,7 +27,6 @@ struct BookmarksView: View {
                     }
                 } else {
                     ProgressView()
-                    
                 }
             }
             .navigationTitle("Bookmarks")
@@ -42,31 +41,30 @@ struct BookmarksView: View {
                               chapterList: chapters,
                               openTo: chapter,
                               pageIndex: pageIndex)
-                .onAppear(perform: model.stop)
+                    .onAppear(perform: model.stop)
             }
         }
     }
-    
+
     func observe() {
         model.observe(id: profileModel.sttIdentifier().id)
     }
-    
+
     func EmptyResultsView() -> some View {
         VStack(alignment: .center, spacing: 7) {
-            
             Text("(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧")
                 .font(.title3)
-            
+
             Text("No Bookmarks")
                 .font(.headline)
                 .fontWeight(.light)
-            
+
             Text("Long press a page in the reader to add a bookmark!")
                 .font(.subheadline)
                 .fontWeight(.thin)
         }
     }
-    
+
     @ViewBuilder
     func ResultsView(_ results: SectionGroup) -> some View {
         List {
@@ -76,7 +74,7 @@ struct BookmarksView: View {
         }
         .headerProminence(.increased)
     }
-    
+
     @ViewBuilder
     func ChapterSectionView(_ section: SectionGroup.Element) -> some View {
         if let chapter = section.first?.chapter {
@@ -92,7 +90,7 @@ struct BookmarksView: View {
             EmptyView()
         }
     }
-    
+
     @ViewBuilder
     func Cell(bookmark: Bookmark, chapter: ChapterReference, imageUrl: String?) -> some View {
         HStack {
@@ -126,13 +124,11 @@ struct BookmarksView: View {
     }
 }
 
-
-
 extension BookmarksView {
     final class ViewModel: ObservableObject {
         private var token: NotificationToken?
         @Published var results: SectionedResults<String, Bookmark>?
-        
+
         func observe(id: String) {
             let realm = try! Realm()
             let results = realm
@@ -141,8 +137,7 @@ extension BookmarksView {
                 .where { $0.chapter != nil && $0.chapter.content != nil }
                 .where { $0.chapter.content.id == id }
                 .sectioned(by: \.chapter!.id, sortDescriptors: [.init(keyPath: "chapter.id"), .init(keyPath: "page")])
-            
-            
+
             token = results.observe { _ in
                 let out = results.freeze()
                 Task { @MainActor in
@@ -152,7 +147,7 @@ extension BookmarksView {
                 }
             }
         }
-        
+
         func stop() {
             token?.invalidate()
             token = nil

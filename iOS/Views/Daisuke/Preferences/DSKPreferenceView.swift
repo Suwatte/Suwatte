@@ -7,17 +7,16 @@
 
 import SwiftUI
 
-
-struct DSKPreferenceView : View {
+struct DSKPreferenceView: View {
     var runner: JSCRunner
     @State private var loadable = Loadable<[DSKCommon.PreferenceGroup]>.idle
-    
+
     var body: some View {
         LoadableView(load, loadable) { value in
             ContentSourceSettingsView(runner: runner, preferences: value)
         }
     }
-    
+
     func load() {
         Task {
             loadable = .loading
@@ -30,7 +29,6 @@ struct DSKPreferenceView : View {
         }
     }
 }
-
 
 struct ContentSourceSettingsView: View {
     var runner: JSCRunner

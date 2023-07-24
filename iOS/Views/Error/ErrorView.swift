@@ -65,7 +65,7 @@ struct ErrorView: View {
             return "JSON Decoding Error (Corrupted Data): \(context.debugDescription)"
         } else if case let DecodingError.keyNotFound(_, context) = error {
             return "JSON Decoding Error (Key Not Found): \(context.debugDescription)"
-        } else if case let DSK.Errors.NetworkError(message, _) = error{
+        } else if case let DSK.Errors.NetworkError(message, _) = error {
             return "Network Error: \(message)"
         } else if case let DSK.Errors.NamedError(name, message) = error {
             return "\(name): \(message)"

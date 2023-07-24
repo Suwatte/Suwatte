@@ -134,16 +134,16 @@ enum STTKeys {
 
     static let BlurNSFWContent = "APP.blur_nsfw"
     static let ShowNSFWContentInSearch = "APP.filter_nsfw"
-    
+
     static let LocalStorageUsesICloud = "APP.local_use_icloud"
-    
+
     static func RunnerOverridesImageRequest(_ id: String) -> String {
         return "RUNNER.IRH:\(id)"
     }
-    
+
     static func PageLinkResolver(_ id: String) -> String {
         return "RUNNER.PLR:\(id)"
     }
-    
+
     static let DefaultPanelReadingMode = "READER.panel_default_mode"
 }

@@ -5,14 +5,13 @@
 //  Created by Mantton on 2023-06-21.
 //
 
-import SwiftUI
-import UIKit
 import ASCollectionView
 import NukeUI
+import SwiftUI
+import UIKit
 
 extension DirectoryViewer {
-    
-    struct CoreCollectionView : View {
+    struct CoreCollectionView: View {
         let directory: Folder
         @Binding var isEditing: Bool
         @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
@@ -22,13 +21,12 @@ extension DirectoryViewer {
         @EnvironmentObject var coreModel: DirectoryViewer.CoreModel
         @State var selectedIndexes = Set<Int>()
         @State var triggerValue = 0
-        var body : some View {
+        var body: some View {
             ASCollectionView(editMode: isEditing) {
-                
                 // Folder Section
                 ASCollectionViewSection(id: 0, data: directory.folders.sorted(by: \.name, descending: false), contentBuilder: Builder)
                     .cacheCells()
-                
+
                 // Files Section
                 ASCollectionViewSection(id: 1, data: directory.files, selectionMode: .selectMultiple($selectedIndexes), contentBuilder: Builder)
             }
@@ -46,18 +44,18 @@ extension DirectoryViewer {
             .onChange(of: showOnlyThumbs, perform: trigger)
             .onChange(of: showTitleOnly, perform: trigger)
         }
-        
-        func trigger(_ v: AnyHashable) {
+
+        func trigger(_: AnyHashable) {
             triggerValue += 1 // Make View Update
         }
-        
+
         func Builder(_ file: File, _ context: ASCellContext) -> some View {
             CellWrapper(file: file, context: context)
                 .environmentObject(coreModel)
                 .environment(\.libraryIsSelecting, isEditing)
         }
-        
-        func Builder(_ folder: Folder.SubFolder ,_  context: ASCellContext) -> some View {
+
+        func Builder(_ folder: Folder.SubFolder, _: ASCellContext) -> some View {
             Color.primary.opacity(0.10)
                 .cornerRadius(7)
                 .overlay {
@@ -82,10 +80,8 @@ extension DirectoryViewer {
     }
 }
 
-
 extension DirectoryViewer {
-    
-    struct CellWrapper : View {
+    struct CellWrapper: View {
         @State var file: File
         let context: ASCellContext
         @EnvironmentObject var coreModel: DirectoryViewer.CoreModel
@@ -106,7 +102,7 @@ extension DirectoryViewer {
                 }
                 .buttonStyle(NeutralButtonStyle())
                 .disabled(isEditing)
-                
+
                 Image(systemName: "circle.fill")
                     .resizable()
                     .foregroundColor(context.isSelected ? .accentColor : .black)
@@ -118,13 +114,13 @@ extension DirectoryViewer {
             }
             .animation(.default, value: isEditing)
             .animation(.default, value: context.isSelected)
-
         }
-        
+
         var isDownloading: Bool {
             coreModel.currentDownloadFileId == file.id
         }
     }
+
     struct Cell: View {
         var file: File
         let context: ASCellContext
@@ -153,13 +149,12 @@ extension DirectoryViewer {
                 }
                 .animation(.default, value: isEditing)
             }
-            
         }
-        
+
         var titleHeight: CGFloat {
             showTitleOnly ? 44 : 65
         }
-        
+
         var TitleView: some View {
             VStack(alignment: .leading, spacing: 1.5) {
                 Text(file.metaData?.formattedName ?? file.name)
@@ -172,14 +167,14 @@ extension DirectoryViewer {
                 }
             }
         }
-        
+
         var SubHeadline: some View {
             HStack(spacing: 3) {
                 Text(file.sizeToString()) // File Size
                 if !file.isOnDevice && !isDownloading {
                     Text("•")
                     Image(systemName: "icloud.and.arrow.down")
-                    
+
                 } else if let pageCount = file.pageCount {
                     let plural = pageCount == 1 ? "" : "s"
                     Text("•")
@@ -195,12 +190,11 @@ extension DirectoryViewer {
             .font(.footnote.weight(.thin))
             .lineLimit(1)
         }
-        
+
         func request(size: CGSize) -> ImageRequest {
             file.imageRequest(size)
         }
     }
-    
 }
 
 extension DirectoryViewer.CoreCollectionView {
@@ -233,7 +227,7 @@ extension DirectoryViewer.CoreCollectionView {
                     widthDimension: .fractionalWidth(1 / CGFloat(itemsPerRow)),
                     heightDimension: .absolute(height)
                 ))
-                
+
                 // Group / Row
                 let group = NSCollectionLayoutGroup.horizontal(
                     layoutSize: NSCollectionLayoutSize(
@@ -251,5 +245,4 @@ extension DirectoryViewer.CoreCollectionView {
             }
         }
     }
-    
 }

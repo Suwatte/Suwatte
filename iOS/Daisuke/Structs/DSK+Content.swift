@@ -26,11 +26,11 @@ enum ReadingMode: Int, CaseIterable, Hashable, UserDefaultsSerializable {
          VERTICAL_SEPARATED, // Vertical with Slight Gap Between Pages
          PAGED_VERTICAL, // A Vertical Pager
          WEB, // Opens using the chapters WebUrl
-        NOVEL_PAGED_MANGA,
-        NOVEL_PAGED_COMIC,
-        NOVEL_PAGED_VERTICAL,
-        NOVEL_WEBTOON
-    
+         NOVEL_PAGED_MANGA,
+         NOVEL_PAGED_COMIC,
+         NOVEL_PAGED_VERTICAL,
+         NOVEL_WEBTOON
+
     var isPanelMode: Bool {
         switch self {
         case .NOVEL_WEBTOON, .NOVEL_PAGED_COMIC, .NOVEL_PAGED_VERTICAL, .NOVEL_PAGED_MANGA, .WEB:
@@ -39,15 +39,15 @@ enum ReadingMode: Int, CaseIterable, Hashable, UserDefaultsSerializable {
             return true
         }
     }
-        
+
     static func PanelCases() -> [Self] {
         Self.allCases.filter { $0.isPanelMode }
     }
-    
+
     static var defaultPanelMode: Self {
         Preferences.standard.defaultPanelReadingMode
     }
-    
+
     var description: String {
         switch self {
         case .PAGED_MANGA:
@@ -92,16 +92,16 @@ extension DaisukeEngine.Structs {
         var context: CodableDict?
         var acquisitionLink: String?
         var streamable: Bool?
-        
+
         var id: String {
             contentId
         }
-        
+
         var canStream: Bool {
             streamable ?? false
         }
     }
-    
+
     struct Badge: JSCObject {
         let color: String?
         let count: Double?
@@ -128,10 +128,9 @@ extension DaisukeEngine.Structs {
         var includedCollections: [HighlightCollection]?
         var trackerInfo: [String: String]?
         var chapters: [Chapter]?
-        
+
         var acquisitionLink: String?
         var streamable: Bool?
-        
 
         var covers: [String] {
             var covers = additionalCovers ?? []
@@ -139,7 +138,7 @@ extension DaisukeEngine.Structs {
             covers.insert(cover, at: 0)
             return covers
         }
-        
+
         var canStream: Bool {
             streamable ?? false
         }
@@ -164,10 +163,9 @@ extension DaisukeEngine.Structs.Highlight {
 
 extension DSKCommon {
     struct ReaderContext: JSCObject {
-        
         let target: String
         let chapters: [Chapter]
-        
+
         let requestedPage: Int?
         let readingMode: ReadingMode?
         let content: Highlight?

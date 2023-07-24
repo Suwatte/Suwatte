@@ -10,13 +10,12 @@
 import Foundation
 
 class ComicNameParser {
-
     struct Name: Hashable {
         let title: String
         let issue: Double?
         let volume: Double?
     }
-    
+
     func getIssueNumber(filename: String) -> (String, Int, Int) {
         var filename = filename
         var found = false
@@ -27,7 +26,7 @@ class ComicNameParser {
 
         if filename.contains("--") {
             filename = filename.components(separatedBy: "--").first ?? ""
-        } else if filename.contains("__") && !filename.contains("[__\\d+__]") {
+        } else if filename.contains("__"), !filename.contains("[__\\d+__]") {
             filename = filename.components(separatedBy: "__").first ?? ""
         }
 
@@ -38,13 +37,13 @@ class ComicNameParser {
         filename = filename.replacingOccurrences(of: "of \\d+", with: "", options: .regularExpression)
 
         let volumeRegex = "(vol|volume)"
-        if let range = filename.range(of: volumeRegex+"(\\d+)", options: .regularExpression, range: nil, locale: nil) {
+        if let range = filename.range(of: volumeRegex + "(\\d+)", options: .regularExpression, range: nil, locale: nil) {
             volume = String(filename[range])
         }
 
         var wordList = [Substring]()
         filename.enumerateSubstrings(in: filename.startIndex..., options: .byWords) { word, range, _, _ in
-        
+
             if let word, !word.isEmpty {
                 wordList.append(filename[range])
             }
@@ -116,7 +115,7 @@ class ComicNameParser {
         filename = filename.replacingOccurrences(of: "\\(.*?\\)", with: "", options: .regularExpression)
 
         let volumeRegex = "(vol|volume)"
-        if let range = filename.range(of: "(.+)"+volumeRegex+"(\\d+)", options: .regularExpression, range: nil, locale: nil) {
+        if let range = filename.range(of: "(.+)" + volumeRegex + "(\\d+)", options: .regularExpression, range: nil, locale: nil) {
             volume = String(filename[range])
             filename = filename.replacingOccurrences(of: volume, with: "")
         }
@@ -150,11 +149,11 @@ class ComicNameParser {
         var formattedName = series
         var volume: Double?
         var issue: Double?
-        
+
         if !volumeStr.isEmpty {
             volume = .init(volumeStr)
         }
-        
+
         if !issueStr.isEmpty {
             issue = .init(issueStr)
         }
@@ -162,18 +161,17 @@ class ComicNameParser {
     }
 }
 
-
 extension ComicNameParser.Name {
     var formattedName: String {
         var out = title
         if let volume {
             out += " Vol. \(volume.clean)"
         }
-        
+
         if let issue {
             out += " #\(issue.issue)"
         }
-        
+
         return out
     }
 }

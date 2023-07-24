@@ -5,13 +5,10 @@
 //  Created by Mantton on 2023-07-12.
 //
 
-import SwiftUI
 import ASCollectionView
-
-
+import SwiftUI
 
 extension DSKPageView {
-    
     struct CollectionView: View {
         let pageSections: [DSKCommon.PageSection<T>]
         let runner: JSCRunner
@@ -21,20 +18,21 @@ extension DSKPageView {
         @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
         @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
         @EnvironmentObject var model: ViewModel
-        
+
         init(sections: [DSKCommon.PageSection<T>], runner: JSCRunner, @ViewBuilder _ tileModifier: @escaping PageItemModifier) {
-            self.pageSections = sections
+            pageSections = sections
             self.runner = runner
             self.tileModifier = tileModifier
         }
+
         var body: some View {
             ASCollectionView(sections: self.sections)
                 .layout(self.layout)
                 .shouldInvalidateLayoutOnStateChange(true)
-                .onPullToRefresh({ endRefreshing in
+                .onPullToRefresh { endRefreshing in
                     model.loadable = .idle
                     endRefreshing()
-                })
+                }
                 .shouldInvalidateLayoutOnStateChange(true)
                 .alwaysBounceVertical()
                 .animateOnDataRefresh(true)
@@ -48,12 +46,12 @@ extension DSKPageView {
 }
 
 // MARK: - Load Methods
+
 extension DSKPageView.CollectionView {
     func loadAll(force: Bool = false) {
-        
         guard !locked && !force else { return }
         locked = true // prevent from refiring
-        let unresolved = pageSections.filter({ $0.items == nil }).map(\.key)
+        let unresolved = pageSections.filter { $0.items == nil }.map(\.key)
         unresolved.forEach { section in
             Task.detached {
                 await model.load(section)
@@ -63,13 +61,14 @@ extension DSKPageView.CollectionView {
 }
 
 // MARK: - Layout
+
 extension DSKPageView.CollectionView {
     var layout: ASCollectionLayout<String> {
-        let cache = Dictionary(uniqueKeysWithValues: pageSections.map { ($0.key, $0.sectionStyle ) })
+        let cache = Dictionary(uniqueKeysWithValues: pageSections.map { ($0.key, $0.sectionStyle) })
         let errors = model.errors
         return ASCollectionLayout { sectionID in
             // Errored Out, Show Error Layout
-            if errors.contains(sectionID)  {
+            if errors.contains(sectionID) {
                 return .init {
                     ErrorLayout()
                 }
@@ -113,34 +112,34 @@ extension DSKPageView.CollectionView {
     }
 }
 
-
 // MARK: - Sections
+
 extension DSKPageView.CollectionView {
     var sections: [ASCollectionViewSection<String>] {
         let loadables = model.loadables
-        return pageSections.map { (section) -> ASCollectionViewSection<String> in
+        return pageSections.map { section -> ASCollectionViewSection<String> in
             let key = section.key
             // Section was preloaded
             if let data = section.items {
                 return LoadedSection(section, data)
             }
-            
+
             // Collection not loaded, find loadable and display based off state
             guard let loadable = loadables[key] else {
                 return ErrorSection(section, error: DSK.Errors.ObjectConversionFailed)
             }
-            
+
             switch loadable {
-            case .failed(let error): return ErrorSection(section, error: error)
+            case let .failed(error): return ErrorSection(section, error: error)
             case .loading, .idle: return LoadingSection(section)
-            case .loaded(let data): return LoadedSection(section, data.items, data)
+            case let .loaded(data): return LoadedSection(section, data.items, data)
             }
         }
     }
 }
 
 extension DSKPageView.CollectionView {
-    func buildHeader(_ title: String,_ subtitle: String?, _ linkable: DSKCommon.Linkable?) -> some View {
+    func buildHeader(_ title: String, _ subtitle: String?, _ linkable: DSKCommon.Linkable?) -> some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading) {
                 Text(title)
@@ -186,6 +185,7 @@ extension DSKPageView.CollectionView {
             EmptyView()
         }
     }
+
     func ErrorSection(_ section: DSKCommon.PageSection<T>, error: Error) -> ASCollectionViewSection<String> {
         ASCollectionViewSection(id: section.key) {
             ErrorView(error: error, runnerID: runner.id) {
@@ -203,8 +203,9 @@ extension DSKPageView.CollectionView {
             EmptyView()
         }
     }
-    func LoadedSection(_ section: DSKCommon.PageSection<T> , _ items: [DSKCommon.PageItem<T>], _ resolved: DSKCommon.ResolvedPageSection<T>? = nil) -> ASCollectionViewSection<String> {
-        ASCollectionViewSection(id: section.key, data: items, dataID: \.hashValue) { data, context in
+
+    func LoadedSection(_ section: DSKCommon.PageSection<T>, _ items: [DSKCommon.PageItem<T>], _ resolved: DSKCommon.ResolvedPageSection<T>? = nil) -> ASCollectionViewSection<String> {
+        ASCollectionViewSection(id: section.key, data: items, dataID: \.hashValue) { data, _ in
             buildPageItemView(data)
                 .environment(\.pageSectionStyle, section.sectionStyle)
         }
@@ -217,8 +218,8 @@ extension DSKPageView.CollectionView {
             EmptyView()
         }
     }
-    
-    func LoadingSection(_ section: DSKCommon.PageSection<T>) -> ASCollectionViewSection<String>  {
+
+    func LoadingSection(_ section: DSKCommon.PageSection<T>) -> ASCollectionViewSection<String> {
         ASCollectionViewSection(id: section.key) {
             ProgressView()
         }
@@ -234,6 +235,7 @@ extension DSKPageView.CollectionView {
 }
 
 // MARK: - Define Secton Style Environment Key
+
 private struct PageSectionStyleKey: EnvironmentKey {
     static let defaultValue = DSKCommon.SectionStyle.DEFAULT
 }
@@ -245,8 +247,8 @@ extension EnvironmentValues {
     }
 }
 
-
 // MARK: - Builder
+
 extension DSKPageView.CollectionView {
     func buildLinkableView(_ linkable: DSKCommon.Linkable) -> some View {
         Group {
@@ -257,7 +259,7 @@ extension DSKPageView.CollectionView {
             }
         }
     }
-    
+
     func buildPageItemView(_ data: DSKCommon.PageItem<T>) -> some View {
         Group {
             if let link = data.link {

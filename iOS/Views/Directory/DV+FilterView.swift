@@ -5,8 +5,8 @@
 //  Created by Mantton on 2023-07-12.
 //
 
-import SwiftUI
 import AnyCodable
+import SwiftUI
 
 extension DirectoryView {
     struct FilterView: View {
@@ -54,7 +54,7 @@ extension DirectoryView {
                                 await model.makeRequest()
                             }
                             model.presentFilters.toggle()
-                            
+
                             Task.detached {
                                 await saveSearch()
                             }
@@ -64,9 +64,8 @@ extension DirectoryView {
                 }
             }
             .navigationViewStyle(.stack)
-
         }
-        
+
         func saveSearch() {
             do {
                 let title = prepareSearch().trimmingCharacters(in: .whitespacesAndNewlines)
@@ -77,10 +76,9 @@ extension DirectoryView {
                 Logger.shared.error(error)
             }
         }
-        
+
         func prepareSearch() -> String {
             var texts: [String] = []
-            
 
             for filter in filters {
                 // Get Filter
@@ -88,12 +86,12 @@ extension DirectoryView {
                 guard let target else {
                     continue
                 }
-                
+
                 let label = filter.label ?? filter.title
                 let options = filter.options ?? []
                 switch filter.type {
                 case .text:
-                    if let str =  (target.value as? String) {
+                    if let str = (target.value as? String) {
                         texts.append("\(label): \(str)")
                     }
                 case .toggle:
@@ -105,12 +103,12 @@ extension DirectoryView {
                         texts.append("Including \(label): \(option.label)")
                     }
                 case .multiselect:
-                    if let val = target.value as? [String]  {
-                        let selected = options.filter({ val.contains($0.key) })
+                    if let val = target.value as? [String] {
+                        let selected = options.filter { val.contains($0.key) }
                         if selected.isEmpty { continue }
                         texts.append("Including \(label): \(selected.map(\.label).joined(separator: ", "))")
                     } else if let val = target.value as? Set<String> {
-                        let selected = options.filter({ val.contains($0.key) })
+                        let selected = options.filter { val.contains($0.key) }
                         if selected.isEmpty { continue }
                         texts.append("Including \(label): \(selected.map(\.label).joined(separator: ", "))")
                     }
@@ -121,31 +119,30 @@ extension DirectoryView {
                     } else if let dict = target.value as? [String: Any], let value = try? DSKCommon.ExcludableMultiSelectProp(dict: dict) {
                         val = value
                     }
-                    
+
                     guard let val else { continue }
-                    let included = options.filter({ val.included.contains($0.key) }).map(\.label).joined(separator: ", ")
-                    let excluded = options.filter({ val.excluded.contains($0.key) }).map(\.label).joined(separator: ", ")
+                    let included = options.filter { val.included.contains($0.key) }.map(\.label).joined(separator: ", ")
+                    let excluded = options.filter { val.excluded.contains($0.key) }.map(\.label).joined(separator: ", ")
                     if !included.isEmpty {
                         let txt = "Including \(label): \(included)"
                         texts.append(txt)
                     }
-                    
+
                     if !excluded.isEmpty {
                         let txt = "Excluding \(label): \(excluded)"
                         texts.append(txt)
                     }
-                
+
                 default: break
                 }
             }
             return texts.joined(separator: "\n")
         }
-
     }
 }
 
-
 // MARK: FilterView Cell
+
 extension DirectoryView.FilterView {
     struct Cell: View {
         var filter: DSKCommon.DirectoryFilter
@@ -167,8 +164,7 @@ extension DirectoryView.FilterView {
                     case .info: EmptyView()
                     case .toggle: ToggleView(filter: filter, data: $data)
                     case .select, .multiselect, .excludableMultiselect: SelectView(filter: filter, query: query, data: $data)
-                    case .text:TextView(filter: filter, data: $data)
-                        
+                    case .text: TextView(filter: filter, data: $data)
                     }
                 }
             }
@@ -177,15 +173,16 @@ extension DirectoryView.FilterView {
 }
 
 // MARK: ToggleView
+
 extension DirectoryView.FilterView.Cell {
     struct ToggleView: View {
         var filter: DSKCommon.DirectoryFilter
         @Binding var data: [String: AnyCodable]
-        
+
         var body: some View {
             Toggle(filter.label ?? filter.title, isOn: binding)
         }
-        
+
         var binding: Binding<Bool> {
             .init {
                 (data[filter.id]?.value as? Bool) ?? false
@@ -197,13 +194,14 @@ extension DirectoryView.FilterView.Cell {
 }
 
 // MARK: Select View
+
 extension DirectoryView.FilterView.Cell {
     struct SelectView: View {
         var filter: DSKCommon.DirectoryFilter
         var query: String
         @Binding var data: [String: AnyCodable]
         @State var props = DSKCommon.ExcludableMultiSelectProp(included: [], excluded: [])
-        
+
         var options: [DSKCommon.Option] {
             var ops = filter.options ?? []
 
@@ -214,7 +212,7 @@ extension DirectoryView.FilterView.Cell {
             }
             return ops.sorted(by: \.label, descending: false)
         }
-        
+
         var body: some View {
             InteractiveTagView(options) { tag in
                 Button {
@@ -233,17 +231,17 @@ extension DirectoryView.FilterView.Cell {
                     props.included.insert(val)
                     return
                 }
-                
+
                 if let val = value as? [String] {
                     val.forEach { props.included.insert($0) }
                     return
                 }
-                
+
                 if let val = value as? Set<String> {
                     props.included = val
                     return
                 }
-                
+
                 if let val = value as? DSKCommon.ExcludableMultiSelectProp {
                     props = val
                 } else if let dict = value as? [String: Any], let val = try? DSKCommon.ExcludableMultiSelectProp(dict: dict) {
@@ -251,14 +249,15 @@ extension DirectoryView.FilterView.Cell {
                 }
             }
         }
-        
+
         // MARK: Methods
+
         func optionColor(_ option: DSKCommon.Option) -> Color {
             if props.included.contains(option.key) { return .green }
             if props.excluded.contains(option.key) { return .red }
             return .primary.opacity(0.1)
         }
-        
+
         func handle(_ option: DSKCommon.Option) {
             let id = option.key
             switch filter.type {
@@ -286,7 +285,7 @@ extension DirectoryView.FilterView.Cell {
                 }
             default: break
             }
-            
+
             switch filter.type {
             case .select:
                 if props.included.isEmpty {
@@ -327,8 +326,8 @@ extension DirectoryView.FilterView.Cell.SelectView {
     }
 }
 
-
 // MARK: TextView
+
 extension DirectoryView.FilterView.Cell {
     struct TextView: View {
         var filter: DSKCommon.DirectoryFilter
@@ -342,7 +341,7 @@ extension DirectoryView.FilterView.Cell {
                 }
             }
         }
-        
+
         var binding: Binding<String> {
             .init {
                 data[filter.id]?.value as? String ?? ""

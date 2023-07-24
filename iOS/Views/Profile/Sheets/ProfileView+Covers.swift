@@ -49,7 +49,7 @@ extension ProfileView {
 
         func handleSaveEvent(for cover: String) async {
             let url = URL(string: cover)
-                
+
             guard let url, let source = DSK.shared.getSource(id: model.source.id) else {
                 return
             }

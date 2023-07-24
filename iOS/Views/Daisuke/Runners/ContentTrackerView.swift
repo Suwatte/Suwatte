@@ -61,5 +61,4 @@ struct ContentTrackerInfoView: View {
             .buttonStyle(.plain)
         }
     }
-
 }

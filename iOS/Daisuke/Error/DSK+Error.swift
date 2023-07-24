@@ -51,7 +51,7 @@ extension DaisukeEngine {
             if let value = errorValue.objectForKeyedSubscript("message"), !value.isUndefined, !value.isNull {
                 message = value.toString() ?? message
             }
-            
+
             if name == "NetworkError" {
                 var response = ""
                 if let res = errorValue.objectForKeyedSubscript("res"), let val = try? DSKCommon.Response(value: res).data {
@@ -59,11 +59,11 @@ extension DaisukeEngine {
                 }
                 return DSK.Errors.NetworkError(message: message, response: response)
             }
-            
+
             if name == "CloudflareError" {
                 return DSK.Errors.Cloudflare
             }
-            
+
             return DaisukeEngine.Errors.NamedError(name: name, message: message)
         }
     }
@@ -86,7 +86,7 @@ extension DaisukeEngine.Errors: LocalizedError {
         case .ValueStoreErrorKeyIsNotString: return .init("[Value Store] Key is not String")
         case .ValueStoreErrorKeyValuePairInvalid: return .init("[Value Store] Value is not valid")
         case .Cloudflare: return .init("Cloudflare Protected Resource")
-            
+
         case .NetworkErrorFailedToConvertRequestObject: return .init("Request Object Is not valid")
         case .NetworkErrorInvalidRequestURL: return .init("Reqeust URL is invalid")
         case let .NamedError(name, message): return .init("[\(name)] \(message)")

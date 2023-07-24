@@ -47,7 +47,7 @@ struct LibraryView: View {
                     }
                     .disabled(requireAuth && AuthProvider.isExpired)
                 }
-                
+
             })
             .sheet(isPresented: $presentOrderSheet, content: {
                 NavigationView {
@@ -58,14 +58,14 @@ struct LibraryView: View {
                         .closeButton()
                 }
                 .navigationViewStyle(.stack)
-                
+
             })
         }
         .task {
             if requireAuth && !LocalAuthManager.shared.isExpired {
                 return
             }
-            
+
             if openAllOnAppear {
                 openFirstCollection.toggle()
             }
@@ -89,6 +89,7 @@ struct LibraryView: View {
 }
 
 // MARK: - Section Builder
+
 extension LibraryView {
     struct LibrarySectionBuilder: View {
         let key: String
@@ -116,11 +117,12 @@ extension LibraryView {
 }
 
 // MARK: PageLink Section
+
 extension LibraryView {
     struct PageLinkSectionView: View {
         let runner: JSCRunner
         let pageLinks: [DSKCommon.PageLinkLabel]
-        
+
         var body: some View {
             Section {
                 ForEach(pageLinks, id: \.hashValue) { pageLink in
@@ -145,6 +147,7 @@ extension LibraryView {
 }
 
 // MARK: - Flags Section
+
 extension LibraryView {
     struct FlagsSectionView: View {
         var body: some View {
@@ -165,6 +168,7 @@ extension LibraryView {
 }
 
 // MARK: - Lists Section
+
 extension LibraryView {
     struct ListsSectionView: View {
         var body: some View {
@@ -181,7 +185,7 @@ extension LibraryView {
                 NavigationLink(destination: DownloadsView()) {
                     Label("Downloads", systemImage: "square.and.arrow.down")
                 }
-                
+
             } header: {
                 Text("Lists")
             }
@@ -191,6 +195,7 @@ extension LibraryView {
 }
 
 // MARK: - Library Section
+
 extension LibraryView {
     struct LibrarySectionView: View {
         var body: some View {
@@ -210,6 +215,7 @@ extension LibraryView {
 }
 
 // MARK: - Collections Section
+
 extension LibraryView {
     struct CollectionsSectionView: View {
         @ObservedResults(LibraryCollection.self, where: { $0.isDeleted == false }, sortDescriptor: SortDescriptor(keyPath: "order", ascending: true)) var collections
@@ -233,6 +239,7 @@ extension LibraryView {
 }
 
 // MARK: - Order Sheet
+
 extension LibraryView {
     struct LibrarySectionOrderSheet: View {
         @AppStorage(STTKeys.LibrarySections) var sections = DEFAULT_LIBRARY_SECTIONS
@@ -240,7 +247,7 @@ extension LibraryView {
         var availableSections: [String] {
             getAvailableSections()
         }
-        
+
         var body: some View {
             List {
                 Section {
@@ -256,7 +263,7 @@ extension LibraryView {
                 } header: {
                     Text("Active")
                 }
-                
+
                 Section {
                     ForEach(availableSections, id: \.hashValue) { section in
                         HStack {
@@ -270,7 +277,7 @@ extension LibraryView {
                                     .padding(.leading, 0)
                                     .font(.system(size: 18))
                             }
-                            
+
                             Cell(section)
                                 .padding(.leading, 8.0)
                         }.onTapGesture(count: 1, perform: {
@@ -280,7 +287,7 @@ extension LibraryView {
                         })
                         .frame(height: 32.0)
                     }
-                    
+
                 } header: {
                     Text("Available Sections")
                 }
@@ -289,7 +296,7 @@ extension LibraryView {
                 priviledgedRunners = DataManager.shared.getLibraryPageProviders()
             }
         }
-        
+
         @ViewBuilder
         func Cell(_ key: String) -> some View {
             Group {
@@ -303,24 +310,23 @@ extension LibraryView {
                 case "library.flags":
                     Text("Reading Flags")
                 default:
-                    if let name = priviledgedRunners.first(where: { $0.id == key})?.name {
+                    if let name = priviledgedRunners.first(where: { $0.id == key })?.name {
                         Text(name)
                     }
                 }
             }
-            
         }
-        
+
         func getAvailableSections() -> [String] {
             let all = DEFAULT_LIBRARY_SECTIONS + priviledgedRunners.map(\.id)
             return all
                 .filter { !sections.contains($0) }
-            
         }
     }
 }
 
 // MARK: - Load Page Links
+
 extension LibraryView {
     func loadPageLinks() {
         triggeredLoad = true
@@ -342,7 +348,7 @@ extension LibraryView {
                             guard !links.isEmpty else { return }
                             Task { @MainActor in
                                 withAnimation {
-                                    pageLinks.updateValue(links , forKey: runner.id)
+                                    pageLinks.updateValue(links, forKey: runner.id)
                                 }
                             }
                         } catch {

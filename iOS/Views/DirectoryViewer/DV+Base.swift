@@ -8,8 +8,6 @@
 import Foundation
 import SwiftUI
 
-
-
 extension DirectoryViewer {
     struct Coreview: View {
         @StateObject var model = DirectoryViewer.CoreModel()

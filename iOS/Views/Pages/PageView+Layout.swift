@@ -7,7 +7,7 @@
 
 import UIKit
 
-extension DSKPageView.CollectionView  {
+extension DSKPageView.CollectionView {
     func ErrorLayout() -> NSCollectionLayoutSection {
         let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
@@ -86,7 +86,7 @@ extension DSKPageView.CollectionView  {
 
     func NormalLayout() -> NSCollectionLayoutSection {
         let iSeparated = UserDefaults.standard.integer(forKey: STTKeys.TileStyle) == TileStyle.SEPARATED.rawValue
-        
+
         let heightDimension: NSCollectionLayoutDimension = !iSeparated ? .absolute(160 * 1.5) : .absolute((160 * 1.5) + 48)
         let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1),
@@ -139,7 +139,7 @@ extension DSKPageView.CollectionView  {
         return section
     }
 
-    func GalleryLayout(_ environment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
+    func GalleryLayout(_: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
         let itemWidth: CGFloat = 290
         let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
@@ -164,17 +164,17 @@ extension DSKPageView.CollectionView  {
         section.boundarySupplementaryItems = [supp]
         return section
     }
-    
+
     func InsetListLayout(_ environment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
         var config = UICollectionLayoutListConfiguration(appearance:
-                .insetGrouped)
+            .insetGrouped)
         config.headerMode = .supplementary
         config.footerMode = .supplementary
         config.headerTopPadding = 7
         let layout: NSCollectionLayoutSection = .list(using: config, layoutEnvironment: environment)
         return layout
     }
-    
+
     func GridLayout(_ environment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
         let viewingPotrait = environment.container.contentSize.width < environment.container.contentSize.height
         let itemsPerRow = UserDefaults.standard.integer(forKey: viewingPotrait ? STTKeys.GridItemsPerRow_P : STTKeys.GridItemsPerRow_LS)

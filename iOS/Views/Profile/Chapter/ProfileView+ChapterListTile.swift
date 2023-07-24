@@ -17,7 +17,7 @@ struct ChapterListTile: View {
     var isLinked: Bool
     var showLanguageFlag: Bool
     var showDate: Bool
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             HStack {
@@ -25,15 +25,12 @@ struct ChapterListTile: View {
                 Spacer()
 
                 HStack {
-                    
                     ProgressSubview
                     DownloadIndicatorView
                     IsNewView
                     LinkedIndicator
                 }
                 .font(.body.weight(.light))
-
-                
             }
 
             HStack {
@@ -54,7 +51,7 @@ struct ChapterListTile: View {
                         } else {
                             Text("🏴‍☠️ Unknown")
                         }
-                        
+
                         if chapter.language != nil && !chapter.providers.isEmpty {
                             Divider()
                         }
@@ -88,13 +85,13 @@ struct ChapterListTile: View {
 
     @ViewBuilder
     var IsNewView: some View {
-        if isNewChapter && progress == nil && download == nil  {
+        if isNewChapter && progress == nil && download == nil {
             Circle()
                 .foregroundColor(.blue)
                 .frame(width: 8, height: 8, alignment: .center)
         }
     }
-    
+
     @ViewBuilder
     var LinkedIndicator: some View {
         if isLinked {
@@ -145,9 +142,9 @@ struct DownloadIndicator: View {
     var size: CGFloat {
         download.status == .completed ? 8 : 15
     }
+
     @ViewBuilder
     var ACTIVE_VIEW: some View {
-
         Group {
             if let state = state {
                 switch state {
@@ -176,6 +173,7 @@ struct DownloadIndicator: View {
             }
         }
     }
+
     var body: some View {
         Group {
             switch download.status {

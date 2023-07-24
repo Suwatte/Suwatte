@@ -9,7 +9,6 @@ import Foundation
 import Fuzi
 
 extension ComicInfo {
-    
     static func fromXML(_ document: XMLDocument) -> ComicInfo? {
         guard let root = document.root else { return nil }
         var comicInfo = ComicInfo()

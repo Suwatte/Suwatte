@@ -9,9 +9,9 @@ import Combine
 import Foundation
 import Network
 import Nuke
-import UIKit
 import RealmSwift
 import SwiftUI
+import UIKit
 
 final class StateManager: ObservableObject {
     static let shared = StateManager()
@@ -22,8 +22,7 @@ final class StateManager: ObservableObject {
     let readerClosedPublisher = PassthroughSubject<Void, Never>()
     @Published var readerState: ReaderState?
     @Published var titleHasCustomThumbs: Set<String> = []
-    
-    
+
     // Tokens
     private var thumbnailToken: NotificationToken?
 
@@ -51,7 +50,7 @@ final class StateManager: ObservableObject {
     func clearMemoryCache() {
         ImagePipeline.shared.configuration.imageCache?.removeAll()
     }
-    
+
     func alert(title: String, message: String) {
         let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: "OK", style: .default)
@@ -66,25 +65,22 @@ extension StateManager {
     }
 }
 
-
 // MARK: - Global Chapter Reading
+
 extension StateManager {
-    
     func openReader(context: DSKCommon.ReaderContext, caller: DSKCommon.Highlight, source: String) {
-        
         // Ensure the chapter to be opened is in the provided chapter list
         let targetInList = context.chapters.map(\.chapterId).contains(context.target)
         guard targetInList else {
             alert(title: "Error", message: "Tried opening to a chapter not provided in the chapter list")
             return
         }
-        
-        
+
         // Save Content, if not saved
         let highlight = context.content ?? caller
         let streamable = highlight.canStream
         let target = DataManager.shared.getStoredContent(ContentIdentifier(contentId: highlight.contentId, sourceId: source).id)
-        
+
         // Target Title is already in the db, Just update the streamble flag
         if let target, target.streamable != streamable {
             let realm = try! Realm()
@@ -96,16 +92,15 @@ extension StateManager {
             let content = highlight.toStored(sourceId: source)
             DataManager.shared.storeContent(content)
         }
-        
+
         // Add Chapters to DB
-        let chapters = context.chapters.map { $0.toStoredChapter(withSource: source )}
-        
-    
+        let chapters = context.chapters.map { $0.toStoredChapter(withSource: source) }
+
         // Open Reader
         let chapter = chapters.first(where: { $0.chapterId == context.target })!
-        self.readerState = .init(title: nil, chapter: chapter, chapters: chapters, requestedPage: context.requestedPage, readingMode: context.readingMode, dismissAction: nil)
+        readerState = .init(title: nil, chapter: chapter, chapters: chapters, requestedPage: context.requestedPage, readingMode: context.readingMode, dismissAction: nil)
     }
-    
+
     func openReader(state: ReaderState) {
         // Ensure the chapter to be opened is in the provided chapter list
         let targetInList = state.chapters.contains(state.chapter)
@@ -113,10 +108,10 @@ extension StateManager {
             alert(title: "Error", message: "Tried opening to a chapter not provided in the chapter list")
             return
         }
-        
-        self.readerState = state
+
+        readerState = state
     }
-    
+
     func stream(item: DSKCommon.Highlight, sourceId: String) {
         ToastManager.shared.loading = true
         Task {
@@ -137,24 +132,23 @@ extension StateManager {
             }
         }
     }
-    
-    func didScenePhaseChange(_ phase: ScenePhase) {
-        
-    }
+
+    func didScenePhaseChange(_: ScenePhase) {}
 }
 
 // MARK: Custom Thumbs
+
 extension StateManager {
     func observe() {
         let realm = try! Realm()
         let thumbnails = realm
             .objects(CustomThumbnail.self)
             .where { $0.isDeleted == false }
-            .where( { $0.file != nil })
-        
+            .where { $0.file != nil }
+
         thumbnailToken = thumbnails.observe { _ in
             let ids = thumbnails.map(\.id)
-            
+
             Task { @MainActor in
                 self.titleHasCustomThumbs = Set(ids)
             }
@@ -163,7 +157,8 @@ extension StateManager {
 }
 
 // MARK: ReaderState
-struct ReaderState : Identifiable {
+
+struct ReaderState: Identifiable {
     var id: String { chapter.id }
     let title: String?
     let chapter: StoredChapter

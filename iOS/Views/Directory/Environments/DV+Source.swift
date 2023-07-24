@@ -5,10 +5,11 @@
 //  Created by Mantton on 2023-07-12.
 //
 
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
-// MARK: -View
+// MARK: - View
+
 struct ContentSourceDirectoryView: View {
     let source: JSCCS
     let request: DSKCommon.DirectoryRequest
@@ -26,11 +27,10 @@ struct ContentSourceDirectoryView: View {
         }
         .onDisappear(perform: model.stop)
     }
-    
-
 }
 
 // MARK: - Cell
+
 extension ContentSourceDirectoryView {
     struct Cell: View {
         var data: DSKCommon.Highlight
@@ -69,24 +69,25 @@ extension ContentSourceDirectoryView {
 }
 
 // MARK: - ViewModel
+
 extension ContentSourceDirectoryView {
     final class ViewModel: ObservableObject {
         @Published var library: Set<String> = []
         @Published var readLater: Set<String> = []
-        
+
         private var libraryToken: NotificationToken?
         private var rlToken: NotificationToken?
-        
+
         func stop() {
             libraryToken?.invalidate()
             rlToken?.invalidate()
             libraryToken = nil
             rlToken = nil
         }
-        
+
         func start(_ sourceID: String) {
             let realm = try! Realm()
-            
+
             let library = realm
                 .objects(LibraryEntry.self)
                 .where { $0.isDeleted == false }
@@ -97,13 +98,13 @@ extension ContentSourceDirectoryView {
                     self?.library = Set(library.compactMap(\.content?.contentId))
                 }
             }
-            
+
             // Read Later
             let readLater = realm
                 .objects(ReadLater.self)
                 .where { $0.isDeleted == false }
                 .where { $0.content.sourceId == sourceID }
-            
+
             rlToken = readLater.observe { [weak self] _ in
                 withAnimation {
                     self?.readLater = Set(readLater.compactMap(\.content?.contentId))

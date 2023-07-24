@@ -6,8 +6,8 @@
 //
 import Alamofire
 import SwiftUI
-import WebKit
 import UIKit
+import WebKit
 
 extension DSKAuthView {
     struct WebViewAuthView: View {
@@ -38,42 +38,42 @@ extension DSKAuthView {
 
 extension DSKAuthView.WebViewAuthView {
     struct WebViewRepresentable: UIViewControllerRepresentable {
-        @EnvironmentObject var model : DSKAuthView.ViewModel
+        @EnvironmentObject var model: DSKAuthView.ViewModel
         var isSignIn: Bool = true
         func makeUIViewController(context _: Context) -> some Controller {
             let view = Controller()
             view.runner = model.runner
             return view
         }
-        
+
         func updateUIViewController(_: UIViewControllerType, context _: Context) {}
     }
 }
 
-fileprivate typealias RepresentableView = DSKAuthView.WebViewAuthView.WebViewRepresentable
+private typealias RepresentableView = DSKAuthView.WebViewAuthView.WebViewRepresentable
 
 extension RepresentableView {
     class Controller: UIViewController, WKUIDelegate {
         var webView: WKWebView!
         var isSignIn: Bool!
         var runner: JSCRunner!
-        
+
         override func viewDidLoad() {
             super.viewDidLoad()
             let webConfiguration = WKWebViewConfiguration()
-            
+
             webView = WKWebView(frame: view.bounds, configuration: webConfiguration)
             webView.customUserAgent = Preferences.standard.userAgent
             webView.uiDelegate = self
             webView.navigationDelegate = self
             view.addSubview(webView)
         }
-        
+
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
             Task { @MainActor in
                 do {
-                    let url = try (try await runner.getWebAuthRequestURL()).toURL()
+                    let url = try (await runner.getWebAuthRequestURL()).toURL()
                     let request = URLRequest(url: url)
                     let _ = self.webView.load(request)
                 } catch {
@@ -89,13 +89,13 @@ extension RepresentableView.Controller: WKNavigationDelegate {
     func webView(_: WKWebView, decidePolicyFor _: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
         decisionHandler(.allow)
     }
-    
+
     func webView(_ webView: WKWebView, didFinish _: WKNavigation!) {
         if !isSignIn {
             return
         }
         let cookieStore = webView.configuration.websiteDataStore.httpCookieStore
-        
+
         cookieStore.getAllCookies { [unowned self] cookies in
             Task {
                 for cookie in cookies {
@@ -110,10 +110,9 @@ extension RepresentableView.Controller: WKNavigationDelegate {
                         Logger.shared.error(error.localizedDescription)
                     }
                 }
-                
+
                 ToastManager.shared.info("-")
             }
-            
         }
     }
 }

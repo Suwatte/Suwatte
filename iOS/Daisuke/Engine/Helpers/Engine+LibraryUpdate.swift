@@ -7,14 +7,16 @@
 
 import Foundation
 import RealmSwift
+
 // MARK: - Fetch Library Update
+
 extension DSK {
     func fetchLibraryUpdates() async -> Int {
         let engine = DSK.shared
         let sources = DataManager
             .shared
             .getSavedAndEnabledSources()
-            .compactMap { engine.getSource(id: $0.id)  }
+            .compactMap { engine.getSource(id: $0.id) }
             .filter { $0.ablityNotDisabled(\.disableUpdateChecks) }
 
         // Fetch Update For Each Source
@@ -43,7 +45,6 @@ extension DSK {
         return result
     }
 }
-
 
 extension DSK {
     @MainActor
@@ -90,11 +91,11 @@ extension DSK {
             // Fetch Chapters
             let chapters = try? await getChapters(for: contentId, with: source)
             var marked: [String] = []
-            
+
             if source.intents.chapterSyncHandler {
                 marked = (try? await source.getReadChapterMarkers(contentId: contentId)) ?? []
             }
-            
+
             let lastFetched = DataManager.shared.getLatestStoredChapter(source.id, contentId)
             // Calculate Update Count
             var filtered = chapters?
@@ -128,7 +129,7 @@ extension DSK {
             if updates == 0 {
                 continue
             }
-            
+
             guard let entry = entry.thaw() else {
                 continue
             }
@@ -184,7 +185,7 @@ extension DSK {
             guard let source = DSK.shared.getSource(id: title.sourceId) else { continue }
             guard let chapters = try? await source.getContentChapters(contentId: title.contentId) else { continue }
             var marked: [String] = []
-            
+
             if source.intents.chapterSyncHandler {
                 marked = (try? await source.getReadChapterMarkers(contentId: title.contentId)) ?? []
             }

@@ -12,20 +12,20 @@ struct TrackerLandingPage: View {
     @State var loadable = Loadable<JSCCT>.idle
 
     var body: some View {
-        LoadableView(start ,loadable) {
+        LoadableView(start, loadable) {
             LoadedTrackerView(tracker: $0)
         }
     }
-    
+
     func start() {
         loadable = .loading
         do {
-            loadable = .loaded(try DSK.shared.getContentTracker(id: trackerID))
+            loadable = try .loaded(DSK.shared.getContentTracker(id: trackerID))
         } catch {
             loadable = .failed(error)
         }
     }
-    
+
     struct LoadedTrackerView: View {
         let tracker: JSCCT
         var body: some View {
@@ -35,10 +35,8 @@ struct TrackerLandingPage: View {
                 } else {
 //                    ContentSourceDirectoryView(source: source, request: .init(page: 1))
 //                        .navigationBarTitleDisplayMode(.inline)
-
                 }
             }
         }
-
     }
 }

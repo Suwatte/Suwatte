@@ -18,7 +18,7 @@ struct SourceInfo: RunnerInfo {
     var version: Double
     var minSupportedAppVersion: String?
     var thumbnail: String?
-    
+
     var website: String
     var supportedLanguages: [String]
 }
@@ -34,6 +34,6 @@ struct SourceConfig: Parsable {
     let disableCustomThumbnails: Bool?
     let disableContentLinking: Bool?
     let disableMigrationDestination: Bool?
-    
+
     var cloudflareResolutionURL: String?
 }

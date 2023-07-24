@@ -12,12 +12,12 @@ import RealmSwift
 import SwiftUI
 import SwiftUIBackports
 
-
 extension Feed: Identifiable, Equatable {
     public static func == (lhs: R2Shared.Feed, rhs: R2Shared.Feed) -> Bool {
         lhs.id == rhs.id
     }
 }
+
 extension OPDSView {
     struct LoadableFeedView: View {
         @EnvironmentObject var client: OPDSClient
@@ -213,7 +213,7 @@ extension Target {
             }
             return try? URLRequest(url: publication.thumbnailURL ?? "", method: HTTPMethod.get, headers: headers)
         }
-        
+
         var acquisitionRequest: URLRequest? {
             var headers = HTTPHeaders()
             if let auth = client.authHeader {
@@ -292,12 +292,11 @@ extension Target {
 
                     if let link = publication.acquisitionLink.flatMap({ URL(string: $0) }) {
                         Button("Download") {
-                            
                             guard let request = acquisitionRequest else {
                                 return
                             }
                             let title = publication.metadata.title
-                            let download = DirectoryViewer.DownloadManager.DownloadObject.init(url: link, request: request, title: title, thumbnailReqeust: thumbnailRequest)
+                            let download = DirectoryViewer.DownloadManager.DownloadObject(url: link, request: request, title: title, thumbnailReqeust: thumbnailRequest)
                             DirectoryViewer.DownloadManager.shared.addToQueue(download)
                         }
                     }

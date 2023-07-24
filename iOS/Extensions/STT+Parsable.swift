@@ -21,7 +21,7 @@ extension Parsable {
         let jsonData = str.data(using: .utf8, allowLossyConversion: false)!
         self = try DaisukeEngine.decode(data: jsonData, to: Self.self)
     }
-    
+
     init(dict: [String: Any]) throws {
         let data = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
         let decoder = JSONDecoder()

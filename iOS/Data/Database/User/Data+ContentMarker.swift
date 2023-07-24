@@ -21,18 +21,18 @@ extension DataManager {
 
         return target
     }
-    
-    func getLatestLinkedMarker(for id: String) -> ProgressMarker?  {
+
+    func getLatestLinkedMarker(for id: String) -> ProgressMarker? {
         let maxedMarker = DataManager
             .shared
             .getLinkedContent(for: id)
             .map { DataManager.shared.getContentMarker(for: $0.id) }
             .appending(DataManager.shared.getContentMarker(for: id))
-            .compactMap( { $0 })
+            .compactMap { $0 }
             .max { lhs, rhs in
                 (lhs.currentChapter?.number ?? 0.0) < (rhs.currentChapter?.number ?? 0.0)
             }
-        
+
         return maxedMarker
     }
 
@@ -52,14 +52,14 @@ extension DataManager {
         case STTHelpers.LOCAL_CONTENT_ID:
             let content = realm
                 .objects(ArchivedContent.self)
-                .where({ $0.id == chapter.contentId  && !$0.isDeleted  })
+                .where { $0.id == chapter.contentId && !$0.isDeleted }
                 .first
             reference = chapter.toStored().generateReference()
             reference?.archive = content
         case STTHelpers.OPDS_CONTENT_ID:
             let content = realm
                 .objects(StreamableOPDSContent.self)
-                .where { $0.id == chapter.id  && !$0.isDeleted  }
+                .where { $0.id == chapter.id && !$0.isDeleted }
                 .first
             reference = chapter.toStored().generateReference()
             reference?.opds = content
@@ -125,14 +125,14 @@ extension DataManager {
         case STTHelpers.LOCAL_CONTENT_ID:
             let content = realm
                 .objects(ArchivedContent.self)
-                .where({ $0.id == chapter.contentId  && !$0.isDeleted  })
+                .where { $0.id == chapter.contentId && !$0.isDeleted }
                 .first
             reference = chapter.toStored().generateReference()
             reference?.archive = content
         case STTHelpers.OPDS_CONTENT_ID:
             let content = realm
                 .objects(StreamableOPDSContent.self)
-                .where { $0.id == chapter.id  && !$0.isDeleted }
+                .where { $0.id == chapter.id && !$0.isDeleted }
                 .first
             reference = chapter.toStored().generateReference()
             reference?.opds = content
@@ -273,7 +273,7 @@ extension DataManager {
             try! realm.safeWrite {
                 if markAsRead { // Insert Into Set
                     target.readChapters.insert(objectsIn: chapters)
-                    
+
                     // Update Progress if more
                     guard let chapter = target.currentChapter, let maxRead = chapters.max(), maxRead >= chapter.number else { return }
                     target.totalPageCount = 1
@@ -318,7 +318,6 @@ extension DataManager {
     }
 }
 
-
 extension DataManager {
     /// Fetches the highest marked chapter with respect to content links
     func getHighestMarkedChapter(id: String) -> Double {
@@ -326,7 +325,7 @@ extension DataManager {
         let maxReadOnLinked = DataManager.shared.getLinkedContent(for: id)
             .map { DataManager.shared.getContentMarker(for: $0.id)?.maxReadChapter ?? 0.0 }
             .max() ?? 0.0
-        
+
         return max(maxReadOnTarget, maxReadOnLinked)
     }
 }

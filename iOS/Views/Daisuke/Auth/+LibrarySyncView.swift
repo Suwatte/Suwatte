@@ -5,15 +5,14 @@
 //  Created by Mantton on 2023-07-07.
 //
 
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 extension DSKAuthView {
-    
-    struct LibrarySyncView : View {
+    struct LibrarySyncView: View {
         var source: AnyContentSource
         @State var presentConfimationAlert = false
-        
+
         var body: some View {
             Button {
                 presentConfimationAlert.toggle()
@@ -28,7 +27,7 @@ extension DSKAuthView {
                 Text("Are you sure you want to proceed?")
             })
         }
-        
+
         func call() {
             Task {
                 ToastManager.shared.loading = true
@@ -42,11 +41,7 @@ extension DSKAuthView {
             }
         }
     }
-    
-
 }
-
-
 
 extension DSKAuthView.LibrarySyncView {
     func handleContentSync() async throws {
@@ -62,7 +57,7 @@ extension DSKAuthView.LibrarySyncView {
 extension DataManager {
     func getUpSync(for id: String) -> [DSKCommon.UpSyncedContent] {
         let realm = try! Realm()
-        
+
         let library: [DSKCommon.UpSyncedContent] = realm
             .objects(LibraryEntry.self)
             .where { $0.content.sourceId == id }

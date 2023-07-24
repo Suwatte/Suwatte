@@ -28,15 +28,15 @@ extension DirectoryView {
         var configSort: DSKCommon.DirectoryConfig.Sort {
             config?.sort ?? .init(options: [], canChangeOrder: false)
         }
-        
+
         var filters: [DSKCommon.DirectoryFilter] {
             config?.filters ?? []
         }
-        
+
         init(runner: JSCRunner, request: DSKCommon.DirectoryRequest) {
             self.runner = runner
             self.request = request
-            self.context = request.context
+            context = request.context
         }
     }
 }
@@ -72,7 +72,6 @@ extension DirectoryView.ViewModel {
 
 extension DirectoryView.ViewModel {
     func makeRequest() async {
-        
         // Update State
         await MainActor.run {
             result = .loading
@@ -81,7 +80,7 @@ extension DirectoryView.ViewModel {
             }
             request.context = context
         }
-        
+
         do {
             let data: DSKCommon.PagedResult<T> = try await runner.getDirectory(request: request)
 
@@ -112,7 +111,6 @@ extension DirectoryView.ViewModel {
         default:
             return
         }
-        
 
         await MainActor.run {
             request.page += 1
@@ -142,14 +140,13 @@ extension DirectoryView.ViewModel {
             }
 
         } catch {
-            await MainActor.run{
+            await MainActor.run {
                 self.pagination = .ERROR(error: error)
                 self.request.page -= 1
             }
         }
     }
 }
-
 
 enum PaginationStatus: Equatable {
     case LOADING, END, ERROR(error: Error), IDLE
@@ -165,5 +162,3 @@ enum PaginationStatus: Equatable {
         }
     }
 }
-
-

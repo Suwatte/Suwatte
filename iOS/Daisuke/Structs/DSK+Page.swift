@@ -5,8 +5,8 @@
 //  Created by Mantton on 2023-07-12.
 //
 
-import Foundation
 import AnyCodable
+import Foundation
 
 // Reference: https://acecilia.medium.com/struct-composition-using-keypath-and-dynamicmemberlookup-kind-of-struct-subclassing-but-better-6ce561768612
 @dynamicMemberLookup
@@ -17,10 +17,12 @@ struct Compose<Element1, Element2>: Codable where Element1: Codable, Element2: C
         get { element1[keyPath: keyPath] }
         set { element1[keyPath: keyPath] = newValue }
     }
+
     subscript<T>(dynamicMember keyPath: WritableKeyPath<Element2, T>) -> T {
         get { element2[keyPath: keyPath] }
         set { element2[keyPath: keyPath] = newValue }
     }
+
     init(_ element1: Element1, _ element2: Element2) {
         self.element1 = element1
         self.element2 = element2
@@ -29,20 +31,19 @@ struct Compose<Element1, Element2>: Codable where Element1: Codable, Element2: C
 
 extension DSKCommon {
     enum SectionStyle: Int, Codable, CaseIterable {
-        case   DEFAULT,
-               INFO,
-               GALLERY,
-               NAVIGATION_LIST,
-               ITEM_LIST,
-               PADDED_LIST,
-               TAG,
-               STANDARD_GRID
+        case DEFAULT,
+             INFO,
+             GALLERY,
+             NAVIGATION_LIST,
+             ITEM_LIST,
+             PADDED_LIST,
+             TAG,
+             STANDARD_GRID
     }
 }
 
 typealias JSCObject = Parsable & Hashable
 extension DSKCommon {
-        
     struct PageSection<T: JSCObject>: JSCObject {
         let key: String
         var title: String
@@ -50,19 +51,19 @@ extension DSKCommon {
         var subtitle: String?
         var viewMoreLink: Linkable?
         var items: [PageItem<T>]?
-        
+
         var sectionStyle: SectionStyle {
             style ?? .DEFAULT
         }
     }
-    
-    struct ResolvedPageSection<T: JSCObject> :JSCObject{
+
+    struct ResolvedPageSection<T: JSCObject>: JSCObject {
         let items: [PageItem<T>]
         let viewMoreLink: Linkable?
         let updatedTitle: String?
         let updatedSubtitle: String?
     }
-    
+
     struct PageLinkLabel: JSCObject {
         let title: String
         let subtitle: String?
@@ -70,12 +71,12 @@ extension DSKCommon {
         let cover: String?
         let link: Linkable
     }
-    
-    struct PageLink: JSCObject  {
+
+    struct PageLink: JSCObject {
         let key: String
         let context: CodableDict?
     }
-    
+
     struct PageItem<T: JSCObject>: JSCObject {
         let link: PageLinkLabel?
         let item: T?
@@ -85,28 +86,24 @@ extension DSKCommon {
     }
 }
 
-
-
 extension DSKCommon {
-    struct Linkable: Parsable , Hashable {
+    struct Linkable: Parsable, Hashable {
         let page: PageLink?
         let request: DirectoryRequest?
 
         var isPageLink: Bool {
             page != nil
         }
-        
+
         func getPageLink() -> PageLink {
             .init(key: page?.key ?? "home", context: page?.context ?? nil)
         }
-        
+
         func getDirectoryRequest() -> DirectoryRequest {
             request!
         }
     }
 }
-
-
 
 extension DSKCommon {
     struct ContextMenuAction: JSCObject {
@@ -115,12 +112,11 @@ extension DSKCommon {
         let systemImage: String?
         let destructive: Bool?
         let displayAsPlainLabel: Bool?
-        
-        
+
         var displayAsLabel: Bool {
             displayAsPlainLabel ?? false
         }
-        
+
         var isDestructive: Bool {
             destructive ?? false
         }

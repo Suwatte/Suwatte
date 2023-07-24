@@ -78,9 +78,9 @@ extension ProfileView.Skeleton {
                     Text(tag.label)
                         .modifier(ProfileTagStyle())
                 }
-
             }
         }
+
         fileprivate func generateSearchRequest(tagId: String, propertyId: String) -> DSKCommon.DirectoryRequest {
             .init(page: 1, tag: .init(tagId: tagId, propertyId: propertyId))
         }

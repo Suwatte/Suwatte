@@ -26,10 +26,8 @@ extension DSKAuthView {
     }
 }
 
-
 extension DSKAuthView.BasicAuthView {
     struct SignInSheet: View {
-        
         @State var username: String = ""
         @State var password: String = ""
         @State var loginStatus: Loadable<Bool> = .idle
@@ -41,8 +39,8 @@ extension DSKAuthView.BasicAuthView {
         var usesEmail: Bool {
             model.runner.intents.basicAuthLabel == .EMAIL
         }
-        
-        var ThumbnailView : some View {
+
+        var ThumbnailView: some View {
             Group {
                 if let url = model.runner.thumbnailURL {
                     BaseImageView(url: url)
@@ -59,6 +57,7 @@ extension DSKAuthView.BasicAuthView {
             .clipShape(Circle())
             .padding()
         }
+
         var body: some View {
             NavigationView {
                 VStack {
@@ -68,10 +67,10 @@ extension DSKAuthView.BasicAuthView {
                         .fontWeight(.semibold)
                         .kerning(1.5)
                         .padding()
-                    
+
                     EmailField
                     PasswordField
-                    
+
                     if loginStatus.error != nil {
                         AuthFailed
                             .padding(.horizontal)
@@ -87,9 +86,9 @@ extension DSKAuthView.BasicAuthView {
                 .accentColor(accentColor)
             }
         }
-        
+
         // MARK: Views
-        
+
         var EmailField: some View {
             HStack(spacing: 10) {
                 Image(systemName: "person")
@@ -106,7 +105,7 @@ extension DSKAuthView.BasicAuthView {
             .cornerRadius(15)
             .padding(.horizontal)
         }
-        
+
         var PasswordField: some View {
             HStack(spacing: 10) {
                 Image(systemName: "lock")
@@ -122,7 +121,7 @@ extension DSKAuthView.BasicAuthView {
             .padding(.horizontal)
             .padding(.top)
         }
-        
+
         var LoginButton: some View {
             Button {
                 signIn()
@@ -136,7 +135,7 @@ extension DSKAuthView.BasicAuthView {
                             .foregroundColor(.white)
                     }
                 }
-                
+
                 .padding(.vertical)
                 .frame(width: 250)
                 .background(Color.accentColor)
@@ -145,7 +144,7 @@ extension DSKAuthView.BasicAuthView {
             .disabled(!isValidInput || loginStatus == .loading)
             .padding(.top)
         }
-        
+
         var AuthFailed: some View {
             HStack {
                 Image(systemName: "exclamationmark.circle")
@@ -153,18 +152,18 @@ extension DSKAuthView.BasicAuthView {
             }
             .foregroundColor(.red)
         }
-        
+
         // MARK: Functions
-        
+
         func validatePassword() -> Bool {
             return true
         }
-        
+
         var isValidInput: Bool {
             if !username.isEmpty && !password.isEmpty && validatePassword() { return true }
             return false
         }
-        
+
         func signIn() {
             loginStatus = .loading
             Task { @MainActor in
@@ -179,5 +178,4 @@ extension DSKAuthView.BasicAuthView {
             }
         }
     }
-
 }

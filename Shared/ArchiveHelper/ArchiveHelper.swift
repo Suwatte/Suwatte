@@ -13,33 +13,33 @@ protocol ArchiveController {
     func getImagePaths(for path: URL) throws -> [String]
     func getImageData(for url: URL, at path: String) throws -> Data
 }
+
 final class ArchiveHelper {
     private let zipController = ZipController()
     private let rarController = RarController()
     func getThumbnail(for path: URL) throws -> UIImage {
         switch path.pathExtension {
-            case "zip", "cbz":
-                return try zipController.getThumbnailImage(for: path)
-            case "rar", "cbr":
-                return try rarController.getThumbnailImage(for: path)
-            default: break
+        case "zip", "cbz":
+            return try zipController.getThumbnailImage(for: path)
+        case "rar", "cbr":
+            return try rarController.getThumbnailImage(for: path)
+        default: break
         }
         throw Errors.ArchiveNotFound
     }
-    
+
     func getItemCount(for path: URL) throws -> Int {
         switch path.pathExtension {
-            case "zip", "cbz":
-                return try zipController.getItemCount(for: path)
-            case "rar", "cbr":
-                return try rarController.getItemCount(for: path)
-            default: break
+        case "zip", "cbz":
+            return try zipController.getItemCount(for: path)
+        case "rar", "cbr":
+            return try rarController.getItemCount(for: path)
+        default: break
         }
         throw Errors.ArchiveNotFound
     }
-    
-    func getImagePaths(for path: URL) throws -> [String] {
 
+    func getImagePaths(for path: URL) throws -> [String] {
         switch path.pathExtension {
         case "zip", "cbz":
             return try zipController.getImagePaths(for: path)
@@ -51,7 +51,6 @@ final class ArchiveHelper {
     }
 
     func getImageData(for url: URL, at path: String) throws -> Data {
-
         switch url.pathExtension {
         case "zip", "cbz":
             return try zipController.getImageData(for: url, at: path)
@@ -61,17 +60,14 @@ final class ArchiveHelper {
         }
         throw Errors.FailedToExtractItems
     }
-    
 }
 
-
 extension ArchiveHelper {
-    enum Errors : String {
+    enum Errors: String {
         case ArchiveNotFound
         case FailedToExtractItems
     }
 }
-
 
 extension ArchiveHelper.Errors: LocalizedError {
     public var errorDescription: String? {

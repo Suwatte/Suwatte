@@ -72,14 +72,12 @@ struct DefaultTile: View {
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
 
-
                 if let subtitle = entry.subtitle {
                     Text(subtitle)
                         .font(.caption2)
                         .lineLimit(1)
                         .foregroundColor(.primary.opacity(0.7))
                         .fixedSize(horizontal: false, vertical: true) // Allows the subtitle to occupy the remaining vertical space
-                    
                 }
             }
         }

@@ -84,5 +84,3 @@ struct DefaultLoadingView: View {
         }
     }
 }
-
-

@@ -6,9 +6,9 @@
 //
 
 import Foundation
-import RealmSwift
 import IceCream
 import NukeUI
+import RealmSwift
 
 final class ArchivedContent: Object, CKRecordConvertible, CKRecordRecoverable {
     @Persisted(primaryKey: true) var id: String
@@ -16,8 +16,6 @@ final class ArchivedContent: Object, CKRecordConvertible, CKRecordRecoverable {
     @Persisted var name: String
     @Persisted var isDeleted: Bool
 }
-
-
 
 extension ArchivedContent {
     func getURL() -> URL? {
@@ -27,14 +25,13 @@ extension ArchivedContent {
             .appendingPathComponent("Library", isDirectory: true)
         let target = directory
             .appendingPathComponent(relativePath)
-        
-        
+
         if target.exists {
             return target
         }
-        
+
         guard CloudDataManager.shared.isCloudEnabled else { return nil }
-        
+
         let resources = try? target.resourceValues(forKeys: [.isUbiquitousItemKey])
         if let resources, let isInCloud = resources.isUbiquitousItem, isInCloud {
             return target
@@ -43,5 +40,3 @@ extension ArchivedContent {
         return nil
     }
 }
-
-

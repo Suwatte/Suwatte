@@ -92,7 +92,7 @@ extension CloudFlareErrorView {
                     StateManager.shared.alert(title: "Invalid Resolution URL", message: "The source failed to provide a valid url.")
                     return
                 }
-        
+
                 let request = URLRequest(url: url)
                 let _ = self.webView.load(request)
             }

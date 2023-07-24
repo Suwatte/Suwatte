@@ -7,9 +7,7 @@
 
 import SwiftUI
 
-
 extension DirectoryViewer {
-    
     struct SettingsSheet: View {
         @AppStorage(STTKeys.LocalThumnailOnly) var showOnlyThumbs = false
         @AppStorage(STTKeys.LocalHideInfo) var showTitleOnly = false
@@ -34,5 +32,4 @@ extension DirectoryViewer {
             .navigationViewStyle(.stack)
         }
     }
-    
 }

@@ -29,7 +29,6 @@ struct OPDSView: View {
                         renamePrompt(server: server)
                     }
                     .tint(.blue)
-
                 }
             }
         }
@@ -50,16 +49,16 @@ struct OPDSView: View {
         .navigationTitle("OPDS")
         .animation(.default, value: servers)
     }
-    
+
     func renamePrompt(server: StoredOPDSServer) {
         let ac = UIAlertController(title: "Rename \(server.alias)", message: nil, preferredStyle: .alert)
         ac.addTextField()
 
         let submitAction = UIAlertAction(title: "Rename", style: .default) { [unowned ac] _ in
             let text = ac.textFields![0].text
-            
+
             guard let text else { return }
-            
+
             DataManager.shared.renameOPDSServer(id: server.id, name: text)
         }
         ac.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))

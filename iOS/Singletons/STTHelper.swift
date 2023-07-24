@@ -5,11 +5,11 @@
 //  Created by Mantton on 2022-04-24.
 //
 
+import CryptoKit
 import Foundation
 import ReadiumOPDS
 import RealmSwift
 import UIKit
-import CryptoKit
 
 class STTHelpers {
     static func toggleSelection<T: Equatable>(list1: inout [T], list2: inout [T], element: T) {
@@ -66,11 +66,11 @@ class STTHelpers {
         case .LOCAL:
             let id = chapter.contentId
             let archivedContent = DataManager.shared.getArchivedcontentInfo(id)
-            
+
             guard let archivedContent else {
                 return .failed(DSK.Errors.NamedError(name: "DataLoader", message: "Failed to locate archive information"))
             }
-            
+
             do {
                 let url = archivedContent.getURL()
                 guard let url else {
@@ -82,7 +82,7 @@ class STTHelpers {
                 obj.archivePaths = arr
                 obj.archiveURL = url
                 return .loaded(obj)
-                
+
             } catch {
                 return .failed(error)
             }
@@ -154,6 +154,7 @@ class STTHelpers {
             return firstVal == nil && secondVal == nil
         }
     }
+
     static func triggerHaptic(_ overrride: Bool = false) {
         if Preferences.standard.enableReaderHaptics || overrride {
             let haptic = UIImpactFeedbackGenerator(style: .medium)
@@ -162,23 +163,22 @@ class STTHelpers {
     }
 }
 
-
 extension STTHelpers {
     static func generateFileIdentifier(size: Int64, created: Date, modified: Date) -> String {
         let sizeHash = sha256(of: "\(size)")
         let createdHash = sha256(of: "\(created)")
         let modifiedHash = sha256(of: "\(modified)")
-        
+
         let combinedHash = sizeHash + createdHash + modifiedHash
         return sha256(of: combinedHash)
     }
-    
+
     static func generateFolderIdentifier(created: Date, name: String) -> String {
         let nameHash = sha256(of: "\(name)")
         let createdHash = sha256(of: "\(created)")
         return sha256(of: "\(nameHash)\(createdHash)")
     }
-    
+
     static func sha256(of string: String) -> String {
         let data = string.data(using: .utf8)!
         let hashed = SHA256.hash(data: data)
@@ -189,7 +189,7 @@ extension STTHelpers {
 extension STTHelpers {
     static let LOCAL_CONTENT_ID = "7348b86c-ec52-47bf-8069-d30bd8382bf7"
     static let OPDS_CONTENT_ID = "c9d560ee-c4ff-4977-8cdf-fe9473825b8b"
-    
+
     static func isInternalSource(_ id: String) -> Bool {
         return id == LOCAL_CONTENT_ID || id == OPDS_CONTENT_ID
     }

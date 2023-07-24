@@ -5,10 +5,10 @@
 //  Created by Mantton on 2023-06-20.
 //
 
-import SwiftUI
+import NukeUI
 import QuickLook
 import QuickLookThumbnailing
-import NukeUI
+import SwiftUI
 
 struct DirectoryViewer: View {
     @StateObject var model: ViewModel
@@ -41,7 +41,7 @@ struct DirectoryViewer: View {
                                 .transition(.opacity)
 
                         } else {
-                            CoreCollectionView(directory: results, isEditing: Binding.constant(false) )
+                            CoreCollectionView(directory: results, isEditing: Binding.constant(false))
                                 .transition(.opacity)
                                 .environmentObject(model)
                         }
@@ -68,7 +68,7 @@ struct DirectoryViewer: View {
         }
         .navigationTitle(title ?? "Library")
         .onChange(of: scenePhase) { newPhase in
-            guard isActive else { return}
+            guard isActive else { return }
             if newPhase == .active {
                 model.observe()
             } else if newPhase == .background {
@@ -83,20 +83,20 @@ struct DirectoryViewer: View {
                 model.observe()
             }
         }
-        .onChange(of: directorySortKey, perform: { sortKey in
+        .onChange(of: directorySortKey, perform: { _ in
             guard isActive else { return }
             model.restart()
         })
-        .onChange(of: directoryOrderKey, perform: { orderKey in
+        .onChange(of: directoryOrderKey, perform: { _ in
             guard isActive else { return }
             model.restart()
         })
-        
+
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 ProgressView()
                     .opacity(model.working ? 1 : 0)
-                
+
                 Group {
                     if isEditing {
                         Button("Done") {
@@ -155,7 +155,6 @@ struct DirectoryViewer: View {
                             Image(systemName: "ellipsis.circle")
                                 .transition(.opacity)
                         }
-                        
                     }
                 }
             }
@@ -170,7 +169,7 @@ struct DirectoryViewer: View {
         }
         .animation(.default, value: isEditing)
     }
-    
+
     var EmptyDirectoryView: some View {
         VStack(alignment: .center, spacing: 15) {
             Text("(━┳━｡ Д ｡━┳━)")
@@ -180,7 +179,7 @@ struct DirectoryViewer: View {
         }
         .foregroundColor(.gray)
     }
-    
+
     var NoResultsView: some View {
         VStack(alignment: .center, spacing: 15) {
             Text("(━┳━｡ Д ｡━┳━)")
@@ -191,4 +190,3 @@ struct DirectoryViewer: View {
         .foregroundColor(.gray)
     }
 }
-

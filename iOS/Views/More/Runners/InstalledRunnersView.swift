@@ -14,19 +14,18 @@ struct InstalledRunnersView: View {
     @State var showAddSheet = false
     var body: some View {
         List {
-            if let r = model.runners  {
+            if let r = model.runners {
                 let grouped = Dictionary(grouping: r, by: \.environment)
-                let keys = grouped.filter({ !$0.value.isEmpty }).keys.sorted(by: \.description)
+                let keys = grouped.filter { !$0.value.isEmpty }.keys.sorted(by: \.description)
                 ForEach(Array(keys), id: \.description) { key in
                     let runners = grouped[key] ?? []
-                    
+
                     Section {
                         ForEach(runners, id: \.id) { runner in
-                            
+
                             let dskRunner = engine.getRunner(runner.id)
                             let isActive = dskRunner != nil
                             NavigationLink {
-                                
                                 if let dskRunner {
                                     if let source = dskRunner as? JSCCS {
                                         ContentSourceInfoView(source: source)
@@ -48,7 +47,7 @@ struct InstalledRunnersView: View {
                                             .font(.footnote.weight(.light))
                                             .foregroundColor(.secondary)
                                     }
-                                    
+
                                     if !isActive {
                                         Spacer()
                                         Image(systemName: "exclamationmark.triangle")
@@ -57,7 +56,6 @@ struct InstalledRunnersView: View {
                                             .frame(height: 15)
                                             .foregroundColor(.red)
                                     }
-                                
                                 }
                             }
                             .disabled(!isActive)
@@ -69,7 +67,6 @@ struct InstalledRunnersView: View {
                                 }
                                 .tint(.red)
                             }
-                            
                         }
                     } header: {
                         Text(key.description)

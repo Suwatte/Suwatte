@@ -72,7 +72,7 @@ extension SuwatteApp {
                 }
                 Task {
                     do {
-                        try await DSK.shared.importRunner(from: url , with: runner)
+                        try await DSK.shared.importRunner(from: url, with: runner)
                     } catch {
                         ToastManager.shared.error("Failed to save Runner List: \(error.localizedDescription)")
                         Logger.shared.error(error)
@@ -108,13 +108,10 @@ extension SuwatteApp {
 
         default:
             STTHelpers.importArchiveFie(at: url)
-            
-                        
         }
     }
-    
-    private func handleFile(_ url: URL) {
-    }
+
+    private func handleFile(_: URL) {}
 }
 
 final class NavigationModel: ObservableObject {
@@ -124,14 +121,13 @@ final class NavigationModel: ObservableObject {
 
 extension ContentIdentifier: Identifiable {}
 extension STTHelpers {
-    
     static func importArchiveFie(at url: URL) {
         let validExtensions = ["cbz", "cbr", "rar", "zip"]
         let canHandle = validExtensions.contains(url.pathExtension)
         guard canHandle else { return }
         let directory = CloudDataManager.shared.getDocumentDiretoryURL().appendingPathComponent("Library")
         let inDirectory = url.path.hasPrefix(directory.path)
-        
+
         if !inDirectory {
             ToastManager.shared.loading = true
             // Move to Library

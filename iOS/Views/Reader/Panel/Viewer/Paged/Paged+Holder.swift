@@ -207,7 +207,6 @@ extension PagedDisplayHolder {
                 Task { @MainActor [weak self] in
                     self?.setError(error)
                 }
-
             }
             Task { @MainActor [weak self] in
                 self?.nukeTask = nil

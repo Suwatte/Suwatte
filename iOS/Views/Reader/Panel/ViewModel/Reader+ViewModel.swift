@@ -52,8 +52,8 @@ extension ReaderView {
         let reloadPublisher = PassthroughSubject<Void, Never>()
         let scrubEndPublisher = PassthroughSubject<Void, Never>()
         let verticalTimerPublisher = PassthroughSubject<Void, Never>()
-        
-        // Additional Helpers        
+
+        // Additional Helpers
         init(chapterList: [StoredChapter], openTo chapter: StoredChapter, title: String? = nil, pageIndex: Int? = nil, readingMode: ReadingMode) {
             // Sort Chapter List by either sourceIndex or chapter number
             let sourceIndexAcc = chapterList.map { $0.index }.reduce(0, +)
@@ -355,8 +355,7 @@ extension ReaderView.ViewModel {
         }
 
         DataManager.shared.updateContentProgress(for: contentIdentifier.id, chapter: chapter.chapter, lastPageRead: chapter.requestedPageIndex + 1, totalPageCount: chapter.pages?.count ?? 1, lastPageOffset: chapter.requestedPageOffset.flatMap(Double.init))
-        
-        
+
         guard !STTHelpers.isInternalSource(chapter.chapter.sourceId) else {
             return
         }
@@ -419,14 +418,12 @@ extension ReaderView.ViewModel {
 
             DataManager.shared.didCompleteChapter(for: id, chapter: lastChapter.chapter)
 
-
             // Source Sync
             await self?.handleSourceSync(contentId: lastChapter.chapter.contentId,
                                          sourceId: lastChapter.chapter.sourceId,
                                          chapterId: lastChapter.chapter.chapterId)
         }
     }
-
 
     private func handleSourceSync(contentId: String, sourceId: String, chapterId: String) {
         guard let source = DSK.shared.getSource(id: sourceId), source.intents.chapterSyncHandler else { return }
@@ -440,7 +437,6 @@ extension ReaderView.ViewModel {
         }
     }
 }
-
 
 // MARK: Reading Mode
 

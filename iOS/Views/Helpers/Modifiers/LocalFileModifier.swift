@@ -26,38 +26,37 @@ struct OpenLocalModifier: ViewModifier {
                 case let .success(urls):
                     for url in urls {
                         let inDirectory = url.path.hasPrefix(directory.path)
-                        
+
                         // Only import files not already in user library
                         guard !inDirectory else {
                             continue
                         }
-                        
+
                         // Access Security Scoped Resource
                         guard url.startAccessingSecurityScopedResource() else {
                             continue
                         }
-                        
+
                         // Define new file location
                         let location = directory.appendingPathComponent(url.lastPathComponent)
-                        
+
                         // File exists at location
                         guard !location.exists else {
                             continue
                         }
-     
+
                         do {
                             try FileManager.default.copyItem(at: url, to: location)
                         } catch {
                             Logger.shared.error(error)
                             ToastManager.shared.error(error)
                         }
-                        
+
                         url.stopAccessingSecurityScopedResource()
                     }
                 }
-                
-                ToastManager.shared.loading = false
 
+                ToastManager.shared.loading = false
             }
     }
 }

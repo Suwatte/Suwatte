@@ -84,7 +84,7 @@ extension MCV {
                         .buttonStyle(.bordered)
                     Spacer()
                 }
-                
+
             } header: {
                 Text("New Collection")
             }

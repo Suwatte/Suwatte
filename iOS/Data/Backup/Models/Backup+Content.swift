@@ -45,7 +45,7 @@ extension StoredContent: Codable {
         if let info = try container.decodeIfPresent(Map<String, String>.self, forKey: .trackerInfo) {
             trackerInfo = info
         }
-        
+
         acquisitionLink = try container.decodeIfPresent(String.self, forKey: .acquisitionLink)
         streamable = try container.decodeIfPresent(Bool.self, forKey: .streamable) ?? false
     }

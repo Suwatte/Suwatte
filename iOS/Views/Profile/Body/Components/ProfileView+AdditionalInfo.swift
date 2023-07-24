@@ -38,7 +38,7 @@ extension ProfileView.Skeleton {
                 }
             }
             if let props = entry.nonInteractiveProperties, !props.isEmpty {
-                let targets = entry.properties == nil && props.count == 1 ? [] : Array(props[1..<props.count])
+                let targets = entry.properties == nil && props.count == 1 ? [] : Array(props[1 ..< props.count])
                 ForEach(targets) { property in
                     VStack(alignment: .leading, spacing: 3) {
                         Text(property.label)

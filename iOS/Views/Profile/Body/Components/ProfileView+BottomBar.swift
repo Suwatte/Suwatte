@@ -85,7 +85,6 @@ extension ProfileView.Skeleton.BottomBar {
             .disabled(!model.chapters.LOADED || actionState.state == .none)
             .padding(.vertical, 5)
             .padding(.leading, 5)
-
         }
 
         @ViewBuilder
@@ -228,9 +227,7 @@ extension ProfileView.Skeleton.BottomBar {
                     Label("Migrate", systemImage: "tray.full")
                 }
                 .disabled(!model.source.ablityNotDisabled(\.disableMigrationDestination))
-
             }
-
         }
 
         @ViewBuilder
@@ -241,7 +238,6 @@ extension ProfileView.Skeleton.BottomBar {
                 Label("Linked Titles", systemImage: "link")
             }
             .disabled(!model.source.ablityNotDisabled(\.disableContentLinking))
-
         }
 
         @ViewBuilder
@@ -256,7 +252,6 @@ extension ProfileView.Skeleton.BottomBar {
                 Label(hasCustomThumb ? "Remove Custom Thumb" : "Set Custom Thumbnail", systemImage: "photo")
             }
             .disabled(!model.source.ablityNotDisabled(\.disableCustomThumbnails))
-
         }
     }
 }

@@ -8,10 +8,9 @@
 import RealmSwift
 import SwiftUI
 
-
-struct DSKAuthView : View {
+struct DSKAuthView: View {
     @StateObject var model: ViewModel
-    
+
     var body: some View {
         LoadableView(model.load, model.loadable) { user in
             if let user {
@@ -21,11 +20,8 @@ struct DSKAuthView : View {
             }
         }
         .environmentObject(model)
-        
     }
-
 }
-
 
 extension DSKAuthView {
     struct AuthenticationGateway: View {
@@ -33,6 +29,7 @@ extension DSKAuthView {
         var method: RunnerIntents.AuthenticationMethod {
             runner.intents.authenticationMethod
         }
+
         var body: some View {
             Group {
                 switch method {

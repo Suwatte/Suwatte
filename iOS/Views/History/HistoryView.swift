@@ -72,7 +72,7 @@ extension HistoryView {
                         $0.currentChapter != nil &&
                         $0.dateRead != nil &&
                         $0.dateRead >= threeMonths &&
-                    ($0.currentChapter.content != nil || $0.currentChapter.opds != nil || $0.currentChapter.archive != nil)
+                        ($0.currentChapter.content != nil || $0.currentChapter.opds != nil || $0.currentChapter.archive != nil)
                 }
                 .distinct(by: ["id"])
                 .sorted(by: \.dateRead, ascending: false)
@@ -92,15 +92,15 @@ extension HistoryView {
             downloader.cancel()
             readerLock = true
         }
-        
+
         func downloadAndOpen(file: File) {
             downloader.cancel()
             currentDownloadFileId = file.id
-            downloader.download(file.url) {[weak self] result in
+            downloader.download(file.url) { [weak self] result in
                 do {
                     let updatedFile = try result.get().convertToSTTFile()
                     try DataManager.shared.saveArchivedFile(updatedFile)
-                    
+
                     guard let self, !self.readerLock else { return }
                     file.read()
                 } catch {
@@ -121,8 +121,7 @@ extension HistoryView {
             } else {
                 model.csSelection = (content.sourceId, content.toHighlight())
             }
-        }
-        else if let content = marker.currentChapter?.opds {
+        } else if let content = marker.currentChapter?.opds {
             content.read()
         } else if let archive = marker.currentChapter?.archive {
             do {

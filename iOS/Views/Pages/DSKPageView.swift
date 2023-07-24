@@ -5,19 +5,19 @@
 //  Created by Mantton on 2023-07-12.
 //
 
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
-struct DSKPageView<T: JSCObject, C: View> : View {
+struct DSKPageView<T: JSCObject, C: View>: View {
     @StateObject var model: ViewModel
     typealias PageItemModifier = (T) -> C
     let modifier: PageItemModifier
-    
+
     init(model: ViewModel, @ViewBuilder _ modifier: @escaping PageItemModifier) {
-        self._model = StateObject(wrappedValue: model)
+        _model = StateObject(wrappedValue: model)
         self.modifier = modifier
     }
-    
+
     var body: some View {
         LoadableView(model.load, model.loadable) { sections in
             CollectionView(sections: sections, runner: model.runner, modifier)
@@ -26,21 +26,19 @@ struct DSKPageView<T: JSCObject, C: View> : View {
     }
 }
 
-
-
 extension DSKPageView {
-    final class ViewModel : ObservableObject {
+    final class ViewModel: ObservableObject {
         let runner: JSCRunner
         let link: DSKCommon.PageLink
         @Published var loadable = Loadable<[DSKCommon.PageSection<T>]>.idle
         @Published var loadables: [String: Loadable<DSKCommon.ResolvedPageSection<T>>] = [:]
         @Published var errors = Set<String>()
-        
+
         init(runner: JSCRunner, link: DSKCommon.PageLink) {
             self.runner = runner
             self.link = link
         }
-        
+
         func load() {
             loadable = .loading
             Task {
@@ -64,7 +62,7 @@ extension DSKPageView {
                 }
             }
         }
-        
+
         func load(_ sectionID: String) async {
             await MainActor.run {
                 loadables[sectionID] = .loading
@@ -85,7 +83,6 @@ extension DSKPageView {
         }
     }
 }
-
 
 struct RunnerPageView: View {
     let runner: JSCRunner

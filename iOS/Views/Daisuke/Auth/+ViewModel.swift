@@ -11,11 +11,11 @@ extension DSKAuthView {
     final class ViewModel: ObservableObject {
         var runner: JSCRunner
         @Published var loadable: Loadable<DSKCommon.User?> = .idle
-        
+
         init(runner: JSCRunner) {
             self.runner = runner
         }
-        
+
         func load() {
             loadable = .loading
             Task { @MainActor in

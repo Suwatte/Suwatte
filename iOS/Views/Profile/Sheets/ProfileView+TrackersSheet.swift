@@ -8,8 +8,7 @@
 import RealmSwift
 import SwiftUI
 
-
-struct TrackerManagementView: View  {
+struct TrackerManagementView: View {
     @StateObject var model: ViewModel
     @State var presentSheet = false
     @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
@@ -31,7 +30,6 @@ struct TrackerManagementView: View  {
                             TrackerItemCell(item: value, tracker: tracker, status: value.entry?.status ?? .CURRENT)
                         }
                         .modifier(HistoryView.StyleModifier())
-                        
                     }
                     .padding(.all)
                 }
@@ -43,7 +41,7 @@ struct TrackerManagementView: View  {
             .navigationBarTitleDisplayMode(.inline)
             .closeButton()
             .toolbar {
-                ToolbarItem (placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Button("\(Image(systemName: "plus"))") {
                         presentSheet.toggle()
                     }
@@ -54,19 +52,14 @@ struct TrackerManagementView: View  {
             }) {
                 let titles = model.getTitles()
                 let trackers = model.getTrackersWithoutLinks()
-                AddTrackerLinkView(contentId: model.contentID , titles: titles, trackers: trackers)
+                AddTrackerLinkView(contentId: model.contentID, titles: titles, trackers: trackers)
                     .accentColor(accentColor)
                     .tint(accentColor) // For Invalid Tint on Appear
-                    
             }
             .environmentObject(model)
         }
         .toast()
-        
     }
-    
-    
-    
 }
 
 extension TrackerManagementView {
@@ -75,30 +68,31 @@ extension TrackerManagementView {
 
         var contentID: String
         @Published var dict: [String: Loadable<TrackItem>] = [:]
-        
+
         private var matches: [String: String] = [:]
         var trackers: [JSCCT] {
             dict
                 .keys
-                .compactMap({ DSK.shared.getTracker(id: $0) })
+                .compactMap { DSK.shared.getTracker(id: $0) }
                 .sorted(by: \.name, descending: false)
         }
+
         init(id: String) {
-            self.contentID = id
+            contentID = id
         }
-        
+
         func prepare() {
             matches = DataManager.shared.getTrackerLinks(for: contentID)
             for (key, _) in matches {
                 guard DSK.shared.getTracker(id: key) != nil else { continue }
                 dict[key] = .idle
             }
-            
+
             Task {
                 await load()
             }
         }
-        
+
         func load() async {
             await withTaskGroup(of: Void.self, body: { group in
                 for (key, value) in matches {
@@ -106,7 +100,7 @@ extension TrackerManagementView {
                     Task { @MainActor in
                         self.dict[key] = .loading
                     }
-                    
+
                     group.addTask {
                         do {
                             let trackItem = try await tracker.getTrackItem(id: value)
@@ -125,29 +119,27 @@ extension TrackerManagementView {
                         }
                     }
                 }
-                
-                for await _ in group {
-                    
-                }
+
+                for await _ in group {}
             })
         }
-        
+
         func getTitles() -> [String] {
             guard let content = DataManager.shared.getStoredContent(contentID) else { return [] }
-            
+
             return content
                 .additionalTitles
                 .toArray()
                 .appending(content.title)
         }
-        
+
         func getTrackersWithoutLinks() -> [JSCCT] {
             DSK
                 .shared
                 .getActiveTrackers()
                 .filter { !matches.keys.contains($0.id) }
         }
-        
+
         func unlink(tracker: JSCCT) {
             let keys = tracker.links
             keys.forEach { DataManager.shared.removeLinkKey(for: contentID, key: $0) }
@@ -178,6 +170,7 @@ extension TrackerManagementView {
                 }
             }
         }
+
         var body: some View {
             HStack {
                 BaseImageView(url: URL(string: item.cover))
@@ -185,7 +178,6 @@ extension TrackerManagementView {
                     .scaledToFit()
                     .cornerRadius(5)
                     .shadow(radius: 3)
-                
 
                 VStack(alignment: .leading, spacing: 10) {
                     HStack {
@@ -206,7 +198,7 @@ extension TrackerManagementView {
                                     Label("Increment Chapter", systemImage: "plus")
                                 }
                                 Button {
-                                    let volume =  entry.progress.lastReadVolume ?? 0
+                                    let volume = entry.progress.lastReadVolume ?? 0
                                     trackerAction {
                                         try await tracker.didUpdateLastReadChapter(id: item.id, progress: .init(chapter: nil, volume: volume + 1))
                                     }
@@ -224,7 +216,7 @@ extension TrackerManagementView {
                                 Button { presentEntryFormView.toggle() } label: {
                                     Label("Edit Tracker Entry", systemImage: "pencil")
                                 }
-                                
+
                             } else {
                                 Button {
                                     trackerAction {
@@ -253,7 +245,6 @@ extension TrackerManagementView {
                                 .contentShape(Rectangle())
                                 .padding(.leading)
                         }
-
                     }
                     if let entry = item.entry {
                         HStack {
@@ -266,11 +257,11 @@ extension TrackerManagementView {
                         Text("Progress: ")
                             .font(.subheadline)
                             .fontWeight(.light)
-                        +
-                        Text("\(entry.progress.lastReadChapter.clean) / \(entry.progress.maxAvailableChapter?.clean ?? "-")")
+                            +
+                            Text("\(entry.progress.lastReadChapter.clean) / \(entry.progress.maxAvailableChapter?.clean ?? "-")")
                             .font(.subheadline)
                             .fontWeight(.semibold)
-                        
+
                     } else {
                         Text("Not Tracking")
                             .font(.subheadline.weight(.light))
@@ -315,7 +306,7 @@ extension TrackerManagementView {
                         }
                     }
                 }
-                
+
                 .navigationBarTitle("Add Trackers")
                 .navigationBarTitleDisplayMode(.inline)
                 .closeButton()
@@ -332,7 +323,7 @@ extension TrackerManagementView {
             .navigationViewStyle(.stack)
         }
     }
-    
+
     struct TrackerResultsSection: View {
         var tracker: JSCCT
         var titles: [String]
@@ -351,7 +342,7 @@ extension TrackerManagementView {
                 }
                 .padding(.horizontal)
             }
-            
+
             // Resullts
             LoadableView(load, loadable) { results in
                 Group {
@@ -366,8 +357,9 @@ extension TrackerManagementView {
             }
             .frame(alignment: .center)
         }
-        
+
         // MARK: Views
+
         func ScrollableResultView(_ results: [DSKCommon.TrackItem]) -> some View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
@@ -379,8 +371,7 @@ extension TrackerManagementView {
                 .padding(.top, 5)
             }
         }
-        
-        
+
         func Cell(_ item: DSKCommon.TrackItem) -> some View {
             ZStack(alignment: .topTrailing) {
                 DefaultTile(entry: .init(contentId: item.id, cover: item.cover, title: item.title))
@@ -392,13 +383,13 @@ extension TrackerManagementView {
                 handleSelection(item.id)
             }
         }
-        
-        
+
         // MARK: Methods
-        var linkKey : String {
+
+        var linkKey: String {
             tracker.config?.linkKeys?.first ?? tracker.id
         }
-        
+
         func load() {
             loadable = .loading
             Task {
@@ -411,7 +402,7 @@ extension TrackerManagementView {
                 }
             }
         }
-        
+
         func handleSelection(_ item: String) {
             withAnimation {
                 let current = selections[linkKey]

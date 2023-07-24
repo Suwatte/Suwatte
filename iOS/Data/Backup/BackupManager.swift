@@ -12,14 +12,14 @@ class BackupManager: ObservableObject {
     static let shared = BackupManager()
     let directory = FileManager.default.documentDirectory.appendingPathComponent("Backups", isDirectory: true)
     @Published var urls: [URL]
-    
+
     init() {
         if !directory.exists {
             directory.createDirectory()
         }
         urls = directory.contents.sorted(by: \.lastModified, descending: true)
     }
-    
+
     func refresh() {
         let urls = directory
             .contents
@@ -29,7 +29,7 @@ class BackupManager: ObservableObject {
             self.urls = urls
         }
     }
-    
+
     func save(name: String? = nil) throws {
         let backup = create()
         let json = try backup.encoded()
@@ -40,17 +40,17 @@ class BackupManager: ObservableObject {
         try json.write(to: path)
         refresh()
     }
-    
+
     func create() -> Backup {
         let manager = DataManager.shared
         return manager.getAllLibraryObjects()
     }
-    
+
     func remove(url: URL) {
         try? FileManager.default.removeItem(at: url)
         refresh()
     }
-    
+
     func `import`(from url: URL) throws {
         let location = directory.appendingPathComponent(url.lastPathComponent)
         if location.exists {
@@ -59,7 +59,7 @@ class BackupManager: ObservableObject {
         try FileManager.default.copyItem(at: url, to: location)
         refresh()
     }
-    
+
     private func restoreDB(backup: Backup) {
         let realm = try! Realm()
         try! realm.safeWrite {
@@ -82,42 +82,42 @@ class BackupManager: ObservableObject {
             realm.objects(UpdatedSearchHistory.self).setValue(true, forKey: "isDeleted")
             realm.objects(StoredOPDSServer.self).setValue(true, forKey: "isDeleted")
             realm.delete(realm.objects(StoredChapterData.self))
-            
+
             let downloadedChapters = realm
                 .objects(ICDMDownloadObject.self)
                 .where { $0.status == .completed }
                 .compactMap { $0.chapter }
-            
+
             let idSet = Array(Set(downloadedChapters.map { $0.contentIdentifier.id }))
-            let chapterIdSet = Array(downloadedChapters.map({ $0.id }))
-            
+            let chapterIdSet = Array(downloadedChapters.map { $0.id })
+
             realm.objects(StoredContent.self).where { !$0.id.in(idSet) }.setValue(true, forKey: "isDeleted")
             realm.objects(StoredChapter.self).where { !$0.id.in(chapterIdSet) }.setValue(true, forKey: "isDeleted")
-            
+
             if let libraryEntries = backup.library {
                 let contents = libraryEntries.compactMap { $0.content }
                 realm.add(contents, update: .all)
                 realm.add(libraryEntries, update: .all)
             }
-            
+
             if let collections = backup.collections {
                 realm.add(collections, update: .all)
             }
-            
+
             if let readLater = backup.readLater {
                 realm.add(readLater, update: .all)
             }
-            
+
             if let runnerLists = backup.runnerLists {
                 realm.add(runnerLists, update: .all)
             }
-            
+
             if let markers = backup.progressMarkers {
                 realm.add(markers, update: .all)
             }
         }
     }
-    
+
     func restore(from url: URL) async throws {
         // Load
         var backup: Backup?
@@ -127,18 +127,18 @@ class BackupManager: ObservableObject {
             Logger.shared.error("[Backups] \(error.localizedDescription)")
             throw error
         }
-        
+
         guard let backup = backup else {
             throw BackUpError.InvalidBackup
         }
-        
+
         let runners = backup.runners?.map { ($0.id, $0.listURL) } ?? []
-        
+
         // Install
         restoreDB(backup: backup)
-        
+
         guard !runners.isEmpty else { return }
-        
+
         await withTaskGroup(of: Void.self) { group in
             for runner in runners {
                 guard let url = URL(string: runner.1) else { return }
@@ -152,7 +152,7 @@ class BackupManager: ObservableObject {
             }
         }
     }
-    
+
     enum BackUpError: Error {
         case FailedToImport, InvalidBackup, EmptyBackup, FileExists
     }
@@ -161,31 +161,31 @@ class BackupManager: ObservableObject {
 extension DataManager {
     func getAllLibraryObjects() -> Backup {
         let realm = try! Realm()
-        
+
         let libraryEntries = realm
             .objects(LibraryEntry.self)
             .where { $0.content != nil && !$0.isDeleted }
-        
+
         let collections = realm
             .objects(LibraryCollection.self)
-            .where({ !$0.isDeleted })
-        
+            .where { !$0.isDeleted }
+
         let readLater = realm
             .objects(ReadLater.self)
             .where { $0.content != nil && !$0.isDeleted }
-        
+
         let progressMarkers = realm
             .objects(ProgressMarker.self)
-            .where({ $0.currentChapter != nil && $0.currentChapter.content != nil && !$0.isDeleted })
-        
+            .where { $0.currentChapter != nil && $0.currentChapter.content != nil && !$0.isDeleted }
+
         let lists = realm
             .objects(StoredRunnerList.self)
-            .where({ !$0.isDeleted })
-        
+            .where { !$0.isDeleted }
+
         let runners = realm
             .objects(StoredRunnerObject.self)
-            .where({ !$0.isDeleted })
-        
+            .where { !$0.isDeleted }
+
         var backup = Backup()
         backup.readLater = readLater.toArray()
         backup.progressMarkers = progressMarkers.toArray()
@@ -193,7 +193,7 @@ extension DataManager {
         backup.collections = collections.toArray()
         backup.runnerLists = lists.toArray()
         backup.runners = runners.toArray()
-        
+
         return backup
     }
 }

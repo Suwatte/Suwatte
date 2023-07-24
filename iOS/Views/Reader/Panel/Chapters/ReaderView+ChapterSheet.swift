@@ -10,22 +10,23 @@ import SwiftUI
 extension ReaderView {
     struct ChapterSheet: View {
         @EnvironmentObject var model: ReaderView.ViewModel
-        
-        var showLangFlag : Bool {
+
+        var showLangFlag: Bool {
             let sourceId = model.activeChapter.chapter.sourceId
             if STTHelpers.isInternalSource(sourceId) { return false }
-            
+
             guard let source = DSK.shared.getSource(id: sourceId) else { return true }
             return source.ablityNotDisabled(\.disableLanguageFlags)
         }
-        
+
         var showDate: Bool {
             let sourceId = model.activeChapter.chapter.sourceId
             if STTHelpers.isInternalSource(sourceId) { return false }
-            
+
             guard let source = DSK.shared.getSource(id: sourceId) else { return true }
             return source.ablityNotDisabled(\.disableChapterDates)
         }
+
         var body: some View {
             ScrollViewReader { proxy in
                 List {

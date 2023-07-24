@@ -38,11 +38,8 @@ final class ChapterReference: Object, CKRecordConvertible, CKRecordRecoverable, 
     @Persisted var opds: StreamableOPDSContent?
     @Persisted var archive: ArchivedContent?
     @Persisted var isDeleted: Bool = false
-    
-    
+
     var isValid: Bool {
         content != nil || opds != nil || archive != nil
     }
 }
-
-

@@ -5,48 +5,48 @@
 //  Created by Mantton on 2023-07-12.
 //
 
-import Foundation
 import AnyCodable
+import Foundation
 
 extension DSKCommon {
-    
     enum FilterType: Int, Codable {
         case toggle, select, multiselect, excludableMultiselect, text, info
     }
-    
+
     struct Option: Parsable, Hashable, Identifiable {
         let key: String
         let label: String
-        
+
         var id: String {
             key
         }
     }
-    
+
     struct DirectoryConfig: Parsable, Hashable {
         let sort: Sort?
         let filters: [DirectoryFilter]?
         var searchable: Bool?
         var filterable: Bool?
         var sortable: Bool?
-        
+
         var canSearch: Bool {
             searchable ?? false
         }
-        
+
         var canFilter: Bool {
             filterable ?? false
         }
-        
+
         var canSort: Bool {
             sortable ?? false
         }
+
         struct Sort: JSCObject {
             let options: [Option]
             let canChangeOrder: Bool
         }
     }
-    
+
     struct DirectoryFilter: Parsable, Hashable {
         let id: String
         let title: String
@@ -55,12 +55,12 @@ extension DSKCommon {
         let type: FilterType
         let options: [Option]?
     }
-    
+
     struct ExcludableMultiSelectProp: Parsable {
         var included: Set<String>
         var excluded: Set<String>
     }
-    
+
     struct DirectoryRequest: Parsable, Hashable {
         var query: String?
         var page: Int
@@ -69,24 +69,23 @@ extension DSKCommon {
         var context: [String: AnyCodable]?
         var configKey: String?
         var sortSelection: SortSelection?
-        
+
         struct RequestTag: Parsable, Hashable {
             var tagId: String
             var propertyId: String
         }
-        
+
         struct SortSelection: JSCObject {
             let key: String
             var ascending: Bool
         }
     }
-    
+
     struct PagedResult<T>: Codable, Hashable where T: Codable, T: Hashable {
         var results: [T]
         var isLastPage: Bool
         var totalResultCount: Int?
     }
-    
 
     struct HighlightCollection: Parsable, Identifiable, Hashable {
         var id: String

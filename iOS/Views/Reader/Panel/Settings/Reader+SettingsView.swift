@@ -234,7 +234,6 @@ extension ReaderView {
     }
 }
 
-
 enum ReaderBlendMode: Int, CaseIterable {
     case normal, screen, multiply
 

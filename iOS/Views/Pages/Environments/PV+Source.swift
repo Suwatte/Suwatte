@@ -14,10 +14,11 @@ struct ContentSourcePageView: View {
     @StateObject var manager = LocalAuthManager.shared
     @Preference(\.protectContent) var protectContent
     @State private var selection: HighlightIdentifier?
-    
+
     var pageKey: String {
         link.key
     }
+
     var body: some View {
         DSKPageView<DSKCommon.Highlight, Cell>(model: .init(runner: source, link: link)) { item in
             Cell(source: source,
@@ -50,12 +51,11 @@ struct ContentSourcePageView: View {
             }
         }
     }
-    
+
     var hideLibrayBadges: Bool {
         protectContent && manager.isExpired
     }
-    
-    
+
     struct Cell: View {
         let source: JSCCS
         @State var item: DSKCommon.Highlight
@@ -63,7 +63,7 @@ struct ContentSourcePageView: View {
         @State var inReadLater: Bool
         let hideLibraryBadges: Bool
         @Binding var selection: HighlightIdentifier?
-        
+
         var body: some View {
             PageViewTile(runnerID: source.id,
                          id: item.contentId,
@@ -73,31 +73,29 @@ struct ContentSourcePageView: View {
                          additionalCovers: item.additionalCovers,
                          info: item.info,
                          badge: item.badge)
-            .contextMenu {
-                if source.ablityNotDisabled(\.disableLibraryActions) {
-                    ReadLaterButton
-                    Divider()
-                }
-                if let acqStr = item.acquisitionLink {
-                    if let url = URL(string: acqStr) {
-                        Button {
-                            download(url)
-                        } label: {
-                            Label("Download", systemImage: "externaldrive.badge.plus")
-                        }
+                .contextMenu {
+                    if source.ablityNotDisabled(\.disableLibraryActions) {
+                        ReadLaterButton
+                        Divider()
                     }
-                } else {
-                    Text("Invalid URL Format for Acquisition Link")
+                    if let acqStr = item.acquisitionLink {
+                        if let url = URL(string: acqStr) {
+                            Button {
+                                download(url)
+                            } label: {
+                                Label("Download", systemImage: "externaldrive.badge.plus")
+                            }
+                        }
+                    } else {
+                        Text("Invalid URL Format for Acquisition Link")
+                    }
+                    buildActions()
                 }
-                buildActions()
-            }
-            .onTapGesture {
-                handleTap()
-            }
-            
+                .onTapGesture {
+                    handleTap()
+                }
         }
-        
-        
+
         func badgeColor() -> Color? {
             let libraryBadge = (inLibrary || inReadLater) && !hideLibraryBadges
             if libraryBadge {
@@ -109,6 +107,7 @@ struct ContentSourcePageView: View {
 }
 
 // MARK: - Default Actions
+
 extension ContentSourcePageView.Cell {
     var ReadLaterButton: some View {
         Button {
@@ -124,6 +123,7 @@ extension ContentSourcePageView.Cell {
 }
 
 // MARK: - Context Actions
+
 extension ContentSourcePageView.Cell {
     func getActions() -> [[DSKCommon.ContextMenuAction]] {
         guard source.intents.isContextMenuProvider else {
@@ -135,18 +135,18 @@ extension ContentSourcePageView.Cell {
         } catch {
             Logger.shared.error(error, source.id)
         }
-        
+
         return []
     }
-    
+
     func didTriggerActions(key: String) {
         Task {
             do {
                 try await source.didTriggerContextActon(highlight: item, key: key)
-                
-                guard source.intents.canRefreshHighlight else { return  }
+
+                guard source.intents.canRefreshHighlight else { return }
                 let data = try await source.getHighlight(highlight: item)
-                
+
                 Task { @MainActor in
                     item = data
                 }
@@ -155,7 +155,7 @@ extension ContentSourcePageView.Cell {
             }
         }
     }
-    
+
     @ViewBuilder
     func buildActions() -> some View {
         let actions = getActions()
@@ -182,35 +182,33 @@ extension ContentSourcePageView.Cell {
     }
 }
 
-
 // MARK: - Handle Tap
+
 extension ContentSourcePageView.Cell {
     func handleTap() {
         let isStreamable = item.streamable ?? false
-        
+
         guard isStreamable else {
             selection = (source.id, item)
             return
         }
-        
+
         guard source.intents.providesReaderContext else {
             StateManager.shared.alert(title: "Bad Configuation", message: "\(source.name) stated that this title can be streamed but has not implemented the 'provideReaderContext' method.")
             return
         }
-        
+
         handleReadContent()
     }
-    
 }
 
-
 // MARK: - Handle Read
+
 extension ContentSourcePageView.Cell {
     func handleReadContent() {
         StateManager.shared.stream(item: item, sourceId: source.id)
     }
 }
-
 
 // MARK: - Download
 
@@ -227,9 +225,9 @@ extension ContentSourcePageView.Cell {
                         thumbnailRequest = try (await source.willRequestImage(imageURL: thumbnailURL)).toURLRequest()
                     }
                 }
-                
+
                 let downloadRequest = try await source.overrrideDownloadRequest(url.absoluteString)?.toURLRequest() ?? defaultRequest
-                let download = DirectoryViewer.DownloadManager.DownloadObject.init(url: url, request: downloadRequest, title: title, thumbnailReqeust: thumbnailRequest)
+                let download = DirectoryViewer.DownloadManager.DownloadObject(url: url, request: downloadRequest, title: title, thumbnailReqeust: thumbnailRequest)
                 DirectoryViewer.DownloadManager.shared.addToQueue(download)
             } catch {
                 Logger.shared.error(error, source.id)

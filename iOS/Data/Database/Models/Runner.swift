@@ -11,7 +11,7 @@ import RealmSwift
 
 enum RunnerEnvironment: String, PersistableEnum, Codable {
     case unknown, tracker, source, plugin
-    
+
     var description: String {
         switch self {
         case .tracker:
@@ -38,7 +38,7 @@ struct Runner: Codable, Hashable, Identifiable {
     var website: String?
     var supportedLanguages: [String]?
     var path: String
-    var nsfw: Bool? 
+    var nsfw: Bool?
     var environment: RunnerEnvironment = .unknown
     var thumbnail: String?
     var minSupportedAppVersion: String?
@@ -63,7 +63,7 @@ final class StoredRunnerObject: Object, Identifiable, CKRecordConvertible, CKRec
     @Persisted var listURL: String
     @Persisted var thumbnail: String
     @Persisted var isDeleted = false
-    
+
     @Persisted var isLibraryPageLinkProvider = false
     @Persisted var isBrowsePageLinkProvider = false
 
@@ -108,8 +108,7 @@ extension DataManager {
             .objects(StoredRunnerObject.self)
             .where { $0.id == runner.id && !$0.isDeleted }
             .first ?? StoredRunnerObject()
-        
-        
+
         let info = runner.info
         try! realm.safeWrite {
             obj.name = info.name
@@ -125,8 +124,8 @@ extension DataManager {
             if let listURL {
                 obj.listURL = listURL.absoluteString
             }
-            
-            if obj.executable == nil  {
+
+            if obj.executable == nil {
                 obj.executable = CreamAsset.create(object: obj, propName: StoredRunnerObject.RUNNER_KEY, url: url)
             }
             if let thumbnail = info.thumbnail {
@@ -142,17 +141,17 @@ extension DataManager {
             realm.add(obj, update: .modified)
         }
     }
-    
+
     func getRunnerExecutable(id: String) -> URL? {
         let realm = try! Realm()
-        
+
         let target = realm
             .objects(StoredRunnerObject.self)
-            .where({ $0.id == id && !$0.isDeleted })
+            .where { $0.id == id && !$0.isDeleted }
             .first
         return target?.executable?.filePath
     }
-    
+
     func getSavedAndEnabledSources() -> Results<StoredRunnerObject> {
         let realm = try! Realm()
 
@@ -161,16 +160,16 @@ extension DataManager {
             .where { $0.enabled == true && $0.isDeleted == false && $0.environment == .source }
             .sorted(by: [SortDescriptor(keyPath: "name", ascending: true)])
     }
-    
+
     func getLibraryPageProviders() -> [StoredRunnerObject] {
         let realm = try! Realm()
-        
+
         return realm
             .objects(StoredRunnerObject.self)
             .where { $0.isLibraryPageLinkProvider && $0.enabled && !$0.isDeleted }
             .map { $0.freeze() }
     }
-    
+
     func getEnabledRunners(for environment: RunnerEnvironment) -> Results<StoredRunnerObject> {
         let realm = try! Realm()
 

@@ -156,7 +156,7 @@ extension RunnerListsView {
                 let sources = filteredRunners.filter { $0.environment == .source }
                 let trackers = filteredRunners.filter { $0.environment == .tracker }
                 let plugins = filteredRunners.filter { $0.environment == .plugin }
-                
+
                 if !sources.isEmpty {
                     Section {
                         ForEach(sources) { source in
@@ -167,7 +167,7 @@ extension RunnerListsView {
                         Text("Sources")
                     }
                 }
-                
+
                 if !trackers.isEmpty {
                     Section {
                         ForEach(trackers) { tracker in
@@ -178,18 +178,17 @@ extension RunnerListsView {
                         Text("Trackers")
                     }
                 }
-                
+
                 if !plugins.isEmpty {
                     Section {
                         ForEach(plugins) { plugin in
                             RunnerListInfo.RunnerListCell(listURL: listURL, list: list, runner: plugin)
                                 .frame(height: 60)
                         }
-                    }  header: {
+                    } header: {
                         Text("Plugins")
                     }
                 }
-                
             }
             .animation(.default, value: text)
             .toolbar(content: {
@@ -248,7 +247,7 @@ extension RunnerListsView {
         }
 
         var languages: [String] {
-            let langs = Set(list.runners.flatMap { $0.supportedLanguages ?? []})
+            let langs = Set(list.runners.flatMap { $0.supportedLanguages ?? [] })
             return Array(langs).filter { langSearchText.isEmpty || $0.lowercased().contains(langSearchText.lowercased()) }
         }
 
@@ -366,13 +365,13 @@ extension RunnerListsView.RunnerListInfo {
         }
 
         func RunnerHeader(runner: Runner) -> some View {
-            HStack (spacing: 7) {
+            HStack(spacing: 7) {
                 let url = runner.thumbnail.flatMap { URL(string: listURL)!.appendingPathComponent("assets").appendingPathComponent($0) }
                 STTThumbView(url: url)
                     .frame(width: 44, height: 44, alignment: .center)
                     .cornerRadius(7)
                 VStack(alignment: .leading, spacing: 5) {
-                    HStack(alignment: .bottom, spacing: 3.5){
+                    HStack(alignment: .bottom, spacing: 3.5) {
                         Text(runner.name)
                             .font(.headline)
                             .fontWeight(.semibold)

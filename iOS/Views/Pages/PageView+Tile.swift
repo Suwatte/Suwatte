@@ -20,8 +20,7 @@ struct PageViewTile: View {
     let badge: DSKCommon.Badge?
     @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
     @Environment(\.pageSectionStyle) var style
-    
-    
+
     var body: some View {
         Group {
             switch style {
@@ -38,8 +37,8 @@ struct PageViewTile: View {
     }
 }
 
-
 // MARK: - Info Style Tile
+
 extension PageViewTile {
     var INFO: some View {
         HStack(alignment: .top, spacing: 5) {
@@ -49,16 +48,15 @@ extension PageViewTile {
                 .cornerRadius(5)
                 .padding(.all, 5)
                 .shadow(radius: 2.5)
-            
+
             VStack(alignment: .leading) {
                 Text(title)
                     .font(.headline)
                     .fontWeight(.bold)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
-                
+
                 TAGS_VIEW
-                
             }
             .padding(.vertical, 7)
             .padding(.trailing, 5)
@@ -68,7 +66,9 @@ extension PageViewTile {
         .cornerRadius(5)
     }
 }
+
 // MARK: - Tags view
+
 extension PageViewTile {
     var TAGS_VIEW: some View {
         VStack(alignment: .leading) {
@@ -81,6 +81,7 @@ extension PageViewTile {
         .font(.subheadline.weight(.thin))
     }
 }
+
 // MARK: - DEFAULT
 
 extension PageViewTile {
@@ -90,7 +91,7 @@ extension PageViewTile {
     }
 }
 
-extension PageViewTile{
+extension PageViewTile {
     var LATEST: some View {
         HStack(alignment: .top, spacing: 5) {
             // Image
@@ -100,14 +101,14 @@ extension PageViewTile{
                 .dskBadge(badge)
                 .padding(.all, 7)
                 .shadow(radius: 2.5)
-            
+
             VStack(alignment: .leading) {
                 Text(title)
                     .font(.headline)
                     .fontWeight(.bold)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
-                
+
                 TAGS_VIEW
             }
             .padding(.vertical, 7)
@@ -139,18 +140,18 @@ extension PageViewTile {
         private var foreGroundColor: Color {
             endColor.isDark ? .white : .black
         }
-        
+
         private var covers: [String] {
             Array(
                 Set([cover] + (additionalCovers ?? []))
             )
         }
-        
+
         @StateObject private var loader = FetchImage()
         private var urls: [URL] {
             return covers.compactMap { URL(string: $0) }
         }
-        
+
         var body: some View {
             ZStack(alignment: .bottom) {
                 Group {
@@ -162,12 +163,12 @@ extension PageViewTile {
                                 .frame(height: proxy.size.width * 1.5, alignment: .center)
                                 .transition(.opacity)
                         }
-                        
+
                     } else {
                         Color.gray.opacity(0.25)
                     }
                 }
-                
+
                 LinearGradient(gradient: Gradient(colors: [.clear, endColor]), startPoint: .center, endPoint: .bottom)
                 VStack {
                     // Image Carasouel
@@ -175,14 +176,14 @@ extension PageViewTile {
                         .multilineTextAlignment(.center)
                         .font(.headline.weight(.semibold))
                         .lineLimit(2)
-                    
+
                     if let subtitle = subtitle {
                         Text(subtitle)
                             .multilineTextAlignment(.center)
                             .font(.subheadline)
                             .lineLimit(2)
                     }
-                    
+
                     VStack(alignment: .center) {
                         ForEach(info ?? []) {
                             Text($0)
@@ -191,8 +192,7 @@ extension PageViewTile {
                     .lineLimit(3)
                     .multilineTextAlignment(.leading)
                     .font(.footnote.weight(.thin))
-                    
-                    
+
                     if covers.count > 1 {
                         HStack {
                             ForEach(covers, id: \.self) { cover in
@@ -206,7 +206,7 @@ extension PageViewTile {
                     }
                 }
                 .foregroundColor(foreGroundColor)
-                
+
                 .padding()
             }
             .animation(.default, value: currentImageIndex)
@@ -229,25 +229,24 @@ extension PageViewTile {
             .animation(.easeOut(duration: 0.25), value: loader.image)
             .animation(.easeOut(duration: 0.25), value: loader.isLoading)
         }
-        
+
         func load(url: URL?) async {
             guard let url else { return }
             let runner = DSK.shared.getRunner(runnerID)
-            
+
             guard let runner, runner.intents.imageRequestHandler, UserDefaults.standard.bool(forKey: STTKeys.RunnerOverridesImageRequest(runnerID)) else {
                 loader.load(url)
                 return
             }
-            
-            
+
             guard let response = try? await runner.willRequestImage(imageURL: url), let request = try? ImageRequest(urlRequest: response.toURLRequest()) else {
                 loader.load(url)
                 return
             }
-            
+
             loader.load(request)
         }
-        
+
         func didAppear() {
             // Update Loader
             loader.transaction = .init(animation: .easeInOut(duration: 0.25))
@@ -259,12 +258,12 @@ extension PageViewTile {
                     endColor = Color(color)
                 }
             }
-            
+
             // Load First Image
             Task {
                 await load(url: urls.first)
             }
-            
+
             if urls.count == 1 {
                 return
             }
@@ -282,8 +281,8 @@ extension PageViewTile {
     }
 }
 
-
 // MARK: - Standard List
+
 extension PageViewTile {
     var LIST: some View {
         HStack(alignment: .top, spacing: 5) {
@@ -294,15 +293,14 @@ extension PageViewTile {
                 .shadow(radius: 2.5)
                 .dskBadge(badge)
                 .padding(.all, 7)
-            
-            
+
             VStack(alignment: .leading) {
                 Text(title)
                     .font(.callout)
                     .fontWeight(.medium)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
-                
+
                 TAGS_VIEW
             }
             .padding(.vertical, 7)
@@ -315,6 +313,7 @@ extension PageViewTile {
 }
 
 // MARK: - NavigationList
+
 extension PageViewTile {
     var NAVIGATION_LIST: some View {
         HStack(alignment: .center, spacing: 5) {
@@ -325,7 +324,7 @@ extension PageViewTile {
                 .shadow(radius: 2.5)
                 .dskBadge(badge)
                 .padding(.all, 7)
-            
+
             VStack(alignment: .center) {
                 Text(title)
                     .font(.callout)
@@ -356,7 +355,7 @@ extension PageViewTile {
         let runnerID: String
         @State var color: Color = .fadedPrimary
         @StateObject private var loader = FetchImage()
-        
+
         var body: some View {
             ZStack(alignment: .bottom) {
                 Group {
@@ -372,7 +371,7 @@ extension PageViewTile {
                 .frame(height: 120)
                 .background(Color.accentColor.opacity(0.80))
                 .clipped()
-                
+
                 Text(title)
                     .font(.footnote)
                     .fontWeight(.semibold)
@@ -391,31 +390,30 @@ extension PageViewTile {
                 if loader.image != nil || loader.isLoading { return }
                 loader.transaction = .init(animation: .easeInOut(duration: 0.25))
                 loader.onCompletion = { result in
-                    
+
                     guard let result = try? result.get() else {
                         return
                     }
-                    
+
                     if let avgColor = result.image.averageColor {
                         color = Color(uiColor: avgColor)
                     }
                 }
-                
+
                 if let str = imageUrl, let url = URL(string: str) {
                     loader.load(url)
                 }
             }
         }
     }
-    
 }
 
-
 // MARK: - Colored BadgeModifier
+
 struct ColoredBadgeModifier: ViewModifier {
     let color: Color?
     func body(content: Content) -> some View {
-        ZStack(alignment: .topTrailing ) {
+        ZStack(alignment: .topTrailing) {
             content
             ColoredBadge(color: color ?? .sttDefault)
                 .opacity(color != nil ? 1 : 0)
@@ -423,27 +421,26 @@ struct ColoredBadgeModifier: ViewModifier {
     }
 }
 
-
 extension View {
     func coloredBadge(_ color: Color?) -> some View {
         modifier(ColoredBadgeModifier(color: color))
     }
 }
 
-
 struct CapsuleBadgeModifier: ViewModifier {
     let value: String
     let color: Color
     func body(content: Content) -> some View {
-        ZStack(alignment: .topTrailing ) {
+        ZStack(alignment: .topTrailing) {
             content
             CapsuleBadge(text: value, color: color)
         }
     }
 }
+
 struct DSKBadgeModifer: ViewModifier {
     let badge: DSKCommon.Badge?
-    
+
     var color: Color {
         if let c = badge?.color {
             return Color(hex: c)
@@ -451,6 +448,7 @@ struct DSKBadgeModifer: ViewModifier {
             return .accentColor
         }
     }
+
     func body(content: Content) -> some View {
         if let badge {
             if let count = badge.count {

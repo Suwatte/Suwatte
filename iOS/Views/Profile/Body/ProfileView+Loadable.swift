@@ -94,7 +94,6 @@ extension ProfileView {
         @State var isRotated = false
         var body: some View {
             switch model.syncState {
-
             case .syncing:
                 Image(systemName: "arrow.triangle.2.circlepath")
                     .resizable()

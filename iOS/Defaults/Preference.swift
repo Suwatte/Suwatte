@@ -134,16 +134,16 @@ final class Preferences {
 
     @UserDefault(STTKeys.BlurNSFWContent)
     var blurNSFWContentInSearch = true
-    
+
     @UserDefault(STTKeys.LocalStorageUsesICloud)
     var useCloudForLocal = true
-    
+
     @UserDefault(STTKeys.LocalSortLibrary)
     var directoryViewSortKey = DirectorySortOption.dateAdded
-    
+
     @UserDefault(STTKeys.LocalOrderLibrary)
     var directoryViewOrderKey = true // Default to Descending
-    
+
     @UserDefault(STTKeys.DefaultPanelReadingMode)
     var defaultPanelReadingMode = ReadingMode.PAGED_COMIC
 }

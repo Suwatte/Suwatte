@@ -266,8 +266,8 @@ extension SettingsView {
 }
 
 // MARK: On My Device
+
 extension SettingsView {
-    
     struct OnMyDeviceSection: View {
         @Preference(\.useCloudForLocal) var useCloud
         var body: some View {

@@ -28,7 +28,6 @@ struct BrowseView: View {
                     } label: {
                         Image(systemName: "magnifyingglass")
                     }
-
                 }
             }
         }
@@ -46,7 +45,6 @@ struct BrowseView: View {
         }
     }
 
-
     var SortedRunners: Results<StoredRunnerObject> {
         runners
             .sorted(by: [SortDescriptor(keyPath: "enabled", ascending: true),
@@ -55,6 +53,7 @@ struct BrowseView: View {
 }
 
 // MARK: Sources
+
 extension BrowseView {
     var sources: Results<StoredRunnerObject> {
         SortedRunners
@@ -90,13 +89,14 @@ extension BrowseView {
 }
 
 // MARK: Trackers
+
 extension BrowseView {
     var trackers: Results<StoredRunnerObject> {
         SortedRunners
             .where { $0.environment == .tracker }
             .where { !$0.isBrowsePageLinkProvider }
     }
-    
+
     @ViewBuilder
     var InstalledTrackersSection: some View {
         if !trackers.isEmpty {
@@ -125,11 +125,13 @@ extension BrowseView {
 }
 
 // MARK: - Page Links
+
 extension BrowseView {
     var linkProviders: Results<StoredRunnerObject> {
         SortedRunners
             .where { $0.isBrowsePageLinkProvider }
     }
+
     var PageLinks: some View {
         Group {
             ForEach(linkProviders) { object in
@@ -140,8 +142,7 @@ extension BrowseView {
             }
         }
     }
-    
-    
+
     func PageLinksView(_ runner: JSCRunner, _ links: [DSKCommon.PageLinkLabel]) -> some View {
         Section {
             ForEach(links, id: \.hashValue) { pageLink in
@@ -163,8 +164,8 @@ extension BrowseView {
     }
 }
 
-
 // MARK: - Load Page Links
+
 extension BrowseView {
     func loadPageLinks() {
         triggeredLoad = true
@@ -189,7 +190,7 @@ extension BrowseView {
                             guard !links.isEmpty else { return }
                             Task { @MainActor in
                                 withAnimation {
-                                    pageLinks.updateValue(links , forKey: runner.id)
+                                    pageLinks.updateValue(links, forKey: runner.id)
                                 }
                             }
                         } catch {
@@ -201,7 +202,6 @@ extension BrowseView {
         }
     }
 }
-
 
 struct PageLinkView: View {
     let pageLink: DSKCommon.PageLinkLabel

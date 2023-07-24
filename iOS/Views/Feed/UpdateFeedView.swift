@@ -62,7 +62,6 @@ struct UpdateFeedView: View {
                             selection = nil
                             selection = (content.sourceId, highlight)
                         }
-
                     }
                     .id(entry.hashValue)
             }

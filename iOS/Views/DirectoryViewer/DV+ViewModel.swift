@@ -10,7 +10,6 @@ import SwiftUI
 
 extension DirectoryViewer {
     final class ViewModel: ObservableObject {
-        
         private var path: URL
         private var observer: DirectoryObserver?
         private let extensions = ["cbr", "cbz", "zip", "rar"]
@@ -24,25 +23,23 @@ extension DirectoryViewer {
                     withAnimation {
                         searchResultsDirectory = nil
                     }
-                }
-                else { search() }
+                } else { search() }
             }
         }
-        
+
         init(path: URL? = nil) {
             self.path = path ?? CloudDataManager.shared.getDocumentDiretoryURL().appendingPathComponent("Library", isDirectory: true) // If path is not provided default to the base folder
-            directorySearcher = DirectorySearcher(path: self.path, extensions: extensions )
-            
+            directorySearcher = DirectorySearcher(path: self.path, extensions: extensions)
         }
-        
+
         func observe() {
             observer?.stop()
             let cloudEnabled = CloudDataManager.shared.isCloudEnabled
-            observer = cloudEnabled ? CloudObserver(extensions: extensions , url: path) : LocalObserver(extensions: extensions, url: path)
+            observer = cloudEnabled ? CloudObserver(extensions: extensions, url: path) : LocalObserver(extensions: extensions, url: path)
             guard let observer else { return }
-            
+
             if directory != nil { working = true } // Set as working when updating
-            
+
             observer.observe { folder in
                 withAnimation {
                     self.directory = folder
@@ -50,17 +47,17 @@ extension DirectoryViewer {
                 }
             }
         }
-        
+
         func restart() {
             stop()
             observe()
         }
-        
+
         func stop() {
             observer?.stop()
             observer = nil
         }
-        
+
         func search() {
             directorySearcher.search(query: query.trimmingCharacters(in: .whitespacesAndNewlines)) { [weak self] folder in
                 withAnimation {
@@ -68,14 +65,14 @@ extension DirectoryViewer {
                 }
             }
         }
-        
+
         func createDirectory() {
             let ac = UIAlertController(title: "Create New Folder", message: nil, preferredStyle: .alert)
             ac.addTextField()
-            
+
             let submitAction = UIAlertAction(title: "OK", style: .default) { [unowned self, unowned ac] _ in
                 let text = ac.textFields![0].text?.trimmingCharacters(in: .whitespacesAndNewlines)
-                
+
                 guard let text else { return }
                 let newFolderPath = path.appendingPathComponent(text, isDirectory: true)
                 guard !newFolderPath.exists else { return }
@@ -90,47 +87,42 @@ extension DirectoryViewer {
             ac.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             ac.addAction(submitAction)
             KEY_WINDOW?.rootViewController?.present(ac, animated: true)
-            
         }
     }
 }
-
 
 extension DirectoryViewer {
     final class CoreModel: ObservableObject {
         @Published var currentDownloadFileId: String?
         @Published var currentlyReading: File?
         private let downloader = CloudDownloader()
-        
-        func read(_ files: [File]) {
-            
-        }
-        
-        func didTapFile(_ file : File) {
+
+        func read(_: [File]) {}
+
+        func didTapFile(_ file: File) {
             do {
                 // Save File
                 try DataManager.shared.saveArchivedFile(file)
-                
+
                 // Generate Chapter
                 let chapter = file.toStoredChapter()
-                
+
                 let context = ReaderState(title: file.metaData?.title ?? file.name, chapter: chapter, chapters: [chapter], requestedPage: nil, readingMode: nil) { [weak self] in
                     self?.currentlyReading = nil
                 }
                 StateManager.shared.openReader(state: context)
                 currentlyReading = file
-                
+
             } catch {
                 ToastManager.shared.error(error)
                 Logger.shared.error(error)
             }
-            
         }
-        
-        func downloadAndRun(_ file: File, _ callback : @escaping (File) -> Void) {
+
+        func downloadAndRun(_ file: File, _ callback: @escaping (File) -> Void) {
             downloader.cancel()
             currentDownloadFileId = file.id
-            downloader.download(file.url) {[weak self] result in
+            downloader.download(file.url) { [weak self] result in
                 do {
                     var updatedFile = try result.get().convertToSTTFile()
                     let pageCount = try? ArchiveHelper().getItemCount(for: updatedFile.url)
@@ -149,8 +141,6 @@ extension DirectoryViewer {
     }
 }
 
-
-
 extension File {
     func toStoredChapter(_ idx: Int? = nil) -> StoredChapter {
         let chapter = StoredChapter()
@@ -164,7 +154,7 @@ extension File {
         chapter.id = "\(chapter.sourceId)||\(chapter.contentId)"
         return chapter
     }
-    
+
     func read() {
         let chapter = toStoredChapter()
         let context = ReaderState(title: metaData?.title ?? name, chapter: chapter, chapters: [chapter], requestedPage: nil, readingMode: nil, dismissAction: nil)

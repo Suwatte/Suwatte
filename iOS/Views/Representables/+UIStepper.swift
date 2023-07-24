@@ -10,7 +10,7 @@ import SwiftUI
 struct StepperView: UIViewRepresentable {
     @Binding var value: Double
     var step: Double = 1
-    var range: ClosedRange<Int> = 1...10
+    var range: ClosedRange<Int> = 1 ... 10
 
     func makeUIView(context: Context) -> UIStepper {
         let stepper = UIStepper()
@@ -21,7 +21,7 @@ struct StepperView: UIViewRepresentable {
         return stepper
     }
 
-    func updateUIView(_ stepper: UIStepper, context: Context) {
+    func updateUIView(_ stepper: UIStepper, context _: Context) {
         stepper.value = value
     }
 

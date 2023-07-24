@@ -25,7 +25,6 @@ struct AllTagsView: View {
     }
 }
 
-
 extension AllTagsView {
     func DataLoadedView(_ data: [DSKCommon.Property]) -> some View {
         List {

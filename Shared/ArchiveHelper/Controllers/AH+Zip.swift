@@ -10,14 +10,13 @@ import ZIPFoundation
 
 extension ArchiveHelper {
     class ZipController: ArchiveController {
-        
         func getImagePaths(for path: URL) throws -> [String] {
             let archive = getZIPArchive(for: path)
-            
+
             guard let archive else {
                 throw Errors.ArchiveNotFound
             }
-            
+
             let files = archive
                 .sorted(by: { $0.path < $1.path })
                 .filter { $0.type == .file && isImagePath($0.path) }
@@ -25,10 +24,10 @@ extension ArchiveHelper {
 
             return files
         }
-        
+
         func getItemCount(for path: URL) throws -> Int {
             let archive = getZIPArchive(for: path)
-            
+
             guard let archive else {
                 throw Errors.ArchiveNotFound
             }
@@ -36,31 +35,29 @@ extension ArchiveHelper {
                 .filter { $0.type == .file && isImagePath($0.path) }
                 .count
         }
-        
+
         func getThumbnailImage(for path: URL) throws -> UIImage {
             let archive = getZIPArchive(for: path)
-            
+
             guard let archive else {
                 throw Errors.ArchiveNotFound
             }
-            
+
             let thumbnailPath = getThumbnail(for: archive)
-            
+
             guard let thumbnailPath else {
                 throw Errors.ArchiveNotFound
             }
-            
+
             let imageData = try getImageData(for: archive.url, at: thumbnailPath)
-            
+
             guard let image = UIImage(data: imageData) else {
                 throw Errors.ArchiveNotFound
             }
-            
+
             return image
         }
-        
-        
-        
+
         func getZIPArchive(for path: URL) -> Archive? {
             guard let archive = Archive(url: path, accessMode: .read) else {
                 return nil
@@ -92,7 +89,7 @@ extension ArchiveHelper {
 
             return nil
         }
-        
+
         func getImageData(for url: URL, at path: String) throws -> Data {
             guard let archive = Archive(url: url, accessMode: .read), let file = archive[path] else {
                 throw ArchiveHelper.Errors.ArchiveNotFound
@@ -106,23 +103,23 @@ extension ArchiveHelper {
 
             return out
         }
-        
+
         func getComicInfo(for url: URL) throws -> Data? {
             let archive = getZIPArchive(for: url)
-            
+
             guard let archive else {
                 throw Errors.ArchiveNotFound
             }
-            
+
             let target = archive
                 .first(where: { entry in
                     entry.type == .file && entry.path.lowercased().contains("comicinfo.xml")
                 })
-            
+
             guard let target else {
                 return nil // Return nil if file does not have info.xml
             }
-            
+
             var out = Data()
 
             _ = try archive.extract(target) { data in

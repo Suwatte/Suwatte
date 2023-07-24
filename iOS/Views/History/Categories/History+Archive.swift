@@ -32,7 +32,7 @@ extension HistoryView {
                         if let issue = file.metaData?.issue {
                             Text("Issue #\(issue.issue)")
                         }
-                        
+
                         Group {
                             if model.currentDownloadFileId == file.id {
                                 HStack(spacing: 5) {
@@ -42,7 +42,7 @@ extension HistoryView {
                                 }
                             } else {
                                 Text(file.isOnDevice ? "On My \(UIDevice.current.model) \(Image(systemName: UIDevice.current.model.lowercased()))"
-                                     : "iCloud Drive \(Image(systemName: "icloud.and.arrow.down"))")
+                                    : "iCloud Drive \(Image(systemName: "icloud.and.arrow.down"))")
                             }
                         }
 

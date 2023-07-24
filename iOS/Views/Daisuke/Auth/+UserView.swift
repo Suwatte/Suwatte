@@ -7,19 +7,18 @@
 
 import SwiftUI
 
-
 extension DSKAuthView {
-    struct UserView : View {
+    struct UserView: View {
         @EnvironmentObject var model: ViewModel
         var user: DSKCommon.User
         var runner: JSCRunner {
             model.runner
         }
+
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
         @State var presentWebView = false
         var body: some View {
             Group {
-                
                 // Header
                 HStack(alignment: .center) {
                     BaseImageView(url: URL(string: user.avatar ?? ""))
@@ -27,12 +26,12 @@ extension DSKAuthView {
                         .clipShape(Circle())
                         .frame(width: 75, height: 75)
                         .padding(.all, 7)
-                    
+
                     Text(user.name)
                         .font(.title3)
                         .fontWeight(.bold)
                 }
-                
+
                 Group {
                     if let info = user.info {
                         InteractiveTagView(info) { tag in
@@ -41,7 +40,7 @@ extension DSKAuthView {
                         }
                     }
                 }
-                
+
                 // Sign Out
                 Group {
                     if method != .webview {
@@ -51,16 +50,16 @@ extension DSKAuthView {
                     }
                 }
                 .fullScreenCover(isPresented: $presentWebView, onDismiss: model.load) {
-                   NavigationView {
-                       WebViewAuthView.WebViewRepresentable(isSignIn: false)
-                           .navigationBarTitle("Login", displayMode: .inline)
-                           .closeButton(title: "Done")
-                           .toast()
-                           .tint(accentColor)
-                           .accentColor(accentColor)
-                   }
-               }
-                
+                    NavigationView {
+                        WebViewAuthView.WebViewRepresentable(isSignIn: false)
+                            .navigationBarTitle("Login", displayMode: .inline)
+                            .closeButton(title: "Done")
+                            .toast()
+                            .tint(accentColor)
+                            .accentColor(accentColor)
+                    }
+                }
+
                 // Sync
                 Group {
                     if let source = runner as? JSCContentSource, source.intents.librarySyncHandler {
@@ -69,7 +68,7 @@ extension DSKAuthView {
                 }
             }
         }
-        
+
         var method: RunnerIntents.AuthenticationMethod {
             model.runner.intents.authenticationMethod
         }
@@ -87,4 +86,3 @@ extension DSKAuthView {
         }
     }
 }
-

@@ -49,7 +49,6 @@ struct STTImageView: View {
     }
 
     func load(_ size: CGSize) {
-        
         if loader.image != nil { return }
         loader.priority = .normal
         loader.transaction = .init(animation: .easeInOut(duration: 0.25))
@@ -59,11 +58,9 @@ struct STTImageView: View {
             loader.load(customThumbanailURL)
             return
         }
-        
-        
+
         guard let url else { return }
 
-        
         Task {
             if identifier.sourceId == STTHelpers.OPDS_CONTENT_ID {
                 let pub = DataManager.shared.getPublication(id: identifier.contentId)
@@ -86,13 +83,13 @@ struct STTImageView: View {
                     loader.load(url)
                     return
                 }
-                
+
                 let runner = DSK.shared.getRunner(identifier.sourceId)
                 guard let runner, runner.intents.imageRequestHandler else {
                     loader.load(url)
                     return
                 }
-                
+
                 do {
                     let response = try await runner.willRequestImage(imageURL: url)
                     let request = try ImageRequest(urlRequest: response.toURLRequest())
@@ -161,7 +158,7 @@ struct BaseImageView: View {
             loader.load(request)
             return
         }
-        
+
         guard let url, url.isHTTP else {
             loader.load(url)
             return
@@ -175,7 +172,7 @@ struct BaseImageView: View {
             loader.load(url)
             return
         }
-        
+
         Task {
             do {
                 let response = try await runner.willRequestImage(imageURL: url)
@@ -187,12 +184,12 @@ struct BaseImageView: View {
             }
         }
     }
+
     func onImageEvent(_ result: Result<ImageResponse, Error>) {
-        
         switch result {
-        case .success(let success):
+        case let .success(success):
             break
-        case .failure(let error):
+        case let .failure(error):
             Logger.shared.error(error, "ImageLoader")
         }
     }

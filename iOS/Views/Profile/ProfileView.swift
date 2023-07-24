@@ -11,25 +11,23 @@ struct ProfileView: View {
     var entry: DaisukeEngine.Structs.Highlight
     var sourceId: String
     @State var source: Loadable<AnyContentSource> = .idle
-    
+
     var body: some View {
-        LoadableView(loadSource, source, { value in
+        LoadableView(loadSource, source) { value in
             StateGate(viewModel: .init(entry, value))
-        })
+        }
         .navigationTitle(entry.title)
         .navigationBarTitleDisplayMode(.inline)
         .navigationViewStyle(.stack)
     }
-    
+
     func loadSource() {
-        self.source = .loading
+        source = .loading
         do {
             let runner = try DSK.shared.getContentSource(id: sourceId)
-            self.source = .loaded(runner)
+            source = .loaded(runner)
         } catch {
-            self.source = .failed(error)
+            source = .failed(error)
         }
     }
-
-
 }

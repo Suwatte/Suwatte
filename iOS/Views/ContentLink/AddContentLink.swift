@@ -39,9 +39,9 @@ struct AddContentLink: View {
             model.makeRequests()
         }
     }
-    
+
     func getSources() -> [JSCCS] {
-         model
+        model
             .sources
             .filter { $0.id != content.sourceId }
             .compactMap { try? DSK.shared.getContentSource(id: $0.id) }

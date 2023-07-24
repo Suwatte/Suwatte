@@ -18,7 +18,7 @@ extension ReaderView {
         @Preference(\.accentColor) var accentColor
 
         var edges = KEY_WINDOW?.safeAreaInsets
-        
+
         var body: some View {
             ZStack(alignment: Alignment(horizontal: .trailing, vertical: .top)) {
                 VStack {
@@ -222,7 +222,6 @@ extension ReaderView.ReaderMenuOverlay {
                     .foregroundColor(Color(uiColor: .systemGray))
                     .background(colorScheme == .light ? .black.opacity(0.70) : .sttGray.opacity(0.80))
                     .clipShape(Circle())
-
             }
             .disabled(model.NextChapter == nil)
         }
