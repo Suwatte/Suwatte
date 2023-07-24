@@ -29,6 +29,7 @@ struct HistoryView: View {
                         }
                 }
                 .transition(.opacity)
+
             } else {
                 ProgressView()
                     .transition(.opacity)
@@ -37,7 +38,6 @@ struct HistoryView: View {
         .modifier(InteractableContainer(selection: $model.csSelection))
         .listStyle(.plain)
         .navigationTitle("History")
-        .animation(.default, value: model.markers)
         .task {
             model.observe()
         }
@@ -53,7 +53,6 @@ struct HistoryView: View {
 }
 
 extension HistoryView {
-    @MainActor
     final class ViewModel: ObservableObject {
         @Published var csSelection: HighlightIdentifier?
         @Published var markers: Results<ProgressMarker>?
@@ -79,8 +78,10 @@ extension HistoryView {
                 .sorted(by: \.dateRead, ascending: false)
             notificationToken = collection
                 .observe { _ in
-                    withAnimation {
-                        self.markers = collection
+                    Task { @MainActor in
+                        withAnimation {
+                            self.markers = collection
+                        }
                     }
                 }
         }

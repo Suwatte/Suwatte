@@ -237,7 +237,6 @@ extension DaisukeEngine {
             runners.removeValue(forKey: rnn.id)
             runners[rnn.id] = rnn
         }
-        DataManager.shared.saveRunner(rnn, listURL: listURL, url: executeableURL(for: rnn.id))
     }
     
     func didStartRunner(_ runner: JSCRunner) {
@@ -300,12 +299,16 @@ extension DaisukeEngine {
         
         let runnerPath = executeableURL(for: runner.id)
         _ = try FileManager.default.replaceItemAt(runnerPath, withItemAt: url)
-        
+        upsertStoredRunner(runner)
         Task { @MainActor in
             didStartRunner(runner)
         }
     }
     
+    
+    private func upsertStoredRunner(_ runner: JSCRunner, listURL: URL? = nil) {
+        DataManager.shared.saveRunner(runner, listURL: listURL, url: executeableURL(for: runner.id))
+    }
 
 }
 
@@ -353,6 +356,7 @@ extension DaisukeEngine {
         _ = try FileManager.default.replaceItemAt(runnerPath, withItemAt: downloadURL)
         try? FileManager.default.removeItem(at: downloadURL)
         addRunner(runner, listURL: list)
+        upsertStoredRunner(runner, listURL: list)
     }
 }
 
