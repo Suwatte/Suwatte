@@ -110,7 +110,6 @@ class CloudObserver: DirectoryObserver {
             let name = nameParser.getNameProperties(url.fileName)
             let file = File(url: url, isOnDevice: isDownloaded, id: id, name: url.fileName, created: creationDate, addedToDirectory: addedToDirectoryDate, size: fileSize, pageCount: pageCount, metaData: name)
             files.append(file)
-            print(file.id)
         }
 
         STTHelpers.sortFiles(files: &files)

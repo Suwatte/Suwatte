@@ -10,7 +10,6 @@ import R2Shared
 import ReadiumOPDS
 import RealmSwift
 import SwiftUI
-import SwiftUIBackports
 
 extension Feed: Identifiable, Equatable {
     public static func == (lhs: R2Shared.Feed, rhs: R2Shared.Feed) -> Bool {

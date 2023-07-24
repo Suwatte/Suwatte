@@ -207,7 +207,7 @@ extension ReaderView {
 
         var opds: OPDSInfo? = nil
 
-        var targetWidth: CGFloat = UIScreen.mainScreen.bounds.width
+        var targetWidth: CGFloat = UIScreen.main.bounds.width
 
         static func == (lhs: Page, rhs: Page) -> Bool {
             return lhs.chapterId == rhs.chapterId && lhs.index == rhs.index

@@ -44,7 +44,7 @@ struct NukeDownsampleProcessor: ImageProcessing {
             return nil
         }
 
-        return .init(cgImage: out, scale: UIScreen.mainScreen.scale, orientation: image.imageOrientation)
+        return .init(cgImage: out, scale: UIScreen.main.scale, orientation: image.imageOrientation)
     }
 
     var identifier: String = Bundle.main.bundleIdentifier! + ".image_processor.downsample"
@@ -55,7 +55,7 @@ struct NukeDownsampleProcessor: ImageProcessing {
             return nil
         }
 
-        let maxDimensionInPixels = max(size.width, size.height) * UIScreen.mainScreen.scale
+        let maxDimensionInPixels = max(size.width, size.height) * UIScreen.main.scale
         let downsampleOptions: [CFString: Any] = [
             kCGImageSourceCreateThumbnailFromImageAlways: true,
             kCGImageSourceShouldCacheImmediately: true,

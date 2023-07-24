@@ -39,9 +39,8 @@ class CloudDataManager {
         while let file = enumerator?.nextObject() as? String {
             do {
                 try fileManager.removeItem(at: url!.appendingPathComponent(file))
-                print("Files deleted")
             } catch let error as NSError {
-                print("Failed deleting files : \(error)")
+                Logger.shared.error(error)
             }
         }
     }
@@ -59,9 +58,8 @@ class CloudDataManager {
         while let file = enumerator?.nextObject() as? String {
             do {
                 try fileManager.copyItem(at: DocumentsDirectory.localDocumentsURL.appendingPathComponent(file), to: DocumentsDirectory.iCloudDocumentsURL!.appendingPathComponent(file))
-                print("Copied to iCloud")
             } catch let error as NSError {
-                print("Failed to move file to Cloud : \(error)")
+                Logger.shared.error(error)
             }
         }
     }
@@ -78,9 +76,8 @@ class CloudDataManager {
                 do {
                     try fileManager.copyItem(at: DocumentsDirectory.iCloudDocumentsURL!.appendingPathComponent(file), to: DocumentsDirectory.localDocumentsURL.appendingPathComponent(file))
 
-                    print("Moved to local dir")
                 } catch let error as NSError {
-                    print("Failed to move file to local dir : \(error)")
+                    Logger.shared.error(error)
                 }
             }
         }

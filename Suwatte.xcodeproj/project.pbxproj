@@ -15,8 +15,6 @@
 		DF13892228BDCAEF0035BDBB /* STT+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF13892128BDCAEF0035BDBB /* STT+URL.swift */; };
 		DF15F590296621C30085DB1F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF15F58F296621C30085DB1F /* SettingsView.swift */; };
 		DF15F59229677DEF0085DB1F /* FCS+Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF15F59129677DEF0085DB1F /* FCS+Options.swift */; };
-		DF15F5952967D3DD0085DB1F /* UIHostingConfigurationBackport in Frameworks */ = {isa = PBXBuildFile; productRef = DF15F5942967D3DD0085DB1F /* UIHostingConfigurationBackport */; };
-		DF15F5982967D4E80085DB1F /* SwiftUIBackports in Frameworks */ = {isa = PBXBuildFile; productRef = DF15F5972967D4E80085DB1F /* SwiftUIBackports */; };
 		DF16F2B12A5F31E000D7AFBB /* DSK+Page.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF16F2B02A5F31E000D7AFBB /* DSK+Page.swift */; };
 		DF16F2B32A5F31F000D7AFBB /* DSK+Directory.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF16F2B22A5F31F000D7AFBB /* DSK+Directory.swift */; };
 		DF16F2B82A5F474F00D7AFBB /* DirectoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF16F2B72A5F474F00D7AFBB /* DirectoryView.swift */; };
@@ -66,7 +64,6 @@
 		DF457DD42A43B216002B5350 /* History+Archive.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF457DD32A43B216002B5350 /* History+Archive.swift */; };
 		DF46C3572A22A04B002762C4 /* CloudManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF46C3562A22A04B002762C4 /* CloudManager.swift */; };
 		DF47DDDE28B55BA600D779E5 /* AdaptiveSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF47DDDD28B55BA500D779E5 /* AdaptiveSheet.swift */; };
-		DF47DDE128B5608D00D779E5 /* PartialSheet in Frameworks */ = {isa = PBXBuildFile; productRef = DF47DDE028B5608D00D779E5 /* PartialSheet */; };
 		DF4817E42A6DF1BB00CB3A47 /* ComicInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4817E32A6DF1BB00CB3A47 /* ComicInfo.swift */; };
 		DF4817E62A6DF22700CB3A47 /* ComicInfo+Methods.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4817E52A6DF22700CB3A47 /* ComicInfo+Methods.swift */; };
 		DF4817E82A6DF83900CB3A47 /* ComicInfo+NameParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4817E72A6DF83900CB3A47 /* ComicInfo+NameParser.swift */; };
@@ -688,8 +685,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DF15F5982967D4E80085DB1F /* SwiftUIBackports in Frameworks */,
-				DF47DDE128B5608D00D779E5 /* PartialSheet in Frameworks */,
 				DF59C988285054670027F19D /* Unrar in Frameworks */,
 				DF248F0C2813844C00818300 /* KeychainSwift in Frameworks */,
 				DF2DA77327CF11C50046FE20 /* Alamofire in Frameworks */,
@@ -699,7 +694,6 @@
 				DF1BE5F32A40AB3400E48572 /* R2Shared in Frameworks */,
 				DF70234F29DA852A0076AAD0 /* Nuke in Frameworks */,
 				DF36E6D0285D08D700FB8B67 /* BetterSafariView in Frameworks */,
-				DF15F5952967D3DD0085DB1F /* UIHostingConfigurationBackport in Frameworks */,
 				DF730CD329411F1B00C62C71 /* FlagKit in Frameworks */,
 				DF482F012955A56F002D3308 /* RealmSwift in Frameworks */,
 				DF0D96062824892C00E592D9 /* Realm in Frameworks */,
@@ -2009,11 +2003,8 @@
 				DF59C987285054670027F19D /* Unrar */,
 				DF36E6CF285D08D700FB8B67 /* BetterSafariView */,
 				DFF1043D28A9963D00E2C3A4 /* AnyCodable */,
-				DF47DDE028B5608D00D779E5 /* PartialSheet */,
 				DF730CD229411F1B00C62C71 /* FlagKit */,
 				DF482F002955A56F002D3308 /* RealmSwift */,
-				DF15F5942967D3DD0085DB1F /* UIHostingConfigurationBackport */,
-				DF15F5972967D4E80085DB1F /* SwiftUIBackports */,
 				DF9C9EEF297AE3A9004A3BC5 /* FirebaseAnalytics */,
 				DFB7FB02297B965D00599097 /* OrderedCollections */,
 				DF70234E29DA852A0076AAD0 /* Nuke */,
@@ -2083,10 +2074,7 @@
 				DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar" */,
 				DF36E6CE285D08D700FB8B67 /* XCRemoteSwiftPackageReference "BetterSafariView" */,
 				DFF1043C28A9963C00E2C3A4 /* XCRemoteSwiftPackageReference "AnyCodable" */,
-				DF47DDDF28B5608C00D779E5 /* XCRemoteSwiftPackageReference "PartialSheet" */,
 				DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit" */,
-				DF15F5932967D3DD0085DB1F /* XCRemoteSwiftPackageReference "UIHostingConfigurationBackport" */,
-				DF15F5962967D4E70085DB1F /* XCRemoteSwiftPackageReference "SwiftUIBackports" */,
 				DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections" */,
 				DF70234D29DA852A0076AAD0 /* XCRemoteSwiftPackageReference "Nuke" */,
@@ -2810,22 +2798,6 @@
 				kind = branch;
 			};
 		};
-		DF15F5932967D3DD0085DB1F /* XCRemoteSwiftPackageReference "UIHostingConfigurationBackport" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/woxtu/UIHostingConfigurationBackport.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.0;
-			};
-		};
-		DF15F5962967D4E70085DB1F /* XCRemoteSwiftPackageReference "SwiftUIBackports" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/shaps80/SwiftUIBackports";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		DF1BE5F12A40AB3400E48572 /* XCRemoteSwiftPackageReference "swift-toolkit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/readium/swift-toolkit.git";
@@ -2866,20 +2838,12 @@
 				kind = branch;
 			};
 		};
-		DF47DDDF28B5608C00D779E5 /* XCRemoteSwiftPackageReference "PartialSheet" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/AndreaMiotto/PartialSheet.git";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
 		DF59C97B285004850027F19D /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.9.9;
+				branch = main;
+				kind = branch;
 			};
 		};
 		DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar" */ = {
@@ -2946,16 +2910,6 @@
 			package = DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = Realm;
 		};
-		DF15F5942967D3DD0085DB1F /* UIHostingConfigurationBackport */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DF15F5932967D3DD0085DB1F /* XCRemoteSwiftPackageReference "UIHostingConfigurationBackport" */;
-			productName = UIHostingConfigurationBackport;
-		};
-		DF15F5972967D4E80085DB1F /* SwiftUIBackports */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DF15F5962967D4E70085DB1F /* XCRemoteSwiftPackageReference "SwiftUIBackports" */;
-			productName = SwiftUIBackports;
-		};
 		DF1BE5F22A40AB3400E48572 /* R2Shared */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DF1BE5F12A40AB3400E48572 /* XCRemoteSwiftPackageReference "swift-toolkit" */;
@@ -2985,11 +2939,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DF36E6CE285D08D700FB8B67 /* XCRemoteSwiftPackageReference "BetterSafariView" */;
 			productName = BetterSafariView;
-		};
-		DF47DDE028B5608D00D779E5 /* PartialSheet */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DF47DDDF28B5608C00D779E5 /* XCRemoteSwiftPackageReference "PartialSheet" */;
-			productName = PartialSheet;
 		};
 		DF482F002955A56F002D3308 /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;

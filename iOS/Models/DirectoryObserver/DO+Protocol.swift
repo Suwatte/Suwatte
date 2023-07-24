@@ -86,7 +86,7 @@ extension File {
     }
 
     private func generateThumb(for path: URL, size: CGSize) async throws -> UIImage {
-        let request = await QLThumbnailGenerator.Request(fileAt: path, size: size, scale: UIScreen.mainScreen.scale, representationTypes: .thumbnail)
+        let request = await QLThumbnailGenerator.Request(fileAt: path, size: size, scale: UIScreen.main.scale, representationTypes: .thumbnail)
         let thumbnailGenerator = QLThumbnailGenerator.shared
         let result = try await thumbnailGenerator.generateBestRepresentation(for: request)
         return result.uiImage

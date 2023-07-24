@@ -65,7 +65,6 @@ extension SuwatteApp {
                     }
                 }
             case "runner":
-                print(url)
                 guard let contentUrl = components?.queryItems?.first(where: { $0.name == "url" })?.value, let url = URL(string: contentUrl), let runner = components?.queryItems?.first(where: { $0.name == "runner" })?.value else {
                     ToastManager.shared.display(.error(nil, "Unable to parse URL"))
                     return
@@ -105,9 +104,10 @@ extension SuwatteApp {
                     ToastManager.shared.display(.error(error))
                 }
             }
-
-        default:
+        case "zip", "cbz", "rar", "cbr":
             STTHelpers.importArchiveFie(at: url)
+        default:
+            Logger.shared.info("Suwatte has not defined a handler for this file type")
         }
     }
 
@@ -149,7 +149,7 @@ extension STTHelpers {
             }
             ToastManager.shared.loading = false
         } else {
-            print("READY: ", url)
+            // TODO: Hanlde URL
         }
     }
 }

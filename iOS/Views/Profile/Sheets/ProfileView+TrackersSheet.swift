@@ -273,7 +273,6 @@ extension TrackerManagementView {
             }
             .animation(.default, value: item.entry)
             .onChange(of: status) { newValue in
-                print(newValue)
                 trackerAction {
                     await MainActor.run {
                         item.entry?.status = newValue

@@ -17,10 +17,24 @@ extension ArchiveHelper {
                 throw Errors.ArchiveNotFound
             }
 
+            print("\n\n")
+            print("Item Count", archive.underestimatedCount)
+            print("Done", path.relativePath, archive.reversed())
+            
+            for entry in archive {
+                if entry.type == .directory {
+                    print("Directory", entry.path)
+                    continue
+                }
+                
+                print(entry.path, entry.checksum)
+            }
             let files = archive
                 .sorted(by: { $0.path < $1.path })
                 .filter { $0.type == .file && isImagePath($0.path) }
                 .map { $0.path }
+
+            print("\n\n")
 
             return files
         }
