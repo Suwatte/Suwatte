@@ -126,7 +126,7 @@ extension STTHelpers {
         let directory = CloudDataManager.shared.getDocumentDiretoryURL().appendingPathComponent("Library")
         let inDirectory = url.path.hasPrefix(directory.path)
 
-        var final: URL? = nil
+        var final: URL?
         if !inDirectory {
             ToastManager.shared.loading = true
             // Move to Library

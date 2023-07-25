@@ -114,7 +114,6 @@ class LocalObserver: DirectoryObserver {
     }
 }
 
-
 extension URL {
     func buildFileInfo() -> File {
         let resourceValues = try? resourceValues(forKeys: [.fileSizeKey, .creationDateKey, .contentModificationDateKey, .addedToDirectoryDateKey])
@@ -139,7 +138,7 @@ extension URL {
                         size: fileSize,
                         pageCount: pageCount,
                         metaData: name)
-        
+
         return file
     }
 }

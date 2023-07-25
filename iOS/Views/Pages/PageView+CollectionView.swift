@@ -53,7 +53,7 @@ extension DSKPageView.CollectionView {
         guard !locked && !force else { return }
         locked = true // prevent from refiring
         let unresolved = pageSections.filter { $0.items == nil }.map(\.key)
-        
+
         Task {
             await withTaskGroup(of: Void.self, body: { group in
                 for section in unresolved {
@@ -228,7 +228,7 @@ extension DSKPageView.CollectionView {
     }
 
     func LoadingSection(_ section: DSKCommon.PageSection<T>) -> ASCollectionViewSection<String> {
-        ASCollectionViewSection(id: section.key, data: DSKCommon.Highlight.placeholders()) {  data, _ in
+        ASCollectionViewSection(id: section.key, data: DSKCommon.Highlight.placeholders()) { data, _ in
             PageViewTile(runnerID: runner.id,
                          id: data.id,
                          title: data.title,
@@ -237,9 +237,9 @@ extension DSKPageView.CollectionView {
                          additionalCovers: [],
                          info: data.info,
                          badge: data.badge)
-            .environment(\.pageSectionStyle, section.sectionStyle)
-            .redacted(reason: .placeholder)
-            .shimmering()
+                .environment(\.pageSectionStyle, section.sectionStyle)
+                .redacted(reason: .placeholder)
+                .shimmering()
         }
         .sectionHeader {
             buildHeader(section.title,

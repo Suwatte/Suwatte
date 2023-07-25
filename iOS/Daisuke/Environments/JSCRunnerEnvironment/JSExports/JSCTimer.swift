@@ -57,7 +57,6 @@ import JavaScriptCore
     }
 }
 
-
 extension JSCTimer {
     // Reference: https://stackoverflow.com/a/39864295
     static func register(context: JSContext) {
@@ -66,14 +65,14 @@ extension JSCTimer {
         context.setObject(timer, forKeyedSubscript: KS as (NSCopying & NSObjectProtocol))
         context.evaluateScript(
             "function setTimeout(callback, ms) {" +
-            "    return _timer.setTimeout(callback, ms)" +
-            "}" +
-            "function clearTimeout(indentifier) {" +
-            "    _timer.clearTimeout(indentifier)" +
-            "}" +
-            "function setInterval(callback, ms) {" +
-            "    return _timer.setInterval(callback, ms)" +
-            "}"
+                "    return _timer.setTimeout(callback, ms)" +
+                "}" +
+                "function clearTimeout(indentifier) {" +
+                "    _timer.clearTimeout(indentifier)" +
+                "}" +
+                "function setInterval(callback, ms) {" +
+                "    return _timer.setInterval(callback, ms)" +
+                "}"
         )
     }
 }

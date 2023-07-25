@@ -122,12 +122,12 @@ class CloudObserver: DirectoryObserver {
     }
 }
 
-
 extension File {
     var cName: String {
         metaData?.formattedName ?? name
     }
 }
+
 extension STTHelpers {
     static func sortFiles(files: inout [File]) {
         let sortKey = Preferences.standard.directoryViewSortKey
@@ -147,7 +147,7 @@ extension STTHelpers {
         }
     }
 
-    static func indexComicInfo(for url: URL) {
+    static func indexComicInfo(for _: URL) {
         // TODO: Indexing ComicInfo perhaps?
 //        do {
 //            let data = try ArchiveHelper().getComicInfo(for: url)

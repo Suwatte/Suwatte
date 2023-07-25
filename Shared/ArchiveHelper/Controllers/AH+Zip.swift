@@ -20,13 +20,13 @@ extension ArchiveHelper {
             print("\n\n")
             print("Item Count", archive.underestimatedCount)
             print("Done", path.relativePath, archive.reversed())
-            
+
             for entry in archive {
                 if entry.type == .directory {
                     print("Directory", entry.path)
                     continue
                 }
-                
+
                 print(entry.path, entry.checksum)
             }
             let files = archive
