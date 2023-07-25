@@ -81,7 +81,7 @@ extension DirectoryViewer {
 
             let downloadName = download.url.lastPathComponent
             let destination: DownloadRequest.Destination = { [unowned self] _, response in
-                let downloadPath = tempDirecotry.appendingPathComponent(response.suggestedFilename ?? download.url.lastPathComponent)
+                let downloadPath = tempDirecotry.appendingPathComponent(response.suggestedFilename ?? downloadName)
                 return (downloadPath, [.removePreviousFile, .createIntermediateDirectories])
             }
 

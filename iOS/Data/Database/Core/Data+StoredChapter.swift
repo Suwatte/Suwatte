@@ -118,6 +118,14 @@ extension DataManager {
         }
         .sorted(by: \.index, ascending: true)
     }
+    
+    func getStoredChapter(_ id: String) -> StoredChapter? {
+        let realm = try! Realm()
+
+        return realm.objects(StoredChapter.self)
+            .where { $0.id == id }
+            .first
+    }
 
     func getLatestStoredChapter(_ sourceId: String, _ contentId: String) -> StoredChapter? {
         let realm = try! Realm()

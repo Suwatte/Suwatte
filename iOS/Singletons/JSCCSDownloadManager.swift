@@ -444,6 +444,7 @@ extension ICDM {
     struct DownloadedChapter {
         var text: String?
         var urls: [URL]?
+        var archive: URL?
     }
 }
 

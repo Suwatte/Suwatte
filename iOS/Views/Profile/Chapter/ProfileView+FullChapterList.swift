@@ -496,12 +496,12 @@ extension ChapterList {
     }
 
     func addToDownloadQueue() {
-        ICDM.shared.add(chapters: Array(selections).map(\.id))
-        deselectAll()
-        let c = model.storedContent
-        if !DataManager.shared.isInLibrary(content: c) {
-            DataManager.shared.toggleLibraryState(for: c)
+        let ids = Array(selections).map(\.id)
+        Task {
+            await SDM.shared.add(chapters: ids)
         }
+//        ICDM.shared.add(chapters:)
+        deselectAll()
     }
 
     func removeDownload() {

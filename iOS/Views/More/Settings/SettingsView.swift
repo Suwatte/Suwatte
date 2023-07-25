@@ -18,6 +18,7 @@ struct SettingsView: View {
             ReaderSection()
             UpdatesSection()
             PrivacySection()
+            DownloadsSection()
             CacheSection()
             NetworkSection()
             RunnersSection()
@@ -286,5 +287,21 @@ public extension Binding where Value: Equatable {
     init(_ source: Binding<Value>, deselectTo value: Value) {
         self.init(get: { source.wrappedValue },
                   set: { source.wrappedValue = $0 == source.wrappedValue ? value : $0 })
+    }
+}
+
+
+extension SettingsView {
+    struct DownloadsSection: View {
+        @Preference(\.archiveSourceDownload) var archive
+        var body: some View {
+            Section {
+                Toggle("Archive Download", isOn: $archive)
+            } header: {
+                Text("Chapter Downloads")
+            } footer: {
+                Text("If enabled, suwatte will compress downloaded chapters and store them as CBZ files.")
+            }
+        }
     }
 }

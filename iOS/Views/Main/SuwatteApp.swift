@@ -29,6 +29,9 @@ struct SuwatteApp: App {
                 .task {
                     DSK.shared.getCommons()
                 }
+                .task {
+                    await SDM.shared.appDidStart()
+                }
         }
     }
 }

@@ -146,4 +146,6 @@ enum STTKeys {
     }
 
     static let DefaultPanelReadingMode = "READER.panel_default_mode"
+    
+    static let MoveDownloadToArchive = "APP.archive_sdm_objct"
 }
