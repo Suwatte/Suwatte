@@ -28,7 +28,6 @@ extension DSKPageView {
         var body: some View {
             ASCollectionView(sections: self.sections)
                 .layout(self.layout)
-                .shouldInvalidateLayoutOnStateChange(true)
                 .onPullToRefresh { endRefreshing in
                     model.loadable = .idle
                     endRefreshing()
@@ -41,6 +40,8 @@ extension DSKPageView {
                 .onChange(of: tileStyle) { _ in } // Triggers view Update when key is updated
                 .onChange(of: PortraitPerRow, perform: { _ in })
                 .onChange(of: LSPerRow, perform: { _ in })
+                .onChange(of: model.errors, perform: { _ in })
+                .onChange(of: model.loadables, perform: { _ in })
         }
     }
 }
@@ -52,10 +53,15 @@ extension DSKPageView.CollectionView {
         guard !locked && !force else { return }
         locked = true // prevent from refiring
         let unresolved = pageSections.filter { $0.items == nil }.map(\.key)
-        unresolved.forEach { section in
-            Task.detached {
-                await model.load(section)
-            }
+        
+        Task {
+            await withTaskGroup(of: Void.self, body: { group in
+                for section in unresolved {
+                    group.addTask {
+                        await model.load(section)
+                    }
+                }
+            })
         }
     }
 }
@@ -125,9 +131,7 @@ extension DSKPageView.CollectionView {
             }
 
             // Collection not loaded, find loadable and display based off state
-            guard let loadable = loadables[key] else {
-                return ErrorSection(section, error: DSK.Errors.ObjectConversionFailed)
-            }
+            let loadable = loadables[key] ?? .loading
 
             switch loadable {
             case let .failed(error): return ErrorSection(section, error: error)
@@ -190,7 +194,11 @@ extension DSKPageView.CollectionView {
         ASCollectionViewSection(id: section.key) {
             ErrorView(error: error, runnerID: runner.id) {
                 Task.detached {
-                    await model.load(section.key)
+                    if case DaisukeEngine.Errors.Cloudflare = error {
+                        await loadAll(force: true)
+                    } else {
+                        await model.load(section.key)
+                    }
                 }
             }
         }
@@ -220,8 +228,18 @@ extension DSKPageView.CollectionView {
     }
 
     func LoadingSection(_ section: DSKCommon.PageSection<T>) -> ASCollectionViewSection<String> {
-        ASCollectionViewSection(id: section.key) {
-            ProgressView()
+        ASCollectionViewSection(id: section.key, data: DSKCommon.Highlight.placeholders()) {  data, _ in
+            PageViewTile(runnerID: runner.id,
+                         id: data.id,
+                         title: data.title,
+                         subtitle: data.subtitle,
+                         cover: data.cover,
+                         additionalCovers: [],
+                         info: data.info,
+                         badge: data.badge)
+            .environment(\.pageSectionStyle, section.sectionStyle)
+            .redacted(reason: .placeholder)
+            .shimmering()
         }
         .sectionHeader {
             buildHeader(section.title,

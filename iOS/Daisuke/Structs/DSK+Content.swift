@@ -152,7 +152,7 @@ extension DaisukeEngine.Structs.Highlight {
         (0 ... 30).map { _ in
             .init(contentId: .random(length: 10),
                   cover: .random(),
-                  title: .random(length: 20))
+                  title: .random(length: 20), subtitle: .random(length: 15))
         }
     }
 
