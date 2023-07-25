@@ -256,12 +256,13 @@ extension ReaderView.ReaderMenuOverlay {
 
                 if let pageCount = model.activeChapter.pages?.last?.page.number {
                     Text("Page \(model.scrubbingPageNumber != nil ? model.scrubbingPageNumber! : model.activeChapter.requestedPageIndex + 1) of \(pageCount)")
-                        .font(.footnote)
+                        .font(.footnote.italic())
                         .fontWeight(.light)
                         .foregroundColor(.gray)
                         .padding(.bottom, edges?.bottom)
                         .opacity(READY ? 1 : 0)
                         .transition(.opacity)
+
                 } else {
                     // Placeholder to keep the ui nice n tidy
                     Text("Page Count")
@@ -270,6 +271,7 @@ extension ReaderView.ReaderMenuOverlay {
                         .foregroundColor(.gray)
                         .padding(.bottom, edges?.bottom)
                         .opacity(0)
+                        .redacted(reason: .placeholder)
                 }
             }
             .padding()

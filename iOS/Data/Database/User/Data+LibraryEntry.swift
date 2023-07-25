@@ -256,7 +256,7 @@ extension DataManager {
         }
 
         try! realm.safeWrite {
-            entry.lastRead = Date()
+            entry.lastRead = .now
         }
     }
 

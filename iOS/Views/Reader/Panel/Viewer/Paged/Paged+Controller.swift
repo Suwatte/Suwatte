@@ -28,6 +28,7 @@ extension PagedViewer {
         var lastPathBeforeRotation: IndexPath?
         var lastViewedSection = 0
         private let prefetcher = ImagePrefetcher()
+        private var didTriggerBackTick = false
     }
 }
 
@@ -149,8 +150,10 @@ extension PagedController {
                     collectionView.insertSections(set)
                     collectionView.insertItems(at: paths)
                 }) { finished in
-                    if finished {
-                        CATransaction.commit()
+                    guard finished else { return }
+                    CATransaction.commit()
+                    Task {
+                        calculateCurrentChapterScrollRange()
                     }
                 }
             }
@@ -336,12 +339,16 @@ extension PagedController {
         isScrolling = true
     }
 
-    func onUserDidScroll(to _: CGFloat) {
+    func onUserDidScroll(to pos: CGFloat) {
         // Update Offset
-        if !model.slider.isScrubbing {
-            Task { @MainActor in
-                model.slider.setCurrent(collectionView.contentOffset.x)
-            }
+        guard !model.slider.isScrubbing else { return }
+
+        if pos < 0 {
+            didTriggerBackTick = true
+            return
+        }
+        Task { @MainActor in
+            model.slider.setCurrent(pos)
         }
     }
 
@@ -354,7 +361,6 @@ extension PagedController {
         }
 
         let section = model.sections[path.section]
-
         // Get Min
         if let minIndex = section.firstIndex(where: { $0 is ReaderPage }) {
             let attributes = collectionView.layoutAttributesForItem(at: .init(item: minIndex, section: path.section))
@@ -380,29 +386,37 @@ extension PagedController {
 
 extension PagedController {
     override func scrollViewDidEndDecelerating(_: UIScrollView) {
-        onScrollStop()
-        lastPathBeforeRotation = currentPath
+        Task {
+            onScrollStop()
+            lastPathBeforeRotation = currentPath
+        }
     }
 
     override func scrollViewDidEndDragging(_: UIScrollView, willDecelerate decelerate: Bool) {
         if decelerate {
             return
         }
-        onScrollStop()
+        Task {
+            onScrollStop()
+        }
     }
 
     override func scrollViewDidEndScrollingAnimation(_: UIScrollView) {
-        onScrollStop()
+        Task {
+            onScrollStop()
+        }
     }
 
     func onScrollStop() {
         isScrolling = false
-
         model.menuControl.hideMenu()
+
         // Handle Load Prev
-        if collectionView.contentOffset.x <= 0 {
+        if didTriggerBackTick {
             model.loadPreviousChapter()
+            didTriggerBackTick = false
         }
+
         // Recalculate Scrollable Range
         calculateCurrentChapterScrollRange()
 

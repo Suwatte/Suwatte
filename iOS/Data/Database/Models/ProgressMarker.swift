@@ -21,6 +21,9 @@ final class ProgressMarker: Object, Identifiable, CKRecordConvertible, CKRecordR
     @Persisted var isDeleted: Bool = false
 
     var isCompleted: Bool {
+        if let num = currentChapter?.number, readChapters.contains(num) {
+            return true
+        }
         guard let lastPageRead, let totalPageCount, totalPageCount >= 1, lastPageRead >= 1 else {
             return false
         }

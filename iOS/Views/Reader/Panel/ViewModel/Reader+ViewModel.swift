@@ -54,7 +54,7 @@ extension ReaderView {
         let verticalTimerPublisher = PassthroughSubject<Void, Never>()
 
         // Additional Helpers
-        init(chapterList: [StoredChapter], openTo chapter: StoredChapter, title: String? = nil, pageIndex: Int? = nil, readingMode: ReadingMode) {
+        init(chapterList: [StoredChapter], openTo chapter: StoredChapter, title: String? = nil, pageIndex: Int? = nil, readingMode _: ReadingMode) {
             // Sort Chapter List by either sourceIndex or chapter number
             let sourceIndexAcc = chapterList.map { $0.index }.reduce(0, +)
             let sortedChapters = sourceIndexAcc > 0 ? chapterList.sorted(by: { $0.index > $1.index }) : chapterList.sorted(by: { $0.number > $1.number })
@@ -77,7 +77,7 @@ extension ReaderView {
                 activeChapter.requestedPageIndex = -1
             }
             readerChapterList.append(activeChapter)
-            updateViewerMode(with: readingMode)
+            setModeToUserSetting()
         }
 
         func loadChapter(_ chapter: ThreadSafeChapter, asNextChapter: Bool = true) async {
@@ -324,12 +324,15 @@ extension ReaderView.ViewModel {
             return
         }
         let page = readerPage.page
+
+        // Moved to next chapter
         if page.chapterId != activeChapter.chapter.id, let chapter = chapterCache[page.chapterId] {
             onChapterChanged(chapter: chapter)
+            onPageChanged(page: page)
             return
         }
 
-        // Last Page
+        // Last Page of same chapter
         if page.index + 1 == activeChapter.pages?.count, let chapter = chapterCache[page.chapterId], recursiveGetChapter(for: chapter.chapter) == nil {
             onPageChanged(page: page)
             onChapterChanged(chapter: chapter)
@@ -385,6 +388,14 @@ extension ReaderView.ViewModel {
         }
         if incognitoMode { return }
 
+        // Update Progress
+        let from = transition.from
+        if let chapter = chapterCache[from.id], activeChapter !== chapter, let count = chapter.pages?.count {
+            activeChapter = chapter
+            activeChapter.requestedPageIndex = count - 1 // Last Page
+        }
+
+        // Progress Update
         let chapter = transition.from
         if transition.to == nil {
             // Mark As Completed
@@ -419,11 +430,9 @@ extension ReaderView.ViewModel {
         }
 
         let id = contentIdentifier.id
+        // Mark As Completed & Update Unread Count
+        DataManager.shared.didCompleteChapter(for: id, chapter: lastChapter.chapter)
         Task.detached { [weak self] in
-            // Mark As Completed & Update Unread Count
-
-            DataManager.shared.didCompleteChapter(for: id, chapter: lastChapter.chapter)
-
             // Source Sync
             await self?.handleSourceSync(contentId: lastChapter.chapter.contentId,
                                          sourceId: lastChapter.chapter.sourceId,

@@ -13,55 +13,74 @@ private let threeMonths = Calendar.current.date(
     value: -3,
     to: .now
 )!
+
 struct HistoryView: View {
     @StateObject var model = ViewModel()
     @Environment(\.scenePhase) var scenePhase // Updates view when scene phase changes so URL ubiquitous download status are rechecked
+    @State var isUserViewing = false
     var body: some View {
-        Group {
-            if let markers = model.markers {
-                List(markers) { marker in
-                    Cell(marker: marker)
-                        .listRowSeparator(.hidden)
-                        .modifier(StyleModifier())
-                        .modifier(DeleteModifier(id: marker.id))
-                        .onTapGesture {
-                            action(marker)
-                        }
-                }
-                .transition(.opacity)
-                .animation(.default, value: markers)
-
-            } else {
-                ProgressView()
-                    .transition(.opacity)
+        ZStack {
+            List(model.markers) { marker in
+                Cell(marker: marker)
+                    .listRowSeparator(.hidden)
+                    .modifier(StyleModifier())
+                    .modifier(DeleteModifier(id: marker.id))
+                    .onTapGesture {
+                        action(marker)
+                    }
             }
+            .opacity(model.markers.isEmpty ? 0 : 1)
+
+            ProgressView()
+                .opacity(model.dataFetchComplete ? 0 : 1)
+
+            VStack {
+                Text("(￣ε￣＠)")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                Text("Titles you read will show up here")
+                    .font(.subheadline)
+                    .fontWeight(.light)
+                    .multilineTextAlignment(.center)
+            }
+            .foregroundColor(.gray)
+            .opacity(model.markers.isEmpty && model.dataFetchComplete ? 1 : 0)
         }
         .modifier(InteractableContainer(selection: $model.csSelection))
         .listStyle(.plain)
         .navigationTitle("History")
         .task {
+            isUserViewing = true
             model.observe()
         }
-        .onDisappear(perform: model.disconnect)
-        .onReceive(StateManager.shared.readerOpenedPublisher, perform: { _ in
+        .onDisappear {
+            isUserViewing = false
             model.disconnect()
+        }
+        .onReceive(StateManager.shared.readerOpenedPublisher, perform: { _ in
+            if isUserViewing {
+                model.disconnect()
+            }
         })
         .onReceive(StateManager.shared.readerClosedPublisher, perform: { _ in
-            model.observe()
+            if isUserViewing {
+                model.observe()
+            }
         })
         .environmentObject(model)
+        .animation(.default, value: model.markers)
     }
 }
 
 extension HistoryView {
     final class ViewModel: ObservableObject {
         @Published var csSelection: HighlightIdentifier?
-        @Published var markers: Results<ProgressMarker>?
+        @Published var markers: [ProgressMarker] = []
         @Published var currentDownloadFileId: String?
         private var downloader: CloudDownloader = .init()
         private var notificationToken: NotificationToken?
         @Published var readerLock = false
-
+        @Published var dataFetchComplete = false
         func observe() {
             guard notificationToken == nil else { return }
             let realm = try! Realm()
@@ -78,9 +97,11 @@ extension HistoryView {
                 .sorted(by: \.dateRead, ascending: false)
             notificationToken = collection
                 .observe { _ in
-                    Task { @MainActor in
+                    let s = collection.freeze().toArray()
+                    DispatchQueue.main.async { [unowned self] in
                         withAnimation {
-                            self.markers = collection
+                            self.markers = s
+                            self.dataFetchComplete = true
                         }
                     }
                 }
