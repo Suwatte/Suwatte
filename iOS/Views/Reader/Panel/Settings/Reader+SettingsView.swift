@@ -25,7 +25,6 @@ extension ReaderView {
         // Preference Publisher
         @Preference(\.verticalAutoScrollSpeed) var autoScrollSpeed
         @Preference(\.readingLeftToRight) var readingLeftToRight
-        @Preference(\.forceTransitions) var forceTransitions
         @Preference(\.imageInteractions) var imageInteractions
         @Preference(\.downsampleImages) var downsampleImages
         @Preference(\.cropWhiteSpaces) var cropWhiteSpaces
@@ -37,6 +36,9 @@ extension ReaderView {
         @Preference(\.imageScaleType) var imageScaleType
         @Preference(\.usePillarBox) var usePillarBox
         @Preference(\.pillarBoxPCT) var pillarBoxPCT
+
+        @Preference(\.enableReaderHaptics) var readerHaptics
+        @Preference(\.forceTransitions) var forceTransitions
 
         private let autoScrollRange: ClosedRange<Double> = 2.5 ... 30
         private let pillarBoxRange: ClosedRange<Double> = 0.15 ... 1.0
@@ -140,6 +142,15 @@ extension ReaderView {
 
                 } header: {
                     Text("Navigation")
+                }
+
+                Section {
+                    Toggle("Haptic Feedback", isOn: $readerHaptics)
+                    Toggle("Transition Pages", isOn: $forceTransitions)
+                } header: {
+                    Text("Miscellaneous")
+                } footer: {
+                    Text("Transition pages will not appear when chapters have less than 10 pages.")
                 }
 
                 // Images

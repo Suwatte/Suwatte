@@ -65,8 +65,7 @@ extension DoublePagedViewer.Controller {
 
         Preferences.standard.preferencesChangedSubject
             .filter { changedKeyPath in
-                changedKeyPath == \Preferences.forceTransitions ||
-                    changedKeyPath == \Preferences.imageInteractions
+                changedKeyPath == \Preferences.imageInteractions
             }
             .sink { [weak self] _ in
                 DispatchQueue.main.async {

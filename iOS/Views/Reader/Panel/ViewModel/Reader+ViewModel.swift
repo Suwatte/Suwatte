@@ -170,7 +170,9 @@ extension ReaderView {
             let nextChapter = recursiveGetChapter(for: chapter)
             if Preferences.standard.forceTransitions || nextChapter == nil {
                 let transition = ReaderView.Transition(from: chapter, to: nextChapter, type: .NEXT)
-                chapterObjects.append(transition)
+                if nextChapter == nil || chapterObjects.count > 10 { // Add Transition Pages for End or Chapters with 10 or more pages
+                    chapterObjects.append(transition)
+                }
             }
 
             return chapterObjects

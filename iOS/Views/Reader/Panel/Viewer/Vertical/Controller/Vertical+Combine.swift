@@ -107,7 +107,7 @@ extension Controller {
         // MARK: Preference Publisher
 
         Preferences.standard.preferencesChangedSubject
-            .filter { $0 == \Preferences.forceTransitions || $0 == \Preferences.imageInteractions }
+            .filter { $0 == \Preferences.imageInteractions }
             .sink { [weak self] _ in
                 Task { @MainActor in
                     self?.collectionNode.reloadData()
