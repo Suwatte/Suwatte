@@ -71,8 +71,8 @@ extension DSKPageView.CollectionView {
 extension DSKPageView.CollectionView {
     var layout: ASCollectionLayout<String> {
         let cache = Dictionary(uniqueKeysWithValues: pageSections.map { ($0.key, $0.sectionStyle) })
-        let errors = model.errors
         return ASCollectionLayout { sectionID in
+            let errors = model.errors
             // Errored Out, Show Error Layout
             if errors.contains(sectionID) {
                 return .init {
