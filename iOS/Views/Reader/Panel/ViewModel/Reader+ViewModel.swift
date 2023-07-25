@@ -81,10 +81,12 @@ extension ReaderView {
         }
 
         func loadChapter(_ chapter: ThreadSafeChapter, asNextChapter: Bool = true) async {
-            let alreadyInList = readerChapterList.contains(where: { $0.chapter.id == chapter.id })
-            let readerChapter: ReaderChapter?
-
-            readerChapter = alreadyInList ? readerChapterList.first(where: { $0.chapter.id == chapter.id })! : ReaderChapter(chapter: chapter)
+            var alreadyInList = false
+            var readerChapter = readerChapterList.first(where: { $0.chapter.id == chapter.id })
+            alreadyInList = readerChapter != nil
+            if readerChapter == nil {
+                readerChapter = ReaderChapter(chapter: chapter)
+            }
 
             guard let readerChapter = readerChapter else {
                 return
@@ -150,8 +152,7 @@ extension ReaderView {
         }
 
         func buildSection(chapter: ThreadSafeChapter, pages: [ReaderPage]) -> [AnyObject] {
-            let chapterIndex = chapterList.firstIndex(where: { $0 == chapter })! // Should never fail
-
+            guard let chapterIndex = chapterList.firstIndex(where: { $0 == chapter }) else { return [] }
             // Prepare Chapter
             var chapterObjects: [AnyObject] = []
 
@@ -175,8 +176,8 @@ extension ReaderView {
             return chapterObjects
         }
 
-        func getChapterIndex(_ chapter: ThreadSafeChapter) -> Int {
-            chapterList.firstIndex(of: chapter)!
+        func getChapterIndex(_ chapter: ThreadSafeChapter) -> Int? {
+            chapterList.firstIndex(of: chapter)
         }
 
         func reload(section: Int) {
@@ -259,6 +260,7 @@ extension ReaderView {
 extension ReaderView.ViewModel {
     func recursiveGetChapter(for chapter: ThreadSafeChapter, isNext: Bool = true) -> ThreadSafeChapter? {
         let index = getChapterIndex(chapter)
+        guard let index else { return nil }
         let nextChapter = chapterList.get(index: index + (isNext ? 1 : -1))
 
         guard let nextChapter = nextChapter else {
@@ -284,12 +286,14 @@ extension ReaderView.ViewModel: ReaderSliderManager {
 
 extension ReaderView.ViewModel {
     var NextChapter: ThreadSafeChapter? {
-        let index = getChapterIndex(activeChapter.chapter) + 1
+        guard let current = getChapterIndex(activeChapter.chapter) else { return nil }
+        let index = current + 1
         return chapterList.get(index: index)
     }
 
     var PreviousChapter: ThreadSafeChapter? {
-        let index = getChapterIndex(activeChapter.chapter) - 1
+        guard let current = getChapterIndex(activeChapter.chapter) else { return nil }
+        let index = current - 1
         return chapterList.get(index: index)
     }
 }
