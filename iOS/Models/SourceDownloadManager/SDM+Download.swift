@@ -83,7 +83,7 @@ extension SDM {
         // Clear, not ideal but removes some bogus edgecases
         try? FileManager.default.removeItem(at: downloadDirectory)
 
-        let sourceId = try DSK.shared.getContentSource(id: identifier.source)
+        let source = try DSK.shared.getContentSource(id: identifier.source)
         
         // Loop Till all images are downloaded
         while !images.isEmpty {
@@ -99,6 +99,15 @@ extension SDM {
                 break
             }
             
+            var request = URLRequest(url: current)
+            
+            // Source Overrides the default image request.
+            if source.intents.imageRequestHandler {
+                let data = try await source.willRequestImage(imageURL: current)
+                let parsedRequest = try data.toURLRequest()
+                request = parsedRequest
+            }
+            
             let indexName = Double(counter).issue
             let destination: DownloadRequest.Destination = { _, response in
                 let pathExtension = response.suggestedFilename?.split(separator: ".").last.flatMap({ String($0) }) ?? current.pathExtension
@@ -108,7 +117,7 @@ extension SDM {
                 return (downloadPath, [.removePreviousFile, .createIntermediateDirectories])
             }
             
-            let task = AF.download(current, to: destination).serializingDownloadedFileURL()
+            let task = AF.download(request, to: destination).serializingDownloadedFileURL()
             
             _ = try await task.result.get()
             let progress = Double(counter) / Double(total)

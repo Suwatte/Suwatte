@@ -22,23 +22,6 @@ extension SDM {
         
         setQueue(collection)
     }
-    /// in the case where the app is closed while a download is active, restart.
-    private func restart() {
-        let realm = try! Realm()
-        
-        let collection = realm
-            .objects(SourceDownload.self)
-            .where { $0.status == .active }
-        
-        try! realm.safeWrite {
-            collection.forEach { object in
-                object.dateAdded = .now
-                object.status = .queued
-            }
-        }
-        
-        fetchQueue()
-    }
     
     internal func update(ids: [String], status: DownloadStatus) {
         let realm = try! Realm()
@@ -128,6 +111,18 @@ extension SDM {
         return targets
     }
     
+    internal func get(_ status: DownloadStatus) -> [SourceDownload] {
+        let realm = try! Realm()
+        
+        let targets = realm
+            .objects(SourceDownload.self)
+            .where { $0.status == status }
+            .freeze()
+            .toArray()
+        
+        return targets
+    }
+    
     internal func finished(_ id: String, url: URL) {
         guard url.isFileURL, !url.hasDirectoryPath else {
             Logger.shared.log("Operation Complete (\(id))")
@@ -176,6 +171,10 @@ extension SDM {
         archivesMarkedForDeletion = archivesMarkedForDeletion.union(archives)
         foldersMarkedForDeletion = foldersMarkedForDeletion.union(completed)
         cancelledTasks = cancelledTasks.union(ids)
+        
+        if isIdle {
+            clean()
+        }
     }
     
     internal func delete(ids: [String]) {
@@ -188,6 +187,17 @@ extension SDM {
         try! realm.safeWrite {
             realm.delete(targets)
         }
+    }
+    
+    internal func reattach() {
+        // Called when restarted, requeue failing downloads
+        let failing = get(.failing)
+        let cancelled = get(.cancelled)
+        let active = get(.active)
+        
+        cancelledTasks = cancelledTasks.union(cancelled.map(\.id)) // Set cancelled tasks to cache, will be clean at next possible interval
+        update(ids: active.map(\.id), status: .queued) // Update prior active tasks to now be requeued
+        update(ids: failing.map(\.id), status: .queued) // update prior failing tasks to be requeued
     }
 }
 

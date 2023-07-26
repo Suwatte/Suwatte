@@ -74,9 +74,9 @@ extension SDM {
     func appDidStart() {
         Logger.shared.log("Resource Initialized", CONTEXT)
         clearOldDirectory()
-        fetchQueue()
+        reattach()
         clean()
-        print(directory.relativePath)
+        fetchQueue()
         if !queue.isEmpty {
             ToastManager.shared.info("Downloads Restarted.")
         }
@@ -89,6 +89,7 @@ extension SDM {
         let directory = FileManager.default.applicationSupport.appendingPathComponent("Downloads", isDirectory: true)
         try? FileManager.default.removeItem(at: directory)
     }
+    
 }
 
 

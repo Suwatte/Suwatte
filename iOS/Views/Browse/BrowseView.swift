@@ -30,6 +30,9 @@ struct BrowseView: View {
                     }
                 }
             }
+            .refreshable {
+                loadPageLinks()
+            }
         }
         .navigationViewStyle(.stack)
 
@@ -38,9 +41,6 @@ struct BrowseView: View {
             loadPageLinks()
         }
         .onReceive(StateManager.shared.runnerListPublisher) { _ in
-            loadPageLinks()
-        }
-        .refreshable {
             loadPageLinks()
         }
     }
