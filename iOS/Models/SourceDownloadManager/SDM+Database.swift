@@ -8,6 +8,10 @@
 import Foundation
 import RealmSwift
 
+enum DownloadStatus: Int, PersistableEnum {
+    case idle, active, queued, failing, completed, paused, cancelled
+}
+
 // MARK: Queue Helpers
 extension SDM {
     

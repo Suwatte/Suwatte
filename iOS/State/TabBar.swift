@@ -19,7 +19,7 @@ enum AppTabs: Int, CaseIterable {
     func view() -> some View {
         switch self {
         case .downloads:
-            DownloadsView()
+            SourceDownloadView()
                 .protectContent()
 
         case .feed:

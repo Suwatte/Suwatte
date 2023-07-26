@@ -43,3 +43,11 @@ extension URL {
         return nil
     }
 }
+
+extension URL {
+    var fileName: String {
+        let fileExt = pathExtension
+
+        return lastPathComponent.replacingOccurrences(of: ".\(fileExt)", with: "")
+    }
+}

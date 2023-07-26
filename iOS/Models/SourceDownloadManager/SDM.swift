@@ -47,6 +47,8 @@ final actor SourceDownloadManager {
     }
 }
 
+
+
 // Typealias
 typealias SDM = SourceDownloadManager
 
@@ -81,6 +83,10 @@ extension SDM {
             ToastManager.shared.info("Downloads Restarted.")
         }
     }
+    
+    func isLocked() -> Bool {
+        !isIdle
+    }
 }
 // MARK: Observer
 extension SDM {
@@ -91,6 +97,7 @@ extension SDM {
     }
     
 }
+typealias ChapterIdentifier = (source: String, content: String, chapter: String)
 
 
 // MARK: Helpers
@@ -108,7 +115,7 @@ extension SDM {
         fire()
     }
     
-    internal func parseID(_ id: String) -> ChapterIndentifier {
+    internal func parseID(_ id: String) -> ChapterIdentifier {
         let splitted = id.components(separatedBy: "||")
         return (splitted[0], splitted[1], splitted[2])
     }

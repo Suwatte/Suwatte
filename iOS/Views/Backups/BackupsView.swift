@@ -123,29 +123,14 @@ extension BackupsView {
 
         restoreTask = Task {
             do {
-                if !ICDM.shared.isIdle {
+                if await !SDM.shared.isLocked() {
                     throw DSK.Errors.NamedError(name: "ERROR", message: "Active Downloads")
                 }
-                if url.pathExtension == "icloud" {
-//                    downloader.downloadCompletion = { result in
-//                        do {
-//                            let url = try result.get()
-//                            handleRestore(url: url)
-//                        } catch {
-//                            Task { @MainActor in
-//                                ToastManager.shared.loading = false
-//                                ToastManager.shared.error(error)
-//                            }
-//                        }
-//                    }
-//                    downloader.download(url)
-                } else {
-                    try await manager.restore(from: url)
-                    await MainActor.run(body: {
-                        ToastManager.shared.loading = false
-                        ToastManager.shared.info("Restored Backup!")
-                    })
-                }
+                try await manager.restore(from: url)
+                await MainActor.run(body: {
+                    ToastManager.shared.loading = false
+                    ToastManager.shared.info("Restored Backup!")
+                })
             } catch {
                 Logger.shared.error("[BackUpView] [Restore] \(error)")
                 await MainActor.run(body: {

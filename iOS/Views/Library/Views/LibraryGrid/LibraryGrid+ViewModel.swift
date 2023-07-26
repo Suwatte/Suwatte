@@ -48,9 +48,8 @@ extension LibraryView.LibraryGrid {
             token = nil
             let realm = try! Realm()
             let downloads = realm
-                .objects(ICDMDownloadObject.self)
-                .where { $0.status == .completed }
-                .distinct(by: ["chapter.sourceId", "chapter.contentId"])
+                .objects(SourceDownloadIndex.self)
+                .where { $0.content != nil && $0.count > 0 }
 
             // Fetch Library
             var library = realm
@@ -126,7 +125,7 @@ extension LibraryView.LibraryGrid {
 
             if downloadsOnly {
                 let ids = downloads
-                    .compactMap { $0.chapter?.contentIdentifier.id } as [String]
+                    .compactMap(\.content?.id) as [String]
                 library = library
                     .where {
                         $0.id.in(ids)

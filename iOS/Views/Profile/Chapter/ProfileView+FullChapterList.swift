@@ -286,7 +286,7 @@ extension ChapterList {
     
     func filterDownloads(_ chapter: StoredChapter) -> Bool {
         if !showOnlyDownloads { return true }
-        return DataManager.shared.hasDownload(id: chapter.id)
+        return model.downloads[chapter.id] != nil
     }
     
     func filterProviders(_ chapter: StoredChapter) -> Bool {

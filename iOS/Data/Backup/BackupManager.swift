@@ -83,16 +83,20 @@ class BackupManager: ObservableObject {
             realm.objects(StoredOPDSServer.self).setValue(true, forKey: "isDeleted")
             realm.delete(realm.objects(StoredChapterData.self))
 
+            let downloadedTitles = realm
+                .objects(SourceDownloadIndex.self)
+                .where { $0.count > 0 && $0.content != nil }
+                .compactMap(\.content?.id) as [String]
+            
             let downloadedChapters = realm
-                .objects(ICDMDownloadObject.self)
-                .where { $0.status == .completed }
-                .compactMap { $0.chapter }
+                .objects(SourceDownload.self)
+                .where { $0.chapter != nil && $0.status != .cancelled }
+                .compactMap(\.chapter?.id) as [String]
 
-            let idSet = Array(Set(downloadedChapters.map { $0.contentIdentifier.id }))
-            let chapterIdSet = Array(downloadedChapters.map { $0.id })
 
-            realm.objects(StoredContent.self).where { !$0.id.in(idSet) }.setValue(true, forKey: "isDeleted")
-            realm.objects(StoredChapter.self).where { !$0.id.in(chapterIdSet) }.setValue(true, forKey: "isDeleted")
+
+            realm.objects(StoredContent.self).where { !$0.id.in(downloadedTitles) }.setValue(true, forKey: "isDeleted")
+            realm.objects(StoredChapter.self).where { !$0.id.in(downloadedChapters) }.setValue(true, forKey: "isDeleted")
 
             if let libraryEntries = backup.library {
                 let contents = libraryEntries.compactMap { $0.content }
