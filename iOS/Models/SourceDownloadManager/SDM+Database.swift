@@ -32,7 +32,6 @@ extension SDM {
         try! realm.safeWrite {
             for download in collection {
                 download.status = status
-                download.dateAdded = .now
             }
         }
         fetchQueue()
@@ -82,7 +81,7 @@ extension SDM {
         try! realm.safeWrite {
             realm.add(downloads, update: .modified)
         }
-        
+        return // Remove
         if queue.isEmpty {
             fetchQueue()
         }
@@ -256,5 +255,21 @@ extension SDM {
         } catch {
             Logger.shared.error(error, CONTEXT)
         }
+    }
+}
+
+
+
+
+extension DataManager {
+    func getActiveDownload(_ id: String) -> SourceDownload? {
+        let realm = try! Realm()
+        
+        return realm
+            .objects(SourceDownload.self)
+            .where { $0.content != nil && $0.chapter != nil }
+            .where { $0.id == id && $0.status == .active }
+            .first?
+            .freeze()
     }
 }

@@ -33,6 +33,8 @@
 		DF1EA4492A70B81B003E27C7 /* SDV+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1EA4482A70B81B003E27C7 /* SDV+ViewModel.swift */; };
 		DF1EA44D2A70BD44003E27C7 /* SDM+Index.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1EA44C2A70BD44003E27C7 /* SDM+Index.swift */; };
 		DF1EA44F2A70C700003E27C7 /* SDV+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1EA44E2A70C700003E27C7 /* SDV+CollectionView.swift */; };
+		DF1EA4522A70E0FE003E27C7 /* SourceDownloadQueueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1EA4512A70E0FE003E27C7 /* SourceDownloadQueueView.swift */; };
+		DF1EA4542A70E7B8003E27C7 /* SDQV+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1EA4532A70E7B8003E27C7 /* SDQV+ViewModel.swift */; };
 		DF1FD5C2284B31AB00A67F0E /* DoublePaged+Representable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1FD5C1284B31AB00A67F0E /* DoublePaged+Representable.swift */; };
 		DF248F0C2813844C00818300 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DF248F0B2813844C00818300 /* KeychainSwift */; };
 		DF248F2B2813B24F00818300 /* BarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF248F2A2813B24F00818300 /* BarChartView.swift */; };
@@ -399,6 +401,8 @@
 		DF1EA4482A70B81B003E27C7 /* SDV+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SDV+ViewModel.swift"; sourceTree = "<group>"; };
 		DF1EA44C2A70BD44003E27C7 /* SDM+Index.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SDM+Index.swift"; sourceTree = "<group>"; };
 		DF1EA44E2A70C700003E27C7 /* SDV+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SDV+CollectionView.swift"; sourceTree = "<group>"; };
+		DF1EA4512A70E0FE003E27C7 /* SourceDownloadQueueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceDownloadQueueView.swift; sourceTree = "<group>"; };
+		DF1EA4532A70E7B8003E27C7 /* SDQV+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SDQV+ViewModel.swift"; sourceTree = "<group>"; };
 		DF1FD5C1284B31AB00A67F0E /* DoublePaged+Representable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DoublePaged+Representable.swift"; sourceTree = "<group>"; };
 		DF248F2A2813B24F00818300 /* BarChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChartView.swift; sourceTree = "<group>"; };
 		DF248F35281474A100818300 /* STT+Encodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+Encodable.swift"; sourceTree = "<group>"; };
@@ -854,6 +858,8 @@
 		DF1EA44B2A70B84E003E27C7 /* Queue */ = {
 			isa = PBXGroup;
 			children = (
+				DF1EA4512A70E0FE003E27C7 /* SourceDownloadQueueView.swift */,
+				DF1EA4532A70E7B8003E27C7 /* SDQV+ViewModel.swift */,
 			);
 			path = Queue;
 			sourceTree = "<group>";
@@ -2260,6 +2266,7 @@
 				DF8D0B322800EE47003E4C3E /* STT+Filemanager.swift in Sources */,
 				DFC39E9728A0B0BC00450EC4 /* Runner.swift in Sources */,
 				DF457DD42A43B216002B5350 /* History+Archive.swift in Sources */,
+				DF1EA4542A70E7B8003E27C7 /* SDQV+ViewModel.swift in Sources */,
 				DF1EA44F2A70C700003E27C7 /* SDV+CollectionView.swift in Sources */,
 				DF67EB8F28E4054C00076FF5 /* LogsView.swift in Sources */,
 				DF9BFDF32A42753B005D0B63 /* DirectoryViewer.swift in Sources */,
@@ -2330,6 +2337,7 @@
 				DF6B8CA428629CCE00DD079D /* Data+ContentLink.swift in Sources */,
 				DF8D0B752800EE48003E4C3E /* LibraryGrid+OptionsSheet.swift in Sources */,
 				DFBBB74B2974A8CF001DAAE9 /* DoublePaged+Controller.swift in Sources */,
+				DF1EA4522A70E0FE003E27C7 /* SourceDownloadQueueView.swift in Sources */,
 				DF8D0B5E2800EE47003E4C3E /* Reader+TransitionCell.swift in Sources */,
 				DFBE48382A25BB53000ABA16 /* Chapter.swift in Sources */,
 				DF8D0B352800EE47003E4C3E /* STT+Double.swift in Sources */,

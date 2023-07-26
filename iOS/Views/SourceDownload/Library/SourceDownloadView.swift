@@ -80,9 +80,10 @@ extension SourceDownloadView {
                 Text(isSearching ? "┐(´～｀)┌" : "(ᅌᴗᅌ✿)")
                     .font(.title2)
                     .fontWeight(.semibold)
-                Text(isSearching ? "no results" : "no downloads")
+                Text(isSearching ? "no results" : "no downloads\ntitles you download from sources will show up here.")
                     .font(.subheadline)
                     .fontWeight(.light)
+                    .multilineTextAlignment(.center)
             }
             .foregroundColor(.gray)
         }

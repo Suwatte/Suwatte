@@ -372,7 +372,7 @@ extension LibraryView {
                 }
                 
                 NavigationLink {
-                    EmptyView()
+                    SourceDownloadQueueView()
                 } label: {
                     Label("Source Queue", systemImage: "list.bullet.below.rectangle")
                 }
