@@ -106,6 +106,8 @@ extension LibraryView {
                     CollectionsSectionView(isActive: $openFirstCollection)
                 case "library.flags":
                     FlagsSectionView()
+                case "library.downloads":
+                    DownloadSection()
                 default:
                     if let pageLinks = links[key], let runner = DSK.shared.getRunner(key) {
                         PageLinkSectionView(runner: runner, pageLinks: pageLinks)
@@ -182,10 +184,6 @@ extension LibraryView {
                 NavigationLink(destination: UpdateFeedView()) {
                     Label("Your Feed", systemImage: "bell")
                 }
-                NavigationLink(destination: DownloadsView()) {
-                    Label("Downloads", systemImage: "square.and.arrow.down")
-                }
-
             } header: {
                 Text("Lists")
             }
@@ -309,6 +307,8 @@ extension LibraryView {
                     Text("Collections")
                 case "library.flags":
                     Text("Reading Flags")
+                case "library.downloads":
+                    Text("Downloads")
                 default:
                     if let name = priviledgedRunners.first(where: { $0.id == key })?.name {
                         Text(name)
@@ -357,6 +357,35 @@ extension LibraryView {
                     }
                 }
             })
+        }
+    }
+}
+
+extension LibraryView {
+    struct DownloadSection : View {
+        var body: some View {
+            Section {
+                NavigationLink {
+                    SourceDownloadView()
+                } label: {
+                    Label("Downloaded Titles", systemImage: "externaldrive.badge.checkmark")
+                }
+                
+                NavigationLink {
+                    EmptyView()
+                } label: {
+                    Label("Source Queue", systemImage: "list.bullet.below.rectangle")
+                }
+                
+                NavigationLink {
+                    EmptyView()
+                } label: {
+                    Label("File Queue", systemImage: "list.bullet.indent")
+                }
+            } header: {
+                Text("Downloads")
+            }
+            .headerProminence(.increased)
         }
     }
 }

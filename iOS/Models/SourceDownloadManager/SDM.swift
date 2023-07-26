@@ -144,6 +144,23 @@ extension SDM {
             removeDirectory(at: folder(for: id))
         }
         
+        // Update Indexes
+        let ts = cancelledTasks
+        Task {
+            let unique = ts.compactMap { val in
+                let ids = parseID(val)
+                return ContentIdentifier(contentId: ids.content, sourceId: ids.source).id
+            }
+                .distinct()
+            
+            let content = DataManager.shared.getStoredContents(ids: unique)
+            
+            content.forEach { c in
+                updateIndex(of: c)
+            }
+            
+        }
+        
         // Consume States
         cancelledTasks.removeAll()
         archivesMarkedForDeletion.removeAll()

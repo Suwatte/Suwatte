@@ -174,8 +174,9 @@ extension SDM {
 
         // Remove Temp
         do {
-            guard directory.exists else { return }
-            try FileManager.default.removeItem(at: directory)
+            if directory.exists {
+                try FileManager.default.removeItem(at: directory)
+            }
         } catch {
             Logger.shared.error("Failed to remove temporary download directory for (\(id), \(error.localizedDescription)", CONTEXT)
         }

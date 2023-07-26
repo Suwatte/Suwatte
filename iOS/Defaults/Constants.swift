@@ -20,7 +20,7 @@ enum STTHost {
     static var coverNotFound = notFound.appendingPathComponent("thumb.png")
 }
 
-let DEFAULT_LIBRARY_SECTIONS = ["library.local", "library.lists", "library.collections", "library.flags"]
+let DEFAULT_LIBRARY_SECTIONS = ["library.local", "library.lists", "library.downloads", "library.collections", "library.flags"]
 
 let STTUserDefaults: [String: Any] = [
     STTKeys.PagedDirection: true,

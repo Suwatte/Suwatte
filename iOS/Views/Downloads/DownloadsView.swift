@@ -160,26 +160,3 @@ extension DownloadsView {
     }
 }
 
-struct CapsuleBadge: View {
-    var text: String
-    var color: Color = .accentColor
-    private let height: CGFloat = 17
-    var body: some View {
-        ZStack(alignment: .center) {
-            Capsule()
-                .foregroundColor(.systemBackground)
-            ZStack(alignment: .center) {
-                Capsule()
-                    .foregroundColor(color)
-                Text(text)
-                    .font(.system(size: 10))
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-                    .padding(.all, 1)
-            }
-            .padding(.all, 3)
-        }
-        .frame(width: height * 2, height: height, alignment: .leading)
-        .offset(x: 8, y: -8)
-    }
-}

@@ -20,3 +20,12 @@ final class SourceDownload : Object, Identifiable {
     @Persisted var text: String?
     @Persisted var archive: String?
 }
+
+
+final class SourceDownloadIndex: Object, Identifiable {
+    @Persisted(primaryKey: true) var id : String
+    @Persisted var dateFirstAdded: Date = .now
+    @Persisted var dateLastAdded: Date = .now
+    @Persisted var content: StoredContent?
+    @Persisted var count: Int = 0
+}

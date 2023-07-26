@@ -124,10 +124,6 @@ extension SDM {
     }
     
     internal func finished(_ id: String, url: URL) {
-        guard url.isFileURL, !url.hasDirectoryPath else {
-            Logger.shared.log("Operation Complete (\(id))")
-            return
-        }
         
         let realm = try! Realm()
         
@@ -140,9 +136,17 @@ extension SDM {
             return
         }
         
-        try! realm.safeWrite {
-            target.archive = url.lastPathComponent
+        // Point Archive
+        if url.isFileURL, !url.hasDirectoryPath {
+            try! realm.safeWrite {
+                target.archive = url.lastPathComponent
+            }
         }
+
+        if let content = target.content {
+            updateIndex(of: content)
+        }
+        
         Logger.shared.log("Operation Complete (\(id))")
     }
 }

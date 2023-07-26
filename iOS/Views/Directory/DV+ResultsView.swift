@@ -30,7 +30,6 @@ extension DirectoryView {
                             }
                         }
                 }
-                .cacheCells()
                 .sectionHeader {
                     Group {
                         if hasHeader {
