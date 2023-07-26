@@ -23,7 +23,7 @@ struct FCS_Options: View {
                 }
             }
             .closeButton()
-            .navigationBarTitle("Options")
+            .navigationBarTitle("Filter")
             .animation(.default, value: filteredProviders)
         }
         .navigationViewStyle(.stack)

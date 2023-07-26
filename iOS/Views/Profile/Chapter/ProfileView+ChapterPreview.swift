@@ -133,7 +133,7 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
         return model.actionState.marker?.progress
     }
 
-    func getDownload(_ chapter: StoredChapter) -> ICDMDownloadObject? {
+    func getDownload(_ chapter: StoredChapter) -> DownloadStatus? {
         model.downloads[chapter.id]
     }
 }

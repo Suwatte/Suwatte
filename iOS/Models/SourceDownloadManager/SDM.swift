@@ -29,13 +29,16 @@ final actor SourceDownloadManager {
     internal var queue: [SourceDownload] = []
     
     // State
-    internal var isIdle = false
+    internal var isIdle = true
     internal var pausedTasks = Set<String>()
     internal var cancelledTasks = Set<String>()
+    internal var archivesMarkedForDeletion = Set<String>()
+    internal var foldersMarkedForDeletion = Set<String>()
     
     // Publishers
+    @MainActor
     var activeDownload: CurrentValueSubject<(String, DownloadState)?, Never> = .init(nil)
-
+    
     
     static let shared = SourceDownloadManager()
     init() {
@@ -60,7 +63,7 @@ extension SDM {
             }
         }
     }
-
+    
     enum DownloadState {
         case fetchingImages, downloading(progress: Double), finalizing
     }
@@ -74,6 +77,9 @@ extension SDM {
         fetchQueue()
         clean()
         print(directory.relativePath)
+        if !queue.isEmpty {
+            ToastManager.shared.info("Downloads Restarted.")
+        }
     }
 }
 // MARK: Observer
@@ -89,7 +95,7 @@ extension SDM {
 // MARK: Helpers
 extension SDM {
     internal func fire() {
-        guard !isIdle, !queue.isEmpty else { return } // Start if the downloader is idle but the queue is not empty
+        guard isIdle, !queue.isEmpty else { return } // Start if the downloader is idle but the queue is not empty
         // Move to Next
         Task {
             await download()
@@ -112,24 +118,37 @@ extension SDM {
 extension SDM {
     internal func announce(_ id: String, state: DownloadState) {
         Task { @MainActor in
-            await activeDownload.send((id, state))
+            activeDownload.send((id, state))
         }
     }
     
     internal func announce() {
         Task { @MainActor in
-            await activeDownload.send(nil)
+            activeDownload.send(nil)
         }
     }
 }
 
 extension SDM {
     func clean() {
+        // Delete Records
+        delete(ids: Array(cancelledTasks))
         
+        // Delete Physical Locations
+        for archive in archivesMarkedForDeletion {
+            removeArchive(at: buildArchive(archive))
+        }
+        
+        for id in foldersMarkedForDeletion {
+            removeDirectory(at: folder(for: id))
+        }
+        
+        // Consume States
+        cancelledTasks.removeAll()
+        archivesMarkedForDeletion.removeAll()
+        foldersMarkedForDeletion.removeAll()
     }
 }
-
-
 
 // MARK: Chapter Data Fetcher
 extension SDM {
@@ -147,24 +166,29 @@ extension SDM {
             return data
         }
         
-        // File / Directory
-        guard let path = download.path else {
-            Logger.shared.warn("Requested a valid download but the path has not been set (\(id)", CONTEXT)
-            return nil
+        // Archive
+        if let archive = download.archive {
+            let url = directory
+                .appendingPathComponent("Archives", isDirectory: true)
+                .appendingPathComponent(archive)
+            
+            // URL is pointing to a file, an archive
+            let paths = try ArchiveHelper().getImagePaths(for: url)
+            
+            data.archiveURL = url
+            data.archivePaths = paths
+            return data
         }
         
-        guard let url = URL(string: path), url.isFileURL, url.exists else {
-            Logger.shared.warn("Requested a valid download but the path is not a valid url (\(id)", CONTEXT)
-            // Delete
-            return nil
-        }
+        // Directory
+        let url = folder(for: id)
         
         if url.hasDirectoryPath {
             let imageExtensions = ["jpg", "png", "gif", "jpeg", "bmp", "tiff", "heif", "heic"]
-
-            let imageUrls = try FileManager
+            let directoryContents = try FileManager
                 .default
-                .contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
+                .contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
+            let imageUrls = directoryContents
                 .filter { imageExtensions.contains($0.pathExtension) }
                 .sorted(by: \.fileName, descending: false)
             
@@ -172,10 +196,7 @@ extension SDM {
             return data
         }
         
-        // URL is pointing to a file, an archive
-        let paths = try ArchiveHelper().getImagePaths(for: url)
-        data.archiveURL = url
-        data.archivePaths = paths
-        return data
+        Logger.shared.warn("Download record exists but archive & directory cases were not met", CONTEXT)
+        return nil
     }
 }

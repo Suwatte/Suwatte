@@ -16,18 +16,14 @@ extension SDM {
     
     private func didFinishTasksAtHead(id: String, with state: TaskCompletionState) {
         
-        if state == .halted {
-            // Consume state
-            pausedTasks.remove(id)
-            cancelledTasks.remove(id)
-        } else {
+        if state != .halted {
             // Update Object
             update(ids: [id], status: state.DownloadState)
-            
         }
         // Reset Publisher
         announce()
-        
+        isIdle = true
+        clean()
         // Update Queue
         fetchQueue()
     }
@@ -155,7 +151,6 @@ extension SDM {
         }
         // All Images Downloaded
         try finalize(for: id, at: downloadDirectory)
-        Logger.shared.log("Completed \(id)")
         return true
     }
 }
@@ -220,7 +215,7 @@ extension SDM {
         
         let interval = end.timeIntervalSince(start) // Calculate the difference
 
-        Logger.shared.log("Archived Chapter \(id) in \(interval) Seconds")
+        Logger.shared.log("Archived Chapter \(id) in \(interval) Seconds", CONTEXT)
 
         return path
     }
@@ -229,7 +224,7 @@ extension SDM {
 
 
 extension SDM {
-    private func folder(for id: String, temp: Bool = false) -> URL {
+    internal func folder(for id: String, temp: Bool = false) -> URL {
         let base = temp ? tempDir : directory
         let identifier = parseID(id)
         return base
@@ -254,7 +249,7 @@ extension SDM {
             name += " Vol. \(volume)"
         }
         
-        if let number = download.chapter?.number.issue {
+        if let number = download.chapter?.number {
             name += " (\(number))"
         }
         

@@ -64,7 +64,7 @@ extension ProfileView {
 
         // Download Tracking Variables
         var downloadTrackingToken: NotificationToken?
-        @Published var downloads: [String: ICDMDownloadObject] = [:]
+        @Published var downloads: [String: DownloadStatus] = [:]
         // Chapter Marking Variables
         var progressToken: NotificationToken?
         @Published var readChapters = Set<Double>()
@@ -157,12 +157,17 @@ extension ProfileView.ViewModel {
         let ids = chapters.map { $0.id }
 
         let collection = realm
-            .objects(ICDMDownloadObject.self)
-            .where { $0.chapter.id.in(ids) }
+            .objects(SourceDownload.self)
+            .where { $0.id.in(ids) }
 
         downloadTrackingToken = collection
-            .observe { [weak self] _ in
-                self?.downloads = Dictionary(uniqueKeysWithValues: collection.map { ($0._id, $0) })
+            .observe { _ in
+                let dictionary = Dictionary(uniqueKeysWithValues: collection.map { ($0.id, $0.status) })
+                Task { @MainActor in
+                    withAnimation {
+                        self.downloads = dictionary
+                    }
+                }
             }
     }
 

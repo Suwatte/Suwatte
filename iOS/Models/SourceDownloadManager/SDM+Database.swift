@@ -16,12 +16,11 @@ extension SDM {
         let collection = realm
             .objects(SourceDownload.self)
             .where { $0.status == .queued }
+            .sorted(by: \.dateAdded, ascending: true)
             .freeze()
             .toArray()
         
         setQueue(collection)
-        
-        let delete = realm.objects(SourceDownload.self)
     }
     /// in the case where the app is closed while a download is active, restart.
     private func restart() {
@@ -37,6 +36,8 @@ extension SDM {
                 object.status = .queued
             }
         }
+        
+        fetchQueue()
     }
     
     internal func update(ids: [String], status: DownloadStatus) {
@@ -51,6 +52,7 @@ extension SDM {
                 download.dateAdded = .now
             }
         }
+        fetchQueue()
     }
     
     func add(chapters: [String]) {
@@ -68,7 +70,7 @@ extension SDM {
             .objects(StoredChapter.self)
             .where { !$0.id.in(completed) } // Filter out Completed Downloads
             .where { $0.id.in(chapters) }
-            .sorted(by: \.index, ascending: true)
+            .sorted(by: \.index, ascending: false)
         
         // Get the selected contents
         let contentIDs = Set(chapters.map(\.contentIdentifier.id))
@@ -89,7 +91,7 @@ extension SDM {
                 download.chapter = chapter
                 download.content = contentMap[chapter.contentIdentifier.id]
                 download.status = .queued
-                
+                download.dateAdded = .now
                 return download
             }
 
@@ -114,7 +116,24 @@ extension SDM {
         return target?.freeze()
     }
     
+    internal func get(_ ids: [String]) -> [SourceDownload] {
+        let realm = try! Realm()
+        
+        let targets = realm
+            .objects(SourceDownload.self)
+            .where { $0.id.in(ids) }
+            .freeze()
+            .toArray()
+        
+        return targets
+    }
+    
     internal func finished(_ id: String, url: URL) {
+        guard url.isFileURL, !url.hasDirectoryPath else {
+            Logger.shared.log("Operation Complete (\(id))")
+            return
+        }
+        
         let realm = try! Realm()
         
         let target = realm
@@ -125,10 +144,10 @@ extension SDM {
             Logger.shared.warn("Trying to update a download that does not exist (\(id))", CONTEXT)
             return
         }
-        try! realm.safeWrite {
-            target.path = url.absoluteString
-        }
         
+        try! realm.safeWrite {
+            target.archive = url.lastPathComponent
+        }
         Logger.shared.log("Operation Complete (\(id))")
     }
 }
@@ -143,12 +162,32 @@ extension SDM {
     func pause(ids: [String]) {
         update(ids: ids, status: .paused)
         pausedTasks = pausedTasks.union(ids)
-
     }
 
     func cancel(ids: [String]) {
+        let collection = get(ids)
+        let completed = collection
+            .filter { $0.status == .completed }
+            .map(\.id)
+        let archives = collection.compactMap(\.archive)
+
         update(ids: ids, status: .cancelled)
+        
+        archivesMarkedForDeletion = archivesMarkedForDeletion.union(archives)
+        foldersMarkedForDeletion = foldersMarkedForDeletion.union(completed)
         cancelledTasks = cancelledTasks.union(ids)
+    }
+    
+    internal func delete(ids: [String]) {
+        let realm = try! Realm()
+        
+        let targets = realm
+            .objects(SourceDownload.self)
+            .where { $0.id.in(ids) }
+        
+        try! realm.safeWrite {
+            realm.delete(targets)
+        }
     }
 }
 
@@ -167,6 +206,41 @@ extension SDM {
         
         try! realm.safeWrite {
             download.text = text
+        }
+    }
+}
+
+// MARK: File Removal
+extension SDM {
+    internal func buildArchive( _ name: String) -> URL {
+       directory
+            .appendingPathComponent("Archives", isDirectory: true)
+            .appendingPathComponent(name)
+    }
+    
+    internal func removeArchive(at url: URL) {
+        guard url.exists else {
+            Logger.shared.warn("Trying to remove a file that does not exist, \(url.fileName)", CONTEXT)
+            return
+        }
+        
+        do {
+            try FileManager.default.removeItem(at: url)
+        } catch {
+            Logger.shared.error(error, CONTEXT)
+        }
+    }
+    
+    internal func removeDirectory(at url: URL) {
+        guard url.exists, url.hasDirectoryPath else {
+            Logger.shared.warn("Trying to remove a file that does not exist, \(url.fileName)", CONTEXT)
+            return
+        }
+        
+        do {
+            try FileManager.default.removeItem(at: url)
+        } catch {
+            Logger.shared.error(error, CONTEXT)
         }
     }
 }

@@ -9,14 +9,14 @@ import Foundation
 import RealmSwift
 
 
-final class SourceDownload : Object {
+final class SourceDownload : Object, Identifiable {
     @Persisted(primaryKey: true) var id : String
     @Persisted var dateAdded: Date
-    @Persisted var status: DownloadStatus
+    @Persisted(indexed: true) var status: DownloadStatus
     
     @Persisted var chapter: StoredChapter?
     @Persisted var content: StoredContent?
 
     @Persisted var text: String?
-    @Persisted var path: String?
+    @Persisted var archive: String?
 }

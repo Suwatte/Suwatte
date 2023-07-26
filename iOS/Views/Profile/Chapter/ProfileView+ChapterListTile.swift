@@ -13,7 +13,7 @@ struct ChapterListTile: View {
     var isCompleted: Bool
     var isNewChapter: Bool
     var progress: Double?
-    var download: ICDMDownloadObject?
+    var download: DownloadStatus?
     var isLinked: Bool
     var showLanguageFlag: Bool
     var showDate: Bool
@@ -121,8 +121,8 @@ struct ChapterListTile: View {
 
     @ViewBuilder
     var DownloadIndicatorView: some View {
-        if let download = download {
-            DownloadIndicator(download: download)
+        if let download {
+            DownloadIndicator(id: chapter.id, status: download)
         }
     }
 
@@ -136,11 +136,12 @@ struct ChapterListTile: View {
 }
 
 struct DownloadIndicator: View {
-    @ObservedRealmObject var download: ICDMDownloadObject
-    @State var state: ICDM.ActiveDownloadState?
+    var id: String
+    var status: DownloadStatus
+    @State var state: SDM.DownloadState?
 
     var size: CGFloat {
-        download.status == .completed ? 8 : 15
+        status == .completed ? 8 : 15
     }
 
     @ViewBuilder
@@ -176,7 +177,7 @@ struct DownloadIndicator: View {
 
     var body: some View {
         Group {
-            switch download.status {
+            switch status {
             case .active:
                 ACTIVE_VIEW
             case .queued, .idle:
@@ -207,16 +208,13 @@ struct DownloadIndicator: View {
         }
         .frame(width: size, height: size, alignment: .center)
         .opacity(0.80)
-        .onReceive(ICDM.shared.activeDownloadPublisher) { val in
-            guard let val = val else {
+        .onReceive(SDM.shared.activeDownload) { val in
+            guard let val = val, val.0 == id else {
                 state = nil
                 return
             }
-
-            if ICDM.shared.generateID(of: val.0) == download._id {
-                withAnimation {
-                    state = val.1
-                }
+            withAnimation {
+                state = val.1
             }
         }
     }

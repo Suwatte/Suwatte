@@ -87,17 +87,11 @@ class STTHelpers {
                 return .failed(error)
             }
         case .EXTERNAL:
-            // Get from ICDM
+            // Get from SDM
             do {
-                let download = try ICDM.shared.getCompletedDownload(for: chapter.id)
-                if let download = download {
-                    let obj = StoredChapterData()
-                    obj.chapter = chapter.toStored()
-                    obj.text = download.text
-                    if let urls = download.urls {
-                        obj.urls = urls
-                    }
-                    return .loaded(obj)
+                let data = try await SDM.shared.getChapterData(for: chapter.id)
+                if let data {
+                    return .loaded(data)
                 }
             } catch {
                 return .failed(error)

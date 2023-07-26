@@ -288,7 +288,7 @@ extension DownloadsQueueView {
         ListTile(chapter: chapter,
                  isCompleted: false,
                  isNewChapter: false,
-                 download: download,
+                 download: nil,
                  isLinked: false,
                  showLanguageFlag: source?.ablityNotDisabled(\.disableLanguageFlags) ?? false,
                  showDate: source?.ablityNotDisabled(\.disableChapterDates) ?? false)
