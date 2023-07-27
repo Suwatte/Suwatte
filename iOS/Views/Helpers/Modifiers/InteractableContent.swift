@@ -25,7 +25,7 @@ struct InteractableContent: ViewModifier {
 
 typealias HighlightIdentifier = (sourceId: String, entry: DaisukeEngine.Structs.Highlight)
 struct InteractableContainer: ViewModifier {
-    @State var isActive = false
+    @State private var isActive = false
     @Binding var selection: HighlightIdentifier?
     func body(content: Content) -> some View {
         content

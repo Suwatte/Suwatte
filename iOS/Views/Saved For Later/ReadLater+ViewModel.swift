@@ -6,6 +6,7 @@
 //
 
 import Combine
+import SwiftUI
 import Foundation
 import RealmSwift
 
@@ -29,27 +30,41 @@ extension LibraryView.ReadLaterView {
             }
         }
 
-        @Published var library: Results<LibraryEntry>?
-        @Published var readLater: Results<ReadLater>?
+        @Published var library = Set<String>()
+        @Published var readLater =  [ReadLater]()
+        
+        @Published var initialFetchComplete = false
+        @Published var selection: HighlightIdentifier?
 
         private var libraryNotificationToken: NotificationToken?
         private var readLaterNotificationToken: NotificationToken?
 
         func observe() {
+            disconnect()
             let realm = try! Realm()
 
             let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
             libraryNotificationToken = realm
                 .objects(LibraryEntry.self)
                 .where { $0.content != nil && $0.isDeleted == false }
-                .observe { [weak self] result in
+                .observe { result in
                     switch result {
                     case let .error(error):
-                        Logger.shared.error("\(error)")
+                        Logger.shared.error("\(error)", "ReadLater")
                     case let .initial(results):
-                        self?.library = results.freeze()
+                        let ids = Set(results.map(\.id))
+                        Task { @MainActor in
+                            withAnimation {
+                                self.library = ids
+                            }
+                        }
                     case let .update(results, _, _, _):
-                        self?.library = results.freeze()
+                        let ids = Set(results.map(\.id))
+                        Task { @MainActor in
+                            withAnimation {
+                                self.library = ids
+                            }
+                        }
                     }
                 }
 
@@ -63,14 +78,30 @@ extension LibraryView.ReadLaterView {
             }
 
             readLaterNotificationToken = readL
-                .observe { [weak self] result in
+                .observe { result in
                     switch result {
                     case let .error(error):
                         Logger.shared.error("\(error)")
                     case let .initial(results):
-                        self?.readLater = results.freeze()
+                        let items  = results.freeze().toArray()
+                        Task { @MainActor in
+                            withAnimation {
+                                self.readLater = items
+                                if !self.initialFetchComplete {
+                                    self.initialFetchComplete.toggle()
+                                }
+                            }
+                        }
                     case let .update(results, _, _, _):
-                        self?.readLater = results.freeze()
+                        let items  = results.freeze().toArray()
+                        Task { @MainActor in
+                            withAnimation {
+                                self.readLater = items
+                                if !self.initialFetchComplete {
+                                    self.initialFetchComplete.toggle()
+                                }
+                            }
+                        }
                     }
                 }
         }
@@ -81,27 +112,6 @@ extension LibraryView.ReadLaterView {
 
             readLaterNotificationToken?.invalidate()
             readLaterNotificationToken = nil
-        }
-
-        func refresh() {
-            guard let library = library else {
-                return
-            }
-            let targets = library.compactMap { $0.content }.map { ($0.contentId, $0.sourceId) } as [(String, String)]
-            ToastManager.shared.loading = true
-            Task {
-                for content in targets {
-                    await DataManager.shared.refreshStored(contentId: content.0, sourceId: content.1)
-                }
-                await MainActor.run {
-                    ToastManager.shared.loading = false
-                    ToastManager.shared.info("Database Refreshed Successfully")
-                }
-            }
-        }
-
-        var isLoading: Bool {
-            library == nil || readLater == nil
         }
     }
 }

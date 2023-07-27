@@ -131,9 +131,6 @@ extension DataManager {
             realm.add(obj, update: .modified)
         }
 
-        // Get Ids
-        let anilistId = content.trackerInfo["al"]
-
         // Run Addition Event
         guard let source, source.intents.contentEventHandler else {
             return true
