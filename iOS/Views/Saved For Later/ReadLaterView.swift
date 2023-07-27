@@ -17,17 +17,15 @@ extension LibraryView {
         @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
         @StateObject var model = ViewModel()
         var body: some View {
-            
             ZStack {
                 CollectionView()
                     .opacity(!model.readLater.isEmpty && model.initialFetchComplete ? 1 : 0)
-                
+
                 NoResultsView()
                     .opacity(model.readLater.isEmpty && model.initialFetchComplete ? 1 : 0)
 
                 ProgressView()
                     .opacity(model.readLater.isEmpty && !model.initialFetchComplete ? 1 : 0)
-            
             }
             .animation(.default, value: model.library)
             .animation(.default, value: model.readLater)

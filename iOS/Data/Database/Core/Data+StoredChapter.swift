@@ -118,7 +118,7 @@ extension DataManager {
         }
         .sorted(by: \.index, ascending: true)
     }
-    
+
     func getStoredChapter(_ id: String) -> StoredChapter? {
         let realm = try! Realm()
 

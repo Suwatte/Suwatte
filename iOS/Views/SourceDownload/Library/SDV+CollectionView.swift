@@ -5,19 +5,17 @@
 //  Created by Mantton on 2023-07-25.
 //
 
+import ASCollectionView
 import Foundation
 import SwiftUI
-import ASCollectionView
-
 
 extension SourceDownloadView {
-    
     struct CollectionView: View {
         @EnvironmentObject var model: ViewModel
         @AppStorage(STTKeys.TileStyle) var style = TileStyle.COMPACT
         @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
         @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
-        
+
         var body: some View {
             ASCollectionView(section: AS_SECTION)
                 .layout {
@@ -33,10 +31,7 @@ extension SourceDownloadView {
                 .onChange(of: style, perform: { _ in })
         }
     }
-    
-    
 }
-
 
 extension SourceDownloadView.CollectionView {
     var AS_SECTION: ASSection<Int> {
@@ -57,7 +52,7 @@ extension SourceDownloadView.CollectionView {
     func Cell(for idx: SourceDownloadIndex) -> some View {
         let sourceId = idx.content?.sourceId ?? ""
         let highlight = getHighlight(idx)
-        
+
         ZStack(alignment: .topTrailing) {
             NavigationLink {
                 ProfileView(entry: highlight, sourceId: sourceId)
@@ -67,11 +62,10 @@ extension SourceDownloadView.CollectionView {
             .buttonStyle(NeutralButtonStyle())
         }
     }
-    
-    
+
     func getHighlight(_ idx: SourceDownloadIndex) -> DSKCommon.Highlight {
         let entry = idx.content ?? StoredContent()
-        
+
         var highlight = entry.toHighlight()
         highlight.subtitle = "\(idx.count) Chapter(s)"
         return highlight

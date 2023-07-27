@@ -290,7 +290,6 @@ public extension Binding where Value: Equatable {
     }
 }
 
-
 extension SettingsView {
     struct DownloadsSection: View {
         @Preference(\.archiveSourceDownload) var archive

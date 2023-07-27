@@ -16,7 +16,7 @@ struct SourceDownloadQueueView: View {
             ListView
                 .opacity(!model.data.isEmpty || activeDownload != nil && model.initialDataFetchComplete ? 1 : 0)
             NoResultsView()
-                .opacity(model.data.isEmpty && activeDownload == nil  && model.initialDataFetchComplete ? 1 : 0)
+                .opacity(model.data.isEmpty && activeDownload == nil && model.initialDataFetchComplete ? 1 : 0)
             ProgressView()
                 .opacity(model.data.isEmpty && activeDownload == nil && !model.initialDataFetchComplete ? 1 : 0)
         }
@@ -27,8 +27,7 @@ struct SourceDownloadQueueView: View {
         .onDisappear(perform: model.stop)
         .onReceive(SDM.shared.activeDownload, perform: didRecievePub(_:))
     }
-    
-    
+
     var ListView: some View {
         List {
             // Active View
@@ -38,15 +37,14 @@ struct SourceDownloadQueueView: View {
                 Text("Active")
             }
             .headerProminence(.increased)
-            
-            
+
             ForEach(model.data, id: \.first?.content?.id) { group in
                 let content = group.first?.content ?? StoredContent()
                 ContentGroup(content: content, entries: group)
             }
         }
     }
-    
+
     struct NoResultsView: View {
         var body: some View {
             VStack(spacing: 3.5) {
@@ -59,18 +57,17 @@ struct SourceDownloadQueueView: View {
             }
             .foregroundColor(.gray)
         }
-        
     }
 }
 
-
 // MARK: Content Grou
+
 typealias SDQV = SourceDownloadQueueView
 extension SDQV {
     struct ContentGroup: View {
         let content: StoredContent
         let entries: [SourceDownload]
-        
+
         var body: some View {
             Section {
                 Header(content: content, downloads: entries)
@@ -79,21 +76,21 @@ extension SDQV {
                 }
             }
         }
-        
     }
 }
 
 // MARK: Header
+
 extension SDQV {
     struct Header: View {
         let content: StoredContent
         let downloads: [SourceDownload]
         var body: some View {
-            HStack (alignment: .top, spacing: 5) {
-                STTImageView(url: URL(string: content.cover) ,identifier: content.ContentIdentifier)
+            HStack(alignment: .top, spacing: 5) {
+                STTImageView(url: URL(string: content.cover), identifier: content.ContentIdentifier)
                     .frame(width: 60, height: 1.5 * 60)
                     .cornerRadius(7)
-                VStack (alignment: .leading) {
+                VStack(alignment: .leading) {
                     Text(content.title)
                         .font(.subheadline)
                         .fontWeight(.semibold)
@@ -106,17 +103,17 @@ extension SDQV {
                 HeaderActionButton(ids: ids, statuses: statuses)
             }
         }
-        
+
         var subheadline: String {
             let count = downloads.count
             return "\(count) Chapter\(count == 1 ? "" : "s") Queued"
         }
-        
+
         var ids: [String] {
             downloads
                 .map(\.id)
         }
-        
+
         var statuses: [DownloadStatus] {
             downloads
                 .map(\.status)
@@ -126,6 +123,7 @@ extension SDQV {
 }
 
 // MARK: Cell
+
 extension SDQV {
     struct Cell: View {
         let download: SourceDownload
@@ -137,13 +135,13 @@ extension SDQV {
                             isLinked: false,
                             showLanguageFlag: false,
                             showDate: false)
-            .modifier(CellActions(id: download.id, status: download.status))
+                .modifier(CellActions(id: download.id, status: download.status))
         }
     }
 }
 
-
 // MARK: Cell Actions
+
 extension SDQV {
     struct CellActions: ViewModifier {
         let id: String
@@ -180,6 +178,7 @@ extension SDQV {
 }
 
 // MARK: Header Action
+
 extension SDQV {
     struct HeaderActionButton: View {
         let ids: [String]
@@ -195,7 +194,7 @@ extension SDQV {
                         Label("Retry Failing", systemImage: "arrow.counterclockwise")
                     }
                 }
-                
+
                 if hasPaused {
                     Button {
                         Task {
@@ -205,7 +204,7 @@ extension SDQV {
                         Label("Resume Paused", systemImage: "play")
                     }
                 }
-                
+
                 if hasQueued {
                     Button {
                         Task {
@@ -215,7 +214,7 @@ extension SDQV {
                         Label("Pause Queued", systemImage: "pause")
                     }
                 }
-                
+
                 if hasHighlightedState {
                     Divider()
                 }
@@ -226,30 +225,30 @@ extension SDQV {
                 } label: {
                     Label("Cancel All", systemImage: "xmark")
                 }
-                
+
             } label: {
                 Image(systemName: "ellipsis.circle")
                     .font(.headline)
             }
         }
-        
+
         var hasFailing: Bool {
             statuses.contains(.failing)
         }
+
         var hasPaused: Bool {
             statuses.contains(.paused)
         }
-        
+
         var hasQueued: Bool {
             statuses.contains(.queued)
         }
-        
+
         var hasHighlightedState: Bool {
             hasFailing || hasPaused || hasQueued
         }
     }
 }
-
 
 // MARK: Active Chapter View
 
@@ -264,18 +263,18 @@ extension SDQV {
             }
             return
         }
-        
+
         let id = info.0
         let state = info.1
-        
+
         if id == activeDownload?.id {
             withAnimation {
                 activeDownloadState = state
             }
-            
+
             return
         }
-        
+
         guard let target = DataManager.shared.getActiveDownload(id) else {
             withAnimation {
                 activeDownload = nil
@@ -283,15 +282,16 @@ extension SDQV {
             }
             return
         }
-        
+
         withAnimation {
             activeDownload = target
             activeDownloadState = state
         }
     }
 }
+
 extension SDQV {
-    struct ActiveDownloadView : View {
+    struct ActiveDownloadView: View {
         var download: SourceDownload?
         var downloadState: SDM.DownloadState?
         var body: some View {
@@ -303,12 +303,11 @@ extension SDQV {
                     NoActiveDownloadView
                         .transition(.opacity)
                 }
-                
             }
             .frame(maxWidth: .infinity)
             .frame(alignment: .center)
         }
-        
+
         var NoActiveDownloadView: some View {
             VStack(spacing: 3.5) {
                 Text("⁽⁽ଘ( ˊωˋ )ଓ⁾⁾")
@@ -320,14 +319,13 @@ extension SDQV {
             }
             .foregroundColor(.gray)
         }
-        
-        
-        func CellHeader(_ content: StoredContent, _ chapter: StoredChapter) -> some View {
-            HStack (alignment: .center, spacing: 5) {
-                STTImageView(url: URL(string: content.cover) ,identifier: content.ContentIdentifier)
+
+        func CellHeader(_ content: StoredContent, _: StoredChapter) -> some View {
+            HStack(alignment: .center, spacing: 5) {
+                STTImageView(url: URL(string: content.cover), identifier: content.ContentIdentifier)
                     .frame(width: 60, height: 1.5 * 60)
                     .cornerRadius(7)
-                VStack (alignment: .leading) {
+                VStack(alignment: .leading) {
                     Text(content.title)
                         .font(.subheadline)
                         .fontWeight(.semibold)
@@ -341,7 +339,7 @@ extension SDQV {
                 StateView(downloadState!)
             }
         }
-        
+
         func StateView(_ state: SDM.DownloadState) -> some View {
             Group {
                 switch state {
@@ -367,11 +365,12 @@ extension SDQV {
             }
             .frame(width: 30, height: 30, alignment: .center)
         }
+
         @ViewBuilder
-        func Cell(_ download: SourceDownload, state: SDM.DownloadState) -> some View {
+        func Cell(_ download: SourceDownload, state _: SDM.DownloadState) -> some View {
             let content = download.content!
             let chapter = download.chapter!
-            
+
             CellHeader(content, chapter)
             ChapterListTile(chapter: chapter,
                             isCompleted: false,

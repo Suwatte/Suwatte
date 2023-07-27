@@ -362,7 +362,7 @@ extension LibraryView {
 }
 
 extension LibraryView {
-    struct DownloadSection : View {
+    struct DownloadSection: View {
         var body: some View {
             Section {
                 NavigationLink {
@@ -370,13 +370,13 @@ extension LibraryView {
                 } label: {
                     Label("Downloaded Titles", systemImage: "externaldrive.badge.checkmark")
                 }
-                
+
                 NavigationLink {
                     SourceDownloadQueueView()
                 } label: {
                     Label("Source Queue", systemImage: "list.bullet.below.rectangle")
                 }
-                
+
                 NavigationLink {
                     EmptyView()
                 } label: {

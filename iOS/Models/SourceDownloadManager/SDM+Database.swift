@@ -13,9 +13,9 @@ enum DownloadStatus: Int, PersistableEnum {
 }
 
 // MARK: Queue Helpers
+
 extension SDM {
-    
-    internal func fetchQueue() {
+    func fetchQueue() {
         let realm = try! Realm()
         let collection = realm
             .objects(SourceDownload.self)
@@ -23,11 +23,11 @@ extension SDM {
             .sorted(by: \.dateAdded, ascending: true)
             .freeze()
             .toArray()
-        
+
         setQueue(collection)
     }
-    
-    internal func update(ids: [String], status: DownloadStatus) {
+
+    func update(ids: [String], status: DownloadStatus) {
         let realm = try! Realm()
         let collection = realm
             .objects(SourceDownload.self)
@@ -40,7 +40,7 @@ extension SDM {
         }
         fetchQueue()
     }
-    
+
     func add(chapters: [String]) {
         let realm = try! Realm()
 
@@ -49,7 +49,6 @@ extension SDM {
             .objects(SourceDownload.self)
             .where { $0.id.in(chapters) && $0.status == .completed }
             .map(\.id) as [String]
-            
 
         // Get Stored Chapters
         let chapters = realm
@@ -57,17 +56,17 @@ extension SDM {
             .where { !$0.id.in(completed) } // Filter out Completed Downloads
             .where { $0.id.in(chapters) }
             .sorted(by: \.index, ascending: false)
-        
+
         // Get the selected contents
         let contentIDs = Set(chapters.map(\.contentIdentifier.id))
-        
+
         let contents = realm
             .objects(StoredContent.self)
             .where { $0.id.in(contentIDs) }
             .toArray()
-        
+
         // create dictionary of content in ID: OBJECT
-        let contentMap = Dictionary(uniqueKeysWithValues: contents.map { ($0.id, $0) } )
+        let contentMap = Dictionary(uniqueKeysWithValues: contents.map { ($0.id, $0) })
 
         // Create download objects for chapters
         let downloads = chapters
@@ -90,46 +89,45 @@ extension SDM {
             fetchQueue()
         }
     }
-    
-    internal func get(_ id: String) -> SourceDownload? {
+
+    func get(_ id: String) -> SourceDownload? {
         let realm = try! Realm()
-        
+
         let target = realm
             .objects(SourceDownload.self)
             .where { $0.id == id }
             .first
-        
+
         return target?.freeze()
     }
-    
-    internal func get(_ ids: [String]) -> [SourceDownload] {
+
+    func get(_ ids: [String]) -> [SourceDownload] {
         let realm = try! Realm()
-        
+
         let targets = realm
             .objects(SourceDownload.self)
             .where { $0.id.in(ids) }
             .freeze()
             .toArray()
-        
+
         return targets
     }
-    
-    internal func get(_ status: DownloadStatus) -> [SourceDownload] {
+
+    func get(_ status: DownloadStatus) -> [SourceDownload] {
         let realm = try! Realm()
-        
+
         let targets = realm
             .objects(SourceDownload.self)
             .where { $0.status == status }
             .freeze()
             .toArray()
-        
+
         return targets
     }
-    
-    internal func finished(_ id: String, url: URL) {
-        
+
+    func finished(_ id: String, url: URL) {
         let realm = try! Realm()
-        
+
         let target = realm
             .objects(SourceDownload.self)
             .where { $0.id == id }
@@ -138,7 +136,7 @@ extension SDM {
             Logger.shared.warn("Trying to update a download that does not exist (\(id))", CONTEXT)
             return
         }
-        
+
         // Point Archive
         if url.isFileURL, !url.hasDirectoryPath {
             try! realm.safeWrite {
@@ -149,7 +147,7 @@ extension SDM {
         if let content = target.content {
             updateIndex(of: content)
         }
-        
+
         Logger.shared.log("Operation Complete (\(id))")
     }
 }
@@ -160,7 +158,7 @@ extension SDM {
         update(ids: ids, status: .queued)
         pausedTasks = pausedTasks.subtracting(ids)
     }
-    
+
     func pause(ids: [String]) {
         update(ids: ids, status: .paused)
         pausedTasks = pausedTasks.union(ids)
@@ -174,34 +172,34 @@ extension SDM {
         let archives = collection.compactMap(\.archive)
 
         update(ids: ids, status: .cancelled)
-        
+
         archivesMarkedForDeletion = archivesMarkedForDeletion.union(archives)
         foldersMarkedForDeletion = foldersMarkedForDeletion.union(completed)
         cancelledTasks = cancelledTasks.union(ids)
-        
+
         if isIdle {
             clean()
         }
     }
-    
-    internal func delete(ids: [String]) {
+
+    func delete(ids: [String]) {
         let realm = try! Realm()
-        
+
         let targets = realm
             .objects(SourceDownload.self)
             .where { $0.id.in(ids) }
-        
+
         try! realm.safeWrite {
             realm.delete(targets)
         }
     }
-    
-    internal func reattach() {
+
+    func reattach() {
         // Called when restarted, requeue failing downloads
         let failing = get(.failing)
         let cancelled = get(.cancelled)
         let active = get(.active)
-        
+
         cancelledTasks = cancelledTasks.union(cancelled.map(\.id)) // Set cancelled tasks to cache, will be clean at next possible interval
         update(ids: active.map(\.id), status: .queued) // Update prior active tasks to now be requeued
         update(ids: failing.map(\.id), status: .queued) // update prior failing tasks to be requeued
@@ -209,18 +207,18 @@ extension SDM {
 }
 
 extension SDM {
-    internal func setText(_ id: String, _ text: String) {
+    func setText(_ id: String, _ text: String) {
         let realm = try! Realm()
         let download = realm
             .objects(SourceDownload.self)
-            .where { $0.id == id  }
+            .where { $0.id == id }
             .first
-        
+
         guard let download else {
             Logger.shared.warn("Trying to update a download that does not exist (\(id))", CONTEXT)
             return
         }
-        
+
         try! realm.safeWrite {
             download.text = text
         }
@@ -228,32 +226,33 @@ extension SDM {
 }
 
 // MARK: File Removal
+
 extension SDM {
-    internal func buildArchive( _ name: String) -> URL {
-       directory
+    func buildArchive(_ name: String) -> URL {
+        directory
             .appendingPathComponent("Archives", isDirectory: true)
             .appendingPathComponent(name)
     }
-    
-    internal func removeArchive(at url: URL) {
+
+    func removeArchive(at url: URL) {
         guard url.exists else {
             Logger.shared.warn("Trying to remove a file that does not exist, \(url.fileName)", CONTEXT)
             return
         }
-        
+
         do {
             try FileManager.default.removeItem(at: url)
         } catch {
             Logger.shared.error(error, CONTEXT)
         }
     }
-    
-    internal func removeDirectory(at url: URL) {
+
+    func removeDirectory(at url: URL) {
         guard url.exists, url.hasDirectoryPath else {
             Logger.shared.warn("Trying to remove a file that does not exist, \(url.fileName)", CONTEXT)
             return
         }
-        
+
         do {
             try FileManager.default.removeItem(at: url)
         } catch {
@@ -262,13 +261,10 @@ extension SDM {
     }
 }
 
-
-
-
 extension DataManager {
     func getActiveDownload(_ id: String) -> SourceDownload? {
         let realm = try! Realm()
-        
+
         return realm
             .objects(SourceDownload.self)
             .where { $0.content != nil && $0.chapter != nil }

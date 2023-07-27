@@ -146,7 +146,7 @@ final class Preferences {
 
     @UserDefault(STTKeys.DefaultPanelReadingMode)
     var defaultPanelReadingMode = ReadingMode.PAGED_COMIC
-    
+
     @UserDefault(STTKeys.MoveDownloadToArchive)
     var archiveSourceDownload = false
 }

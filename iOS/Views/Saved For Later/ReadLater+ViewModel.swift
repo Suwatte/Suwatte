@@ -6,9 +6,9 @@
 //
 
 import Combine
-import SwiftUI
 import Foundation
 import RealmSwift
+import SwiftUI
 
 extension LibraryView.ReadLaterView {
     final class ViewModel: ObservableObject {
@@ -31,8 +31,8 @@ extension LibraryView.ReadLaterView {
         }
 
         @Published var library = Set<String>()
-        @Published var readLater =  [ReadLater]()
-        
+        @Published var readLater = [ReadLater]()
+
         @Published var initialFetchComplete = false
         @Published var selection: HighlightIdentifier?
 
@@ -83,7 +83,7 @@ extension LibraryView.ReadLaterView {
                     case let .error(error):
                         Logger.shared.error("\(error)")
                     case let .initial(results):
-                        let items  = results.freeze().toArray()
+                        let items = results.freeze().toArray()
                         Task { @MainActor in
                             withAnimation {
                                 self.readLater = items
@@ -93,7 +93,7 @@ extension LibraryView.ReadLaterView {
                             }
                         }
                     case let .update(results, _, _, _):
-                        let items  = results.freeze().toArray()
+                        let items = results.freeze().toArray()
                         Task { @MainActor in
                             withAnimation {
                                 self.readLater = items

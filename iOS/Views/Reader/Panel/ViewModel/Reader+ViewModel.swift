@@ -54,7 +54,7 @@ extension ReaderView {
         let verticalTimerPublisher = PassthroughSubject<Void, Never>()
 
         // Additional Helpers
-        init(chapterList: [StoredChapter], openTo chapter: StoredChapter, title: String? = nil, pageIndex: Int? = nil, readingMode _: ReadingMode) {
+        init(chapterList: [StoredChapter], openTo chapter: StoredChapter, title: String? = nil, pageIndex: Int? = nil) {
             // Sort Chapter List by either sourceIndex or chapter number
             let sourceIndexAcc = chapterList.map { $0.index }.reduce(0, +)
             let sortedChapters = sourceIndexAcc > 0 ? chapterList.sorted(by: { $0.index > $1.index }) : chapterList.sorted(by: { $0.number > $1.number })

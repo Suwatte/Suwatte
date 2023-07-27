@@ -22,11 +22,11 @@ public extension Sequence {
 
 enum ChapterSortOption: Int, CaseIterable, Identifiable {
     case number, date, source
-    
+
     var id: Int {
         hashValue
     }
-    
+
     var description: String {
         switch self {
         case .number:
@@ -82,7 +82,7 @@ struct ChapterList: View {
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 EditButton()
-                
+
                 Menu {
                     Picker("Sort By", selection: $sortKey) {
                         ForEach(filterCases) {
@@ -134,36 +134,36 @@ struct ChapterList: View {
             doFilter()
         }
     }
-    
+
     var filterCases: [ChapterSortOption] {
         let removeDate = !model.source.ablityNotDisabled(\.disableChapterDates)
-        
+
         if removeDate {
             return ChapterSortOption.allCases.filter { $0 != .date }
         }
         return ChapterSortOption.allCases
     }
-    
+
     func handleReconnection() {
         DispatchQueue.main.async {
             model.setupObservers()
         }
     }
-    
+
     func genId(_ id: String, _ completed: Bool, _ status: DownloadStatus?) -> String {
         var id = id
-        
+
         id += completed.description
-        
+
         if let status {
             id += status.rawValue.description
         } else {
             id += "none"
         }
-        
+
         return id
     }
-    
+
     @ViewBuilder
     var BottomBar: some View {
         Menu("Select") {
@@ -189,7 +189,7 @@ struct ChapterList: View {
             Button("Reset Chapter Data", role: .destructive) { clearChapterData() }
         }
     }
-    
+
     func ChaptersView(_ chapters: [StoredChapter]) -> some View {
         List(chapters, id: \.self, selection: $selections) { chapter in
             let completed = isChapterCompleted(chapter)
@@ -211,7 +211,7 @@ struct ChapterList: View {
                                 showDate: model.source.ablityNotDisabled(\.disableChapterDates))
             }
             .buttonStyle(.plain)
-            
+
             .background(
                 Color.clear
                     .contextMenu {
@@ -225,7 +225,7 @@ struct ChapterList: View {
                             Button { mark(chapter: chapter, read: true, above: false) } label: {
                                 Label("As Read", systemImage: "eye.circle")
                             }
-                            
+
                             Button { mark(chapter: chapter, read: false, above: false) } label: {
                                 Label("As Unread", systemImage: "eye.slash.circle")
                             }
@@ -246,14 +246,14 @@ extension ChapterList {
             filterChapters(chapters: chapters)
         }
     }
-    
+
     func filterChapters(chapters: [StoredChapter]) {
         // Core filters
         var base = chapters
             .filter(filterDownloads(_:))
             .filter(filterProviders(_:))
             .filter(filterLanguages(_:))
-        
+
         switch sortKey {
         case .date:
             base = base
@@ -272,28 +272,28 @@ extension ChapterList {
                     return !(rhs.volume == nil && lhs.volume == nil) // In This case nil volumes are higher up the order
                 }
             }
-            
+
             if sortDesc { sortedV = sortedV.reversed() }
             base = sortedV
         }
-        
+
         Task { @MainActor in
             withAnimation {
                 visibleChapters = base
             }
         }
     }
-    
+
     func filterDownloads(_ chapter: StoredChapter) -> Bool {
         if !showOnlyDownloads { return true }
         return model.downloads[chapter.id] != nil
     }
-    
+
     func filterProviders(_ chapter: StoredChapter) -> Bool {
         if filteredProviders.isEmpty { return true }
         return chapter.providers.contains(where: { !filteredProviders.contains($0.id) })
     }
-    
+
     func filterLanguages(_ chapter: StoredChapter) -> Bool {
         guard let lang = chapter.language else { return true }
         return !filteredLanguages.contains(lang)
@@ -317,7 +317,7 @@ extension ChapterList {
             }
         }
     }
-    
+
     @ViewBuilder
     func ProviderView(_ chapter: StoredChapter) -> some View {
         if !chapter.providers.isEmpty {
@@ -344,21 +344,21 @@ extension ChapterList {
     func isChapterCompleted(_ chapter: StoredChapter) -> Bool {
         model.readChapters.contains(chapter.number)
     }
-    
+
     func isChapterNew(_ chapter: StoredChapter) -> Bool {
         guard let date = model.actionState.marker?.date else {
             return false
         }
         return chapter.date > date
     }
-    
+
     func chapterProgress(_ chapter: StoredChapter) -> Double? {
         guard let id = model.actionState.chapter?.id, id == chapter.id else {
             return nil
         }
         return model.actionState.marker?.progress
     }
-    
+
     func getDownload(_ chapter: StoredChapter) -> DownloadStatus? {
         model.downloads[chapter.id]
     }
@@ -380,47 +380,47 @@ extension ChapterList {
             markAsUnread()
         }
     }
-    
+
     func selectAbove() {
         if selections.isEmpty { return }
-        
+
         let chapters = visibleChapters
         let target = selections.first
-        
+
         guard let target, let idx = chapters.firstIndex(of: target) else { return }
-        
+
         let sub = chapters[0 ... idx]
         selections.formUnion(sub)
     }
-    
+
     func selectBelow() {
         if selections.isEmpty { return }
-        
+
         let chapters = visibleChapters
         let target = selections.first
-        
+
         guard let target, let idx = chapters.firstIndex(of: target) else { return }
-        
+
         let sub = chapters[idx...]
         selections.formUnion(sub)
     }
-    
+
     func selectAll() {
         let cs = visibleChapters
         selections = Set(cs)
     }
-    
+
     func deselectAll() {
         selections.removeAll()
     }
-    
+
     func fillRange() {
         if selections.isEmpty { return }
-        
+
         let cs = visibleChapters
-        
+
         var indexes = [Int]()
-        
+
         for c in selections {
             if let index = cs.firstIndex(of: c) {
                 indexes.append(index)
@@ -433,23 +433,23 @@ extension ChapterList {
         //
         selections = Set(cs[start ... end])
     }
-    
+
     func invertSelection() {
         let cs = visibleChapters
         selections = Set(cs.filter { !selections.contains($0) })
     }
-    
+
     func markAsRead() {
         DataManager.shared.bulkMarkChapters(for: model.sttIdentifier(), chapters: Array(selections))
         deselectAll()
         didMark()
     }
-    
+
     func markAsUnread() {
         DataManager.shared.bulkMarkChapters(for: model.sttIdentifier(), chapters: Array(selections), markAsRead: false)
         deselectAll()
     }
-    
+
     func addToDownloadQueue() {
         let ids = Array(selections).map(\.id)
         Task {
@@ -457,7 +457,7 @@ extension ChapterList {
         }
         deselectAll()
     }
-    
+
     func removeDownload() {
         let ids = Array(selections).map(\.id)
         Task {
@@ -465,14 +465,14 @@ extension ChapterList {
         }
         deselectAll()
     }
-    
+
     func clearChapterData() {
         selections.forEach {
             DataManager.shared.resetChapterData(forId: $0.id)
         }
         deselectAll()
     }
-    
+
     func didMark() { // This is called before the notification is delivered to for model `readChapters` property to update
         let maxRead = DataManager
             .shared
@@ -487,13 +487,11 @@ extension ChapterList {
     }
 }
 
-
 extension ChapterList {
-    
-    struct DownloadContextView : View {
+    struct DownloadContextView: View {
         let id: String
         let status: DownloadStatus
-        var body: some View  {
+        var body: some View {
             Group {
                 switch status {
                 case .cancelled:
@@ -520,7 +518,7 @@ extension ChapterList {
                             Task {
                                 await SDM.shared.cancel(ids: [id])
                             }
-                            
+
                         } label: {
                             Label("Cancel Download", systemImage: "x.circle")
                         }
@@ -544,9 +542,10 @@ extension ChapterList {
                     Button {
                         Task {
                             await SDM.shared.resume(ids: [id])
-                        }                    } label: {
-                            Label("Retry Download", systemImage: "arrow.counterclockwise.circle")
                         }
+                    } label: {
+                        Label("Retry Download", systemImage: "arrow.counterclockwise.circle")
+                    }
                     Button(role: .destructive) {
                         Task {
                             await SDM.shared.cancel(ids: [id])

@@ -11,21 +11,20 @@ struct SourceDownloadView: View {
     @StateObject var model = ViewModel()
     @AppStorage(STTKeys.DownloadsSortLibrary) var sortOption: SortOption = .downloadCount
     @State var isAscending = true
-    
+
     var body: some View {
         ZStack {
             CollectionView()
                 .opacity(!model.entries.isEmpty && model.initialFetchComplete ? 1 : 0) // Work is complete and there are results
                 .transition(.opacity)
-            
+
             ProgressView()
                 .opacity(model.working && model.entries.isEmpty && !model.initialFetchComplete ? 1 : 0) // Work is not complete and there are no results
                 .transition(.opacity)
-            
+
             NoResultsView()
                 .opacity(!model.working && model.entries.isEmpty && model.initialFetchComplete ? 1 : 0) // work is complete and there are no results
                 .transition(.opacity)
-            
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -71,7 +70,6 @@ struct SourceDownloadView: View {
     }
 }
 
-
 extension SourceDownloadView {
     struct NoResultsView: View {
         @EnvironmentObject var model: ViewModel
@@ -87,7 +85,7 @@ extension SourceDownloadView {
             }
             .foregroundColor(.gray)
         }
-        
+
         var isSearching: Bool {
             !model.text.isEmpty
         }
@@ -97,7 +95,7 @@ extension SourceDownloadView {
 extension SourceDownloadView {
     enum SortOption: Int, CaseIterable, Identifiable {
         case title, downloadCount, dateAdded
-        
+
         var description: String {
             switch self {
             case .downloadCount: return "Download Count"
@@ -105,13 +103,12 @@ extension SourceDownloadView {
             case .dateAdded: return "Date Downloaded"
             }
         }
-        
+
         var id: Int {
             return hashValue
         }
     }
 }
-
 
 struct CapsuleBadge: View {
     var text: String

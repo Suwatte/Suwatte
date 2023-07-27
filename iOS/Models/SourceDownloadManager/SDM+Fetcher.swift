@@ -7,11 +7,10 @@
 
 import Foundation
 
-
 extension SDM {
-    internal func getImages(id: String) async throws -> (urls: [URL], raws: [Data], text: String?) {
+    func getImages(id: String) async throws -> (urls: [URL], raws: [Data], text: String?) {
         let identifier = parseID(id)
-        
+
         let source = try DSK.shared.getContentSource(id: identifier.source)
 
         let data = try await source.getChapterData(contentId: identifier.content, chapterId: identifier.chapter)

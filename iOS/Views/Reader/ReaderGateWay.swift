@@ -18,7 +18,7 @@ struct ReaderGateWay: View {
     var body: some View {
         Group {
             if readingMode.isPanelMode {
-                ReaderView(model: .init(chapterList: chapterList, openTo: openTo, title: title, pageIndex: pageIndex, readingMode: readingMode))
+                ReaderView(model: .init(chapterList: chapterList, openTo: openTo, title: title, pageIndex: pageIndex))
             } else if readingMode == .WEB {
                 WebReader(chapter: openTo)
             } else {

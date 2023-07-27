@@ -87,13 +87,11 @@ class BackupManager: ObservableObject {
                 .objects(SourceDownloadIndex.self)
                 .where { $0.count > 0 && $0.content != nil }
                 .compactMap(\.content?.id) as [String]
-            
+
             let downloadedChapters = realm
                 .objects(SourceDownload.self)
                 .where { $0.chapter != nil && $0.status != .cancelled }
                 .compactMap(\.chapter?.id) as [String]
-
-
 
             realm.objects(StoredContent.self).where { !$0.id.in(downloadedTitles) }.setValue(true, forKey: "isDeleted")
             realm.objects(StoredChapter.self).where { !$0.id.in(downloadedChapters) }.setValue(true, forKey: "isDeleted")

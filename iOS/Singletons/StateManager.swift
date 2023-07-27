@@ -22,7 +22,7 @@ final class StateManager: ObservableObject {
     let readerClosedPublisher = PassthroughSubject<Void, Never>()
     @Published var readerState: ReaderState?
     @Published var titleHasCustomThumbs: Set<String> = []
-    
+
     /// This is incremented when a grid related setting is changes
     @Published var gridLayoutDidChange = 0
 

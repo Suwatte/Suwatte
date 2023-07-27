@@ -5,10 +5,11 @@
 //  Created by Mantton on 2023-07-26.
 //
 
-import SwiftUI
 import ASCollectionView
+import SwiftUI
 
 // MARK: Collection
+
 extension LibraryView.ReadLaterView {
     struct CollectionView: View {
         @EnvironmentObject var model: ViewModel
@@ -29,31 +30,30 @@ extension LibraryView.ReadLaterView {
             .animateOnDataRefresh(true)
             .ignoresSafeArea(.keyboard, edges: .all)
         }
-        
-        
+
         var CollectionViewSection: ASSection<Int> {
             .init(id: 0,
                   data: model.readLater,
-                  contextMenuProvider: contextMenuProvider) { entry, _ in
+                  contextMenuProvider: contextMenuProvider)
+            { entry, _ in
                 Cell(data: entry)
             }
         }
     }
 }
 
-
 // MARK: Cell
+
 extension LibraryView.ReadLaterView {
-    
     struct Cell: View {
         @EnvironmentObject var model: ViewModel
         let data: ReadLater
-        
+
         // Computed
         var highlight: Highlight { data.content!.toHighlight() }
         var sourceId: String { data.content!.sourceId }
         var inLibrary: Bool { model.library.contains(data.id) }
-        
+
         // Body
         var body: some View {
             DefaultTile(entry: highlight, sourceId: sourceId)
@@ -64,6 +64,3 @@ extension LibraryView.ReadLaterView {
         }
     }
 }
-
-
-
