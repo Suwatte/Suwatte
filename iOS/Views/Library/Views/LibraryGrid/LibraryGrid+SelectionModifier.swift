@@ -17,7 +17,7 @@ extension LibraryView.LibraryGrid {
             case collections, flags, migrate
         }
 
-        var entries: Results<LibraryEntry>
+        var entries: [LibraryEntry]
         @State var selectionOption: SelectionOption?
         @State var confirmRemoval = false
         @EnvironmentObject var model: ViewModel

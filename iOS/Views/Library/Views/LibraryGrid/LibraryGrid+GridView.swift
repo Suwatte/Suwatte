@@ -11,12 +11,11 @@ import SwiftUI
 
 extension LibraryView.LibraryGrid {
     struct Grid: View {
-        var entries: Results<LibraryEntry>
+        var entries: [LibraryEntry]
         var collection: LibraryCollection?
         @AppStorage(STTKeys.TileStyle) var style = TileStyle.COMPACT
         @EnvironmentObject var model: LibraryView.LibraryGrid.ViewModel
-        @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
-        @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
+        @EnvironmentObject var appState: StateManager
 
         var body: some View {
             ASCollectionView(editMode: model.isSelecting) {
@@ -54,16 +53,13 @@ extension LibraryView.LibraryGrid {
                     EmptyView()
                 })
             }
-//            .layout(customLayout: {
-//                DynamicGridLayout()
-//            })
-            .layout(createCustomLayout: {
+            .layout {
                 DynamicGridLayout()
-            }, configureCustomLayout: { layout in
-                layout.invalidateLayout()
-            })
+            }
             .alwaysBounceVertical()
             .animateOnDataRefresh(true)
+            .shouldInvalidateLayoutOnStateChange(true)
+            .onChange(of: appState.gridLayoutDidChange, perform: { _ in })
             .ignoresSafeArea(.keyboard, edges: .all)
             .animation(.default, value: model.isSelecting)
             .animation(.default, value: model.selectedIndexes)

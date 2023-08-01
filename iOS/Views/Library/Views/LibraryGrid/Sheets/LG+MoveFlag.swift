@@ -14,7 +14,7 @@ enum SelectionState {
 
 extension LibraryView.LibraryGrid {
     struct MoveReadingFlag: View {
-        var entries: Results<LibraryEntry>
+        var entries: [LibraryEntry]
         @Environment(\.presentationMode) var presentationMode
         @EnvironmentObject var model: ViewModel
 

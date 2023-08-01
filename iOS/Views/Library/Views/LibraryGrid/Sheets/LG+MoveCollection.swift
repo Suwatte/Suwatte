@@ -10,7 +10,7 @@ import SwiftUI
 
 extension LibraryView.LibraryGrid {
     struct MoveCollectionsView: View {
-        var entries: Results<LibraryEntry>
+        var entries: [LibraryEntry]
         @EnvironmentObject var model: ViewModel
         @ObservedResults(LibraryCollection.self, where: { $0.isDeleted == false }) var collections
         @Environment(\.presentationMode) var presentationMode

@@ -18,7 +18,6 @@ extension LibraryView {
         // State
         @State var presentOrderOptions = false
         @State var presentMigrateSheet = false
-        @State var query = ""
 
         @ViewBuilder
         func conditional() -> some View {
@@ -38,7 +37,7 @@ extension LibraryView {
             }
         }
 
-        func observe(_: Any? = nil) {
+        func observe(_: AnyHashable? = nil) {
             model.observe(downloadsOnly: showDownloadsOnly, key: sortKey, order: sortOrder)
         }
 
@@ -120,14 +119,17 @@ extension LibraryView {
                 .navigationTitle(NAV_TITLE)
                 .navigationBarTitleDisplayMode(.inline)
                 .environmentObject(model)
-                .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: Text("Search \(NAV_TITLE)"))
+                .searchable(text: $model.query, placement: .navigationBarDrawer(displayMode: .always), prompt: Text("Search \(NAV_TITLE)"))
+                .onReceive(model.$query.debounce(for: .seconds(0.15), scheduler: DispatchQueue.main).dropFirst()) { _ in
+                    observe()
+                }
         }
 
         var NAV_TITLE: String {
             model.collection?.name ?? model.readingFlag?.description ?? "All Titles"
         }
 
-        func MainView(_ entries: Results<LibraryEntry>) -> some View {
+        func MainView(_ entries: [LibraryEntry]) -> some View {
             LibraryGrid.Grid(entries: entries, collection: model.collection)
                 .modifier(CollectionModifier(selection: $model.navSelection))
                 .modifier(SelectionModifier(entries: entries))

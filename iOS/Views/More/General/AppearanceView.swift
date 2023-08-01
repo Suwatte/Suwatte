@@ -53,6 +53,15 @@ struct AppearanceView: View {
         }
         .buttonStyle(.plain)
         .navigationTitle("Appearance")
+        .onChange(of: tileStyle) { _ in
+            StateManager.shared.gridLayoutDidChange += 1
+        }
+        .onChange(of: IPRP) { _ in
+            StateManager.shared.gridLayoutDidChange += 1
+        }
+        .onChange(of: IPRLS) { _ in
+            StateManager.shared.gridLayoutDidChange += 1
+        }
     }
 }
 
