@@ -125,7 +125,6 @@ extension RunnerListsView {
             .searchable(text: $text, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search...")
         }
 
-        @MainActor
         func load() async {
             loadable = .loading
             do {
@@ -135,8 +134,8 @@ extension RunnerListsView {
                 let data = try await DSK.shared.getRunnerList(at: url)
 
                 loadable = .loaded(data)
-                DataManager.shared.saveRunnerList(data, at: url)
-
+                let actor = await RealmActor()
+                await actor.saveRunnerList(data, at: url)
             } catch {
                 loadable = .failed(error)
             }

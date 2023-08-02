@@ -10,7 +10,7 @@ import SwiftUI
 struct ErrorView: View {
     var error: Error
     var runnerID: String?
-    var action: () -> Void
+    var action: () async -> Void
     var body: some View {
         Group {
             VStack(alignment: .center) {
@@ -40,7 +40,9 @@ struct ErrorView: View {
                     .multilineTextAlignment(.center)
             }
             Button {
-                action()
+                Task {
+                    await action()
+                }
             }
             label: {
                 Text("Retry")

@@ -24,7 +24,10 @@ extension RealmActor {
             target.flag = flag
         }
 
-        guard let id = target.content?.contentId, let sourceId = target.content?.sourceId, let source = DSK.shared.getSource(id: sourceId), source.intents.contentEventHandler else {
+        guard let id = target.content?.contentId,
+              let sourceId = target.content?.sourceId,
+              let source = await DSK.shared.getSource(id: sourceId),
+              source.intents.contentEventHandler else {
             return
         }
         Task {
@@ -51,7 +54,7 @@ extension RealmActor {
 
         let sourceIds = Set(targets.compactMap { $0.content?.sourceId })
         for id in sourceIds {
-            let source = DSK.shared.getSource(id: id)
+            let source = await DSK.shared.getSource(id: id)
 
             guard let source, source.intents.contentEventHandler else {
                 continue
@@ -73,8 +76,8 @@ extension RealmActor {
     }
 
     @discardableResult
-    func toggleLibraryState(for ids: ContentIdentifier) -> Bool {
-        let source = DSK.shared.getSource(id: ids.sourceId)
+    func toggleLibraryState(for ids: ContentIdentifier) async -> Bool {
+        let source = await DSK.shared.getSource(id: ids.sourceId)
         if let target = realm.objects(LibraryEntry.self).first(where: { $0.id == ids.id }) {
             // Run Removal Event
             Task {
@@ -170,7 +173,7 @@ extension RealmActor {
         let grouped = Dictionary(grouping: ids, by: { $0.sourceId })
 
         for (key, value) in grouped {
-            let source = DSK.shared.getSource(id: key)
+            let source = await DSK.shared.getSource(id: key)
             guard let source, source.intents.contentEventHandler else { continue }
             Task {
                 do {

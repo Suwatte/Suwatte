@@ -11,7 +11,7 @@ import UIKit
 extension DSK {
     private func handleGetIdentifier(for url: String) async -> [ContentIdentifier] {
         var results = [ContentIdentifier]()
-        let sources = getActiveSources()
+        let sources = await getActiveSources()
         for source in sources {
             let result = try? await source.getIdentifiers(for: url)
             guard let result else { continue }
@@ -45,7 +45,7 @@ extension DSK {
 
         // Add Actions
         for result in results {
-            guard let source = getSource(id: result.sourceId) else {
+            guard let source = await getSource(id: result.sourceId) else {
                 continue
             }
             // Add Action

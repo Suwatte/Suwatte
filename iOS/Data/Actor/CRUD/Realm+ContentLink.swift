@@ -9,10 +9,10 @@ import Foundation
 import RealmSwift
 
 extension RealmActor {
-    func linkContent(_ parent: StoredContent, _ child: DSKCommon.Highlight, _ sourceId: String) async -> Bool {
+    func linkContent(_ parent: String, _ child: DSKCommon.Highlight, _ sourceId: String) async -> Bool {
         let id = ContentIdentifier(contentId: child.contentId, sourceId: sourceId).id
         await saveIfNeeded(child, sourceId)
-        return await linkContent(parent.id, id)
+        return await linkContent(parent, id)
     }
 
     func linkContent(_ one: String, _ two: String) async -> Bool {
@@ -47,17 +47,17 @@ extension RealmActor {
         return true
     }
 
-    func unlinkContent(_ child: StoredContent, _ from: StoredContent) async {
+    func unlinkContent(_ child: String, _ from: String) async {
         let target = realm
             .objects(ContentLink.self)
-            .where { $0.ids.containsAny(in: [child.id, from.id]) && $0.isDeleted == false }
+            .where { $0.ids.containsAny(in: [child, from]) && $0.isDeleted == false }
             .first
 
         guard let target else {
             return
         }
         try! await realm.asyncWrite {
-            target.ids.remove(child.id)
+            target.ids.remove(child)
         }
     }
 

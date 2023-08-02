@@ -85,39 +85,4 @@ extension DataManager {
 
         return dict.filter { !$0.value.isEmpty }
     }
-
-    func getTrackerLinks(for id: String) -> [String: String] {
-        let dict = getLinkKeys(for: id)
-        var matches: [String: String] = [:]
-
-        for (key, value) in dict {
-            let trackers = DSK
-                .shared
-                .getActiveTrackers()
-                .filter { $0.links.contains(key) }
-
-            // Trackers that can handle this link
-            for tracker in trackers {
-                guard matches[tracker.id] == nil else { continue }
-                matches[tracker.id] = value
-            }
-        }
-
-        return matches
-    }
-
-    func updateTrackProgress(for id: String, progress: DSKCommon.TrackProgressUpdate) {
-        let links = getTrackerLinks(for: id)
-
-        for (trackerId, mediaId) in links {
-            guard let tracker = DSK.shared.getTracker(id: trackerId) else { continue }
-            Task.detached {
-                do {
-                    try await tracker.didUpdateLastReadChapter(id: mediaId, progress: progress)
-                } catch {
-                    Logger.shared.error(error, trackerId)
-                }
-            }
-        }
-    }
 }

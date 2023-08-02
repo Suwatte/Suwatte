@@ -62,7 +62,7 @@ struct ManageContentLinks: View {
     
     func unlink(_ title: StoredContent) async {
         let actor = await RealmActor()
-        await actor.unlinkContent(title, content)
+        await actor.unlinkContent(title.id, content.id)
         await fetch()
     }
 

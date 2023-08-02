@@ -9,6 +9,13 @@ import RealmSwift
 import Foundation
 
 extension RealmActor {
+    
+    func getLibraryCollection( for id: String) -> LibraryCollection? {
+        realm
+            .objects(LibraryCollection.self)
+            .where { $0.id == id && !$0.isDeleted }
+            .first
+    }
     func addCollection(withName name: String) async {
         try! await realm.asyncWrite {
             let collection = LibraryCollection()
@@ -18,21 +25,23 @@ extension RealmActor {
         }
     }
 
-    func reorderCollections(_ incoming: [LibraryCollection]) async {
-        for collection in incoming {
-            if let target = realm.objects(LibraryCollection.self).first(where: { $0.id == collection.id && collection.isDeleted == false }) {
-                try! await realm.asyncWrite {
-                    target.order = incoming.firstIndex(of: collection)!
-                }
+    func reorderCollections(_ incoming: [String]) async {
+        let collections = realm
+            .objects(LibraryCollection.self)
+            .where { !$0.isDeleted }
+        
+        try! await realm.asyncWrite {
+            for collection in collections {
+                collection.order = incoming.firstIndex(of: collection.id) ?? 999
+                
             }
         }
     }
 
-    func renameCollection(_ collection: LibraryCollection, _ name: String) async {
+    func renameCollection(_ collection: String, _ name: String) async {
+        let collection = getLibraryCollection(for: collection)
+        guard let collection else { return }
         try! await realm.asyncWrite {
-            guard let collection = collection.thaw() else {
-                return
-            }
             collection.name = name
         }
     }
@@ -40,7 +49,8 @@ extension RealmActor {
     func deleteCollection(id: String) async {
         let collection = realm
             .objects(LibraryCollection.self)
-            .first(where: { $0.isDeleted == false && $0.id == id })
+            .where { $0.id == id && !$0.isDeleted }
+            .first
 
         guard let collection else { return }
 

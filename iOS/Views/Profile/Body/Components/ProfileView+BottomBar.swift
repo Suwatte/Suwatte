@@ -179,8 +179,10 @@ extension ProfileView.Skeleton.BottomBar {
             }
 
             .onChange(of: inputImage) { val in
-                if let val = val {
-                    DataManager.shared.setCustomThumbnail(image: val, id: sttId.id)
+                guard let val else { return }
+                Task {
+                    let actor = await RealmActor()
+                    await actor.setCustomThumbnail(image: val, id: sttId.id)
                 }
             }
             .onChange(of: presentNextEntry, perform: { newValue in
@@ -212,7 +214,10 @@ extension ProfileView.Skeleton.BottomBar {
 
         var SaveForLaterButton: some View {
             Button {
-                DataManager.shared.toggleReadLater(sttId.sourceId, sttId.contentId)
+                Task {
+                    let actor = await RealmActor()
+                    await actor.toggleReadLater(sttId.sourceId, sttId.contentId)
+                }
             } label: {
                 Label(isSavedForLater ? "Remove from Read Later" : "Save For Later",
                       systemImage: isSavedForLater ? "circle.slash" : "clock")
@@ -244,7 +249,10 @@ extension ProfileView.Skeleton.BottomBar {
         var CustomThumbnailButton: some View {
             Button {
                 if hasCustomThumb {
-                    DataManager.shared.removeCustomThumbnail(id: sttId.id)
+                    Task {
+                        let actor = await RealmActor()
+                        await actor.removeCustomThumbnail(id: sttId.id)
+                    }
                 } else {
                     presentImageSheet.toggle()
                 }

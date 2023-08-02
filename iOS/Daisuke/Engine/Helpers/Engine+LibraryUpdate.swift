@@ -12,11 +12,7 @@ import RealmSwift
 
 extension DSK {
     func fetchLibraryUpdates() async -> Int {
-        let actor = await RealmActor()
-        let sources = await actor
-            .getSavedAndEnabledSources()
-            .compactMap { self.getSource(id: $0.id) }
-            .filter { $0.ablityNotDisabled(\.disableUpdateChecks) }
+        let sources = await getSourcesForUpdateCheck()
 
         // Fetch Update For Each Source
         let result = await withTaskGroup(of: Int.self) { group in
@@ -184,7 +180,7 @@ extension DSK {
     
     func checkLinked(title: StoredContent, min: Double?) async -> Bool {
         let actor = await RealmActor()
-        guard let source = DSK.shared.getSource(id: title.sourceId) else { return false }
+        guard let source = await DSK.shared.getSource(id: title.sourceId) else { return false }
         guard let chapters = try? await source.getContentChapters(contentId: title.contentId) else { return false }
         var marked: [String] = []
 

@@ -9,12 +9,30 @@ import Foundation
 import RealmSwift
 
 extension RealmActor {
+    func getReadLater(for id: String) -> ReadLater? {
+        realm
+            .objects(ReadLater.self)
+            .where { $0.id == id }
+            .where { $0.isDeleted == false }
+            .first
+    }
+    
+    func isSavedForLater(_ id: String) -> Bool {
+        
+        return !realm
+            .objects(ReadLater.self)
+            .where { $0.id == id }
+            .where { $0.isDeleted == false }
+            .isEmpty
+    }
+    
     func toggleReadLater(_ source: String, _ content: String) async {
         let id = ContentIdentifier(contentId: content, sourceId: source).id
-        if let obj = realm.objects(ReadLater.self).first(where: { $0.id == id && $0.isDeleted == false }) {
-            try! await realm.asyncWrite {
-                obj.isDeleted = true
-            }
+
+        let isSaved = isSavedForLater(id)
+        
+        if isSaved {
+            await removeFromReadLater(source, content: content)
             return
         }
 
@@ -22,48 +40,51 @@ extension RealmActor {
     }
 
     func removeFromReadLater(_ source: String, content: String) async {
-        guard let obj = realm.objects(ReadLater.self).first(where: { $0.content?.contentId == content && $0.content?.sourceId == source && $0.isDeleted == false }) else {
-            return
-        }
+        let id = ContentIdentifier(contentId: content, sourceId: source).id
+
+        guard let target = getReadLater(for: id) else { return }
 
         try! await realm.asyncWrite {
-            obj.isDeleted = true
+            target.isDeleted = true
         }
     }
 
     func addToReadLater(_ sourceID: String, _ contentID: String) async {
         // Get Stored Content
+
+        let content = getStoredContent(sourceID, contentID)
+
+        guard let content else {
+            await queryAndSaveForLater(sourceID, contentID)
+            return
+        }
         let obj = ReadLater()
+        obj.content = content
+        
+        try! await realm.asyncWrite {
+            realm.add(obj, update: .modified)
+        }
+    }
+    
+    func queryAndSaveForLater(_ sourceId: String, _ contentId: String) async {
+        guard let source = DSK.shared.getSource(id: sourceId) else {
+            Logger.shared.warn("Source not Found", "RealmActor")
+            return
+        }
+        
+        do {
+            let content = try await source.getContent(id: contentId)
+            let storedContent = try content.toStoredContent(withSource: sourceId)
 
-        let storedContent = realm.objects(StoredContent.self).first(where: { $0.contentId == contentID && $0.sourceId == sourceID })
-
-        if let storedContent = storedContent {
+            let obj = ReadLater()
             obj.content = storedContent
             try! await realm.asyncWrite {
-                realm.add(obj, update: .modified)
+                realm.add(storedContent, update: .modified)
+                obj.content = storedContent
+                realm.add(obj, update: .all)
             }
-            return
-        }
-
-        guard let source = DSK.shared.getSource(id: sourceID) else {
-            ToastManager.shared.error("[ReadLater] Source not Found")
-            return
-        }
-
-        Task {
-            do {
-                let content = try await source.getContent(id: contentID)
-                let storedContent = try content.toStoredContent(withSource: sourceID)
-
-                let realm = try Realm(queue: nil)
-                try! await realm.asyncWrite {
-                    realm.add(storedContent)
-                    obj.content = storedContent
-                    realm.add(obj, update: .all)
-                }
-            } catch {
-                ToastManager.shared.error(error)
-            }
+        } catch {
+            ToastManager.shared.error(error)
         }
     }
 }

@@ -13,7 +13,7 @@ import UIKit
 extension RealmActor {
     func setCustomThumbnail(image: UIImage, id: String) async {
         do {
-            let result = try STTImageProvider.shared.saveImage(image, for: id)
+            let result = try await STTImageProvider.shared.saveImage(image, for: id)
             let obj = CustomThumbnail()
             obj.id = id
             obj.file = CreamAsset.create(object: obj, propName: CustomThumbnail.FILE_KEY, url: result)

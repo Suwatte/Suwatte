@@ -123,7 +123,7 @@ extension StateManager {
         ToastManager.shared.loading = true
         Task {
             do {
-                let source = try DSK.shared.getContentSource(id: sourceId)
+                let source = try await DSK.shared.getContentSource(id: sourceId)
                 let context = try await source.provideReaderContext(for: item.contentId)
                 Task {
                     ToastManager.shared.loading = false

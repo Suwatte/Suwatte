@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-final class STTImageProvider {
+final actor STTImageProvider {
     static var shared = STTImageProvider()
 
     static let directory = FileManager.default.documentDirectory.appendingPathComponent("Thumbnails", isDirectory: true)
@@ -25,7 +25,7 @@ final class STTImageProvider {
         return filepath
     }
 
-    static func urlFor(id: String) -> URL {
+    func urlFor(id: String) -> URL {
         Self.directory.appendingPathComponent("\(id).jpg")
     }
 }

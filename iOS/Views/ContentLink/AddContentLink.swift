@@ -9,14 +9,15 @@ import SwiftUI
 
 struct AddContentLink: View {
     var content: StoredContent
-    @StateObject var model = SearchView.ViewModel()
+    @StateObject var model = SearchView.ViewModel(forLinking: true)
     @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
     @State private var selection: HighlightIdentifier?
     @State private var isPresenting = false
+    @State var sources: [JSCCS] = []
     @Environment(\.presentationMode) var presentationMode
     var body: some View {
         List {
-            ForEach(getSources(), id: \.id) { source in
+            ForEach(sources, id: \.id) { source in
                 SourceCell(source: source)
                     .listRowInsets(.init(top: 5, leading: 0, bottom: 20, trailing: 0))
                     .listRowSeparator(.hidden)
@@ -32,21 +33,17 @@ struct AddContentLink: View {
                 model.results.removeAll()
                 return
             }
-            model.makeRequests()
+            Task {
+                await model.makeRequests()
+            }
         }
-        .onAppear {
+        .task {
             model.query = content.title
-            model.makeRequests()
+            await model.getSources()
+            await model.makeRequests()
         }
     }
 
-    func getSources() -> [JSCCS] {
-        model
-            .sources
-            .filter { $0.id != content.sourceId }
-            .compactMap { try? DSK.shared.getContentSource(id: $0.id) }
-            .filter { $0.ablityNotDisabled(\.disableContentLinking) }
-    }
 
     @ViewBuilder
     func SourceCell(source: JSCCS) -> some View {
@@ -62,7 +59,7 @@ struct AddContentLink: View {
             } _: { error in
                 HStack {
                     Spacer()
-                    ErrorView(error: error, runnerID: id, action: { model.loadForSource(id: id) })
+                    ErrorView(error: error, runnerID: id, action: { await model.load(for: source) })
                     Spacer()
                 }
             } _: { value in
@@ -83,12 +80,14 @@ struct AddContentLink: View {
             Button("Cancel", role: .cancel) {}
             Button("Link") {
                 guard let selection else { return }
-                let result = DataManager.shared.linkContent(content, selection.entry, selection.sourceId)
-                presentationMode.wrappedValue.dismiss()
-
-                if result {
-                    ToastManager.shared.info("Linked Contents!")
+                Task {
+                    let actor = await RealmActor()
+                    let result = await actor.linkContent(content.id, selection.entry, selection.sourceId)
+                    if result {
+                        ToastManager.shared.info("Linked Contents!")
+                    }
                 }
+                presentationMode.wrappedValue.dismiss()               
             }
         } message: {
             if let selection {

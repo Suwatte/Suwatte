@@ -102,7 +102,7 @@ protocol JSCRunner: JSCContextProtocol {
     var intents: RunnerIntents { get }
     var environment: RunnerEnvironment { get }
     var configCache: [String: DSKCommon.DirectoryConfig] { get set }
-    init(value: JSValue) throws
+    init(value: JSValue) async throws
 }
 
 extension JSCRunner {

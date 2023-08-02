@@ -89,6 +89,14 @@ extension RealmActor {
             .where { $0.enabled == true && $0.isDeleted == false && $0.environment == .source }
             .sorted(by: [SortDescriptor(keyPath: "name", ascending: true)])
     }
+    
+    func getSearchableSources() -> [StoredRunnerObject] {
+        let disabledRunnerIDs: [String] = .init(rawValue: UserDefaults.standard.string(forKey: STTKeys.SourcesHiddenFromGlobalSearch) ?? "") ?? []
+        return getSavedAndEnabledSources()
+            .where { !$0.id.in(disabledRunnerIDs) }
+            .freeze()
+            .toArray()
+    }
 
     func getLibraryPageProviders() -> [StoredRunnerObject] {
         realm

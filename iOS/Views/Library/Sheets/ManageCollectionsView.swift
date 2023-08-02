@@ -55,15 +55,23 @@ extension MCV {
     }
 
     func move(from source: IndexSet, to destination: Int) {
-        var arr = Array(collections)
+        var arr = collections.map(\.id) as [String]
         arr.move(fromOffsets: source, toOffset: destination)
-        DataManager.shared.reorderCollections(arr)
+        
+        
+        Task {
+            let actor = await RealmActor()
+            await actor.reorderCollections(arr)
+        }
     }
 
     func delete(from idxs: IndexSet) {
         let ids = idxs.compactMap { collections.getOrNil($0)?.id }
         ids.forEach { id in
-            DataManager.shared.deleteCollection(id: id)
+            Task {
+                let actor = await RealmActor()
+                await actor.deleteCollection(id: id)
+            }
         }
     }
 }
@@ -94,8 +102,12 @@ extension MCV {
             if name.isEmpty {
                 return
             }
-            DataManager.shared.addCollection(withName: name)
+            let val = name
             name = ""
+            Task {
+                let actor = await RealmActor()
+                await actor.addCollection(withName: val)
+            }
         }
     }
 }
@@ -127,7 +139,10 @@ extension MCV {
                 if showDone {
                     Button("Done") {
                         if !name.isEmpty {
-                            DataManager.shared.renameCollection(collection, name)
+                            Task {
+                                let actor = await RealmActor()
+                                await actor.renameCollection(collection.id, name)
+                            }
                         }
                         resign()
                     }

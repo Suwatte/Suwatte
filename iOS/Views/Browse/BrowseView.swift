@@ -184,7 +184,7 @@ extension BrowseView {
                 for id in runnerIDs {
                     group.addTask {
                         do {
-                            let runner = try DSK.shared.getJSCRunner(id)
+                            let runner = try await DSK.shared.getJSCRunner(id)
                             guard runner.intents.browsePageLinkProvider else { return }
                             let links = try await runner.getBrowsePageLinks()
                             guard !links.isEmpty else { return }

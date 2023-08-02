@@ -12,7 +12,7 @@ import WebKit
 
 struct CloudFlareErrorView: View {
     var sourceID: String
-    var action: () -> Void
+    var action: () async -> Void
     @State var showSheet: Bool = false
     @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
@@ -46,7 +46,7 @@ struct CloudFlareErrorView: View {
             }
             .buttonStyle(PlainButtonStyle())
         }
-        .fullScreenCover(isPresented: $showSheet, onDismiss: { action() }) {
+        .fullScreenCover(isPresented: $showSheet, onDismiss: { Task { await action() }}) {
             NavigationView {
                 CloudFlareWebView(sourceID: sourceID)
                     .navigationBarTitle("Cloudflare Resolve", displayMode: .inline)
@@ -87,8 +87,9 @@ extension CloudFlareErrorView {
 
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
+            
             Task { @MainActor in
-                guard let source = DSK.shared.getSource(id: sourceID), let url = source.cloudflareResolutionURL, url.isHTTP else {
+                guard let source = await DSK.shared.getSource(id: sourceID), let url = source.cloudflareResolutionURL, url.isHTTP else {
                     StateManager.shared.alert(title: "Invalid Resolution URL", message: "The source failed to provide a valid url.")
                     return
                 }

@@ -16,8 +16,8 @@ struct TrackerManagementView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                ForEach(model.trackers, id: \.id) { tracker in
-                    let loadable = model.dict[tracker.id]!
+                ForEach(model.linkedTrackers, id: \.id) { tracker in
+                    let loadable = model.dict[tracker.id] ?? .idle
                     VStack {
                         HStack {
                             STTThumbView(url: tracker.thumbnailURL)
@@ -35,7 +35,7 @@ struct TrackerManagementView: View {
                 }
             }
             .task {
-                model.prepare()
+                await model.prepare()
             }
             .navigationTitle("Trackers")
             .navigationBarTitleDisplayMode(.inline)
@@ -47,17 +47,14 @@ struct TrackerManagementView: View {
                     }
                 }
             }
-            .fullScreenCover(isPresented: $presentSheet, onDismiss: model.prepare) {
+            .fullScreenCover(isPresented: $presentSheet, onDismiss: { Task { await model.prepare() }}) {
                 let titles = model.titles
-                let trackers = model.getTrackersWithoutLinks()
+                let trackers = model.unlinkedTrackers
                 AddTrackerLinkView(contentId: model.contentID, titles: titles, trackers: trackers)
                     .accentColor(accentColor)
                     .tint(accentColor) // For Invalid Tint on Appear
             }
             .environmentObject(model)
-            .task {
-                print(model.titles)
-            }
         }
         .toast()
     }
@@ -69,77 +66,89 @@ extension TrackerManagementView {
 
         var contentID: String
         var titles: [String]
-        @Published var dict: [String: Loadable<TrackItem>] = [:]
-
+        @MainActor @Published var dict: [String: Loadable<TrackItem>] = [:]
+        @MainActor @Published var linkedTrackers: [JSCCT] = []
+        @MainActor @Published var unlinkedTrackers: [JSCCT] = []
         private var matches: [String: String] = [:]
-        var trackers: [JSCCT] {
-            dict
-                .keys
-                .compactMap { DSK.shared.getTracker(id: $0) }
-                .sorted(by: \.name, descending: false)
-        }
+        
 
         init(id: String, _ titles: [String]) {
             contentID = id
             self.titles = titles
         }
-
-        func prepare() {
-            matches = DataManager.shared.getTrackerLinks(for: contentID)
-            for (key, _) in matches {
-                guard DSK.shared.getTracker(id: key) != nil else { continue }
-                dict[key] = .idle
+        
+        func loadTrackers (_ keys: [String]) async {
+            let data = await DSK.shared.getActiveTrackers()
+                
+            await MainActor.run {
+                self.linkedTrackers = data
+                    .filter{ keys.contains($0.id) }
+                self.unlinkedTrackers = data
+                    .filter{ !keys.contains($0.id) }
             }
+        }
 
-            Task {
-                await load()
+        func prepare() async {
+            let actor = await RealmActor()
+            matches = await actor.getTrackerLinks(for: contentID)
+            
+            await loadTrackers(Array(matches.keys))
+            
+            Task { @MainActor in
+                for tracker in linkedTrackers {
+                    Task { @MainActor in
+                        dict[tracker.id] = .idle
+                    }
+                }
             }
+            await load()
         }
 
         func load() async {
-            await withTaskGroup(of: Void.self, body: { group in
+            let engine = DSK.shared
+            await withTaskGroup(of: Void.self) { group in
                 for (key, value) in matches {
-                    guard let tracker = DSK.shared.getTracker(id: key) else { continue }
-                    Task { @MainActor in
-                        self.dict[key] = .loading
-                    }
-
+                    guard let tracker = await engine.getTracker(id: key) else { continue }
+                    
                     group.addTask {
-                        do {
-                            let trackItem = try await tracker.getTrackItem(id: value)
-                            await MainActor.run {
-                                withAnimation {
-                                    self.dict[key] = .loaded(trackItem)
-                                }
-                            }
-                        } catch {
-                            Logger.shared.error(error, tracker.id)
-                            await MainActor.run {
-                                withAnimation {
-                                    self.dict[key] = .failed(error)
-                                }
-                            }
-                        }
+                        await self.load(for: tracker, id: value)
                     }
                 }
+            }
 
-                for await _ in group {}
-            })
+        }
+        
+        func load(for tracker: JSCCT, id: String) async {
+            do {
+                let trackItem = try await tracker.getTrackItem(id: id)
+                Task { @MainActor in
+                    withAnimation {
+                        dict[tracker.id] = .loaded(trackItem)
+                    }
+                }
+            } catch {
+                Logger.shared.error(error, tracker.id)
+                Task { @MainActor in
+                    withAnimation {
+                        self.dict[tracker.id] = .failed(error)
+                    }
+                }
+            }
         }
 
-        func getTrackersWithoutLinks() -> [JSCCT] {
-            DSK
-                .shared
-                .getActiveTrackers()
-                .filter { !matches.keys.contains($0.id) }
-        }
-
-        func unlink(tracker: JSCCT) {
+        func unlink(tracker: JSCCT) async {
             let keys = tracker.links
-            keys.forEach { DataManager.shared.removeLinkKey(for: contentID, key: $0) }
+            let actor = await RealmActor()
+            await withTaskGroup(of: Void.self, body: { group in
+                for key in keys {
+                    await actor.removeLinkKey(for: contentID, key: key)
+                }
+            })
             matches.removeAll()
-            dict.removeAll()
-            prepare()
+            await MainActor.run {
+                dict.removeAll()
+            }
+            await prepare()
         }
     }
 }
@@ -215,7 +224,7 @@ extension TrackerManagementView {
                                 Button {
                                     trackerAction {
                                         try await tracker.beginTracking(id: item.id, status: .CURRENT)
-                                        model.prepare()
+                                        await model.prepare()
                                     }
                                 } label: {
                                     Label("Start Tracking", systemImage: "pin")
@@ -224,7 +233,9 @@ extension TrackerManagementView {
                             Divider()
                             Divider()
                             Button(role: .destructive) {
-                                model.unlink(tracker: tracker)
+                                Task {
+                                   await model.unlink(tracker: tracker)
+                                }
                             } label: {
                                 Label("Remove Link", systemImage: "trash")
                             }
@@ -306,7 +317,10 @@ extension TrackerManagementView {
                 .toolbar {
                     ToolbarItem {
                         Button("Add") {
-                            DataManager.shared.setTrackerLink(for: contentId, values: selections)
+                            Task {
+                                let actor = await RealmActor()
+                                await actor.setTrackerLink(for: contentId, values: selections)
+                            }
                             presentationMode.wrappedValue.dismiss()
                         }
                         .disabled(selections.isEmpty)

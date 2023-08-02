@@ -277,51 +277,47 @@ extension SearchView {
         // Get Sources Filtered for Global Search
         @Published var results: [String: Loadable<DSKCommon.PagedResult<DSKCommon.Highlight>>] = [:]
 
-        private var disabledSourceIds: [String] {
-            .init(rawValue: UserDefaults.standard.string(forKey: STTKeys.SourcesHiddenFromGlobalSearch) ?? "") ?? []
+        @Published var sources = [JSCCS]()
+        
+        private let isContentLinkModel: Bool
+        
+        init(forLinking: Bool = false) {
+            self.isContentLinkModel = forLinking
         }
 
-        var sources: [StoredRunnerObject] {
-            DataManager.shared.getSavedAndEnabledSources().filter { !disabledSourceIds.contains($0.id) }
+        func getSources () async {
+            let engine = DSK.shared
+            sources = await isContentLinkModel ? engine.getSourcesForLinking() : engine.getSourcesForSearching()
         }
 
-        func makeRequests() {
+        func makeRequests() async {
             results.removeAll()
-            let request = DSKCommon.DirectoryRequest(query: query, page: 1)
             // Add All Sources To Loading
             sources.forEach { source in
                 results[source.id] = .loading
-                Task { @MainActor in
-                    do {
-                        let controller = try DSK.shared.getContentSource(id: source.id)
-                        let data: DSKCommon.PagedResult<DSKCommon.Highlight> = try await controller.getDirectory(request: request)
-                        results[source.id] = .loaded(data)
-                    } catch {
-                        results[source.id] = .failed(error)
+            }
+            
+            await withTaskGroup(of: Void.self) { group in
+                for source in sources {
+                    group.addTask {
+                        await load(for: source)
                     }
                 }
             }
         }
 
-        func loadForSource(id: String) {
-            guard let source = sources.first(where: { $0.id == id }) else {
-                return
-            }
-            Task { @MainActor in
-                do {
-                    let request = DSKCommon.DirectoryRequest(query: query, page: 1)
-                    let controller = try DSK.shared.getContentSource(id: source.id)
-
-                    guard controller.ablityNotDisabled(\.disableContentLinking) else {
-                        results[source.id] = .loaded(.init(results: [], isLastPage: true))
-                        return
-                    }
-
-                    let data: DSKCommon.PagedResult<DSKCommon.Highlight> = try await controller.getDirectory(request: request)
+        func load(for source: JSCCS) async {
+            let request = DSKCommon.DirectoryRequest(query: query, page: 1)
+            do {
+                let data: DSKCommon.PagedResult<DSKCommon.Highlight> = try await source.getDirectory(request: request)
+                await MainActor.run {
                     results[source.id] = .loaded(data)
-                } catch {
+                }
+            } catch {
+                await MainActor.run {
                     results[source.id] = .failed(error)
                 }
+                Logger.shared.error(error, source.id)
             }
         }
     }

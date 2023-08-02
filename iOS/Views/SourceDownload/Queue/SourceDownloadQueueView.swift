@@ -25,7 +25,11 @@ struct SourceDownloadQueueView: View {
             model.watch()
         }
         .onDisappear(perform: model.stop)
-        .onReceive(SDM.shared.activeDownload, perform: didRecievePub(_:))
+        .onReceive(SDM.shared.activeDownload) { value in
+            Task {
+                await didRecievePub(value)
+            }
+        }
     }
 
     var ListView: some View {
@@ -253,7 +257,7 @@ extension SDQV {
 // MARK: Active Chapter View
 
 extension SDQV {
-    func didRecievePub(_ info: (String, SDM.DownloadState)?) {
+    func didRecievePub(_ info: (String, SDM.DownloadState)?)  async{
         guard model.initialDataFetchComplete else { return }
         guard let info else {
             // Reset
@@ -274,8 +278,10 @@ extension SDQV {
 
             return
         }
-
-        guard let target = DataManager.shared.getActiveDownload(id) else {
+        let actor = await RealmActor()
+        let target = await actor.getActiveDownload(id)
+        
+        guard let target else {
             withAnimation {
                 activeDownload = nil
                 activeDownloadState = nil

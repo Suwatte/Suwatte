@@ -11,25 +11,6 @@ import RealmSwift
 import UIKit
 
 extension DataManager {
-    func setCustomThumbnail(image: UIImage, id: String) {
-        let realm = try! Realm()
-
-        do {
-            let result = try STTImageProvider.shared.saveImage(image, for: id)
-            let obj = CustomThumbnail()
-            obj.id = id
-            obj.file = CreamAsset.create(object: obj, propName: CustomThumbnail.FILE_KEY, url: result)
-            obj.isDeleted = false
-            try! realm.safeWrite {
-                realm.add(obj, update: .modified)
-            }
-            ToastManager.shared.info("Thumbnail Updated!")
-
-        } catch {
-            ToastManager.shared.error(error)
-            Logger.shared.error("\(error)")
-        }
-    }
 
     func removeCustomThumbnail(id: String) {
         let realm = try! Realm()

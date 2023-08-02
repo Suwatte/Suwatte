@@ -198,7 +198,7 @@ extension RealmActor {
         defer {
             Task {
                 let chapterIds = chapters.map { $0.chapterId }
-                notifySourceOfMarkState(identifier: id, chapters: chapterIds, completed: markAsRead)
+                await notifySourceOfMarkState(identifier: id, chapters: chapterIds, completed: markAsRead)
             }
         }
         // Get Object
@@ -239,14 +239,18 @@ extension RealmActor {
 
     func markChaptersByNumber(for id: ContentIdentifier, chapters: Set<Double>, markAsRead: Bool = true) async {
         defer {
-            // Get Chapters
-            let chapterIds = realm
-                .objects(StoredChapter.self)
-                .where { $0.contentId == id.contentId }
-                .where { $0.sourceId == id.sourceId }
-                .where { $0.number.in(chapters) }
-                .map(\.chapterId) as [String]
-            notifySourceOfMarkState(identifier: id, chapters: chapterIds, completed: markAsRead)
+            
+            Task {
+                // Get Chapters
+                let chapterIds = realm
+                    .objects(StoredChapter.self)
+                    .where { $0.contentId == id.contentId }
+                    .where { $0.sourceId == id.sourceId }
+                    .where { $0.number.in(chapters) }
+                    .map(\.chapterId) as [String]
+                
+                await notifySourceOfMarkState(identifier: id, chapters: chapterIds, completed: markAsRead)
+            }
         }
 
         let target = realm
@@ -289,8 +293,8 @@ extension RealmActor {
         }
     }
 
-    func notifySourceOfMarkState(identifier: ContentIdentifier, chapters: [String], completed: Bool) {
-        guard let source = DSK.shared.getSource(id: identifier.sourceId), source.intents.chapterEventHandler else {
+    func notifySourceOfMarkState(identifier: ContentIdentifier, chapters: [String], completed: Bool) async {
+        guard let source = await DSK.shared.getSource(id: identifier.sourceId), source.intents.chapterEventHandler else {
             return
         }
 

@@ -54,12 +54,13 @@ extension ContentSourceDirectoryView {
             }
             .contextMenu {
                 Button {
-                    if readLater {
-                        DataManager.shared.removeFromReadLater(sourceID, content: data.contentId)
-                    } else {
-                        DataManager.shared.addToReadLater(sourceID, data.contentId)
+                    Task {
+                        let actor = await RealmActor()
+                        await actor.toggleReadLater(sourceID, data.contentId)
+                        await MainActor.run {
+                            readLater.toggle()
+                        }
                     }
-                    readLater.toggle()
                 } label: {
                     Label(readLater ? "Remove from Read Later" : "Add to Read Later", systemImage: readLater ? "bookmark.slash" : "bookmark")
                 }

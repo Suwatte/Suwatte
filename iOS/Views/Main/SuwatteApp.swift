@@ -27,7 +27,7 @@ struct SuwatteApp: App {
                 .accentColor(accentColor)
                 .tint(accentColor)
                 .task {
-                    DSK.shared.getCommons()
+                    await DSK.shared.getCommons()
                 }
                 .task {
                     await SDM.shared.appDidStart()

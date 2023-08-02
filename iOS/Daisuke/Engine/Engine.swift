@@ -10,7 +10,7 @@ import Foundation
 import JavaScriptCore
 import RealmSwift
 
-final class DaisukeEngine: NSObject {
+final actor DaisukeEngine {
     // MARK: Singleton
 
     static let shared = DaisukeEngine()
@@ -28,7 +28,7 @@ final class DaisukeEngine: NSObject {
     private var runners: [String: JSCRunner] = [:]
     private let vm: JSVirtualMachine
 
-    override init() {
+    init() {
         // Create Directory if required
         if !directory.exists {
             directory.createDirectory()
@@ -75,9 +75,9 @@ extension DaisukeEngine {
         return file
     }
 
-    private func validateRunnerVersion(runner: JSCRunner) throws {
+    private func validateRunnerVersion(runner: JSCRunner) async throws {
         // Validate that the incoming runner has a higher version
-        let current = getRunner(runner.id)
+        let current = await getRunner(runner.id)
 
         if let current = current, current.version > runner.version {
             throw DSK.Errors.NamedError(name: "Validation", message: "An updated version is already installed.")
@@ -172,22 +172,23 @@ extension DaisukeEngine {
 // MARK: - Runner Start Up
 
 extension DaisukeEngine {
-    func startRunner(_ id: String) throws -> JSCRunner {
-        let file = DataManager.shared.getRunnerExecutable(id: id)
+    func startRunner(_ id: String) async throws -> JSCRunner {
+        let actor = await RealmActor()
+        let file = await actor.getRunnerExecutable(id: id)
 
         guard let file, file.exists else {
             let standardLocation = executeableURL(for: id)
             if standardLocation.exists {
-                return try startRunner(standardLocation)
+                return try await startRunner(standardLocation)
             } else {
                 throw DSK.Errors.RunnerExecutableNotFound
             }
         }
 
-        return try startRunner(file)
+        return try await startRunner(file)
     }
 
-    func startRunner(_ url: URL) throws -> JSCRunner {
+    func startRunner(_ url: URL) async throws -> JSCRunner {
         // Get Core Runner Object
         let runnerObject = try bootstrap(url)
 
@@ -219,13 +220,17 @@ extension DaisukeEngine {
 // MARK: - Runner Management
 
 extension DaisukeEngine {
-    func getJSCRunner(_ id: String) throws -> JSCRunner {
-        return try runners[id] ?? startRunner(id)
+    func getJSCRunner(_ id: String) async throws -> JSCRunner {
+        if let runner = runners[id] {
+            return runner
+        }
+        
+        return try await startRunner(id)
     }
 
-    func getRunner(_ id: String) -> JSCRunner? {
+    func getRunner(_ id: String) async -> JSCRunner? {
         do {
-            return try getJSCRunner(id)
+            return try await getJSCRunner(id)
         } catch {
             Logger.shared.error("[\(id)] [Requested] \(error.localizedDescription)")
             return nil
@@ -233,10 +238,8 @@ extension DaisukeEngine {
     }
 
     func addRunner(_ rnn: JSCRunner, listURL _: URL? = nil) {
-        Task { @MainActor in
-            runners.removeValue(forKey: rnn.id)
-            runners[rnn.id] = rnn
-        }
+        runners.removeValue(forKey: rnn.id)
+        runners[rnn.id] = rnn
     }
 
     func didStartRunner(_ runner: JSCRunner) {
@@ -264,7 +267,7 @@ extension DaisukeEngine {
     func importRunner(from url: URL) async throws {
         try await downloadCommonsIfNecessary()
         if url.isFileURL {
-            try handleFileRunnerImport(from: url)
+            try await handleFileRunnerImport(from: url)
         } else {
             try await handleNetworkRunnerImport(from: url)
         }
@@ -293,20 +296,19 @@ extension DaisukeEngine {
         StateManager.shared.runnerListPublisher.send()
     }
 
-    private func handleFileRunnerImport(from url: URL) throws {
-        let runner = try startRunner(url) // Start up
-        try validateRunnerVersion(runner: runner) // check if is new version
+    private func handleFileRunnerImport(from url: URL) async throws {
+        let runner = try await startRunner(url) // Start up
+        try await validateRunnerVersion(runner: runner) // check if is new version
 
         let runnerPath = executeableURL(for: runner.id)
         _ = try FileManager.default.replaceItemAt(runnerPath, withItemAt: url)
-        upsertStoredRunner(runner)
-        Task { @MainActor in
-            didStartRunner(runner)
-        }
+        await upsertStoredRunner(runner)
+        didStartRunner(runner)
     }
 
-    private func upsertStoredRunner(_ runner: JSCRunner, listURL: URL? = nil) {
-        DataManager.shared.saveRunner(runner, listURL: listURL, url: executeableURL(for: runner.id))
+    private func upsertStoredRunner(_ runner: JSCRunner, listURL: URL? = nil) async {
+        let actor = await RealmActor()
+        await actor.saveRunner(runner, listURL: listURL, url: executeableURL(for: runner.id))
     }
 }
 
@@ -330,7 +332,8 @@ extension DaisukeEngine {
             throw DSK.Errors.NamedError(name: "Validation", message: "Invalid URL")
         }
         let runnerList = try await getRunnerList(at: base)
-        DataManager.shared.saveRunnerList(runnerList, at: base)
+        let actor = await RealmActor()
+        await actor.saveRunnerList(runnerList, at: base)
     }
 
     // Handle Importing Runner File from Internet
@@ -348,14 +351,14 @@ extension DaisukeEngine {
 
         let downloadURL = try await request.serializingDownloadedFileURL().result.get()
 
-        let runner = try startRunner(downloadURL)
-        try validateRunnerVersion(runner: runner)
+        let runner = try await startRunner(downloadURL)
+        try await validateRunnerVersion(runner: runner)
 
         let runnerPath = executeableURL(for: runner.id)
         _ = try FileManager.default.replaceItemAt(runnerPath, withItemAt: downloadURL)
         try? FileManager.default.removeItem(at: downloadURL)
         addRunner(runner, listURL: list)
-        upsertStoredRunner(runner, listURL: list)
+        await upsertStoredRunner(runner, listURL: list)
     }
 }
 
@@ -400,15 +403,15 @@ extension DaisukeEngine {
 // MARK: - Source Management
 
 extension DaisukeEngine {
-    func getSource(id: String) -> JSCContentSource? {
-        let runner = getRunner(id)
+    func getSource(id: String) async  -> JSCContentSource? {
+        let runner = await getRunner(id)
 
         guard let runner, let source = runner as? JSCCS else { return nil }
         return source
     }
 
-    func getContentSource(id: String) throws -> JSCContentSource {
-        let runner = try getJSCRunner(id)
+    func getContentSource(id: String) async throws -> JSCContentSource {
+        let runner = try await getJSCRunner(id)
 
         guard let source = runner as? JSCCS else {
             throw DSK.Errors.InvalidRunnerEnvironment
@@ -417,26 +420,59 @@ extension DaisukeEngine {
         return source
     }
 
-    func getActiveSources() -> [AnyContentSource] {
-        DataManager
-            .shared
-            .getSavedAndEnabledSources()
-            .compactMap { DSK.shared.getSource(id: $0.id) }
+    func getActiveSources() async -> [JSCCS] {
+        let actor = await RealmActor()
+        let runners = await actor.getSavedAndEnabledSources().map(\.id)
+        
+        let sources = await withTaskGroup(of: AnyContentSource?.self, body: { group in
+            for runner in runners {
+                group.addTask {
+                    await self.getSource(id: runner)
+                }
+            }
+            
+            var sources: [JSCCS] = []
+            for await runner in group {
+                guard let runner else { continue }
+                sources.append(runner)
+            }
+            
+            return sources
+        })
+        
+        return sources
+            .sorted(by: \.name)
+    }
+    
+    func getSourcesForSearching() async -> [JSCCS] {
+        let disabled: Set<String> = Set([String].init(rawValue: UserDefaults.standard.string(forKey: STTKeys.SourcesHiddenFromGlobalSearch) ?? "") ?? [])
+        
+        return await getActiveSources()
+            .filter { !disabled.contains($0.id) }
+    }
+    func getSourcesForLinking() async -> [JSCCS] {
+        await getSourcesForSearching()
+            .filter { $0.ablityNotDisabled(\.disableContentLinking) }
+    }
+    
+    func getSourcesForUpdateCheck() async -> [JSCCS] {
+        await getActiveSources()
+            .filter { $0.ablityNotDisabled(\.disableUpdateChecks) }
     }
 }
 
 // MARK: - Tracker Management
 
 extension DaisukeEngine {
-    func getTracker(id: String) -> JSCCT? {
-        let runner = getRunner(id)
+    func getTracker(id: String) async -> JSCCT? {
+        let runner = await getRunner(id)
 
         guard let runner, let tracker = runner as? JSCCT else { return nil }
         return tracker
     }
 
-    func getContentTracker(id: String) throws -> JSCCT {
-        let runner = try getJSCRunner(id)
+    func getContentTracker(id: String) async throws -> JSCCT {
+        let runner = try await getJSCRunner(id)
 
         guard let tracker = runner as? JSCCT else {
             throw DSK.Errors.InvalidRunnerEnvironment
@@ -445,25 +481,42 @@ extension DaisukeEngine {
         return tracker
     }
 
-    func getActiveTrackers() -> [JSCCT] {
-        DataManager
-            .shared
-            .getEnabledRunners(for: .tracker)
-            .compactMap { DSK.shared.getTracker(id: $0.id) }
+    func getActiveTrackers() async -> [JSCCT] {
+        let actor = await RealmActor()
+        let runners = await actor.getEnabledRunners(for: .tracker).map(\.id)
+        
+        let trackers = await withTaskGroup(of: JSCCT?.self, body: { group in
+            for runner in runners {
+                group.addTask {
+                    await self.getTracker(id: runner)
+                }
+            }
+            
+            var trackers: [JSCCT] = []
+            for await runner in group {
+                guard let runner else { continue }
+                trackers.append(runner)
+            }
+            
+            return trackers
+        })
+        
+        return trackers
+            .sorted(by: \.name)
     }
 
-    func getTrackersHandling(key: String) -> [JSCCT] {
-        getActiveTrackers()
+    func getTrackersHandling(key: String) async -> [JSCCT] {
+        await getActiveTrackers()
             .filter { $0.config?.linkKeys?.contains(key) ?? false }
     }
 
     /// Gets a map of  TrackerLInkKey:MediaID and coverts it to a TrackerID:MediaID dict
-    func getTrackerHandleMap(values: [String: String]) -> [String: String] {
+    func getTrackerHandleMap(values: [String: String]) async -> [String: String] {
         var matches: [String: String] = [:]
 
         // Loop through links and get matching sources
         for (key, value) in values {
-            let trackers = getActiveTrackers()
+            let trackers = await getActiveTrackers()
                 .filter { $0.links.contains(key) }
 
             // Trackers that can handle this link

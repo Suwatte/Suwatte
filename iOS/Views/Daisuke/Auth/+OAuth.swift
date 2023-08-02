@@ -62,7 +62,8 @@ extension DSKAuthView {
                 alert()
             }
 
-            session.presentationContextProvider = DSK.shared
+            let anchor = WebAuthAnchor()
+            session.presentationContextProvider = anchor
             session.start()
         }
 
@@ -78,8 +79,9 @@ extension DSKAuthView {
     }
 }
 
-extension DaisukeEngine: ASWebAuthenticationPresentationContextProviding {
+final class WebAuthAnchor: NSObject, ASWebAuthenticationPresentationContextProviding {
     func presentationAnchor(for _: ASWebAuthenticationSession) -> ASPresentationAnchor {
         KEY_WINDOW!
     }
 }
+

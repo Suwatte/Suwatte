@@ -18,7 +18,6 @@ extension DataManager {
             return
         }
 
-        addToReadLater(source, content)
     }
 
     func removeFromReadLater(_ source: String, content: String) {
@@ -33,42 +32,4 @@ extension DataManager {
         }
     }
 
-    func addToReadLater(_ sourceID: String, _ contentID: String) {
-        let realm = try! Realm()
-        // Get Stored Content
-        let obj = ReadLater()
-
-        let storedContent = realm.objects(StoredContent.self).first(where: { $0.contentId == contentID && $0.sourceId == sourceID })
-
-        if let storedContent = storedContent {
-            obj.content = storedContent
-            try! realm.safeWrite {
-                realm.add(obj, update: .modified)
-            }
-            return
-        }
-
-        guard let source = DSK.shared.getSource(id: sourceID) else {
-            ToastManager.shared.error("[ReadLater] Source not Found")
-            return
-        }
-
-        Task {
-            do {
-                let content = try await source.getContent(id: contentID)
-                let storedContent = try content.toStoredContent(withSource: sourceID)
-
-                let realm = try Realm(queue: nil)
-                try! realm.safeWrite {
-                    realm.add(storedContent)
-                    obj.content = storedContent
-                    realm.add(obj, update: .all)
-                }
-            } catch {
-                await MainActor.run(body: {
-                    ToastManager.shared.error(error)
-                })
-            }
-        }
-    }
 }

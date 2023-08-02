@@ -111,10 +111,9 @@ struct ContentSourcePageView: View {
 extension ContentSourcePageView.Cell {
     var ReadLaterButton: some View {
         Button {
-            if inReadLater {
-                DataManager.shared.removeFromReadLater(source.id, content: item.contentId)
-            } else {
-                DataManager.shared.addToReadLater(source.id, item.contentId)
+            Task {
+                let actor = await RealmActor()
+                await actor.toggleReadLater(source.id, item.contentId)
             }
         } label: {
             Label(inReadLater ? "Remove from Read Later" : "Add to Read Later", systemImage: inReadLater ? "bookmark.slash" : "bookmark")
