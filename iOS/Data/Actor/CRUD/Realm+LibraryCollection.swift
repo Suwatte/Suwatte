@@ -1,22 +1,16 @@
 //
-//  Collection.swift
+//  Realm+LibraryCollection.swift
 //  Suwatte (iOS)
 //
-//  Created by Mantton on 2022-02-28.
+//  Created by Mantton on 2023-08-01.
 //
 
-import Foundation
-import IceCream
 import RealmSwift
+import Foundation
 
-
-// MARK: Manager Functions
-
-extension DataManager {
-    func addCollection(withName name: String) {
-        let realm = try! Realm()
-
-        try! realm.safeWrite {
+extension RealmActor {
+    func addCollection(withName name: String) async {
+        try! await realm.asyncWrite {
             let collection = LibraryCollection()
             collection.name = name
             collection.order = realm.objects(LibraryCollection.self).count
@@ -24,22 +18,18 @@ extension DataManager {
         }
     }
 
-    func reorderCollections(_ incoming: [LibraryCollection]) {
-        let realm = try! Realm()
-
+    func reorderCollections(_ incoming: [LibraryCollection]) async {
         for collection in incoming {
             if let target = realm.objects(LibraryCollection.self).first(where: { $0.id == collection.id && collection.isDeleted == false }) {
-                try! realm.safeWrite {
+                try! await realm.asyncWrite {
                     target.order = incoming.firstIndex(of: collection)!
                 }
             }
         }
     }
 
-    func renameCollection(_ collection: LibraryCollection, _ name: String) {
-        let realm = try! Realm()
-
-        try! realm.safeWrite {
+    func renameCollection(_ collection: LibraryCollection, _ name: String) async {
+        try! await realm.asyncWrite {
             guard let collection = collection.thaw() else {
                 return
             }
@@ -47,16 +37,14 @@ extension DataManager {
         }
     }
 
-    func deleteCollection(id: String) {
-        let realm = try! Realm()
-
+    func deleteCollection(id: String) async {
         let collection = realm
             .objects(LibraryCollection.self)
             .first(where: { $0.isDeleted == false && $0.id == id })
 
         guard let collection else { return }
 
-        try! realm.safeWrite {
+        try! await realm.asyncWrite {
             collection.isDeleted = true
             collection.filter?.isDeleted = true
         }

@@ -354,9 +354,10 @@ extension MigrationView {
         await MainActor.run(body: {
             operationState = .searching
         })
-
+        
+        let actor = await RealmActor()
         for content in contents {
-            let lastChapter = DataManager.shared.getLatestStoredChapter(content.sourceId, content.contentId)?.number
+            let lastChapter = await actor.getLatestStoredChapter(content.sourceId, content.contentId)?.number
             let sources = preferredDestinations
             if Task.isCancelled {
                 return

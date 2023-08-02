@@ -55,10 +55,12 @@ final class StateManager: ObservableObject {
     }
 
     func alert(title: String, message: String) {
-        let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: "OK", style: .default)
-        controller.addAction(action)
-        KEY_WINDOW?.rootViewController?.present(controller, animated: true)
+        Task { @MainActor in
+            let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let action = UIAlertAction(title: "OK", style: .default)
+            controller.addAction(action)
+            KEY_WINDOW?.rootViewController?.present(controller, animated: true)
+        }
     }
 }
 
@@ -71,7 +73,7 @@ extension StateManager {
 // MARK: - Global Chapter Reading
 
 extension StateManager {
-    func openReader(context: DSKCommon.ReaderContext, caller: DSKCommon.Highlight, source: String) {
+    func openReader(context: DSKCommon.ReaderContext, caller: DSKCommon.Highlight, source: String) async {
         // Ensure the chapter to be opened is in the provided chapter list
         let targetInList = context.chapters.map(\.chapterId).contains(context.target)
         guard targetInList else {
@@ -82,18 +84,18 @@ extension StateManager {
         // Save Content, if not saved
         let highlight = context.content ?? caller
         let streamable = highlight.canStream
-        let target = DataManager.shared.getStoredContent(ContentIdentifier(contentId: highlight.contentId, sourceId: source).id)
+        
+        let actor = await RealmActor()
+
+        let target = await actor.getStoredContent(ContentIdentifier(contentId: highlight.contentId, sourceId: source).id)?.freeze()
 
         // Target Title is already in the db, Just update the streamble flag
         if let target, target.streamable != streamable {
-            let realm = try! Realm()
-            try! realm.safeWrite {
-                target.streamable = streamable
-            }
+            await actor.updateStreamable(id: target.id, streamable)
         } else {
             // target title not saved to db, save
             let content = highlight.toStored(sourceId: source)
-            DataManager.shared.storeContent(content)
+            await actor.storeContent(content)
         }
 
         // Add Chapters to DB
@@ -101,7 +103,9 @@ extension StateManager {
 
         // Open Reader
         let chapter = chapters.first(where: { $0.chapterId == context.target })!
-        readerState = .init(title: nil, chapter: chapter, chapters: chapters, requestedPage: context.requestedPage, readingMode: context.readingMode, dismissAction: nil)
+        Task { @MainActor in
+            readerState = .init(title: nil, chapter: chapter, chapters: chapters, requestedPage: context.requestedPage, readingMode: context.readingMode, dismissAction: nil)
+        }
     }
 
     func openReader(state: ReaderState) {
@@ -121,9 +125,9 @@ extension StateManager {
             do {
                 let source = try DSK.shared.getContentSource(id: sourceId)
                 let context = try await source.provideReaderContext(for: item.contentId)
-                Task { @MainActor in
+                Task {
                     ToastManager.shared.loading = false
-                    StateManager.shared.openReader(context: context, caller: item, source: sourceId)
+                    await StateManager.shared.openReader(context: context, caller: item, source: sourceId)
                 }
             } catch {
                 Task { @MainActor in

@@ -47,16 +47,17 @@ struct TrackerManagementView: View {
                     }
                 }
             }
-            .fullScreenCover(isPresented: $presentSheet, onDismiss: {
-                model.prepare()
-            }) {
-                let titles = model.getTitles()
+            .fullScreenCover(isPresented: $presentSheet, onDismiss: model.prepare) {
+                let titles = model.titles
                 let trackers = model.getTrackersWithoutLinks()
                 AddTrackerLinkView(contentId: model.contentID, titles: titles, trackers: trackers)
                     .accentColor(accentColor)
                     .tint(accentColor) // For Invalid Tint on Appear
             }
             .environmentObject(model)
+            .task {
+                print(model.titles)
+            }
         }
         .toast()
     }
@@ -67,6 +68,7 @@ extension TrackerManagementView {
         typealias TrackItem = DSKCommon.TrackItem
 
         var contentID: String
+        var titles: [String]
         @Published var dict: [String: Loadable<TrackItem>] = [:]
 
         private var matches: [String: String] = [:]
@@ -77,8 +79,9 @@ extension TrackerManagementView {
                 .sorted(by: \.name, descending: false)
         }
 
-        init(id: String) {
+        init(id: String, _ titles: [String]) {
             contentID = id
+            self.titles = titles
         }
 
         func prepare() {
@@ -122,15 +125,6 @@ extension TrackerManagementView {
 
                 for await _ in group {}
             })
-        }
-
-        func getTitles() -> [String] {
-            guard let content = DataManager.shared.getStoredContent(contentID) else { return [] }
-
-            return content
-                .additionalTitles
-                .toArray()
-                .appending(content.title)
         }
 
         func getTrackersWithoutLinks() -> [JSCCT] {

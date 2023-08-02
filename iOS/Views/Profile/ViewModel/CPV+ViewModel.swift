@@ -110,67 +110,39 @@ extension ProfileView.ViewModel {
         readLaterToken?.invalidate()
     }
 
-    func setupObservers() {
-        let realm = try! Realm()
+    func setupObservers() async {
+        let actor = await RealmActor()
 
-        // Get Read Chapters
-        let _r1 = realm
-            .objects(ProgressMarker.self)
-            .where { $0.id == contentIdentifier && $0.isDeleted == false }
-
-        progressToken = _r1.observe { [weak self] _ in
-            defer { self?.setActionState() }
-            let target = _r1.first
-            guard let target else { return }
-            self?.readChapters = Set(target.readChapters)
-        }
-
-        // Get Library
-        let id = sttIdentifier().id
-
-        let _r3 = realm
-            .objects(LibraryEntry.self)
-            .where { $0.id == id && !$0.isDeleted }
-
-        libraryTrackingToken = _r3.observe { [weak self] _ in
-            self?.inLibrary = !_r3.isEmpty
-        }
-
-        // Read Later
-        let _r4 = realm
-            .objects(ReadLater.self)
-            .where { $0.id == id }
-            .where { $0.isDeleted == false }
-
-        readLaterToken = _r4.observe { [weak self] _ in
-            self?.savedForLater = !_r4.isEmpty
-        }
-    }
-
-    func observeDownloads() {
-        guard let chapters = chapters.value else { return } // Chapters must be loaded
-        let realm = try! Realm()
-
-        downloadTrackingToken?.invalidate()
-        downloadTrackingToken = nil
-
-        let ids = chapters.map { $0.id }
-
-        let collection = realm
-            .objects(SourceDownload.self)
-            .where { $0.id.in(ids) }
-
-        downloadTrackingToken = collection
-            .observe { _ in
-                let dictionary = Dictionary(uniqueKeysWithValues: collection.map { ($0.id, $0.status) })
-                Task { @MainActor in
-                    withAnimation {
-                        self.downloads = dictionary
-                    }
+        // Observe Progress Markers
+        let id = contentIdentifier
+        progressToken = await actor
+            .observeReadChapters(for: id) { value in
+                self.readChapters = value
+                Task {
+                    await self.setActionState()
                 }
             }
-    }
+        
+        // Observe Library
+        libraryTrackingToken = await actor
+            .observeLibraryState(for: id) { value in
+                self.inLibrary = value
+            }
 
+        // Observe Saved For Later
+        readLaterToken = await actor
+            .observeReadLaterState(for: id) { value in
+                self.savedForLater = value
+            }
+
+        // Observe Downloads
+        downloadTrackingToken = await actor
+            .observeDownloadStatus(for: id) { value in
+                self.downloads = value
+            }
+        
+    }
+    
     func removeNotifier() {
         currentMarkerToken?.invalidate()
         currentMarkerToken = nil
@@ -196,30 +168,26 @@ extension ProfileView.ViewModel {
         do {
             // Fetch From JS
             let parsed = try await source.getContent(id: entry.id)
-            await MainActor.run { [weak self] in
-                self?.content = parsed
-                self?.loadableContent = .loaded(true)
-                self?.working = false
+            Task { @MainActor in
+                self.content = parsed
+                self.loadableContent = .loaded(true)
+                self.working = false
             }
-            try Task.checkCancellation()
-            try await Task.sleep(seconds: 0.1)
+            
+            guard !Task.isCancelled else { return }
 
-            // Load Chapters
-            Task.detached { [weak self] in
-                await self?.loadChapters(parsed.chapters)
-            }
+            await loadChapters(parsed.chapters)
+            
 
             // Save to Realm
-            Task.detached { [weak self] in
-                if let source = self?.source, let stored = try? parsed.toStoredContent(withSource: source.id) {
-                    DataManager.shared.storeContent(stored)
-                }
-            }
+            let actor = await RealmActor()
+            let stored = try parsed.toStoredContent(withSource: source.id)
+            await actor.storeContent(stored)
         } catch {
-            Task.detached { [weak self] in
-                await self?.loadChapters()
-            }
+            guard !Task.isCancelled else { return }
+            await loadChapters()
 
+            
             Task { @MainActor [weak self] in
                 if self?.loadableContent.LOADED ?? false {
                     ToastManager.shared.error("Failed to Update Profile")
@@ -233,31 +201,32 @@ extension ProfileView.ViewModel {
     }
 
     func loadContentFromDatabase() async {
-        await MainActor.run(body: {
+        let actor = await RealmActor()
+        
+        Task { @MainActor in
             withAnimation {
-                self.loadableContent = .loading
+                loadableContent = .loading
             }
-        })
+        }
 
-        let target = DataManager.shared.getStoredContent(source.id, entry.id)
+        let target = await actor.getStoredContent(source.id, entry.id)
 
         if let target = target {
             do {
                 let c = try target.toDSKContent()
-                await MainActor.run(body: {
-                    content = c
-                    loadableContent = .loaded(true)
-                })
-
+                Task { @MainActor in
+                    withAnimation {
+                        content = c
+                        loadableContent = .loaded(true)
+                    }
+                }
             } catch {}
         }
 
         if StateManager.shared.NetworkStateHigh || target == nil { // Connected To Network OR The Content is not saved thus has to be fetched regardless
-            Task {
-                await loadContentFromNetwork()
-            }
+            await loadContentFromNetwork()
         } else {
-            loadChaptersfromDB()
+            await loadChaptersfromDB()
         }
     }
 }
@@ -266,10 +235,13 @@ extension ProfileView.ViewModel {
 
 extension ProfileView.ViewModel {
     func loadChapters(_ parsedChapters: [DSKCommon.Chapter]? = nil) async {
-        await MainActor.run { [weak self] in
-            self?.working = true
-            self?.threadSafeChapters = parsedChapters
+        Task { @MainActor in
+            withAnimation {
+                working = true
+                threadSafeChapters = parsedChapters
+            }
         }
+        
         let sourceId = source.id
         do {
             // Fetch Chapters
@@ -283,79 +255,62 @@ extension ProfileView.ViewModel {
             let unmanaged = chapters.map { $0.toStoredChapter(withSource: source.id) }.sorted(by: \.index, descending: false)
 
             // Update UI with fetched values
-            await MainActor.run { [weak self] in
+            Task { @MainActor in
                 withAnimation {
-                    self?.threadSafeChapters = chapters
-                    self?.chapters = .loaded(unmanaged)
-                    self?.working = false
+                    threadSafeChapters = chapters
+                    self.chapters = .loaded(unmanaged)
+                    working = false
                 }
             }
             // Store To Realm
-            Task.detached {
+            Task {
+                let actor = await RealmActor()
                 let stored = chapters.map { $0.toStoredChapter(withSource: sourceId) }
-                DataManager.shared.storeChapters(stored)
+                await actor.storeChapters(stored)
             }
 
             // Post Chapter Load Actions
-            Task.detached { [weak self] in
-                await self?.didLoadChapters()
+            Task {
+                await didLoadChapters()
             }
 
         } catch {
             Logger.shared.error(error, source.id)
-            Task { @MainActor [weak self] in
-                self?.loadChaptersfromDB()
-                if self?.chapters.LOADED ?? false {
+            await loadChaptersfromDB()
+
+            Task { @MainActor in
+                if chapters.LOADED  {
                     ToastManager.shared.error("Failed to Fetch Chapters: \(error.localizedDescription)")
                     return
                 } else {
-                    self?.chapters = .failed(error)
+                    chapters = .failed(error)
                 }
-                self?.working = false
+                working = false
             }
         }
     }
 
-    func loadChaptersfromDB() {
-        let realm = try! Realm()
-        let storedChapters = realm
-            .objects(StoredChapter.self)
-            .where { $0.contentId == entry.contentId }
-            .where { $0.sourceId == source.id }
-            .sorted(by: \.index, ascending: true)
-            .map { $0.freeze() } as [StoredChapter]
+    func loadChaptersfromDB() async {
+        let actor = await RealmActor()
+        
+        let storedChapters = await actor.getChapters(source.id, content: entry.contentId)
         if storedChapters.isEmpty { return }
-
         Task { @MainActor in
             chapters = .loaded(storedChapters)
-            observeDownloads()
         }
-
-        Task { @MainActor [weak self] in
-            self?.calculateActionState()
-        }
+        await setActionState()
     }
 
     func didLoadChapters() async {
+        let actor = await RealmActor()
         let id = sttIdentifier()
 
         // Resolve Links, Sync & Update Action State
-        Task.detached { [weak self] in
-            await self?.resolveLinks()
-            await self?.handleSync()
-            self?.setActionState()
-            DataManager.shared.updateUnreadCount(for: id)
-
-            guard let self else { return }
-            Task { @MainActor in
-                self.observeDownloads()
-            }
-        }
-
-        // Clear Updates
-        Task.detached {
-            DataManager.shared.clearUpdates(id: id.id)
-        }
+        await resolveLinks()
+        await handleSync()
+        await setActionState()
+        await actor.updateUnreadCount(for: id)
+        await actor.clearUpdates(id: id.id)
     }
 }
 
@@ -364,7 +319,7 @@ extension ProfileView.ViewModel {
 extension ProfileView.ViewModel {
     // Handles the addition on linked chapters
     func resolveLinks() async {
-        await MainActor.run {
+        Task { @MainActor in
             working = true
         }
         defer {
@@ -401,8 +356,9 @@ extension ProfileView.ViewModel {
                         let chapters = try await source.getContentChapters(contentId: entry.contentId)
                         // Save to db
                         Task {
+                            let actor = await RealmActor()
                             let stored = chapters.map { $0.toStoredChapter(withSource: source.id) }
-                            DataManager.shared.storeChapters(stored)
+                            await actor.storeChapters(stored)
                         }
                         return chapters
                             .filter { $0.number > currentMaxChapter }
@@ -471,10 +427,11 @@ extension ProfileView.ViewModel {
     // Sync
 
     func syncWithAllParties() async {
+        let actor = await RealmActor()
         let identifier = sttIdentifier()
         let chapterNumbers = Set(threadSafeChapters?.map(\.number) ?? [])
         // gets tracker matches in a [TrackerID:EntryID] format
-        let matches: [String: String] = DataManager.shared.getTrackerLinks(for: contentIdentifier)
+        let matches: [String: String] = await actor.getTrackerLinks(for: contentIdentifier)
 
         // Get A Dictionary representing the trackers and the current max read chapter on each tracker
         typealias Marker = (String, Double)
@@ -521,7 +478,7 @@ extension ProfileView.ViewModel {
         }
 
         // Prepare the Highest Read Chapter Number
-        let localHighestRead = DataManager.shared.getHighestMarkedChapter(id: identifier.id)
+        let localHighestRead = await actor.getHighestMarkedChapter(id: identifier.id)
         let originHighestRead = Array(markers.values).max() ?? 0
         let maxRead = max(localHighestRead, originHighestRead, sourceOriginHighestRead)
 
@@ -550,13 +507,18 @@ extension ProfileView.ViewModel {
         })
 
         // Update Local Value if outdated, sources are notified if they have the Chapter Event Handler
-        if maxRead != localHighestRead {
-            let chaptersToMark = chapterNumbers.filter { $0 <= maxRead }
-            let linked = DataManager.shared.getLinkedContent(for: identifier.id)
-            DataManager.shared.markChaptersByNumber(for: identifier, chapters: chaptersToMark)
-            linked
-                .forEach { DataManager.shared.markChaptersByNumber(for: $0.ContentIdentifier, chapters: chaptersToMark) }
-        }
+        guard maxRead != localHighestRead else { return }
+        let chaptersToMark = chapterNumbers.filter { $0 <= maxRead }
+        let linked = await actor.getLinkedContent(for: identifier.id)
+        await actor.markChaptersByNumber(for: identifier, chapters: chaptersToMark)
+        await withTaskGroup(of: Void.self, body: { group in
+            for link in linked {
+                group.addTask {
+                    await actor
+                        .markChaptersByNumber(for: link.ContentIdentifier, chapters: chaptersToMark)
+                }
+            }
+        })
     }
 }
 
@@ -602,8 +564,8 @@ extension ProfileView.ViewModel {
         }
     }
 
-    func setActionState() {
-        let state = calculateActionState()
+    func setActionState() async {
+        let state = await calculateActionState()
         Task { @MainActor in
             withAnimation {
                 self.actionState = state
@@ -611,7 +573,7 @@ extension ProfileView.ViewModel {
         }
     }
 
-    func calculateActionState() -> ActionState {
+    func calculateActionState() async -> ActionState {
         guard let chapters = chapters.value, !chapters.isEmpty else {
             return .init(state: .none)
         }
@@ -619,11 +581,11 @@ extension ProfileView.ViewModel {
         guard content.contentId == entry.contentId else {
             return .init(state: .none)
         }
-
-        let marker = DataManager
-            .shared
-            .getLatestLinkedMarker(for: contentIdentifier)?
-            .freeze()
+        
+        let actor = await RealmActor()
+        
+        let marker = await actor
+            .getLatestLinkedMarker(for: contentIdentifier)
 
         guard let marker else {
             // No Progress marker present, return first chapter

@@ -233,7 +233,10 @@ extension HistoryView {
         }
 
         private func handleRemoveMarker() {
-            DataManager.shared.removeFromHistory(id: id)
+            Task {
+                let actor = await RealmActor()
+                await actor.removeFromHistory(id: id)
+            }
         }
     }
 }

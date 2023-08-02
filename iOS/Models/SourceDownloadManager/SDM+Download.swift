@@ -122,7 +122,7 @@ extension SDM {
             counter += 1
         }
         // All Images Downloaded
-        try finalize(for: id, at: downloadDirectory)
+        try await finalize(for: id, at: downloadDirectory)
         return true
     }
 
@@ -156,17 +156,17 @@ extension SDM {
             counter += 1
         }
         // All Images Downloaded
-        try finalize(for: id, at: downloadDirectory)
+        try await finalize(for: id, at: downloadDirectory)
         return true
     }
 }
 
 extension SDM {
-    private func finalize(for id: String, at directory: URL) throws {
+    private func finalize(for id: String, at directory: URL) async throws {
         announce(id, state: .finalizing)
         let shouldArchiveDownload = Preferences.standard.archiveSourceDownload
 
-        let finalPath = try shouldArchiveDownload ? archiveCompletedDownload(at: directory, id: id) : moveCompletedDownload(from: directory, id: id)
+        let finalPath = try await shouldArchiveDownload ? archiveCompletedDownload(at: directory, id: id) : moveCompletedDownload(from: directory, id: id)
 
         // Remove Temp
         do {
@@ -196,9 +196,9 @@ extension SDM {
     }
 
     // Parse Comic Info & Archive
-    private func archiveCompletedDownload(at directory: URL, id: String) throws -> URL {
+    private func archiveCompletedDownload(at directory: URL, id: String) async throws -> URL {
         // Images have been downloaded to `directory`, create ComicInfo.xml file
-        let xml = prepareComicInfo(for: id)
+        let xml = await prepareComicInfo(for: id)
         if let xml {
             let path = directory.appendingPathComponent("ComicInfo.xml")
             try xml.write(to: path, atomically: true, encoding: .utf8)
@@ -265,10 +265,11 @@ extension SDM {
         return validFileName
     }
 
-    private func prepareComicInfo(for id: String) -> String? {
+    private func prepareComicInfo(for id: String) async -> String? {
+        let actor = await RealmActor()
         let identifier = parseID(id)
-        let content = DataManager.shared.getStoredContent(identifier.source, identifier.content)
-        let chapter = DataManager.shared.getStoredChapter(id)
+        let content = await actor.getStoredContent(identifier.source, identifier.content)
+        let chapter = await actor.getStoredChapter(id)
         guard let content, let chapter else { return nil }
         let appVersion = Bundle.main.releaseVersionNumber ?? "0.0.0"
         let components = Calendar.current.dateComponents([.year, .month, .day], from: chapter.date)

@@ -62,11 +62,6 @@ extension ReaderView {
 
             // Update Content
             let chapter = chapter
-            content = DataManager.shared.getStoredContent(chapter.sourceId, chapter.contentId)
-            if let content {
-                isInLibrary = DataManager.shared.isInLibrary(content: content)
-            }
-
             contentTitle = title
             let c: ReaderChapter = .init(chapter: chapter.toThreadSafe())
             activeChapter = c
@@ -78,6 +73,17 @@ extension ReaderView {
             }
             readerChapterList.append(activeChapter)
             setModeToUserSetting()
+            updateContentInfo(chapter) // To be safe
+        }
+        
+        func updateContentInfo(_ chapter: StoredChapter) {
+            Task {
+                let actor = await RealmActor()
+                content = await actor.getStoredContent(chapter.sourceId, chapter.contentId)
+                if let content {
+                    isInLibrary = await actor.isInLibrary(content: content)
+                }
+            }
         }
 
         func loadChapter(_ chapter: ThreadSafeChapter, asNextChapter: Bool = true) async {
@@ -123,7 +129,7 @@ extension ReaderView {
 
             // Set Opening Page
             if readerChapterList.count == 1, readerChapter.requestedPageIndex == -1 {
-                let values = STTHelpers.getInitialPanelPosition(for: contentIdentifier.id, chapterId: readerChapter.chapter.chapterId, limit: pages.count)
+                let values = await STTHelpers.getInitialPanelPosition(for: contentIdentifier.id, chapterId: readerChapter.chapter.chapterId, limit: pages.count)
                 readerChapter.requestedPageIndex = values.0
                 readerChapter.requestedPageOffset = values.1
             }
@@ -362,15 +368,28 @@ extension ReaderView.ViewModel {
         guard let chapter = chapterCache[page.chapterId], canMark(sourceId: chapter.chapter.sourceId) else {
             return
         }
-
-        DataManager.shared.updateContentProgress(for: contentIdentifier.id, chapter: chapter.chapter, lastPageRead: chapter.requestedPageIndex + 1, totalPageCount: chapter.pages?.count ?? 1, lastPageOffset: chapter.requestedPageOffset.flatMap(Double.init))
-
+        
+        let id = contentIdentifier.id
+        let target = chapter.chapter
+        let lastPageRead = chapter.requestedPageIndex + 1
+        let pageCount = chapter.pages?.count ?? 1
+        let offset = chapter.requestedPageOffset.flatMap(Double.init)
+        
+        Task {
+            let actor = await RealmActor()
+            await actor.updateContentProgress(for: id,
+                                              chapter: target,
+                                              lastPageRead: lastPageRead,
+                                              totalPageCount: pageCount,
+                                              lastPageOffset: offset)
+        }
         guard !STTHelpers.isInternalSource(chapter.chapter.sourceId) else {
             return
         }
         let cl = chapter.chapter
         let idx = page.index + 1
-        Task.detached {
+        
+        Task {
             guard let source = DSK.shared.getSource(id: cl.sourceId) else { return }
             do {
                 try await source.onPageRead(contentId: cl.contentId, chapterId: cl.chapterId, page: idx)
@@ -397,17 +416,24 @@ extension ReaderView.ViewModel {
 
         // Progress Update
         let chapter = transition.from
+        let identifier = contentIdentifier.id
         if transition.to == nil {
             // Mark As Completed
             if canMark(sourceId: chapter.sourceId) {
-                DataManager.shared.didCompleteChapter(for: contentIdentifier.id, chapter: chapter)
+                Task {
+                    let actor = await RealmActor()
+                    await actor.didCompleteChapter(for: identifier, chapter: chapter)
+                }
             }
         }
 
         if let num = transition.to?.number, num > transition.from.number {
             // Mark As Completed
             if canMark(sourceId: chapter.sourceId) {
-                DataManager.shared.didCompleteChapter(for: contentIdentifier.id, chapter: chapter)
+                Task {
+                    let actor = await RealmActor()
+                    await actor.didCompleteChapter(for: identifier, chapter: chapter)
+                }
             }
         }
     }
@@ -431,24 +457,22 @@ extension ReaderView.ViewModel {
 
         let id = contentIdentifier.id
         // Mark As Completed & Update Unread Count
-        DataManager.shared.didCompleteChapter(for: id, chapter: lastChapter.chapter)
-        Task.detached { [weak self] in
-            // Source Sync
-            await self?.handleSourceSync(contentId: lastChapter.chapter.contentId,
-                                         sourceId: lastChapter.chapter.sourceId,
-                                         chapterId: lastChapter.chapter.chapterId)
+        Task {
+            let actor = await RealmActor()
+            await actor.didCompleteChapter(for: id, chapter: lastChapter.chapter)
+            await self.handleSourceSync(contentId: lastChapter.chapter.contentId,
+                                        sourceId: lastChapter.chapter.sourceId,
+                                        chapterId: lastChapter.chapter.chapterId)
         }
     }
 
-    private func handleSourceSync(contentId: String, sourceId: String, chapterId: String) {
+    private func handleSourceSync(contentId: String, sourceId: String, chapterId: String) async {
         guard let source = DSK.shared.getSource(id: sourceId), source.intents.chapterSyncHandler else { return }
         // Services
-        Task.detached {
-            do {
-                try await source.onChapterRead(contentId: contentId, chapterId: chapterId)
-            } catch {
-                Logger.shared.error(error, source.id)
-            }
+        do {
+            try await source.onChapterRead(contentId: contentId, chapterId: chapterId)
+        } catch {
+            Logger.shared.error(error, source.id)
         }
     }
 }

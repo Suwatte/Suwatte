@@ -1,37 +1,31 @@
 //
-//  Comic.swift
+//  Realm+Content.swift
 //  Suwatte (iOS)
 //
-//  Created by Mantton on 2022-02-28.
+//  Created by Mantton on 2023-08-01.
 //
 
-import Foundation
-import IceCream
 import RealmSwift
 
-
-
-extension DataManager {
-    func storeContent(_ content: StoredContent) {
-        let realm = try! Realm()
-
-        try! realm.safeWrite {
-            realm.add(content, update: .modified)
+extension RealmActor {
+    func storeContent(_ content: StoredContent) async {
+        do {
+            try await realm.asyncWrite {
+                realm.add(content, update: .modified)
+            }
+        } catch {
+            Logger.shared.error(error, "RealmActor")
         }
     }
 
     func getStoredContent(_ sourceId: String, _ contentId: String) -> StoredContent? {
-        let realm = try! Realm()
-
-        return realm
+        realm
             .objects(StoredContent.self)
             .where { $0.contentId == contentId && $0.sourceId == sourceId }
             .first
     }
 
     func getStoredContent(_ id: String) -> StoredContent? {
-        let realm = try! Realm()
-
         return realm
             .objects(StoredContent.self)
             .where { $0.id == id }
@@ -39,11 +33,10 @@ extension DataManager {
     }
 
     func getStoredContents(ids: [String]) -> Results<StoredContent> {
-        let realm = try! Realm()
-
         return realm
             .objects(StoredContent.self)
             .filter("id IN %@", ids)
+            .sorted(by: \.title, ascending: true)
     }
 
     func refreshStored(contentId: String, sourceId: String) async {
@@ -55,6 +48,17 @@ extension DataManager {
         guard let stored = try? data?.toStoredContent(withSource: sourceId) else {
             return
         }
-        storeContent(stored)
+        await storeContent(stored)
+    }
+    
+    func updateStreamable(id: String, _ value: Bool) async {
+        let target = realm
+            .objects(StoredContent.self)
+            .where { $0.id == id }
+            .first
+        guard let target else { return }
+        try! await realm.asyncWrite {
+            target.streamable = value
+        }
     }
 }

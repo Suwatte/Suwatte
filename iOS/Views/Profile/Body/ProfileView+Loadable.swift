@@ -17,18 +17,14 @@ extension ProfileView {
             LoadableView(loadable: viewModel.loadableContent,
                          { PLACEHOLDER
                              .task {
-                                 Task.detached {
-                                     await viewModel.loadContentFromDatabase()
-                                 }
-                                 viewModel.setupObservers()
+                                 await viewModel.loadContentFromDatabase()
+                                 await viewModel.setupObservers()
                              }
                          },
                          { PLACEHOLDER },
                          { error in ErrorView(error: error, action: {
                              Task {
-                                 await MainActor.run(body: {
-                                     viewModel.loadableContent = .loading
-                                 })
+                                 viewModel.loadableContent = .loading
                                  await viewModel.loadContentFromNetwork()
                              }
                          }) },
@@ -38,7 +34,7 @@ extension ProfileView {
                                  .transition(.opacity)
                                  .fullScreenCover(item: $viewModel.selection, onDismiss: {
                                      Task {
-                                         handleReconnection()
+                                         await handleReconnection()
                                          ImagePipeline.shared.configuration.imageCache?.removeAll()
                                      }
                                  }) { id in
@@ -82,10 +78,8 @@ extension ProfileView {
             ProgressView()
         }
 
-        func handleReconnection() {
-            DispatchQueue.main.async {
-                viewModel.setupObservers()
-            }
+        func handleReconnection() async {
+            await viewModel.setupObservers()
         }
     }
 

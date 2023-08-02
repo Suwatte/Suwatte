@@ -143,12 +143,14 @@ extension SDM {
                 target.archive = url.lastPathComponent
             }
         }
+        Logger.shared.log("Operation Complete (\(id))")
 
-        if let content = target.content {
-            updateIndex(of: content)
+        guard let id = target.content?.id else { return }
+        Task {
+            let actor = await RealmActor()
+            await actor.updateDownloadIndex(for: [id])
         }
 
-        Logger.shared.log("Operation Complete (\(id))")
     }
 }
 

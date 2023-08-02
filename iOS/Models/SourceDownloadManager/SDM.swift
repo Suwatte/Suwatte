@@ -158,11 +158,8 @@ extension SDM {
             }
             .distinct()
 
-            let content = DataManager.shared.getStoredContents(ids: unique)
-
-            content.forEach { c in
-                updateIndex(of: c)
-            }
+            let actor = await RealmActor()
+            await actor.updateDownloadIndex(for: unique)
         }
 
         // Consume States

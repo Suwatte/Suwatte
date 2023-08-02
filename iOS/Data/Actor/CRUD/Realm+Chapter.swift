@@ -1,18 +1,24 @@
 //
-//  Chapter.swift
+//  Realm+Chapter.swift
 //  Suwatte (iOS)
 //
-//  Created by Mantton on 2022-02-28.
+//  Created by Mantton on 2023-08-01.
 //
 
-import Foundation
-import IceCream
 import RealmSwift
 
+extension RealmActor {
+    @MainActor
+    func getChapterType(for id: String) -> ReaderView.ReaderChapter.ChapterType {
+        if id == STTHelpers.LOCAL_CONTENT_ID { return .LOCAL }
+        else if id == STTHelpers.OPDS_CONTENT_ID { return .OPDS }
+        else { return .EXTERNAL }
+    }
+}
 
-extension DataManager {
-    func validateChapterReference(id: String, _ realm: Realm? = nil) {
-        let realm = try! realm ?? Realm()
+
+extension RealmActor {
+    func validateChapterReference(id: String) async {
         let target = realm
             .objects(ChapterReference.self)
             .where { $0.id == id && $0.isDeleted == false }
@@ -37,43 +43,30 @@ extension DataManager {
             return
         }
         // Has no references, delete.
-        try! realm.safeWrite {
+        try! await realm.asyncWrite {
             target.isDeleted = true
         }
     }
 }
 
-extension DataManager {
-    func getChapterType(for id: String) -> ReaderView.ReaderChapter.ChapterType {
-        if id == STTHelpers.LOCAL_CONTENT_ID { return .LOCAL }
-        else if id == STTHelpers.OPDS_CONTENT_ID { return .OPDS }
-        else { return .EXTERNAL }
-    }
-}
 
-
-extension DataManager {
-    func getChapters(_ source: String, content: String) -> Results<StoredChapter> {
-        let realm = try! Realm()
-
-        return realm.objects(StoredChapter.self).where {
-            $0.contentId == content &&
-                $0.sourceId == source
-        }
+extension RealmActor {
+    func getChapters(_ source: String, content: String) -> [StoredChapter] {
+        realm.objects(StoredChapter.self)
+        .where { $0.contentId == content }
+        .where { $0.sourceId == source }
         .sorted(by: \.index, ascending: true)
+        .freeze()
+        .toArray()
     }
 
     func getStoredChapter(_ id: String) -> StoredChapter? {
-        let realm = try! Realm()
-
         return realm.objects(StoredChapter.self)
             .where { $0.id == id }
             .first
     }
 
     func getLatestStoredChapter(_ sourceId: String, _ contentId: String) -> StoredChapter? {
-        let realm = try! Realm()
-
         let chapter = realm
             .objects(StoredChapter.self)
             .where { $0.contentId == contentId }
@@ -84,8 +77,7 @@ extension DataManager {
         return chapter
     }
 
-    func storeChapters(_ chapters: [StoredChapter]) {
-        let realm = try! Realm()
+    func storeChapters(_ chapters: [StoredChapter]) async {
         // Get Chapters to be deleted
         if let first = chapters.first {
             let idList = chapters.map { $0.chapterId }
@@ -95,13 +87,13 @@ extension DataManager {
                 .where { $0.sourceId == first.sourceId }
                 .where { !$0.chapterId.in(idList) }
 
-            try! realm.safeWrite {
+            try! await realm.asyncWrite {
                 realm.delete(toBeDeleted)
             }
         }
 
         // Upsert Chapters List
-        try! realm.safeWrite {
+        try! await realm.asyncWrite {
             realm.add(chapters, update: .modified)
         }
     }

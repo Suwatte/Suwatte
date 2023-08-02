@@ -1,23 +1,21 @@
 //
-//  Data+ContentLink.swift
+//  Realm+ContentLink.swift
 //  Suwatte (iOS)
 //
-//  Created by Mantton on 2022-06-21.
+//  Created by Mantton on 2023-08-01.
 //
 
 import Foundation
 import RealmSwift
 
-extension DataManager {
-    func linkContent(_ parent: StoredContent, _ child: DSKCommon.Highlight, _ sourceId: String) -> Bool {
+extension RealmActor {
+    func linkContent(_ parent: StoredContent, _ child: DSKCommon.Highlight, _ sourceId: String) async -> Bool {
         let id = ContentIdentifier(contentId: child.contentId, sourceId: sourceId).id
-        saveIfNeeded(child, sourceId)
-        return linkContent(parent.id, id)
+        await saveIfNeeded(child, sourceId)
+        return await linkContent(parent.id, id)
     }
 
-    func linkContent(_ one: String, _ two: String) -> Bool {
-        let realm = try! Realm()
-
+    func linkContent(_ one: String, _ two: String) async -> Bool {
         let matches = !realm
             .objects(ContentLink.self)
             .where { $0.ids.contains(one) && $0.ids.contains(two) && $0.isDeleted == false }
@@ -34,7 +32,7 @@ extension DataManager {
 
         // A or B already in a linkset
         if let target {
-            try! realm.safeWrite {
+            try! await realm.asyncWrite {
                 target.ids.insert(one)
                 target.ids.insert(two)
             }
@@ -42,16 +40,14 @@ extension DataManager {
             let obj = ContentLink()
             obj.ids.insert(one)
             obj.ids.insert(two)
-            try! realm.safeWrite {
+            try! await realm.asyncWrite {
                 realm.add(obj, update: .modified)
             }
         }
         return true
     }
 
-    func unlinkContent(_ child: StoredContent, _ from: StoredContent) {
-        let realm = try! Realm()
-
+    func unlinkContent(_ child: StoredContent, _ from: StoredContent) async {
         let target = realm
             .objects(ContentLink.self)
             .where { $0.ids.containsAny(in: [child.id, from.id]) && $0.isDeleted == false }
@@ -60,13 +56,12 @@ extension DataManager {
         guard let target else {
             return
         }
-        try! realm.safeWrite {
+        try! await realm.asyncWrite {
             target.ids.remove(child.id)
         }
     }
 
-    func getLinkedContent(for id: String) -> [StoredContent] {
-        let realm = try! Realm()
+    func getLinkedContent(for id: String, _ removeQuery: Bool = true) -> [StoredContent] {
         let ids = realm
             .objects(ContentLink.self)
             .where { $0.ids.contains(id) && $0.isDeleted == false }
@@ -77,16 +72,19 @@ extension DataManager {
             return []
         }
 
+        
         var arr = Array(ids)
-        arr.removeAll(where: { $0 == id })
-        let contents = Array(getStoredContents(ids: arr))
+        if removeQuery {
+            arr.removeAll(where: { $0 == id })
+        }
+        let contents = getStoredContents(ids: arr)
+            .freeze()
+            .toArray()
 
         return contents
     }
 
-    func saveIfNeeded(_ h: DSKCommon.Highlight, _ sId: String) {
-        let realm = try! Realm()
-
+    func saveIfNeeded(_ h: DSKCommon.Highlight, _ sId: String) async {
         let result = realm
             .objects(StoredContent.self)
             .where { $0.sourceId == sId && $0.contentId == h.contentId }
@@ -95,9 +93,8 @@ extension DataManager {
         }
 
         let obj = h.toStored(sourceId: sId)
-        try! realm.safeWrite {
+        try! await realm.asyncWrite {
             realm.add(obj)
         }
     }
 }
-

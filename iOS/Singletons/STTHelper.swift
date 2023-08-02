@@ -37,8 +37,10 @@ class STTHelpers {
         }
     }
 
-    static func getInitialPanelPosition(for id: String, chapterId: String, limit: Int) -> (Int, CGFloat?) {
-        guard let marker = DataManager.shared.getContentMarker(for: id), let chapter = marker.currentChapter else {
+    static func getInitialPanelPosition(for id: String, chapterId: String, limit: Int) async-> (Int, CGFloat?)  {
+        let actor = await RealmActor()
+        let marker = await actor.getContentMarker(for: id)
+        guard let marker, let chapter = marker.currentChapter else {
             return (0, nil) // No Marker, Start from beginning
         }
 
@@ -62,10 +64,11 @@ class STTHelpers {
     }
 
     static func getChapterData(_ chapter: ThreadSafeChapter) async -> Loadable<StoredChapterData> {
+        let actor = await RealmActor()
         switch chapter.chapterType {
         case .LOCAL:
             let id = chapter.contentId
-            let archivedContent = DataManager.shared.getArchivedcontentInfo(id)
+            let archivedContent = await actor.getArchivedcontentInfo(id)
 
             guard let archivedContent else {
                 return .failed(DSK.Errors.NamedError(name: "DataLoader", message: "Failed to locate archive information"))
@@ -98,8 +101,8 @@ class STTHelpers {
             }
 
             // Get from Database
-            if let data = DataManager.shared.getChapterData(forId: chapter.id) {
-                return .loaded(data.freeze())
+            if let data = await actor.getChapterData(forId: chapter.id) {
+                return .loaded(data)
             }
             // Get from source
             guard let source = DSK.shared.getSource(id: chapter.sourceId) else {
@@ -109,7 +112,7 @@ class STTHelpers {
                 let data = try await source.getChapterData(contentId: chapter.contentId, chapterId: chapter.chapterId)
                 let stored = data.toStored(withStoredChapter: chapter.toStored())
                 if source.ablityNotDisabled(\.disableChapterDataCaching) {
-                    DataManager.shared.saveChapterData(data: stored)
+                    await actor.saveChapterData(data: stored)
                 }
                 return .loaded(stored.realm == nil ? stored : stored.freeze())
             } catch {
@@ -120,7 +123,7 @@ class STTHelpers {
                 let obj = StoredChapterData()
                 obj.chapter = chapter.toStored()
                 let baseLink = chapter.chapterId
-                let publication = DataManager.shared.getPublication(id: chapter.id)
+                let publication = await actor.getPublication(id: chapter.id)
                 guard let publication, let client = publication.client else {
                     throw DSK.Errors.NamedError(name: "OPDS", message: "Unable to fetch OPDS Content")
                 }

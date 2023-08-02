@@ -145,8 +145,8 @@ struct ChapterList: View {
     }
 
     func handleReconnection() {
-        DispatchQueue.main.async {
-            model.setupObservers()
+        Task {
+            await model.setupObservers()
         }
     }
 
@@ -216,7 +216,13 @@ struct ChapterList: View {
                 Color.clear
                     .contextMenu {
                         Button {
-                            DataManager.shared.bulkMarkChapters(for: model.sttIdentifier(), chapters: [chapter], markAsRead: !completed)
+                            let id = model.sttIdentifier()
+                            Task {
+                                let actor = await RealmActor()
+                                await actor.bulkMarkChapters(for: id,
+                                                             chapters: [chapter],
+                                                             markAsRead: !completed)
+                            }
                             didMark()
                         } label: {
                             Label(completed ? "Mark as Unread" : "Mark as Read", systemImage: completed ? "eye.slash.circle" : "eye.circle")
@@ -440,13 +446,23 @@ extension ChapterList {
     }
 
     func markAsRead() {
-        DataManager.shared.bulkMarkChapters(for: model.sttIdentifier(), chapters: Array(selections))
+        let id = model.sttIdentifier()
+        let chapters = Array(selections)
+        Task {
+            let actor = await RealmActor()
+            await actor.bulkMarkChapters(for: id, chapters: chapters)
+        }
         deselectAll()
         didMark()
     }
 
     func markAsUnread() {
-        DataManager.shared.bulkMarkChapters(for: model.sttIdentifier(), chapters: Array(selections), markAsRead: false)
+        let id = model.sttIdentifier()
+        let chapters = Array(selections)
+        Task {
+            let actor = await RealmActor()
+            await actor.bulkMarkChapters(for: id, chapters: chapters, markAsRead: false)
+        }
         deselectAll()
     }
 
@@ -467,22 +483,24 @@ extension ChapterList {
     }
 
     func clearChapterData() {
-        selections.forEach {
-            DataManager.shared.resetChapterData(forId: $0.id)
+        let ids = selections.map(\.id)
+        Task {
+            let actor = await RealmActor()
+            await actor.resetChapterData(for: ids)
         }
         deselectAll()
     }
 
     func didMark() { // This is called before the notification is delivered to for model `readChapters` property to update
-        let maxRead = DataManager
-            .shared
-            .getContentMarker(for: model.contentIdentifier)?
-            .readChapters
-            .max()
-        guard let maxRead else { return }
-        Task.detached {
+        let identifier = model.contentIdentifier
+        Task {
+            let actor = await RealmActor()
+            let maxRead = await actor
+                .getContentMarker(for: identifier)?
+                .readChapters
+                .max()
             let progress = DSKCommon.TrackProgressUpdate(chapter: maxRead, volume: nil) // TODO: Probably Want to get the volume here
-            await DataManager.shared.updateTrackProgress(for: model.contentIdentifier, progress: progress)
+            await actor.updateTrackProgress(for: identifier, progress: progress)
         }
     }
 }

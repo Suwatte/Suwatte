@@ -9,20 +9,12 @@ import RealmSwift
 import SwiftUI
 
 struct ManageContentLinks: View {
-    @ObservedResults(ContentLink.self, where: { $0.isDeleted == false }) var entries
     var content: StoredContent
     @State var presentAddSheet = false
-
-    init(content: StoredContent) {
-        self.content = content
-        let id = content.id
-        $entries.where = { $0.ids.contains(id) }
-    }
-
+    @State var linked: [StoredContent] = []
     var body: some View {
-        let data = fetch()
         List {
-            ForEach(data) { linked in
+            ForEach(linked) { linked in
                 NavigationLink {
                     ProfileView(entry: linked.toHighlight(), sourceId: linked.sourceId)
                 } label: {
@@ -31,7 +23,7 @@ struct ManageContentLinks: View {
                 .buttonStyle(.plain)
                 .swipeActions {
                     Button(role: .destructive) {
-                        DataManager.shared.unlinkContent(linked, content)
+                        Task { await unlink(linked) }
                     } label: {
                         Label("Unlink", systemImage: "pin.slash.fill")
                             .tint(.red)
@@ -48,22 +40,30 @@ struct ManageContentLinks: View {
                 }
             }
         }
-        .sheet(isPresented: $presentAddSheet, content: {
+        .sheet(isPresented: $presentAddSheet, onDismiss: { Task { await fetch() }}){
             NavigationView {
                 AddContentLink(content: content)
                     .closeButton()
             }
-        })
+        }
+        .task {
+            await fetch()
+        }
     }
 
-    func fetch() -> [StoredContent] {
-        guard let ids = entries.first?.ids else {
-            return []
+    func fetch() async {
+        let actor = await RealmActor()
+        let data = await actor.getLinkedContent(for: content.id)
+        
+        withAnimation {
+            linked = data
         }
-        var arr = Array(ids)
-        arr.removeAll(where: { $0 == content.id })
-        let contents = Array(DataManager.shared.getStoredContents(ids: arr))
-        return contents
+    }
+    
+    func unlink(_ title: StoredContent) async {
+        let actor = await RealmActor()
+        await actor.unlinkContent(title, content)
+        await fetch()
     }
 
     @ViewBuilder

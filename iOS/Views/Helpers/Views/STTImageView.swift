@@ -134,7 +134,7 @@ struct BaseImageView: View {
                         .shimmering(active: shimmer && isVisible)
                 }
             }
-            .onAppear { load(size) }
+            .task { await load(size, url) }
             .onDisappear {
                 loader.reset()
                 loader.priority = .low
@@ -144,10 +144,15 @@ struct BaseImageView: View {
             .background(Color.gray.opacity(0.25))
             .animation(.easeOut(duration: 0.25), value: loader.image)
             .animation(.easeOut(duration: 0.25), value: loader.isLoading)
+            .onChange(of: url) { value in
+                Task {
+                    await load(size, value)
+                }
+            }
         }
     }
 
-    func load(_ size: CGSize) {
+    func load(_ size: CGSize, _ url: URL?) async {
         isVisible = true
         if loader.image != nil { return }
         loader.processors = [NukeDownsampleProcessor(size: size)]
@@ -158,8 +163,10 @@ struct BaseImageView: View {
             loader.load(request)
             return
         }
+        
+        guard let url else { return }
 
-        guard let url, url.isHTTP else {
+        guard url.isHTTP else {
             loader.load(url)
             return
         }
@@ -173,21 +180,19 @@ struct BaseImageView: View {
             return
         }
 
-        Task {
-            do {
-                let response = try await runner.willRequestImage(imageURL: url)
-                let request = try ImageRequest(urlRequest: response.toURLRequest())
-                loader.load(request)
-            } catch {
-                Logger.shared.error(error.localizedDescription)
-                loader.load(url)
-            }
+        do {
+            let response = try await runner.willRequestImage(imageURL: url)
+            let request = try ImageRequest(urlRequest: response.toURLRequest())
+            loader.load(request)
+        } catch {
+            Logger.shared.error(error.localizedDescription)
+            loader.load(url)
         }
     }
 
     func onImageEvent(_ result: Result<ImageResponse, Error>) {
         switch result {
-        case let .success(success):
+        case .success:
             break
         case let .failure(error):
             Logger.shared.error(error, "ImageLoader")
