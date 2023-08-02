@@ -88,7 +88,7 @@ extension LibraryView.LibraryGrid {
                         let editCollectionsAction = UIAction(title: "Manage", image: .init(systemName: "gearshape"))
                             { _ in
                                 //
-                                let controller = UIHostingController(rootView: ProfileView.Sheets.LibrarySheet(storedContent: content))
+                                let controller = UIHostingController(rootView: ProfileView.Sheets.LibrarySheet(id: content.id))
                                 KEY_WINDOW?.rootViewController?.present(controller, animated: true)
                             }
 
@@ -99,7 +99,11 @@ extension LibraryView.LibraryGrid {
                     if content.updateCount >= 1 {
                         let clearUpdatesActions = UIAction(title: "Clear Updates", image: UIImage(systemName: "bell.slash"), attributes: .destructive) {
                             _ in
-                            DataManager.shared.clearUpdates(id: content.id)
+                            let id = content.id
+                            Task {
+                                let actor = await Suwatte.RealmActor()
+                                await actor.clearUpdates(id: id)
+                            }
                         }
 
                         destructiveActions.append(clearUpdatesActions)
@@ -110,7 +114,12 @@ extension LibraryView.LibraryGrid {
                         let removeFromCollection = UIAction(title: "Remove from Collection", image: .init(systemName: "xmark"), attributes: .destructive)
                             { _ in
                                 //
-                                DataManager.shared.toggleCollection(for: content, withId: collection.id)
+                                let contentId = content.id
+                                let collectionID = collection.id
+                                Task {
+                                    let actor = await Suwatte.RealmActor()
+                                    await actor.toggleCollection(for: contentId, withId: collectionID)
+                                }
                             }
 
                         destructiveActions.append(removeFromCollection)
@@ -120,7 +129,11 @@ extension LibraryView.LibraryGrid {
                     if let content = content.content {
                         let removeFromLibAction = UIAction(title: "Remove from library", image: .init(systemName: "trash"), attributes: .destructive)
                             { _ in
-                                DataManager.shared.toggleLibraryState(for: content)
+                                let cID = content.ContentIdentifier
+                                Task {
+                                    let actor = await Suwatte.RealmActor()
+                                    await actor.toggleLibraryState(for: cID)
+                                }
                             }
                         destructiveActions.append(removeFromLibAction)
                     }

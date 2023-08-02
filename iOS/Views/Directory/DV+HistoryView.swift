@@ -25,7 +25,11 @@ extension DirectoryView {
                         Cell(for: result)
                             .swipeActions {
                                 Button("Delete", role: .destructive) {
-                                    DataManager.shared.deleteSearch(result)
+                                    let id = result.id
+                                    Task {
+                                        let actor = await RealmActor()
+                                        await actor.deleteSearch(id)
+                                    }
                                 }
                             }
                     }
@@ -66,9 +70,11 @@ extension DirectoryView.HistoryView {
 
 extension DirectoryView.HistoryView {
     func handleClear() {
-        ToastManager.shared.loading.toggle()
-        DataManager.shared.deleteSearchHistory(for: model.runner.id)
-        ToastManager.shared.loading.toggle()
+        let runnerId = model.runner.id
+        Task {
+            let actor = await RealmActor()
+            await actor.deleteSearchHistory(for: runnerId)
+        }
     }
 
     func didTap(_ entry: UpdatedSearchHistory) {

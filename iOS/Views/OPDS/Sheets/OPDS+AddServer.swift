@@ -68,12 +68,13 @@ extension OPDSView {
                         let auth = hasAuthentication ? (entry.userName, entry.password) : nil
                         let client = OPDSClient(id: "", base: entry.host, auth: auth) // client only used to test if server works
                         // Test
-                        Task { @MainActor in
+                        Task {
                             do {
                                 let _ = try await client.getFeed(url: entry.host)
 
                                 // Save
-                                DataManager.shared.saveNewOPDSServer(entry: entry)
+                                let actor = await RealmActor()
+                                await actor.saveNewOPDSServer(entry: entry)
                                 // Dismiss
                                 presentationMode.wrappedValue.dismiss()
 

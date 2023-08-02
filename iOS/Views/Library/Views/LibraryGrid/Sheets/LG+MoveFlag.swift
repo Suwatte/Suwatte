@@ -59,8 +59,13 @@ extension LibraryView.LibraryGrid {
                 .filter { model.selectedIndexes.contains($0.0) }
                 .map { $0.1.id }
             let ids = Set(targets)
-            DataManager.shared.bulkSetReadingFlag(for: ids, to: flag)
-            presentationMode.wrappedValue.dismiss()
+            Task {
+                let actor = await Suwatte.RealmActor()
+                await actor.bulkSetReadingFlag(for: ids, to: flag)
+                await MainActor.run {
+                    presentationMode.wrappedValue.dismiss()
+                }
+            }
         }
     }
 }

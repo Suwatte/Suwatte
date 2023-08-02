@@ -34,11 +34,4 @@ extension RealmActor {
             .where { $0.id == id && !$0.isDeleted }
             .first
     }
-
-    func getArchiveDateRead(_ id: String) -> Date {
-        return realm.objects(ProgressMarker.self)
-            .where { $0.currentChapter.archive.id == id && !$0.isDeleted }
-            .first?
-            .dateRead ?? .distantPast
-    }
 }

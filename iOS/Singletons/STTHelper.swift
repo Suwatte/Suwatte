@@ -152,6 +152,7 @@ class STTHelpers {
         }
     }
 
+    @MainActor
     static func triggerHaptic(_ overrride: Bool = false) {
         if Preferences.standard.enableReaderHaptics || overrride {
             let haptic = UIImpactFeedbackGenerator(style: .medium)

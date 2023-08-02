@@ -27,12 +27,15 @@ extension RealmActor {
         }
     }
 
-    func deleteSearch(_ object: UpdatedSearchHistory) async {
-        guard let object = object.thaw() else {
-            return
-        }
+    func deleteSearch(_ id: String) async {
+       let target = realm
+            .objects(UpdatedSearchHistory.self)
+            .where { $0.id == id }
+            .first
+        
+        guard let target else { return }
         try! await realm.asyncWrite {
-            object.isDeleted = true
+            target.isDeleted = true
         }
     }
 }

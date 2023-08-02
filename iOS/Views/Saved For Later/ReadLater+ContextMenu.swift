@@ -24,16 +24,23 @@ extension LibraryView.ReadLaterView.CollectionView {
                 var actions = [UIAction]()
                 let removeAction = UIAction(title: "Remove from Read Later", image: UIImage(systemName: "bookmark.slash"), attributes: .destructive) {
                     _ in
-                    DataManager.shared.removeFromReadLater(content.sourceId, content: content.contentId)
+                    Task {
+                        let actor = await RealmActor()
+                        await actor
+                            .removeFromReadLater(content.sourceId,
+                                            content: content.contentId)
+                    }
                 }
                 actions.append(removeAction)
 
                 if !inLibrary(entry) {
                     let moveAction = UIAction(title: "Move to Library", image: UIImage(systemName: "folder")) {
                         _ in
-
-                        DataManager.shared.removeFromReadLater(content.sourceId, content: content.contentId)
-                        DataManager.shared.toggleLibraryState(for: content)
+                        Task {
+                            let actor = await RealmActor()
+                            await actor.removeFromReadLater(content.sourceId, content: content.contentId)
+                            await actor.toggleLibraryState(for: content.ContentIdentifier)
+                        }
                     }
                     actions.append(moveAction)
                 }

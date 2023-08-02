@@ -81,7 +81,7 @@ extension ReaderView {
                 let actor = await RealmActor()
                 content = await actor.getStoredContent(chapter.sourceId, chapter.contentId)
                 if let content {
-                    isInLibrary = await actor.isInLibrary(content: content)
+                    isInLibrary = await actor.isInLibrary(id: content.id)
                 }
             }
         }

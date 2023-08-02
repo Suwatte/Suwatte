@@ -22,7 +22,10 @@ struct OPDSView: View {
                 }
                 .swipeActions {
                     Button("Delete") {
-                        DataManager.shared.removeOPDServer(id: server.id)
+                        Task {
+                            let actor = await RealmActor()
+                            await actor.removeOPDServer(id: server.id)
+                        }
                     }
                     .tint(.red)
                     Button("Rename") {
@@ -59,7 +62,10 @@ struct OPDSView: View {
 
             guard let text else { return }
 
-            DataManager.shared.renameOPDSServer(id: server.id, name: text)
+            Task {
+                let actor = await RealmActor()
+                await actor.renameOPDSServer(id: server.id, name: text)
+            }
         }
         ac.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         ac.addAction(submitAction)

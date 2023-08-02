@@ -43,7 +43,11 @@ struct SearchView: View {
         }
         .onSubmit(of: .search) {
             let request: DSKCommon.DirectoryRequest = .init(query: model.query, page: 1)
-            try? DataManager.shared.saveSearch(request, sourceId: nil, display: model.query)
+            let display = model.query
+            Task {
+                let actor = await RealmActor()
+                await actor.saveSearch(request, sourceId: nil, display: display)
+            }
         }
         .onAppear {
             if initialQuery.isEmpty || !initial { return }

@@ -26,10 +26,6 @@ struct File: Identifiable, Hashable {
     func sizeToString() -> String {
         ByteCountFormatter.string(fromByteCount: size, countStyle: .file)
     }
-
-    var dateRead: Date {
-        DataManager.shared.getArchiveDateRead(id)
-    }
 }
 
 struct Folder: Hashable {
@@ -45,7 +41,7 @@ struct Folder: Hashable {
 }
 
 enum DirectorySortOption: Int, CaseIterable, UserDefaultsSerializable {
-    case creationDate, size, title, dateAdded, lastRead
+    case creationDate, size, title, dateAdded
 
     var description: String {
         switch self {
@@ -57,8 +53,7 @@ enum DirectorySortOption: Int, CaseIterable, UserDefaultsSerializable {
             return "Creation Date"
         case .dateAdded:
             return "Date Added"
-        case .lastRead:
-            return "Last Read"
+
         }
     }
 }

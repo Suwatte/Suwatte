@@ -62,10 +62,11 @@ extension RealmActor {
         obj.alias = entry.alias
         obj.host = entry.host
         obj.userName = entry.userName
+        
         try! await realm.asyncWrite {
             realm.add(obj)
         }
-
+        
         // Save PW to KC
         let keychain = KeychainSwift()
         keychain.synchronizable = true

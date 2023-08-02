@@ -19,17 +19,19 @@ extension JSCHandler {
         func _post(_ message: JSValue) -> JSValue {
             .init(newPromiseIn: message.context) { resolve, reject in
                 let context = message.context
-                do {
-                    let message = try Message(value: message)
-                    let response = try self.handle(message: message)
-                    if let response {
-                        resolve?.call(withArguments: [response])
-                    } else {
-                        let jsNull = JSValue(nullIn: context)
-                        resolve?.call(withArguments: [jsNull as Any])
+                Task {
+                    do {
+                        let message = try Message(value: message)
+                        let response = try await self.handle(message: message)
+                        if let response {
+                            resolve?.call(withArguments: [response])
+                        } else {
+                            let jsNull = JSValue(nullIn: context)
+                            resolve?.call(withArguments: [jsNull as Any])
+                        }
+                    } catch {
+                        reject?.call(withArguments: [error])
                     }
-                } catch {
-                    reject?.call(withArguments: [error])
                 }
             }
         }
@@ -56,33 +58,34 @@ extension H {
 }
 
 extension H {
-    func handle(message: Message) throws -> String? {
+    func handle(message: Message) async throws -> String? {
         let id = try getRunnerID()
+        let actor = await RealmActor()
         switch message.store {
         case .os: // ObjectStore
             switch message.action {
             case .get:
-                return DataManager.shared.getStoreValue(for: id, key: message.key)
+                return await actor.getStoreValue(for: id, key: message.key)
             case .set:
                 guard let value = message.value else {
                     throw DSK.Errors.ValueStoreErrorKeyValuePairInvalid
                 }
-                DataManager.shared.setStoreValue(for: id, key: message.key, value: value)
+                await actor.setStoreValue(for: id, key: message.key, value: value)
             case .remove:
-                DataManager.shared.removeStoreValue(for: id, key: message.key)
+                await actor.removeStoreValue(for: id, key: message.key)
             }
 
         case .ss: // SecureStore
             switch message.action {
             case .get:
-                return DataManager.shared.getKeychainValue(for: id, key: message.key)
+                return await actor.getKeychainValue(for: id, key: message.key)
             case .set:
                 guard let value = message.value else {
                     throw DSK.Errors.ValueStoreErrorKeyValuePairInvalid
                 }
-                DataManager.shared.setKeychainValue(for: id, key: message.key, value: value)
+                await actor.setKeychainValue(for: id, key: message.key, value: value)
             case .remove:
-                DataManager.shared.deleteKeyChainValue(for: id, key: message.key)
+                await actor.deleteKeyChainValue(for: id, key: message.key)
             }
         }
         return nil

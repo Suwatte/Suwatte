@@ -21,4 +21,12 @@ actor RealmActor {
     func close() {
         realm = nil
     }
+    
+    func operation(_ task: @escaping () async throws -> Void) async {
+        do {
+            try await task()
+        } catch {
+            Logger.shared.error(error, "RealmActor")
+        }
+    }
 }

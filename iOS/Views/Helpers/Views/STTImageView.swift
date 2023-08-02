@@ -63,7 +63,8 @@ struct STTImageView: View {
 
         Task {
             if identifier.sourceId == STTHelpers.OPDS_CONTENT_ID {
-                let pub = DataManager.shared.getPublication(id: identifier.contentId)
+                let actor = await RealmActor()
+                let pub = await actor.getPublication(id: identifier.contentId)
                 let value = pub?.client?.toClient().authHeader
                 guard let value else {
                     loader.load(url)

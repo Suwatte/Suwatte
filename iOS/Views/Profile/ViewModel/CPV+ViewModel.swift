@@ -112,7 +112,7 @@ extension ProfileView.ViewModel {
 
     func setupObservers() async {
         let actor = await RealmActor()
-
+        
         // Observe Progress Markers
         let id = contentIdentifier
         progressToken = await actor
@@ -140,7 +140,7 @@ extension ProfileView.ViewModel {
             .observeDownloadStatus(for: id) { value in
                 self.downloads = value
             }
-        
+                
     }
     
     func removeNotifier() {

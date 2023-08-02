@@ -55,7 +55,7 @@ extension DirectoryView {
                             }
                             model.presentFilters.toggle()
 
-                            Task.detached {
+                            Task {
                                 await saveSearch()
                             }
                         }
@@ -66,15 +66,11 @@ extension DirectoryView {
             .navigationViewStyle(.stack)
         }
 
-        func saveSearch() {
-            do {
-                let title = prepareSearch().trimmingCharacters(in: .whitespacesAndNewlines)
-                guard !title.isEmpty else { return }
-                try DataManager.shared.saveSearch(model.request, sourceId: model.runner.id, display: title)
-
-            } catch {
-                Logger.shared.error(error)
-            }
+        func saveSearch() async {
+            let title = prepareSearch().trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !title.isEmpty else { return }
+            let actor = await RealmActor()
+            await actor.saveSearch(model.request, sourceId: model.runner.id, display: title)
         }
 
         func prepareSearch() -> String {

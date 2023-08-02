@@ -16,7 +16,7 @@ extension ProfileView {
         var body: some View {
             Main
                 .fullScreenCover(isPresented: $viewModel.presentCollectionsSheet, content: {
-                    ProfileView.Sheets.LibrarySheet(storedContent: viewModel.storedContent)
+                    ProfileView.Sheets.LibrarySheet(id: viewModel.contentIdentifier)
                         .tint(accentColor)
                         .accentColor(accentColor)
                 })

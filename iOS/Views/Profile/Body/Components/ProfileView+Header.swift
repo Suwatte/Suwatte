@@ -110,24 +110,11 @@ private extension Skeleton {
                 ForEach(actions, id: \.option) { action in
 
                     Button {
+                        
                         switch action.option {
                         case .COLLECTIONS:
-                            STTHelpers.triggerHaptic(true)
-                            if !EntryInLibrary {
-                                DataManager.shared.toggleLibraryState(for: model.storedContent)
-                            }
-                            if promptForConfig || EntryInLibrary {
-                                model.presentCollectionsSheet.toggle()
-                            } else {
-                                if !defaultCollection.isEmpty {
-                                    DataManager.shared.toggleCollection(for: model.contentIdentifier, withId: defaultCollection)
-                                }
-
-                                if defaultFlag != .unknown {
-                                    var s = Set<String>()
-                                    s.insert(model.contentIdentifier)
-                                    DataManager.shared.bulkSetReadingFlag(for: s, to: defaultFlag)
-                                }
+                            Task {
+                                await handleLibraryAction()
                             }
                         case .TRACKERS: model.presentTrackersSheet.toggle()
                         case .WEBVIEW: model.presentSafariView.toggle()
@@ -147,6 +134,30 @@ private extension Skeleton {
 
         var EntryInLibrary: Bool {
             model.inLibrary
+        }
+        
+        func handleLibraryAction() async {
+            let actor = await RealmActor()
+            Task { @MainActor in
+                STTHelpers.triggerHaptic(true)
+            }
+            let ids = model.storedContent.ContentIdentifier
+            if !EntryInLibrary {
+                await actor.toggleLibraryState(for: ids)
+            }
+            if promptForConfig || EntryInLibrary {
+                model.presentCollectionsSheet.toggle()
+            } else {
+                if !defaultCollection.isEmpty {
+                    await actor.toggleCollection(for: model.contentIdentifier, withId: defaultCollection)
+                }
+
+                if defaultFlag != .unknown {
+                    var s = Set<String>()
+                    s.insert(model.contentIdentifier)
+                    await actor.bulkSetReadingFlag(for: s, to: defaultFlag)
+                }
+            }
         }
     }
 }

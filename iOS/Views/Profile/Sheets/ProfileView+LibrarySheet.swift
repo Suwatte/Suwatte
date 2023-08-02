@@ -14,16 +14,12 @@ extension ProfileView {
 
 extension ProfileView.Sheets {
     struct LibrarySheet: View {
-        @ObservedResults(LibraryCollection.self, where: { $0.isDeleted == false }) var collections
-        @ObservedResults(LibraryEntry.self, where: { $0.isDeleted == false }) var libraryEntries
-        var storedContent: StoredContent
+        @ObservedResults(LibraryCollection.self, where: { $0.isDeleted == false }) private var collections
         private typealias AddCollectionView = LibraryView.ManageCollectionsView.AddCollectionView
-
-        @State var flag: LibraryFlag = .unknown
-        @State var selectedCollections = Set<String>()
-        var entry: LibraryEntry? {
-            libraryEntries.first { $0.id == storedContent.id }
-        }
+        let id: String
+        @State private var flag: LibraryFlag = .unknown
+        @State private var selectedCollections = Set<String>()
+        @State private var entry: LibraryEntry?
 
         func containsCollection(withID id: String) -> Bool {
             entry?.collections.contains(id) ?? false
@@ -43,39 +39,38 @@ extension ProfileView.Sheets {
 
         var body: some View {
             NavigationView {
-                List {
-                    Section {
-                        // Collections
-                        CollectionView
-                        // Content Flag
-                        ContentFlags
-                    } header: {
-                        Text("Manage")
+                
+                Group {
+                    if let entry {
+                        List {
+                            Section {
+                                // Collections
+                                CollectionView
+                                // Content Flag
+                                ContentFlags
+                            } header: {
+                                Text("Manage")
+                            }
+                            .headerProminence(.increased)
+
+                            // Delete Section
+                            DeleteSection
+                        }
+                    } else {
+                        ProgressView()
                     }
-                    .headerProminence(.increased)
-
-                    // Delete Section
-                    DeleteSection
                 }
-
                 .animation(.default, value: collections)
-                .animation(.default, value: libraryEntries)
                 .animation(.default, value: entry)
                 .navigationTitle("Manage")
                 .navigationBarTitleDisplayMode(.inline)
                 .closeButton()
-                .onAppear {
-                    flag = entry?.flag ?? .unknown
-                    // Prune Deleted Collections
-                    let realm = try! Realm()
-                    guard let entry = entry?.thaw() else {
-                        return
-                    }
-                    var collecs = entry.collections.toArray()
-                    collecs = collecs.filter(isValidCollection(_:))
-                    try! realm.safeWrite {
-                        entry.collections.removeAll()
-                        entry.collections.append(objectsIn: collecs)
+                .task {
+                    let actor = await RealmActor()
+                    let value = await actor.fetchAndPruneLibraryEntry(for: id)
+                    Task { @MainActor in
+                        entry = value
+                        flag = value?.flag ?? .unknown
                     }
                 }
             }
@@ -131,12 +126,20 @@ extension ProfileView.Sheets {
                     guard let entry = entry else {
                         return
                     }
-                    DataManager.shared.clearCollections(for: entry)
+                    Task {
+                        let actor = await RealmActor()
+                        await actor.clearCollections(for: entry.id)
+                    }
                 } label: {
                     Label("Remove from all collections.", systemImage: "archivebox")
                 }
                 Button(role: .destructive) {
-                    DataManager.shared.toggleLibraryState(for: storedContent)
+                    guard let ci = entry?.content?.ContentIdentifier else { return }
+                    Task {
+                        
+                        let actor = await RealmActor()
+                        await actor.toggleLibraryState(for: ci)
+                    }
                     presentationMode.wrappedValue.dismiss()
                 } label: {
                     Label("Remove from library", systemImage: "folder.badge.minus")
@@ -157,8 +160,10 @@ extension ProfileView.Sheets {
             }
             .pickerStyle(.automatic)
             .onChange(of: flag) { newValue in
-                if let entry = entry {
-                    DataManager.shared.setReadingFlag(for: entry, to: newValue)
+                guard let entry else { return }
+                Task {
+                    let actor = await RealmActor()
+                    await actor.setReadingFlag(for: entry.id, to: newValue)
                 }
             }
         }
@@ -191,7 +196,12 @@ extension ProfileView.Sheets {
             guard let entry = entry else {
                 return
             }
-            DataManager.shared.toggleCollection(for: entry, withId: id)
+            let contentID = entry.id
+            let collectionID = id
+            Task {
+                let actor = await RealmActor()
+                await actor.toggleCollection(for: contentID, withId: collectionID)
+            }
         }
 
         var NoCollectionsView: some View {

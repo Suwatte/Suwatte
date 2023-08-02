@@ -88,14 +88,21 @@ extension ReaderView {
                 HStack(spacing: 15) {
                     if !wasInLibrary {
                         ActionButton(label: inLibrary ? "Unfollow" : "Follow", systemImage: inLibrary ? "folder.fill" : "folder.badge.plus") {
-                            inLibrary = DataManager.shared.toggleLibraryState(for: entry)
-                            if inLibrary { openCollectionSheet.toggle() }
+                            let cID = entry.ContentIdentifier
+                            Task {
+                                let actor = await RealmActor()
+                                let result = await actor.toggleLibraryState(for: cID)
+                                Task { @MainActor in
+                                    inLibrary = result
+                                    if inLibrary { openCollectionSheet.toggle() }
+                                }
+                            }
                         }
                         .transition(.opacity)
                     }
                 }
                 .sheet(isPresented: $openCollectionSheet) {
-                    ProfileView.Sheets.LibrarySheet(storedContent: entry)
+                    ProfileView.Sheets.LibrarySheet(id: entry.id)
                 }
                 .padding()
                 .background(Color.primary.opacity(0.05))

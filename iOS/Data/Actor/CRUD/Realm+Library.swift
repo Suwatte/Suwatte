@@ -8,16 +8,23 @@ import RealmSwift
 import Foundation
 
 extension RealmActor {
-    func setReadingFlag(for object: LibraryEntry, to flag: LibraryFlag) async {
-        guard let object = object.thaw() else {
-            return
-        }
+    
+    func getLibraryEntry(for id: String) -> LibraryEntry? {
+        realm
+            .objects(LibraryEntry.self)
+            .where { $0.id == id }
+            .first
+    }
+    
+    func setReadingFlag(for id: String, to flag: LibraryFlag) async {
+        let target = getLibraryEntry(for: id)
+        guard let target else { return }
 
         try! await realm.asyncWrite {
-            object.flag = flag
+            target.flag = flag
         }
 
-        guard let id = object.content?.contentId, let sourceId = object.content?.sourceId, let source = DSK.shared.getSource(id: sourceId), source.intents.contentEventHandler else {
+        guard let id = target.content?.contentId, let sourceId = target.content?.sourceId, let source = DSK.shared.getSource(id: sourceId), source.intents.contentEventHandler else {
             return
         }
         Task {
@@ -25,7 +32,7 @@ extension RealmActor {
                 try await source.onContentsReadingFlagChanged(ids: [id], flag: flag)
             } catch {
                 ToastManager.shared.error(error)
-                Logger.shared.error(error.localizedDescription)
+                Logger.shared.error(error)
             }
         }
     }
@@ -66,10 +73,9 @@ extension RealmActor {
     }
 
     @discardableResult
-    func toggleLibraryState(for content: StoredContent) async -> Bool {
-        let ids = content.ContentIdentifier
-        let source = DSK.shared.getSource(id: content.sourceId)
-        if let target = realm.objects(LibraryEntry.self).first(where: { $0.id == content.id }) {
+    func toggleLibraryState(for ids: ContentIdentifier) -> Bool {
+        let source = DSK.shared.getSource(id: ids.sourceId)
+        if let target = realm.objects(LibraryEntry.self).first(where: { $0.id == ids.id }) {
             // Run Removal Event
             Task {
                 do {
@@ -80,17 +86,17 @@ extension RealmActor {
                 }
             }
             // In Library, delete object
-            try! await realm.asyncWrite {
+            try! realm.safeWrite {
                 target.isDeleted = true
             }
             return false
         }
 
         // Add To library
-        let unread = getUnreadCount(for: .init(contentId: content.contentId, sourceId: content.sourceId))
-        try! await realm.asyncWrite {
+        let unread = getUnreadCount(for: .init(contentId: ids.contentId, sourceId: ids.sourceId))
+        try! realm.safeWrite {
             let obj = LibraryEntry()
-            obj.content = content
+            obj.content = getStoredContent(ids.id)
             // Update Dates
             obj.lastOpened = .now
             obj.unreadCount = unread
@@ -114,15 +120,18 @@ extension RealmActor {
         return true
     }
 
-    func isInLibrary(content: StoredContent) -> Bool {
-
-        return realm.objects(LibraryEntry.self).contains(where: { $0.id == content.id })
+    func isInLibrary(id: String) -> Bool {
+         !realm
+            .objects(LibraryEntry.self)
+            .where { $0.id == id }
+            .isEmpty
     }
 
     // MARK: Collections
 
-    func clearCollections(for entry: LibraryEntry) async {
-        guard let entry = entry.thaw() else {
+    func clearCollections(for id: String) async {
+        
+        guard let entry = getLibraryEntry(for: id) else {
             return
         }
 
@@ -131,23 +140,10 @@ extension RealmActor {
         }
     }
 
-    func toggleCollection(for entry: LibraryEntry, withId cid: String) async {
-        guard let entry = entry.thaw() else {
+    func toggleCollection(for id: String, withId cid: String) async {
+        guard let entry = getLibraryEntry(for: id) else {
             return
         }
-
-        try! await realm.asyncWrite {
-            if entry.collections.contains(cid) {
-                entry.collections.remove(at: entry.collections.firstIndex(of: cid)!)
-            } else {
-                entry.collections.append(cid)
-            }
-        }
-    }
-
-    func toggleCollection(for entry: String, withId cid: String) async {
-
-        guard let entry = realm.objects(LibraryEntry.self).where({ $0.id == entry }).first else { return }
 
         try! await realm.asyncWrite {
             if entry.collections.contains(cid) {
@@ -159,9 +155,18 @@ extension RealmActor {
     }
 
     func batchRemoveFromLibrary(with ids: Set<String>) async {
-        let objects = realm.objects(LibraryEntry.self).filter { ids.contains($0.id) }
+        let objects = realm
+            .objects(LibraryEntry.self)
+            .where { $0.id.in(ids) }
 
         let ids = objects.compactMap { $0.content?.ContentIdentifier }
+
+        try! await realm.asyncWrite {
+            for object in objects {
+                object.isDeleted = true
+            }
+        }
+        
         let grouped = Dictionary(grouping: ids, by: { $0.sourceId })
 
         for (key, value) in grouped {
@@ -175,14 +180,11 @@ extension RealmActor {
                 }
             }
         }
-
-        try! await realm.asyncWrite {
-            realm.delete(objects)
-        }
     }
 
     func moveToCollections(entries: Set<String>, cids: [String]) async {
-        let objects = realm.objects(LibraryEntry.self).filter { entries.contains($0.id) }
+        let objects = realm.objects(LibraryEntry.self)
+            .where { $0.id.in(entries) }
         try! await realm.asyncWrite {
             objects.forEach {
                 $0.collections.removeAll()
@@ -192,18 +194,18 @@ extension RealmActor {
     }
 
     func clearUpdates(id: String) async {
-        guard let entry = realm.objects(LibraryEntry.self).first(where: { $0.id == id }) else {
+        guard let entry = getLibraryEntry(for: id) else {
             return
         }
 
         try! await realm.asyncWrite {
             entry.updateCount = 0
-            entry.lastOpened = Date()
+            entry.lastOpened = .now
         }
     }
 
     func updateLastRead(forId id: String) async {
-        guard let entry = realm.objects(LibraryEntry.self).first(where: { $0.id == id }) else {
+        guard let entry = getLibraryEntry(for: id) else {
             return
         }
 
@@ -216,7 +218,9 @@ extension RealmActor {
         let date = UserDefaults.standard.object(forKey: STTKeys.LastFetchedUpdates) as! Date
         // Filter out titles that may have been recently added
         return realm.objects(LibraryEntry.self)
-            .filter { $0.dateAdded < date && $0.content?.sourceId == sourceId && $0.content?.status == .ONGOING }
+            .where { $0.dateAdded < date && $0.content.sourceId == sourceId && $0.content.status == .ONGOING }
+            .freeze()
+            .toArray()
     }
 
     func getUnreadCount(for id: ContentIdentifier) -> Int {
@@ -265,6 +269,38 @@ extension RealmActor {
             target.unreadCount -= 1
             target.lastRead = .now
         }
+    }
+    
+    func fetchAndPruneLibraryEntry(for id: String) async -> LibraryEntry? {
+        guard let target = getLibraryEntry(for: id) else {
+            return nil
+        }
+        
+        let collections = realm
+            .objects(LibraryCollection.self)
+            .where { !$0.isDeleted }
+            .map(\.id)
+
+        
+        let currentCollections = target.collections
+        let fixed = currentCollections.filter { collections.contains($0) }
+        
+        try! await realm.asyncWrite {
+            target.collections.removeAll()
+            target.collections.append(objectsIn: fixed)
+        }
+        
+        
+        return target
+            .freeze()
+    }
+    
+    func getLibraryCollections() -> [LibraryCollection] {
+        realm
+            .objects(LibraryCollection.self)
+            .where { !$0.isDeleted }
+            .freeze()
+            .toArray()
     }
 }
 

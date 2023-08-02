@@ -142,8 +142,6 @@ extension STTHelpers {
             files = files.sorted(by: \.cName, descending: orderKey)
         case .dateAdded:
             files = files.sorted(by: \.addedToDirectory, descending: orderKey)
-        case .lastRead:
-            files = files.sorted(by: \.dateRead, descending: orderKey)
         }
     }
 

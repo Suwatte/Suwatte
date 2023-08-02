@@ -48,7 +48,7 @@ struct UpdateFeedView: View {
             ForEach(entries) { entry in
                 UpdateFeedTile(entry: entry)
                     .swipeActions(allowsFullSwipe: true) {
-                        Button(action: { DataManager.shared.clearUpdates(id: entry.id) }) {
+                        Button(action: { clear(for: entry.id) }) {
                             Label("Clear Updates", systemImage: "xmark.circle")
                         }
                         .tint(.red)
@@ -69,6 +69,13 @@ struct UpdateFeedView: View {
             Text(title)
         }
         .headerProminence(.increased)
+    }
+    
+    func clear(for id: String) {
+        Task {
+            let actor = await RealmActor()
+            await actor.clearUpdates(id: id)
+        }
     }
 }
 
