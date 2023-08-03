@@ -47,7 +47,7 @@ extension DataManager {
         // Create new bookmark
         let object = Bookmark()
         object.chapter = chapter.generateReference()
-        object.chapter?.content = getStoredContent(chapter.contentIdentifier.id)
+//        object.chapter?.content = getStoredContent(chapter.contentIdentifier.id)
         object.page = page
         object.verticalOffset = offset
         try! realm.safeWrite {

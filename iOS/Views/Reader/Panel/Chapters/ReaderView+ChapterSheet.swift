@@ -11,21 +11,8 @@ extension ReaderView {
     struct ChapterSheet: View {
         @EnvironmentObject var model: ReaderView.ViewModel
 
-        var showLangFlag: Bool {
-            let sourceId = model.activeChapter.chapter.sourceId
-            if STTHelpers.isInternalSource(sourceId) { return false }
-
-            guard let source = DSK.shared.getSource(id: sourceId) else { return true }
-            return source.ablityNotDisabled(\.disableLanguageFlags)
-        }
-
-        var showDate: Bool {
-            let sourceId = model.activeChapter.chapter.sourceId
-            if STTHelpers.isInternalSource(sourceId) { return false }
-
-            guard let source = DSK.shared.getSource(id: sourceId) else { return true }
-            return source.ablityNotDisabled(\.disableChapterDates)
-        }
+        @State var showLangFlag = false
+        @State var showDate = false
 
         var body: some View {
             ScrollViewReader { proxy in
@@ -61,6 +48,9 @@ extension ReaderView {
                 .onAppear {
                     proxy.scrollTo(model.activeChapter.chapter.id, anchor: .center)
                 }
+                .task {
+                    await loadSource()
+                }
             }
         }
     }
@@ -73,5 +63,13 @@ extension ReaderView.ChapterSheet {
         }
         model.menuControl.toggleChapterList()
         model.resetToChapter(chapter)
+    }
+    
+    func loadSource() async {
+        let sourceId = model.activeChapter.chapter.sourceId
+        if STTHelpers.isInternalSource(sourceId) { return }
+        guard let source = await DSK.shared.getSource(id: sourceId) else { return }
+        showLangFlag = source.ablityNotDisabled(\.disableLanguageFlags)
+        showDate = source.ablityNotDisabled(\.disableChapterDates)
     }
 }

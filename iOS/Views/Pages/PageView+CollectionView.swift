@@ -282,7 +282,7 @@ extension DSKPageView.CollectionView {
         Group {
             if let link = data.link {
                 NavigationLink {
-                    PageLinkView(pageLink: link, runner: runner)
+                    PageLinkView(pageLink: link, runnerID: runner.id)
                 } label: {
                     PageViewTile(runnerID: runner.id, id: link.hashValue.description, title: link.title, subtitle: link.subtitle, cover: link.cover ?? "", additionalCovers: nil, info: nil, badge: link.badge)
                 }

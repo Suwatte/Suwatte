@@ -41,7 +41,8 @@ extension ProfileView {
             didSet {
                 if !presentManageContentLinks { // Dismissed check if linked changed, if so refresh
                     Task {
-                        let newLinked = DataManager.shared.getLinkedContent(for: contentIdentifier).map(\.id)
+                        let actor = await RealmActor()
+                        let newLinked = await actor.getLinkedContent(for: contentIdentifier).map(\.id)
                         if newLinked != linkedContentIDs {
                             await MainActor.run {
                                 self.loadableContent = .idle
@@ -329,11 +330,10 @@ extension ProfileView.ViewModel {
         }
         guard let threadSafeChapters else { return }
 
+        let actor = await RealmActor()
         // Contents that this title is linked to
-        let entries = DataManager
-            .shared
+        let entries = await actor
             .getLinkedContent(for: contentIdentifier)
-            .map { $0.freeze() }
 
         linkedContentIDs = entries
             .map(\.id)
@@ -348,10 +348,11 @@ extension ProfileView.ViewModel {
         let chaptersToBeAdded = await withTaskGroup(of: [(String, DSKCommon.Chapter)].self, body: { group in
             // Build
             for entry in entries {
-                guard let source = DSK.shared.getSource(id: entry.sourceId) else { continue }
 
                 // Get Chapters from source that are higher than our current max available chapter
                 group.addTask {
+                    guard let source = await DSK.shared.getSource(id: entry.sourceId) else { return [] }
+
                     do {
                         let chapters = try await source.getContentChapters(contentId: entry.contentId)
                         // Save to db
@@ -439,7 +440,7 @@ extension ProfileView.ViewModel {
 
             for (key, value) in matches {
                 // Get Tracker To handle
-                guard let tracker = DSK.shared.getTracker(id: key) else {
+                guard let tracker = await DSK.shared.getTracker(id: key) else {
                     continue
                 }
 
@@ -488,7 +489,7 @@ extension ProfileView.ViewModel {
         // Update Origin Value if outdated
         await withTaskGroup(of: String?.self, body: { group in
             for (key, value) in markers {
-                guard let tracker = DSK.shared.getTracker(id: key), maxRead > value, let entryId = matches[key] else { return }
+                guard let tracker = await DSK.shared.getTracker(id: key), maxRead > value, let entryId = matches[key] else { return }
                 group.addTask {
                     do {
                         try await tracker.didUpdateLastReadChapter(id: entryId, progress: .init(chapter: maxRead, volume: nil))

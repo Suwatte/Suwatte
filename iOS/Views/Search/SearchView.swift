@@ -39,7 +39,9 @@ struct SearchView: View {
                 model.results.removeAll()
                 return
             }
-            model.makeRequests()
+            Task {
+                await model.makeRequests()
+            }
         }
         .onSubmit(of: .search) {
             let request: DSKCommon.DirectoryRequest = .init(query: model.query, page: 1)
@@ -49,10 +51,10 @@ struct SearchView: View {
                 await actor.saveSearch(request, sourceId: nil, display: display)
             }
         }
-        .onAppear {
+        .task {
             if initialQuery.isEmpty || !initial { return }
             model.query = initialQuery
-            model.makeRequests()
+            await model.makeRequests()
             initial.toggle()
         }
         .animation(.default, value: model.results)
@@ -180,9 +182,9 @@ struct SearchView: View {
                                 }
                             }
                             Spacer()
-                            if data.results.count < data.totalResultCount ?? 0, let dskSrc = DSK.shared.getSource(id: key) {
+                            if data.results.count < data.totalResultCount ?? 0, let source {
                                 NavigationLink {
-                                    ContentSourceDirectoryView(source: dskSrc, request: .init(query: model.query, page: 1))
+                                    ContentSourceDirectoryView(source: source, request: .init(query: model.query, page: 1))
                                 } label: {
                                     Text("View More \(Image(systemName: "chevron.right"))")
                                         .font(.subheadline)
@@ -198,7 +200,8 @@ struct SearchView: View {
                 case let .failed(error):
                     return ASCollectionViewSection(id: key + "::FAILED", data: ["FAILED"]) { _, _ in
                         ErrorView(error: error, action: {
-                            model.loadForSource(id: key)
+                            guard let source else { return }
+                            await model.load(for: source)
                         })
                     }
                     .sectionHeader {
@@ -300,7 +303,7 @@ extension SearchView {
             await withTaskGroup(of: Void.self) { group in
                 for source in sources {
                     group.addTask {
-                        await load(for: source)
+                        await self.load(for: source)
                     }
                 }
             }

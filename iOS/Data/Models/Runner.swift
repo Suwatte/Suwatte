@@ -9,7 +9,7 @@ import Foundation
 import IceCream
 import RealmSwift
 
-enum RunnerEnvironment: String, PersistableEnum, Codable {
+enum RunnerEnvironment: String, PersistableEnum, Codable, Hashable {
     case unknown, tracker, source, plugin
 
     var description: String {

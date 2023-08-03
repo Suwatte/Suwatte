@@ -9,8 +9,7 @@ import RealmSwift
 import SwiftUI
 
 struct BrowseView: View {
-    @ObservedResults(StoredRunnerObject.self, where: { $0.isDeleted == false }, sortDescriptor: .init(keyPath: "name")) var runners
-    @State var pageLinks: [String: [DSKCommon.PageLinkLabel]] = [:]
+    @StateObject private var model = ViewModel()
     @State var triggeredLoad = false
     var body: some View {
         NavigationView {
@@ -31,34 +30,24 @@ struct BrowseView: View {
                 }
             }
             .refreshable {
-                loadPageLinks()
+                await model.stopObserving()
+                await model.observe()
             }
         }
         .navigationViewStyle(.stack)
 
         .task {
-            guard !triggeredLoad else { return }
-            loadPageLinks()
+            await model.observe()
         }
-        .onReceive(StateManager.shared.runnerListPublisher) { _ in
-            loadPageLinks()
-        }
-    }
-
-    var SortedRunners: Results<StoredRunnerObject> {
-        runners
-            .sorted(by: [SortDescriptor(keyPath: "enabled", ascending: true),
-                         SortDescriptor(keyPath: "name", ascending: true)])
     }
 }
 
 // MARK: Sources
 
 extension BrowseView {
-    var sources: Results<StoredRunnerObject> {
-        SortedRunners
-            .where { $0.environment == .source }
-            .where { !$0.isBrowsePageLinkProvider }
+    var sources: [StoredRunnerObject] {
+        model.runners
+            .filter { $0.environment == .source && !$0.isBrowsePageLinkProvider }
     }
 
     @ViewBuilder
@@ -91,10 +80,9 @@ extension BrowseView {
 // MARK: Trackers
 
 extension BrowseView {
-    var trackers: Results<StoredRunnerObject> {
-        SortedRunners
-            .where { $0.environment == .tracker }
-            .where { !$0.isBrowsePageLinkProvider }
+    var trackers: [StoredRunnerObject] {
+        model.runners
+            .filter { $0.environment == .tracker && !$0.isBrowsePageLinkProvider }
     }
 
     @ViewBuilder
@@ -127,30 +115,32 @@ extension BrowseView {
 // MARK: - Page Links
 
 extension BrowseView {
-    var linkProviders: Results<StoredRunnerObject> {
-        SortedRunners
-            .where { $0.isBrowsePageLinkProvider }
+    var linkProviders: [StoredRunnerObject] {
+        model
+            .runners
+            .filter { $0.isBrowsePageLinkProvider }
+            .filter { model.links[$0.id] != nil }
     }
 
     var PageLinks: some View {
         Group {
             ForEach(linkProviders) { object in
                 let id = object.id
-                if let links = pageLinks[id], let runner = DSK.shared.getRunner(id) {
-                    PageLinksView(runner, links)
+                if let links = model.links[id] {
+                    PageLinksView(object, links)
                 }
             }
         }
     }
 
-    func PageLinksView(_ runner: JSCRunner, _ links: [DSKCommon.PageLinkLabel]) -> some View {
+    func PageLinksView(_ runner: StoredRunnerObject, _ links: [DSKCommon.PageLinkLabel]) -> some View {
         Section {
             ForEach(links, id: \.hashValue) { pageLink in
                 NavigationLink {
-                    PageLinkView(pageLink: pageLink, runner: runner)
+                    PageLinkView(pageLink: pageLink, runnerID: runner.id)
                 } label: {
                     HStack {
-                        STTThumbView(url: URL(string: pageLink.cover ?? "") ?? runner.thumbnailURL)
+                        STTThumbView(url: URL(string: pageLink.cover ?? runner.thumbnail))
                             .frame(width: 40, height: 40)
                             .cornerRadius(5)
                         Text(pageLink.title)
@@ -164,56 +154,115 @@ extension BrowseView {
     }
 }
 
-// MARK: - Load Page Links
-
-extension BrowseView {
-    func loadPageLinks() {
-        triggeredLoad = true
-
-        // Get Links
-        let runnerIDs = runners
-            .where { $0.isBrowsePageLinkProvider }
-            .map(\.id)
-        // Remove All
-        withAnimation {
-            pageLinks.removeAll()
-        }
-        // Load all links, log errors
-        Task {
-            await withTaskGroup(of: Void.self, body: { group in
-                for id in runnerIDs {
-                    group.addTask {
-                        do {
-                            let runner = try await DSK.shared.getJSCRunner(id)
-                            guard runner.intents.browsePageLinkProvider else { return }
-                            let links = try await runner.getBrowsePageLinks()
-                            guard !links.isEmpty else { return }
-                            Task { @MainActor in
-                                withAnimation {
-                                    pageLinks.updateValue(links, forKey: runner.id)
-                                }
-                            }
-                        } catch {
-                            Logger.shared.error(error, id)
-                        }
-                    }
+struct PageLinkView: View {
+    let pageLink: DSKCommon.PageLinkLabel
+    let runnerID: String
+    @State var loadable: Loadable<JSCRunner> = .idle
+    var body: some View {
+        LoadableView(load, loadable) { runner in
+            Group {
+                if pageLink.link.isPageLink {
+                    RunnerPageView(runner: runner, link: pageLink.link.getPageLink())
+                } else {
+                    RunnerDirectoryView(runner: runner, request: pageLink.link.getDirectoryRequest())
                 }
-            })
+            }
+        }
+        .navigationBarTitle(pageLink.title)
+    }
+    func load() async {
+        loadable = .loading
+        do {
+            let runner = try await DSK.shared.getJSCRunner(runnerID)
+            loadable = .loaded(runner)
+        } catch {
+            loadable = .failed(error)
         }
     }
 }
 
-struct PageLinkView: View {
-    let pageLink: DSKCommon.PageLinkLabel
-    let runner: JSCRunner
-    var body: some View {
-        Group {
-            if pageLink.link.isPageLink {
-                RunnerPageView(runner: runner, link: pageLink.link.getPageLink())
-            } else {
-                RunnerDirectoryView(runner: runner, request: pageLink.link.getDirectoryRequest())
+// MARK: ViewModel
+extension BrowseView {
+    final actor ViewModel: ObservableObject {
+        
+        @MainActor
+        @Published
+        var runners: [StoredRunnerObject] = []
+        
+        @MainActor
+        @Published
+        var links :  [String: [DSKCommon.PageLinkLabel]] = [:]
+        
+        private var token: NotificationToken?
+        
+        
+        func observe() async {
+            let actor = await RealmActor()
+            self.token = await actor.observeInstalledRunners { value in
+                Task { @MainActor in
+                    withAnimation {
+                        self.runners = value
+                    }
+                    await self.getPageLinks()
+                }
             }
         }
-        .navigationBarTitle(pageLink.title)
+        
+        func stopObserving() {
+            token?.invalidate()
+            token = nil
+        }
+        
+        func getLinkProviders() async -> [JSCRunner] {
+            let ids = await runners
+                .filter(\.isBrowsePageLinkProvider)
+                .map(\.id)
+            
+            let results = await withTaskGroup(of: JSCRunner?.self) { group in
+                
+                for id in ids {
+                    group.addTask {
+                        await DSK.shared.getRunner(id)
+                    }
+                }
+                
+                var out: [JSCRunner] = []
+                for await result in group {
+                    guard let result else { continue }
+                    out.append(result)
+                }
+                
+                return out
+            }
+            
+            return results
+        }
+        
+        func getPageLinks() async {
+            await MainActor.run {
+                links.removeAll()
+            }
+            let runners = await getLinkProviders()
+            await withTaskGroup(of: Void.self) { group in
+                for runner in runners {
+                    group.addTask {
+                        await self.load(for: runner)
+                    }
+                }
+            }
+        }
+        
+        func load(for runner: JSCRunner) async {
+            guard runner.intents.browsePageLinkProvider else { return }
+            do {
+                let pageLinks = try await runner.getBrowsePageLinks()
+                guard !pageLinks.isEmpty else { return }
+                Task { @MainActor in
+                    self.links.updateValue(pageLinks,forKey: runner.id)
+                }
+            } catch {
+                Logger.shared.error(error, runner.id)
+            }
+        }
     }
 }

@@ -80,7 +80,7 @@ extension SDM {
         // Clear, not ideal but removes some bogus edgecases
         try? FileManager.default.removeItem(at: downloadDirectory)
 
-        let source = try DSK.shared.getContentSource(id: identifier.source)
+        let source = try await DSK.shared.getContentSource(id: identifier.source)
 
         // Loop Till all images are downloaded
         while !images.isEmpty {

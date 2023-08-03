@@ -56,7 +56,7 @@ struct LoadableView<Value, Idle, Loading, Failure, Content>: View where Idle: Vi
 
 extension LoadableView where Idle == DefaultNotRequestedView, Loading == DefaultLoadingView, Failure == ErrorView {
     init(
-        _ action: @escaping () -> Void,
+        _ action: @escaping () async -> Void,
         _ loadable: Loadable<Value>,
         @ViewBuilder _ content: @escaping (_ value: Value) -> Content
     ) {
@@ -65,11 +65,11 @@ extension LoadableView where Idle == DefaultNotRequestedView, Loading == Default
 }
 
 struct DefaultNotRequestedView: View {
-    var action: () -> Void
+    var action: () async -> Void
     var body: some View {
         DefaultLoadingView()
             .task {
-                action()
+                await action()
             }
     }
 }

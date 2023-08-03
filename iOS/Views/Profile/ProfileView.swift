@@ -21,10 +21,10 @@ struct ProfileView: View {
         .navigationViewStyle(.stack)
     }
 
-    func loadSource() {
+    func loadSource() async {
         source = .loading
         do {
-            let runner = try DSK.shared.getContentSource(id: sourceId)
+            let runner = try await DSK.shared.getContentSource(id: sourceId)
             source = .loaded(runner)
         } catch {
             source = .failed(error)

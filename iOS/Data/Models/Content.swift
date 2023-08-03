@@ -47,10 +47,6 @@ final class StoredContent: Object, Identifiable, CKRecordConvertible, CKRecordRe
     @Persisted var acquisitionLink: String?
     @Persisted var streamable: Bool = false
 
-    var SourceName: String {
-        DSK.shared.getSource(id: sourceId)?.name ?? "Unrecognized : \(sourceId)"
-    }
-
     var ContentIdentifier: ContentIdentifier {
         return .init(contentId: contentId, sourceId: sourceId)
     }

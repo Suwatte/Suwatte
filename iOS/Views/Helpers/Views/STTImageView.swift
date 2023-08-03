@@ -88,7 +88,7 @@ struct STTImageView: View {
                 return
             }
             
-            let runner = DSK.shared.getRunner(identifier.sourceId)
+            let runner = await DSK.shared.getRunner(identifier.sourceId)
             guard let runner, runner.intents.imageRequestHandler else {
                 loader.load(url)
                 return
@@ -170,7 +170,7 @@ struct BaseImageView: View {
             loader.load(url)
             return
         }
-        guard let runner = DSK.shared.getRunner(runnerId), runner.intents.imageRequestHandler else {
+        guard let runner = await DSK.shared.getRunner(runnerId), runner.intents.imageRequestHandler else {
             loader.load(url)
             return
         }

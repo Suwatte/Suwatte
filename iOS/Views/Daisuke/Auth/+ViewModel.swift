@@ -17,8 +17,8 @@ extension DSKAuthView {
         }
 
         func load() {
-            loadable = .loading
             Task { @MainActor in
+                loadable = .loading
                 do {
                     let data = try await runner.getAuthenticatedUser()
                     loadable = .loaded(data)

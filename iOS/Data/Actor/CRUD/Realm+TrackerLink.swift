@@ -81,12 +81,12 @@ extension RealmActor {
         return dict.filter { !$0.value.isEmpty }
     }
 
-    func getTrackerLinks(for id: String) -> [String: String] {
+    func getTrackerLinks(for id: String) async -> [String: String] {
         let dict = getLinkKeys(for: id)
         var matches: [String: String] = [:]
 
         for (key, value) in dict {
-            let trackers = DSK
+            let trackers = await DSK
                 .shared
                 .getActiveTrackers()
                 .filter { $0.links.contains(key) }
@@ -101,11 +101,11 @@ extension RealmActor {
         return matches
     }
 
-    func updateTrackProgress(for id: String, progress: DSKCommon.TrackProgressUpdate) {
-        let links = getTrackerLinks(for: id)
+    func updateTrackProgress(for id: String, progress: DSKCommon.TrackProgressUpdate) async {
+        let links = await getTrackerLinks(for: id)
 
         for (trackerId, mediaId) in links {
-            guard let tracker = DSK.shared.getTracker(id: trackerId) else { continue }
+            guard let tracker = await DSK.shared.getTracker(id: trackerId) else { continue }
             Task.detached {
                 do {
                     try await tracker.didUpdateLastReadChapter(id: mediaId, progress: progress)

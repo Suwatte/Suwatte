@@ -12,6 +12,7 @@ struct ManageContentLinks: View {
     var content: StoredContent
     @State var presentAddSheet = false
     @State var linked: [StoredContent] = []
+    @State var names: [String: String] = [:]
     var body: some View {
         List {
             ForEach(linked) { linked in
@@ -54,7 +55,7 @@ struct ManageContentLinks: View {
     func fetch() async {
         let actor = await RealmActor()
         let data = await actor.getLinkedContent(for: content.id)
-        
+        names = await actor.getAllRunnerNames()
         withAnimation {
             linked = data
         }
@@ -80,7 +81,7 @@ struct ManageContentLinks: View {
                     .font(.headline)
                     .fontWeight(.semibold)
                     .lineLimit(3)
-                Text(content.SourceName)
+                Text(names[content.sourceId] ?? "")
                     .font(.callout)
                     .foregroundColor(.gray)
             }

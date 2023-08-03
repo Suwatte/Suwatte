@@ -17,10 +17,11 @@ struct SourceLandingPage: View {
         }
     }
 
-    func startSource() {
+    func startSource() async  {
         loadable = .loading
         do {
-            loadable = try .loaded(DSK.shared.getContentSource(id: sourceID))
+            let runner = try await DSK.shared.getContentSource(id: sourceID)
+            loadable = .loaded(runner)
         } catch {
             loadable = .failed(error)
         }

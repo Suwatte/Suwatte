@@ -67,7 +67,7 @@ extension RealmActor {
     }
     
     func queryAndSaveForLater(_ sourceId: String, _ contentId: String) async {
-        guard let source = DSK.shared.getSource(id: sourceId) else {
+        guard let source = await DSK.shared.getSource(id: sourceId) else {
             Logger.shared.warn("Source not Found", "RealmActor")
             return
         }

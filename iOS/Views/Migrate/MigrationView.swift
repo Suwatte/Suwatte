@@ -220,10 +220,7 @@ extension MigrationView {
     }
 
     private func getAvailableSources() -> [AnyContentSource] {
-        return runners
-            .filter { !preferredDestinations.map(\.id).contains($0.id) }
-            .compactMap { DSK.shared.getSource(id: $0.id) }
-            .filter { $0.ablityNotDisabled(\.disableMigrationDestination) }
+        return []
     }
 
     private func move(from source: IndexSet, to destination: Int) {
@@ -273,7 +270,7 @@ extension MigrationView {
         VStack {
             // Warning
             HStack {
-                Text(content.SourceName)
+                Text(content.sourceId)
                 Spacer()
                 Text("Destination")
             }
@@ -329,7 +326,8 @@ extension MigrationView {
                     .environment(\.placeholderImageShimmer, false)
             case .noMatches:
                 NavigationLink {
-                    ManualDestinationSelectionView(content: initial, states: $operations)
+                    EmptyView()
+//                    ManualDestinationSelectionView(content: initial, states: $operations)
                 } label: {
                     VStack(alignment: .center) {
                         Text("No Matches")
@@ -517,62 +515,62 @@ extension MigrationView {
             return
         }
 
-        let realm = try! Realm()
+//        let realm = try! Realm()
 
-        func doMigration(entry: HighlightIdentifier, target: LibraryEntry) {
-            var stored = realm
-                .objects(StoredContent.self)
-                .where { $0.contentId == entry.entry.contentId }
-                .where { $0.sourceId == entry.sourceId }
-                .where { $0.isDeleted == false }
-                .first
-
-            stored = stored ?? entry.entry.toStored(sourceId: entry.sourceId)
-            guard let stored else { return }
-
-            switch libraryStrat {
-            case .link:
-                guard let content = target.content else { return }
-                _ = DataManager.shared.linkContent(stored.id, content.id)
-            case .replace:
-                let obj = LibraryEntry()
-                obj.content = stored
-                obj.collections = target.collections
-                obj.flag = target.flag
-                obj.dateAdded = target.dateAdded
-                realm.add(obj, update: .modified)
-
-                if target.id != obj.id {
-                    target.isDeleted = true
-                }
-            }
-        }
-        try! realm.safeWrite {
-            for (id, state) in data {
-                let target = realm
-                    .objects(LibraryEntry.self)
-                    .where { $0.id == id }
-                    .where { $0.isDeleted == false }
-                    .first
-                guard let target else { continue }
-                switch state {
-                case let .found(entry):
-                    doMigration(entry: entry, target: target)
-                case let .lowerFind(entry, _, _):
-                    if lessChapterSrat == .skip { continue }
-                    doMigration(entry: entry, target: target)
-                default:
-                    if notFoundStrat == .remove {
-                        target.isDeleted = true
-                    }
-                }
-            }
-        }
-        Task { @MainActor in
-            ToastManager.shared.loading = false
-            ToastManager.shared.cancel()
-            ToastManager.shared.info("Migration Complete!")
-            presentationMode.wrappedValue.dismiss()
-        }
+//        func doMigration(entry: HighlightIdentifier, target: LibraryEntry) {
+//            var stored = realm
+//                .objects(StoredContent.self)
+//                .where { $0.contentId == entry.entry.contentId }
+//                .where { $0.sourceId == entry.sourceId }
+//                .where { $0.isDeleted == false }
+//                .first
+//
+//            stored = stored ?? entry.entry.toStored(sourceId: entry.sourceId)
+//            guard let stored else { return }
+//
+//            switch libraryStrat {
+//            case .link:
+//                guard let content = target.content else { return }
+//                _ = DataManager.shared.linkContent(stored.id, content.id)
+//            case .replace:
+//                let obj = LibraryEntry()
+//                obj.content = stored
+//                obj.collections = target.collections
+//                obj.flag = target.flag
+//                obj.dateAdded = target.dateAdded
+//                realm.add(obj, update: .modified)
+//
+//                if target.id != obj.id {
+//                    target.isDeleted = true
+//                }
+//            }
+//        }
+//        try! realm.safeWrite {
+//            for (id, state) in data {
+//                let target = realm
+//                    .objects(LibraryEntry.self)
+//                    .where { $0.id == id }
+//                    .where { $0.isDeleted == false }
+//                    .first
+//                guard let target else { continue }
+//                switch state {
+//                case let .found(entry):
+//                    doMigration(entry: entry, target: target)
+//                case let .lowerFind(entry, _, _):
+//                    if lessChapterSrat == .skip { continue }
+//                    doMigration(entry: entry, target: target)
+//                default:
+//                    if notFoundStrat == .remove {
+//                        target.isDeleted = true
+//                    }
+//                }
+//            }
+//        }
+//        Task { @MainActor in
+//            ToastManager.shared.loading = false
+//            ToastManager.shared.cancel()
+//            ToastManager.shared.info("Migration Complete!")
+//            presentationMode.wrappedValue.dismiss()
+//        }
     }
 }

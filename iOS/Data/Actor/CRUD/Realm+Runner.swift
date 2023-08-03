@@ -82,6 +82,14 @@ extension RealmActor {
             .executable?
             .filePath
     }
+    
+    func getAllRunnerNames() -> [String:String] {
+        let kvSq = realm
+            .objects(StoredRunnerObject.self)
+            .map { ($0.id, $0.name) }
+        
+        return Dictionary(uniqueKeysWithValues: kvSq)
+    }
 
     func getSavedAndEnabledSources() -> Results<StoredRunnerObject> {
         realm

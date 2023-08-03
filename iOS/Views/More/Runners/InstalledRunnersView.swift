@@ -12,72 +12,33 @@ struct InstalledRunnersView: View {
     private let engine = DSK.shared
     @StateObject var model = ViewModel()
     @State var showAddSheet = false
+    
+    var groups: Dictionary<RunnerEnvironment, [StoredRunnerObject]> {
+        Dictionary(grouping: model.runners, by: \.environment)
+    }
+        
+    private var items : [RunnerEnvironment] {
+        [.source, .tracker]
+    }
+    
+    
     var body: some View {
         List {
-            if let r = model.runners {
-                let grouped = Dictionary(grouping: r, by: \.environment)
-                let keys = grouped.filter { !$0.value.isEmpty }.keys.sorted(by: \.description)
-                ForEach(Array(keys), id: \.description) { key in
-                    let runners = grouped[key] ?? []
-
-                    Section {
-                        ForEach(runners, id: \.id) { runner in
-
-                            let dskRunner = engine.getRunner(runner.id)
-                            let isActive = dskRunner != nil
-                            NavigationLink {
-                                if let dskRunner {
-                                    if let source = dskRunner as? JSCCS {
-                                        ContentSourceInfoView(source: source)
-                                    } else if let tracker = dskRunner as? JSCContentTracker {
-                                        ContentTrackerInfoView(tracker: tracker)
-                                    }
-                                } else {
-                                    EmptyView()
-                                }
-                            } label: {
-                                HStack(spacing: 15) {
-                                    STTThumbView(url: URL(string: runner.thumbnail))
-                                        .frame(width: 44, height: 44, alignment: .center)
-                                        .cornerRadius(7)
-                                    VStack(alignment: .leading, spacing: 2.5) {
-                                        Text(runner.name)
-                                            .fontWeight(.semibold)
-                                        Text("v" + runner.version.description)
-                                            .font(.footnote.weight(.light))
-                                            .foregroundColor(.secondary)
-                                    }
-
-                                    if !isActive {
-                                        Spacer()
-                                        Image(systemName: "exclamationmark.triangle")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(height: 15)
-                                            .foregroundColor(.red)
-                                    }
-                                }
-                            }
-                            .disabled(!isActive)
-                            .swipeActions {
-                                Button {
-                                    engine.removeRunner(runner.id)
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
-                                }
-                                .tint(.red)
-                            }
-                        }
-                    } header: {
-                        Text(key.description)
+            ForEach(items, id: \.hashValue) { environment in
+                let runners = groups[environment] ?? []
+                Section {
+                    ForEach(runners) { runner in
+                       Cell(runner)
                     }
+                } header: {
+                    Text(environment.description)
                 }
-                .transition(.opacity)
             }
+            .transition(.opacity)
         }
         .navigationTitle("Installed Runners")
         .task {
-            model.observe()
+            await model.observe()
         }
         .onDisappear(perform: model.disconnect)
         .toolbar {
@@ -112,34 +73,87 @@ struct InstalledRunnersView: View {
             }
         }
     }
+    
+    func Cell(_ runner: StoredRunnerObject) -> some View {
+        NavigationLink {
+            Gateway(runnerID: runner.id)
+        } label: {
+            HStack(spacing: 15) {
+                STTThumbView(url: URL(string: runner.thumbnail))
+                    .frame(width: 44, height: 44, alignment: .center)
+                    .cornerRadius(7)
+                VStack(alignment: .leading, spacing: 2.5) {
+                    Text(runner.name)
+                        .fontWeight(.semibold)
+                    Text("v" + runner.version.description)
+                        .font(.footnote.weight(.light))
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+        .disabled(!runner.enabled)
+        .swipeActions {
+            Button {
+                Task {
+                    await engine.removeRunner(runner.id)
+                }
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
+            .tint(.red)
+        }
+    }
+
 }
 
 extension InstalledRunnersView {
     final class ViewModel: ObservableObject {
-        @Published var runners: Results<StoredRunnerObject>?
-
+        @Published var runners: [StoredRunnerObject] = []
         private var token: NotificationToken?
 
-        func observe() {
+        func observe() async {
             token?.invalidate()
             token = nil
-            let realm = try! Realm()
-
-            let results = realm
-                .objects(StoredRunnerObject.self)
-                .where { $0.isDeleted == false }
-                .sorted(by: [SortDescriptor(keyPath: "enabled", ascending: true), SortDescriptor(keyPath: "name", ascending: true)])
-
-            token = results.observe { [weak self] _ in
-                DispatchQueue.main.async {
-                    self?.runners = results.freeze()
+            
+            let actor = await RealmActor()
+            
+            token = await actor
+                .observeInstalledRunners(onlyEnabled: false) { value in
+                    self.runners = value
                 }
-            }
         }
 
         func disconnect() {
             token?.invalidate()
             token = nil
+        }
+    }
+}
+
+
+extension InstalledRunnersView {
+    struct Gateway: View {
+        let runnerID: String
+        @State var loadable: Loadable<JSCRunner> = .idle
+        var body: some View {
+            LoadableView(load, loadable) { runner in
+                if let source = runner as? JSCCS {
+                    ContentSourceInfoView(source: source)
+                } else if let tracker = runner as? JSCContentTracker {
+                    ContentTrackerInfoView(tracker: tracker)
+                }
+            }
+        }
+        
+        func load() async {
+            loadable = .loading
+            do {
+                let runner = try await DSK.shared.getJSCRunner(runnerID)
+                loadable = .loaded(runner)
+            } catch {
+                loadable = .failed(error)
+                Logger.shared.error(error, "Engine")
+            }
         }
     }
 }

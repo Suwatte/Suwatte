@@ -9,7 +9,6 @@ import RealmSwift
 import SwiftUI
 
 struct LibraryView: View {
-    @ObservedResults(StoredRunnerObject.self, where: { !$0.isDeleted && $0.isLibraryPageLinkProvider }) var runners
     @AppStorage(STTKeys.LibrarySections) var sections: [String] = DEFAULT_LIBRARY_SECTIONS
     @StateObject var AuthProvider = LocalAuthManager.shared
     @State var presentCollectionSheet = false
@@ -17,6 +16,7 @@ struct LibraryView: View {
     @State var openFirstCollection = false
     @AppStorage(STTKeys.OpenAllTitlesOnAppear) var openAllOnAppear = false
     @AppStorage(STTKeys.LibraryAuth) var requireAuth = false
+    @State var runners: [StoredRunnerObject] = []
     @State var pageLinks: [String: [DSKCommon.PageLinkLabel]] = [:]
     @State var triggeredLoad = false
 
@@ -24,7 +24,7 @@ struct LibraryView: View {
         NavigationView {
             List {
                 ForEach(sections) { section in
-                    LibrarySectionBuilder(key: section, openFirstCollection: $openFirstCollection, links: $pageLinks)
+                    LibrarySectionBuilder(key: section, openFirstCollection: $openFirstCollection, links: $pageLinks, runners: $runners)
                 }
             }
             .listStyle(.insetGrouped)
@@ -77,13 +77,17 @@ struct LibraryView: View {
         }
         .task {
             guard !triggeredLoad else { return }
-            loadPageLinks()
+            await loadPageLinks()
         }
         .onChange(of: sections) { _ in
-            loadPageLinks()
+            Task {
+                await loadPageLinks()
+            }
         }
         .onReceive(StateManager.shared.runnerListPublisher) { _ in
-            loadPageLinks()
+            Task {
+                await loadPageLinks()
+            }
         }
     }
 }
@@ -95,6 +99,7 @@ extension LibraryView {
         let key: String
         @Binding var openFirstCollection: Bool
         @Binding var links: [String: [DSKCommon.PageLinkLabel]]
+        @Binding var runners: [StoredRunnerObject]
         var body: some View {
             Group {
                 switch key {
@@ -109,7 +114,7 @@ extension LibraryView {
                 case "library.downloads":
                     DownloadSection()
                 default:
-                    if let pageLinks = links[key], let runner = DSK.shared.getRunner(key) {
+                    if let pageLinks = links[key], let runner = runners.first(where: { $0.id == key }) {
                         PageLinkSectionView(runner: runner, pageLinks: pageLinks)
                     }
                 }
@@ -122,17 +127,17 @@ extension LibraryView {
 
 extension LibraryView {
     struct PageLinkSectionView: View {
-        let runner: JSCRunner
+        let runner: StoredRunnerObject
         let pageLinks: [DSKCommon.PageLinkLabel]
 
         var body: some View {
             Section {
                 ForEach(pageLinks, id: \.hashValue) { pageLink in
                     NavigationLink {
-                        PageLinkView(pageLink: pageLink, runner: runner)
+                        PageLinkView(pageLink: pageLink, runnerID: runner.id)
                     } label: {
                         HStack {
-                            STTThumbView(url: URL(string: pageLink.cover ?? "") ?? runner.thumbnailURL)
+                            STTThumbView(url: URL(string: pageLink.cover ?? runner.thumbnail))
                                 .frame(width: 32, height: 32)
                                 .cornerRadius(5)
                             Text(pageLink.title)
@@ -328,8 +333,10 @@ extension LibraryView {
 // MARK: - Load Page Links
 
 extension LibraryView {
-    func loadPageLinks() {
+    func loadPageLinks() async {
         triggeredLoad = true
+        let actor = await RealmActor()
+        runners = await actor.getLibraryPageProviders()
         // Get Links
         let runnerIDs = runners.map(\.id)
         // Remove All
@@ -337,26 +344,24 @@ extension LibraryView {
             pageLinks.removeAll()
         }
         // Load all links, log errors
-        Task {
-            await withTaskGroup(of: Void.self, body: { group in
-                for id in runnerIDs {
-                    group.addTask {
-                        do {
-                            let runner = try DSK.shared.getJSCRunner(id)
-                            guard runner.intents.libraryPageLinkProvider else { return }
-                            let links = try await runner.getLibraryPageLinks()
-                            guard !links.isEmpty else { return }
-                            Task { @MainActor in
-                                withAnimation {
-                                    pageLinks.updateValue(links, forKey: runner.id)
-                                }
+        await withTaskGroup(of: Void.self) { group in
+            for id in runnerIDs {
+                group.addTask {
+                    do {
+                        let runner = try await DSK.shared.getJSCRunner(id)
+                        guard runner.intents.libraryPageLinkProvider else { return }
+                        let links = try await runner.getLibraryPageLinks()
+                        guard !links.isEmpty else { return }
+                        Task { @MainActor in
+                            withAnimation {
+                                pageLinks.updateValue(links, forKey: runner.id)
                             }
-                        } catch {
-                            Logger.shared.error(error, id)
                         }
+                    } catch {
+                        Logger.shared.error(error, id)
                     }
                 }
-            })
+            }
         }
     }
 }

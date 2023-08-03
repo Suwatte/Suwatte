@@ -390,7 +390,7 @@ extension ReaderView.ViewModel {
         let idx = page.index + 1
         
         Task {
-            guard let source = DSK.shared.getSource(id: cl.sourceId) else { return }
+            guard let source = await DSK.shared.getSource(id: cl.sourceId) else { return }
             do {
                 try await source.onPageRead(contentId: cl.contentId, chapterId: cl.chapterId, page: idx)
             } catch {
@@ -467,7 +467,7 @@ extension ReaderView.ViewModel {
     }
 
     private func handleSourceSync(contentId: String, sourceId: String, chapterId: String) async {
-        guard let source = DSK.shared.getSource(id: sourceId), source.intents.chapterSyncHandler else { return }
+        guard let source = await DSK.shared.getSource(id: sourceId), source.intents.chapterSyncHandler else { return }
         // Services
         do {
             try await source.onChapterRead(contentId: contentId, chapterId: chapterId)

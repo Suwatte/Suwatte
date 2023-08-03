@@ -40,7 +40,7 @@ extension RealmActor {
     }
 
     func refreshStored(contentId: String, sourceId: String) async {
-        guard let source = DSK.shared.getSource(id: sourceId) else {
+        guard let source = await DSK.shared.getSource(id: sourceId) else {
             return
         }
 

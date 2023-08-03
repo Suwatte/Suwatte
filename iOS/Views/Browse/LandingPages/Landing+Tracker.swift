@@ -12,15 +12,16 @@ struct TrackerLandingPage: View {
     @State var loadable = Loadable<JSCCT>.idle
 
     var body: some View {
-        LoadableView(start, loadable) {
+        LoadableView(load, loadable) {
             LoadedTrackerView(tracker: $0)
         }
     }
 
-    func start() {
+    func load() async {
         loadable = .loading
         do {
-            loadable = try .loaded(DSK.shared.getContentTracker(id: trackerID))
+            let runner = try await DSK.shared.getContentTracker(id: trackerID)
+            loadable = .loaded(runner)
         } catch {
             loadable = .failed(error)
         }

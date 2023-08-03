@@ -336,9 +336,6 @@ extension SDQV {
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .lineLimit(2)
-                    Text(content.SourceName)
-                        .font(.footnote)
-                        .fontWeight(.light)
                     Spacer()
                 }
                 Spacer()

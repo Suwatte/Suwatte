@@ -232,7 +232,7 @@ extension PageViewTile {
 
         func load(url: URL?) async {
             guard let url else { return }
-            let runner = DSK.shared.getRunner(runnerID)
+            let runner = await DSK.shared.getRunner(runnerID)
 
             guard let runner, runner.intents.imageRequestHandler, UserDefaults.standard.bool(forKey: STTKeys.RunnerOverridesImageRequest(runnerID)) else {
                 loader.load(url)
