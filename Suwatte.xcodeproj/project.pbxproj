@@ -352,6 +352,10 @@
 		DFD4D8682A7AD20300C5AC13 /* Realm+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD4D8672A7AD20300C5AC13 /* Realm+Observer.swift */; };
 		DFD4D86A2A7AD70700C5AC13 /* Realm+ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD4D8692A7AD70700C5AC13 /* Realm+ProfileView.swift */; };
 		DFD4D86C2A7B1C2500C5AC13 /* Realm+BrowseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD4D86B2A7B1C2500C5AC13 /* Realm+BrowseView.swift */; };
+		DFD4D86E2A7B53BB00C5AC13 /* SearchView+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD4D86D2A7B53BB00C5AC13 /* SearchView+ViewModel.swift */; };
+		DFD4D8702A7B540800C5AC13 /* SearchView+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD4D86F2A7B540800C5AC13 /* SearchView+CollectionView.swift */; };
+		DFD4D8722A7B541900C5AC13 /* SearchView+HIstoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD4D8712A7B541900C5AC13 /* SearchView+HIstoryView.swift */; };
+		DFDBF96B2A7C4470006D49AD /* Realm+HighlightGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFDBF96A2A7C4470006D49AD /* Realm+HighlightGrid.swift */; };
 		DFE179342A4CF80900CB535E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DFE179332A4CF80900CB535E /* GoogleService-Info.plist */; };
 		DFF09B452A58BABC00C5CA5E /* JSCContentTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B442A58BABC00C5CA5E /* JSCContentTracker.swift */; };
 		DFF09B4A2A58C13900C5CA5E /* +WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B492A58C13900C5CA5E /* +WebView.swift */; };
@@ -730,6 +734,10 @@
 		DFD4D8672A7AD20300C5AC13 /* Realm+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+Observer.swift"; sourceTree = "<group>"; };
 		DFD4D8692A7AD70700C5AC13 /* Realm+ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+ProfileView.swift"; sourceTree = "<group>"; };
 		DFD4D86B2A7B1C2500C5AC13 /* Realm+BrowseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+BrowseView.swift"; sourceTree = "<group>"; };
+		DFD4D86D2A7B53BB00C5AC13 /* SearchView+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SearchView+ViewModel.swift"; sourceTree = "<group>"; };
+		DFD4D86F2A7B540800C5AC13 /* SearchView+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SearchView+CollectionView.swift"; sourceTree = "<group>"; };
+		DFD4D8712A7B541900C5AC13 /* SearchView+HIstoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SearchView+HIstoryView.swift"; sourceTree = "<group>"; };
+		DFDBF96A2A7C4470006D49AD /* Realm+HighlightGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+HighlightGrid.swift"; sourceTree = "<group>"; };
 		DFE179332A4CF80900CB535E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		DFF09B442A58BABC00C5CA5E /* JSCContentTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSCContentTracker.swift; sourceTree = "<group>"; };
 		DFF09B492A58C13900C5CA5E /* +WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+WebView.swift"; sourceTree = "<group>"; };
@@ -1678,6 +1686,9 @@
 			isa = PBXGroup;
 			children = (
 				DF8D0A8B2800EE47003E4C3E /* SearchView.swift */,
+				DFD4D86D2A7B53BB00C5AC13 /* SearchView+ViewModel.swift */,
+				DFD4D86F2A7B540800C5AC13 /* SearchView+CollectionView.swift */,
+				DFD4D8712A7B541900C5AC13 /* SearchView+HIstoryView.swift */,
 			);
 			path = Search;
 			sourceTree = "<group>";
@@ -2057,6 +2068,7 @@
 				DFD4D8672A7AD20300C5AC13 /* Realm+Observer.swift */,
 				DFD4D8692A7AD70700C5AC13 /* Realm+ProfileView.swift */,
 				DFD4D86B2A7B1C2500C5AC13 /* Realm+BrowseView.swift */,
+				DFDBF96A2A7C4470006D49AD /* Realm+HighlightGrid.swift */,
 			);
 			path = Observers;
 			sourceTree = "<group>";
@@ -2422,6 +2434,7 @@
 				DFC39E9528A093D700450EC4 /* SavedListsView.swift in Sources */,
 				DF8D0B392800EE47003E4C3E /* STT+Realm.swift in Sources */,
 				DF68838C2A60B618009B5642 /* DV+Tracker.swift in Sources */,
+				DFD4D86E2A7B53BB00C5AC13 /* SearchView+ViewModel.swift in Sources */,
 				DF6A896828834AC40045529D /* Orientation.swift in Sources */,
 				DF16F2CE2A5F998A00D7AFBB /* PageView+Layout.swift in Sources */,
 				DFAC77982815D48D00AF6394 /* STTHelper.swift in Sources */,
@@ -2483,6 +2496,7 @@
 				DF8D0B6F2800EE48003E4C3E /* Loadable+View.swift in Sources */,
 				DF8D0B532800EE47003E4C3E /* Backup.swift in Sources */,
 				DF68249C28A5CF6D00AB30A1 /* DSK+Preferences.swift in Sources */,
+				DFDBF96B2A7C4470006D49AD /* Realm+HighlightGrid.swift in Sources */,
 				DF30193928BFCBD00024AA8B /* ZoomingScrollView.swift in Sources */,
 				DF16F2C32A5F5F1700D7AFBB /* DV+FilterView.swift in Sources */,
 				DF8D0B4B2800EE47003E4C3E /* Data+LibraryEntry.swift in Sources */,
@@ -2531,6 +2545,7 @@
 				DF2783642A79BFD00098BBA9 /* +CollectionFilter.swift in Sources */,
 				DF8D0B312800EE47003E4C3E /* STT+UIImage.swift in Sources */,
 				DF8D0B4C2800EE47003E4C3E /* Data+ReadLater.swift in Sources */,
+				DFD4D8702A7B540800C5AC13 /* SearchView+CollectionView.swift in Sources */,
 				DF67EBA428EA34DE00076FF5 /* DSK+Common.swift in Sources */,
 				DF67EB8A28E39E2200076FF5 /* DSK+Sync.swift in Sources */,
 				DFBE484E2A25BE10000ABA16 /* LibraryCollectionFilter.swift in Sources */,
@@ -2613,6 +2628,7 @@
 				DF8D0B222800EE47003E4C3E /* STTScheduler.swift in Sources */,
 				DF8D0BA82800EE48003E4C3E /* ContentView.swift in Sources */,
 				DF457DD02A439F5C002B5350 /* ArchivedContent.swift in Sources */,
+				DFD4D8722A7B541900C5AC13 /* SearchView+HIstoryView.swift in Sources */,
 				DF8D0B9A2800EE48003E4C3E /* ProfileView+BottomBar.swift in Sources */,
 				DF99004D29A94A49006EB29A /* JSCCS+Protocol.swift in Sources */,
 				DF16F2B82A5F474F00D7AFBB /* DirectoryView.swift in Sources */,

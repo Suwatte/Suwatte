@@ -86,6 +86,8 @@ extension DSKCommon {
         var isLastPage: Bool
         var totalResultCount: Int?
     }
+    
+    typealias PagedHighlight =  PagedResult<DSKCommon.Highlight>
 
     struct HighlightCollection: Parsable, Identifiable, Hashable {
         var id: String

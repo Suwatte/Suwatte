@@ -9,16 +9,15 @@ import SwiftUI
 
 struct AddContentLink: View {
     var content: StoredContent
-    @StateObject var model = SearchView.ViewModel(forLinking: true)
-    @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
+    @StateObject private var model = SearchView.ViewModel(forLinking: true)
+    @AppStorage(STTKeys.TileStyle) private var tileStyle = TileStyle.SEPARATED
     @State private var selection: HighlightIdentifier?
     @State private var isPresenting = false
-    @State var sources: [JSCCS] = []
-    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.presentationMode) private var presentationMode
     var body: some View {
         List {
-            ForEach(sources, id: \.id) { source in
-                SourceCell(source: source)
+            ForEach(model.results, id: \.source.id) { result in
+                SourceSection(result: result)
                     .listRowInsets(.init(top: 5, leading: 0, bottom: 20, trailing: 0))
                     .listRowSeparator(.hidden)
             }
@@ -39,36 +38,17 @@ struct AddContentLink: View {
         }
         .task {
             model.query = content.title
-            await model.getSources()
             await model.makeRequests()
         }
     }
 
 
     @ViewBuilder
-    func SourceCell(source: JSCCS) -> some View {
-        let id = source.id
-        let data = model.results[id] ?? .loading
+    func SourceSection(result: SearchView.ResultGroup) -> some View {
+        let source = result.source
+        let data = result.result
         Section {
-            LoadableView(loadable: data) {
-                ResultGroup(DSKCommon.Highlight.placeholders(), id)
-                    .redacted(reason: .placeholder)
-            } _: {
-                ResultGroup(DSKCommon.Highlight.placeholders(), id)
-                    .redacted(reason: .placeholder)
-            } _: { error in
-                HStack {
-                    Spacer()
-                    ErrorView(error: error, runnerID: id, action: { await model.load(for: source) })
-                    Spacer()
-                }
-            } _: { value in
-                if value.results.isEmpty {
-                    EmptyResults
-                } else {
-                    ResultGroup(value.results, id)
-                }
-            }
+            ResultGroup(data.results, source.id)
         } header: {
             HStack {
                 Text(source.name)

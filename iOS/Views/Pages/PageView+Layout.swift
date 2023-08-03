@@ -28,6 +28,7 @@ extension DSKPageView.CollectionView {
         section.contentInsets = NSDirectionalEdgeInsets(top: 15, leading: 20, bottom: 15, trailing: 20)
         section.orthogonalScrollingBehavior = .none
         section.boundarySupplementaryItems = [.init(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(44)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)]
+        section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
         return section
     }
 
@@ -55,6 +56,7 @@ extension DSKPageView.CollectionView {
         section.orthogonalScrollingBehavior = .groupPaging
         let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(44)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
         section.boundarySupplementaryItems = [supp]
+        section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
         return section
     }
 
@@ -80,6 +82,7 @@ extension DSKPageView.CollectionView {
         section.orthogonalScrollingBehavior = .continuous
         let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(44)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
         section.boundarySupplementaryItems = [supp]
+        section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
 
         return section
     }
@@ -109,6 +112,7 @@ extension DSKPageView.CollectionView {
         section.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
         let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(44)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
         section.boundarySupplementaryItems = [supp]
+        section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
         return section
     }
 
@@ -136,6 +140,7 @@ extension DSKPageView.CollectionView {
         section.orthogonalScrollingBehavior = .none
         let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(44)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
         section.boundarySupplementaryItems = [supp]
+        section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
         return section
     }
 
@@ -162,6 +167,7 @@ extension DSKPageView.CollectionView {
         section.orthogonalScrollingBehavior = .groupPaging
         let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(44)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
         section.boundarySupplementaryItems = [supp]
+        section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
         return section
     }
 
@@ -172,6 +178,7 @@ extension DSKPageView.CollectionView {
         config.footerMode = .supplementary
         config.headerTopPadding = 7
         let layout: NSCollectionLayoutSection = .list(using: config, layoutEnvironment: environment)
+        layout.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
         return layout
     }
 
@@ -211,6 +218,7 @@ extension DSKPageView.CollectionView {
 
         let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(44)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
         section.boundarySupplementaryItems = [supp]
+        section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
         return section
     }
 }

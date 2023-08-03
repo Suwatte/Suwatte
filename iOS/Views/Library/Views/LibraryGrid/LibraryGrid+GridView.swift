@@ -204,6 +204,7 @@ func DynamicGridLayout(header: NSCollectionLayoutDimension? = nil, footer: NSCol
             items.append(footerComponent)
         }
         section.boundarySupplementaryItems = items
+        section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
         return section
     }
 }

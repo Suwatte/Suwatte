@@ -33,6 +33,8 @@ struct BrowseView: View {
                 await model.stopObserving()
                 await model.observe()
             }
+            .animation(.default, value: model.runners)
+            .animation(.default, value: model.links)
         }
         .navigationViewStyle(.stack)
 
@@ -197,6 +199,7 @@ extension BrowseView {
         
         
         func observe() async {
+            guard token == nil else { return }
             let actor = await RealmActor()
             self.token = await actor.observeInstalledRunners { value in
                 Task { @MainActor in

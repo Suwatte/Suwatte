@@ -43,22 +43,49 @@ extension RealmActor {
 extension RealmActor {
     func getSearchHistory(for sourceId: String) -> [UpdatedSearchHistory] {
 
-        return realm.objects(UpdatedSearchHistory.self).filter { $0.sourceId == sourceId }
+        return realm
+            .objects(UpdatedSearchHistory.self)
+            .where { $0.sourceId == sourceId }
+            .where { !$0.isDeleted }
+            .freeze()
+            .toArray()
     }
 
     // No Source ID means it was an all source search
     func getAllSearchHistory() -> [UpdatedSearchHistory] {
 
-        return realm.objects(UpdatedSearchHistory.self).filter { $0.sourceId == nil }
+        return realm
+            .objects(UpdatedSearchHistory.self)
+            .where { $0.sourceId == nil }
+            .where { !$0.isDeleted }
+            .freeze()
+            .toArray()
     }
 }
 
 extension RealmActor {
     func deleteSearchHistory(for sourceId: String) async {
 
+        let objects = realm
+            .objects(UpdatedSearchHistory.self)
+            .where { $0.sourceId == sourceId }
+            .where { !$0.isDeleted }
+        
         try! await realm.asyncWrite {
-            realm.objects(UpdatedSearchHistory.self).where { $0.sourceId == sourceId }.forEach { obj in
-                obj.isDeleted = true
+            for object in objects {
+                object.isDeleted = true
+            }
+        }
+    }
+    
+    func deleteSearchHistory() async {
+        let objects = realm
+            .objects(UpdatedSearchHistory.self)
+            .where { $0.sourceId == nil }
+        
+        try! await realm.asyncWrite {
+            for object in objects {
+                object.isDeleted = true
             }
         }
     }

@@ -30,7 +30,7 @@ struct STTThumbView: View {
     @State var systemName: String? = nil
     @State var url: URL? = nil
     @StateObject var imageFetcher = FetchImage()
-    @Preference(\.accentColor) var color
+    @AppStorage(STTKeys.AppAccentColor) var color: Color = .sttDefault
     var body: some View {
         GeometryReader { proxy in
             Group {

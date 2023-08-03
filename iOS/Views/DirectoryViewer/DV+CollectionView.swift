@@ -240,6 +240,7 @@ extension DirectoryViewer.CoreCollectionView {
                 let section = NSCollectionLayoutSection(group: group)
                 section.contentInsets = .init(top: 5, leading: INSET, bottom: 10, trailing: INSET)
                 section.interGroupSpacing = SPACING
+                section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
                 return section
             }
         }

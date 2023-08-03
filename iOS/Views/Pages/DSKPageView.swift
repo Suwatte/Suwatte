@@ -40,8 +40,10 @@ extension DSKPageView {
         }
 
         func load() {
-            loadable = .loading
             Task {
+                await MainActor.run {
+                    loadable = .loading
+                }
                 do {
                     let data: [DSKCommon.PageSection<T>] = try await runner.getSectionsForPage(link: link) // Load Page
                     if !data.allSatisfy({ $0.items != nil }) {

@@ -126,7 +126,9 @@ extension StateManager {
                 let source = try await DSK.shared.getContentSource(id: sourceId)
                 let context = try await source.provideReaderContext(for: item.contentId)
                 Task {
-                    ToastManager.shared.loading = false
+                    await MainActor.run {
+                        ToastManager.shared.loading = false
+                    }
                     await StateManager.shared.openReader(context: context, caller: item, source: sourceId)
                 }
             } catch {
