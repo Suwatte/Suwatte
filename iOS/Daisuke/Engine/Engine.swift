@@ -105,12 +105,10 @@ extension DaisukeEngine {
 
     func startRunner(_ url: URL) async throws -> AnyRunner {
         let content = try String(contentsOf: url, encoding: .utf8)
-        let hasWKDirective = content.contains("dsk_env webview")
+        let hasWKDirective = content.contains("stt webkit")
+        let instance: InstanceInformation = .init(name: "", id: "")
+        let runner = try await hasWKDirective ? startWKRunner(with: url, of: instance) : startJSCRunner(with: url, for: instance)
         
-        
-//        let runner = try await startJSCRunner(with: url, for: .init(name: "Default", id: "Default"))
-        let runner = try await startWKRunner(with: url, of: .init(name: "Default", id: "default"))
-
         didStartRunner(runner)
         return runner
     }

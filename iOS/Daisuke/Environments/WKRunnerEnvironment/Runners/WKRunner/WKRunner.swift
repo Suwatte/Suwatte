@@ -38,7 +38,7 @@ public class WKRunner: DSKRunner {
 
 
 class WKBootstrapper : NSObject {
-    private let wv: WKWebView
+    private weak var  wv: WKWebView?
     internal var isClientReady = false
     fileprivate var continuation: CheckedContinuation<Void, Never>?
     init(wv: WKWebView) {
@@ -61,14 +61,10 @@ class WKBootstrapper : NSObject {
 
     @MainActor
     func prepare() async {
-        wv.configuration.userContentController.add(self, contentWorld: .defaultClient, name: "state")
+        wv?.configuration.userContentController.add(self, contentWorld: .defaultClient, name: "state")
         await withCheckedContinuation { continuation in
-            if isClientReady {
-                continuation.resume()
-                return
-            }
             self.continuation = continuation
-            wv.loadHTMLString(HTML, baseURL: nil)
+            wv?.loadHTMLString(HTML, baseURL: nil)
         }
     }
 }
@@ -78,6 +74,10 @@ extension WKBootstrapper: WKScriptMessageHandler {
     private func didEnterReadyState() {
         isClientReady = true
         continuation?.resume()
+        continuation = nil
+        wv?.configuration.userContentController.removeScriptMessageHandler(forName: "state", contentWorld: .defaultClient)
+        wv = nil
+
     }
     public func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) {
         let msg = message.body as? String

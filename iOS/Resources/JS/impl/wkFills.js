@@ -6,13 +6,13 @@ class StoreHandler {
 
 class LogHandler {
   post(val) {
-    return window.webkit.messageHandlers.logging.postMessage(val);
+    window.webkit.messageHandlers.logging.postMessage(val);
   }
 }
 
 class NetworkHandler {
   post(val) {
-    return window.webkit.messageHandlers.networking.postMessage(val);
+    return window.webkit.messageHandlers.networking.postMessage(JSON.parse(JSON.stringify(val)));
   }
 }
 

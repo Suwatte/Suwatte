@@ -27,6 +27,9 @@ struct LibraryView: View {
                     LibrarySectionBuilder(key: section, openFirstCollection: $openFirstCollection, links: $pageLinks, runners: $runners)
                 }
             }
+            .refreshable {
+                await loadPageLinks()
+            }
             .listStyle(.insetGrouped)
             .navigationTitle("Library")
             .toolbar(content: {
