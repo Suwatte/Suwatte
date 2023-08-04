@@ -73,8 +73,8 @@ extension WKContentSource : ContentSource {
         try await eval(script("let data = await RunnerObject.getHighlight(highlight);"), ["highlight": try highlight.asDictionary()])
     }
     
-    func getContextActions(highlight: DSKCommon.Highlight) throws -> [[DSKCommon.ContextMenuAction]] {
-        []
+    func getContextActions(highlight: DSKCommon.Highlight) async throws -> [DSKCommon.ContextMenuGroup] {
+        try await eval(script("let data = await RunnerObject.getContextActions(highlight);"), ["highlight": try highlight.asDictionary()])
     }
     
     func didTriggerContextActon(highlight: DSKCommon.Highlight, key: String) async throws {

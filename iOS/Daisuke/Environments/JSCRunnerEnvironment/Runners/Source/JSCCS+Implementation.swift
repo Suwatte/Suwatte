@@ -96,8 +96,8 @@ extension JSCContentSource {
                                                resolvesTo: DSKCommon.Highlight.self)
     }
 
-    func getContextActions(highlight: DSKCommon.Highlight) throws -> [[DSKCommon.ContextMenuAction]] {
-        return try synchronousCall(method: "getContextActions", arguments: [highlight.asDictionary()])
+    func getContextActions(highlight: DSKCommon.Highlight) async throws -> [DSKCommon.ContextMenuGroup] {
+        try await callMethodReturningDecodable(method: "getContextActions", arguments: [highlight.asDictionary()], resolvesTo: [DSKCommon.ContextMenuGroup].self)
     }
 
     func didTriggerContextActon(highlight: DSKCommon.Highlight, key: String) async throws {

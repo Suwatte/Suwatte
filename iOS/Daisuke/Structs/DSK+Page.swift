@@ -106,6 +106,11 @@ extension DSKCommon {
 }
 
 extension DSKCommon {
+    struct ContextMenuGroup: JSCObject {
+        let key: String
+        let actions: [ContextMenuAction]
+    }
+    
     struct ContextMenuAction: JSCObject {
         let key: String
         let label: String

@@ -63,7 +63,8 @@ struct ContentSourcePageView: View {
         @State var inReadLater: Bool
         let hideLibraryBadges: Bool
         @Binding var selection: HighlightIdentifier?
-
+        @State var actions: Loadable<[DSKCommon.ContextMenuGroup]> = .idle
+        
         var body: some View {
             PageViewTile(runnerID: source.id,
                          id: item.contentId,
@@ -89,7 +90,12 @@ struct ContentSourcePageView: View {
                     } else {
                         Text("Invalid URL Format for Acquisition Link")
                     }
-                    buildActions()
+                    if source.intents.isContextMenuProvider {
+                        buildActions()
+                            .onDisappear {
+                                print("reset")
+                            }
+                    }
                 }
                 .onTapGesture {
                     handleTap()
@@ -124,18 +130,16 @@ extension ContentSourcePageView.Cell {
 // MARK: - Context Actions
 
 extension ContentSourcePageView.Cell {
-    func getActions() -> [[DSKCommon.ContextMenuAction]] {
-        guard source.intents.isContextMenuProvider else {
-            return []
-        }
+
+    func loadActions() async {
+        actions = .loading
         do {
-            let actions = try source.getContextActions(highlight: item)
-            return actions
+            let data = try await source.getContextActions(highlight: item)
+            self.actions = .loaded(data)
         } catch {
             Logger.shared.error(error, source.id)
+            self.actions = .loaded([])
         }
-
-        return []
     }
 
     func didTriggerActions(key: String) {
@@ -157,11 +161,9 @@ extension ContentSourcePageView.Cell {
 
     @ViewBuilder
     func buildActions() -> some View {
-        let actions = getActions()
-        if !actions.isEmpty {
-            ForEach(actions, id: \.hashValue) { group in
-                Divider()
-                ForEach(group, id: \.hashValue) { action in
+        LoadableView(loadActions, actions) { groups in
+            ForEach(groups, id: \.key) { group in
+                ForEach(group.actions, id: \.key) { action in
                     if action.displayAsLabel {
                         Text(action.label)
                     } else {

@@ -54,7 +54,7 @@ protocol ContentSource: DSKRunner {
     
     func getHighlight(highlight: DSKCommon.Highlight) async throws -> DSKCommon.Highlight
     
-    func getContextActions(highlight: DSKCommon.Highlight) throws -> [[DSKCommon.ContextMenuAction]]
+    func getContextActions(highlight: DSKCommon.Highlight) async throws -> [DSKCommon.ContextMenuGroup]
     
     func didTriggerContextActon(highlight: DSKCommon.Highlight, key: String) async throws
     
@@ -64,7 +64,7 @@ protocol ContentSource: DSKRunner {
 
 extension ContentSource {
     var cloudflareResolutionURL: URL? {
-        config?.cloudflareResolutionURL.flatMap(URL.init(string:)) ?? URL(string: info.website ?? "")
+        config?.cloudflareResolutionURL.flatMap(URL.init(string:)) ?? URL(string: info.website)
     }
     
     func ablityNotDisabled(_ path: KeyPath<SourceConfig, Bool?>) -> Bool {
