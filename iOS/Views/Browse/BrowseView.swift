@@ -159,7 +159,7 @@ extension BrowseView {
 struct PageLinkView: View {
     let pageLink: DSKCommon.PageLinkLabel
     let runnerID: String
-    @State var loadable: Loadable<JSCRunner> = .idle
+    @State var loadable: Loadable<AnyRunner> = .idle
     var body: some View {
         LoadableView(load, loadable) { runner in
             Group {
@@ -175,7 +175,7 @@ struct PageLinkView: View {
     func load() async {
         loadable = .loading
         do {
-            let runner = try await DSK.shared.getJSCRunner(runnerID)
+            let runner = try await DSK.shared.getDSKRunner(runnerID)
             loadable = .loaded(runner)
         } catch {
             loadable = .failed(error)
@@ -216,12 +216,12 @@ extension BrowseView {
             token = nil
         }
         
-        func getLinkProviders() async -> [JSCRunner] {
+        func getLinkProviders() async -> [AnyRunner] {
             let ids = await runners
                 .filter(\.isBrowsePageLinkProvider)
                 .map(\.id)
             
-            let results = await withTaskGroup(of: JSCRunner?.self) { group in
+            let results = await withTaskGroup(of: AnyRunner?.self) { group in
                 
                 for id in ids {
                     group.addTask {
@@ -229,7 +229,7 @@ extension BrowseView {
                     }
                 }
                 
-                var out: [JSCRunner] = []
+                var out: [AnyRunner] = []
                 for await result in group {
                     guard let result else { continue }
                     out.append(result)
@@ -255,7 +255,7 @@ extension BrowseView {
             }
         }
         
-        func load(for runner: JSCRunner) async {
+        func load(for runner: AnyRunner) async {
             guard runner.intents.browsePageLinkProvider else { return }
             do {
                 let pageLinks = try await runner.getBrowsePageLinks()

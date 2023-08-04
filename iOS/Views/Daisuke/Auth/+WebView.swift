@@ -56,7 +56,7 @@ extension RepresentableView {
     class Controller: UIViewController, WKUIDelegate {
         var webView: WKWebView!
         var isSignIn: Bool!
-        var runner: JSCRunner!
+        var runner: AnyRunner!
 
         override func viewDidLoad() {
             super.viewDidLoad()

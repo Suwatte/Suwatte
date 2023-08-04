@@ -51,7 +51,7 @@ struct ContentTrackerInfoView: View {
 
     var InfoSection: some View {
         Section {
-            Link(destination: URL(string: tracker.trackerInfo.website) ?? STTHost.notFound) {
+            Link(destination: URL(string: tracker.info.website ?? "") ?? STTHost.notFound) {
                 HStack {
                     Text("Visit Website")
                     Spacer()

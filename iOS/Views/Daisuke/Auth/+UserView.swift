@@ -11,7 +11,7 @@ extension DSKAuthView {
     struct UserView: View {
         @EnvironmentObject var model: ViewModel
         var user: DSKCommon.User
-        var runner: JSCRunner {
+        var runner: AnyRunner {
             model.runner
         }
 

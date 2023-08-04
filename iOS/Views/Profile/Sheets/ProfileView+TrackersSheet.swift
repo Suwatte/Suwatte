@@ -20,8 +20,8 @@ struct TrackerManagementView: View {
                     let loadable = model.dict[tracker.id] ?? .idle
                     VStack {
                         HStack {
-                            STTThumbView(url: tracker.thumbnailURL)
-                                .frame(width: 25, height: 25, alignment: .center)
+//                            STTThumbView(url: tracker.thumbnailURL)
+//                                .frame(width: 25, height: 25, alignment: .center)
                             Text(tracker.name)
                                 .font(.headline)
                             Spacer()
@@ -341,8 +341,8 @@ extension TrackerManagementView {
             // Header
             VStack {
                 HStack {
-                    STTThumbView(url: tracker.thumbnailURL)
-                        .frame(width: 25, height: 25, alignment: .center)
+//                    STTThumbView(url: tracker.thumbnailURL)
+//                        .frame(width: 25, height: 25, alignment: .center)
                     Text(tracker.name)
                         .font(.headline)
                     Spacer()

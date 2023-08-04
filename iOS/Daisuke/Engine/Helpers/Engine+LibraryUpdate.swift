@@ -42,7 +42,7 @@ extension DSK {
 }
 
 extension DSK {
-    private func fetchUpdatesForSource(source: JSCContentSource) async throws -> Int {
+    private func fetchUpdatesForSource(source: AnyContentSource) async throws -> Int {
         let actor = await RealmActor()
         let library = await actor.getTitlesPendingUpdate(source.id)
         Logger.shared.log("[\(source.id)] [Updates Checker] Updating \(library.count) titles")
@@ -129,7 +129,7 @@ extension DSK {
         return updates
     }
 
-    private func getChapters(for id: String, with source: JSCContentSource) async throws -> [DSKCommon.Chapter] {
+    private func getChapters(for id: String, with source: AnyContentSource) async throws -> [DSKCommon.Chapter] {
         let shouldUpdateProfile = UserDefaults.standard.bool(forKey: STTKeys.UpdateContentData)
 
         if shouldUpdateProfile, let chapters = try await updateProfile(for: id, with: source) {

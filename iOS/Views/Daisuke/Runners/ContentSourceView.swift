@@ -78,27 +78,29 @@ struct ContentSourceInfoView: View {
 
     var InfoSection: some View {
         Section {
-            if source.sourceInfo.supportedLanguages.count > 1 {
-                NavigationLink {
-                    List {
-                        ForEach(source.sourceInfo.supportedLanguages.sorted(by: { Locale.current.localizedString(forIdentifier: $0) ?? "" < Locale.current.localizedString(forIdentifier: $1) ?? "" })) {
-                            LanguageCellView(language: $0)
+            if let languages = source.info.supportedLanguages {
+                if languages.count > 1 {
+                    NavigationLink {
+                        List {
+                            ForEach(languages.sorted(by: { Locale.current.localizedString(forIdentifier: $0) ?? "" < Locale.current.localizedString(forIdentifier: $1) ?? "" })) {
+                                LanguageCellView(language: $0)
+                            }
                         }
+                        .navigationTitle("Supported Languages")
+                    } label: {
+                        Text("Supported Languages")
                     }
-                    .navigationTitle("Supported Languages")
-                } label: {
-                    Text("Supported Languages")
-                }
-            } else {
-                HStack {
-                    Text("Supported Language")
-                    Spacer()
-                    LanguageCellView(language: source.sourceInfo.supportedLanguages.first ?? "Unknown")
-                        .foregroundColor(.gray)
+                } else {
+                    HStack {
+                        Text("Supported Language")
+                        Spacer()
+                        LanguageCellView(language: languages.first ?? "Unknown")
+                            .foregroundColor(.gray)
+                    }
                 }
             }
-
-            Link(destination: URL(string: source.sourceInfo.website) ?? STTHost.notFound) {
+            
+            Link(destination: URL(string: source.info.website) ?? STTHost.notFound) {
                 HStack {
                     Text("Visit Website")
                     Spacer()

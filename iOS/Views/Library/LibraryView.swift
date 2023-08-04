@@ -348,7 +348,7 @@ extension LibraryView {
             for id in runnerIDs {
                 group.addTask {
                     do {
-                        let runner = try await DSK.shared.getJSCRunner(id)
+                        let runner = try await DSK.shared.getDSKRunner(id)
                         guard runner.intents.libraryPageLinkProvider else { return }
                         let links = try await runner.getLibraryPageLinks()
                         guard !links.isEmpty else { return }

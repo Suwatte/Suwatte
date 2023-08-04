@@ -134,7 +134,7 @@ extension InstalledRunnersView {
 extension InstalledRunnersView {
     struct Gateway: View {
         let runnerID: String
-        @State var loadable: Loadable<JSCRunner> = .idle
+        @State var loadable: Loadable<AnyRunner> = .idle
         var body: some View {
             LoadableView(load, loadable) { runner in
                 if let source = runner as? JSCCS {
@@ -148,7 +148,7 @@ extension InstalledRunnersView {
         func load() async {
             loadable = .loading
             do {
-                let runner = try await DSK.shared.getJSCRunner(runnerID)
+                let runner = try await DSK.shared.getDSKRunner(runnerID)
                 loadable = .loaded(runner)
             } catch {
                 loadable = .failed(error)

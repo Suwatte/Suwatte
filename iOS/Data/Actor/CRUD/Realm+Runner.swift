@@ -35,7 +35,7 @@ extension RealmActor {
             .first
     }
 
-    func saveRunner(_ runner: JSCRunner, listURL: URL? = nil, url: URL) async {
+    func saveRunner(_ runner: AnyRunner, listURL: URL? = nil, url: URL) async {
         let obj = realm
             .objects(StoredRunnerObject.self)
             .where { $0.id == runner.id && !$0.isDeleted }

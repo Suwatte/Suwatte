@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DSKPreferenceView: View {
-    var runner: JSCRunner
+    var runner: AnyRunner
     @State private var loadable = Loadable<[DSKCommon.PreferenceGroup]>.idle
 
     var body: some View {
@@ -31,7 +31,7 @@ struct DSKPreferenceView: View {
 }
 
 struct ContentSourceSettingsView: View {
-    var runner: JSCRunner
+    var runner: AnyRunner
     var preferences: [DSKCommon.PreferenceGroup]
     var body: some View {
         Form {
@@ -71,11 +71,11 @@ struct ContentSourceSettingsView: View {
 
 extension ContentSourceSettingsView {
     struct SelectionView: View {
-        var runner: JSCRunner
+        var runner: AnyRunner
         var pref: DSKCommon.Preference
         @State var selection: String
 
-        init(runner: JSCRunner, pref: DSKCommon.Preference) {
+        init(runner: AnyRunner, pref: DSKCommon.Preference) {
             self.runner = runner
             self.pref = pref
             let value = (pref.value.value as? String) ?? pref.options?.first?.value ?? ""
@@ -102,11 +102,11 @@ extension ContentSourceSettingsView {
 
 extension ContentSourceSettingsView {
     struct ToggleView: View {
-        var runner: JSCRunner
+        var runner: AnyRunner
         var pref: DSKCommon.Preference
         @State var isOn: Bool
 
-        init(runner: JSCRunner, pref: DSKCommon.Preference) {
+        init(runner: AnyRunner, pref: DSKCommon.Preference) {
             self.runner = runner
             self.pref = pref
 
@@ -129,10 +129,10 @@ extension ContentSourceSettingsView {
 
 extension ContentSourceSettingsView {
     struct TextFieldView: View {
-        var runner: JSCRunner
+        var runner: AnyRunner
         var pref: DSKCommon.Preference
         @State var text: String
-        init(runner: JSCRunner, pref: DSKCommon.Preference) {
+        init(runner: AnyRunner, pref: DSKCommon.Preference) {
             self.runner = runner
             self.pref = pref
             let value = (pref.value.value as? String) ?? ""
@@ -154,10 +154,10 @@ extension ContentSourceSettingsView {
 
 extension ContentSourceSettingsView {
     struct StepperView: View {
-        var runner: JSCRunner
+        var runner: AnyRunner
         var pref: DSKCommon.Preference
         @State var value: Int
-        init(runner: JSCRunner, pref: DSKCommon.Preference) {
+        init(runner: AnyRunner, pref: DSKCommon.Preference) {
             self.runner = runner
             self.pref = pref
             let cValue = (pref.value.value as? Int) ?? pref.minStepper
@@ -181,10 +181,10 @@ extension ContentSourceSettingsView {
 
 extension ContentSourceSettingsView {
     struct MultiSelectView: View {
-        var runner: JSCRunner
+        var runner: AnyRunner
         var pref: DSKCommon.Preference
         @State var selections: [String]
-        init(runner: JSCRunner, pref: DSKCommon.Preference) {
+        init(runner: AnyRunner, pref: DSKCommon.Preference) {
             self.runner = runner
             self.pref = pref
 
@@ -244,9 +244,9 @@ extension ContentSourceSettingsView {
 
 extension ContentSourceSettingsView {
     struct ButtonView: View {
-        var runner: JSCRunner
+        var runner: AnyRunner
         var pref: DSKCommon.Preference
-        init(runner: JSCRunner, pref: DSKCommon.Preference) {
+        init(runner: AnyRunner, pref: DSKCommon.Preference) {
             self.runner = runner
             self.pref = pref
         }

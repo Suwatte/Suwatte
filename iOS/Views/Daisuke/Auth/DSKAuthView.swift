@@ -25,7 +25,7 @@ struct DSKAuthView: View {
 
 extension DSKAuthView {
     struct AuthenticationGateway: View {
-        var runner: JSCRunner
+        var runner: AnyRunner
         var method: RunnerIntents.AuthenticationMethod {
             runner.intents.authenticationMethod
         }

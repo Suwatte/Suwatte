@@ -99,6 +99,16 @@ const bootstrap = () => {
 
   // Log
   console.log(`Ready!`);
+    
+    try {
+        if (window) {
+            window.addEventListener("load", function (event) {
+              window.webkit.messageHandlers.state.postMessage("loaded");
+            });
+        }
+    } catch (err) {
+        
+    }
 };
 
 //

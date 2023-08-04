@@ -11,7 +11,7 @@ import SwiftUI
 extension DSKPageView {
     struct CollectionView: View {
         let pageSections: [DSKCommon.PageSection<T>]
-        let runner: JSCRunner
+        let runner: AnyRunner
         let tileModifier: PageItemModifier
         @State var locked = false
         @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
@@ -19,7 +19,7 @@ extension DSKPageView {
         @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
         @EnvironmentObject var model: ViewModel
 
-        init(sections: [DSKCommon.PageSection<T>], runner: JSCRunner, @ViewBuilder _ tileModifier: @escaping PageItemModifier) {
+        init(sections: [DSKCommon.PageSection<T>], runner: AnyRunner, @ViewBuilder _ tileModifier: @escaping PageItemModifier) {
             pageSections = sections
             self.runner = runner
             self.tileModifier = tileModifier

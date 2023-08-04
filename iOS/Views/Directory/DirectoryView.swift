@@ -123,7 +123,7 @@ extension DirectoryView {
 }
 
 struct RunnerDirectoryView: View {
-    let runner: JSCRunner
+    let runner: AnyRunner
     let request: DSKCommon.DirectoryRequest
 
     var body: some View {

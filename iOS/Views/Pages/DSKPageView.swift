@@ -28,13 +28,13 @@ struct DSKPageView<T: JSCObject, C: View>: View {
 
 extension DSKPageView {
     final class ViewModel: ObservableObject {
-        let runner: JSCRunner
+        let runner: AnyRunner
         let link: DSKCommon.PageLink
         @Published var loadable = Loadable<[DSKCommon.PageSection<T>]>.idle
         @Published var loadables: [String: Loadable<DSKCommon.ResolvedPageSection<T>>] = [:]
         @Published var errors = Set<String>()
 
-        init(runner: JSCRunner, link: DSKCommon.PageLink) {
+        init(runner: AnyRunner, link: DSKCommon.PageLink) {
             self.runner = runner
             self.link = link
         }
@@ -87,19 +87,17 @@ extension DSKPageView {
 }
 
 struct RunnerPageView: View {
-    let runner: JSCRunner
+    let runner: AnyRunner
     var link: DSKCommon.PageLink
     var body: some View {
         Group {
-            switch runner.environment {
-            case .plugin:
-                EmptyView()
-            case .tracker:
-                ContentTrackerPageView(tracker: runner as! JSCCT, link: link)
-            case .source:
-                ContentSourcePageView(source: runner as! JSCCS, link: link)
-            case .unknown:
-                EmptyView()
+            
+            if let runner = runner as? AnyContentSource {
+                ContentSourcePageView(source: runner, link: link)
+            } else if let runner = runner as? AnyContentTracker {
+                ContentTrackerPageView(tracker: runner , link: link)
+            } else {
+                Text("No Environment")
             }
         }
     }

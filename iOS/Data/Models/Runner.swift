@@ -101,7 +101,7 @@ extension DataManager {
             .first
     }
 
-    func saveRunner(_ runner: JSCRunner, listURL: URL? = nil, url: URL) {
+    func saveRunner(_ runner: AnyRunner, listURL: URL? = nil, url: URL) {
         let realm = try! Realm()
 
         let obj = realm

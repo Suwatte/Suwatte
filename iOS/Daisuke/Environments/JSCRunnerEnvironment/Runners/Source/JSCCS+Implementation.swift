@@ -46,7 +46,7 @@ extension JSCContentSource {
 
 // MARK: -  Library Event handler
 
-extension JSCCS {
+extension JSCContentSource {
     func onContentsAddedToLibrary(ids: [String]) async throws {
         try await callOptionalVoidMethod(method: "onContentsAddedToLibrary", arguments: [ids])
     }
@@ -62,7 +62,7 @@ extension JSCCS {
 
 // MARK: - Chapter Event Handler
 
-extension JSCCS {
+extension JSCContentSource {
     func onChaptersMarked(contentId: String, chapterIds: [String], completed: Bool) async throws {
         try await callOptionalVoidMethod(method: "onChaptersMarked", arguments: [contentId, chapterIds, completed])
     }
@@ -109,7 +109,7 @@ extension JSCContentSource {
 
 // MARK: - Acquirable
 
-extension JSCCS {
+extension JSCContentSource {
     func overrrideDownloadRequest(_ url: String) async throws -> DSKCommon.Request? {
         guard runnerClass.hasProperty("overrideDownloadRequest") else {
             return nil

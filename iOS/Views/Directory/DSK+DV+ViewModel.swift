@@ -9,7 +9,7 @@ import SwiftUI
 
 extension DirectoryView {
     final class ViewModel: ObservableObject {
-        var runner: JSCRunner
+        var runner: AnyRunner
 
         // Core
         @Published var result = Loadable<[T]>.idle
@@ -33,7 +33,7 @@ extension DirectoryView {
             config?.filters ?? []
         }
 
-        init(runner: JSCRunner, request: DSKCommon.DirectoryRequest) {
+        init(runner: AnyRunner, request: DSKCommon.DirectoryRequest) {
             self.runner = runner
             self.request = request
             context = request.context

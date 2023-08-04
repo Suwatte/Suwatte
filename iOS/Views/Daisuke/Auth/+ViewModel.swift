@@ -9,10 +9,10 @@ import Foundation
 
 extension DSKAuthView {
     final class ViewModel: ObservableObject {
-        var runner: JSCRunner
+        var runner: AnyRunner
         @Published var loadable: Loadable<DSKCommon.User?> = .idle
 
-        init(runner: JSCRunner) {
+        init(runner: AnyRunner) {
             self.runner = runner
         }
 

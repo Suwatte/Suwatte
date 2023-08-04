@@ -7,67 +7,15 @@
 import Foundation
 import JavaScriptCore
 
-class JSCContentSource: NSObject, JSCRunner {
-    var configCache: [String: DSKCommon.DirectoryConfig] = [:]
-
-    static func == (lhs: JSCContentSource, rhs: JSCContentSource) -> Bool {
-        lhs.info.id == rhs.info.id
-    }
-
-    var info: RunnerInfo
-    let intents: RunnerIntents
-    var runnerClass: JSValue
-    let environment: RunnerEnvironment = .source
+final class JSCContentSource: JSCRunner, ContentSource {
     var config: SourceConfig?
+    internal var directoryTags: [DSKCommon.Property]?
 
-    var directoryConfig: DSKCommon.DirectoryConfig?
-    var directoryTags: [DSKCommon.Property]?
-
-    required init(value: JSValue) throws {
-        runnerClass = value
-        let ctx = runnerClass.context
-        // Prepare Runner Info
-        guard let ctx, let dictionary = runnerClass.forProperty("info"), dictionary.isObject else {
-            throw DSK.Errors.RunnerInfoInitFailed
-        }
-
-        info = try SourceInfo(value: dictionary)
-
-        // Get Intents
-        let intents = try ctx
-            .evaluateScript("(function(){ return RunnerIntents })()")
-            .flatMap { try RunnerIntents(value: $0) }
-
-        guard let intents else {
-            throw DSK.Errors.FailedToParseRunnerIntents
-        }
-
-        self.intents = intents
-
+    override init(instance: InstanceInformation, object: JSValue) async throws {
+        try await super.init(instance: instance, object: object)
         // Get Config
         if let dictionary = runnerClass.forProperty("config"), dictionary.isObject {
             config = try SourceConfig(value: dictionary)
         }
-        super.init()
-        saveState()
-    }
-
-    var sourceInfo: SourceInfo {
-        info as! SourceInfo
-    }
-}
-
-typealias JSCCS = JSCContentSource
-typealias AnyContentSource = JSCCS
-
-extension JSCCS {
-    var cloudflareResolutionURL: URL? {
-        config?.cloudflareResolutionURL.flatMap(URL.init(string:)) ?? URL(string: sourceInfo.website)
-    }
-}
-
-extension JSCCS {
-    func ablityNotDisabled(_ path: KeyPath<SourceConfig, Bool?>) -> Bool {
-        !(config?[keyPath: path] ?? false)
     }
 }

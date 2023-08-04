@@ -314,7 +314,7 @@ extension PagedController {
         if currentPath.item < path.item {
             let preloadNext = model.sections[path.section].count - path.item + 1 < 5
             if preloadNext, model.readerChapterList.get(index: path.section + 1) == nil {
-                Task.detached { [weak self] in
+                Task { [weak self] in
                     await self?.model.loadNextChapter()
                 }
             }
@@ -508,7 +508,7 @@ extension PagedController: UICollectionViewDataSourcePrefetching {
             }
             return page.page
         }
-        Task.detached { [weak self] in
+        Task { [weak self] in
             let requests = await withTaskGroup(of: ImageRequest?.self) { group in
 
                 for page in pages {
@@ -537,7 +537,7 @@ extension PagedController: UICollectionViewDataSourcePrefetching {
             return page.page
         }
 
-        Task.detached { [weak self] in
+        Task { [weak self] in
             let requests = await withTaskGroup(of: ImageRequest?.self) { group in
 
                 for page in pages {

@@ -15,7 +15,7 @@ final actor DaisukeEngine {
 
     static let shared = DaisukeEngine()
 
-    private let directory = FileManager
+    internal let directory = FileManager
         .default
         .applicationSupport
         .appendingPathComponent("Runners", isDirectory: true)
@@ -25,8 +25,8 @@ final actor DaisukeEngine {
             .appendingPathComponent("common.js")
     }
 
-    private var runners: [String: JSCRunner] = [:]
-    private let vm: JSVirtualMachine
+    private var runners: [String: AnyRunner] = [:]
+    internal let vm: JSVirtualMachine
 
     init() {
         // Create Directory if required
@@ -35,7 +35,7 @@ final actor DaisukeEngine {
         }
 
         // Start VM
-        let queue = DispatchQueue(label: "com.ceres.suwatte.daisuke", attributes: .concurrent)
+        let queue = DispatchQueue(label: "com.ceres.suwatte.daisuke.jsc", attributes: .concurrent)
         vm = queue.sync { JSVirtualMachine()! }
 
         // Simple Log Message
@@ -65,7 +65,6 @@ final actor DaisukeEngine {
     }
 }
 
-// MARK: - Helpers
 
 extension DaisukeEngine {
     private func executeableURL(for id: String) -> URL {
@@ -75,7 +74,7 @@ extension DaisukeEngine {
         return file
     }
 
-    private func validateRunnerVersion(runner: JSCRunner) async throws {
+    private func validateRunnerVersion(runner: AnyRunner) async throws {
         // Validate that the incoming runner has a higher version
         let current = await getRunner(runner.id)
 
@@ -85,94 +84,10 @@ extension DaisukeEngine {
     }
 }
 
-// MARK: - Bootstrap
-
-extension DaisukeEngine {
-    private func newJSCContext() -> JSContext {
-        JSContext(virtualMachine: vm)!
-    }
-
-    private func add(class cls: AnyClass, name: String, context: JSContext) {
-        let constructorName = "__constructor__\(name)"
-
-        let constructor: @convention(block) () -> NSObject = {
-            let cls = cls as! NSObject.Type
-            return cls.init()
-        }
-
-        context.setObject(unsafeBitCast(constructor, to: AnyObject.self),
-                          forKeyedSubscript: constructorName as NSCopying & NSObjectProtocol)
-
-        let script = "function \(name)() " +
-            "{ " +
-            "   var obj = \(constructorName)(); " +
-            "   obj.setThisValue(obj); " +
-            "   return obj; " +
-            "} "
-
-        context.evaluateScript(script)
-    }
-
-    internal func bootstrap(_ scriptURL: URL) throws -> JSValue {
-        // Generate New Context
-        let context = newJSCContext()
-
-        // Required File Routes
-        let commonsPath = FileManager
-            .default
-            .applicationSupport
-            .appendingPathComponent("Runners", isDirectory: true)
-            .appendingPathComponent("common.js")
-
-        let messageHandlerFiles = [
-            Bundle.main.url(forResource: "log", withExtension: "js")!,
-            Bundle.main.url(forResource: "store", withExtension: "js")!,
-            Bundle.main.url(forResource: "network", withExtension: "js")!,
-        ]
-
-        let bootstrapFile = Bundle.main.url(forResource: "bridge", withExtension: "js")!
-
-        // Declare Intial ID
-        context.globalObject.setValue(scriptURL.fileName, forProperty: "IDENTIFIER")
-        // Evaluate Commons Script
-        var content = try String(contentsOf: commonsPath, encoding: .utf8)
-        _ = context.evaluateScript(content)
-
-        // Inject Handlers
-        add(class: JSCHandler.LogHandler.self, name: "LogHandler", context: context)
-        add(class: JSCHandler.StoreHandler.self, name: "StoreHandler", context: context)
-        add(class: JSCHandler.NetworkHandler.self, name: "NetworkHandler", context: context)
-
-        // JSExports
-        JSCTimer.register(context: context)
-
-        // Evaluate Message Handler Scripts
-        for url in messageHandlerFiles {
-            content = try String(contentsOf: url, encoding: .utf8)
-            _ = context.evaluateScript(content)
-        }
-
-        // Evalutate Runner Script
-        content = try String(contentsOf: scriptURL, encoding: .utf8)
-        _ = context.evaluateScript(content)
-
-        // Evaluate Bootstrap Script
-        content = try String(contentsOf: bootstrapFile, encoding: .utf8)
-        _ = context.evaluateScript(content)
-
-        let runner = context.daisukeRunner()
-        guard let runner, runner.isObject else {
-            throw DSK.Errors.RunnerClassInitFailed
-        }
-
-        return runner
-    }
-}
-
 // MARK: - Runner Start Up
 
 extension DaisukeEngine {
-    func startRunner(_ id: String) async throws -> JSCRunner {
+    func startRunner(_ id: String) async throws -> AnyRunner {
         let actor = await RealmActor()
         let file = await actor.getRunnerExecutable(id: id)
 
@@ -188,29 +103,13 @@ extension DaisukeEngine {
         return try await startRunner(file)
     }
 
-    func startRunner(_ url: URL) async throws -> JSCRunner {
-        // Get Core Runner Object
-        let runnerObject = try bootstrap(url)
-
-        // Get Runner Environment
-        let environment = runnerObject
-            .context!
-            .evaluateScript("(function(){ return RunnerEnvironment })()")
-            .toString()
-            .flatMap(DSKCommon.RunnerEnvironment.init(rawValue:)) ?? .unknown
-        var runner: JSCRunner? = nil
-        switch environment {
-        case .source:
-            runner = try JSCCS(value: runnerObject)
-        case .tracker:
-            runner = try JSCContentTracker(value: runnerObject)
-        default:
-            break
-        }
-
-        guard let runner else {
-            throw DSK.Errors.NamedError(name: "Engine", message: "Failed to recognize runner environment.")
-        }
+    func startRunner(_ url: URL) async throws -> AnyRunner {
+        let content = try String(contentsOf: url, encoding: .utf8)
+        let hasWKDirective = content.contains("dsk_env webview")
+        
+        
+//        let runner = try await startJSCRunner(with: url, for: .init(name: "Default", id: "Default"))
+        let runner = try await startWKRunner(with: url, of: .init(name: "Default", id: "default"))
 
         didStartRunner(runner)
         return runner
@@ -220,7 +119,7 @@ extension DaisukeEngine {
 // MARK: - Runner Management
 
 extension DaisukeEngine {
-    func getJSCRunner(_ id: String) async throws -> JSCRunner {
+    func getDSKRunner(_ id: String) async throws -> AnyRunner {
         if let runner = runners[id] {
             return runner
         }
@@ -228,21 +127,21 @@ extension DaisukeEngine {
         return try await startRunner(id)
     }
 
-    func getRunner(_ id: String) async -> JSCRunner? {
+    func getRunner(_ id: String) async -> AnyRunner? {
         do {
-            return try await getJSCRunner(id)
+            return try await getDSKRunner(id)
         } catch {
             Logger.shared.error("[\(id)] [Requested] \(error.localizedDescription)")
             return nil
         }
     }
 
-    func addRunner(_ rnn: JSCRunner, listURL _: URL? = nil) {
+    func addRunner(_ rnn: AnyRunner, listURL _: URL? = nil) {
         runners.removeValue(forKey: rnn.id)
         runners[rnn.id] = rnn
     }
 
-    func didStartRunner(_ runner: JSCRunner) {
+    func didStartRunner(_ runner: AnyRunner) {
         addRunner(runner)
     }
 
@@ -306,7 +205,7 @@ extension DaisukeEngine {
         didStartRunner(runner)
     }
 
-    private func upsertStoredRunner(_ runner: JSCRunner, listURL: URL? = nil) async {
+    private func upsertStoredRunner(_ runner: AnyRunner, listURL: URL? = nil) async {
         let actor = await RealmActor()
         await actor.saveRunner(runner, listURL: listURL, url: executeableURL(for: runner.id))
     }
@@ -403,15 +302,15 @@ extension DaisukeEngine {
 // MARK: - Source Management
 
 extension DaisukeEngine {
-    func getSource(id: String) async  -> JSCContentSource? {
+    func getSource(id: String) async  -> AnyContentSource? {
         let runner = await getRunner(id)
 
         guard let runner, let source = runner as? JSCCS else { return nil }
         return source
     }
 
-    func getContentSource(id: String) async throws -> JSCContentSource {
-        let runner = try await getJSCRunner(id)
+    func getContentSource(id: String) async throws -> AnyContentSource {
+        let runner = try await getDSKRunner(id)
 
         guard let source = runner as? JSCCS else {
             throw DSK.Errors.InvalidRunnerEnvironment
@@ -472,7 +371,7 @@ extension DaisukeEngine {
     }
 
     func getContentTracker(id: String) async throws -> JSCCT {
-        let runner = try await getJSCRunner(id)
+        let runner = try await getDSKRunner(id)
 
         guard let tracker = runner as? JSCCT else {
             throw DSK.Errors.InvalidRunnerEnvironment

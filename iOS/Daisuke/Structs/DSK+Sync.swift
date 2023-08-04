@@ -8,12 +8,12 @@
 import Foundation
 
 extension DSKCommon {
-    struct UpSyncedContent: Parsable, DaisukeInterface {
+    struct UpSyncedContent: JSCObject {
         var id: String
         var flag: LibraryFlag
     }
 
-    struct DownSyncedContent: Parsable, DaisukeInterface {
+    struct DownSyncedContent: JSCObject {
         var id: String
         var title: String
         var cover: String

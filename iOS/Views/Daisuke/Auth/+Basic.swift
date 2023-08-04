@@ -42,16 +42,11 @@ extension DSKAuthView.BasicAuthView {
 
         var ThumbnailView: some View {
             Group {
-                if let url = model.runner.thumbnailURL {
-                    BaseImageView(url: url)
-
-                } else {
-                    Image("stt")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .foregroundColor(color)
-                        .padding(.all, 3)
-                }
+                Image("stt")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundColor(color)
+                    .padding(.all, 3)
             }
             .frame(height: 75, alignment: .center)
             .clipShape(Circle())
