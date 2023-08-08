@@ -116,6 +116,7 @@
 		DF489C0E2A819591006A21B9 /* PagedCoordinator+Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF489C0D2A819591006A21B9 /* PagedCoordinator+Data.swift */; };
 		DF489C112A81C6F2006A21B9 /* IV+Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF489C102A81C6F2006A21B9 /* IV+Protocol.swift */; };
 		DF489C132A81C89C006A21B9 /* PagedCoordinator+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF489C122A81C89C006A21B9 /* PagedCoordinator+Keyboard.swift */; };
+		DF489C162A81D02C006A21B9 /* IV+Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF489C152A81D02C006A21B9 /* IV+Menu.swift */; };
 		DF49415929F4B20800DE9EDC /* ColoredBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF49415829F4B20800DE9EDC /* ColoredBadge.swift */; };
 		DF52FBAF28939745008FAD3A /* PagingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF52FBAE28939745008FAD3A /* PagingScrollView.swift */; };
 		DF52FBBE289487C6008FAD3A /* STTGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF52FBBD289487C6008FAD3A /* STTGridView.swift */; };
@@ -525,6 +526,7 @@
 		DF489C0D2A819591006A21B9 /* PagedCoordinator+Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagedCoordinator+Data.swift"; sourceTree = "<group>"; };
 		DF489C102A81C6F2006A21B9 /* IV+Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IV+Protocol.swift"; sourceTree = "<group>"; };
 		DF489C122A81C89C006A21B9 /* PagedCoordinator+Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagedCoordinator+Keyboard.swift"; sourceTree = "<group>"; };
+		DF489C152A81D02C006A21B9 /* IV+Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IV+Menu.swift"; sourceTree = "<group>"; };
 		DF49415829F4B20800DE9EDC /* ColoredBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoredBadge.swift; sourceTree = "<group>"; };
 		DF52FBAE28939745008FAD3A /* PagingScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingScrollView.swift; sourceTree = "<group>"; };
 		DF52FBBD289487C6008FAD3A /* STTGridView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = STTGridView.swift; sourceTree = "<group>"; };
@@ -1133,6 +1135,14 @@
 				DF489C102A81C6F2006A21B9 /* IV+Protocol.swift */,
 			);
 			path = Protocols;
+			sourceTree = "<group>";
+		};
+		DF489C142A81D021006A21B9 /* Menu */ = {
+			isa = PBXGroup;
+			children = (
+				DF489C152A81D02C006A21B9 /* IV+Menu.swift */,
+			);
+			path = Menu;
 			sourceTree = "<group>";
 		};
 		DF553CC729726F39004C3428 /* Models */ = {
@@ -2101,6 +2111,7 @@
 		DFDBF9CA2A7DB7C3006D49AD /* SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				DF489C142A81D021006A21B9 /* Menu */,
 				DFDBF9F52A7DF79A006D49AD /* IV+Modifiers.swift */,
 				DF489C0B2A817F38006A21B9 /* IV+TransitionView.swift */,
 			);
@@ -2706,6 +2717,7 @@
 				DFDBF9F62A7DF79A006D49AD /* IV+Modifiers.swift in Sources */,
 				DFBE484A2A25BDA8000ABA16 /* ProgressMarker.swift in Sources */,
 				DF13892228BDCAEF0035BDBB /* STT+URL.swift in Sources */,
+				DF489C162A81D02C006A21B9 /* IV+Menu.swift in Sources */,
 				DF2783492A79A0970098BBA9 /* Realm+ReadLater.swift in Sources */,
 				DF8D0BA12800EE48003E4C3E /* ProfileView+ChapterPreview.swift in Sources */,
 				DF8D0B332800EE47003E4C3E /* STT+String.swift in Sources */,

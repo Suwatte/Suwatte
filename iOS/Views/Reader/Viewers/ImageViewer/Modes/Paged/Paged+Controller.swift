@@ -34,8 +34,9 @@ final class PagedViewerController: UICollectionViewController {
 
 
     override var prefersHomeIndicatorAutoHidden: Bool {
-        return true
+        true
     }
+    
     
     
     override var keyCommands: [UIKeyCommand]? {

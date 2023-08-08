@@ -14,6 +14,8 @@ extension Coordinator {
     func listen() {
         watchSplitPage()
         watchReadingDirection()
+        watchSlider()
+        watchDidEndScrubbing()
     }
 }
 
@@ -39,6 +41,27 @@ extension Coordinator {
                 Task { @MainActor in
                     collectionView.collectionViewLayout.invalidateLayout()
                 }
+            }
+            .store(in: &subscriptions)
+    }
+    
+    func watchSlider() {
+       PanelPublisher
+            .shared
+            .sliderPct
+            .sink { [unowned self] value in
+                scrollToPosition(for: value)
+            }
+            .store(in: &subscriptions)
+
+    }
+    
+    func watchDidEndScrubbing() {
+        PanelPublisher
+            .shared
+            .didEndScrubbing
+            .sink { [unowned self] in
+                setScrollToCurrentIndex()
             }
             .store(in: &subscriptions)
     }

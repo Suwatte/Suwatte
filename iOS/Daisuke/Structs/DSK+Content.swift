@@ -23,7 +23,6 @@ enum ReadingMode: Int, CaseIterable, Hashable, UserDefaultsSerializable {
     case PAGED_MANGA, // Page 2 <---- Page 1
          PAGED_COMIC, // Page 1 ----> Page 2
          VERTICAL,
-         VERTICAL_SEPARATED, // Vertical with Slight Gap Between Pages
          PAGED_VERTICAL, // A Vertical Pager
          WEB, // Opens using the chapters WebUrl
          NOVEL_PAGED_MANGA,
@@ -38,6 +37,14 @@ enum ReadingMode: Int, CaseIterable, Hashable, UserDefaultsSerializable {
         default:
             return true
         }
+    }
+    
+    var isVertical: Bool {
+        [Self.PAGED_VERTICAL, .VERTICAL].contains(self)
+    }
+    
+    var invertedReading: Bool {
+        [Self.NOVEL_PAGED_MANGA, .PAGED_MANGA].contains(self)
     }
 
     static func PanelCases() -> [Self] {
@@ -56,8 +63,6 @@ enum ReadingMode: Int, CaseIterable, Hashable, UserDefaultsSerializable {
             return "LTR (Comic)"
         case .VERTICAL:
             return "Webtoon"
-        case .VERTICAL_SEPARATED:
-            return "Webtoon Padded"
         case .PAGED_VERTICAL:
             return "Paged Vertical"
         case .WEB:

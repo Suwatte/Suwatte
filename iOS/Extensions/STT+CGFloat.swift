@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-extension CGFloat {
-    func map(from: ClosedRange<CGFloat>, to: ClosedRange<CGFloat>) -> CGFloat {
+extension Double {
+    func map(from: ClosedRange<Double>, to: ClosedRange<Double>) -> Double {
         let value = clamped(to: from)
 
         let fromRange = from.upperBound - from.lowerBound

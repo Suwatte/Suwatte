@@ -9,20 +9,8 @@ import Foundation
 
 
 struct SliderControl {
-    var min: CGFloat = 0.0
-    var current: CGFloat = 0.0
-    var max: CGFloat = 1000.0
-
+    var current: Double = 0.0
     var isScrubbing = false
-
-    mutating func setCurrent(_ val: CGFloat) {
-        current = val
-    }
-
-    mutating func setRange(_ min: CGFloat, _ max: CGFloat) {
-        self.min = min
-        self.max = max
-    }
 }
 
 struct MenuControl : Hashable {

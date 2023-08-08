@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct VerticalSlider: View {
-    @Binding var value: CGFloat
+    @Binding var value: Double
     @Binding var isScrolling: Bool
-    @State var lastOffset: CGFloat = 0
-    var range: ClosedRange<CGFloat>
+    @State var lastOffset: Double = 0
+    var range: ClosedRange<Double>
     
     var knobSize: CGSize = .init(width: 17, height: 17)
     func scrollColor() -> Color {

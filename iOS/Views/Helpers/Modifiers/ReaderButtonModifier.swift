@@ -14,6 +14,5 @@ struct ReaderButtonModifier: ViewModifier {
         content
             .scaledToFit()
             .frame(width: 20, height: 20, alignment: .center)
-            .padding(.all, 5)
     }
 }

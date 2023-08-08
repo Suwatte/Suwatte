@@ -18,7 +18,7 @@ struct ReaderGateWay: View {
     var body: some View {
         Group {
             if readingMode.isPanelMode {
-                ImageViewer(initial: .init(chapters: chapterList, openTo: openTo, pageIndex: pageIndex, pageOffset: nil))
+                ImageViewer(initial: .init(chapters: chapterList, openTo: openTo, pageIndex: pageIndex, pageOffset: nil, title: title ?? ""))
             } else if readingMode == .WEB {
                 WebReader(chapter: openTo)
             } else {

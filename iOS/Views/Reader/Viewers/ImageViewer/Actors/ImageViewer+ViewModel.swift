@@ -11,29 +11,58 @@ import SwiftUI
 struct CurrentViewerState: Hashable {
     var chapter: ThreadSafeChapter
     var page: Int
-    var progress: Double
+    var pageCount: Int
+    var hasPreviousChapter: Bool
+    var hasNextChapter: Bool
+    
+    static var placeholder: Self {
+        .init(chapter: .init(id: "", sourceId: "", chapterId: "", contentId: "", index: 0, number: 0, volume: 0, title: nil, language: nil, date: .now, webUrl: nil, thumbnail: nil), page: 0, pageCount: 0, hasPreviousChapter: false, hasNextChapter: false)
+    }
+}
+
+struct PendingViewerState: Hashable {
+    var chapter: ThreadSafeChapter?
+    var pageIndex: Int?
+    var pageOffset: Double?
 }
 
 @MainActor
 final class IVViewModel: ObservableObject {
     /// Keeps track of the  current viewer state
-    @Published var viewerState: CurrentViewerState?
+    @Published var viewerState: CurrentViewerState = .placeholder
     
     /// Keeps track of the load state of each chapter
-    @Published var loadState: [String: Loadable<Bool>] = [:]
+    @Published var loadState: [ThreadSafeChapter: Loadable<Bool>] = [:]
     
     /// Keeps track of the initial presentation state
     @Published var presentationState : Loadable<Bool> = .idle
     
     /// Controls the sheets that appear
     @Published var control: MenuControl = .init()
+    @Published var slider: SliderControl = .init()
     
+    @Published var readingMode: ReadingMode = .defaultPanelMode
+    
+    @Published var title: String = ""
+    
+    @Published var chapterCount = 0
+        
     let dataCache = IVDataCache()
     
-    func consume(_ value: InitialIVState) async {
-        let requested = value.openTo.toThreadSafe()
-        presentationState = .loading
+    var pendingState: PendingViewerState?
+    
+    
+    
+}
 
+// MARK: State & Initial Load
+extension IVViewModel {
+    func consume(_ value: InitialIVState) async {
+        title = value.title
+        presentationState = .loading
+        chapterCount = value.chapters.count
+
+        let requested = value.openTo.toThreadSafe()
         let chapters = value.chapters
 
         // Sort Chapters
@@ -46,14 +75,14 @@ final class IVViewModel: ObservableObject {
         // Load Initial Chapter
         do {
             try await dataCache.load(for: requested)
-            updateChapterState(requested.id, state: .loaded(true))
+            updateChapterState(for: requested, state: .loaded(true))
             await MainActor.run {
                 withAnimation {
                     presentationState = .loaded(true)
                 }
             }
         } catch {
-            updateChapterState(requested.id, state: .failed(error))
+            updateChapterState(for: requested, state: .failed(error))
             Logger.shared.error(error, "Reader")
             await MainActor.run {
                 withAnimation {
@@ -65,8 +94,21 @@ final class IVViewModel: ObservableObject {
     }
     
     @MainActor
-    func updateChapterState(_ id: String, state: Loadable<Bool>) {
-        loadState.updateValue(state, forKey: id)
+    func updateChapterState(for chapter: ThreadSafeChapter, state: Loadable<Bool>) {
+        loadState.updateValue(state, forKey: chapter)
     }
     
+    @MainActor
+    func incrementViewerStatePage() {
+        viewerState.page += 1
+    }
+    
+    @MainActor
+    func changeViewerStateChapter(_ chapter: ThreadSafeChapter) {
+        viewerState.chapter = chapter
+    }
+    @MainActor
+    func setViewerState(_ state: CurrentViewerState) {
+        viewerState = state
+    }
 }

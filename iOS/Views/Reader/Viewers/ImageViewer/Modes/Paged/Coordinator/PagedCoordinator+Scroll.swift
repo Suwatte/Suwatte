@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 fileprivate typealias Coordinator = PagedImageViewer.Coordinator
 
@@ -37,10 +38,20 @@ extension Coordinator {
         onUserDidScroll(to: scrollView.contentOffset.x)
     }
     
+    
     func onUserDidScroll(to pos: CGFloat) {
         if pos < 0 {
             didTriggerBackTick = true
             return
+        }
+        
+        let difference = abs(pos - lastKnownScrollPosition)
+        guard difference >= scrollPositionUpdateThreshold else { return }
+        lastKnownScrollPosition = pos
+        Task { @MainActor in
+            // Only real-time update when the user is not scrubbing & the menu is being shown
+            guard !model.slider.isScrubbing && model.control.menu else { return }
+            setScrollPCT(for: pos)
         }
         
     }
@@ -93,6 +104,11 @@ extension Coordinator {
                 
         lastIndexPath = currentPath
         
+        Task { @MainActor in
+            guard !model.control.menu else { return }
+            setScrollPCT(for: collectionView.currentPoint.x)
+        }
+        
     }
 }
 
@@ -134,6 +150,33 @@ extension Coordinator {
     
     func updateChapterScrollRange() {
         self.currentChapterRange = getScrollRange()
+    }
+    
+    func scrollToPosition(for pct: Double) {
+        let total = currentChapterRange.max - currentChapterRange.min
+        var amount = total * pct
+        amount += currentChapterRange.min
+        
+        let positon = CGPoint(x: amount, y: 0)
+        collectionView.setContentOffset(positon, animated: false)
+    }
+    
+    func setScrollPCT(for offset: CGFloat) {
+        let total = currentChapterRange.max - currentChapterRange.min
+        var current = collectionView.contentOffset.x - currentChapterRange.min
+        current = max(0, current)
+        current = min(currentChapterRange.max, current)
+        let target = Double(current / total)
+        Task { @MainActor in
+            withAnimation {
+                model.slider.current = target
+            }
+        }
+    }
+    
+    func setScrollToCurrentIndex() {
+        guard let path = collectionView.currentPath else { return }
+        collectionView.scrollToItem(at: path, at: .centeredHorizontally, animated: true)
     }
     
 }

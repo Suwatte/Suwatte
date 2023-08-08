@@ -40,6 +40,9 @@ extension PagedImageViewer {
         internal var lastIndexPath: IndexPath = .init(item: 0, section: 0)
         internal var currentChapterRange: (min: CGFloat, max: CGFloat) = (min: .zero, max: .zero)
         internal var didTriggerBackTick = false
+        internal var lastKnownScrollPosition: CGFloat = 0.0
+        internal var scrollPositionUpdateThreshold: CGFloat = 20.0
+
     }
 }
 
@@ -63,18 +66,18 @@ extension Coordinator {
     
     func load(_ chapter: ThreadSafeChapter) async {
         do {
-            await model.updateChapterState(chapter.id, state: .loading)
+            await model.updateChapterState(for: chapter, state: .loading)
             try await dataCache.load(for: chapter)
             await load(chapter.id)
         } catch {
             Logger.shared.error(error)
-            await model.updateChapterState(chapter.id, state: .failed(error))
+            await model.updateChapterState(for: chapter, state: .failed(error))
             return
         }
     }
     
     func loadAtHead(_ chapter: ThreadSafeChapter) async {
-        await model.updateChapterState(chapter.id, state: .loading)
+        await model.updateChapterState(for: chapter, state: .loading)
         
         do {
             try await dataCache.load(for: chapter)
@@ -85,7 +88,6 @@ extension Coordinator {
                 return
             }
             
-            
             snapshot.insertSections([chapter.id], beforeSection: head)
             snapshot.appendItems(pages, toSection: chapter.id)
             let s = snapshot
@@ -95,7 +97,7 @@ extension Coordinator {
             }
         } catch {
             Logger.shared.error(error)
-            await model.updateChapterState(chapter.id, state: .failed(error))
+            await model.updateChapterState(for: chapter, state: .failed(error))
             ToastManager.shared.error("Failed to load chapter.")
         }
 

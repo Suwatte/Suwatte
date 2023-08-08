@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct HorizontalSlider: View {
-    @Binding var value: CGFloat
+    @Binding var value: Double
     @Binding var isScrolling: Bool
-    @State var lastOffset: CGFloat = 0
+    @State var lastOffset: Double = 0
     @Environment(\.colorScheme) var colorScheme
-    var range: ClosedRange<CGFloat>
+    var range: ClosedRange<Double>
     
     var knobSize: CGSize = .init(width: 17, height: 17)
     
@@ -73,5 +73,9 @@ struct HorizontalSlider: View {
             }
         }
         .frame(height: knobSize.height)
+        .padding(.horizontal, 7)
+        .frame(height: 25)
+        .background(colorScheme == .light ? .black : .sttGray)
+        .cornerRadius(100)
     }
 }

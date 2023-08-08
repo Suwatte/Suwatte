@@ -13,7 +13,7 @@ extension UICollectionView {
     }
 
     var currentPath: IndexPath? {
-        indexPathForItem(at: currentPoint)
+        indexPathsForVisibleItems.first
      }
 }
 
@@ -65,7 +65,7 @@ extension Coordinator {
         
         guard let next else { return }
         
-        let currentState = await model.loadState[next.id]
+        let currentState = await model.loadState[next]
         
         guard currentState == nil else { return } // only trigger if the chapter has not been loaded
         

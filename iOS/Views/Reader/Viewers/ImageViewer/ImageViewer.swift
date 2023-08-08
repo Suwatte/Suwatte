@@ -19,10 +19,15 @@ struct ImageViewer: View {
             PagedImageViewer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-        .ignoresSafeArea()
-        .statusBarHidden(!model.control.menu)
+        .overlay {
+            if model.control.menu {
+                IVMenuView()
+            }
+        }
         .modifier(GrayScaleModifier())
         .modifier(ColorInvertModifier())
+        .statusBarHidden(!model.control.menu)
+        .ignoresSafeArea()
         .animation(StandardAnimation, value: model.control)
         .animation(StandardAnimation, value: model.presentationState)
         .animation(StandardAnimation, value: model.viewerState)
@@ -45,4 +50,19 @@ struct InitialIVState {
     let openTo: StoredChapter
     let pageIndex: Int?
     let pageOffset: CGFloat?
+    let title: String
+}
+
+
+struct OpacityViewModifier : ViewModifier {
+    var show: Bool = true
+    func body(content: Content) -> some View {
+        content
+            .opacity(show ? 1 : 0)
+    }
+}
+extension View {
+    func showIf(_ bool: Bool) -> some View {
+        modifier(OpacityViewModifier(show: bool))
+    }
 }
