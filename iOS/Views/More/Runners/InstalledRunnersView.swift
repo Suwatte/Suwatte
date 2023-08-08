@@ -136,7 +136,7 @@ extension InstalledRunnersView {
         let runnerID: String
         @State var loadable: Loadable<AnyRunner> = .idle
         var body: some View {
-            LoadableView(load, loadable) { runner in
+            LoadableView(load, $loadable) { runner in
                 if let source = runner as? JSCCS {
                     ContentSourceInfoView(source: source)
                 } else if let tracker = runner as? JSCContentTracker {
@@ -145,15 +145,10 @@ extension InstalledRunnersView {
             }
         }
         
-        func load() async {
+        func load() async throws {
             loadable = .loading
-            do {
-                let runner = try await DSK.shared.getDSKRunner(runnerID)
-                loadable = .loaded(runner)
-            } catch {
-                loadable = .failed(error)
-                Logger.shared.error(error, "Engine")
-            }
+            let runner = try await DSK.shared.getDSKRunner(runnerID)
+            loadable = .loaded(runner)
         }
     }
 }

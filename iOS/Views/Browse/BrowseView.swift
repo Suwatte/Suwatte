@@ -161,7 +161,7 @@ struct PageLinkView: View {
     let runnerID: String
     @State var loadable: Loadable<AnyRunner> = .idle
     var body: some View {
-        LoadableView(load, loadable) { runner in
+        LoadableView(load, $loadable) { runner in
             Group {
                 if pageLink.link.isPageLink {
                     RunnerPageView(runner: runner, link: pageLink.link.getPageLink())

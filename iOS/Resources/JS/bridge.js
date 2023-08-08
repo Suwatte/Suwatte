@@ -123,7 +123,7 @@ function setupSourceConfig() {
 
     // PageLink
     RunnerIntents.pageLinkResolver =
-      !!ctx.getPage && !!ctx.willResolvePage && !!ctx.resolvePageSection;
+      !!ctx.getSectionsForPage && !!ctx.resolvePageSection;
     RunnerIntents.libraryPageLinkProvider = !!ctx.getLibraryPageLinks;
     RunnerIntents.browsePageLinkProvider = !!ctx.getBrowsePageLinks;
     // Authentication

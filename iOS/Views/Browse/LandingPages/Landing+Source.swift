@@ -12,19 +12,15 @@ struct SourceLandingPage: View {
     @State var loadable = Loadable<JSCCS>.idle
 
     var body: some View {
-        LoadableView(startSource, loadable) {
+        LoadableView(startSource, $loadable) {
             LoadedSourceView(source: $0)
         }
     }
 
-    func startSource() async  {
+    func startSource() async throws {
         loadable = .loading
-        do {
-            let runner = try await DSK.shared.getContentSource(id: sourceID)
-            loadable = .loaded(runner)
-        } catch {
-            loadable = .failed(error)
-        }
+        let runner = try await DSK.shared.getContentSource(id: sourceID)
+        loadable = .loaded(runner)
     }
 
     struct LoadedSourceView: View {

@@ -9,21 +9,13 @@ import RealmSwift
 import Foundation
 
 extension RealmActor {
-    func saveChapterData(chapter: StoredChapter, data: DaisukeEngine.Structs.ChapterData) async {
-        guard let chapter = chapter.thaw() else {
-            return
-        }
-        try! await realm.asyncWrite {
-            realm.add(data.toStored(withStoredChapter: chapter), update: .all)
-        }
-    }
 
-    func saveChapterData(data: StoredChapterData) async {
+    func saveChapterData(data: DSKCommon.ChapterData, chapter: ThreadSafeChapter) async {
+        let stored = data.toStored(withStoredChapter: chapter.toStored())
         try! await realm.asyncWrite {
-            let chapter = data.chapter
-            data.chapter = chapter
-            realm.add(data, update: .all)
+            realm.add(stored, update: .modified)
         }
+        
     }
 
     func getChapterData(forId id: String) -> StoredChapterData? {

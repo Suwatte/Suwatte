@@ -26,7 +26,7 @@ struct TrackerManagementView: View {
                                 .font(.headline)
                             Spacer()
                         }
-                        LoadableView({}, loadable) { value in
+                        LoadableView({}, Binding.constant(loadable)) { value in
                             TrackerItemCell(item: value, tracker: tracker, status: value.entry?.status ?? .CURRENT)
                         }
                         .modifier(HistoryView.StyleModifier())
@@ -351,7 +351,7 @@ extension TrackerManagementView {
             }
 
             // Resullts
-            LoadableView(load, loadable) { results in
+            LoadableView(load, $loadable) { results in
                 Group {
                     if results.isEmpty {
                         Text("No Matches")

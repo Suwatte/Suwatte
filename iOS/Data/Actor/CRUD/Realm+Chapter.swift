@@ -9,7 +9,7 @@ import RealmSwift
 
 extension RealmActor {
     @MainActor
-    func getChapterType(for id: String) -> ReaderView.ReaderChapter.ChapterType {
+    func getChapterType(for id: String) -> ChapterType {
         if id == STTHelpers.LOCAL_CONTENT_ID { return .LOCAL }
         else if id == STTHelpers.OPDS_CONTENT_ID { return .OPDS }
         else { return .EXTERNAL }

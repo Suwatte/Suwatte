@@ -129,9 +129,9 @@ enum STTKeys {
 
     static let VerticalPillarBoxEnabled = "READER.pillar_box_enabled"
     static let VerticalPillarBoxPCT = "READER.pillar_box_pct"
-    static let PrefersDirectoryView = "APP.use_directory"
     static let EnableReaderHaptics = "READER.haptics"
-
+    static let PagedSplitsWide = "READER.split_wide"
+    static let PagedZoomWide = "READER.zoom_wide"
     static let BlurNSFWContent = "APP.blur_nsfw"
     static let ShowNSFWContentInSearch = "APP.filter_nsfw"
 

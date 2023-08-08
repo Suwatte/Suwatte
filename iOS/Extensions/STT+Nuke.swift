@@ -16,7 +16,7 @@ struct NukeWhitespaceProcessor: ImageProcessing {
     var identifier: String = Bundle.main.bundleIdentifier! + ".image_processor.whitespace"
 }
 
-struct NukeDownsampleProcessor: ImageProcessing {
+struct NukeDownsampleProcessor: ImageProcessing, Hashable {
     private let width: CGFloat
     private let height: CGFloat
     init(width: CGFloat) {
@@ -43,12 +43,18 @@ struct NukeDownsampleProcessor: ImageProcessing {
         guard let data, let out = ds(data, size) else {
             return nil
         }
-
-        return .init(cgImage: out, scale: UIScreen.main.scale, orientation: image.imageOrientation)
+        
+        return .init(cgImage: out, scale: image.scale, orientation: image.imageOrientation)
     }
 
-    var identifier: String = Bundle.main.bundleIdentifier! + ".image_processor.downsample"
+    var identifier: String {
+        Bundle.main.bundleIdentifier! + ".image_processor.downsample?w=\(width),h=\(height)"
+    }
 
+    var hashableIdentifier: AnyHashable {
+        self
+    }
+    
     func ds(_ data: Data, _ size: CGSize) -> CGImage? {
         let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
         guard let imageSource = CGImageSourceCreateWithData(data as CFData, imageSourceOptions) else {
@@ -66,5 +72,32 @@ struct NukeDownsampleProcessor: ImageProcessing {
             return nil
         }
         return downsampledImage
+    }
+}
+
+
+struct NukeSplitWidePageProcessor: ImageProcessing, Hashable {
+    private let half: UIImage.ImageHalf
+    private let page: PanelPage
+    init(half: UIImage.ImageHalf, page: PanelPage) {
+        self.half = half
+        self.page = page
+    }
+    
+    func process(_ image: Nuke.PlatformImage) -> Nuke.PlatformImage? {
+        let isWide = image.size.ratio > 1
+        
+        if isWide && !page.isSecondaryPage { // fire if the page is wide AND is the primary page
+            PanelPublisher.shared.willSplitPage.send(page)
+        }
+        return isWide ? image.split(take: half) : image
+    }
+    
+    var identifier: String {
+        Bundle.main.bundleIdentifier! + ".image_processor.split_wide?h=\(half)"
+    }
+    
+    var hashableIdentifier: AnyHashable {
+        self
     }
 }

@@ -120,9 +120,6 @@ final class Preferences {
     @UserDefault(STTKeys.VerticalPillarBoxPCT)
     var pillarBoxPCT = 1.0 // 0.15 -> 1.0
 
-    @UserDefault(STTKeys.PrefersDirectoryView)
-    var useDirectory = false
-
     @UserDefault(STTKeys.ForceTransition)
     var alwaysUseTransitions = true
 
@@ -149,6 +146,12 @@ final class Preferences {
 
     @UserDefault(STTKeys.MoveDownloadToArchive)
     var archiveSourceDownload = false
+    
+    @UserDefault(STTKeys.PagedSplitsWide)
+    var splitWidePages = false
+    
+    @UserDefault(STTKeys.PagedZoomWide)
+    var zoomWidePages = false
 }
 
 @propertyWrapper

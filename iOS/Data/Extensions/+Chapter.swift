@@ -65,3 +65,14 @@ extension DaisukeEngine.Structs.Chapter {
         return chapter
     }
 }
+
+
+extension StoredChapter {
+    static func == (lhs: StoredChapter, rhs: StoredChapter) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
+enum ChapterType {
+    case EXTERNAL, LOCAL, OPDS
+}

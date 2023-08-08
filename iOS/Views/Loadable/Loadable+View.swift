@@ -12,24 +12,28 @@ struct LoadableView<Value, Idle, Loading, Failure, Content>: View where Idle: Vi
     Failure: View,
     Content: View
 {
-    var loadable: Loadable<Value>
+    @Binding var loadable: Loadable<Value>
     let content: (_ value: Value) -> Content
     let idle: () -> Idle
     let loading: () -> Loading
     let failure: (_ error: Error) -> Failure
+    let action: (() async throws -> Void)
+    @State private var loaded = false
 
     init(
-        loadable: Loadable<Value>,
+        loadable: Binding<Loadable<Value>>,
+        _ action:  @escaping () async throws -> Void,
         @ViewBuilder _ idle: @escaping () -> Idle,
         @ViewBuilder _ loading: @escaping () -> Loading,
         @ViewBuilder _ failure: @escaping (_ error: Error) -> Failure,
         @ViewBuilder _ content: @escaping (_ value: Value) -> Content
     ) {
-        self.loadable = loadable
+        self._loadable = loadable
         self.content = content
         self.loading = loading
         self.failure = failure
         self.idle = idle
+        self.action = action
     }
 
     var body: some View {
@@ -51,26 +55,37 @@ struct LoadableView<Value, Idle, Loading, Failure, Content>: View where Idle: Vi
                     .transition(.opacity)
             }
         }
+        .task {
+            await load()
+        }
+    }
+    
+    func load() async {
+        guard !loaded else { return }
+        do {
+            try await action()
+            loaded = true
+        } catch {
+            Logger.shared.error(error)
+            loadable = .failed(error)
+        }
     }
 }
 
 extension LoadableView where Idle == DefaultNotRequestedView, Loading == DefaultLoadingView, Failure == ErrorView {
     init(
-        _ action: @escaping () async -> Void,
-        _ loadable: Loadable<Value>,
+        _ action: @escaping () async throws -> Void,
+        _ loadable: Binding<Loadable<Value>>,
         @ViewBuilder _ content: @escaping (_ value: Value) -> Content
     ) {
-        self.init(loadable: loadable, { DefaultNotRequestedView(action: action) }, { DefaultLoadingView() }, { ErrorView(error: $0, action: action) }, content)
+        
+        self.init(loadable: loadable, action, { DefaultNotRequestedView() }, { DefaultLoadingView() }, { ErrorView(error: $0, action: action) }, content)
     }
 }
 
 struct DefaultNotRequestedView: View {
-    var action: () async -> Void
     var body: some View {
         DefaultLoadingView()
-            .task {
-                await action()
-            }
     }
 }
 

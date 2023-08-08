@@ -13,7 +13,7 @@ struct ProfileView: View {
     @State var source: Loadable<AnyContentSource> = .idle
 
     var body: some View {
-        LoadableView(loadSource, source) { value in
+        LoadableView(loadSource, $source) { value in
             StateGate(viewModel: .init(entry, value))
         }
         .navigationTitle(entry.title)

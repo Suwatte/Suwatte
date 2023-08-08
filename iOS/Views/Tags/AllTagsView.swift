@@ -13,7 +13,7 @@ struct AllTagsView: View {
     @State var selectedTag: String?
     @State var text: String = ""
     var body: some View {
-        LoadableView(loadData, properties) {
+        LoadableView(loadData, $properties) {
             DataLoadedView($0)
         }
         .searchable(text: $text, placement: .navigationBarDrawer(displayMode: .always))

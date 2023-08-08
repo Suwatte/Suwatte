@@ -18,25 +18,15 @@ extension ProfileView.Skeleton.ChapterView {
         @EnvironmentObject var model: ProfileView.ViewModel
         var body: some View {
             HStack {
-                Spacer()
-                LoadableView(loadable: model.chapters,
-                             { ProgressView().padding() },
-                             { ProgressView().padding() },
-                             { ErrorView(error: $0, action: {
-                                 Task {
-                                     await model.loadChapters()
-                                 }
-                             }) },
-                             { chapters in
-                                 if !chapters.isEmpty {
-                                     LoadedView(chapters)
-                                         .transition(.opacity)
-                                 } else {
-                                     LoadedEmptyView()
-                                         .transition(.opacity)
-                                 }
-                             })
-                Spacer()
+                LoadableView({await model.loadChapters()}, $model.chapters) { chapters in
+                    if !chapters.isEmpty {
+                        LoadedView(chapters)
+                            .transition(.opacity)
+                    } else {
+                        LoadedEmptyView()
+                            .transition(.opacity)
+                    }
+                }
             }
             .animation(.easeInOut(duration: 0.25), value: model.chapters)
         }

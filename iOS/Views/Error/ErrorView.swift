@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct ErrorView: View {
-    var error: Error
+    @State var error: Error
     var runnerID: String?
-    var action: () async -> Void
+    var action: () async throws -> Void
     var body: some View {
         Group {
             VStack(alignment: .center) {
                 if case DaisukeEngine.Errors.Cloudflare = error, let runnerID = runnerID {
-                    CloudFlareErrorView(sourceID: runnerID, action: action)
+                    CloudFlareErrorView(sourceID: runnerID, action: handle)
                 } else {
                     BaseErrorView
                 }
@@ -41,7 +41,7 @@ struct ErrorView: View {
             }
             Button {
                 Task {
-                    await action()
+                    await handle()
                 }
             }
             label: {
@@ -58,6 +58,13 @@ struct ErrorView: View {
         }
     }
 
+    func handle() async {
+        do {
+            try await action()
+        } catch {
+            Logger.shared.error(error)
+        }
+    }
     func getMessage(for error: Error) -> String {
         if case let DecodingError.valueNotFound(_, context) = error {
             return "JSON Decoding Error (Value not Found): \(context.debugDescription)"

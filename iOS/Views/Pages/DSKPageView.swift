@@ -19,7 +19,7 @@ struct DSKPageView<T: JSCObject, C: View>: View {
     }
 
     var body: some View {
-        LoadableView(model.load, model.loadable) { sections in
+        LoadableView(model.load, $model.loadable) { sections in
             CollectionView(sections: sections, runner: model.runner, modifier)
         }
         .environmentObject(model)
@@ -39,27 +39,25 @@ extension DSKPageView {
             self.link = link
         }
 
-        func load() {
-            Task {
-                await MainActor.run {
-                    loadable = .loading
+        func load() async {
+            await MainActor.run {
+                loadable = .loading
+            }
+            do {
+                let data: [DSKCommon.PageSection<T>] = try await runner.getSectionsForPage(link: link) // Load Page
+                if !data.allSatisfy({ $0.items != nil }) {
+                    try await runner.willResolveSectionsForPage(link: link) // Tell Runner that suwatte will begin resolution of page sections
                 }
-                do {
-                    let data: [DSKCommon.PageSection<T>] = try await runner.getSectionsForPage(link: link) // Load Page
-                    if !data.allSatisfy({ $0.items != nil }) {
-                        try await runner.willResolveSectionsForPage(link: link) // Tell Runner that suwatte will begin resolution of page sections
+                await MainActor.run {
+                    withAnimation {
+                        loadable = .loaded(data)
                     }
-                    await MainActor.run {
-                        withAnimation {
-                            loadable = .loaded(data)
-                        }
-                    }
-                } catch {
-                    Logger.shared.error(error, runner.id)
-                    await MainActor.run {
-                        withAnimation {
-                            loadable = .failed(error)
-                        }
+                }
+            } catch {
+                Logger.shared.error(error, runner.id)
+                await MainActor.run {
+                    withAnimation {
+                        loadable = .failed(error)
                     }
                 }
             }

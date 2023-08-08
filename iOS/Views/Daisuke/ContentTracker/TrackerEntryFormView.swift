@@ -15,7 +15,7 @@ struct TrackerEntryFormView: View {
     @StateObject var model: ViewModel
     var title: String
     var body: some View {
-        LoadableView(model.load, model.loadable) { value in
+        LoadableView(model.load, $model.loadable) { value in
             Form {
                 ForEach(value.sections, id: \.hashValue) { section in
                     Section {

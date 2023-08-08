@@ -94,10 +94,12 @@ extension ArchiveHelper {
             guard let archive = Archive(url: url, accessMode: .read), let file = archive[path] else {
                 throw ArchiveHelper.Errors.ArchiveNotFound
             }
+            try Task.checkCancellation()
 
             var out = Data()
 
             _ = try archive.extract(file) { data in
+                try Task.checkCancellation()
                 out.append(data)
             }
 
@@ -123,6 +125,7 @@ extension ArchiveHelper {
             var out = Data()
 
             _ = try archive.extract(target) { data in
+                try Task.checkCancellation()
                 out.append(data)
             }
 

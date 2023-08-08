@@ -12,7 +12,7 @@ struct DSKPreferenceView: View {
     @State private var loadable = Loadable<[DSKCommon.PreferenceGroup]>.idle
 
     var body: some View {
-        LoadableView(load, loadable) { value in
+        LoadableView(load, $loadable) { value in
             ContentSourceSettingsView(runner: runner, preferences: value)
         }
     }

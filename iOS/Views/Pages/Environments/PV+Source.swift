@@ -161,7 +161,7 @@ extension ContentSourcePageView.Cell {
 
     @ViewBuilder
     func buildActions() -> some View {
-        LoadableView(loadActions, actions) { groups in
+        LoadableView(loadActions, $actions) { groups in
             ForEach(groups, id: \.key) { group in
                 ForEach(group.actions, id: \.key) { action in
                     if action.displayAsLabel {

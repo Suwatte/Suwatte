@@ -43,13 +43,6 @@ extension DataManager {
     }
 }
 
-extension DataManager {
-    func getChapterType(for id: String) -> ReaderView.ReaderChapter.ChapterType {
-        if id == STTHelpers.LOCAL_CONTENT_ID { return .LOCAL }
-        else if id == STTHelpers.OPDS_CONTENT_ID { return .OPDS }
-        else { return .EXTERNAL }
-    }
-}
 
 
 extension DataManager {

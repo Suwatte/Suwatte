@@ -24,7 +24,7 @@ struct DirectoryView<T: Codable & Hashable, C: View>: View {
     }
 
     var body: some View {
-        LoadableView(load, model.result) { value in
+        LoadableView(load, $model.result) { value in
             if value.isEmpty {
                 NoResultsView()
             } else {

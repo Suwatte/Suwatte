@@ -102,22 +102,9 @@ extension RunnerListsView {
         @State var loadable: Loadable<RunnerList> = .idle
         @State var text: String = ""
         var body: some View {
-            LoadableView(loadable: loadable) {
-                ProgressView()
-                    .task {
-                        await load()
-                    }
-            } _: {
-                ProgressView()
-            } _: { error in
-                ErrorView(error: error) {
-                    Task {
-                        await load()
-                    }
-                }
-            } _: { value in
+            LoadableView(load, $loadable, { value in
                 InternalListInfoView(list: value, listURL: listURL, text: $text)
-            }
+            })
             .animation(.default, value: loadable)
             .refreshable {
                 loadable = .idle

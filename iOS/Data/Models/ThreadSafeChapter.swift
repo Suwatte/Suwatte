@@ -8,18 +8,18 @@
 import Foundation
 
 struct ThreadSafeChapter: Hashable {
-    var id: String
-    var sourceId: String
-    var chapterId: String
-    var contentId: String
-    var index: Int
-    var number: Double
-    var volume: Double?
-    var title: String?
-    var language: String?
-    var date: Date
-    var webUrl: String?
-    var thumbnail: String?
+    let id: String
+    let sourceId: String
+    let chapterId: String
+    let contentId: String
+    let index: Int
+    let number: Double
+    let volume: Double?
+    let title: String?
+    let language: String?
+    let date: Date
+    let webUrl: String?
+    let thumbnail: String?
 
     func toStored() -> StoredChapter {
         let obj = StoredChapter()
@@ -42,7 +42,7 @@ struct ThreadSafeChapter: Hashable {
         ContentIdentifier(contentId: contentId, sourceId: sourceId).id
     }
 
-    var chapterType: ReaderView.ReaderChapter.ChapterType {
+    var chapterType: ChapterType {
         if sourceId == STTHelpers.LOCAL_CONTENT_ID { return .LOCAL }
         else if sourceId == STTHelpers.OPDS_CONTENT_ID { return .OPDS }
         else { return .EXTERNAL }

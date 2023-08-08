@@ -52,10 +52,8 @@ struct ImageSearchView: View {
 
     func IMAGE_SELECTED(_ image: UIImage) -> some View {
         LoadableView({
-            Task {
-                await loadResults(image)
-            }
-        }, response) { response in
+            await loadResults(image)
+        }, $response) { response in
             RESPONSE_LOADED_VIEW(response: response)
         }
     }

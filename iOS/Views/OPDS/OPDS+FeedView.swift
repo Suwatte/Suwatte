@@ -24,41 +24,26 @@ extension OPDSView {
         @State var loadable: Loadable<Feed> = .idle
 
         var body: some View {
-            LoadableView(loadable: loadable) {
-                ProgressView()
-                    .onAppear {
-                        handleLoad()
-                    }
-            } _: {
-                ProgressView()
-            } _: { error in
-                ErrorView(error: error, action: handleLoad)
-            } _: { value in
-                FeedView(feed: value)
+            LoadableView(load, $loadable) { feed in
+                FeedView(feed: feed)
                     .refreshable {
-                        await action()
+                        do {
+                            try await load()
+                        } catch {
+                            ToastManager.shared.error(error)
+                        }
                     }
             }
-
             .environmentObject(client)
         }
 
-        func handleLoad() {
+        func load() async throws {
             loadable = .loading
-            Task { @MainActor in
-                await action()
-            }
-        }
-
-        func action() async {
-            do {
-                let feed = try await client.getFeed(url: url)
+            let feed = try await client.getFeed(url: url)
+            
+            await MainActor.run {
                 withAnimation {
                     loadable = .loaded(feed)
-                }
-            } catch {
-                withAnimation {
-                    loadable = .failed(error)
                 }
             }
         }

@@ -30,8 +30,8 @@ let STTUserDefaults: [String: Any] = [
     STTKeys.ShowOnlyDownloadedTitles: false,
     STTKeys.LastFetchedUpdates: Date.distantPast,
     STTKeys.TileStyle: TileStyle.SEPARATED.rawValue,
-    STTKeys.VerticalNavigator: ReaderView.ReaderNavigation.Modes.lNav.rawValue,
-    STTKeys.PagedNavigator: ReaderView.ReaderNavigation.Modes.standard.rawValue,
+    STTKeys.VerticalNavigator: ReaderNavigation.Modes.lNav.rawValue,
+    STTKeys.PagedNavigator: ReaderNavigation.Modes.standard.rawValue,
     STTKeys.GridItemsPerRow_P: Int((2 * UIScreen.main.bounds.width) / 375), // IPhone 13 Mini
     STTKeys.GridItemsPerRow_LS: Int((6 * UIScreen.main.bounds.height) / 812),
     STTKeys.TimeoutDuration: LocalAuthManager.TimeoutDuration.immediately.rawValue,

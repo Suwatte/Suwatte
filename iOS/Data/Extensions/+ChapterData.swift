@@ -24,3 +24,16 @@ extension DaisukeEngine.Structs.ChapterData {
         return object
     }
 }
+
+
+extension StoredChapterData {
+    func toReadableChapterData(with chapter: ThreadSafeChapter) -> ReaderChapterData {
+        let chapterPages: [DSKCommon.ChapterPage] = pages.map { .init(url: $0.url, raw: $0.raw) }
+        return .init(chapter: chapter,
+                     pages: chapterPages,
+                     text: text,urls:urls,
+                     archivePaths: archivePaths,
+                     archiveFile: archiveURL,
+                     opdsInfo: opdsInfo)
+    }
+}

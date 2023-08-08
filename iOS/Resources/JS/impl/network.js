@@ -32,7 +32,7 @@ class NetworkClient {
   // Rate Limiting
   buffer = [];
   lastRequestTime = 0;
-  requestsPerSecond;
+  requestsPerSecond = 999;
 
   constructor(builder) {
     if (builder) {
@@ -89,10 +89,9 @@ class NetworkClient {
     return final;
   }
   async get(url, config) {
-    return this.rateLimitedRequest(() =>
-      this.request({ method: "GET", url, ...config })
-    );
+      return this.request({ url, method: "GET", ...config });
   }
+
   async post(url, config) {
     return this.request({ url, method: "POST", ...config });
   }

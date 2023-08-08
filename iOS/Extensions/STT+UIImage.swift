@@ -148,3 +148,52 @@ extension UIImage {
 extension CGImage {
     var image: UIImage { .init(cgImage: self) }
 }
+
+extension CGSize {
+    var ratio: CGFloat {
+        width / height
+    }
+}
+
+enum ImageScaleOption: Int, CaseIterable, UserDefaultsSerializable {
+    case screen, height, width, stretch
+
+    var description: String {
+        switch self {
+        case .screen:
+            return "Fit Screen"
+        case .height:
+            return "Fit Height"
+        case .width:
+            return "Fit Width"
+        case .stretch:
+            return "Stretch"
+        }
+    }
+}
+
+extension UIImage {
+    enum ImageHalf {
+        case left, right
+    }
+    
+    func split(take half: ImageHalf) -> UIImage? {
+        
+        func getRect() -> CGRect {
+            switch half {
+            case .left:
+                return CGRect(x: 0, y: 0, width: size.width/2, height: size.height)
+            case .right:
+                return CGRect(x: size.width/2, y: 0, width: size.width/2, height: size.height)
+            }
+        }
+        
+        let rect = getRect()
+        
+        let img = cgImage?.cropping(to: rect)
+        
+        guard let img else { return nil }
+        
+        return .init(cgImage: img, scale: scale, orientation: imageOrientation)
+    }
+}

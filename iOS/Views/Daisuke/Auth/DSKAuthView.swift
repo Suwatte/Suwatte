@@ -12,7 +12,7 @@ struct DSKAuthView: View {
     @StateObject var model: ViewModel
 
     var body: some View {
-        LoadableView(model.load, model.loadable) { user in
+        LoadableView(model.load, $model.loadable) { user in
             if let user {
                 UserView(user: user)
             } else {
