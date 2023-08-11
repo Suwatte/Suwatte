@@ -17,4 +17,5 @@ final class PanelPublisher {
     let sliderPct = PassthroughSubject<Double, Never>()
     let didEndScrubbing = PassthroughSubject<Void, Never>()
     let didChangeHorizontalDirection = PassthroughSubject<Void, Never>()
+    let didChangeSplitMode = PassthroughSubject<Void, Never>()
 }

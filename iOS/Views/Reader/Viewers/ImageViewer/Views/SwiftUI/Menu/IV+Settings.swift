@@ -39,7 +39,7 @@ struct IVSettingsView: View {
 
     @Preference(\.enableReaderHaptics) var readerHaptics
     @Preference(\.forceTransitions) var forceTransitions
-
+    @Preference(\.splitWidePages) var splitWidePages
     private let autoScrollRange: ClosedRange<Double> = 2.5 ... 30
     private let pillarBoxRange: ClosedRange<Double> = 0.15 ... 1.0
     @State var holdingAutoScrollBinding: Double = 0.0
@@ -159,6 +159,13 @@ struct IVSettingsView: View {
                 // Images
                 Section {
                     Toggle("Context Actions", isOn: $imageInteractions)
+                    if model.readingMode.isHorizontalPager {
+                        Toggle("Split Wide Pages", isOn: $splitWidePages)
+                            .onChange(of: splitWidePages) { _ in
+                                PanelPublisher.shared.didChangeSplitMode.send()
+                            }
+
+                    }
                     if model.readingMode.isHorizontalPager || model.readingMode == .PAGED_VERTICAL {
                         Picker("Scale Type", selection: $imageScaleType) {
                             ForEach(ImageScaleOption.allCases, id: \.rawValue) {

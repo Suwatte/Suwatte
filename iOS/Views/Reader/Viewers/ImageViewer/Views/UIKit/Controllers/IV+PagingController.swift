@@ -237,6 +237,14 @@ extension Controller {
                 }
             }
             .store(in: &subscriptions)
+        
+        PanelPublisher
+            .shared
+            .didChangeSplitMode
+            .sink { [weak self] in
+                // TODO: Fetch and Rebuild Section
+            }
+            .store(in: &subscriptions)
     }
     
     func subToReadingDirectionPublisher() {
@@ -572,7 +580,6 @@ extension Controller {
               model.loadState[next] == nil else { return } // is not already loading/loaded
         
         await loadAtHead(next)
-        print("Loaded Prev")
     }
 }
 

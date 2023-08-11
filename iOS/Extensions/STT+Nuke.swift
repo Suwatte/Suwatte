@@ -188,7 +188,7 @@ struct NukeSplitWidePageProcessor: ImageProcessing, Hashable {
         if isWide && !page.isSplitPageChild { // fire if the page is wide AND is the primary page
             PanelPublisher.shared.willSplitPage.send(page)
         }
-        return isWide ? image.split(take: half) : image
+        return isWide ? split(take: half, image: image) : image
     }
     
     var identifier: String {
@@ -197,5 +197,29 @@ struct NukeSplitWidePageProcessor: ImageProcessing, Hashable {
     
     var hashableIdentifier: AnyHashable {
         self
+    }
+    
+    func split(take half: UIImage.ImageHalf, image: UIImage) -> UIImage? {
+        let size = image.size
+        func getRect() -> CGRect {
+            switch half {
+            case .left:
+                return CGRect(x: 0, y: 0, width: size.width/2, height: size.height)
+            case .right:
+                return CGRect(x: size.width/2, y: 0, width: size.width/2, height: size.height)
+            }
+        }
+        
+        let rect = getRect()
+        
+        let out = UIGraphicsImageRenderer(
+           size: rect.size,
+           format: image.imageRendererFormat).image { context in
+               // If rect.origin != (0,0) image is slightly offset in canvas, fix by moving the drawing position to start at the origin of the canvas
+               image.draw(at: CGPoint(x: -rect.origin.x, y: -rect.origin.y))
+           }
+        
+        return out
+        
     }
 }
