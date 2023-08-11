@@ -10,13 +10,25 @@ import UIKit
 
 struct NukeWhitespaceProcessor: ImageProcessing, Hashable {
     func process(_ image: Nuke.PlatformImage) -> Nuke.PlatformImage? {
-        let rect = try? image.croppedWhitespaceRect()
-        guard let rect, let cropped = image.cgImage?.cropping(to: rect) else {
+        guard let cgImage = image.cgImage else {
+            return image
+        }
+        let rect = try? croppedWhitespaceRect(cgImage)
+
+        guard let rect else {
             return image
         }
         
+        // Reference: https://www.advancedswift.com/crop-image/
+        // Not the most efficient solution but this prevents a very annoying memeory leak when uisng CGImage.cropping(to:) on a background thread.
+        let out = UIGraphicsImageRenderer(
+            size: rect.size,
+            format: image.imageRendererFormat).image { context in
+                // If rect.origin != (0,0) image is slightly offset in canvas, fix by moving the drawing position to start at the origin of the canvas
+                image.draw(at: CGPoint(x: -rect.origin.x, y: -rect.origin.y))
+            }
         
-        return PlatformImage(cgImage: cropped, scale: image.scale, orientation: image.imageOrientation)
+        return out
     }
 
     var identifier: String {
@@ -25,6 +37,79 @@ struct NukeWhitespaceProcessor: ImageProcessing, Hashable {
     
     var hashableIdentifier: AnyHashable {
         self
+    }
+    
+    // Reference : https://stackoverflow.com/a/40780523
+    func croppedWhitespaceRect(_ cgImage: CGImage) throws -> CGRect? {
+        var out: CGRect? = nil
+        let cgWidth = cgImage.width
+        let cgHeight = cgImage.height
+        let bitmapBytesPerRow = cgWidth * 4
+        let bitmapByteCount = bitmapBytesPerRow * cgHeight
+        
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        
+        let pointer = UnsafeMutablePointer<UInt8>.allocate(capacity: bitmapByteCount)
+        
+        let context = CGContext(data: pointer,
+                                width: cgWidth,
+                                height: cgHeight,
+                                bitsPerComponent: 8,
+                                bytesPerRow: bitmapBytesPerRow,
+                                space: colorSpace,
+                                bitmapInfo: CGImageAlphaInfo.premultipliedFirst.rawValue | CGBitmapInfo.byteOrder32Big.rawValue)
+        defer {
+            pointer.deallocate()
+        }
+        
+        guard let context else  {
+            return nil
+        }
+        
+        
+        let height = CGFloat(cgImage.height)
+        let width = CGFloat(cgImage.width)
+        
+        let rect = CGRect(x: 0, y: 0, width: width, height: height)
+        context.clear(rect)
+        context.draw(cgImage, in: rect)
+        
+        guard let data = context.data?.assumingMemoryBound(to: UInt8.self) else {
+            return nil
+        }
+        
+        
+        var lowX = width
+        var lowY = height
+        var highX: CGFloat = 0
+        var highY: CGFloat = 0
+        
+        let heightInt = Int(height)
+        let widthInt = Int(width)
+        let whiteThreshold = 0xE0
+        for y in 0 ..< heightInt {
+            let y = CGFloat(y)
+            try Task.checkCancellation()
+            for x in 0 ..< widthInt {
+                let x = CGFloat(x)
+                let pixelIndex = (width * y + x) * 4 /* 4 for A, R, G, B */
+                let idx = Int(pixelIndex)
+                let alpha = data[idx]
+                guard alpha != 0 else { continue } // Transparent
+                let red = data[idx + 1]
+                let green = data[idx + 2]
+                let blue = data[idx + 3]
+                if red > whiteThreshold, green > whiteThreshold, blue > whiteThreshold { continue } // White
+                lowX = min(lowX, x)
+                highX = max(highX, x)
+                lowY = min(lowY, y)
+                highY = max(highY, y)
+            }
+        }
+        
+        out = CGRect(x: lowX, y: lowY, width: highX - lowX, height: highY - lowY)
+        context.clear(rect)
+        return out
     }
     
 }

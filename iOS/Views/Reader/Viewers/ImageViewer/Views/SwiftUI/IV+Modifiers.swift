@@ -47,3 +47,32 @@ struct CustomOverlayModifier: ViewModifier {
             }
     }
 }
+
+
+struct CustomBackgroundModifier: ViewModifier {
+    @AppStorage(STTKeys.BackgroundColor, store: .standard) var backgroundColor = Color.primary
+    @AppStorage(STTKeys.UseSystemBG, store: .standard) var useSystemBG = true
+    
+    func body(content: Content) -> some View {
+        content
+            .background(useSystemBG ? nil : backgroundColor.ignoresSafeArea())
+            .modifier(BackgroundTapModifier())
+    }
+}
+
+struct BackgroundTapModifier: ViewModifier {
+    @EnvironmentObject var model: IVViewModel
+    func body(content: Content) -> some View {
+        content
+            .background(Color.primary.opacity(0.01).gesture(tap))
+    }
+    
+    var tap: some Gesture {
+           TapGesture(count: 1)
+               .onEnded { _ in
+                   Task { @MainActor in
+                       model.toggleMenu()
+                   }
+               }
+       }
+}

@@ -31,6 +31,7 @@ struct ImageViewer: View {
             }
         }
         .statusBarHidden(!model.control.menu)
+        .modifier(CustomBackgroundModifier())
         .ignoresSafeArea()
         .animation(StandardAnimation, value: model.control)
         .animation(StandardAnimation, value: model.presentationState)
@@ -39,7 +40,6 @@ struct ImageViewer: View {
         .sheet(isPresented: $model.control.settings) {
             IVSettingsView()
                 .onDisappear {
-                    print("show overlay")
                 }
         }
         .environmentObject(model)
