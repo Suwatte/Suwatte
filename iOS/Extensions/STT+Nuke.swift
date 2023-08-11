@@ -8,12 +8,25 @@
 import Nuke
 import UIKit
 
-struct NukeWhitespaceProcessor: ImageProcessing {
+struct NukeWhitespaceProcessor: ImageProcessing, Hashable {
     func process(_ image: Nuke.PlatformImage) -> Nuke.PlatformImage? {
-        return image.withWhitespaceCropped()
+        let rect = try? image.croppedWhitespaceRect()
+        guard let rect, let cropped = image.cgImage?.cropping(to: rect) else {
+            return image
+        }
+        
+        
+        return PlatformImage(cgImage: cropped, scale: image.scale, orientation: image.imageOrientation)
     }
 
-    var identifier: String = Bundle.main.bundleIdentifier! + ".image_processor.whitespace"
+    var identifier: String {
+        Bundle.main.bundleIdentifier! + ".image_processor.whitespace"
+    }
+    
+    var hashableIdentifier: AnyHashable {
+        self
+    }
+    
 }
 
 struct NukeDownsampleProcessor: ImageProcessing, Hashable {
@@ -40,7 +53,7 @@ struct NukeDownsampleProcessor: ImageProcessing, Hashable {
 
         let data = image.pngData()
 
-        guard let data, let out = ds(data, size) else {
+        guard let data, let out = ds(data, size, image.scale) else {
             return nil
         }
         
@@ -55,7 +68,7 @@ struct NukeDownsampleProcessor: ImageProcessing, Hashable {
         self
     }
     
-    func ds(_ data: Data, _ size: CGSize) -> CGImage? {
+    func ds(_ data: Data, _ size: CGSize, _ scale: CGFloat) -> CGImage? {
         let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
         guard let imageSource = CGImageSourceCreateWithData(data as CFData, imageSourceOptions) else {
             return nil
@@ -87,7 +100,7 @@ struct NukeSplitWidePageProcessor: ImageProcessing, Hashable {
     func process(_ image: Nuke.PlatformImage) -> Nuke.PlatformImage? {
         let isWide = image.size.ratio > 1
         
-        if isWide && !page.isSecondaryPage { // fire if the page is wide AND is the primary page
+        if isWide && !page.isSplitPageChild { // fire if the page is wide AND is the primary page
             PanelPublisher.shared.willSplitPage.send(page)
         }
         return isWide ? image.split(take: half) : image

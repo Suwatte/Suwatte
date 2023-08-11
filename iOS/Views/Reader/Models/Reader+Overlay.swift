@@ -8,7 +8,7 @@
 import Foundation
 
 
-struct SliderControl {
+struct SliderControl: Hashable {
     var current: Double = 0.0
     var isScrubbing = false
 }
@@ -19,24 +19,4 @@ struct MenuControl : Hashable {
     var comments = false
     var settings = false
     var transitionOption = false
-
-    mutating func toggleMenu() {
-        menu.toggle()
-    }
-
-    mutating func hideMenu() {
-        menu = false
-    }
-
-    mutating func toggleChapterList() {
-        chapterList.toggle()
-    }
-
-    mutating func toggleSettings() {
-        settings.toggle()
-    }
-
-    mutating func toggleComments() {
-        comments.toggle()
-    }
 }

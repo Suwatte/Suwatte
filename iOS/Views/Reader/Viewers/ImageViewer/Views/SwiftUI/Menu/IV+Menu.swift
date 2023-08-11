@@ -121,7 +121,7 @@ extension IVMenuView {
         var SettingsButton: some View {
             Button {
                 STTHelpers.triggerHaptic()
-                model.control.toggleSettings()
+                model.toggleSettings()
             } label: {
                 Image(systemName: "ellipsis.circle.fill")
                     .resizable()
@@ -171,7 +171,7 @@ extension IVMenuView {
         func open() {
             guard model.chapterCount > 1 else { return }
             STTHelpers.triggerHaptic()
-            model.control.toggleChapterList()
+            model.toggleChapterList()
         }
     }
 }
@@ -211,7 +211,7 @@ extension IVMenuView {
             .modifier(GradientModifier(rotate: true))
         }
         var inverted: Bool {
-            model.readingMode.invertedReading
+            model.readingMode.isInverted
         }
         
         
@@ -220,7 +220,7 @@ extension IVMenuView {
                 if model.viewerState.hasPreviousChapter {
                     ReaderNavButton(asNext: false)
                 }
-                HorizontalSlider(value: $model.slider.current, isScrolling: $model.slider.isScrubbing, range: 0 ... 1)
+                ReaderSlider(value: $model.slider.current, isScrolling: $model.slider.isScrubbing, range: 0 ... 1)
                     .onChange(of: model.slider.current) { value in
                         guard model.slider.isScrubbing else { return }
                         PanelPublisher.shared.sliderPct.send(value)

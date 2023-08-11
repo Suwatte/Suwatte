@@ -1,28 +1,29 @@
 //
-//  Paged+Layout.swift
+//  IV+VerticalLayout.swift
 //  Suwatte (iOS)
 //
-//  Created by Mantton on 2023-08-04.
+//  Created by Mantton on 2023-08-09.
 //
 
 import UIKit
 
 
-class HImageViewerLayout: UICollectionViewFlowLayout {
-    
+
+class VImageViewerLayout: UICollectionViewFlowLayout, OffsetPreservingLayout {
     override init() {
         super.init()
-        scrollDirection = .horizontal
+        scrollDirection = .vertical
         minimumLineSpacing = 0
         minimumInteritemSpacing = 0
+        minimumLineSpacing = Preferences.standard.VerticalPagePadding ? 10 : 0
         sectionInset = UIEdgeInsets.zero
-        estimatedItemSize = .zero
     }
-    
-    required init?(coder: NSCoder) {
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     var isInsertingCellsToTop: Bool = false {
         didSet {
             if isInsertingCellsToTop {
@@ -48,16 +49,4 @@ class HImageViewerLayout: UICollectionViewFlowLayout {
             isInsertingCellsToTop = false
         }
     }
-
-    override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        let readingLeftToRight = Preferences.standard.readingLeftToRight
-
-        let layoutAttributes = super.layoutAttributesForElements(in: rect) ?? []
-        for attribute in layoutAttributes {
-            attribute.transform = readingLeftToRight ? .identity : .init(scaleX: -1, y: 1)
-        }
-
-        return layoutAttributes
-    }
 }
-

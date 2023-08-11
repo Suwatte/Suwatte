@@ -8,7 +8,7 @@
 import UIKit
 
 
-final class PagedViewerController: UICollectionViewController {
+final class TController: UICollectionViewController {
     
     internal var preRotationPath: IndexPath?
     weak var keyboardNavigationDelegate: IVKeyboardNavigationDelegate?

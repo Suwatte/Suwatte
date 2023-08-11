@@ -55,7 +55,7 @@ extension PanelActor {
         let shouldSplit = [ReadingMode.PAGED_COMIC, .PAGED_MANGA].contains(readingMode) && !Preferences.standard.zoomWidePages && Preferences.standard.splitWidePages && Preferences.standard.imageScaleType != .height && Preferences.standard.imageScaleType != .stretch
         
         if shouldSplit && !data.isPad { // Don't split on ipads
-            let isSecondaryPage = data.data.isSecondaryPage
+            let isSecondaryPage = data.data.isSplitPageChild
             let useRight = (readingMode == .PAGED_COMIC && isSecondaryPage) || (readingMode == .PAGED_MANGA && !isSecondaryPage)
             let half: UIImage.ImageHalf = useRight ? .right : .left
             
@@ -72,9 +72,9 @@ extension PanelActor {
             }
         } else {
             if data.fitToWidth {
-                processors.append(ImageProcessors.Resize(width: size.width, unit: .pixels))
+                processors.append(ImageProcessors.Resize(width: size.width, unit: .points))
             } else {
-                processors.append(ImageProcessors.Resize(size: size, unit: .pixels))
+                processors.append(ImageProcessors.Resize(size: size, unit: .points))
             }
         }
 

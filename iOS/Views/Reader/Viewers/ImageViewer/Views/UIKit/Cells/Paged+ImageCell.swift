@@ -7,8 +7,11 @@
 
 import UIKit
 
+protocol CancellableImageCell: NSObject {
+    func cancelTasks()
+}
 
-class PagedViewerImageCell: UICollectionViewCell {
+class PagedViewerImageCell: UICollectionViewCell, CancellableImageCell {
     var pageView: PagedViewerImageHolder?
 
     override init(frame: CGRect) {
@@ -21,18 +24,20 @@ class PagedViewerImageCell: UICollectionViewCell {
     }
 
     override func prepareForReuse() {
+        super.prepareForReuse()
+        pageView?.cancel()
         pageView?.reset()
+        pageView?.imageView.image = nil
         pageView?.removeFromSuperview()
         pageView = nil
         NSLayoutConstraint.deactivate(pageViewContraints)
         pageViewContraints.removeAll()
-        super.prepareForReuse()
     }
 
-    func set(page: PanelPage, delegate: UIContextMenuInteractionDelegate) {
+    func set(page: PanelPage, delegate: UIContextMenuInteractionDelegate?) {
         // Initialize
-        pageView = PagedViewerImageHolder()
-        pageView?.page = page
+        pageView = PagedViewerImageHolder(page: page, frame: frame)
+        pageView?.delegate = delegate
         
         guard let pageView else { fatalError("Holder Cannot Be Nil") }
         pageView.translatesAutoresizingMaskIntoConstraints = false
@@ -40,7 +45,7 @@ class PagedViewerImageCell: UICollectionViewCell {
         pageView.setup()
 
         // Add Context Menu Interaction
-        if Preferences.standard.imageInteractions {
+        if Preferences.standard.imageInteractions, let delegate {
             pageView.addImageInteraction(UIContextMenuInteraction(delegate: delegate))
         }
 

@@ -46,13 +46,10 @@ final class IVViewModel: ObservableObject {
     @Published var title: String = ""
     
     @Published var chapterCount = 0
-        
+    
     let dataCache = IVDataCache()
     
     var pendingState: PendingViewerState?
-    
-    
-    
 }
 
 // MARK: State & Initial Load
@@ -61,17 +58,16 @@ extension IVViewModel {
         title = value.title
         presentationState = .loading
         chapterCount = value.chapters.count
-
+        setReadingMode()
         let requested = value.openTo.toThreadSafe()
         let chapters = value.chapters
-
+        
         // Sort Chapters
         let useIndex = chapters.map { $0.index }.reduce(0, +) > 0
         let sorted =  useIndex ? chapters.sorted(by: { $0.index > $1.index }) : chapters.sorted(by: { $0.number > $1.number })
-
+        
         // Set Chapters
         await dataCache.setChapters(sorted.map { $0.toThreadSafe() })
-                 
         // Load Initial Chapter
         do {
             try await dataCache.load(for: requested)
@@ -110,5 +106,45 @@ extension IVViewModel {
     @MainActor
     func setViewerState(_ state: CurrentViewerState) {
         viewerState = state
+    }
+    
+    func setReadingMode() {
+        let preferences = Preferences.standard
+        
+        preferences.currentReadingMode = .PAGED_COMIC
+    }
+}
+
+
+extension IVViewModel {
+    
+    nonisolated func toggleMenu() {
+        Task { @MainActor in
+            control.menu.toggle()
+        }
+    }
+    
+    nonisolated func hideMenu() {
+        Task { @MainActor in
+            control.menu = false
+        }
+    }
+    
+    nonisolated func toggleChapterList() {
+        Task { @MainActor in
+            control.chapterList.toggle()
+        }
+    }
+    
+    nonisolated func toggleSettings() {
+        Task { @MainActor in
+            control.settings.toggle()
+        }
+    }
+    
+    nonisolated func toggleComments() {
+        Task { @MainActor in
+            control.comments.toggle()
+        }
     }
 }

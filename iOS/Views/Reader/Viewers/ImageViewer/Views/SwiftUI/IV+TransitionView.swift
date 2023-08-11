@@ -20,7 +20,6 @@ struct ReaderTransitionView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea()
-        .edgesIgnoringSafeArea(.all)
     }
 
     @ViewBuilder

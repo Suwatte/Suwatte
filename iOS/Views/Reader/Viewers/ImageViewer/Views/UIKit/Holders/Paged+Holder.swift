@@ -42,14 +42,6 @@ class PagedViewerImageHolder: UIView {
     var visionInteraction: UIInteraction?
     
     // Init
-    init() {
-        super.init(frame: UIScreen.main.bounds)
-    }
-    
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
     lazy var visionPressGesuture: UITapGestureRecognizer = {
         let press = UITapGestureRecognizer(target: self, action: #selector(handleVisionRequest(_:)))
@@ -57,6 +49,15 @@ class PagedViewerImageHolder: UIView {
         press.numberOfTouchesRequired = 2
         return press
     }()
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    init(page: PanelPage, frame: CGRect) {
+        super.init(frame: frame)
+        self.page = page
+    }
 }
 
 extension PagedViewerImageHolder {
@@ -130,21 +131,26 @@ extension PagedViewerImageHolder {
                 changedKeyPath == \Preferences.cropWhiteSpaces
             }
             .sink { [weak self] _ in
-                self?.cancel()
-                self?.imageView.image = nil
-                self?.load()
+                Task { @MainActor [weak self] in
+                    self?.cancel()
+                    self?.imageView.image = nil
+                    self?.load()
+                }
             }
             .store(in: &subscriptions)
-        
+
         Preferences
             .standard
             .preferencesChangedSubject
             .filter { $0 == \Preferences.imageScaleType }
             .sink { [weak self] _ in
-                self?.constrain()
+                Task { @MainActor [weak self] in
+                    self?.constrain()
+                }
             }
             .store(in: &subscriptions)
     }
+    
 }
 
 extension PagedViewerImageHolder {
@@ -153,27 +159,30 @@ extension PagedViewerImageHolder {
         nukeTask?.cancel()
         imageTask = nil
         nukeTask = nil
+        subscriptions.forEach { $0.cancel() }
+        subscriptions.removeAll()
     }
 }
 
 extension PagedViewerImageHolder {
     func load() {
+        
         let locked = imageView.image != nil || nukeTask != nil
         
         guard !locked else {
             return
         }
+        
         setVisible(.loading)
         let rPage = page.page
-        
         let isPad = UIDevice.current.userInterfaceIdiom == .pad
         let data: PanelActor.PageData = .init(data: page,
                                               size: frame.size,
                                               fitToWidth: false,
                                               isPad: isPad)
         
-        imageTask = Task {
-            await PanelActor.run {
+        imageTask = Task { [weak self] in
+            await PanelActor.run { [weak self] in
                 do {
                     let request = try await PanelActor.shared.loadPage(for: data)
                     
@@ -182,8 +191,8 @@ extension PagedViewerImageHolder {
                     for await progress in request.progress {
                         // Update progress
                         let p = Double(progress.fraction)
-                        await MainActor.run {
-                            setProgress(p)
+                        await MainActor.run { [weak self] in
+                            self?.setProgress(p)
                         }
                     }
                     
@@ -193,20 +202,20 @@ extension PagedViewerImageHolder {
                     
                     guard !Task.isCancelled else { return }
 
-                    await MainActor.run {
-                        displayImage(image: image)
+                    await MainActor.run { [weak self] in
+                        self?.displayImage(image: image)
                     }
                     
                 } catch {
                     Logger.shared.error(error, rPage.chapter.sourceId)
                     if error is CancellationError { return }
-                    await MainActor.run {
-                        setError(error)
+                    await MainActor.run { [weak self] in
+                        self?.setError(error)
                     }
                 }
                 
-                await MainActor.run {
-                    nukeTask = nil
+                await MainActor.run { [weak self] in
+                    self?.nukeTask = nil
                 }
             }
 
@@ -232,8 +241,11 @@ extension PagedViewerImageHolder {
     }
     
     func reload() {
-        cancel()
-        load()
+        Task { @MainActor [weak self] in
+            self?.cancel()
+            self?.load()
+        }
+        
     }
 }
 
@@ -246,7 +258,8 @@ extension PagedViewerImageHolder {
         addVisionInteraction()
         setVisible(.set)
         
-        Task { @MainActor in
+        Task { @MainActor [weak self] in
+            guard let self else { return }
             UIView.transition(with: self.imageView,
                               duration: 0.20,
                               options: [.transitionCrossDissolve, .allowUserInteraction],
@@ -261,6 +274,8 @@ extension PagedViewerImageHolder {
     
     func didSetImage() {
         scrollView.addGestures()
+        imageTask = nil
+        nukeTask = nil
     }
 }
 
@@ -344,7 +359,7 @@ extension PagedViewerImageHolder {
 
 extension PagedViewerImageHolder {
     func setProgress(_ value: Double) {
-        progressView.setProgress(to: value, withAnimation: true)
+        progressView.setProgress(to: value, withAnimation: false)
     }
     
     func setError(_ error: Error) {

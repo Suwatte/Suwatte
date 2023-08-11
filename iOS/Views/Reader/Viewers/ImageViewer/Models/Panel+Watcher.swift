@@ -16,4 +16,5 @@ final class PanelPublisher {
     let willSplitPage = PassthroughSubject<PanelPage, Never>()
     let sliderPct = PassthroughSubject<Double, Never>()
     let didEndScrubbing = PassthroughSubject<Void, Never>()
+    let didChangeHorizontalDirection = PassthroughSubject<Void, Never>()
 }

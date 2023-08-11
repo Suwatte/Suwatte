@@ -101,7 +101,7 @@ enum ReaderNavigation {
 
     static let NavigationModes = [StandardNavigation, LNavigation, EdgeNavigation, KindlishNavigation]
 
-    enum Modes: Int, CaseIterable, Identifiable {
+    enum Modes: Int, CaseIterable, Identifiable, UserDefaultsSerializable {
         case standard, lNav, edge, kindlish
 
         var id: Int {

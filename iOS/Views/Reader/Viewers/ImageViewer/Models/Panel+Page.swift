@@ -8,17 +8,18 @@
 import Foundation
 
 struct PanelPage: Hashable, Sendable {
+    init(page: ReaderPage) {
+        self.page = page
+    }
     
     let page: ReaderPage
     
     /**
      Indicates Whether This Page is the Second Half of a Split Page
      */
-    var isSecondaryPage = false
+    var isSplitPageChild = false
     
-    init(page: ReaderPage) {
-        self.page = page
-    }
-    
+
+    var secondaryPage: ReaderPage?
 }
 

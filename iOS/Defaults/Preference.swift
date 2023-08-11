@@ -152,6 +152,15 @@ final class Preferences {
     
     @UserDefault(STTKeys.PagedZoomWide)
     var zoomWidePages = false
+    
+    @UserDefault(STTKeys.VerticalNavigator)
+    var verticalNavigator = ReaderNavigation.Modes.lNav
+    
+    @UserDefault(STTKeys.PagedNavigator)
+    var horizontalNavigator = ReaderNavigation.Modes.standard
+    
+    @UserDefault(STTKeys.CurrentReadingMode)
+    var currentReadingMode = ReadingMode.PAGED_COMIC
 }
 
 @propertyWrapper

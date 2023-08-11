@@ -30,9 +30,9 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
         // Image Pipeline
         let pipeline = ImagePipeline {
             let dataCache = try? DataCache(name: "com.ceres.suwatte.nuke_cache")
-            let imageCache = ImageCache()
+            let imageCache = ImageCache.shared
             dataCache?.sizeLimit = 1024 * 1024 * 1024 // 1 GB
-            imageCache.costLimit = 500 * 1024 * 1024 // 500 MB
+            imageCache.costLimit = 200 * 1024 * 1024 // 500 MB
             imageCache.countLimit = 100 // 100 Images
             $0.dataLoader = DataLoader(configuration: nukeConfig)
             $0.imageCache = imageCache

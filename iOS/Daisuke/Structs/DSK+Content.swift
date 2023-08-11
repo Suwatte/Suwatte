@@ -43,8 +43,12 @@ enum ReadingMode: Int, CaseIterable, Hashable, UserDefaultsSerializable {
         [Self.PAGED_VERTICAL, .VERTICAL].contains(self)
     }
     
-    var invertedReading: Bool {
+    var isInverted: Bool {
         [Self.NOVEL_PAGED_MANGA, .PAGED_MANGA].contains(self)
+    }
+    
+    var isHorizontalPager: Bool {
+        self.isIn([.PAGED_COMIC, .PAGED_MANGA])
     }
 
     static func PanelCases() -> [Self] {
