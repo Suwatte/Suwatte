@@ -91,18 +91,5 @@ extension UIImage {
 
 
 extension UIImage {
-    func sideBySide(with image: UIImage) -> UIImage? {
-        
-        let width = size.width + image.size.width
-        let height = max(size.height, image.size.height)
-        let size = CGSize(width: width, height: height)
-        UIGraphicsBeginImageContext(size)
-        draw(in: CGRect(x: 0, y: (height - self.size.height) / 2, width: self.size.width, height: self.size.height))
-        image.draw(in: CGRect(x: self.size.width, y: (height - image.size.height) / 2, width: image.size.width, height: image.size.height))
-        
-        let result = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        
-        return result
-    }
+
 }
