@@ -47,15 +47,30 @@ struct MoreView: View {
         } header: {
             Text("Info")
         }
-
+        
         Section {
-            Link("Support on KoFi", destination: URL(string: "https://ko-fi.com/mantton")!)
-            Link("Support on Patreon", destination: URL(string: "https://patreon.com/mantton")!)
             Link("Discord Server", destination: URL(string: "https://discord.gg/8wmkXsT6h5")!)
+                .badge("\(Image(systemName: "arrow.up.right.circle"))")
             Link("About Suwatte", destination: STTHost.root)
+                .badge("\(Image(systemName: "arrow.up.right.circle"))")
+
         } header: {
             Text("Links")
         }
+        .buttonStyle(.plain)
+        
+        Section {
+            Link("Support on KoFi", destination: URL(string: "https://ko-fi.com/mantton")!)
+                .badge("\(Image(systemName: "arrow.up.right.circle"))")
+
+            Link("Support on Patreon", destination: URL(string: "https://patreon.com/mantton")!)
+                .badge("\(Image(systemName: "arrow.up.right.circle"))")
+
+        } header: {
+            Text("Support")
+        }
+        .buttonStyle(.plain)
+
     }
 
     var DataSection: some View {
