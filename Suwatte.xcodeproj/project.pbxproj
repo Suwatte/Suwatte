@@ -1542,7 +1542,7 @@
 		DF8D0A2D2800EE47003E4C3E /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				DF8D0A582800EE47003E4C3E /* Saved For Later */,
+				DF8D0A582800EE47003E4C3E /* ReadLater */,
 				DF1EA4452A70B78C003E27C7 /* SourceDownload */,
 				DF8D0AAB2800EE47003E4C3E /* Main */,
 				DF6883832A608FC1009B5642 /* Tags */,
@@ -1601,7 +1601,7 @@
 			path = Sheets;
 			sourceTree = "<group>";
 		};
-		DF8D0A582800EE47003E4C3E /* Saved For Later */ = {
+		DF8D0A582800EE47003E4C3E /* ReadLater */ = {
 			isa = PBXGroup;
 			children = (
 				DF8D0A592800EE47003E4C3E /* ReadLaterView.swift */,
@@ -1609,7 +1609,7 @@
 				DF8BEAFE2A71E8FC005C396F /* ReadLater+CollectionView.swift */,
 				DF8BEB002A7205AB005C396F /* ReadLater+ContextMenu.swift */,
 			);
-			path = "Saved For Later";
+			path = ReadLater;
 			sourceTree = "<group>";
 		};
 		DF8D0A5B2800EE47003E4C3E /* Views */ = {
