@@ -12,6 +12,18 @@ protocol ArchiveController {
     func getItemCount(for path: URL) throws -> Int
     func getImagePaths(for path: URL) throws -> [String]
     func getImageData(for url: URL, at path: String) throws -> Data
+    func getComicInfo(for url: URL) throws -> Data?
+}
+
+extension ArchiveController {
+    var extensions: Set<String> {
+        ["png", "jpg", "jpeg", "gif"]
+    }
+
+    func isImagePath(_ path: String) -> Bool {
+        extensions
+            .contains(where: { path.hasSuffix($0) })
+    }
 }
 
 final class ArchiveHelper {
@@ -25,7 +37,7 @@ final class ArchiveHelper {
             return try rarController.getThumbnailImage(for: path)
         default: break
         }
-        throw Errors.ArchiveNotFound
+        throw Errors.UnsupportedFileType
     }
 
     func getItemCount(for path: URL) throws -> Int {
@@ -36,7 +48,7 @@ final class ArchiveHelper {
             return try rarController.getItemCount(for: path)
         default: break
         }
-        throw Errors.ArchiveNotFound
+        throw Errors.UnsupportedFileType
     }
 
     func getImagePaths(for path: URL) throws -> [String] {
@@ -47,7 +59,7 @@ final class ArchiveHelper {
             return try rarController.getImagePaths(for: path)
         default: break
         }
-        throw Errors.FailedToExtractItems
+        throw Errors.UnsupportedFileType
     }
 
     func getImageData(for url: URL, at path: String) throws -> Data {
@@ -58,7 +70,18 @@ final class ArchiveHelper {
             return try rarController.getImageData(for: url, at: path)
         default: break
         }
-        throw Errors.FailedToExtractItems
+        throw Errors.UnsupportedFileType
+    }
+
+    func getComicInfo(for url: URL) throws -> Data? {
+        switch url.pathExtension {
+        case "zip", "cbz":
+            return try zipController.getComicInfo(for: url)
+        case "rar", "cbr":
+            return try rarController.getComicInfo(for: url)
+        default: break
+        }
+        throw Errors.UnsupportedFileType
     }
 }
 
@@ -66,6 +89,7 @@ extension ArchiveHelper {
     enum Errors: String {
         case ArchiveNotFound
         case FailedToExtractItems
+        case UnsupportedFileType
     }
 }
 
@@ -79,6 +103,8 @@ extension ArchiveHelper.Errors: LocalizedError {
             )
         case .FailedToExtractItems:
             return NSLocalizedString("Failed to extract contents of archive", comment: "Failed to extract archive contents")
+        case .UnsupportedFileType:
+            return NSLocalizedString("Unsupported File", comment: "Suwatte does not support the file provided.")
         }
     }
 }
