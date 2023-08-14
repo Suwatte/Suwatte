@@ -21,7 +21,7 @@ struct CurrentViewerState: Hashable {
 }
 
 struct PendingViewerState: Hashable {
-    var chapter: ThreadSafeChapter?
+    var chapter: ThreadSafeChapter
     var pageIndex: Int?
     var pageOffset: Double?
 }
@@ -68,6 +68,9 @@ extension IVViewModel {
         
         // Set Chapters
         await dataCache.setChapters(sorted.map { $0.toThreadSafe() })
+        
+        // Define State
+        pendingState = .init(chapter: requested)
         // Load Initial Chapter
         do {
             try await dataCache.load(for: requested)
@@ -112,6 +115,10 @@ extension IVViewModel {
         let preferences = Preferences.standard
         
         preferences.currentReadingMode = .PAGED_COMIC
+    }
+    
+    func producePendingState() {
+        pendingState = .init(chapter: viewerState.chapter, pageIndex: viewerState.page - 1, pageOffset:  nil)
     }
 }
 

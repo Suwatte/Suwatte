@@ -243,16 +243,18 @@ extension IVSettingsView {
     struct ModeSelectorView: View {
         @AppStorage(STTKeys.ReaderType) var mode = ReadingMode.PAGED_COMIC
         @EnvironmentObject var model: IVViewModel
+        @Preference(\.currentReadingMode) var readingMode
 
         var body: some View {
-            Picker("Reading Mode", selection: $model.readingMode) {
+            Picker("Reading Mode", selection: $readingMode) {
                 ForEach(ReadingMode.PanelCases(), id: \.rawValue) {
                     Text($0.description)
                         .tag($0)
                 }
             }
-            .onChange(of: model.readingMode, perform: { v in
-                Preferences.standard.currentReadingMode = v
+            .onChange(of: readingMode, perform: { v in
+                model.producePendingState()
+                model.readingMode = v
                 if v.isHorizontalPager {
                     PanelPublisher.shared.didChangeHorizontalDirection.send()
                 }

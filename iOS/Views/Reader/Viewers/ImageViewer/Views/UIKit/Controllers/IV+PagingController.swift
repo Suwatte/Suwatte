@@ -79,11 +79,21 @@ extension Controller {
         // start 
         startup()
     }
-    func updateReaderState(with chapter: ThreadSafeChapter, page: Int, count: Int) async {
-        
+    func updateReaderState(with chapter: ThreadSafeChapter, indexPath: IndexPath, offset: CGFloat?) async {
         let hasNext = await dataCache.getChapter(after: chapter) != nil
         let hasPrev = await dataCache.getChapter(before: chapter) != nil
-        let state: CurrentViewerState = .init(chapter: chapter, page: page, pageCount: count, hasPreviousChapter: hasPrev, hasNextChapter: hasNext)
+        let pages = await dataCache.cache[chapter.id]?.count
+        let item = dataSource.itemIdentifier(for: indexPath)
+        guard let pages, case .page(let page) = item else {
+            Logger.shared.warn("invalid reader state", "updateReaderState")
+            return
+        }
+        
+        let state: CurrentViewerState = .init(chapter: chapter,
+                                              page: page.page.number,
+                                              pageCount: pages,
+                                              hasPreviousChapter: hasPrev,
+                                              hasNextChapter: hasNext)
         
         model.setViewerState(state)
     }
@@ -93,9 +103,10 @@ extension Controller {
             guard let self else { return }
             let state = await self.initialLoad()
             guard let state else { return }
-            await self.updateReaderState(with: state.chapter, page: state.index + 1, count: state.count)
+            let (chapter, path, offset) = state
+            await self.updateReaderState(with: chapter, indexPath: path, offset: offset)
             await MainActor.run { [weak self] in
-                self?.didFinishInitialLoad(state)
+                self?.didFinishInitialLoad(chapter, path)
             }
         }
     }
@@ -112,7 +123,6 @@ extension Controller {
         super.viewDidDisappear(animated)
         subscriptions.forEach { $0.cancel() }
         subscriptions.removeAll()
-        model.pendingState = nil
     }
     
 }
@@ -120,13 +130,11 @@ extension Controller {
 
 extension Controller {
     
-    func didFinishInitialLoad(_ values: (chapter: ThreadSafeChapter, index: Int, count: Int)) {
-        let path = IndexPath(item: values.index, section: 0)
+    func didFinishInitialLoad(_ chapter: ThreadSafeChapter, _ path: IndexPath) {
         lastIndexPath = path
         updateChapterScrollRange()
         collectionView.scrollToItem(at: path, at: isVertical ? .centeredVertically : .centeredHorizontally, animated: false)
         collectionView.isHidden = false
-        model.pendingState = nil // Consume Pending
     }
 }
 
@@ -560,9 +568,16 @@ extension Controller: DoublePageResolverDelegate {
 
 extension Controller {
     
-    func didChangePage(_ page: PanelViewerItem) {
-//        print("page change")
-        
+    func didChangePage(_ item: PanelViewerItem) {
+        switch item {
+            case .page(let page):
+                model.viewerState.chapter = page.page.chapter
+                model.viewerState.page = page.page.index + 1
+                model.viewerState.pageCount = page.page.chapterPageCount
+                // TODO: DB Actions
+            case .transition(let transition):
+                break
+        }
     }
     
     func didChapterChange(from: ThreadSafeChapter, to: ThreadSafeChapter) {
@@ -652,36 +667,36 @@ extension Controller {
     }
     
     
-    func initialLoad() async -> (chapter: ThreadSafeChapter, index: Int, count: Int)? {
-        // Get Chapter
-        guard let chapter = model.loadState.keys.first else {
-            Logger.shared.warn("unconsumed setup state", "ImageViewer")
+    func initialLoad() async -> (ThreadSafeChapter, IndexPath, CGFloat?)? {
+        guard let pendingState = model.pendingState else {
+            Logger.shared.warn("calling initialLoad() without any pending state")
             return nil
         }
+        let chapter = pendingState.chapter
+        let isLoaded = model.loadState[chapter] != nil
         
-        
-        // Load Chapter Data
-        _ = await load(chapter)
-        
+        if !isLoaded {
+            // Load Chapter Data
+            _ = await load(chapter)
+        } else {
+            // Data has already been loaded, just apply instead
+            await apply(chapter)
+
+        }
+                        
         // Retrieve chapter data
-        guard let pages = await dataCache.cache[chapter.id],
-              let chapterIndex = await dataCache.chapters.firstIndex(of: chapter) else {
+        guard let chapterIndex = await dataCache.chapters.firstIndex(of: chapter) else {
             Logger.shared.warn("load complete but page list is empty", "ImageViewer")
             return nil
         }
         
-        let pageCount = pages.count
-        var requestedPageIndex = model.pendingState?.pageIndex
-        if requestedPageIndex == nil {
-            requestedPageIndex = chapterIndex == 0 ? 1 : 0
-        }
+        let isFirstChapter = chapterIndex == 0
+        let requestedPageIndex = (pendingState.pageIndex ?? 0) + (isFirstChapter ? 1 : 0)
+        let indexPath = IndexPath(item: requestedPageIndex, section: 0)
         
-        guard let requestedPageIndex else {
-            Logger.shared.warn("unable to select a page.", "ImageViewer")
-            return nil
-        }
+        model.pendingState = nil // Consume Pending State
         
-        return (chapter: chapter, index: requestedPageIndex, count: pageCount)
+        return (chapter, indexPath, pendingState.pageOffset.flatMap(CGFloat.init))
     }
     
     func split(_ page: PanelPage) {
