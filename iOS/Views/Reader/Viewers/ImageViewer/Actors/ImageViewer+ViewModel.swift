@@ -120,6 +120,28 @@ extension IVViewModel {
     func producePendingState() {
         pendingState = .init(chapter: viewerState.chapter, pageIndex: viewerState.page - 1, pageOffset:  nil)
     }
+    
+    func resetToChapter(_ chapter: ThreadSafeChapter) async {
+        presentationState = .loading
+        // Load Initial Chapter
+        do {
+            try await dataCache.load(for: chapter)
+            updateChapterState(for: chapter, state: .loaded(true))
+            await MainActor.run {
+                withAnimation {
+                    presentationState = .loaded(true)
+                }
+            }
+        } catch {
+            updateChapterState(for: chapter, state: .failed(error))
+            Logger.shared.error(error, "Reader")
+            await MainActor.run {
+                withAnimation {
+                    presentationState = .failed(error)
+                }
+            }
+        }
+    }
 }
 
 

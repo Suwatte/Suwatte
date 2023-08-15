@@ -39,8 +39,9 @@ struct ImageViewer: View {
         .animation(StandardAnimation, value: model.slider)
         .sheet(isPresented: $model.control.settings) {
             IVSettingsView()
-                .onDisappear {
-                }
+        }
+        .sheet(isPresented: $model.control.chapterList, onDismiss: reset) {
+            IVChapterListView()
         }
         .environmentObject(model)
         .onDisappear {
@@ -88,6 +89,18 @@ extension ImageViewer {
     
     private var StandardAnimation: Animation {
         .easeInOut(duration: 0.3)
+    }
+}
+
+
+extension ImageViewer {
+    private func reset() {
+        guard let chapter = model.pendingState?.chapter else {
+            return
+        }
+        Task {
+            await model.resetToChapter(chapter)
+        }
     }
 }
 

@@ -62,6 +62,9 @@ struct IVSettingsView: View {
                 if model.readingMode.isHorizontalPager {
                     Section {
                         Toggle("Double Paged", isOn: $isDoublePaged)
+                            .onChange(of: isDoublePaged) { _ in
+                                model.producePendingState()
+                            }
                     } header: {
                         Text("Paging Options")
                     }

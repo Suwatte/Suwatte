@@ -13,6 +13,9 @@
 		DF020A412A899C6300BC5562 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DF020A402A899C6300BC5562 /* GoogleService-Info.plist */; };
 		DF020A442A89A07C00BC5562 /* ArchiveHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A432A89A07C00BC5562 /* ArchiveHelper.swift */; };
 		DF020A452A89A07C00BC5562 /* ArchiveHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A432A89A07C00BC5562 /* ArchiveHelper.swift */; };
+		DF020A472A8B118A00BC5562 /* ImageViewer+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A462A8B118A00BC5562 /* ImageViewer+Database.swift */; };
+		DF020A482A8B118A00BC5562 /* ImageViewer+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A462A8B118A00BC5562 /* ImageViewer+Database.swift */; };
+		DF020A4A2A8B120700BC5562 /* IV+ChapterList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A492A8B120700BC5562 /* IV+ChapterList.swift */; };
 		DF03F73A2846FAB800602E59 /* ReaderButtonModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF03F7392846FAB800602E59 /* ReaderButtonModifier.swift */; };
 		DF0D96062824892C00E592D9 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = DF0D96052824892C00E592D9 /* Realm */; };
 		DF13892228BDCAEF0035BDBB /* STT+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF13892128BDCAEF0035BDBB /* STT+URL.swift */; };
@@ -428,6 +431,8 @@
 		DF01DEEB2A587A680025700B /* Engine+URLHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Engine+URLHandler.swift"; sourceTree = "<group>"; };
 		DF020A402A899C6300BC5562 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		DF020A432A89A07C00BC5562 /* ArchiveHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ArchiveHelper.swift; path = Shared/ArchiveHelper/ArchiveHelper.swift; sourceTree = SOURCE_ROOT; };
+		DF020A462A8B118A00BC5562 /* ImageViewer+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ImageViewer+Database.swift"; sourceTree = "<group>"; };
+		DF020A492A8B120700BC5562 /* IV+ChapterList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IV+ChapterList.swift"; sourceTree = "<group>"; };
 		DF03F7392846FAB800602E59 /* ReaderButtonModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderButtonModifier.swift; sourceTree = "<group>"; };
 		DF13892128BDCAEF0035BDBB /* STT+URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+URL.swift"; sourceTree = "<group>"; };
 		DF15F58F296621C30085DB1F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -1140,6 +1145,7 @@
 			children = (
 				DF489C152A81D02C006A21B9 /* IV+Menu.swift */,
 				DF489C332A846B83006A21B9 /* IV+Settings.swift */,
+				DF020A492A8B120700BC5562 /* IV+ChapterList.swift */,
 			);
 			path = Menu;
 			sourceTree = "<group>";
@@ -2167,6 +2173,7 @@
 			children = (
 				DFDBF9F12A7DD550006D49AD /* ImageViewer+DataCache.swift */,
 				DFDBF9F32A7DD588006D49AD /* ImageViewer+ViewModel.swift */,
+				DF020A462A8B118A00BC5562 /* ImageViewer+Database.swift */,
 			);
 			path = Actors;
 			sourceTree = "<group>";
@@ -2785,6 +2792,7 @@
 				DFDBF9722A7C4CBF006D49AD /* JSC+RunnerIntents.swift in Sources */,
 				DF8D0B442800EE47003E4C3E /* Data+StoredContent.swift in Sources */,
 				DF4817E62A6DF22700CB3A47 /* ComicInfo+Methods.swift in Sources */,
+				DF020A472A8B118A00BC5562 /* ImageViewer+Database.swift in Sources */,
 				DF8D0B572800EE47003E4C3E /* Backup+ReadLater.swift in Sources */,
 				DFB47F002881013A0040A1BD /* OPDSClient.swift in Sources */,
 				DF8D0B932800EE48003E4C3E /* BookmarksView.swift in Sources */,
@@ -2813,6 +2821,7 @@
 				DF8D0B342800EE47003E4C3E /* STT+Bundle.swift in Sources */,
 				DFDBF9932A7C74B9006D49AD /* Source+Protocol.swift in Sources */,
 				DF489C292A830350006A21B9 /* IV+PagingController.swift in Sources */,
+				DF020A4A2A8B120700BC5562 /* IV+ChapterList.swift in Sources */,
 				DF8D0B742800EE48003E4C3E /* LibraryGrid+GridTile.swift in Sources */,
 				DF67EB9F28E8FC4C00076FF5 /* ManualDestinationSelectionView.swift in Sources */,
 				DF977E162A0ECB3900AA1E90 /* StateManager.swift in Sources */,
@@ -2857,6 +2866,7 @@
 			files = (
 				DF020A452A89A07C00BC5562 /* ArchiveHelper.swift in Sources */,
 				DF9BFE1F2A428A73005D0B63 /* AH+Rar.swift in Sources */,
+				DF020A482A8B118A00BC5562 /* ImageViewer+Database.swift in Sources */,
 				DF9BFE1B2A428A5B005D0B63 /* AH+Zip.swift in Sources */,
 				DF9BFE012A4285BC005D0B63 /* ThumbnailProvider.swift in Sources */,
 			);
