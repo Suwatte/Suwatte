@@ -133,6 +133,7 @@ extension Controller {
     func didFinishInitialLoad(_ chapter: ThreadSafeChapter, _ path: IndexPath) {
         lastIndexPath = path
         updateChapterScrollRange()
+        model.slider.current = 0.0
         collectionView.scrollToItem(at: path, at: isVertical ? .centeredVertically : .centeredHorizontally, animated: false)
         collectionView.isHidden = false
     }

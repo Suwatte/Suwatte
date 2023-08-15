@@ -12,7 +12,6 @@ import SwiftUI
 struct ReaderButtonModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .scaledToFit()
-            .frame(width: 20, height: 20, alignment: .center)
+            .frame(width: 25, height: 25, alignment: .center)
     }
 }

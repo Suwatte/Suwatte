@@ -34,7 +34,6 @@ extension IVMenuView {
                     if !model.readingMode.isVertical {
                         BottomView()
                             .frame(height: proxy.size.height * 0.225, alignment: .bottom)
-                        
                     }
                 }
             }
@@ -72,10 +71,13 @@ extension IVMenuView {
     struct HeaderView: View {
         @EnvironmentObject var model: IVViewModel
         var body: some View {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 5) {
                 HeaderButtons()
                 Text(model.title)
-                    .font(.headline)
+                    .font(.title3)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(3)
+                    .frame(alignment: .leadingLastTextBaseline)
                 ActiveChapterView()
             }
             .padding(.horizontal)
@@ -114,7 +116,10 @@ extension IVMenuView {
                     presentationMode.wrappedValue.dismiss()
                 }
             } label: {
-                Image(systemName: "xmark.circle.fill").resizable().modifier(ReaderButtonModifier())
+                Image(systemName: "xmark.circle.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .modifier(ReaderButtonModifier())
             }
         }
         
@@ -125,6 +130,7 @@ extension IVMenuView {
             } label: {
                 Image(systemName: "ellipsis.circle.fill")
                     .resizable()
+                    .scaledToFit()
                     .modifier(ReaderButtonModifier())
             }
         }
@@ -185,16 +191,26 @@ extension IVMenuView {
         var body: some View {
             Button {
                 STTHelpers.triggerHaptic()
-                
+                Task {
+                    await navigate()
+                }
             } label: {
-                Text("\(Image(systemName: "chevron.\(asNext ? "right" : "left")"))")
-                    .fontWeight(.semibold)
-                    .padding()
+                Image(systemName: "chevron.\(asNext ? "right" : "left").circle.fill")
+                    .resizable()
+                    .scaledToFit()
                     .modifier(ReaderButtonModifier())
-                    .foregroundColor(Color(uiColor: .systemGray))
-                    .background(colorScheme == .light ? .black.opacity(0.70) : .sttGray.opacity(0.80))
+                    .foregroundColor(colorScheme == .dark ? Color(hex: "3d3d40") : .init(hex: "58585C"))
                     .clipShape(Circle())
             }
+        }
+        func navigate() async {
+            let current = model.viewerState.chapter
+            let cache = model.dataCache
+            let chapter = await asNext ? cache.getChapter(after: current) : cache.getChapter(before: current)
+            guard let chapter else {
+                return
+            }
+            await model.resetToChapter(chapter)
         }
     }
     

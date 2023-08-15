@@ -36,10 +36,13 @@ extension ProfileView {
                         
                         Group {
                             if let chapter = chapter {
-                                ReaderGateWay(readingMode: viewModel.content.recommendedReadingMode ?? .defaultPanelMode, chapterList: chapterList, openTo: chapter)
-                                    .onAppear {
-                                        viewModel.removeNotifier()
-                                    }
+                                ReaderGateWay(readingMode: viewModel.content.recommendedReadingMode ?? .defaultPanelMode,
+                                              chapterList: chapterList,
+                                              openTo: chapter,
+                                              title: viewModel.content.title)
+                                .onAppear {
+                                    viewModel.removeNotifier()
+                                }
                             } else {
                                 NavigationView {
                                     Text("Invalid Chapter")
@@ -91,20 +94,20 @@ extension ProfileView {
         @State var isRotated = false
         var body: some View {
             switch model.syncState {
-            case .syncing:
-                Image(systemName: "arrow.triangle.2.circlepath")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 15, height: 15, alignment: .center)
-                    .foregroundColor(.green)
-                    .rotationEffect(Angle.degrees(isRotated ? 360 : 0))
-                    .transition(.scale)
-                    .animation(animation, value: isRotated)
-                    .onAppear {
-                        isRotated.toggle()
-                    }
-            default: EmptyView()
-                    .transition(.opacity)
+                case .syncing:
+                    Image(systemName: "arrow.triangle.2.circlepath")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 15, height: 15, alignment: .center)
+                        .foregroundColor(.green)
+                        .rotationEffect(Angle.degrees(isRotated ? 360 : 0))
+                        .transition(.scale)
+                        .animation(animation, value: isRotated)
+                        .onAppear {
+                            isRotated.toggle()
+                        }
+                default: EmptyView()
+                        .transition(.opacity)
             }
         }
         

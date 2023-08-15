@@ -14,11 +14,15 @@ struct ReaderGateWay: View {
     var pageIndex: Int?
     var title: String?
     @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
-
+    
     var body: some View {
         Group {
             if readingMode.isPanelMode {
-                ImageViewer(initial: .init(chapters: chapterList, openTo: openTo, pageIndex: pageIndex, pageOffset: nil, title: title ?? ""))
+                ImageViewer(initial: .init(chapters: chapterList,
+                                           openTo: openTo,
+                                           pageIndex: pageIndex,
+                                           pageOffset: nil,
+                                           title: title ?? ""))
             } else if readingMode == .WEB {
                 WebReader(chapter: openTo)
             } else {
@@ -34,7 +38,7 @@ struct ReaderGateWay: View {
 
 struct WebReader: View {
     var chapter: StoredChapter
-
+    
     var body: some View {
         NavigationView {
             STTWebView(url: URL(string: chapter.webUrl ?? ""))
