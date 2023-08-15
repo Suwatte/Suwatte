@@ -102,9 +102,9 @@ extension RunnerListsView {
         @State var loadable: Loadable<RunnerList> = .idle
         @State var text: String = ""
         var body: some View {
-            LoadableView(load, $loadable, { value in
+            LoadableView(load, $loadable) { value in
                 InternalListInfoView(list: value, listURL: listURL, text: $text)
-            })
+            }
             .animation(.default, value: loadable)
             .refreshable {
                 loadable = .idle
@@ -338,16 +338,17 @@ extension RunnerListsView.RunnerListInfo {
                     return .appOutDated
                 }
             }
-            guard let installed = DataManager.shared.getRunner(runner.id) else {
-                return .notInstalled
-            }
-            if installed.version > runner.version {
-                return .sourceOutdated
-            } else if installed.version == runner.version {
-                return .installed
-            } else {
-                return .outdated
-            }
+//            guard let installed = DataManager.shared.getRunner(runner.id) else {
+//                return .notInstalled
+//            }
+//            if installed.version > runner.version {
+//                return .sourceOutdated
+//            } else if installed.version == runner.version {
+//                return .installed
+//            } else {
+//                return .outdated
+//            }
+            return .outdated
         }
 
         func RunnerHeader(runner: Runner) -> some View {

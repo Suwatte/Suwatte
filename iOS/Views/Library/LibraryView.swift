@@ -299,7 +299,8 @@ extension LibraryView {
                 }
             }
             .task {
-                priviledgedRunners = DataManager.shared.getLibraryPageProviders()
+                let actor = await RealmActor()
+                priviledgedRunners = await actor.getLibraryPageProviders()
             }
         }
 

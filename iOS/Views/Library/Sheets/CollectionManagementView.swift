@@ -71,6 +71,7 @@ extension CollectionManagementView {
         @State var contentStatuses: [ContentStatus]
         @State var titleText = ""
         @State var tagText = ""
+        @State var sources: [StoredRunnerObject] = []
         var body: some View {
             AdultContentSection
             TitlesSection
@@ -110,6 +111,10 @@ extension CollectionManagementView {
                 }
                 .onChange(of: contentStatuses) { _ in
                     saveAll()
+                }
+                .task {
+                    let actor = await RealmActor()
+                    sources = await actor.getSavedAndEnabledSources()
                 }
         }
     }
@@ -295,7 +300,7 @@ extension CollectionManagementView.FilterSections {
         Section {
             NavigationLink {
                 List {
-                    ForEach(Array(DataManager.shared.getSavedAndEnabledSources()), id: \.id) { source in
+                    ForEach(Array(sources), id: \.id) { source in
                         Button {
                             if sourceSelections.contains(source.id) { sourceSelections.removeAll(where: { $0 == source.id }) } else {
                                 sourceSelections.append(source.id)

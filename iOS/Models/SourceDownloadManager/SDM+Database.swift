@@ -263,7 +263,7 @@ extension SDM {
     }
 }
 
-extension DataManager {
+extension SDM {
     func getActiveDownload(_ id: String) -> SourceDownload? {
         let realm = try! Realm()
 

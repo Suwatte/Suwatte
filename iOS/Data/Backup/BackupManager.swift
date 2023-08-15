@@ -42,8 +42,7 @@ class BackupManager: ObservableObject {
     }
 
     func create() -> Backup {
-        let manager = DataManager.shared
-        return manager.getAllLibraryObjects()
+        return .init()
     }
 
     func remove(url: URL) {
@@ -157,45 +156,5 @@ class BackupManager: ObservableObject {
 
     enum BackUpError: Error {
         case FailedToImport, InvalidBackup, EmptyBackup, FileExists
-    }
-}
-
-extension DataManager {
-    func getAllLibraryObjects() -> Backup {
-        let realm = try! Realm()
-
-        let libraryEntries = realm
-            .objects(LibraryEntry.self)
-            .where { $0.content != nil && !$0.isDeleted }
-
-        let collections = realm
-            .objects(LibraryCollection.self)
-            .where { !$0.isDeleted }
-
-        let readLater = realm
-            .objects(ReadLater.self)
-            .where { $0.content != nil && !$0.isDeleted }
-
-        let progressMarkers = realm
-            .objects(ProgressMarker.self)
-            .where { $0.currentChapter != nil && $0.currentChapter.content != nil && !$0.isDeleted }
-
-        let lists = realm
-            .objects(StoredRunnerList.self)
-            .where { !$0.isDeleted }
-
-        let runners = realm
-            .objects(StoredRunnerObject.self)
-            .where { !$0.isDeleted }
-
-        var backup = Backup()
-        backup.readLater = readLater.toArray()
-        backup.progressMarkers = progressMarkers.toArray()
-        backup.library = libraryEntries.toArray()
-        backup.collections = collections.toArray()
-        backup.runnerLists = lists.toArray()
-        backup.runners = runners.toArray()
-
-        return backup
     }
 }

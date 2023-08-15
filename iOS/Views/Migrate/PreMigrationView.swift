@@ -38,16 +38,3 @@ struct PreMigrationView: View {
         }
     }
 }
-
-extension DataManager {
-    func getUserLibrary(for id: String) -> [StoredContent] {
-        let realm = try! Realm()
-
-        let objects = realm
-            .objects(LibraryEntry.self)
-            .where { $0.content.sourceId == id }
-            .compactMap(\.content)
-
-        return Array(objects)
-    }
-}

@@ -45,24 +45,11 @@ extension DSKAuthView {
 
 extension DSKAuthView.LibrarySyncView {
     func handleContentSync() async throws {
-        let library = DataManager.shared.getUpSync(for: source.id)
+        let actor = await RealmActor()
+        let library = await actor.getUpSync(for: source.id)
         let downSynced = try await source.syncUserLibrary(library: library)
-        DataManager.shared.downSyncLibrary(entries: downSynced, sourceId: source.id)
-        await MainActor.run(body: {
-            ToastManager.shared.info("Synced!")
-        })
-    }
-}
-
-extension DataManager {
-    func getUpSync(for id: String) -> [DSKCommon.UpSyncedContent] {
-        let realm = try! Realm()
-
-        let library: [DSKCommon.UpSyncedContent] = realm
-            .objects(LibraryEntry.self)
-            .where { $0.content.sourceId == id }
-            .where { $0.content != nil }
-            .map { .init(id: $0.content!.contentId, flag: $0.flag) }
-        return library
+        
+        await actor.downSyncLibrary(entries: downSynced, sourceId: source.id)
+        ToastManager.shared.info("Synced!")
     }
 }

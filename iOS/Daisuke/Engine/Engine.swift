@@ -145,14 +145,11 @@ extension DaisukeEngine {
 
     func removeRunner(_ id: String) {
         runners.removeValue(forKey: id)
-
-        // Remove From Realm
-        DataManager.shared.deleteRunner(id)
-
-        // Delete .STT File If present
         Task {
-            let path = executeableURL(for: id)
+            let actor = await RealmActor()
+            let path = await actor.getRunner(id)?.executable?.filePath ?? executeableURL(for: id)
             try? FileManager.default.removeItem(at: path)
+            await actor.deleteRunner(id)
         }
     }
 }
