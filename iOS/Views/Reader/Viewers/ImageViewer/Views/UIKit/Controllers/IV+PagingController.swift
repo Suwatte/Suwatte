@@ -265,7 +265,8 @@ extension Controller {
                  Task { @MainActor [weak self] in
                      self?.setReadingOrder()
                      self?.collectionView.collectionViewLayout.invalidateLayout()
-                 }             }
+                 }
+             }
              .store(in: &subscriptions)
     }
     
@@ -274,7 +275,7 @@ extension Controller {
             .shared
             .sliderPct
             .sink { [weak self] value in
-                self?.scrollToPosition(for: value)
+                self?.handleSliderPositionChange(value)
             }
             .store(in: &subscriptions)
 
@@ -366,7 +367,7 @@ extension Controller {
     }
     
     func onScrollStop() {
-        let currentPath = collectionView.currentPath
+        let currentPath = collectionView.pathAtCenterOfScreen
         
         model.hideMenu()
 
@@ -407,13 +408,11 @@ extension Controller {
         self.currentChapterRange = getScrollRange()
     }
     
-    func scrollToPosition(for pct: Double) {
+    func scrollToPosition(for pct: Double) -> CGFloat {
         let total = currentChapterRange.max - currentChapterRange.min
         var amount = total * pct
         amount += currentChapterRange.min
-        
-        let positon = CGPoint(x: amount, y: 0)
-        collectionView.setContentOffset(positon, animated: false)
+        return amount
     }
     
     func setScrollPCT(for offset: CGFloat) {
@@ -430,7 +429,7 @@ extension Controller {
     }
     
     func setScrollToCurrentIndex() {
-        guard let path = collectionView.currentPath else { return }
+        guard let path = collectionView.pathAtCenterOfScreen else { return }
         collectionView.scrollToItem(at: path, at: isVertical ? .centeredVertically : .centeredHorizontally, animated: true)
     }
 }
@@ -889,5 +888,27 @@ extension Controller {
         guard currentState == nil else { return } // only trigger if the chapter has not been loaded
         
         await load(next)
+    }
+}
+
+
+extension Controller {
+    func handleSliderPositionChange(_ value: Double) {
+        guard model.slider.isScrubbing else {
+            return
+        }
+        let position = scrollToPosition(for: value)
+        let point = CGPoint(x: !isVertical ? position : 0,
+                            y: isVertical ? position : 0)
+
+        defer {
+            collectionView.setContentOffset(point, animated: false)
+        }
+        guard let path = collectionView.indexPathForItem(at: point),
+              case .page(let page) = dataSource.itemIdentifier(for: path) else {
+            return
+        }
+        
+        model.viewerState.page = page.page.number
     }
 }
