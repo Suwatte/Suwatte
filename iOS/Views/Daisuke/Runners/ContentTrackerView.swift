@@ -49,16 +49,19 @@ struct ContentTrackerInfoView: View {
         }
     }
 
+    @ViewBuilder
     var InfoSection: some View {
-        Section {
-            Link(destination: URL(string: tracker.info.website ?? "") ?? STTHost.notFound) {
-                HStack {
-                    Text("Visit Website")
-                    Spacer()
-                    Image(systemName: "globe")
+        if let url =  URL(string: tracker.info.website) {
+            Section {
+                Link(destination: url) {
+                    HStack {
+                        Text("Visit Website")
+                        Spacer()
+                        Image(systemName: "globe")
+                    }
                 }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
         }
     }
 }

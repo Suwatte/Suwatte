@@ -23,7 +23,7 @@ extension StoredContent: Codable {
         sourceId = try container.decodeIfPresent(String.self, forKey: .sourceId) ?? UUID().uuidString
         contentId = try container.decode(String.self, forKey: .contentId)
         title = try container.decode(String.self, forKey: .title)
-        cover = try container.decodeIfPresent(String.self, forKey: .cover) ?? STTHost.coverNotFound.absoluteString
+        cover = try container.decodeIfPresent(String.self, forKey: .cover) ?? ""
         if let covers = try container.decodeIfPresent(List<String>.self, forKey: .additionalCovers) {
             additionalCovers.append(objectsIn: covers)
         }

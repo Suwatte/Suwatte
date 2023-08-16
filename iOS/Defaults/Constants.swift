@@ -11,13 +11,9 @@ import UIKit
 typealias JSON = [String: Any]
 
 enum STTHost {
-    static var root = URL(string: "https://suwatte.mantton.com")!
+    static var root = URL(string: "https://www.suwatte.app")!
 
     static var notFound = root.appendingPathComponent("404")
-    static var api = root.appendingPathComponent("api")
-    static var tnc = root.appendingPathComponent("tnc")
-
-    static var coverNotFound = notFound.appendingPathComponent("thumb.png")
 }
 
 let DEFAULT_LIBRARY_SECTIONS = ["library.local", "library.lists", "library.downloads", "library.collections", "library.flags"]

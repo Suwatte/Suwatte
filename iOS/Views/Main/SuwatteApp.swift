@@ -18,7 +18,7 @@ struct SuwatteApp: App {
                 .onOpenURL(perform: handleURL(_:))
                 .fullScreenCover(item: $navModel.identifier) { ids in
                     NavigationView {
-                        ProfileView(entry: .init(contentId: ids.contentId, cover: STTHost.coverNotFound.absoluteString, title: "..."), sourceId: ids.sourceId)
+                        ProfileView(entry: .init(contentId: ids.contentId, cover: "", title: "..."), sourceId: ids.sourceId)
                             .closeButton()
                             .environmentObject(ToastManager.shared)
                     }
