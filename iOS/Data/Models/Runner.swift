@@ -70,3 +70,14 @@ final class StoredRunnerObject: Object, Identifiable, CKRecordConvertible, CKRec
     static let RUNNER_KEY = "bundle"
     @Persisted var executable: CreamAsset?
 }
+
+final class RunnerInstance: Object, CKRecordConvertible, CKRecordRecoverable {
+    @Persisted(primaryKey: true) var instanceID = UUID().uuidString
+    @Persisted var instanceOf: StoredRunnerObject?
+    @Persisted var preferredName: String?
+    @Persisted var isDeleted = false
+    
+    var name: String {
+        preferredName ?? instanceOf?.name ?? ""
+    }
+}

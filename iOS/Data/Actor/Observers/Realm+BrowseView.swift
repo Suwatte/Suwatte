@@ -27,9 +27,7 @@ extension RealmActor {
                 .freeze()
                 .toArray()
             
-            Task { @MainActor in
-                callback(list)
-            }
+            callback(list)
         }
         return await observeCollection(collection: collection, didUpdate)
     }

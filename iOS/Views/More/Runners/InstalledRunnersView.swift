@@ -119,7 +119,9 @@ extension InstalledRunnersView {
             
             token = await actor
                 .observeInstalledRunners(onlyEnabled: false) { value in
-                    self.runners = value
+                    Task { @MainActor in
+                        self.runners = value
+                    }
                 }
         }
 
