@@ -18,6 +18,12 @@
 		DF020A4A2A8B120700BC5562 /* IV+ChapterList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A492A8B120700BC5562 /* IV+ChapterList.swift */; };
 		DF020A512A8C43D200BC5562 /* RLV+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A502A8C43D200BC5562 /* RLV+ViewModel.swift */; };
 		DF020A542A8C46AE00BC5562 /* Realm+RunnerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A532A8C46AE00BC5562 /* Realm+RunnerListView.swift */; };
+		DF020A5A2A8C5E8A00BC5562 /* PagingController+ContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A592A8C5E8A00BC5562 /* PagingController+ContextMenu.swift */; };
+		DF020A5D2A8C5E9600BC5562 /* PagingController+Scroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A5C2A8C5E9600BC5562 /* PagingController+Scroll.swift */; };
+		DF020A602A8C5EA000BC5562 /* PagingController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A5F2A8C5EA000BC5562 /* PagingController+Combine.swift */; };
+		DF020A632A8C5EAB00BC5562 /* PagingController+Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A622A8C5EAB00BC5562 /* PagingController+Data.swift */; };
+		DF020A662A8C5F7900BC5562 /* PagingController+DoublePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A652A8C5F7900BC5562 /* PagingController+DoublePage.swift */; };
+		DF020A692A8C5F9000BC5562 /* PagingController+State.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A682A8C5F9000BC5562 /* PagingController+State.swift */; };
 		DF03F73A2846FAB800602E59 /* ReaderButtonModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF03F7392846FAB800602E59 /* ReaderButtonModifier.swift */; };
 		DF0D96062824892C00E592D9 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = DF0D96052824892C00E592D9 /* Realm */; };
 		DF13892228BDCAEF0035BDBB /* STT+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF13892128BDCAEF0035BDBB /* STT+URL.swift */; };
@@ -421,6 +427,12 @@
 		DF020A492A8B120700BC5562 /* IV+ChapterList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IV+ChapterList.swift"; sourceTree = "<group>"; };
 		DF020A502A8C43D200BC5562 /* RLV+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RLV+ViewModel.swift"; sourceTree = "<group>"; };
 		DF020A532A8C46AE00BC5562 /* Realm+RunnerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+RunnerListView.swift"; sourceTree = "<group>"; };
+		DF020A592A8C5E8A00BC5562 /* PagingController+ContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagingController+ContextMenu.swift"; sourceTree = "<group>"; };
+		DF020A5C2A8C5E9600BC5562 /* PagingController+Scroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagingController+Scroll.swift"; sourceTree = "<group>"; };
+		DF020A5F2A8C5EA000BC5562 /* PagingController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagingController+Combine.swift"; sourceTree = "<group>"; };
+		DF020A622A8C5EAB00BC5562 /* PagingController+Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagingController+Data.swift"; sourceTree = "<group>"; };
+		DF020A652A8C5F7900BC5562 /* PagingController+DoublePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagingController+DoublePage.swift"; sourceTree = "<group>"; };
+		DF020A682A8C5F9000BC5562 /* PagingController+State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagingController+State.swift"; sourceTree = "<group>"; };
 		DF03F7392846FAB800602E59 /* ReaderButtonModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderButtonModifier.swift; sourceTree = "<group>"; };
 		DF13892128BDCAEF0035BDBB /* STT+URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+URL.swift"; sourceTree = "<group>"; };
 		DF15F58F296621C30085DB1F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -865,6 +877,20 @@
 			path = SavedLists;
 			sourceTree = "<group>";
 		};
+		DF020A582A8C5E6C00BC5562 /* PagingController */ = {
+			isa = PBXGroup;
+			children = (
+				DF489C282A830350006A21B9 /* IV+PagingController.swift */,
+				DF020A592A8C5E8A00BC5562 /* PagingController+ContextMenu.swift */,
+				DF020A5C2A8C5E9600BC5562 /* PagingController+Scroll.swift */,
+				DF020A5F2A8C5EA000BC5562 /* PagingController+Combine.swift */,
+				DF020A622A8C5EAB00BC5562 /* PagingController+Data.swift */,
+				DF020A652A8C5F7900BC5562 /* PagingController+DoublePage.swift */,
+				DF020A682A8C5F9000BC5562 /* PagingController+State.swift */,
+			);
+			path = PagingController;
+			sourceTree = "<group>";
+		};
 		DF15F58E296621B10085DB1F /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -1187,7 +1213,7 @@
 		DF489C462A8484D9006A21B9 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				DF489C282A830350006A21B9 /* IV+PagingController.swift */,
+				DF020A582A8C5E6C00BC5562 /* PagingController */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -2469,8 +2495,10 @@
 				DFBE483A2A25BBC1000ABA16 /* ChapterReference.swift in Sources */,
 				DF8D0B3B2800EE47003E4C3E /* Constants.swift in Sources */,
 				DFDBF9D82A7DB93E006D49AD /* Reader+ColorOverlay.swift in Sources */,
+				DF020A692A8C5F9000BC5562 /* PagingController+State.swift in Sources */,
 				DFDBF9772A7C557B006D49AD /* JSCR+Preferences.swift in Sources */,
 				DF33AC142A700AB100D2993A /* SDM+Fetcher.swift in Sources */,
+				DF020A602A8C5EA000BC5562 /* PagingController+Combine.swift in Sources */,
 				DF27835B2A79A5B60098BBA9 /* Realm+Backup.swift in Sources */,
 				DF8D0B732800EE48003E4C3E /* LibraryView.swift in Sources */,
 				DF8D0B322800EE47003E4C3E /* STT+Filemanager.swift in Sources */,
@@ -2549,7 +2577,9 @@
 				DFDBF9F82A7E2088006D49AD /* IV+ZoomingScrollView.swift in Sources */,
 				DFDBF9872A7C60B4006D49AD /* Engine+WK.swift in Sources */,
 				DF489C362A8478C9006A21B9 /* Opacity.swift in Sources */,
+				DF020A632A8C5EAB00BC5562 /* PagingController+Data.swift in Sources */,
 				DF1EA4522A70E0FE003E27C7 /* SourceDownloadQueueView.swift in Sources */,
+				DF020A5A2A8C5E8A00BC5562 /* PagingController+ContextMenu.swift in Sources */,
 				DFBE48382A25BB53000ABA16 /* Chapter.swift in Sources */,
 				DFD4D86C2A7B1C2500C5AC13 /* Realm+BrowseView.swift in Sources */,
 				DF29D8A72A770E41006C67B6 /* LibraryGrid+ViewModel.swift in Sources */,
@@ -2596,6 +2626,7 @@
 				DFDBF96B2A7C4470006D49AD /* Realm+HighlightGrid.swift in Sources */,
 				DF16F2C32A5F5F1700D7AFBB /* DV+FilterView.swift in Sources */,
 				DFBE484C2A25BDEF000ABA16 /* LibraryCollection.swift in Sources */,
+				DF020A5D2A8C5E9600BC5562 /* PagingController+Scroll.swift in Sources */,
 				DF3318572A47A63E000B092B /* CloudDownloader.swift in Sources */,
 				DF8D0B9C2800EE48003E4C3E /* ProfileView+Skeleton.swift in Sources */,
 				DF8D0B712800EE48003E4C3E /* ManageCollectionsView.swift in Sources */,
@@ -2767,6 +2798,7 @@
 				DF67EB8828E3674900076FF5 /* LG+MoveFlag.swift in Sources */,
 				DF8D0B952800EE48003E4C3E /* ProfileView+LibrarySheet.swift in Sources */,
 				DF27834F2A79A16C0098BBA9 /* Realm+CustomThumbnail.swift in Sources */,
+				DF020A662A8C5F7900BC5562 /* PagingController+DoublePage.swift in Sources */,
 				DF553CC4297119AD004C3428 /* UserDefaultSerializable.swift in Sources */,
 				DF27833B2A799D950098BBA9 /* Realm+Chapter.swift in Sources */,
 				DF8D0B9B2800EE48003E4C3E /* ProfileView+InfoSection.swift in Sources */,
