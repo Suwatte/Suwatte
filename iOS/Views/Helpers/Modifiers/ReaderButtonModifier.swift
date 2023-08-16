@@ -13,5 +13,6 @@ struct ReaderButtonModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .frame(width: 25, height: 25, alignment: .center)
+        
     }
 }

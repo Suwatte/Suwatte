@@ -7,12 +7,13 @@
 
 import SwiftUI
 
-struct VerticalSlider: View {
+struct ReaderVSlider: View {
     @Binding var value: Double
     @Binding var isScrolling: Bool
     @State var lastOffset: Double = 0
     var range: ClosedRange<Double>
-    
+    @Environment(\.colorScheme) var colorScheme
+
     var knobSize: CGSize = .init(width: 17, height: 17)
     func scrollColor() -> Color {
         isScrolling || value >= range.upperBound ? Color.accentColor : Color(hex: "77777d")
@@ -24,8 +25,8 @@ struct VerticalSlider: View {
                 // BackGround
                 RoundedRectangle(cornerRadius: 50)
                     .frame(width: 5)
-                    .foregroundColor(.init(hex: "3d3d40"))
-                
+                    .foregroundColor(colorScheme == .dark ? Color(hex: "3d3d40") : .init(hex: "58585C"))
+
                 // Trailing
                 RoundedRectangle(cornerRadius: 50)
                     .foregroundColor(scrollColor())
@@ -59,5 +60,9 @@ struct VerticalSlider: View {
             }
         }
         .frame(width: knobSize.width)
+        .padding(.vertical, 7)
+        .frame(width: 25)
+        .background(colorScheme == .light ? .black : .sttGray)
+        .cornerRadius(100)
     }
 }

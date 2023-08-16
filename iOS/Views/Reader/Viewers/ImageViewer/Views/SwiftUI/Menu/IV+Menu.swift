@@ -9,11 +9,35 @@ import SwiftUI
 
 
 struct IVMenuView: View {
+    @EnvironmentObject var model: IVViewModel
     var body: some View {
-        ZStack {
+        ZStack (alignment: .center) {
             MainBody()
+            if model.readingMode.isVertical {
+                GeometryReader { proxy in
+                    ZStack(alignment: .center) {
+                        VerticalSliderView()
+                            .transition(.move(edge: .trailing))
+                            .frame(width: proxy.size.width,
+                                   height: proxy.size.height * 0.60,
+                                   alignment: Alignment(horizontal: .trailing, vertical: .center))
+                    }
+                    .frame(height: proxy.size.height)
+                    
+                }
+                .frame(alignment: .center)
+            }
         }
+        .animation(.default, value: model.control)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        .onChange(of: model.slider.current) { value in
+            guard model.slider.isScrubbing else { return }
+            PanelPublisher.shared.sliderPct.send(value)
+        }
+        .onChange(of: model.slider.isScrubbing) { value in
+            guard !value else { return }
+            PanelPublisher.shared.didEndScrubbing.send()
+        }
     }
 }
 
@@ -199,7 +223,6 @@ extension IVMenuView {
                     .resizable()
                     .scaledToFit()
                     .modifier(ReaderButtonModifier())
-                    .foregroundColor(colorScheme == .dark ? Color(hex: "3d3d40") : .init(hex: "58585C"))
                     .clipShape(Circle())
             }
         }
@@ -236,15 +259,7 @@ extension IVMenuView {
                 if model.viewerState.hasPreviousChapter {
                     ReaderNavButton(asNext: false)
                 }
-                ReaderSlider(value: $model.slider.current, isScrolling: $model.slider.isScrubbing, range: 0 ... 1)
-                    .onChange(of: model.slider.current) { value in
-                        guard model.slider.isScrubbing else { return }
-                        PanelPublisher.shared.sliderPct.send(value)
-                    }
-                    .onChange(of: model.slider.isScrubbing) { value in
-                        guard !value else { return }
-                        PanelPublisher.shared.didEndScrubbing.send()
-                    }
+                ReaderHSlider(value: $model.slider.current, isScrolling: $model.slider.isScrubbing, range: 0 ... 1)
                 
                 if model.viewerState.hasNextChapter {
                     ReaderNavButton()
@@ -269,6 +284,30 @@ extension IVMenuView {
                 .padding(.bottom, bottomInset)
                 .showIf(model.viewerState != .placeholder)
                 .transition(.opacity)
+        }
+    }
+}
+
+extension IVMenuView {
+    struct VerticalSliderView: View {
+        @EnvironmentObject var model: IVViewModel
+        
+        var body: some View {
+            VStack(alignment: .center) {
+                if model.viewerState.hasPreviousChapter {
+                    ReaderNavButton(asNext: false)
+                        .rotationEffect(.degrees(90))
+                    
+                }
+                ReaderVSlider(value: $model.slider.current, isScrolling: $model.slider.isScrubbing, range: 0 ... 1)
+                
+                if model.viewerState.hasNextChapter {
+                    ReaderNavButton()
+                        .rotationEffect(.degrees(90))
+                    
+                }
+            }
+            .padding()
         }
     }
 }

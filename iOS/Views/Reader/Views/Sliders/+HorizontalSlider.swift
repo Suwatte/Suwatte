@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ReaderSlider: View {
+struct ReaderHSlider: View {
     @Binding var value: Double
     @Binding var isScrolling: Bool
     @State var lastOffset: Double = 0

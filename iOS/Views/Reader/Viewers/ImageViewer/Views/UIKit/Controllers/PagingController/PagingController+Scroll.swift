@@ -87,7 +87,7 @@ extension Controller {
         
         Task { @MainActor [weak self] in
             guard let self, !self.model.control.menu else { return }
-            self.setScrollPCT(for: self.collectionView.currentPoint.x)
+            self.setScrollPCT()
         }
         
     }
@@ -106,13 +106,13 @@ extension Controller {
         return amount
     }
     
-    func setScrollPCT(for offset: CGFloat) {
-        let contentOffset = isVertical ? collectionView.contentOffset.y : collectionView.contentOffset.x
+    func setScrollPCT() {
+        let contentOffset = offset
         let total = currentChapterRange.max - currentChapterRange.min
         var current = contentOffset - currentChapterRange.min
         current = max(0, current)
         current = min(currentChapterRange.max, current)
-        let target = Double(current / total)
+        let target = Double(current) / Double(total)
         
         Task { @MainActor [weak self] in
             self?.model.slider.current = target
@@ -193,14 +193,16 @@ extension Controller {
             let attributes = collectionView.layoutAttributesForItem(at: .init(item: minIndex, section: path.section))
             
             if let attributes = attributes {
-                sectionMinOffset = attributes.frame.minX
+                let frame = attributes.frame
+                sectionMinOffset = isVertical ? frame.minY : frame.minX
             }
         }
         
         // Get Max
         let attributes = collectionView.layoutAttributesForItem(at: .init(item: maxIndex, section: path.section))
         if let attributes = attributes {
-            sectionMaxOffset = attributes.frame.minX
+            let frame = attributes.frame
+            sectionMaxOffset = isVertical ? frame.minY : frame.minX
         }
         
         return (min: sectionMinOffset, max: sectionMaxOffset)
