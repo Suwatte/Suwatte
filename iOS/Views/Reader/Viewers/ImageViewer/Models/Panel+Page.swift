@@ -21,5 +21,9 @@ struct PanelPage: Hashable, Sendable {
     
 
     var secondaryPage: ReaderPage?
+    
+    func isHolding(_ page: ReaderPage) -> Bool {
+        page == page || secondaryPage == page
+    }
 }
 

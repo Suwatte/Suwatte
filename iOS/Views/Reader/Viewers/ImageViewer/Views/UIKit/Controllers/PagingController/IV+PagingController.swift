@@ -87,9 +87,9 @@ extension Controller {
     func updateReaderState(with chapter: ThreadSafeChapter, indexPath: IndexPath, offset: CGFloat?) async {
         let hasNext = await dataCache.getChapter(after: chapter) != nil
         let hasPrev = await dataCache.getChapter(before: chapter) != nil
-        let pages = await dataCache.cache[chapter.id]?.count
+        let pages = await dataCache.getCount(chapter.id)
         let item = dataSource.itemIdentifier(for: indexPath)
-        guard let pages, case .page(let page) = item else {
+        guard case .page(let page) = item else {
             Logger.shared.warn("invalid reader state", "updateReaderState")
             return
         }
@@ -106,13 +106,7 @@ extension Controller {
     func startup() {
         Task { [weak self] in
             guard let self else { return }
-            let state = await self.initialLoad()
-            guard let state else { return }
-            let (chapter, path, offset) = state
-            await self.updateReaderState(with: chapter, indexPath: path, offset: offset)
-            await MainActor.run { [weak self] in
-                self?.didFinishInitialLoad(chapter, path)
-            }
+            await self.initialLoad()
         }
     }
 }
@@ -131,20 +125,6 @@ extension Controller {
     }
     
 }
-
-
-extension Controller {
-    
-    func didFinishInitialLoad(_ chapter: ThreadSafeChapter, _ path: IndexPath) {
-        lastIndexPath = path
-        collectionView.scrollToItem(at: path, at: isVertical ? .centeredVertically : .centeredHorizontally, animated: false)
-        updateChapterScrollRange()
-        setScrollPCT()
-        collectionView.isHidden = false
-    }
-}
-
-
 
 
 // MARK: Transform
@@ -201,6 +181,10 @@ extension Controller {
 // MARK: - Did End Displaying / Task Cancellation
 extension Controller {
     override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let data = dataSource.itemIdentifier(for:  indexPath)
+        if case .transition(let transition) = data, transition.to != nil {
+            STTHelpers.triggerHaptic()
+        }
         guard let cell = cell as? CancellableImageCell else { return }
         cell.cancelTasks()
     }

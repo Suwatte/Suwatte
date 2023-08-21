@@ -49,6 +49,10 @@ final actor IVDataCache {
         cache[key]
     }
     
+    func getCount(_ key: String) -> Int {
+        cache[key]?.count ?? 0
+    }
+        
     
     func prepare(_ key: String) -> [PanelViewerItem]? {
         let pages = cache[key]

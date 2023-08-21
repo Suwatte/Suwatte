@@ -84,10 +84,10 @@ extension Controller {
     }
     
     
-    func initialLoad() async -> (ThreadSafeChapter, IndexPath, CGFloat?)? {
+    func initialLoad() async {
         guard let pendingState = model.pendingState else {
             Logger.shared.warn("calling initialLoad() without any pending state")
-            return nil
+            return
         }
         let chapter = pendingState.chapter
         let isLoaded = model.loadState[chapter] != nil
@@ -104,16 +104,45 @@ extension Controller {
         // Retrieve chapter data
         guard let chapterIndex = await dataCache.chapters.firstIndex(of: chapter) else {
             Logger.shared.warn("load complete but page list is empty", "ImageViewer")
-            return nil
+            return
         }
         
-        let isFirstChapter = chapterIndex == 0
-        let requestedPageIndex = (pendingState.pageIndex ?? 0) + (isFirstChapter ? 1 : 0)
-        let indexPath = IndexPath(item: requestedPageIndex, section: 0)
-        
-        model.pendingState = nil // Consume Pending State
-        
-        return (chapter, indexPath, pendingState.pageOffset.flatMap(CGFloat.init))
+        guard let page = await dataCache.get(chapter.id)?.getOrNil(pendingState.pageIndex ?? 0) else {
+            Logger.shared.warn("Unable to get the requested page or the first page in the chapter", "PagingController")
+            return
+        }
+        model.updateViewerStateChapter(chapter)
+        model.updateViewerState(with: page)
+
+        var path = IndexPath(item: 0, section: 0)
+        if !isDoublePager {
+            let isFirstChapter = chapterIndex == 0
+            let requestedPageIndex = (pendingState.pageIndex ?? 0) + (isFirstChapter ? 1 : 0)
+            path = IndexPath(item: requestedPageIndex, section: 0)
+        } else {
+            let snapshot = dataSource.snapshot().itemIdentifiers(inSection: chapter.id)
+            let index = snapshot.firstIndex { item in
+                guard case .page(let v) = item, v.isHolding(page) else {
+                    return false
+                }
+                return true
+            }
+            
+            if let index {
+                path.item = index
+            }
+        }
+        await MainActor.run {
+            model.pendingState = nil // Consume Pending State
+            lastIndexPath = path
+            collectionView.scrollToItem(at: path,
+                                        at: isVertical ? .centeredVertically : .centeredHorizontally,
+                                        animated: false)
+            updateChapterScrollRange()
+            setScrollPCT()
+            collectionView.isHidden = false
+        }
+
     }
     
     func split(_ page: PanelPage) {

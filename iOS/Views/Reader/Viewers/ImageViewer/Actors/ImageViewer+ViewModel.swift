@@ -23,7 +23,7 @@ struct CurrentViewerState: Hashable {
 struct PendingViewerState: Hashable {
     var chapter: ThreadSafeChapter
     var pageIndex: Int?
-    var pageOffset: Double?
+    var pageOffset: CGFloat?
 }
 
 @MainActor
@@ -58,10 +58,10 @@ extension IVViewModel {
         title = value.title
         presentationState = .loading
         chapterCount = value.chapters.count
-        setReadingMode(for: value.openTo.contentIdentifier.id)
         let requested = value.openTo.toThreadSafe()
         let chapters = value.chapters
-        
+        setReadingMode(for: requested.STTContentIdentifier)
+
         // Sort Chapters
         let useIndex = chapters.map { $0.index }.reduce(0, +) > 0
         let sorted =  useIndex ? chapters.sorted(by: { $0.index > $1.index }) : chapters.sorted(by: { $0.number > $1.number })
@@ -70,10 +70,25 @@ extension IVViewModel {
         await dataCache.setChapters(sorted.map { $0.toThreadSafe() })
         
         // Define State
-        pendingState = .init(chapter: requested)
+        pendingState = .init(chapter: requested,
+                             pageIndex: value.pageIndex,
+                             pageOffset: value.pageOffset)
+                
         // Load Initial Chapter
         do {
             try await dataCache.load(for: requested)
+            let pageCount = await dataCache.getCount(requested.id)
+            // Check DB For Last Known State
+            if pendingState?.pageIndex == nil {
+                let values = await STTHelpers
+                    .getInitialPanelPosition(for: requested.STTContentIdentifier,
+                                             chapterId: requested.chapterId,
+                                             limit: pageCount)
+                pendingState?.pageIndex = values.0
+                pendingState?.pageOffset = values.1
+            }
+
+            
             updateChapterState(for: requested, state: .loaded(true))
             await MainActor.run {
                 withAnimation {
@@ -104,10 +119,13 @@ extension IVViewModel {
     
     func setReadingMode(for id: String) {
         readingMode = STTHelpers.getReadingMode(for: id)
+        Preferences.standard.currentReadingMode = readingMode
     }
     
     func producePendingState() {
-        pendingState = .init(chapter: viewerState.chapter, pageIndex: viewerState.page - 1, pageOffset:  nil)
+        pendingState = .init(chapter: viewerState.chapter,
+                             pageIndex: viewerState.page - 1,
+                             pageOffset:  nil)
     }
     
     @MainActor
@@ -141,11 +159,7 @@ extension IVViewModel {
 
 extension IVViewModel {
     @MainActor
-    func changeViewerStateChapter(_ chapter: ThreadSafeChapter) {
-        if viewerState.chapter.STTContentIdentifier != chapter.STTContentIdentifier {
-            setReadingMode(for: chapter.STTContentIdentifier)
-        }
-        
+    func updateViewerStateChapter(_ chapter: ThreadSafeChapter) {
         viewerState.chapter = chapter
         didChangeViewerStateChapter(with: chapter)
     }
@@ -156,7 +170,7 @@ extension IVViewModel {
     }
     
     @MainActor
-    func updateViewState(with transition: ReaderTransition) {
+    func updateViewerState(with transition: ReaderTransition) {
         guard let count = transition.pageCount else { return }
         viewerState.page = count // Set to last page
     }
@@ -165,7 +179,7 @@ extension IVViewModel {
         Task {
             let hasNext = await dataCache.getChapter(after: chapter) != nil
             let hasPrev = await dataCache.getChapter(before: chapter) != nil
-            let pages = await dataCache.cache[chapter.id]?.count ?? 0
+            let pages = await dataCache.getCount(chapter.id)
             
             await MainActor.run {
                 viewerState.hasNextChapter = hasNext

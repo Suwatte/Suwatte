@@ -10,45 +10,25 @@ import UIKit
 private typealias Controller = WebtoonController
 
 extension Controller {
-    internal func updateReaderState(with chapter: ThreadSafeChapter, indexPath: IndexPath, offset: CGFloat?) async {
-        let hasNext = await dataCache.getChapter(after: chapter) != nil
-        let hasPrev = await dataCache.getChapter(before: chapter) != nil
-        let pages = await dataCache.cache[chapter.id]?.count
-        let item = dataSource.itemIdentifier(for: indexPath)
-        guard let pages, case .page(let page) = item else {
-            Logger.shared.warn("invalid reader state", "updateReaderState")
-            return
-        }
-        
-        let state: CurrentViewerState = .init(chapter: chapter,
-                                              page: page.page.number,
-                                              pageCount: pages,
-                                              hasPreviousChapter: hasPrev,
-                                              hasNextChapter: hasNext)
-        
-        model.setViewerState(state)
-    }
-    
     internal func startup() {
         Task { [weak self] in
             guard let self else { return }
-            let state = await self.initialLoad()
-            guard let state else { return }
-            let (chapter, path, offset) = state
-            await self.updateReaderState(with: chapter, indexPath: path, offset: offset)
-            await MainActor.run { [weak self] in
-                self?.didFinishInitialLoad(chapter, path, offset)
-            }
+            await self.initialLoad()
         }
     }
     
-    internal func initialLoad() async -> (ThreadSafeChapter, IndexPath, CGFloat?)? {
+    internal func initialLoad() async {
         guard let pendingState = model.pendingState else {
             Logger.shared.warn("calling initialLoad() without any pending state")
-            return nil
+            return
         }
         let chapter = pendingState.chapter
         let isLoaded = model.loadState[chapter] != nil
+        
+        if let index = pendingState.pageIndex, let offset = pendingState.pageOffset {
+            resumptionPosition = (index, offset)
+        }
+
         
         if !isLoaded {
             // Load Chapter Data
@@ -62,25 +42,27 @@ extension Controller {
         // Retrieve chapter data
         guard let chapterIndex = await dataCache.chapters.firstIndex(of: chapter) else {
             Logger.shared.warn("load complete but page list is empty", "ImageViewer")
-            return nil
+            return
         }
+        
+        guard let page = await dataCache.get(chapter.id)?.getOrNil(pendingState.pageIndex ?? 0) else {
+            Logger.shared.warn("Unable to get the requested page or the first page in the chapter", "WebtoonController")
+            return
+        }
+        model.updateViewerStateChapter(chapter)
+        model.updateViewerState(with: page)
         
         let isFirstChapter = chapterIndex == 0
         let requestedPageIndex = (pendingState.pageIndex ?? 0) + (isFirstChapter ? 1 : 0)
         let indexPath = IndexPath(item: requestedPageIndex, section: 0)
-        
-        model.pendingState = nil // Consume Pending State
-        
-        return (chapter, indexPath, pendingState.pageOffset.flatMap(CGFloat.init))
-    }
-
-    /// Called after the first requested chapter has loaded.
-    func didFinishInitialLoad(_ chapter: ThreadSafeChapter, _ path: IndexPath, _ offset: CGFloat?) {
-        lastIndexPath = path
-        collectionNode.scrollToItem(at: path, at: .top, animated: false)
-        updateChapterScrollRange()
-        setScrollPCT()
-        presentNode()
+        await MainActor.run {
+            model.pendingState = nil // Consume Pending State
+            lastIndexPath = indexPath
+            collectionNode.scrollToItem(at: indexPath, at: .top, animated: false)
+            updateChapterScrollRange()
+            setScrollPCT()
+            presentNode()
+        }
     }
 }
 
@@ -97,6 +79,18 @@ extension Controller {
             model.updateChapterState(for: chapter, state: .failed(error))
             return
         }
+    }
+    
+    @MainActor
+    func loadPrevChapter() async {
+        guard let current = pathAtCenterOfScreen, // Current Index
+              let chapter = dataSource.itemIdentifier(for: current)?.chapter, // Current Chapter
+              let currentReadingIndex = await dataCache.chapters.firstIndex(of: chapter), // Index Relative to ChapterList
+              currentReadingIndex != 0, // Is not the first chapter
+              let next = await dataCache.chapters.getOrNil(currentReadingIndex - 1), // Next Chapter in List
+              model.loadState[next] == nil else { return } // is not already loading/loaded
+        
+        await loadAtHead(next)
     }
     
     func loadAtHead(_ chapter: ThreadSafeChapter) async {

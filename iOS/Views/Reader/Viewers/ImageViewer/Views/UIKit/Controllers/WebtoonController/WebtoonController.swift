@@ -24,7 +24,7 @@ class WebtoonController: ASDKViewController<ASCollectionNode> {
     internal var timer: Timer?
     internal var isZooming = false
     internal var dataSource = WCDataSource()
-    internal var resumptionPosition: (IndexPath, CGFloat)?
+    internal var resumptionPosition: (Int, CGFloat)?
     internal var preRotationPath: IndexPath?
     internal var preRotationOffset: CGFloat?
     internal var lastIndexPath: IndexPath = .init(item: 0, section: 0)
@@ -34,8 +34,8 @@ class WebtoonController: ASDKViewController<ASCollectionNode> {
     internal var scrollPositionUpdateThreshold: CGFloat = 30.0
     internal var currentZoomingIndexPath: IndexPath!
     private let zoomTransitionDelegate = ZoomTransitioningDelegate()
+    internal var onPageReadTask: Task<Void, Never>?
 
-    
     // Computed
     internal var dataCache: IVDataCache {
         model.dataCache
@@ -190,9 +190,8 @@ extension Controller: ASCollectionDelegate {
                 return { [weak self] in
                     let node = ImageNode(page: page)
                     node.delegate = self
-                    
                     guard let pending = self?.resumptionPosition,
-                          pending.0 == indexPath else {
+                          pending.0 == indexPath.item else {
                         return node
                     }
                     node.savedOffset = pending.1

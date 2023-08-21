@@ -255,13 +255,21 @@ extension IVSettingsView {
                         .tag($0)
                 }
             }
-            .onChange(of: readingMode, perform: { v in
-                model.producePendingState()
-                model.readingMode = v
-                if v.isHorizontalPager {
-                    PanelPublisher.shared.didChangeHorizontalDirection.send()
-                }
-            })
+            .onChange(of: readingMode, perform: updateReadingMode)
+        }
+        
+        func updateReadingMode(_ value: ReadingMode) {
+            model.producePendingState()
+            model.readingMode = value
+            if value.isHorizontalPager {
+                PanelPublisher.shared.didChangeHorizontalDirection.send()
+            }
+            
+            // Update on a per-comic basis
+            let id = model.viewerState.chapter.STTContentIdentifier
+            let container = UserDefaults.standard
+            let key = STTKeys.ReaderType + "%%" + id
+            container.setValue(value.rawValue, forKey: key)
         }
     }
 

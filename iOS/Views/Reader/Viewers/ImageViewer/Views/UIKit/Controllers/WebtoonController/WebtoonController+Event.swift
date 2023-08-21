@@ -8,45 +8,97 @@
 import Foundation
 fileprivate typealias Controller = WebtoonController
 
-
 extension Controller {
     
-    func didChangePage(_ item: PanelViewerItem) {
+    func didChangePage(_ item: PanelViewerItem, indexPath: IndexPath) {
+        let chapter = item.chapter
+        if !model.isCurrentlyReading(chapter) {
+            didChapterChange(to: chapter)
+        }
         switch item {
             case .page(let page):
-                if model.viewerState.chapter != page.page.chapter {
-                    didChapterChange(from: model.viewerState.chapter, to: page.page.chapter)
-                }
-                model.viewerState.page = page.page.index + 1
-                model.viewerState.pageCount = page.page.chapterPageCount
-                // TODO: DB Actions
+                let target = page.secondaryPage ?? page.page
+                model.updateViewerState(with: target)
+                didReadPage(target, path: indexPath)
             case .transition(let transition):
-                break
+                model.updateViewerState(with: transition)
+                didCompleteChapter(chapter)
         }
     }
     
-    
-    
-    func didChapterChange(from: ThreadSafeChapter, to chapter: ThreadSafeChapter) {
+    func didChapterChange(to chapter: ThreadSafeChapter) {
         // Update Scrub Range
         currentChapterRange = getScrollRange()
-        model.viewerState.chapter = chapter
+        model.updateViewerStateChapter(chapter)
     }
+    
+    func canMark(chapter: ThreadSafeChapter) -> Bool {
+        let prefs = Preferences.standard
+        return !prefs.incognitoMode && !prefs.disabledHistorySources.contains(chapter.sourceId)
+    }
+
     
     func didCompleteChapter(_ chapter: ThreadSafeChapter) {
         STTHelpers.triggerHaptic()
+        guard canMark(chapter: chapter) else { return }
+        // Update in Database
+        Task {
+            let actor = await RealmActor()
+            await actor.didCompleteChapter(chapter: chapter)
+        }
+        
+        // Update in Source
+        Task {
+            guard let source = await DSK.shared.getSource(id: chapter.sourceId),
+                  source.intents.chapterSyncHandler else { return }
+           do {
+               try await source.onChapterRead(contentId: chapter.contentId,
+                                              chapterId: chapter.chapterId)
+           } catch {
+               Logger.shared.error(error, source.id)
+           }
+        }
+        
+        // Update on Trackers
+    }
+    
+    func didReadPage(_ page: ReaderPage, path: IndexPath) {
+        guard canMark(chapter: page.chapter) else { return }
+        
+        let offset = calculateCurrentOffset(of: path)
+        // Update Local DB Marker
+        Task {
+            let actor = await RealmActor()
+            await actor.updateContentProgress(chapter: page.chapter,
+                                              lastPageRead: page.number,
+                                              totalPageCount: page.chapterPageCount,
+                                              lastPageOffset: offset)
+        }
+        
+        // Update on Source
+        let isInternalSource = STTHelpers
+            .isInternalSource(page.chapter.sourceId)
+        guard !isInternalSource else { return }
+        onPageReadTask?.cancel()
+        onPageReadTask = Task {
+            let chapter = page.chapter
+            guard let source = await DSK.shared.getSource(id: chapter.sourceId) else { return }
+            do {
+                try await source.onPageRead(contentId: chapter.contentId,
+                                            chapterId: chapter.chapterId,
+                                            page: page.number)
+            } catch {
+                Logger.shared.error(error, source.id)
+            }
+        }
 
     }
     
-    @MainActor
-    func loadPrevChapter() async {
-        guard let current = pathAtCenterOfScreen, // Current Index
-              let chapter = dataSource.itemIdentifier(for: current)?.chapter, // Current Chapter
-              let currentReadingIndex = await dataCache.chapters.firstIndex(of: chapter), // Index Relative to ChapterList
-              currentReadingIndex != 0, // Is not the first chapter
-              let next = await dataCache.chapters.getOrNil(currentReadingIndex - 1), // Next Chapter in List
-              model.loadState[next] == nil else { return } // is not already loading/loaded
-        
-        await loadAtHead(next)
+    func calculateCurrentOffset(of path: IndexPath) -> Double? {
+        guard let frame = frameOfItem(at: path) else { return nil }
+        let pageOffset = frame.minY
+        let currentOffset = offset
+        return Double(currentOffset - pageOffset)
     }
+    
 }

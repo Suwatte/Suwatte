@@ -59,17 +59,7 @@ extension ImageViewer {
         case .VERTICAL:
             WebtoonViewer()
         default:
-            BadPathView
-        }
-    }
-    
-    var BadPathView: some View {
-        VStack (alignment: .center) {
-            Text("ᕦ(▀̿ ̿ -▀̿ ̿ )つ/̵͇̿̿/’̿’̿ ̿ ̿̿ ̿̿ ̿̿")
-                .font(.title3)
-                .fontWeight(.bold)
-            Text("how'd you get here?")
-                .font(.subheadline)
+            ProgressView()
         }
     }
 }

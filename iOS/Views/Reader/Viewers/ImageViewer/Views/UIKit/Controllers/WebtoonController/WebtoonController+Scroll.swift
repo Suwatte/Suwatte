@@ -47,7 +47,7 @@ extension Controller {
         guard let currentPath else { return }
         
         guard currentPath.item != lastIndexPath.item, let page = dataSource.itemIdentifier(for: currentPath) else { return }
-        didChangePage(page)
+        didChangePage(page, indexPath: currentPath)
         lastIndexPath = currentPath
         
         Task { @MainActor [weak self] in

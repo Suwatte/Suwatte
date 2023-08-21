@@ -23,7 +23,7 @@ extension Controller {
                 model.updateViewerState(with: target)
                 didReadPage(target)
             case .transition(let transition):
-                model.updateViewState(with: transition)
+                model.updateViewerState(with: transition)
                 didCompleteChapter(chapter)
         }
     }
@@ -31,7 +31,7 @@ extension Controller {
     func didChapterChange(to chapter: ThreadSafeChapter) {
         // Update Scrub Range
         currentChapterRange = getScrollRange()
-        model.changeViewerStateChapter(chapter)
+        model.updateViewerStateChapter(chapter)
     }
     
     func canMark(chapter: ThreadSafeChapter) -> Bool {
