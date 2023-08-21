@@ -38,7 +38,7 @@ extension Controller {
         // Load Previous Chapter if requested
         if didTriggerBackTick {
             Task { [weak self] in
-//                await self?.loadPrevChapter()
+                await self?.loadPrevChapter()
             }
             didTriggerBackTick = false
         }
@@ -46,17 +46,8 @@ extension Controller {
         let currentPath = pathAtCenterOfScreen
         guard let currentPath else { return }
         
-        if currentPath.section != lastIndexPath.section {
-            STTHelpers.triggerHaptic()
-            let prev = dataSource.itemIdentifier(for: lastIndexPath)?.chapter
-            let next = dataSource.itemIdentifier(for: currentPath)?.chapter
-            guard let prev, let next else { return }
-//            didChapterChange(from: prev, to: next)
-        } else {
-            guard currentPath.item != lastIndexPath.item, let page = dataSource.itemIdentifier(for: currentPath) else { return }
-//            didChangePage(page)
-        }
-                
+        guard currentPath.item != lastIndexPath.item, let page = dataSource.itemIdentifier(for: currentPath) else { return }
+        didChangePage(page)
         lastIndexPath = currentPath
         
         Task { @MainActor [weak self] in
@@ -75,7 +66,7 @@ extension Controller {
         }
         
         // If current offset is lower than 0, user wants to see previous chapter
-        if position < 0 {
+        if position < 0 && !didTriggerBackTick {
             didTriggerBackTick = true
             return
         }

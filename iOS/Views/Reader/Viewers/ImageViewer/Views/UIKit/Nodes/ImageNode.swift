@@ -27,6 +27,8 @@ class ImageNode: ASCellNode {
     private var contextMenuEnabled: Bool {
         Preferences.standard.imageInteractions
     }
+    private var hasTriggeredChapterDelegateCall = false
+    
     var image: UIImage?
 
     var isLeading: Bool {
@@ -110,31 +112,16 @@ extension ImageNode {
 
     override func didExitVisibleState() {
         super.didExitVisibleState()
+        if isZoomed { return }
         cancel()
+        checkIfChapterDelegateShouldBeCalled()
+
     }
     
     override func interfaceStateDidChange(_ newState: ASInterfaceState, from oldState: ASInterfaceState) {
         super.interfaceStateDidChange(newState, from: oldState)
         guard newState == .preload, oldState == .display else { return }
-        
-        // Reset
-        if isZoomed { return }
-        
-        imageTask?.cancel()
-        nukeTask?.cancel()
-
-        imageTask = nil
-        nukeTask = nil
-
-        imageNode.image = nil
-        image = nil
-        ratio = 0
-
-        imageNode.alpha = 0
-        progressNode.alpha = 1
-
-        subscriptions.forEach { $0.cancel() }
-        subscriptions.removeAll()
+        hardReset()
     }
 }
 
@@ -160,16 +147,16 @@ extension ImageNode {
         let manager = owningNode as? ASCollectionNode
         let layout = manager?.collectionViewLayout as? VImageViewerLayout
 
-        guard let layout, let manager, let indexPath, let savedOffset else { return }
+        guard let layout, let manager, let indexPath else { return }
         let Y = manager.collectionViewLayout.layoutAttributesForItem(at: indexPath)?.frame.origin.y
         guard let Y else { return }
         layout.isInsertingCellsToTop = Y < manager.contentOffset.y
-        guard savedOffset <= imageNode.frame.height else {
+        guard let savedOffset, savedOffset <= imageNode.frame.height else {
             return
         }
+        manager.contentOffset.y += savedOffset
         self.savedOffset = nil
         delegate?.clearResumption()
-        manager.contentOffset.y += savedOffset
     }
 
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
@@ -315,6 +302,39 @@ extension ImageNode {
     
     func postImageSetSetup() {
         listen()
+    }
+    
+    func hardReset() {
+        // Reset
+        if isZoomed { return }
+        
+        imageTask?.cancel()
+        nukeTask?.cancel()
+
+        imageTask = nil
+        nukeTask = nil
+
+        imageNode.image = nil
+        image = nil
+        ratio = 0
+
+        imageNode.alpha = 0
+        progressNode.alpha = 1
+
+        subscriptions.forEach { $0.cancel() }
+        subscriptions.removeAll()
+    }
+    
+    func checkIfChapterDelegateShouldBeCalled() {
+        guard page.page.isLastPage,
+              !hasTriggeredChapterDelegateCall,
+              let delegate,
+              let indexPath,
+              let maxY = delegate.frameOfItem(at: indexPath)?.maxY,
+              maxY < delegate.offset  else { return }
+        
+        delegate.didCompleteChapter(page.page.chapter)
+        hasTriggeredChapterDelegateCall = true
     }
 
 }

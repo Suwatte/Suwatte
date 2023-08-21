@@ -159,8 +159,9 @@ struct ReaderTransitionView: View {
         var destination: ThreadSafeChapter
         var from: ThreadSafeChapter
         var type: ReaderTransition.TransitionType
+        @EnvironmentObject var model: IVViewModel
         var body: some View {
-            VStack(spacing: 100) {
+            VStack(spacing: 150) {
                 // Header
                 HeaderView
 
@@ -221,9 +222,9 @@ struct ReaderTransitionView: View {
         }
 
         var SYSTEM_IMAGE: String {
-            if Preferences.standard.isReadingVertically {
+            if model.readingMode.isVertical {
                 return "arrowtriangle.down.circle.fill"
-            } else if Preferences.standard.readingLeftToRight {
+            } else if !model.readingMode.isInverted {
                 return "arrowtriangle.right.circle.fill"
             }
             return "arrowtriangle.left.circle.fill"
@@ -231,20 +232,20 @@ struct ReaderTransitionView: View {
 
         @ViewBuilder
         var ChapterStatusView: some View {
-            Text("")
-//            if let chapter = model.readerChapterList.first(where: { $0.chapter.id == destination.id }) {
-//                // Loading Status
-//                switch chapter.data {
-//                case let .failed(error):
-//                    ErrorView(error: error, action: {})
-//                case .idle, .loading:
-//                    ProgressView()
-//                case .loaded:
-//                    Image(systemName: SYSTEM_IMAGE)
-//                        .resizable()
-//                        .foregroundColor(.green)
-//                }
-//            }
+            if let state = model.loadState[destination] {
+                switch state {
+                case let .failed(error):
+                    ErrorView(error: error, action: {})
+                case .idle, .loading:
+                    ProgressView()
+                case .loaded:
+                    Image(systemName: SYSTEM_IMAGE)
+                        .resizable()
+                        .foregroundColor(.green)
+                }
+            } else {
+                ProgressView()
+            }
         }
     }
 }

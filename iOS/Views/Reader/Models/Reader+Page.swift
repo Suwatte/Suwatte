@@ -19,6 +19,10 @@ struct ReaderPage: Hashable, Sendable {
         index + 1
     }
     
+    var isLastPage: Bool {
+        number == chapterPageCount
+    }
+    
     let chapter: ThreadSafeChapter
     
     let downloadURL: URL?

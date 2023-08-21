@@ -90,6 +90,7 @@ extension Controller {
         do {
             model.updateChapterState(for: chapter, state: .loading)
             try await dataCache.load(for: chapter)
+            model.updateChapterState(for: chapter, state: .loaded(true))
             await apply(chapter)
         } catch {
             Logger.shared.error(error)
@@ -98,6 +99,37 @@ extension Controller {
         }
     }
     
+    func loadAtHead(_ chapter: ThreadSafeChapter) async {
+        model.updateChapterState(for: chapter, state: .loading)
+        
+        do {
+            try await dataCache.load(for: chapter)
+            model.updateChapterState(for: chapter, state: .loaded(true))
+            let pages = await build(for: chapter)
+
+            let id = chapter.id
+            dataSource.sections.insert(id, at: 0)
+            dataSource.appendItems(pages, to: id)
+            let section = 0
+            let paths = pages.indices.map { IndexPath(item: $0, section: section) }
+            let set = IndexSet(integer: section)
+            
+            preparingToInsertAtHead()
+            await collectionNode.performBatch(animated: false) { [weak self] in
+                self?.collectionNode.insertSections(set)
+                self?.collectionNode.insertItems(at: paths)
+            }
+
+        } catch {
+            Logger.shared.error(error)
+            model.updateChapterState(for: chapter, state: .failed(error))
+            ToastManager.shared.error("Failed to load chapter.")
+        }
+
+    }
+}
+
+extension Controller {
     func apply(_ chapter: ThreadSafeChapter) async {
         let pages = await build(for: chapter)
 
@@ -115,6 +147,10 @@ extension Controller {
     
     func build(for chapter: ThreadSafeChapter) async -> [PanelViewerItem] {
         await dataCache.prepare(chapter.id) ?? []
-
+    }
+    
+    func preparingToInsertAtHead() {
+        let layout = collectionNode.view.collectionViewLayout as? OffsetPreservingLayout
+        layout?.isInsertingCellsToTop = true
     }
 }

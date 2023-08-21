@@ -11,7 +11,7 @@ import OrderedCollections
 struct IVChapterListView: View {
     @State private var showLangFlag = false
     @State private var showDate = false
-    @State private var chapters: OrderedSet<ThreadSafeChapter> = []
+    @State private var chapters: [ThreadSafeChapter] = []
     @EnvironmentObject private var model: IVViewModel
     
     private var activeChapter: ThreadSafeChapter {
@@ -33,7 +33,7 @@ struct IVChapterListView: View {
                     }
 
                     Section {
-                        ForEach(chapters, id: \.hashValue) { chapter in
+                        ForEach(chapters, id: \.id) { chapter in
                             Button { didSelect(chapter) } label: {
                                 ChapterListTile(chapter: chapter.toStored(),
                                                 isCompleted: false,
@@ -43,18 +43,16 @@ struct IVChapterListView: View {
                                                 showDate: showDate)
                             }
                             .listRowBackground(activeChapter.id == chapter.id ? Color.accentColor.opacity(0.05) : nil)
-                            .id(chapter.id)
                         }
                     } header: {
                         Text("Chapter List")
                     }
                 }
-                .onAppear {
-                    proxy.scrollTo(activeChapter.id, anchor: .center)
-                }
+                .headerProminence(.increased)
                 .task {
                     await loadSource()
                     await loadChapters()
+                    proxy.scrollTo(activeChapter.id, anchor: .center)
                 }
             }
             .closeButton()
@@ -88,6 +86,6 @@ extension IVChapterListView {
     
     func loadChapters() async {
         let cache = model.dataCache
-        chapters = await cache.chapters
+        chapters = Array(await cache.chapters)
     }
 }

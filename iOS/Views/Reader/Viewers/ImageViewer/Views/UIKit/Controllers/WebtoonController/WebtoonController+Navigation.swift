@@ -50,13 +50,11 @@ extension Controller {
     }
     
     func moveToPage(next: Bool = true) {
-        let range = currentChapterRange
         let multiplier: CGFloat = (next ? 1 : -1)
         let jump = view.frame.height * 0.66 * multiplier
         var newOffset = offset + jump
-        let size = contentSize
-        newOffset = min(contentSize.height, max(newOffset, 0))
-        
+        let maxY = contentSize.height - view.frame.height
+        newOffset = min(maxY, max(newOffset, 0))
         collectionNode
             .setContentOffset(.init(x: 0, y: newOffset), animated: true)
     }

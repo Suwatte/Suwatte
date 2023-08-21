@@ -55,7 +55,7 @@ class WebtoonController: ASDKViewController<ASCollectionNode> {
     }
 
     internal var currentPath: IndexPath? {
-        collectionNode.view.currentPath
+        collectionNode.view.pathAtCenterOfScreen
     }
     
     internal var pathAtCenterOfScreen: IndexPath? {
@@ -149,7 +149,6 @@ extension Controller {
         addGestures()
         collectionNode.view.contentInsetAdjustmentBehavior = .never
         collectionNode.view.scrollsToTop = false
-        collectionNode.leadingScreensForBatching = 2
     }
 }
 
@@ -194,12 +193,16 @@ extension Controller: ASCollectionDelegate {
                     return node
                 }
             case .transition(let transition):
+                let height = view.frame.height * 0.66
                 return {
-                    ASCellNode(viewControllerBlock: {
+                    let node = ASCellNode(viewControllerBlock: {
                         let view = ReaderTransitionView(transition: transition)
                         let controller = UIHostingController(rootView: view)
                         return controller
                     })
+                    node.style.width = ASDimensionMakeWithFraction(1)
+                    node.style.height = ASDimensionMake(height)
+                    return node
                 }
         }
     }

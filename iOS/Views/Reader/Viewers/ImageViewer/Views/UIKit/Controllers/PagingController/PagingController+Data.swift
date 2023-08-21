@@ -14,6 +14,7 @@ extension Controller {
         do {
             model.updateChapterState(for: chapter, state: .loading)
             try await dataCache.load(for: chapter)
+            model.updateChapterState(for: chapter, state: .loaded(true))
             await apply(chapter)
         } catch {
             Logger.shared.error(error)
@@ -39,6 +40,7 @@ extension Controller {
         
         do {
             try await dataCache.load(for: chapter)
+            model.updateChapterState(for: chapter, state: .loaded(true))
             let pages = await build(for: chapter)
             var snapshot = dataSource.snapshot()
             let head = snapshot.sectionIdentifiers.first
