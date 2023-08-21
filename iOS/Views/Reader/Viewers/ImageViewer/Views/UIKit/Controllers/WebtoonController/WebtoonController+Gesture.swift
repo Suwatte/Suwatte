@@ -44,10 +44,11 @@ extension Controller {
         let point = sender.location(in: view)
         let path = collectionNode.indexPathForItem(at: point)
         let node = path.flatMap(collectionNode.nodeForItem(at:)) as? ImageNode
-        guard let node, let image = node.image else { return }
+        guard let node, let path = node.indexPath else { return }
         
-        print("double tapped")
-        // Do Nothing
+        isZooming = true
+        let location = sender.location(in: node.view)
+        cellTappedAt(point: location, frame: node.view.frame, path: path)
     }
     
     @objc func handleLongPress(gesture: UILongPressGestureRecognizer) {

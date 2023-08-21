@@ -20,7 +20,9 @@ class ImageNode: ASCellNode {
     private var ratio: CGFloat?
     weak var delegate: WebtoonController?
     var savedOffset: CGFloat?
-    private var isZoomed = false
+    private var isZoomed: Bool {
+        delegate?.isZooming ?? false
+    }
     private weak var nukeTask: AsyncImageTask?
     private var imageTask: Task<Void, Never>?
     private var subscriptions = Set<AnyCancellable>()
@@ -105,7 +107,6 @@ extension ImageNode {
     
     override func didEnterVisibleState() {
         super.didEnterVisibleState()
-        isZoomed = false
         guard imageNode.image == nil else { return }
         loadImage()
     }
@@ -340,6 +341,7 @@ extension ImageNode {
 }
 
 
+// MARK: - Bare Bones Image Node
 class BareBonesImageNode: ASDisplayNode {
     var image: UIImage?
     

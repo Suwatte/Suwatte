@@ -32,7 +32,10 @@ class WebtoonController: ASDKViewController<ASCollectionNode> {
     internal var didTriggerBackTick = false
     internal var lastKnownScrollPosition: CGFloat = 0.0
     internal var scrollPositionUpdateThreshold: CGFloat = 30.0
+    internal var currentZoomingIndexPath: IndexPath!
+    private let zoomTransitionDelegate = ZoomTransitioningDelegate()
 
+    
     // Computed
     internal var dataCache: IVDataCache {
         model.dataCache
@@ -133,6 +136,8 @@ extension Controller {
         collectionNode.insetsLayoutMarginsFromSafeArea = false
         collectionNode.alpha = 0
         collectionNode.automaticallyManagesSubnodes = true
+        
+        navigationController?.delegate = zoomTransitionDelegate
         navigationController?.isNavigationBarHidden = true
         navigationController?.isToolbarHidden = true
                 

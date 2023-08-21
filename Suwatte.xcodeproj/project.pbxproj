@@ -41,6 +41,9 @@
 		DF1114842A92EF3C00FA8A39 /* WebtoonController+Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1114832A92EF3C00FA8A39 /* WebtoonController+Event.swift */; };
 		DF1114862A92F04800FA8A39 /* WebtoonController+Slider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1114852A92F04800FA8A39 /* WebtoonController+Slider.swift */; };
 		DF1114882A92F6E300FA8A39 /* WebtoonController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1114872A92F6E300FA8A39 /* WebtoonController+Combine.swift */; };
+		DF11148C2A93EF0500FA8A39 /* ZoomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF11148B2A93EF0500FA8A39 /* ZoomViewController.swift */; };
+		DF1114912A93EF6300FA8A39 /* ImageScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1114902A93EF6300FA8A39 /* ImageScrollView.swift */; };
+		DF1114932A93F0DD00FA8A39 /* WebtoonController+Zoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1114922A93F0DD00FA8A39 /* WebtoonController+Zoom.swift */; };
 		DF13892228BDCAEF0035BDBB /* STT+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF13892128BDCAEF0035BDBB /* STT+URL.swift */; };
 		DF15F590296621C30085DB1F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF15F58F296621C30085DB1F /* SettingsView.swift */; };
 		DF15F59229677DEF0085DB1F /* FCS+Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF15F59129677DEF0085DB1F /* FCS+Options.swift */; };
@@ -464,6 +467,9 @@
 		DF1114832A92EF3C00FA8A39 /* WebtoonController+Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebtoonController+Event.swift"; sourceTree = "<group>"; };
 		DF1114852A92F04800FA8A39 /* WebtoonController+Slider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebtoonController+Slider.swift"; sourceTree = "<group>"; };
 		DF1114872A92F6E300FA8A39 /* WebtoonController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebtoonController+Combine.swift"; sourceTree = "<group>"; };
+		DF11148B2A93EF0500FA8A39 /* ZoomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomViewController.swift; sourceTree = "<group>"; };
+		DF1114902A93EF6300FA8A39 /* ImageScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageScrollView.swift; sourceTree = "<group>"; };
+		DF1114922A93F0DD00FA8A39 /* WebtoonController+Zoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebtoonController+Zoom.swift"; sourceTree = "<group>"; };
 		DF13892128BDCAEF0035BDBB /* STT+URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+URL.swift"; sourceTree = "<group>"; };
 		DF15F58F296621C30085DB1F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		DF15F59129677DEF0085DB1F /* FCS+Options.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FCS+Options.swift"; sourceTree = "<group>"; };
@@ -924,6 +930,7 @@
 		DF020A6B2A8C7BF900BC5562 /* WebtoonController */ = {
 			isa = PBXGroup;
 			children = (
+				DF11148D2A93EF1400FA8A39 /* Zoom */,
 				DF020A6C2A8C7C1700BC5562 /* WebtoonController.swift */,
 				DF1114832A92EF3C00FA8A39 /* WebtoonController+Event.swift */,
 				DF1114812A92EA2100FA8A39 /* WebtoonController+Rotation.swift */,
@@ -937,6 +944,7 @@
 				DF1114772A92E87500FA8A39 /* WebtoonController+ContextMenu.swift */,
 				DF1114852A92F04800FA8A39 /* WebtoonController+Slider.swift */,
 				DF1114872A92F6E300FA8A39 /* WebtoonController+Combine.swift */,
+				DF1114922A93F0DD00FA8A39 /* WebtoonController+Zoom.swift */,
 			);
 			path = WebtoonController;
 			sourceTree = "<group>";
@@ -947,6 +955,15 @@
 				DF1114732A91A01300FA8A39 /* ImageNode.swift */,
 			);
 			path = Nodes;
+			sourceTree = "<group>";
+		};
+		DF11148D2A93EF1400FA8A39 /* Zoom */ = {
+			isa = PBXGroup;
+			children = (
+				DF11148B2A93EF0500FA8A39 /* ZoomViewController.swift */,
+				DF1114902A93EF6300FA8A39 /* ImageScrollView.swift */,
+			);
+			path = Zoom;
 			sourceTree = "<group>";
 		};
 		DF15F58E296621B10085DB1F /* Settings */ = {
@@ -2692,6 +2709,7 @@
 				DF8D0B6F2800EE48003E4C3E /* Loadable+View.swift in Sources */,
 				DF8D0B532800EE47003E4C3E /* Backup.swift in Sources */,
 				DF68249C28A5CF6D00AB30A1 /* DSK+Preferences.swift in Sources */,
+				DF11148C2A93EF0500FA8A39 /* ZoomViewController.swift in Sources */,
 				DFDBF96B2A7C4470006D49AD /* Realm+HighlightGrid.swift in Sources */,
 				DF16F2C32A5F5F1700D7AFBB /* DV+FilterView.swift in Sources */,
 				DFBE484C2A25BDEF000ABA16 /* LibraryCollection.swift in Sources */,
@@ -2719,6 +2737,7 @@
 				DFB47EFD2880E9C90040A1BD /* OPDS+AddServer.swift in Sources */,
 				DF6883852A608FD7009B5642 /* AllTagsView.swift in Sources */,
 				DFDBF9A62A7CC4CD006D49AD /* WKCS+Impl.swift in Sources */,
+				DF1114912A93EF6300FA8A39 /* ImageScrollView.swift in Sources */,
 				DFF09B4A2A58C13900C5CA5E /* +WebView.swift in Sources */,
 				DF8BEB012A7205AB005C396F /* ReadLater+ContextMenu.swift in Sources */,
 				DFDBF97D2A7C559C006D49AD /* JSCR+Page.swift in Sources */,
@@ -2741,6 +2760,7 @@
 				DF6883872A60937E009B5642 /* Landing+Source.swift in Sources */,
 				DFDBF9E72A7DC2A4006D49AD /* Paged+Holder.swift in Sources */,
 				DFDBF9BB2A7DA178006D49AD /* Reader+Transition.swift in Sources */,
+				DF1114932A93F0DD00FA8A39 /* WebtoonController+Zoom.swift in Sources */,
 				DF2783642A79BFD00098BBA9 /* +CollectionFilter.swift in Sources */,
 				DF8D0B312800EE47003E4C3E /* STT+UIImage.swift in Sources */,
 				DFD4D8702A7B540800C5AC13 /* SearchView+CollectionView.swift in Sources */,
