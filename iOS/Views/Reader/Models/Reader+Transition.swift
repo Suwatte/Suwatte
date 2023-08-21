@@ -10,6 +10,7 @@ import Foundation
 
 struct ReaderTransition: Hashable, Sendable {
     let from: ThreadSafeChapter
+    let pageCount: Int?
     let to: ThreadSafeChapter?
     let type: TransitionType
 
@@ -17,10 +18,11 @@ struct ReaderTransition: Hashable, Sendable {
         case NEXT, PREV
     }
 
-    init(from: ThreadSafeChapter, to: ThreadSafeChapter?, type: TransitionType) {
+    init(from: ThreadSafeChapter, to: ThreadSafeChapter?, type: TransitionType, pageCount: Int? = nil) {
         self.from = from
         self.to = to
         self.type = type
+        self.pageCount = pageCount
     }
 
     static func == (lhs: ReaderTransition, rhs: ReaderTransition) -> Bool {

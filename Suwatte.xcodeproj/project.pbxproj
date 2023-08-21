@@ -23,7 +23,7 @@
 		DF020A602A8C5EA000BC5562 /* PagingController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A5F2A8C5EA000BC5562 /* PagingController+Combine.swift */; };
 		DF020A632A8C5EAB00BC5562 /* PagingController+Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A622A8C5EAB00BC5562 /* PagingController+Data.swift */; };
 		DF020A662A8C5F7900BC5562 /* PagingController+DoublePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A652A8C5F7900BC5562 /* PagingController+DoublePage.swift */; };
-		DF020A692A8C5F9000BC5562 /* PagingController+State.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A682A8C5F9000BC5562 /* PagingController+State.swift */; };
+		DF020A692A8C5F9000BC5562 /* PagingController+Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A682A8C5F9000BC5562 /* PagingController+Event.swift */; };
 		DF020A6D2A8C7C1700BC5562 /* WebtoonController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A6C2A8C7C1700BC5562 /* WebtoonController.swift */; };
 		DF020A702A90249A00BC5562 /* WebtoonController+Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A6F2A90249A00BC5562 /* WebtoonController+Delegate.swift */; };
 		DF020A722A9024D100BC5562 /* Webtoon+Representable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A712A9024D100BC5562 /* Webtoon+Representable.swift */; };
@@ -46,6 +46,7 @@
 		DF1114932A93F0DD00FA8A39 /* WebtoonController+Zoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1114922A93F0DD00FA8A39 /* WebtoonController+Zoom.swift */; };
 		DF1114952A93F70500FA8A39 /* IV+AutoScroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1114942A93F70500FA8A39 /* IV+AutoScroll.swift */; };
 		DF1114972A93FC4900FA8A39 /* WebtoonController+AutoScroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1114962A93FC4900FA8A39 /* WebtoonController+AutoScroll.swift */; };
+		DF1114992A9407AD00FA8A39 /* PagingController+Gesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1114982A9407AD00FA8A39 /* PagingController+Gesture.swift */; };
 		DF13892228BDCAEF0035BDBB /* STT+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF13892128BDCAEF0035BDBB /* STT+URL.swift */; };
 		DF15F590296621C30085DB1F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF15F58F296621C30085DB1F /* SettingsView.swift */; };
 		DF15F59229677DEF0085DB1F /* FCS+Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF15F59129677DEF0085DB1F /* FCS+Options.swift */; };
@@ -452,7 +453,7 @@
 		DF020A5F2A8C5EA000BC5562 /* PagingController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagingController+Combine.swift"; sourceTree = "<group>"; };
 		DF020A622A8C5EAB00BC5562 /* PagingController+Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagingController+Data.swift"; sourceTree = "<group>"; };
 		DF020A652A8C5F7900BC5562 /* PagingController+DoublePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagingController+DoublePage.swift"; sourceTree = "<group>"; };
-		DF020A682A8C5F9000BC5562 /* PagingController+State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagingController+State.swift"; sourceTree = "<group>"; };
+		DF020A682A8C5F9000BC5562 /* PagingController+Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagingController+Event.swift"; sourceTree = "<group>"; };
 		DF020A6C2A8C7C1700BC5562 /* WebtoonController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebtoonController.swift; sourceTree = "<group>"; };
 		DF020A6F2A90249A00BC5562 /* WebtoonController+Delegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebtoonController+Delegate.swift"; sourceTree = "<group>"; };
 		DF020A712A9024D100BC5562 /* Webtoon+Representable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Webtoon+Representable.swift"; sourceTree = "<group>"; };
@@ -474,6 +475,7 @@
 		DF1114922A93F0DD00FA8A39 /* WebtoonController+Zoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebtoonController+Zoom.swift"; sourceTree = "<group>"; };
 		DF1114942A93F70500FA8A39 /* IV+AutoScroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IV+AutoScroll.swift"; sourceTree = "<group>"; };
 		DF1114962A93FC4900FA8A39 /* WebtoonController+AutoScroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebtoonController+AutoScroll.swift"; sourceTree = "<group>"; };
+		DF1114982A9407AD00FA8A39 /* PagingController+Gesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagingController+Gesture.swift"; sourceTree = "<group>"; };
 		DF13892128BDCAEF0035BDBB /* STT+URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+URL.swift"; sourceTree = "<group>"; };
 		DF15F58F296621C30085DB1F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		DF15F59129677DEF0085DB1F /* FCS+Options.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FCS+Options.swift"; sourceTree = "<group>"; };
@@ -926,7 +928,8 @@
 				DF020A5F2A8C5EA000BC5562 /* PagingController+Combine.swift */,
 				DF020A622A8C5EAB00BC5562 /* PagingController+Data.swift */,
 				DF020A652A8C5F7900BC5562 /* PagingController+DoublePage.swift */,
-				DF020A682A8C5F9000BC5562 /* PagingController+State.swift */,
+				DF020A682A8C5F9000BC5562 /* PagingController+Event.swift */,
+				DF1114982A9407AD00FA8A39 /* PagingController+Gesture.swift */,
 			);
 			path = PagingController;
 			sourceTree = "<group>";
@@ -2583,7 +2586,7 @@
 				DFBE483A2A25BBC1000ABA16 /* ChapterReference.swift in Sources */,
 				DF8D0B3B2800EE47003E4C3E /* Constants.swift in Sources */,
 				DFDBF9D82A7DB93E006D49AD /* Reader+ColorOverlay.swift in Sources */,
-				DF020A692A8C5F9000BC5562 /* PagingController+State.swift in Sources */,
+				DF020A692A8C5F9000BC5562 /* PagingController+Event.swift in Sources */,
 				DFDBF9772A7C557B006D49AD /* JSCR+Preferences.swift in Sources */,
 				DF33AC142A700AB100D2993A /* SDM+Fetcher.swift in Sources */,
 				DF020A602A8C5EA000BC5562 /* PagingController+Combine.swift in Sources */,
@@ -2751,6 +2754,7 @@
 				DFDBF97D2A7C559C006D49AD /* JSCR+Page.swift in Sources */,
 				DF8D0BB22800EE48003E4C3E /* MarkDownView.swift in Sources */,
 				DF67EB8C28E3F22700076FF5 /* Logger.swift in Sources */,
+				DF1114992A9407AD00FA8A39 /* PagingController+Gesture.swift in Sources */,
 				DF8D0B252800EE47003E4C3E /* LocalAuthManager.swift in Sources */,
 				DFBE48422A25BCD1000ABA16 /* ChapterData.swift in Sources */,
 				DFDBF99D2A7C9714006D49AD /* WKR+Directory.swift in Sources */,

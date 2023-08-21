@@ -83,7 +83,10 @@ final actor IVDataCache {
             return objects
         }
         
-        let transition = ReaderTransition(from: chapter, to: next, type: .NEXT)
+        let transition = ReaderTransition(from: chapter,
+                                          to: next,
+                                          type: .NEXT,
+                                          pageCount: readerPages.count)
         objects.append(.transition(transition))
         
         

@@ -51,7 +51,7 @@ extension PanelActor {
         let cropWhiteSpaces = Preferences.standard.cropWhiteSpaces
         let downSampleImage = Preferences.standard.downsampleImages
         
-        let readingMode = STTHelpers.getReadingMode(for: data.page.chapter.sttId)
+        let readingMode = STTHelpers.getReadingMode(for: data.page.chapter.STTContentIdentifier)
         let shouldSplit = [ReadingMode.PAGED_COMIC, .PAGED_MANGA].contains(readingMode) && !Preferences.standard.zoomWidePages && Preferences.standard.splitWidePages && Preferences.standard.imageScaleType != .height && Preferences.standard.imageScaleType != .stretch
         
         if shouldSplit && !data.isPad { // Don't split on ipads

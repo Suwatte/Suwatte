@@ -38,7 +38,7 @@ struct ThreadSafeChapter: Hashable {
         return obj
     }
 
-    var sttId: String {
+    var STTContentIdentifier: String {
         ContentIdentifier(contentId: contentId, sourceId: sourceId).id
     }
 

@@ -58,7 +58,7 @@ extension IVViewModel {
         title = value.title
         presentationState = .loading
         chapterCount = value.chapters.count
-        setReadingMode()
+        setReadingMode(for: value.openTo.contentIdentifier.id)
         let requested = value.openTo.toThreadSafe()
         let chapters = value.chapters
         
@@ -98,29 +98,19 @@ extension IVViewModel {
     }
     
     @MainActor
-    func incrementViewerStatePage() {
-        viewerState.page += 1
-    }
-    
-    @MainActor
-    func changeViewerStateChapter(_ chapter: ThreadSafeChapter) {
-        viewerState.chapter = chapter
-    }
-    @MainActor
     func setViewerState(_ state: CurrentViewerState) {
         viewerState = state
     }
     
-    func setReadingMode() {
-        let preferences = Preferences.standard
-        
-        preferences.currentReadingMode = .PAGED_COMIC
+    func setReadingMode(for id: String) {
+        readingMode = STTHelpers.getReadingMode(for: id)
     }
     
     func producePendingState() {
         pendingState = .init(chapter: viewerState.chapter, pageIndex: viewerState.page - 1, pageOffset:  nil)
     }
     
+    @MainActor
     func resetToChapter(_ chapter: ThreadSafeChapter) async {
         presentationState = .loading
         pendingState = .init(chapter: chapter)
@@ -140,6 +130,47 @@ extension IVViewModel {
                 withAnimation {
                     presentationState = .failed(error)
                 }
+            }
+        }
+    }
+    
+    func isCurrentlyReading(_ chapter: ThreadSafeChapter) -> Bool {
+        chapter == viewerState.chapter
+    }
+}
+
+extension IVViewModel {
+    @MainActor
+    func changeViewerStateChapter(_ chapter: ThreadSafeChapter) {
+        if viewerState.chapter.STTContentIdentifier != chapter.STTContentIdentifier {
+            setReadingMode(for: chapter.STTContentIdentifier)
+        }
+        
+        viewerState.chapter = chapter
+        didChangeViewerStateChapter(with: chapter)
+    }
+    
+    @MainActor
+    func updateViewerState(with page: ReaderPage) {
+        viewerState.page = page.number
+    }
+    
+    @MainActor
+    func updateViewState(with transition: ReaderTransition) {
+        guard let count = transition.pageCount else { return }
+        viewerState.page = count // Set to last page
+    }
+    
+    func didChangeViewerStateChapter(with chapter: ThreadSafeChapter) {
+        Task {
+            let hasNext = await dataCache.getChapter(after: chapter) != nil
+            let hasPrev = await dataCache.getChapter(before: chapter) != nil
+            let pages = await dataCache.cache[chapter.id]?.count ?? 0
+            
+            await MainActor.run {
+                viewerState.hasNextChapter = hasNext
+                viewerState.hasPreviousChapter = hasPrev
+                viewerState.pageCount = pages
             }
         }
     }

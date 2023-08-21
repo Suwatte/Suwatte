@@ -78,16 +78,9 @@ extension Controller {
         let currentPath = collectionView.pathAtCenterOfScreen
         guard let currentPath else { return }
         
-        if currentPath.section != lastIndexPath.section {
-            STTHelpers.triggerHaptic()
-            let prev = dataSource.itemIdentifier(for: lastIndexPath)?.chapter
-            let next = dataSource.itemIdentifier(for: currentPath)?.chapter
-            guard let prev, let next else { return }
-            didChapterChange(from: prev, to: next)
-        } else {
-            guard currentPath.item != lastIndexPath.item, let page = dataSource.itemIdentifier(for: currentPath) else { return }
-            didChangePage(page)
-        }
+        guard currentPath.item != lastIndexPath.item,
+              let page = dataSource.itemIdentifier(for: currentPath) else { return }
+        didChangePage(page)
                 
         lastIndexPath = currentPath
         

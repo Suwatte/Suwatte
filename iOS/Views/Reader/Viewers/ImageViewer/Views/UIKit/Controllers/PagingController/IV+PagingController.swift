@@ -25,6 +25,7 @@ class IVPagingController: UICollectionViewController {
     internal var scrollPositionUpdateThreshold: CGFloat = 20.0
     internal var dataSource: UICollectionViewDiffableDataSource<String, PanelViewerItem>!
     internal var widePages: Set<String> = []
+    internal var onPageReadTask: Task<Void, Never>?
     var model: IVViewModel!
     
     var isVertical = false
@@ -207,6 +208,7 @@ extension Controller {
 
 // MARK: - Will Display / Chapter Preloading
 extension Controller {
+    
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let data = dataSource.itemIdentifier(for:  indexPath)
         
@@ -217,7 +219,14 @@ extension Controller {
         let current = page.number
         let count =  page.chapterPageCount
         let chapter =  page.chapter
-        let inPreloadRange = count - current < 5
+        
+        // Chapter Completed
+        if page.isLastPage {
+            didCompleteChapter(chapter)
+        }
+        
+        // Preloading
+        let inPreloadRange = count - current < 5 || page.isLastPage
         
         guard inPreloadRange else { return }
         

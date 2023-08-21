@@ -33,8 +33,8 @@ extension RealmActor {
             .freeze()
     }
 
-    func didCompleteChapter(for id: String, chapter: ThreadSafeChapter) async {
-
+    func didCompleteChapter(chapter: ThreadSafeChapter) async {
+        let id = chapter.STTContentIdentifier
         // Get Object
         let target = realm
             .objects(ProgressMarker.self)
@@ -105,8 +105,9 @@ extension RealmActor {
         await decrementUnreadCount(for: id)
     }
 
-    func updateContentProgress(for id: String, chapter: ThreadSafeChapter, lastPageRead: Int, totalPageCount: Int, lastPageOffset: Double? = nil) async {
+    func updateContentProgress(chapter: ThreadSafeChapter, lastPageRead: Int, totalPageCount: Int, lastPageOffset: Double? = nil) async {
 
+        let id = chapter.STTContentIdentifier
         // Get Object
         let target = realm
             .objects(ProgressMarker.self)

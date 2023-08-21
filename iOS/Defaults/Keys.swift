@@ -93,7 +93,7 @@ enum STTKeys {
     static var DownloadsSortLibrary = "LIBRARY.DOWNLOADS.sort"
 
     // Global Source Settings
-    static var SourcesDisabledFromHistory = "APP.disabled_history"
+    static var SourcesDisabledFromHistory = "APP.progress_mark_disabled_sources"
     static var SourcesHiddenFromGlobalSearch = "APP.global_search_hidden"
 
     static var GridItemsPerRow_P = "APP.grid_items_per_row_potrait"
