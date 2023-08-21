@@ -18,4 +18,6 @@ final class PanelPublisher {
     let didEndScrubbing = PassthroughSubject<Void, Never>()
     let didChangeHorizontalDirection = PassthroughSubject<Void, Never>()
     let didChangeSplitMode = PassthroughSubject<Void, Never>()
+    let autoScrollDidStart = PassthroughSubject<Bool, Never>()
+    let autoScrollDidStop = PassthroughSubject<Void, Never>()
 }

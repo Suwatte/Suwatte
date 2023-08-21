@@ -25,11 +25,8 @@ struct ImageViewer: View {
         .modifier(CustomOverlayModifier())
         .modifier(GrayScaleModifier())
         .modifier(ColorInvertModifier())
-        .overlay {
-            if model.control.menu {
-                IVMenuView()
-            }
-        }
+        .modifier(ReaderMenuModifier())
+        .modifier(AutoScrollModifier())
         .statusBarHidden(!model.control.menu)
         .modifier(CustomBackgroundModifier())
         .ignoresSafeArea()
@@ -37,12 +34,7 @@ struct ImageViewer: View {
         .animation(StandardAnimation, value: model.presentationState)
         .animation(StandardAnimation, value: model.viewerState)
         .animation(StandardAnimation, value: model.slider)
-        .sheet(isPresented: $model.control.settings) {
-            IVSettingsView()
-        }
-        .sheet(isPresented: $model.control.chapterList, onDismiss: reset) {
-            IVChapterListView()
-        }
+        .modifier(ReaderSheetsModifier())
         .environmentObject(model)
         .onDisappear {
             Task { @MainActor in
@@ -89,18 +81,6 @@ extension ImageViewer {
     
     private var StandardAnimation: Animation {
         .easeInOut(duration: 0.3)
-    }
-}
-
-
-extension ImageViewer {
-    private func reset() {
-        guard let chapter = model.pendingState?.chapter else {
-            return
-        }
-        Task {
-            await model.resetToChapter(chapter)
-        }
     }
 }
 

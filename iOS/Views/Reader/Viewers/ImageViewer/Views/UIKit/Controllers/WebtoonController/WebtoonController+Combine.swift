@@ -12,6 +12,7 @@ extension Controller {
     func subscribeAll() {
         subToSliderPublisher()
         subToScrubEventPublisher()
+        subToAutoScrollPublisher()
     }
 }
 
@@ -36,6 +37,20 @@ extension Controller {
             .didEndScrubbing
             .sink { [weak self] in
                 self?.onScrollStop()
+            }
+            .store(in: &subscriptions)
+    }
+    
+    func subToAutoScrollPublisher() {
+        PanelPublisher
+            .shared
+            .autoScrollDidStart
+            .sink { [weak self] state in
+                if state {
+                    self?.requestAutoPlay()
+                } else {
+                    self?.cancelAutoScroll()
+                }
             }
             .store(in: &subscriptions)
     }

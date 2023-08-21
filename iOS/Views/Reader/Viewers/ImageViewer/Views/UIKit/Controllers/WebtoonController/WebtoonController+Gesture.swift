@@ -27,7 +27,7 @@ extension Controller {
     }
     
     @objc func handleTap(_ sender: UITapGestureRecognizer? = nil) {
-//        cancelAutoScroll()
+        cancelAutoScroll()
         guard let sender else {
             return
         }
@@ -37,6 +37,7 @@ extension Controller {
     }
 
     @objc func handleDoubleTap(_ sender:  UITapGestureRecognizer? = nil) {
+        cancelAutoScroll()
         guard let sender else {
             return
         }
@@ -52,6 +53,7 @@ extension Controller {
     }
     
     @objc func handleLongPress(gesture: UILongPressGestureRecognizer) {
+        cancelAutoScroll()
         let interaction = UIContextMenuInteraction(delegate: self)
         navigationController?
             .view

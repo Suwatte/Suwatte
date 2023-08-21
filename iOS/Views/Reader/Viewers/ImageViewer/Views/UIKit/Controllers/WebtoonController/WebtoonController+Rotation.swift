@@ -27,7 +27,7 @@ extension Controller: UICollectionViewDelegate {
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        
+        cancelAutoScroll()
         defer {
             collectionNode.collectionViewLayout.invalidateLayout()
         }

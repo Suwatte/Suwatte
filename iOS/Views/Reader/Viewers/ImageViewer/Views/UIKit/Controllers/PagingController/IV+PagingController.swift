@@ -47,7 +47,7 @@ class IVPagingController: UICollectionViewController {
     }
     
     deinit {
-        Logger.shared.debug("IVPagingController deallocated")
+        Logger.shared.debug("controller deallocated", "PagingController")
     }
 
 }

@@ -79,6 +79,7 @@ class WebtoonController: ASDKViewController<ASCollectionNode> {
     }
     
     deinit {
+        timer = nil
         NotificationCenter
             .default
             .removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
@@ -102,7 +103,7 @@ class WebtoonController: ASDKViewController<ASCollectionNode> {
     }
     
     @objc internal func appMovedToBackground() {
-        //            cancelAutoScroll()
+        cancelAutoScroll()
     }
     
     internal func presentNode() {
