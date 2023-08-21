@@ -65,7 +65,7 @@ extension ImageViewer {
         case .PAGED_VERTICAL:
             VerticalPagedViewer()
         case .VERTICAL:
-            Text("Placeholder")
+            WebtoonViewer()
         default:
             BadPathView
         }
