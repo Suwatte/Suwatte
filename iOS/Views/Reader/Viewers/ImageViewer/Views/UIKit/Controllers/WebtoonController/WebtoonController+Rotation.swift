@@ -15,14 +15,14 @@ extension Controller: UICollectionViewDelegate {
         guard let preRotationPath, let preRotationOffset else {
             return proposedContentOffset
         }
-        
         let maxY = collectionNode.view.contentSize.height
-        let val = (frameOfItem(at: preRotationPath)?.minY ?? 0) + preRotationOffset
-        let corrected = min(maxY, max(val, 0))
+        collectionNode.scrollToItem(at: preRotationPath, at: .top, animated: false)
+        var current = collectionNode.contentOffset
+        current.y = min(maxY, max(offset + preRotationOffset, 0))
         self.preRotationPath = nil
         self.preRotationOffset = nil
         
-        return .init(x: 0, y: corrected)
+        return current
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {

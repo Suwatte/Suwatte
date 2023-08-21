@@ -42,5 +42,9 @@ extension Controller {
             getSection(at: section)
                 .flatMap { dataMap[$0]?.count } ?? 0
         }
+        
+        func itemIdentifiers(inSection section: String) -> [PanelViewerItem] {
+            dataMap[section] ?? []
+        }
     }
 }

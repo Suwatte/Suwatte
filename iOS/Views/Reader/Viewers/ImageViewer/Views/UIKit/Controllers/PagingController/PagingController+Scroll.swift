@@ -33,7 +33,7 @@ extension Controller {
             guard let self else { return }
             // Only real-time update when the user is not scrubbing & the menu is being shown
             guard !model.slider.isScrubbing && model.control.menu else { return }
-//            setScrollPCT(for: pos)
+            setScrollPCT()
         }
         
     }
@@ -58,7 +58,6 @@ extension Controller {
     }
     
     func onScrollStop() {
-        let currentPath = collectionView.pathAtCenterOfScreen
         
         model.hideMenu()
 
@@ -69,7 +68,7 @@ extension Controller {
             }
             didTriggerBackTick = false
         }
-        
+        let currentPath = collectionView.pathAtCenterOfScreen
         guard let currentPath else { return }
         
         if currentPath.section != lastIndexPath.section {

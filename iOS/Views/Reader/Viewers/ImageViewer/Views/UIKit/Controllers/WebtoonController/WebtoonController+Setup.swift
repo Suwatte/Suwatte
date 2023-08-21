@@ -78,8 +78,8 @@ extension Controller {
     func didFinishInitialLoad(_ chapter: ThreadSafeChapter, _ path: IndexPath, _ offset: CGFloat?) {
         lastIndexPath = path
         collectionNode.scrollToItem(at: path, at: .top, animated: false)
-//        updateChapterScrollRange()
-//        setScrollPCT()
+        updateChapterScrollRange()
+        setScrollPCT()
         presentNode()
     }
 }

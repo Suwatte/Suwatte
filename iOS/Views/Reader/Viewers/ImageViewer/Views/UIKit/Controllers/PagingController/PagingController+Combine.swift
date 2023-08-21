@@ -74,6 +74,7 @@ extension Controller {
             .didEndScrubbing
             .sink { [weak self] in
                 self?.setScrollToCurrentIndex()
+                self?.onScrollStop()
             }
             .store(in: &subscriptions)
     }

@@ -87,7 +87,7 @@ class WebtoonController: ASDKViewController<ASCollectionNode> {
         super.viewDidLoad()
         self.setup()
         self.startup()
-        
+        self.subscribeAll()
     }
     
     override func viewDidAppear(_ animated: Bool) {

@@ -68,7 +68,7 @@ enum ReadingMode: Int, CaseIterable, Hashable, UserDefaultsSerializable {
         case .VERTICAL:
             return "Webtoon"
         case .PAGED_VERTICAL:
-            return "Paged Vertical"
+            return "Vertical Pager"
         case .WEB:
             return "WebView"
         case .NOVEL_WEBTOON:

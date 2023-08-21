@@ -78,6 +78,8 @@ class ImageNode: ASCellNode {
                 self?.transitionLayout(with: .init(min: size, max: size), animated: true, shouldMeasureAsync: false)
             }
             .store(in: &subscriptions)
+        
+        // TODO: Downsample
     }
     
 
@@ -123,10 +125,7 @@ extension ImageNode {
 
         imageTask = nil
         nukeTask = nil
-//
-////        imageNode.view.removeGestureRecognizer(menuTap)
-////        imageNode.view.removeGestureRecognizer(zoomingTap)
-//
+
         imageNode.image = nil
         image = nil
         ratio = 0
@@ -153,6 +152,9 @@ extension ImageNode {
         }
         imageNode.frame = context.finalFrame(for: imageNode)
         context.completeTransition(true)
+        Task { @MainActor in
+            delegate?.updateChapterScrollRange()
+        }
 
         // Inserting At Top
         let manager = owningNode as? ASCollectionNode
@@ -312,12 +314,6 @@ extension ImageNode {
     }
     
     func postImageSetSetup() {
-//        imageNode.isUserInteractionEnabled = true
-//        imageNode.view.addGestureRecognizer(menuTap)
-//        imageNode.view.addGestureRecognizer(zoomingTap)
-        if contextMenuEnabled {
-//                imageNode.view.addInteraction(UIContextMenuInteraction(delegate: delegate))
-        }
         listen()
     }
 

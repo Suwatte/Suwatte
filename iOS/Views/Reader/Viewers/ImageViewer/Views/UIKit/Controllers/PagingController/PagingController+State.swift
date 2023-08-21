@@ -42,8 +42,8 @@ extension Controller {
         let preferences = Preferences.standard
         let tapToNavigate = preferences.tapSidesToNavigate
         
-        guard tapToNavigate else {
-            // TODO: Open Menu
+        guard tapToNavigate,!model.control.menu  else {
+            model.toggleMenu()
             return
         }
         
