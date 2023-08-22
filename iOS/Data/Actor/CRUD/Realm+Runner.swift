@@ -107,7 +107,7 @@ extension RealmActor {
     }
     
     func getSearchableSources() -> [StoredRunnerObject] {
-        let disabledRunnerIDs: [String] = .init(rawValue: UserDefaults.standard.string(forKey: STTKeys.SourcesHiddenFromGlobalSearch) ?? "") ?? []
+        let disabledRunnerIDs: [String] = Array(Preferences.standard.disabledGlobalSearchSources)
         return getSavedAndEnabledSources()
             .where { !$0.id.in(disabledRunnerIDs) }
             .freeze()

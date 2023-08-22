@@ -9,8 +9,8 @@ import SwiftUI
 
 struct ContentSourceInfoView: View {
     var source: AnyContentSource
-    @AppStorage(STTKeys.SourcesDisabledFromHistory) var sourcesDisabledFromHistory: [String] = []
-    @AppStorage(STTKeys.SourcesHiddenFromGlobalSearch) var sourcesHiddenFromGlobalSearch: [String] = []
+    @Preference(\.disabledHistorySources) var sourcesDisabledFromHistory
+    @Preference(\.disabledGlobalSearchSources) var sourcesDisabledFromGlobalSearch
 
     var body: some View {
         List {
@@ -37,20 +37,18 @@ struct ContentSourceInfoView: View {
                     sourcesDisabledFromHistory.contains(source.id)
                 }, set: { value in
                     if value {
-                        sourcesDisabledFromHistory.append(source.id)
-                        sourcesDisabledFromHistory = Array(Set(sourcesDisabledFromHistory))
+                        sourcesDisabledFromHistory.insert(source.id)
                     } else {
-                        sourcesDisabledFromHistory.removeAll(where: { $0 == source.id })
+                        sourcesDisabledFromHistory.remove(source.id)
                     }
                 }))
                 Toggle("Hide From Global Search", isOn: .init(get: {
-                    sourcesHiddenFromGlobalSearch.contains(source.id)
+                    sourcesDisabledFromGlobalSearch.contains(source.id)
                 }, set: { value in
                     if value {
-                        sourcesHiddenFromGlobalSearch.append(source.id)
-                        sourcesHiddenFromGlobalSearch = Array(Set(sourcesHiddenFromGlobalSearch))
+                        sourcesDisabledFromGlobalSearch.insert(source.id)
                     } else {
-                        sourcesHiddenFromGlobalSearch.removeAll(where: { $0 == source.id })
+                        sourcesDisabledFromGlobalSearch.remove(source.id)
                     }
                 }))
             } header: {

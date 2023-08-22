@@ -163,7 +163,10 @@ final class Preferences {
     var currentReadingMode = ReadingMode.PAGED_COMIC
     
     @UserDefault(STTKeys.SourcesDisabledFromHistory)
-    var disabledHistorySources = [String]()
+    var disabledHistorySources = Set<String>()
+    
+    @UserDefault(STTKeys.SourcesDisabledFromGlobalSearch)
+    var disabledGlobalSearchSources = Set<String>()
 }
 
 @propertyWrapper

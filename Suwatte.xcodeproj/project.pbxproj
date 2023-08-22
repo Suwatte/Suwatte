@@ -994,13 +994,6 @@
 			path = Directory;
 			sourceTree = "<group>";
 		};
-		DF16F2B62A5F473600D7AFBB /* PageView */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = PageView;
-			sourceTree = "<group>";
-		};
 		DF16F2BD2A5F552E00D7AFBB /* Environments */ = {
 			isa = PBXGroup;
 			children = (
@@ -1346,7 +1339,6 @@
 		DF68249D28A5D2BB00AB30A1 /* Daisuke */ = {
 			isa = PBXGroup;
 			children = (
-				DF16F2B62A5F473600D7AFBB /* PageView */,
 				DFF09B5F2A5A0B2B00C5CA5E /* ContentTracker */,
 				DFF09B562A58D53400C5CA5E /* Preferences */,
 				DFF09B552A58D52B00C5CA5E /* Runners */,

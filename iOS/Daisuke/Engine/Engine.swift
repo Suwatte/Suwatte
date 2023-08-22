@@ -339,7 +339,7 @@ extension DaisukeEngine {
     }
     
     func getSourcesForSearching() async -> [JSCCS] {
-        let disabled: Set<String> = Set([String].init(rawValue: UserDefaults.standard.string(forKey: STTKeys.SourcesHiddenFromGlobalSearch) ?? "") ?? [])
+        let disabled: Set<String> = Preferences.standard.disabledGlobalSearchSources
         
         return await getActiveSources()
             .filter { !disabled.contains($0.id) }
