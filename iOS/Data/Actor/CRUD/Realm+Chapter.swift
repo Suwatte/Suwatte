@@ -30,7 +30,7 @@ extension RealmActor {
 
         // Check if it has any references
         let hasBookmarks = !realm
-            .objects(Bookmark.self)
+            .objects(UpdatedBookmark.self)
             .where { $0.isDeleted == false && $0.chapter.id == id }
             .isEmpty
 

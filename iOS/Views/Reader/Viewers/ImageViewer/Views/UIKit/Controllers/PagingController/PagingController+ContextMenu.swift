@@ -43,18 +43,22 @@ extension Controller: UIContextMenuInteractionDelegate {
             guard !STTHelpers.isInternalSource(chapter.sourceId) else { return menu }
             
             // Bookmark Actions
+            let bookmarkAction = UIAction(title: "Bookmark Panel", image: UIImage(systemName: "bookmark"), attributes:[]) { [weak self] _ in
+                self?.addBookmark(for: page.page, image: image)
+            }
             
-//            let isBookmarked = DataManager.shared.isBookmarked(chapter: chapter.toStored(), page: page.page.index)
-//            let bkTitle = isBookmarked ? "Remove Bookmark" : "Bookmark Panel"
-//            let bkSysImage = isBookmarked ? "bookmark.slash" : "bookmark"
-//
-//            let bookmarkAction = UIAction(title: bkTitle, image: UIImage(systemName: bkSysImage), attributes: isBookmarked ? [.destructive] : []) { _ in
-//                DataManager.shared.toggleBookmark(chapter: chapter.toStored(), page: page.page.index)
-//                ToastManager.shared.info("Bookmark \(isBookmarked ? "Removed" : "Added")!")
-//            }
-            
-            menu = menu.replacingChildren([photoMenu])
+            menu = menu.replacingChildren([photoMenu, bookmarkAction])
             return menu
         })
+    }
+    
+    func addBookmark(for page: ReaderPage, image: UIImage) {
+        Task {
+            let actor = await RealmActor()
+            let result = await actor.addBookmark(for: page.chapter, at: page.number, with: image)
+            result ? ToastManager.shared.info("Bookmarked!") : ToastManager.shared.error("Failed to bookmark")
+            
+        }
+
     }
 }

@@ -65,7 +65,7 @@ class BackupManager: ObservableObject {
             // Delete old objects
             realm.objects(LibraryEntry.self).setValue(true, forKey: "isDeleted")
             realm.objects(LibraryCollection.self).setValue(true, forKey: "isDeleted")
-            realm.objects(Bookmark.self).setValue(true, forKey: "isDeleted")
+            realm.objects(UpdatedBookmark.self).setValue(true, forKey: "isDeleted")
             realm.objects(ReadLater.self).setValue(true, forKey: "isDeleted")
             realm.objects(ProgressMarker.self).setValue(true, forKey: "isDeleted")
             realm.objects(StoredRunnerList.self).setValue(true, forKey: "isDeleted")

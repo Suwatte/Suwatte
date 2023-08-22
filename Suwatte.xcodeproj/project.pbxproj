@@ -159,6 +159,8 @@
 		DF59C97D285004860027F19D /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = DF59C97C285004860027F19D /* ZIPFoundation */; };
 		DF59C98028500E200027F19D /* LocalFileModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59C97F28500E200027F19D /* LocalFileModifier.swift */; };
 		DF59C988285054670027F19D /* Unrar in Frameworks */ = {isa = PBXBuildFile; productRef = DF59C987285054670027F19D /* Unrar */; };
+		DF62B5A12A946B5600F907CD /* BookmarksView+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5A02A946B5600F907CD /* BookmarksView+CollectionView.swift */; };
+		DF62B5A32A946B6800F907CD /* BookmarksView+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5A22A946B6800F907CD /* BookmarksView+ViewModel.swift */; };
 		DF67EB8828E3674900076FF5 /* LG+MoveFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */; };
 		DF67EB8A28E39E2200076FF5 /* DSK+Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */; };
 		DF67EB8C28E3F22700076FF5 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8B28E3F22700076FF5 /* Logger.swift */; };
@@ -580,6 +582,8 @@
 		DF541ED22A57448C0022C7EE /* JSCCS+Implementation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCCS+Implementation.swift"; sourceTree = "<group>"; };
 		DF553CC3297119AD004C3428 /* UserDefaultSerializable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultSerializable.swift; sourceTree = "<group>"; };
 		DF59C97F28500E200027F19D /* LocalFileModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalFileModifier.swift; sourceTree = "<group>"; };
+		DF62B5A02A946B5600F907CD /* BookmarksView+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BookmarksView+CollectionView.swift"; sourceTree = "<group>"; };
+		DF62B5A22A946B6800F907CD /* BookmarksView+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BookmarksView+ViewModel.swift"; sourceTree = "<group>"; };
 		DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LG+MoveFlag.swift"; sourceTree = "<group>"; };
 		DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Sync.swift"; sourceTree = "<group>"; };
 		DF67EB8B28E3F22700076FF5 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -1232,13 +1236,6 @@
 			path = Menu;
 			sourceTree = "<group>";
 		};
-		DF489C372A8482BD006A21B9 /* Cell */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Cell;
-			sourceTree = "<group>";
-		};
 		DF489C3A2A8482ED006A21B9 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
@@ -1729,6 +1726,8 @@
 			isa = PBXGroup;
 			children = (
 				DF8D0A8D2800EE47003E4C3E /* BookmarksView.swift */,
+				DF62B5A02A946B5600F907CD /* BookmarksView+CollectionView.swift */,
+				DF62B5A22A946B6800F907CD /* BookmarksView+ViewModel.swift */,
 			);
 			path = Bookmarks;
 			sourceTree = "<group>";
@@ -2280,7 +2279,6 @@
 			isa = PBXGroup;
 			children = (
 				DF489C3A2A8482ED006A21B9 /* Controller */,
-				DF489C372A8482BD006A21B9 /* Cell */,
 			);
 			path = Paged;
 			sourceTree = "<group>";
@@ -2674,7 +2672,9 @@
 				DF8D0B352800EE47003E4C3E /* STT+Double.swift in Sources */,
 				DF8D0BA62800EE48003E4C3E /* BrowseView.swift in Sources */,
 				DF8D0B212800EE47003E4C3E /* STTNotifier.swift in Sources */,
+				DF62B5A12A946B5600F907CD /* BookmarksView+CollectionView.swift in Sources */,
 				DFF1044028A9A6B800E2C3A4 /* DSK+Networking.swift in Sources */,
+				DF62B5A32A946B6800F907CD /* BookmarksView+ViewModel.swift in Sources */,
 				DFDBF9792A7C5583006D49AD /* JSCR+Auth.swift in Sources */,
 				DF356D7A29C57AC7000B605C /* JSCContentSource.swift in Sources */,
 				DF4817F32A6F8B0300CB3A47 /* SDM.swift in Sources */,

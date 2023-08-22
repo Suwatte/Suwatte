@@ -34,7 +34,7 @@ extension Controller {
 extension Controller: UIContextMenuInteractionDelegate, UIGestureRecognizerDelegate {
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-        
+        guard let currentPath, let item = dataSource.itemIdentifier(for: currentPath), item.isPage else { return nil }
         let image = captureVisibleRect(of: collectionNode.view)
         return UIContextMenuConfiguration(identifier: nil, previewProvider: {
             // Create and return a preview for the visible portion of the image
@@ -66,9 +66,9 @@ extension Controller: UIContextMenuInteractionDelegate, UIGestureRecognizerDeleg
             
             let bookmarkAction = UIAction(title: "Bookmark",
                                           image: UIImage(systemName: "bookmark"),
-                                          attributes: []) { _ in
+                                          attributes: []) {[weak self] _ in
                 
-                ToastManager.shared.info("Bookmarked!")
+            self?.addBookmark(image: image)
             }
                         
             menu = menu.replacingChildren([panelMenu, bookmarkAction])
@@ -78,6 +78,21 @@ extension Controller: UIContextMenuInteractionDelegate, UIGestureRecognizerDeleg
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willEndFor configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionAnimating?) {
         navigationController?.view.removeInteraction(interaction)
+    }
+    
+    func addBookmark(image: UIImage) {
+        guard let currentPath, let item = dataSource.itemIdentifier(for: currentPath), case .page(let page) = item else { return }
+        let offset = calculateCurrentOffset(of: currentPath)
+        Task {
+            let actor = await RealmActor()
+            let result = await actor.addBookmark(for: page.page.chapter,
+                                                 at: page.page.number,
+                                                 with: image,
+                                                 on: offset)
+            result ? ToastManager.shared.info("Bookmarked!") : ToastManager.shared.error("Failed to bookmark")
+            
+        }
+
     }
     
 }

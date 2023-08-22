@@ -78,7 +78,7 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
             SyncObject(type: LibraryCollection.self),
             SyncObject(type: ChapterReference.self),
             SyncObject(type: ProgressMarker.self),
-            SyncObject(type: Bookmark.self),
+            SyncObject(type: UpdatedBookmark.self),
             SyncObject(type: ReadLater.self),
             SyncObject(type: StreamableOPDSContent.self),
             SyncObject(type: ArchivedContent.self),
