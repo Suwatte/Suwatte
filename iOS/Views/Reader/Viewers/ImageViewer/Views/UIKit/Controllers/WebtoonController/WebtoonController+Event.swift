@@ -60,6 +60,18 @@ extension Controller {
         }
         
         // Update on Trackers
+        let isInternalSource = STTHelpers
+            .isInternalSource(chapter.sourceId)
+        guard !isInternalSource else { return }
+        Task {
+            let actor = await RealmActor()
+            let progress = DSKCommon
+                .TrackProgressUpdate(chapter: chapter.number,
+                                                         volume: chapter.volume)
+            await actor
+                .updateTrackProgress(for: chapter.STTContentIdentifier,
+                                            progress: progress)
+        }
     }
     
     func didReadPage(_ page: ReaderPage, path: IndexPath) {

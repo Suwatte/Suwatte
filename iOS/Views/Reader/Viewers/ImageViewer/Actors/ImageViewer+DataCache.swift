@@ -182,7 +182,7 @@ extension IVDataCache {
             return nil
         }
         
-        guard next.number > chapter.number else {
+        guard next.number != chapter.number else {
             return getChapter(after: next)
         }
         
@@ -202,7 +202,7 @@ extension IVDataCache {
             return nil
         }
         
-        guard prev.number < chapter.number else {
+        guard prev.number != chapter.number else {
             return getChapter(before: prev)
         }
         
