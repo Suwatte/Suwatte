@@ -94,11 +94,14 @@ extension IVMenuView {
     }
     struct HeaderView: View {
         @EnvironmentObject var model: IVViewModel
+        @Environment(\.colorScheme) var colorScheme
         var body: some View {
             VStack(alignment: .leading, spacing: 5) {
                 HeaderButtons()
                 Text(model.title)
                     .font(.title3)
+                    .fontWeight(.bold)
+                    .shadow(radius: colorScheme == .dark ? 1.5 : 0)
                     .multilineTextAlignment(.leading)
                     .lineLimit(3)
                     .frame(alignment: .leadingLastTextBaseline)
@@ -165,6 +168,8 @@ extension IVMenuView {
 extension IVMenuView {
     struct ActiveChapterView: View {
         @EnvironmentObject var model: IVViewModel
+        @Environment(\.colorScheme) var colorScheme
+
         var body: some View {
             Button {
                 open()
@@ -189,8 +194,12 @@ extension IVMenuView {
                 VStack(alignment: .leading) {
                     Text(chapter.displayName)
                         .font(.headline)
+                        .fontWeight(.semibold)
+                        .shadow(radius: colorScheme == .dark ? 1.5 : 0)
                     Text(chapter.title ?? chapter.displayName)
                         .font(.subheadline)
+                        .fontWeight(.medium)
+                        .shadow(radius: colorScheme == .dark ? 1.5 : 0)
                 }
                 Image(systemName: "chevron.down").imageScale(.medium)
                     .opacity(model.chapterCount != 1 ? 1 : 0)
