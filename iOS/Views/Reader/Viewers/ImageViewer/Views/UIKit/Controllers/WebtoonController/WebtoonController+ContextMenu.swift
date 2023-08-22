@@ -35,34 +35,45 @@ extension Controller: UIContextMenuInteractionDelegate, UIGestureRecognizerDeleg
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
         
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: { [unowned self] in
+        let image = captureVisibleRect(of: collectionNode.view)
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: {
             // Create and return a preview for the visible portion of the image
             let previewVC = UIViewController()
             let imageView = UIImageView(frame: CGRect(origin: .zero, size: UIScreen.main.bounds.size))
             imageView.contentMode = .scaleAspectFit
-            imageView.image = captureVisibleRect(of: collectionNode.view)
+            imageView.image = image
             previewVC.view = imageView
             return previewVC
-        }, actionProvider: { suggestedActions in
-        
-            // Create an action for sharing
-                        let share = UIAction(title: "Share", image: UIImage(systemName: "square.and.arrow.up")) { action in
-                            // Show system share sheet
-                        }
+        }, actionProvider: { _ in
+            
+            guard let image else { return nil }
+            // Save to Photos
+            let saveToAlbum = UIAction(title: "Save Panel", image: UIImage(systemName: "square.and.arrow.down")) { _ in
+                STTPhotoAlbum.shared.save(image)
+                ToastManager.shared.info("Panel Saved!")
+            }
+            
+            // Share Photo
+            let sharePhotoAction = UIAction(title: "Share Panel", image: UIImage(systemName: "square.and.arrow.up")) { _ in
+                let objectsToShare = [image]
+                let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+                self.present(activityVC, animated: true, completion: nil)
+            }
+            
+            let panelMenu = UIMenu(title: "", options: .displayInline, children: [saveToAlbum, sharePhotoAction])
+            
+            var menu = UIMenu(title: "Actions", children: [panelMenu])
+            
+            let bookmarkAction = UIAction(title: "Bookmark",
+                                          image: UIImage(systemName: "bookmark"),
+                                          attributes: []) { _ in
                 
-                        // Create an action for renaming
-                        let rename = UIAction(title: "Rename", image: UIImage(systemName: "square.and.pencil")) { action in
-                            // Perform renaming
-                        }
-                
-                        // Here we specify the "destructive" attribute to show that it’s destructive in nature
-                        let delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
-                            // Perform delete
-                        }
-                
-                        // Create and return a UIMenu with all of the actions as children
-                        return UIMenu(title: "", children: [share, rename, delete])
-        }) // No actions are provided in this case
+                ToastManager.shared.info("Bookmarked!")
+            }
+                        
+            menu = menu.replacingChildren([panelMenu, bookmarkAction])
+            return menu
+        })
     }
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willEndFor configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionAnimating?) {

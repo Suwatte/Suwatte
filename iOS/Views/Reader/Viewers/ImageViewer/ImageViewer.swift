@@ -41,6 +41,7 @@ struct ImageViewer: View {
                 ImageCache.shared.removeAll()
             }
         }
+        .toast()
     }
 }
 
