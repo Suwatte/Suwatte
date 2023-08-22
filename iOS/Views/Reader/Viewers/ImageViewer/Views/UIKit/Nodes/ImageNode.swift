@@ -69,6 +69,7 @@ class ImageNode: ASCellNode {
     }
 
     func listen() {
+        // Pillarbox
         Preferences.standard.preferencesChangedSubject
             .filter { changedKeyPath in
                 changedKeyPath == \Preferences.usePillarBox ||
@@ -83,7 +84,18 @@ class ImageNode: ASCellNode {
             }
             .store(in: &subscriptions)
         
-        // TODO: Downsample
+        Preferences
+            .standard
+            .preferencesChangedSubject
+            .filter { path in
+                path == \Preferences.downsampleImages
+            }
+            .sink { [weak self] _ in
+                self?.image = nil
+                self?.imageNode.image = nil
+                self?.loadImage()
+            }
+            .store(in: &subscriptions)
     }
     
 

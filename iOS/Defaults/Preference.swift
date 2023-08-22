@@ -167,6 +167,9 @@ final class Preferences {
     
     @UserDefault(STTKeys.SourcesDisabledFromGlobalSearch)
     var disabledGlobalSearchSources = Set<String>()
+    
+    @UserDefault(STTKeys.VerticalPagePaddingAmount)
+    var verticalPagePaddingAmount: Int = 5
 }
 
 @propertyWrapper

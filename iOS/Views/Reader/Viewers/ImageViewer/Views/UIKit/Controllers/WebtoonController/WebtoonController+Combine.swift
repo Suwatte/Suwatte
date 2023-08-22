@@ -13,6 +13,7 @@ extension Controller {
         subToSliderPublisher()
         subToScrubEventPublisher()
         subToAutoScrollPublisher()
+        subToPagePaddingPublisher()
     }
 }
 
@@ -53,5 +54,24 @@ extension Controller {
                 }
             }
             .store(in: &subscriptions)
+    }
+    
+    func subToPagePaddingPublisher() {
+        // Padding
+        Preferences
+            .standard
+            .preferencesChangedSubject
+            .filter { keyPath in
+                keyPath == \Preferences.VerticalPagePadding ||
+                keyPath == \Preferences.verticalPagePaddingAmount
+            }
+            .sink { [weak self] _ in
+                (self?.collectionNode.view.collectionViewLayout as? VImageViewerLayout)?
+                    .updateSpacing()
+                self?.collectionNode.view.collectionViewLayout.invalidateLayout()
+                self?.collectionNode.view.setNeedsLayout()
+            }
+            .store(in: &subscriptions)
+
     }
 }

@@ -24,12 +24,10 @@ struct IVSettingsView: View {
     @AppStorage(STTKeys.VerticalAutoScroll) var verticalAutoScroll = false
     // Preference Publisher
     @Preference(\.verticalAutoScrollSpeed) var autoScrollSpeed
-    @Preference(\.readingLeftToRight) var readingLeftToRight
     @Preference(\.imageInteractions) var imageInteractions
     @Preference(\.downsampleImages) var downsampleImages
     @Preference(\.cropWhiteSpaces) var cropWhiteSpaces
     @Preference(\.displayNavOverlay) var displayNavOverlay
-    @Preference(\.isReadingVertically) var isVertical
     @Preference(\.isDoublePagedEnabled) var isDoublePaged
     @Preference(\.invertTapSidesToNavigate) var invertTapSidesToNavigate
     @Preference(\.VerticalPagePadding) var verticalPagePadding
@@ -40,6 +38,7 @@ struct IVSettingsView: View {
     @Preference(\.enableReaderHaptics) var readerHaptics
     @Preference(\.forceTransitions) var forceTransitions
     @Preference(\.splitWidePages) var splitWidePages
+    @Preference(\.verticalPagePaddingAmount) var pagePaddingAmount
     private let autoScrollRange: ClosedRange<Double> = 2.5 ... 30
     private let pillarBoxRange: ClosedRange<Double> = 0.15 ... 1.0
     @State var holdingAutoScrollBinding: Double = 0.0
@@ -126,6 +125,18 @@ struct IVSettingsView: View {
                             Text("Images will be sized to fit roughly \((holdingPillarBoxPCT * 100).clean)% of the screen's width.")
                         }
                     }
+                    
+                    Section {
+                        Toggle("Enable Padding", isOn: $verticalPagePadding)
+                        if verticalPagePadding {
+                            Stepper(value: $pagePaddingAmount, in: 5 ... 50, step: 5) {
+                                FieldLabel(primary: "Amount",
+                                           secondary: pagePaddingAmount.description)
+                            }
+                        }
+                    } header: {
+                        Text("Page Padding")
+                    }
                 }
 
                 Section {
@@ -136,7 +147,7 @@ struct IVSettingsView: View {
 
                         Toggle("Display Guide", isOn: $displayNavOverlay)
 
-                        Picker("Navigation Layout", selection: isVertical ? $verticalNavigator : $pagedNavigator) {
+                        Picker("Navigation Layout", selection: model.readingMode.isVertical ? $verticalNavigator : $pagedNavigator) {
                             ForEach(ReaderNavigation.Modes.allCases) { entry in
 
                                 Text(entry.mode.title)

@@ -34,6 +34,7 @@ enum STTKeys {
     static let VerticalAutoScroll = "READER.vertical_auto_scroll"
     static let VerticalAutoScrollSpeed = "READER.vertical_auto_scroll_speed"
     static let VerticalPagePadding = "READER.vertical_page_padding"
+    static let VerticalPagePaddingAmount = "READER.vertical.padding.amount"
     static let ForceTransition = "READER.force_transitions"
 
     static let BackgroundColor = "READER.bg_color"

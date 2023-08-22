@@ -13,11 +13,11 @@ class VImageViewerLayout: UICollectionViewFlowLayout, OffsetPreservingLayout {
     override init() {
         super.init()
         scrollDirection = .vertical
-        minimumLineSpacing = 0
         minimumInteritemSpacing = 0
-        minimumLineSpacing = Preferences.standard.VerticalPagePadding ? 10 : 0
         sectionInset = UIEdgeInsets.zero
+        updateSpacing()
     }
+    
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
@@ -48,5 +48,9 @@ class VImageViewerLayout: UICollectionViewFlowLayout, OffsetPreservingLayout {
             contentSizeBeforeInsertingToTop = nil
             isInsertingCellsToTop = false
         }
+    }
+    
+    func updateSpacing() {
+        minimumLineSpacing = CGFloat(Preferences.standard.VerticalPagePadding ? Preferences.standard.verticalPagePaddingAmount : 0)
     }
 }
