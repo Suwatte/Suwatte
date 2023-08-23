@@ -67,6 +67,7 @@ extension RealmActor {
         
         let contents = getLinkedContent(for: id, false)
             .map(\.id)
+            .appending(id)
         
         let collection = realm
             .objects(SourceDownload.self)

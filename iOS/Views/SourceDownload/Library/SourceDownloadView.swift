@@ -77,6 +77,7 @@ struct SourceDownloadView: View {
                 await model.watch(sortOption, isAscending)
             }
         }
+        .animation(.default, value: model.entries)
         .navigationBarTitle("Downloads")
         .navigationBarTitleDisplayMode(.inline)
     }

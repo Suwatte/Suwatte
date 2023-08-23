@@ -18,6 +18,11 @@ extension SDM {
         if state != .halted {
             // Update Object
             await update(ids: [id], status: state.DownloadState)
+            let contentID = await get(id)?.content?.id
+            if let contentID {
+                let actor = await RealmActor()
+                await actor.updateDownloadIndex(for: [contentID])
+            }
         }
         // Reset Publisher
         announce()
