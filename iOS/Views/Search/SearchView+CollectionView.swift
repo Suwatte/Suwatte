@@ -33,8 +33,8 @@ extension SearchView.CollectionView {
     }
     
     func CollectionSection(_ result: SearchView.ResultGroup) -> ASCollectionViewSection<String> {
-        .init(id: result.source.id, data: result.result.results) { data, _ in
-            CollectionCell(data: data, sourceID: result.source.id)
+        .init(id: result.sourceID, data: result.result.results) { data, _ in
+            CollectionCell(data: data, sourceID: result.sourceID)
         }
         .sectionHeader {
             CollectionHeader(result)
@@ -78,11 +78,10 @@ extension SearchView.CollectionView {
 extension SearchView.CollectionView {
     @ViewBuilder
     func CollectionHeader(_ group: SearchView.ResultGroup) -> some View {
-        let source = group.source
         let result = group.result
         HStack {
             VStack(alignment: .leading) {
-                Text(source.name)
+                Text(group.sourceName)
                     .font(.headline.weight(.semibold))
                 if let count = result.totalResultCount {
                     Text(count.description + " Results")
@@ -92,8 +91,11 @@ extension SearchView.CollectionView {
             Spacer()
             if !result.isLastPage {
                 NavigationLink {
-                    ContentSourceDirectoryView(source: source,
-                                               request: .init(query: model.query, page: 1))
+                    LoadableSourceView(sourceID: group.sourceID) { source in
+                        ContentSourceDirectoryView(source: source,
+                                                   request: .init(query: model.query,
+                                                                  page: 1))
+                    }
                 } label: {
                     Text("View More \(Image(systemName: "chevron.right"))")
                         .font(.subheadline)

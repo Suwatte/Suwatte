@@ -70,7 +70,7 @@ extension DSKRunnerDelegate {
     }
 
     var name: String {
-        instance.name
+        info.name
     }
 
     var version: Double {

@@ -13,7 +13,8 @@ extension SearchView {
     typealias PagedResult = DSKCommon.PagedHighlight
 
     struct ResultGroup {
-        let source: JSCCS
+        let sourceID: String
+        let sourceName: String
         let result: PagedResult
     }
     
@@ -58,13 +59,17 @@ extension SearchView {
             
             let sources = await getSources()
                         
+            guard !Task.isCancelled else { return }
             await withTaskGroup(of: Void.self) { group in
                 for source in sources {
+                    guard !Task.isCancelled else { return }
                     group.addTask {
                         await self.load(for: source)
                     }
                 }
             }
+            
+            guard !Task.isCancelled else { return }
             
             await MainActor.run {
                 state = .loaded("")
@@ -80,7 +85,7 @@ extension SearchView {
                     if data.results.isEmpty {
                         incomplete.noResults.append(source.name)
                     } else {
-                        let result: ResultGroup = .init(source: source, result: data)
+                        let result: ResultGroup = .init(sourceID: source.id, sourceName: source.name, result: data)
                         results.append(result)
                     }
                 }

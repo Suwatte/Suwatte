@@ -16,7 +16,7 @@ struct SearchView: View {
     @StateObject private var model = ViewModel()
     @State private var presentHistory = false
     @State private var presentImageSearch = false
-    
+    @State var searchTask: Task<Void, Never>?
     var body: some View {
         Group {
             if model.query.isEmpty {
@@ -50,8 +50,8 @@ struct SearchView: View {
                 model.results.removeAll()
                 return
             }
-            
-            Task {
+            searchTask?.cancel()
+            searchTask = Task {
                 await model.makeRequests()
             }
         }
@@ -61,6 +61,9 @@ struct SearchView: View {
             Task {
                 let actor = await RealmActor()
                 await actor.saveSearch(request, sourceId: nil, display: display)
+            }
+            searchTask?.cancel()
+            searchTask = Task {
                 await model.makeRequests()
             }
         }

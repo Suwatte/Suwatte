@@ -16,7 +16,7 @@ struct AddContentLink: View {
     @Environment(\.presentationMode) private var presentationMode
     var body: some View {
         List {
-            ForEach(model.results, id: \.source.id) { result in
+            ForEach(model.results, id: \.sourceID) { result in
                 SourceSection(result: result)
                     .listRowInsets(.init(top: 5, leading: 0, bottom: 20, trailing: 0))
                     .listRowSeparator(.hidden)
@@ -45,13 +45,12 @@ struct AddContentLink: View {
 
     @ViewBuilder
     func SourceSection(result: SearchView.ResultGroup) -> some View {
-        let source = result.source
         let data = result.result
         Section {
-            ResultGroup(data.results, source.id)
+            ResultGroup(data.results, result.sourceName)
         } header: {
             HStack {
-                Text(source.name)
+                Text(result.sourceName)
             }
             .padding(.horizontal)
         }
