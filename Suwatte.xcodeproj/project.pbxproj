@@ -161,6 +161,8 @@
 		DF59C988285054670027F19D /* Unrar in Frameworks */ = {isa = PBXBuildFile; productRef = DF59C987285054670027F19D /* Unrar */; };
 		DF62B5A12A946B5600F907CD /* BookmarksView+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5A02A946B5600F907CD /* BookmarksView+CollectionView.swift */; };
 		DF62B5A32A946B6800F907CD /* BookmarksView+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5A22A946B6800F907CD /* BookmarksView+ViewModel.swift */; };
+		DF62B5A52A946F4C00F907CD /* Realm+BookmarksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5A42A946F4C00F907CD /* Realm+BookmarksView.swift */; };
+		DF62B5A72A94800D00F907CD /* BookmarksView+TabPager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5A62A94800D00F907CD /* BookmarksView+TabPager.swift */; };
 		DF67EB8828E3674900076FF5 /* LG+MoveFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */; };
 		DF67EB8A28E39E2200076FF5 /* DSK+Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */; };
 		DF67EB8C28E3F22700076FF5 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8B28E3F22700076FF5 /* Logger.swift */; };
@@ -584,6 +586,8 @@
 		DF59C97F28500E200027F19D /* LocalFileModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalFileModifier.swift; sourceTree = "<group>"; };
 		DF62B5A02A946B5600F907CD /* BookmarksView+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BookmarksView+CollectionView.swift"; sourceTree = "<group>"; };
 		DF62B5A22A946B6800F907CD /* BookmarksView+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BookmarksView+ViewModel.swift"; sourceTree = "<group>"; };
+		DF62B5A42A946F4C00F907CD /* Realm+BookmarksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+BookmarksView.swift"; sourceTree = "<group>"; };
+		DF62B5A62A94800D00F907CD /* BookmarksView+TabPager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BookmarksView+TabPager.swift"; sourceTree = "<group>"; };
 		DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LG+MoveFlag.swift"; sourceTree = "<group>"; };
 		DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Sync.swift"; sourceTree = "<group>"; };
 		DF67EB8B28E3F22700076FF5 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -1728,6 +1732,7 @@
 				DF8D0A8D2800EE47003E4C3E /* BookmarksView.swift */,
 				DF62B5A02A946B5600F907CD /* BookmarksView+CollectionView.swift */,
 				DF62B5A22A946B6800F907CD /* BookmarksView+ViewModel.swift */,
+				DF62B5A62A94800D00F907CD /* BookmarksView+TabPager.swift */,
 			);
 			path = Bookmarks;
 			sourceTree = "<group>";
@@ -2060,6 +2065,7 @@
 				DFD4D86B2A7B1C2500C5AC13 /* Realm+BrowseView.swift */,
 				DFDBF96A2A7C4470006D49AD /* Realm+HighlightGrid.swift */,
 				DF020A532A8C46AE00BC5562 /* Realm+RunnerListView.swift */,
+				DF62B5A42A946F4C00F907CD /* Realm+BookmarksView.swift */,
 			);
 			path = Observers;
 			sourceTree = "<group>";
@@ -2763,9 +2769,11 @@
 				DFDBF9F42A7DD588006D49AD /* ImageViewer+ViewModel.swift in Sources */,
 				DF6883872A60937E009B5642 /* Landing+Source.swift in Sources */,
 				DFDBF9E72A7DC2A4006D49AD /* Paged+Holder.swift in Sources */,
+				DF62B5A72A94800D00F907CD /* BookmarksView+TabPager.swift in Sources */,
 				DFDBF9BB2A7DA178006D49AD /* Reader+Transition.swift in Sources */,
 				DF1114932A93F0DD00FA8A39 /* WebtoonController+Zoom.swift in Sources */,
 				DF2783642A79BFD00098BBA9 /* +CollectionFilter.swift in Sources */,
+				DF62B5A52A946F4C00F907CD /* Realm+BookmarksView.swift in Sources */,
 				DF8D0B312800EE47003E4C3E /* STT+UIImage.swift in Sources */,
 				DFD4D8702A7B540800C5AC13 /* SearchView+CollectionView.swift in Sources */,
 				DF67EBA428EA34DE00076FF5 /* DSK+Common.swift in Sources */,

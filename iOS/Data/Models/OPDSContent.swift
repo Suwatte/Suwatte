@@ -34,7 +34,15 @@ extension StreamableOPDSContent {
 
     func read(onDismiss: (() -> Void)? = nil) {
         let chapter = toStoredChapter()
-        let state = ReaderState(title: contentTitle, chapter: chapter, chapters: [chapter], requestedPage: nil, readingMode: nil, dismissAction: onDismiss)
-        StateManager.shared.openReader(state: state)
+        let state = ReaderState(title: contentTitle,
+                                chapter: chapter,
+                                chapters: [chapter],
+                                requestedPage: nil,
+                                requestedOffset: nil,
+                                readingMode: nil,
+                                dismissAction: onDismiss)
+        Task { @MainActor in
+            StateManager.shared.openReader(state: state)
+        }
     }
 }

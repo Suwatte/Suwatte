@@ -22,7 +22,7 @@ final class ToastManager: ObservableObject {
         task = Task { @MainActor in
             try? await Task.sleep(seconds: 0.3)
             toast = message
-            try? await Task.sleep(seconds: 3)
+            try? await Task.sleep(seconds: 2.5)
             toast = nil
             queue.dequeue()
             run()
@@ -77,5 +77,30 @@ extension ToastManager {
 
     func error(_ error: String) {
         display(.error(nil, error))
+    }
+}
+
+
+extension ToastManager {
+    func block(_ action: @escaping () async throws -> Void ) {
+        
+        Task {
+            await MainActor.run {
+                loading = true
+            }
+            
+            do {
+                try await action()
+                await MainActor.run {
+                    loading = false
+                }
+            } catch {
+                Logger.shared.error(error)
+                await MainActor.run {
+                    loading = false
+                    self.error(error)
+                }
+            }
+        }
     }
 }

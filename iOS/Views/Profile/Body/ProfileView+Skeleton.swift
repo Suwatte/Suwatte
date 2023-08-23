@@ -26,11 +26,6 @@ extension ProfileView {
                         .tint(accentColor)
                         .accentColor(accentColor)
                 })
-                .fullScreenCover(isPresented: $viewModel.presentBookmarksSheet, content: {
-                    BookmarksView()
-                        .tint(accentColor)
-                        .accentColor(accentColor)
-                })
                 .fullScreenCover(isPresented: $viewModel.presentManageContentLinks, content: {
                     NavigationView {
                         ManageContentLinks(content: viewModel.storedContent)

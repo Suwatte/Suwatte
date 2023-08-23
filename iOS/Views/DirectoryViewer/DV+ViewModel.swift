@@ -107,10 +107,17 @@ extension DirectoryViewer {
             // Generate Chapter
             let chapter = file.toStoredChapter()
 
-            let context = ReaderState(title: file.metaData?.title ?? file.name, chapter: chapter, chapters: [chapter], requestedPage: nil, readingMode: nil) { [weak self] in
+            let context = ReaderState(title: file.metaData?.title ?? file.name,
+                                      chapter: chapter,
+                                      chapters: [chapter],
+                                      requestedPage: nil,
+                                      requestedOffset: nil,
+                                      readingMode: nil) { [weak self] in
                 self?.currentlyReading = nil
             }
-            StateManager.shared.openReader(state: context)
+            Task { @MainActor in
+                StateManager.shared.openReader(state: context)
+            }
             currentlyReading = file
         }
 
@@ -152,11 +159,18 @@ extension File {
 
     func read() {
         let chapter = toStoredChapter()
-        let context = ReaderState(title: metaData?.title ?? name, chapter: chapter, chapters: [chapter], requestedPage: nil, readingMode: nil, dismissAction: nil)
+        let context = ReaderState(title: metaData?.title ?? name,
+                                  chapter: chapter, chapters: [chapter],
+                                  requestedPage: nil,
+                                  requestedOffset: nil,
+                                  readingMode: nil,
+                                  dismissAction: nil)
         Task {
             let actor = await RealmActor()
             await actor.saveArchivedFile(self)
         }
-        StateManager.shared.openReader(state: context)
+        Task { @MainActor in
+            StateManager.shared.openReader(state: context)
+        }
     }
 }

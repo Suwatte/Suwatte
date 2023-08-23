@@ -104,10 +104,17 @@ extension StateManager {
         // Open Reader
         let chapter = chapters.first(where: { $0.chapterId == context.target })!
         Task { @MainActor in
-            readerState = .init(title: nil, chapter: chapter, chapters: chapters, requestedPage: context.requestedPage, readingMode: context.readingMode, dismissAction: nil)
+            readerState = .init(title: highlight.title,
+                                chapter: chapter,
+                                chapters: chapters,
+                                requestedPage: context.requestedPage,
+                                requestedOffset: nil,
+                                readingMode: context.readingMode,
+                                dismissAction: nil)
         }
     }
 
+    @MainActor
     func openReader(state: ReaderState) {
         // Ensure the chapter to be opened is in the provided chapter list
         let targetInList = state.chapters.contains(state.chapter)
@@ -173,6 +180,58 @@ struct ReaderState: Identifiable {
     let chapter: StoredChapter
     let chapters: [StoredChapter]
     let requestedPage: Int?
+    let requestedOffset: Double?
     let readingMode: ReadingMode?
     let dismissAction: (() -> Void)?
+}
+
+// TODO: Continue From History
+extension StateManager {
+    
+}
+
+// MARK: Continue From Bookmark
+extension StateManager {
+    func open(bookmark: UpdatedBookmark) {
+        let toaster = ToastManager.shared
+        typealias errors = DSK.Errors
+        toaster.block {
+            let reference = bookmark.chapter
+            guard let reference, reference.isValid else {
+                throw errors.NamedError(name: "StateManager", message: "invalid reference")
+            }
+            
+            let actor = await RealmActor()
+            // Content
+            if let content = reference.content {
+                let chapters = await actor.getChapters(content.sourceId,
+                                                       content: content.contentId)
+                guard let target = chapters.first(where: { $0.id == reference.id }) else {
+                    throw errors.NamedError(name: "StateManager", message: "chapter not found")
+                }
+                
+                let state: ReaderState = .init(title: content.title,
+                                               chapter: target,
+                                               chapters: chapters,
+                                               requestedPage: bookmark.page - 1, // Bookmark uses page rather than index
+                                               requestedOffset: bookmark.verticalOffset,
+                                               readingMode: content.recommendedReadingMode,
+                                               dismissAction: nil)
+                await MainActor.run { [weak self] in
+                    self?.openReader(state: state)
+                }
+                
+            } else if let content = reference.opds {
+                
+            } else if let content = reference.archive {
+                
+            }
+            
+            
+            
+            
+            
+        }
+
+    }
 }

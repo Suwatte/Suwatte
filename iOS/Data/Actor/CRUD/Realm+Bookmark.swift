@@ -10,13 +10,6 @@ import RealmSwift
 import IceCream
 
 extension RealmActor {
-//    func isBookmarked(chapter: String, page: Int) -> Bool {
-//        return !realm.objects(UpdatedBookmark.self)
-//            .where { $0.isDeleted == false }
-//            .where { $0.chapter.id == chapter }
-//            .where { $0.page == page }
-//            .isEmpty
-//    }
     
     func addBookmark(for chapter: ThreadSafeChapter, at page: Int, with image: UIImage, on offset: Double? = nil) async -> Bool {
         
@@ -70,8 +63,8 @@ extension RealmActor {
 
     func removeBookmark(_ id: String) async {
         let target = realm
-            .objects(Bookmark.self)
-            .where { $0.id == id }
+            .objects(UpdatedBookmark.self)
+            .where { $0.id == id && !$0.isDeleted }
             .first
 
         guard let target else {
@@ -79,7 +72,7 @@ extension RealmActor {
         }
 
         try! await realm.asyncWrite {
-            target.isDeleted = false
+            target.isDeleted = true
         }
     }
 }

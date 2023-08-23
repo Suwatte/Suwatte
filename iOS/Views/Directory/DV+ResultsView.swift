@@ -45,7 +45,7 @@ extension DirectoryView {
             }
 
             .layout(createCustomLayout: {
-                DynamicGridLayout(header: hasHeader ? .estimated(32) : .absolute(0), footer: .estimated(44))
+                DynamicGridLayout(header: hasHeader ? .estimated(32) : .absolute(1), footer: .estimated(44))
             }, configureCustomLayout: { layout in
                 layout.invalidateLayout()
             })

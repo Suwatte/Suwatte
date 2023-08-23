@@ -99,7 +99,6 @@ extension Skeleton.Header {
 
 private extension Skeleton {
     struct ActionButtons: View {
-        @State var currentAction: Option?
         @State var presentSafariView = false
         @EnvironmentObject var model: ProfileView.ViewModel
         @AppStorage(STTKeys.AlwaysAskForLibraryConfig) var promptForConfig = true
@@ -107,26 +106,35 @@ private extension Skeleton {
         @AppStorage(STTKeys.DefaultReadingFlag) var defaultFlag = LibraryFlag.unknown
         var body: some View {
             HStack(alignment: .center, spacing: 30) {
-                ForEach(actions, id: \.option) { action in
-
-                    Button {
-                        
-                        switch action.option {
-                        case .COLLECTIONS:
-                            Task {
-                                await handleLibraryAction()
-                            }
-                        case .TRACKERS: model.presentTrackersSheet.toggle()
-                        case .WEBVIEW: model.presentSafariView.toggle()
-                        case .BOOKMARKS: model.presentBookmarksSheet.toggle()
-                        }
-                    } label: {
-                        Image(systemName: action.imageName)
+                // Library Button
+                Button {
+                    Task {
+                        await handleLibraryAction()
                     }
-                    .disabled(action.option == .WEBVIEW && model.content.webUrl == nil)
-                    .disabled(action.option == .COLLECTIONS && !model.source.ablityNotDisabled(\.disableLibraryActions))
-                    .disabled(action.option == .TRACKERS && !model.source.ablityNotDisabled(\.disableTrackerLinking))
+                } label: {
+                    Image(systemName: EntryInLibrary ? "folder.fill" : "folder.badge.plus")
                 }
+                .disabled(!model.source.ablityNotDisabled(\.disableLibraryActions))
+                
+                Button {
+                    model.presentTrackersSheet.toggle()
+                } label: {
+                    Image(systemName: "checklist")
+                }
+                .disabled(!model.source.ablityNotDisabled(\.disableTrackerLinking))
+                
+                NavigationLink {
+                    BookmarksView(contentID: model.contentIdentifier)
+                } label: {
+                    Image(systemName: "bookmark")
+                }
+                
+                Button {
+                    model.presentSafariView.toggle()
+                } label: {
+                    Image(systemName: "globe")
+                }
+                .disabled(model.content.webUrl == nil)
             }
 
             .font(.title2.weight(.light))
@@ -159,27 +167,5 @@ private extension Skeleton {
                 }
             }
         }
-    }
-}
-
-private extension Skeleton.ActionButtons {
-    var actions: [Action] {
-        [.init(imageName: EntryInLibrary ? "folder.fill" : "folder.badge.plus", option: .COLLECTIONS),
-         .init(imageName: "checklist", option: .TRACKERS),
-         .init(imageName: "bookmark", option: .BOOKMARKS),
-         .init(imageName: "globe", option: .WEBVIEW)]
-    }
-
-    enum Option: Identifiable {
-        case COLLECTIONS, BOOKMARKS, TRACKERS, WEBVIEW
-
-        var id: Int {
-            hashValue
-        }
-    }
-
-    struct Action {
-        var imageName: String
-        var option: Option
     }
 }
