@@ -25,7 +25,14 @@ struct CollectionManagementView: View {
             Toggle("Enable Smart Filters", isOn: $enableFilters)
 
             if let filter = collection.filter, enableFilters {
-                FilterSections(collectionId: collection.id, sourceSelections: filter.sources.toArray(), flagSelections: filter.readingFlags.toArray(), contentSelections: filter.contentType.toArray(), titleContains: filter.textContains.toArray(), tagContains: filter.tagContains.toArray(), contentStatuses: filter.statuses.toArray())
+                FilterSections(collectionId: collection.id,
+                               currentFilterID: collection.filter?.id,
+                               sourceSelections: filter.sources.toArray(),
+                               flagSelections: filter.readingFlags.toArray(),
+                               contentSelections: filter.contentType.toArray(),
+                               titleContains: filter.textContains.toArray(),
+                               tagContains: filter.tagContains.toArray(),
+                               contentStatuses: filter.statuses.toArray())
                     .transition(.slide)
                     .animation(.default)
             }
@@ -46,10 +53,10 @@ struct CollectionManagementView: View {
             collectionName = collection.name
             return
         }
-        let realm = try! Realm()
-
-        try! realm.safeWrite {
-            collection.thaw()?.name = str
+        let id = collection.id
+        Task {
+            let actor = await RealmActor()
+            await actor.renameCollection(id, str)
         }
     }
 
@@ -61,7 +68,8 @@ struct CollectionManagementView: View {
 
 extension CollectionManagementView {
     struct FilterSections: View {
-        var collectionId: String
+        let collectionId: String
+        let currentFilterID: String?
         @State var adultContent = ContentSelectionType.both
         @State var sourceSelections: [String]
         @State var flagSelections: [LibraryFlag]
@@ -339,12 +347,10 @@ extension CollectionManagementView.FilterSections {
     }
 
     func saveAll() {
-        let realm = try! Realm()
-        let collection = realm.objects(LibraryCollection.self).first(where: { $0.id == collectionId })
         let filter = LibraryCollectionFilter()
 
-        if let f = collection?.filter {
-            filter.id = f.id
+        if let currentFilterID {
+            filter.id = currentFilterID
         }
         filter.adultContent = adultContent
         filter.sources.append(objectsIn: sourceSelections)
@@ -353,29 +359,20 @@ extension CollectionManagementView.FilterSections {
         filter.tagContains.append(objectsIn: tagContains)
         filter.textContains.append(objectsIn: titleContains)
         filter.statuses.append(objectsIn: contentStatuses)
-        try! realm.safeWrite {
-            realm.add(filter, update: .modified)
-            collection?.filter = filter
+        Task {
+            let actor = await RealmActor()
+            await actor.saveCollectionFilters(for: collectionId, filter: filter)
         }
     }
 }
 
 extension CollectionManagementView {
     func handleToggleFilterEnabled(_ value: Bool) {
-        let realm = try! Realm()
-        let collection = collection.thaw()
-
-        try! realm.safeWrite {
-            if value {
-                if collection?.filter == nil {
-                    collection?.filter = LibraryCollectionFilter()
-                }
-            } else {
-                if let filter = collection?.filter {
-                    filter.isDeleted = true
-                }
-                collection?.filter = nil
-            }
+        let id = collection.id
+        
+        Task {
+            let actor = await RealmActor()
+            await actor.toggleCollectionFilters(id: id, value: value)
         }
     }
 }

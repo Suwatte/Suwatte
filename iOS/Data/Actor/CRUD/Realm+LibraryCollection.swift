@@ -60,3 +60,33 @@ extension RealmActor {
         }
     }
 }
+
+
+extension RealmActor {
+    func toggleCollectionFilters(id: String, value: Bool) async {
+        let collection = getLibraryCollection(for: id)
+        guard let collection else { return }
+        
+        try! await realm.asyncWrite {
+            if value {
+                if collection.filter == nil {
+                    collection.filter = LibraryCollectionFilter()
+                }
+            } else {
+                if let filter = collection.filter {
+                    filter.isDeleted = true
+                }
+                collection.filter = nil
+            }
+        }
+    }
+    
+    func saveCollectionFilters(for id: String, filter: LibraryCollectionFilter) async {
+        let collection = getLibraryCollection(for: id)
+        guard let collection else { return }
+        try! await realm.asyncWrite {
+            realm.add(filter, update: .modified)
+            collection.filter = filter
+        }
+    }
+}
