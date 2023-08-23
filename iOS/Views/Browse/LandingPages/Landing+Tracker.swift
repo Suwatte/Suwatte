@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TrackerLandingPage: View {
     let trackerID: String
-    @State var loadable = Loadable<JSCCT>.idle
+    @State var loadable = Loadable<AnyContentTracker>.idle
 
     var body: some View {
         LoadableView(load, $loadable) {
@@ -24,7 +24,7 @@ struct TrackerLandingPage: View {
     }
 
     struct LoadedTrackerView: View {
-        let tracker: JSCCT
+        let tracker: AnyContentTracker
         var body: some View {
             Group {
                 if tracker.intents.pageLinkResolver {

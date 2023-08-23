@@ -49,12 +49,12 @@ struct TrackerEntryFormView: View {
 extension TrackerEntryFormView {
     final class ViewModel: ObservableObject {
         let id: String
-        let tracker: JSCCT
+        let tracker: AnyContentTracker
         @Published var loadable: Loadable<DSKCommon.TrackForm> = .idle
 
         @Published private var form: [String: AnyCodable] = [:]
 
-        init(tracker: JSCCT, id: String) {
+        init(tracker: AnyContentTracker, id: String) {
             self.tracker = tracker
             self.id = id
         }

@@ -73,5 +73,3 @@ extension ContentSource {
 }
 
 typealias AnyContentSource = (any ContentSource)
-typealias JSCCS = AnyContentSource
-

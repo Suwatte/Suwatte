@@ -139,7 +139,7 @@ extension InstalledRunnersView {
         @State var loadable: Loadable<AnyRunner> = .idle
         var body: some View {
             LoadableView(load, $loadable) { runner in
-                if let source = runner as? JSCCS {
+                if let source = runner as? AnyContentSource {
                     ContentSourceInfoView(source: source)
                 } else if let tracker = runner as? JSCContentTracker {
                     ContentTrackerInfoView(tracker: tracker)

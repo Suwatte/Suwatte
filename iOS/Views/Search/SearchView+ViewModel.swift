@@ -43,7 +43,7 @@ extension SearchView {
             self.isContentLinkModel = forLinking
         }
 
-        private func getSources () async -> [JSCCS] {
+        private func getSources () async -> [AnyContentSource] {
             let engine = DSK.shared
             let sources = await isContentLinkModel ? engine.getSourcesForLinking() : engine.getSourcesForSearching()
            return sources
@@ -76,7 +76,7 @@ extension SearchView {
             }
         }
 
-        func load(for source: JSCCS) async {
+        func load(for source: AnyContentSource) async {
             let request = DSKCommon.DirectoryRequest(query: query, page: 1)
             do {
                 let data: PagedResult = try await source.getDirectory(request: request)

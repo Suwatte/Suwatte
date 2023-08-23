@@ -67,8 +67,8 @@ extension TrackerManagementView {
         var contentID: String
         var titles: [String]
         @MainActor @Published var dict: [String: Loadable<TrackItem>] = [:]
-        @MainActor @Published var linkedTrackers: [JSCCT] = []
-        @MainActor @Published var unlinkedTrackers: [JSCCT] = []
+        @MainActor @Published var linkedTrackers: [AnyContentTracker] = []
+        @MainActor @Published var unlinkedTrackers: [AnyContentTracker] = []
         private var matches: [String: String] = [:]
         
 
@@ -118,7 +118,7 @@ extension TrackerManagementView {
 
         }
         
-        func load(for tracker: JSCCT, id: String) async {
+        func load(for tracker: AnyContentTracker, id: String) async {
             do {
                 let trackItem = try await tracker.getTrackItem(id: id)
                 Task { @MainActor in
@@ -136,7 +136,7 @@ extension TrackerManagementView {
             }
         }
 
-        func unlink(tracker: JSCCT) async {
+        func unlink(tracker: AnyContentTracker) async {
             let keys = tracker.links
             let actor = await RealmActor()
             await withTaskGroup(of: Void.self, body: { group in
@@ -157,7 +157,7 @@ extension TrackerManagementView {
     struct TrackerItemCell: View {
         @EnvironmentObject var model: ViewModel
         @State var item: DSKCommon.TrackItem
-        let tracker: JSCCT
+        let tracker: AnyContentTracker
         @State var status: DSKCommon.TrackStatus
         private let size = 140.0
         @State var presentEntryFormView = false
@@ -298,7 +298,7 @@ extension TrackerManagementView {
     struct AddTrackerLinkView: View {
         let contentId: String
         let titles: [String]
-        let trackers: [JSCCT]
+        let trackers: [AnyContentTracker]
         @State private var selections: [String: String] = [:]
         @Environment(\.presentationMode) var presentationMode
         var body: some View {
@@ -332,7 +332,7 @@ extension TrackerManagementView {
     }
 
     struct TrackerResultsSection: View {
-        var tracker: JSCCT
+        var tracker: AnyContentTracker
         var titles: [String]
         @State private var loadable: Loadable<[DSKCommon.TrackItem]> = .idle
         @Binding var selections: [String: String]

@@ -300,21 +300,21 @@ extension DaisukeEngine {
     func getSource(id: String) async  -> AnyContentSource? {
         let runner = await getRunner(id)
 
-        guard let runner, let source = runner as? JSCCS else { return nil }
+        guard let runner, let source = runner as? AnyContentSource else { return nil }
         return source
     }
 
     func getContentSource(id: String) async throws -> AnyContentSource {
         let runner = try await getDSKRunner(id)
 
-        guard let source = runner as? JSCCS else {
+        guard let source = runner as? AnyContentSource else {
             throw DSK.Errors.InvalidRunnerEnvironment
         }
 
         return source
     }
 
-    func getActiveSources() async -> [JSCCS] {
+    func getActiveSources() async -> [AnyContentSource] {
         let actor = await RealmActor()
         let runners = await actor.getSavedAndEnabledSources().map(\.id)
         
@@ -325,7 +325,7 @@ extension DaisukeEngine {
                 }
             }
             
-            var sources: [JSCCS] = []
+            var sources: [AnyContentSource] = []
             for await runner in group {
                 guard let runner else { continue }
                 sources.append(runner)
@@ -338,18 +338,18 @@ extension DaisukeEngine {
             .sorted(by: \.name)
     }
     
-    func getSourcesForSearching() async -> [JSCCS] {
+    func getSourcesForSearching() async -> [AnyContentSource] {
         let disabled: Set<String> = Preferences.standard.disabledGlobalSearchSources
         
         return await getActiveSources()
             .filter { !disabled.contains($0.id) }
     }
-    func getSourcesForLinking() async -> [JSCCS] {
+    func getSourcesForLinking() async -> [AnyContentSource] {
         await getSourcesForSearching()
             .filter { $0.ablityNotDisabled(\.disableContentLinking) }
     }
     
-    func getSourcesForUpdateCheck() async -> [JSCCS] {
+    func getSourcesForUpdateCheck() async -> [AnyContentSource] {
         await getActiveSources()
             .filter { $0.ablityNotDisabled(\.disableUpdateChecks) }
     }
@@ -358,35 +358,35 @@ extension DaisukeEngine {
 // MARK: - Tracker Management
 
 extension DaisukeEngine {
-    func getTracker(id: String) async -> JSCCT? {
+    func getTracker(id: String) async -> AnyContentTracker? {
         let runner = await getRunner(id)
 
-        guard let runner, let tracker = runner as? JSCCT else { return nil }
+        guard let runner, let tracker = runner as? AnyContentTracker else { return nil }
         return tracker
     }
 
-    func getContentTracker(id: String) async throws -> JSCCT {
+    func getContentTracker(id: String) async throws -> AnyContentTracker {
         let runner = try await getDSKRunner(id)
 
-        guard let tracker = runner as? JSCCT else {
+        guard let tracker = runner as? AnyContentTracker else {
             throw DSK.Errors.InvalidRunnerEnvironment
         }
 
         return tracker
     }
 
-    func getActiveTrackers() async -> [JSCCT] {
+    func getActiveTrackers() async -> [AnyContentTracker] {
         let actor = await RealmActor()
         let runners = await actor.getEnabledRunners(for: .tracker).map(\.id)
         
-        let trackers = await withTaskGroup(of: JSCCT?.self, body: { group in
+        let trackers = await withTaskGroup(of: AnyContentTracker?.self, body: { group in
             for runner in runners {
                 group.addTask {
                     await self.getTracker(id: runner)
                 }
             }
             
-            var trackers: [JSCCT] = []
+            var trackers: [AnyContentTracker] = []
             for await runner in group {
                 guard let runner else { continue }
                 trackers.append(runner)
@@ -399,7 +399,7 @@ extension DaisukeEngine {
             .sorted(by: \.name)
     }
 
-    func getTrackersHandling(key: String) async -> [JSCCT] {
+    func getTrackersHandling(key: String) async -> [AnyContentTracker] {
         await getActiveTrackers()
             .filter { $0.config?.linkKeys?.contains(key) ?? false }
     }

@@ -132,9 +132,9 @@ struct RunnerDirectoryView: View {
             case .plugin:
                 EmptyView()
             case .tracker:
-                ContentTrackerDirectoryView(tracker: runner as! JSCCT, request: request)
+                ContentTrackerDirectoryView(tracker: runner as! AnyContentTracker, request: request)
             case .source:
-                ContentSourceDirectoryView(source: runner as! JSCCS, request: request)
+                ContentSourceDirectoryView(source: runner as! AnyContentSource, request: request)
             case .unknown:
                 EmptyView()
             }

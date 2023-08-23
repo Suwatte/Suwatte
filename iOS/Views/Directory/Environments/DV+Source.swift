@@ -11,7 +11,7 @@ import SwiftUI
 // MARK: - View
 
 struct ContentSourceDirectoryView: View {
-    let source: JSCCS
+    let source: AnyContentSource
     let request: DSKCommon.DirectoryRequest
     @State var selection: HighlightIdentifier?
     @StateObject var model = ViewModel()

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SourceLandingPage: View {
     let sourceID: String
-    @State var loadable = Loadable<JSCCS>.idle
+    @State var loadable = Loadable<AnyContentSource>.idle
 
     var body: some View {
         LoadableView(startSource, $loadable) {
@@ -24,7 +24,7 @@ struct SourceLandingPage: View {
     }
 
     struct LoadedSourceView: View {
-        let source: JSCCS
+        let source: AnyContentSource
         var body: some View {
             Group {
                 if source.intents.pageLinkResolver {

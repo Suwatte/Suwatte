@@ -10,7 +10,7 @@ import SwiftUI
 // MARK: - View
 
 struct ContentTrackerDirectoryView: View {
-    let tracker: JSCCT
+    let tracker: AnyContentTracker
     let request: DSKCommon.DirectoryRequest
     var body: some View {
         DirectoryView<DSKCommon.TrackItem, Cell>(model: .init(runner: tracker, request: request)) { data in
@@ -24,7 +24,7 @@ struct ContentTrackerDirectoryView: View {
 extension ContentTrackerDirectoryView {
     struct Cell: View {
         @State var data: DSKCommon.TrackItem
-        let tracker: JSCCT
+        let tracker: AnyContentTracker
         var body: some View {
             ZStack(alignment: .topTrailing) {
                 DefaultTile(entry: .init(contentId: data.id, cover: data.cover, title: data.title))

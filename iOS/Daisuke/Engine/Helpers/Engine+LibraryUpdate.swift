@@ -65,7 +65,7 @@ extension DSK {
         return updates
     }
     
-    private func getUpdates(for entry: LibraryEntry, source: JSCCS) async -> Int {
+    private func getUpdates(for entry: LibraryEntry, source: AnyContentSource) async -> Int {
         guard let contentId = entry.content?.contentId else {
             return 0
         }
@@ -140,7 +140,7 @@ extension DSK {
         return chapters
     }
     
-    private func updateProfile(for id: String, with source: JSCCS) async throws -> [DSKCommon.Chapter]? {
+    private func updateProfile(for id: String, with source: AnyContentSource) async throws -> [DSKCommon.Chapter]? {
         do {
             let profile = try await source
                 .getContent(id: id)

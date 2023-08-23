@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentTrackerPageView: View {
-    let tracker: JSCCT
+    let tracker: AnyContentTracker
     var link: DSKCommon.PageLink
     var body: some View {
         DSKPageView<DSKCommon.TrackItem, Cell>(model: .init(runner: tracker, link: link)) { item in
@@ -28,7 +28,7 @@ struct ContentTrackerPageView: View {
     }
 
     struct Cell: View {
-        let tracker: JSCCT
+        let tracker: AnyContentTracker
         @State var item: DSKCommon.TrackItem
         var body: some View {
             PageViewTile(runnerID: tracker.id, id: item.id, title: item.title, subtitle: nil, cover: item.cover, additionalCovers: nil, info: nil, badge: nil)
@@ -39,7 +39,7 @@ struct ContentTrackerPageView: View {
 }
 
 struct TrackerContextModifier: ViewModifier {
-    let tracker: JSCCT
+    let tracker: AnyContentTracker
     @Binding var item: DSKCommon.TrackItem
     @State var presentEntryFormView = false
     @State var status: DSKCommon.TrackStatus

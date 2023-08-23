@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentSourcePageView: View {
-    let source: JSCCS
+    let source: AnyContentSource
     var link: DSKCommon.PageLink
     @StateObject private var model = ContentSourceDirectoryView.ViewModel()
     @StateObject var manager = LocalAuthManager.shared
@@ -61,7 +61,7 @@ struct ContentSourcePageView: View {
     }
     
     struct Cell: View {
-        let source: JSCCS
+        let source: AnyContentSource
         @State var item: DSKCommon.Highlight
         @State var inLibrary: Bool
         @State var inReadLater: Bool

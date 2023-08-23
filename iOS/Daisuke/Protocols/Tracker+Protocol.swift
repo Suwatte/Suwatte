@@ -40,4 +40,3 @@ extension ContentTracker {
 }
 
 typealias AnyContentTracker = (any ContentTracker)
-typealias JSCCT = (any ContentTracker)
