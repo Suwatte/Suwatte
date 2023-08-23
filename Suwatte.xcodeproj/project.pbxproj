@@ -165,6 +165,7 @@
 		DF62B5A72A94800D00F907CD /* BookmarksView+TabPager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5A62A94800D00F907CD /* BookmarksView+TabPager.swift */; };
 		DF62B5A92A95B89C00F907CD /* Realm+StateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5A82A95B89C00F907CD /* Realm+StateManager.swift */; };
 		DF62B5AB2A95BB7D00F907CD /* Realm+HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5AA2A95BB7D00F907CD /* Realm+HistoryView.swift */; };
+		DF62B5AD2A95BFB200F907CD /* Realm+UpdateFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5AC2A95BFB200F907CD /* Realm+UpdateFeed.swift */; };
 		DF67EB8828E3674900076FF5 /* LG+MoveFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */; };
 		DF67EB8A28E39E2200076FF5 /* DSK+Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */; };
 		DF67EB8C28E3F22700076FF5 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8B28E3F22700076FF5 /* Logger.swift */; };
@@ -592,6 +593,7 @@
 		DF62B5A62A94800D00F907CD /* BookmarksView+TabPager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BookmarksView+TabPager.swift"; sourceTree = "<group>"; };
 		DF62B5A82A95B89C00F907CD /* Realm+StateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+StateManager.swift"; sourceTree = "<group>"; };
 		DF62B5AA2A95BB7D00F907CD /* Realm+HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+HistoryView.swift"; sourceTree = "<group>"; };
+		DF62B5AC2A95BFB200F907CD /* Realm+UpdateFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+UpdateFeed.swift"; sourceTree = "<group>"; };
 		DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LG+MoveFlag.swift"; sourceTree = "<group>"; };
 		DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Sync.swift"; sourceTree = "<group>"; };
 		DF67EB8B28E3F22700076FF5 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -2072,6 +2074,7 @@
 				DF62B5A42A946F4C00F907CD /* Realm+BookmarksView.swift */,
 				DF62B5A82A95B89C00F907CD /* Realm+StateManager.swift */,
 				DF62B5AA2A95BB7D00F907CD /* Realm+HistoryView.swift */,
+				DF62B5AC2A95BFB200F907CD /* Realm+UpdateFeed.swift */,
 			);
 			path = Observers;
 			sourceTree = "<group>";
@@ -2858,6 +2861,7 @@
 				DF489C2E2A83580E006A21B9 /* DoublePaged+Holder.swift in Sources */,
 				DFDBF9722A7C4CBF006D49AD /* JSC+RunnerIntents.swift in Sources */,
 				DF4817E62A6DF22700CB3A47 /* ComicInfo+Methods.swift in Sources */,
+				DF62B5AD2A95BFB200F907CD /* Realm+UpdateFeed.swift in Sources */,
 				DF11147C2A92E96300FA8A39 /* WebtoonController+Gesture.swift in Sources */,
 				DF020A472A8B118A00BC5562 /* ImageViewer+Database.swift in Sources */,
 				DF8D0B572800EE47003E4C3E /* Backup+ReadLater.swift in Sources */,
