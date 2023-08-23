@@ -92,7 +92,8 @@ extension SearchView.CollectionView {
             Spacer()
             if !result.isLastPage {
                 NavigationLink {
-                    ContentSourceDirectoryView(source: source, request: .init(query: model.query, page: 1))
+                    ContentSourceDirectoryView(source: source,
+                                               request: .init(query: model.query, page: 1))
                 } label: {
                     Text("View More \(Image(systemName: "chevron.right"))")
                         .font(.subheadline)

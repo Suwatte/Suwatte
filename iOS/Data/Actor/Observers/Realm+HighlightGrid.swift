@@ -12,11 +12,16 @@ import RealmSwift
 extension RealmActor {
     
     
-    func observeLibraryIDs(_ callback: @escaping Callback<Set<String>>) async -> NotificationToken {
+    func observeLibraryIDs(sourceID: String? = nil, _ callback: @escaping Callback<Set<String>>) async -> NotificationToken {
         
-        let collection = realm
+        var collection = realm
             .objects(LibraryEntry.self)
             .where { $0.content != nil && !$0.isDeleted }
+        
+        if let sourceID {
+            collection = collection
+                .where { $0.content.sourceId == sourceID }
+        }
         
         func didUpdate(_ result: Results<LibraryEntry>) {
             let ids = Set(result.map(\.id) as [String])
@@ -29,11 +34,16 @@ extension RealmActor {
     }
     
     
-    func observeReadLaterIDs(_ callback: @escaping Callback<Set<String>>) async -> NotificationToken {
+    func observeReadLaterIDs(sourceID: String? = nil, _ callback: @escaping Callback<Set<String>>) async -> NotificationToken {
         
-        let collection = realm
+        var collection = realm
             .objects(ReadLater.self)
             .where { $0.content != nil && !$0.isDeleted }
+        
+        if let sourceID {
+            collection = collection
+                .where { $0.content.sourceId == sourceID }
+        }
         
         func didUpdate(_ result: Results<ReadLater>) {
             let ids = Set(result.map(\.id) as [String])

@@ -17,15 +17,24 @@ struct ContentSourceDirectoryView: View {
     @StateObject var model = ViewModel()
     var body: some View {
         DirectoryView<DSKCommon.Highlight, Cell>(model: .init(runner: source, request: request)) { data in
-            let inLibrary = model.library.contains(data.contentId)
-            let inReadLater = model.readLater.contains(data.contentId)
-            Cell(data: data, sourceID: source.id, inLibrary: inLibrary, readLater: inReadLater, selection: $selection)
+            let identifier = ContentIdentifier(contentId: data.contentId,
+                                               sourceId: source.runnerID).id
+            let inLibrary = model.library.contains(identifier)
+            let inReadLater = model.readLater.contains(identifier)
+            Cell(data: data,
+                 sourceID: source.id,
+                 inLibrary: inLibrary,
+                 readLater: inReadLater,
+                 selection: $selection)
         }
         .modifier(InteractableContainer(selection: $selection))
         .task {
-            model.start(source.id)
+            await model.start(source.id)
         }
+        
         .onDisappear(perform: model.stop)
+        .animation(.default, value: model.readLater)
+        .animation(.default, value: model.library)
     }
 }
 
@@ -39,32 +48,28 @@ extension ContentSourceDirectoryView {
         @State var readLater: Bool
         @Binding var selection: HighlightIdentifier?
         var body: some View {
-            ZStack(alignment: .topTrailing) {
-                DefaultTile(entry: data, sourceId: sourceID)
-                if inLibrary || readLater {
-                    ColoredBadge(color: inLibrary ? .accentColor : .yellow)
-                }
-            }
-            .onTapGesture {
-                if data.canStream {
-                    StateManager.shared.stream(item: data, sourceId: sourceID)
-                } else {
-                    selection = (sourceID, data)
-                }
-            }
-            .contextMenu {
-                Button {
-                    Task {
-                        let actor = await RealmActor()
-                        await actor.toggleReadLater(sourceID, data.contentId)
-                        await MainActor.run {
-                            readLater.toggle()
-                        }
+            DefaultTile(entry: data, sourceId: sourceID)
+                .coloredBadge(inLibrary ? .accentColor : readLater ? .yellow : nil)
+                .onTapGesture {
+                    if data.canStream {
+                        StateManager.shared.stream(item: data, sourceId: sourceID)
+                    } else {
+                        selection = (sourceID, data)
                     }
-                } label: {
-                    Label(readLater ? "Remove from Read Later" : "Add to Read Later", systemImage: readLater ? "bookmark.slash" : "bookmark")
                 }
-            }
+                .contextMenu {
+                    Button {
+                        Task {
+                            let actor = await RealmActor()
+                            await actor.toggleReadLater(sourceID, data.contentId)
+                            await MainActor.run {
+                                readLater.toggle()
+                            }
+                        }
+                    } label: {
+                        Label(readLater ? "Remove from Read Later" : "Add to Read Later", systemImage: readLater ? "bookmark.slash" : "bookmark")
+                    }
+                }
         }
     }
 }
@@ -75,42 +80,29 @@ extension ContentSourceDirectoryView {
     final class ViewModel: ObservableObject {
         @Published var library: Set<String> = []
         @Published var readLater: Set<String> = []
-
+        
         private var libraryToken: NotificationToken?
         private var rlToken: NotificationToken?
-
+        
         func stop() {
             libraryToken?.invalidate()
             rlToken?.invalidate()
             libraryToken = nil
             rlToken = nil
         }
-
-        func start(_ sourceID: String) {
-            let realm = try! Realm()
-
-            let library = realm
-                .objects(LibraryEntry.self)
-                .where { $0.isDeleted == false }
-                .where { $0.content.sourceId == sourceID }
-
-            libraryToken = library.observe { [weak self] _ in
-                withAnimation {
-                    self?.library = Set(library.compactMap(\.content?.contentId))
-                }
-            }
-
-            // Read Later
-            let readLater = realm
-                .objects(ReadLater.self)
-                .where { $0.isDeleted == false }
-                .where { $0.content.sourceId == sourceID }
-
-            rlToken = readLater.observe { [weak self] _ in
-                withAnimation {
-                    self?.readLater = Set(readLater.compactMap(\.content?.contentId))
-                }
-            }
+        
+        func start(_ sourceID: String) async {
+            let actor = await RealmActor()
+            
+            libraryToken = await actor
+                .observeLibraryIDs(sourceID: sourceID, { [weak self] values in
+                    self?.library = values
+                })
+            
+            rlToken = await actor
+                .observeReadLaterIDs(sourceID: sourceID, { [weak self] values in
+                    self?.readLater = values
+                })
         }
     }
 }
