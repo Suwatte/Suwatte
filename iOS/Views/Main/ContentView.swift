@@ -36,6 +36,7 @@ struct ContentView: View {
             }
             .task {
                 appState.initialize()
+                await appState.observe()
             }
     }
 

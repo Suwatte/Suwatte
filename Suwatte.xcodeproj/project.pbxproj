@@ -163,6 +163,7 @@
 		DF62B5A32A946B6800F907CD /* BookmarksView+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5A22A946B6800F907CD /* BookmarksView+ViewModel.swift */; };
 		DF62B5A52A946F4C00F907CD /* Realm+BookmarksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5A42A946F4C00F907CD /* Realm+BookmarksView.swift */; };
 		DF62B5A72A94800D00F907CD /* BookmarksView+TabPager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5A62A94800D00F907CD /* BookmarksView+TabPager.swift */; };
+		DF62B5A92A95B89C00F907CD /* Realm+StateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5A82A95B89C00F907CD /* Realm+StateManager.swift */; };
 		DF67EB8828E3674900076FF5 /* LG+MoveFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */; };
 		DF67EB8A28E39E2200076FF5 /* DSK+Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */; };
 		DF67EB8C28E3F22700076FF5 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8B28E3F22700076FF5 /* Logger.swift */; };
@@ -588,6 +589,7 @@
 		DF62B5A22A946B6800F907CD /* BookmarksView+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BookmarksView+ViewModel.swift"; sourceTree = "<group>"; };
 		DF62B5A42A946F4C00F907CD /* Realm+BookmarksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+BookmarksView.swift"; sourceTree = "<group>"; };
 		DF62B5A62A94800D00F907CD /* BookmarksView+TabPager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BookmarksView+TabPager.swift"; sourceTree = "<group>"; };
+		DF62B5A82A95B89C00F907CD /* Realm+StateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+StateManager.swift"; sourceTree = "<group>"; };
 		DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LG+MoveFlag.swift"; sourceTree = "<group>"; };
 		DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Sync.swift"; sourceTree = "<group>"; };
 		DF67EB8B28E3F22700076FF5 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -2066,6 +2068,7 @@
 				DFDBF96A2A7C4470006D49AD /* Realm+HighlightGrid.swift */,
 				DF020A532A8C46AE00BC5562 /* Realm+RunnerListView.swift */,
 				DF62B5A42A946F4C00F907CD /* Realm+BookmarksView.swift */,
+				DF62B5A82A95B89C00F907CD /* Realm+StateManager.swift */,
 			);
 			path = Observers;
 			sourceTree = "<group>";
@@ -2579,6 +2582,7 @@
 				DF8D0B7D2800EE48003E4C3E /* AppearanceView.swift in Sources */,
 				DF8D0BB72800EE48003E4C3E /* STTWebView.swift in Sources */,
 				DF541ED32A57448C0022C7EE /* JSCCS+Implementation.swift in Sources */,
+				DF62B5A92A95B89C00F907CD /* Realm+StateManager.swift in Sources */,
 				DFBE483A2A25BBC1000ABA16 /* ChapterReference.swift in Sources */,
 				DF8D0B3B2800EE47003E4C3E /* Constants.swift in Sources */,
 				DFDBF9D82A7DB93E006D49AD /* Reader+ColorOverlay.swift in Sources */,

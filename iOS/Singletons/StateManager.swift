@@ -31,7 +31,6 @@ final class StateManager: ObservableObject {
     
     func initialize() {
         registerNetworkObserver()
-        observe()
     }
     
     func registerNetworkObserver() {
@@ -149,26 +148,42 @@ extension StateManager {
         }
     }
     
-    func didScenePhaseChange(_: ScenePhase) {}
+    func didScenePhaseChange(_ phase: ScenePhase) {
+        switch phase {
+            case .background:
+                stopObservingRealm()
+            case .inactive:
+                break
+            case .active:
+                if thumbnailToken == nil {
+                    Task {
+                        await observe()
+                    }
+                }
+
+                break
+            @unknown default:
+                break
+        }
+    }
 }
 
 // MARK: Custom Thumbs
 
 extension StateManager {
-    func observe() {
-        let realm = try! Realm()
-        let thumbnails = realm
-            .objects(CustomThumbnail.self)
-            .where { $0.isDeleted == false }
-            .where { $0.file != nil }
+    func observe() async {
+        let actor = await RealmActor()
         
-        thumbnailToken = thumbnails.observe { _ in
-            let ids = thumbnails.map(\.id)
-            
+        thumbnailToken = await actor.observeCustomThumbnails({ value in
             Task { @MainActor in
-                self.titleHasCustomThumbs = Set(ids)
+                self.titleHasCustomThumbs = value
             }
-        }
+        })
+    }
+    
+    func stopObservingRealm() {
+        thumbnailToken?.invalidate()
+        thumbnailToken = nil
     }
 }
 
