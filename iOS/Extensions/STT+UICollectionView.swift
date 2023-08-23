@@ -14,11 +14,9 @@ extension UICollectionView {
 
     var currentPath: IndexPath? {
         indexPathsForVisibleItems.first
-     }
-    
+    }
+
     var pathAtCenterOfScreen: IndexPath? {
         indexPathForItem(at: currentPoint)
     }
-    
 }
-

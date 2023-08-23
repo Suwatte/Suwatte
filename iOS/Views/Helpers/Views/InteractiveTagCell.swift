@@ -1,5 +1,5 @@
 //
-//  MSInteractableTag.swift
+//  InteractiveTagCell.swift
 //  Suwatte (iOS)
 //
 //  Created by Mantton on 2022-05-02.

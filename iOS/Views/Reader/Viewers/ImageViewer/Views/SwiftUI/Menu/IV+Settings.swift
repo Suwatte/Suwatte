@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-
-
 struct IVSettingsView: View {
     // AppStorage
     @AppStorage(STTKeys.EnableOverlay) var enableOverlay = false
@@ -68,7 +66,7 @@ struct IVSettingsView: View {
                         Text("Paging Options")
                     }
                 }
-                
+
                 if model.readingMode == .VERTICAL {
                     Section {
                         Toggle("AutoScroll", isOn: $verticalAutoScroll)
@@ -125,7 +123,7 @@ struct IVSettingsView: View {
                             Text("Images will be sized to fit roughly \((holdingPillarBoxPCT * 100).clean)% of the screen's width.")
                         }
                     }
-                    
+
                     Section {
                         Toggle("Enable Padding", isOn: $verticalPagePadding)
                         if verticalPagePadding {
@@ -178,7 +176,6 @@ struct IVSettingsView: View {
                             .onChange(of: splitWidePages) { _ in
                                 PanelPublisher.shared.didChangeSplitMode.send()
                             }
-
                     }
                     if model.readingMode.isHorizontalPager || model.readingMode == .PAGED_VERTICAL {
                         Picker("Scale Type", selection: $imageScaleType) {
@@ -252,7 +249,6 @@ struct IVSettingsView: View {
     }
 }
 
-
 extension IVSettingsView {
     struct ModeSelectorView: View {
         @AppStorage(STTKeys.ReaderType) var mode = ReadingMode.PAGED_COMIC
@@ -268,14 +264,14 @@ extension IVSettingsView {
             }
             .onChange(of: readingMode, perform: updateReadingMode)
         }
-        
+
         func updateReadingMode(_ value: ReadingMode) {
             model.producePendingState()
             model.readingMode = value
             if value.isHorizontalPager {
                 PanelPublisher.shared.didChangeHorizontalDirection.send()
             }
-            
+
             // Update on a per-comic basis
             let id = model.viewerState.chapter.STTContentIdentifier
             let container = UserDefaults.standard
@@ -283,5 +279,4 @@ extension IVSettingsView {
             container.setValue(value.rawValue, forKey: key)
         }
     }
-
 }

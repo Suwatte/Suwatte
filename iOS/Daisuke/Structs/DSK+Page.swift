@@ -42,7 +42,7 @@ extension DSKCommon {
     }
 }
 
-typealias JSCObject = Parsable & Hashable
+typealias JSCObject = Hashable & Parsable
 extension DSKCommon {
     struct PageSection<T: JSCObject>: JSCObject {
         let key: String
@@ -110,7 +110,7 @@ extension DSKCommon {
         let key: String
         let actions: [ContextMenuAction]
     }
-    
+
     struct ContextMenuAction: JSCObject {
         let key: String
         let label: String

@@ -57,8 +57,7 @@ extension MCV {
     func move(from source: IndexSet, to destination: Int) {
         var arr = collections.map(\.id) as [String]
         arr.move(fromOffsets: source, toOffset: destination)
-        
-        
+
         Task {
             let actor = await RealmActor()
             await actor.reorderCollections(arr)

@@ -11,28 +11,28 @@ import Foundation
 let SDM_FolderName = "ChapterDownloads"
 final actor SourceDownloadManager {
     // Paths
-    internal let directory = FileManager
+    let directory = FileManager
         .default
         .documentDirectory
         .appendingPathComponent(SDM_FolderName, isDirectory: true)
 
-    internal let tempDir = FileManager
+    let tempDir = FileManager
         .default
         .documentDirectory
         .appendingPathComponent(SDM_FolderName, isDirectory: true)
         .appendingPathComponent("__temp__", isDirectory: true)
 
-    internal let CONTEXT = "DownloadManager"
+    let CONTEXT = "DownloadManager"
 
     // Core
-    internal var queue: [SourceDownload] = []
+    var queue: [SourceDownload] = []
 
     // State
-    internal var isIdle = true
-    internal var pausedTasks = Set<String>()
-    internal var cancelledTasks = Set<String>()
-    internal var archivesMarkedForDeletion = Set<String>()
-    internal var foldersMarkedForDeletion = Set<String>()
+    var isIdle = true
+    var pausedTasks = Set<String>()
+    var cancelledTasks = Set<String>()
+    var archivesMarkedForDeletion = Set<String>()
+    var foldersMarkedForDeletion = Set<String>()
 
     // Publishers
     @MainActor

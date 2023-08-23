@@ -1,5 +1,5 @@
 //
-//  Vertical+Zoom.swift
+//  WebtoonController+Zoom.swift
 //  Suwatte (iOS)
 //
 //  Created by Mantton on 2022-10-12.
@@ -12,10 +12,10 @@ import UIKit
 private typealias Controller = WebtoonController
 
 extension Controller: ZoomingViewController, ZoomableHostDelegate, ZoomHandlerDelegate {
-    
     func cellTappedAt(point: CGPoint, frame: CGRect, path: IndexPath) {
         guard let node = collectionNode.nodeForItem(at: path) as? ImageNode,
-              let image = node.image else {
+              let image = node.image
+        else {
             return
         }
         currentZoomingIndexPath = path
@@ -35,7 +35,8 @@ extension Controller: ZoomingViewController, ZoomableHostDelegate, ZoomHandlerDe
 
     func zoomingImageView(for _: ZoomTransitioningDelegate) -> UIView? {
         guard let path = currentZoomingIndexPath,
-              let node = collectionNode.nodeForItem(at: path) as? ImageNode else {
+              let node = collectionNode.nodeForItem(at: path) as? ImageNode
+        else {
             return nil
         }
 
@@ -44,7 +45,8 @@ extension Controller: ZoomingViewController, ZoomableHostDelegate, ZoomHandlerDe
 
     func zoomingImage(for _: ZoomTransitioningDelegate) -> UIImage? {
         guard let path = currentZoomingIndexPath,
-              let node = collectionNode.nodeForItem(at: path) as? ImageNode else {
+              let node = collectionNode.nodeForItem(at: path) as? ImageNode
+        else {
             return nil
         }
 

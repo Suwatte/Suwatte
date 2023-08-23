@@ -48,7 +48,7 @@ extension DSKAuthView.LibrarySyncView {
         let actor = await RealmActor()
         let library = await actor.getUpSync(for: source.id)
         let downSynced = try await source.syncUserLibrary(library: library)
-        
+
         await actor.downSyncLibrary(entries: downSynced, sourceId: source.id)
         ToastManager.shared.info("Synced!")
     }

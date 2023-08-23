@@ -113,7 +113,7 @@ extension ProfileView.ViewModel {
 
     func setupObservers() async {
         let actor = await RealmActor()
-        
+
         // Observe Progress Markers
         let id = contentIdentifier
         progressToken = await actor
@@ -123,7 +123,7 @@ extension ProfileView.ViewModel {
                     await self?.setActionState()
                 }
             }
-        
+
         // Observe Library
         libraryTrackingToken = await actor
             .observeLibraryState(for: id) { [weak self] value in
@@ -141,9 +141,8 @@ extension ProfileView.ViewModel {
             .observeDownloadStatus(for: id) { [weak self] value in
                 self?.downloads = value
             }
-                
     }
-    
+
     func removeNotifier() {
         currentMarkerToken?.invalidate()
         currentMarkerToken = nil
@@ -174,11 +173,10 @@ extension ProfileView.ViewModel {
                 self.loadableContent = .loaded(true)
                 self.working = false
             }
-            
+
             guard !Task.isCancelled else { return }
 
             await loadChapters(parsed.chapters)
-            
 
             // Save to Realm
             let actor = await RealmActor()
@@ -188,7 +186,6 @@ extension ProfileView.ViewModel {
             guard !Task.isCancelled else { return }
             await loadChapters()
 
-            
             Task { @MainActor [weak self] in
                 if self?.loadableContent.LOADED ?? false {
                     ToastManager.shared.error("Failed to Update Profile")
@@ -203,7 +200,7 @@ extension ProfileView.ViewModel {
 
     func loadContentFromDatabase() async {
         let actor = await RealmActor()
-        
+
         Task { @MainActor in
             withAnimation {
                 loadableContent = .loading
@@ -242,7 +239,7 @@ extension ProfileView.ViewModel {
                 threadSafeChapters = parsedChapters
             }
         }
-        
+
         let sourceId = source.id
         do {
             // Fetch Chapters
@@ -280,7 +277,7 @@ extension ProfileView.ViewModel {
             await loadChaptersfromDB()
 
             Task { @MainActor in
-                if chapters.LOADED  {
+                if chapters.LOADED {
                     ToastManager.shared.error("Failed to Fetch Chapters: \(error.localizedDescription)")
                     return
                 } else {
@@ -293,7 +290,7 @@ extension ProfileView.ViewModel {
 
     func loadChaptersfromDB() async {
         let actor = await RealmActor()
-        
+
         let storedChapters = await actor.getChapters(source.id, content: entry.contentId)
         if storedChapters.isEmpty { return }
         Task { @MainActor in
@@ -348,7 +345,6 @@ extension ProfileView.ViewModel {
         let chaptersToBeAdded = await withTaskGroup(of: [(String, DSKCommon.Chapter)].self, body: { group in
             // Build
             for entry in entries {
-
                 // Get Chapters from source that are higher than our current max available chapter
                 group.addTask {
                     guard let source = await DSK.shared.getSource(id: entry.sourceId) else { return [] }
@@ -582,9 +578,9 @@ extension ProfileView.ViewModel {
         guard content.contentId == entry.contentId else {
             return .init(state: .none)
         }
-        
+
         let actor = await RealmActor()
-        
+
         let marker = await actor
             .getLatestLinkedMarker(for: contentIdentifier)
 

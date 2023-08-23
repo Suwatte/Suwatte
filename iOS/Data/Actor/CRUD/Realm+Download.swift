@@ -17,9 +17,9 @@ extension RealmActor {
             .first?
             .freeze()
     }
-    
+
     func updateDownloadIndex(for ids: [String]) async {
-        await withTaskGroup(of: Void.self, body: { group in
+        await withTaskGroup(of: Void.self, body: { _ in
             for id in ids {
                 let collection = realm
                     .objects(SourceDownload.self)

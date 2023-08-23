@@ -1,5 +1,5 @@
 //
-//  STT_color.swift
+//  STT+Color.swift
 //  Suwatte (iOS)
 //
 //  Created by Mantton on 2022-03-05.

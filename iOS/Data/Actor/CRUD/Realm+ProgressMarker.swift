@@ -5,8 +5,8 @@
 //  Created by Mantton on 2023-08-01.
 //
 
-import RealmSwift
 import Foundation
+import RealmSwift
 
 extension RealmActor {
     func getContentMarker(for id: String) -> ProgressMarker? {
@@ -106,7 +106,6 @@ extension RealmActor {
     }
 
     func updateContentProgress(chapter: ThreadSafeChapter, lastPageRead: Int, totalPageCount: Int, lastPageOffset: Double? = nil) async {
-
         let id = chapter.STTContentIdentifier
         // Get Object
         let target = realm
@@ -156,7 +155,7 @@ extension RealmActor {
             }
 
             if let prevMarkerID, prevMarkerID != chapter.id {
-               await validateChapterReference(id: prevMarkerID)
+                await validateChapterReference(id: prevMarkerID)
             }
             await updateLastRead(forId: id)
             return
@@ -240,7 +239,6 @@ extension RealmActor {
 
     func markChaptersByNumber(for id: ContentIdentifier, chapters: Set<Double>, markAsRead: Bool = true) async {
         defer {
-            
             Task {
                 // Get Chapters
                 let chapterIds = realm
@@ -249,7 +247,7 @@ extension RealmActor {
                     .where { $0.sourceId == id.sourceId }
                     .where { $0.number.in(chapters) }
                     .map(\.chapterId) as [String]
-                
+
                 await notifySourceOfMarkState(identifier: id, chapters: chapterIds, completed: markAsRead)
             }
         }

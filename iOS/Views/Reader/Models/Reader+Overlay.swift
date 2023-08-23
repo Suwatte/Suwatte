@@ -7,13 +7,12 @@
 
 import Foundation
 
-
 struct SliderControl: Hashable {
     var current: Double = 0.0
     var isScrubbing = false
 }
 
-struct MenuControl : Hashable {
+struct MenuControl: Hashable {
     var menu = false
     var chapterList = false
     var comments = false

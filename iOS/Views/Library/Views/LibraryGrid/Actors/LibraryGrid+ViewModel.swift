@@ -47,7 +47,7 @@ extension LibraryView.LibraryGrid {
                 await actor?.stop()
             }
         }
-        
+
         func didSetResult(_ lib: [LibraryEntry]) {
             withAnimation {
                 self.library = lib
@@ -62,11 +62,9 @@ extension LibraryView.LibraryGrid {
         }
 
         func refresh() {
-
             guard let library, !library.isEmpty else { return }
             ToastManager.shared.loading = true
 
-            
             Task {
                 let actor = await Suwatte.RealmActor()
                 for content in library.compactMap(\.content) {

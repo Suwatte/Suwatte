@@ -26,13 +26,13 @@ extension SourceDownloadQueueView.ViewModel {
         }
         let actor = await RealmActor()
         token = await actor
-            .observeDownloadsQueue({ value in
+            .observeDownloadsQueue { value in
                 Task { @MainActor [weak self] in
                     self?.data = value
                     self?.initialDataFetchComplete = true
                     self?.isWorking = false
                 }
-            })
+            }
     }
 
     func stop() {

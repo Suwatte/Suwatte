@@ -8,10 +8,8 @@
 import Foundation
 import RealmSwift
 
-
 extension LibraryView.LibraryGrid {
     final actor RealmActor {
-        
         var collection: LibraryCollection?
         var readingFlag: LibraryFlag?
         // An implicitly-unwrapped optional is used here to let us pass `self` to
@@ -20,28 +18,28 @@ extension LibraryView.LibraryGrid {
         private var token: NotificationToken?
         init(collection: LibraryCollection? = nil, flag: LibraryFlag? = nil) async throws {
             self.collection = collection?.freeze()
-            self.readingFlag = flag
+            readingFlag = flag
             realm = try await Realm(actor: self)
         }
-        
+
         private var query = ""
         private var sort: KeyPath = .dateAdded
         private var order: SortOrder = .desc
         private var showOnlyDownloadedTitles = false
         typealias Result = ([LibraryEntry]) -> Void
-        
+
         func set(_ query: String, sort: KeyPath, order: SortOrder, downloads: Bool) {
             self.query = query
             self.sort = sort
             self.order = order
-            self.showOnlyDownloadedTitles = downloads
+            showOnlyDownloadedTitles = downloads
         }
-        
+
         func stop() {
             token?.invalidate()
             token = nil
         }
-        
+
         func observe(_ callback: @escaping Result) async {
             let downloads = realm
                 .objects(SourceDownloadIndex.self)
@@ -49,7 +47,7 @@ extension LibraryView.LibraryGrid {
             var library = realm
                 .objects(LibraryEntry.self)
                 .where { $0.content != nil && $0.isDeleted == false }
-            
+
             // Query For Title
             if !query.isEmpty {
                 library = library
@@ -133,11 +131,11 @@ extension LibraryView.LibraryGrid {
             library = library
                 .sorted(byKeyPath: keyPath, ascending: ascending)
 
-            token = await library.observe(on: self, { _, results in
+            token = await library.observe(on: self) { _, results in
                 switch results {
-                case .error(let error):
+                case let .error(error):
                     Logger.shared.error(error, "RealmActor")
-                case .initial(let results):
+                case let .initial(results):
                     let data = results.freeze().toArray()
                     Task { @MainActor in
                         callback(data)
@@ -148,7 +146,7 @@ extension LibraryView.LibraryGrid {
                         callback(data)
                     }
                 }
-            })
+            }
         }
     }
 }

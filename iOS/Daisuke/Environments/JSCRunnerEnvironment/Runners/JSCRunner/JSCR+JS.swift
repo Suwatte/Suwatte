@@ -9,6 +9,7 @@ import Foundation
 import JavaScriptCore
 
 // MARK: - Asynchronous Call
+
 extension JSCRunner {
     func methodExists(method: String) -> Bool {
         runnerClass.hasProperty(method)
@@ -127,7 +128,6 @@ extension JSCRunner {
         }
     }
 }
-
 
 // MARK: - Synchronous Call
 

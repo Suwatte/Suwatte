@@ -10,7 +10,6 @@ import Combine
 import Nuke
 import UIKit
 
-
 class ImageNode: ASCellNode {
     private let imageNode = BareBonesImageNode()
     private let progressNode = ASDisplayNode(viewBlock: {
@@ -23,28 +22,31 @@ class ImageNode: ASCellNode {
     private var isZoomed: Bool {
         delegate?.isZooming ?? false
     }
+
     private weak var nukeTask: AsyncImageTask?
     private var imageTask: Task<Void, Never>?
     private var subscriptions = Set<AnyCancellable>()
     private var contextMenuEnabled: Bool {
         Preferences.standard.imageInteractions
     }
+
     private var hasTriggeredChapterDelegateCall = false
-    
+
     var image: UIImage?
 
     var isLeading: Bool {
         let collectionNode = owningNode as? ASCollectionNode
-        guard let collectionNode,let indexPath else { return false }
+        guard let collectionNode, let indexPath else { return false }
         let yOrigin = collectionNode.collectionViewLayout.layoutAttributesForItem(at: indexPath)?.frame.origin.y
         guard let yOrigin else { return false }
         return yOrigin < collectionNode.contentOffset.y
     }
+
     private var downsample: Bool {
         Preferences.standard.downsampleImages
     }
-    
-    private var isWorking : Bool {
+
+    private var isWorking: Bool {
         imageTask != nil && nukeTask != nil
     }
 
@@ -58,7 +60,7 @@ class ImageNode: ASCellNode {
         imageNode.backgroundColor = .clear
         imageNode.isUserInteractionEnabled = false
         imageNode.alpha = 0
-        
+
         imageNode.isLayerBacked = true
         imageNode.backgroundColor = .randomColor()
         // ;-;
@@ -83,7 +85,7 @@ class ImageNode: ASCellNode {
                 self?.transitionLayout(with: .init(min: size, max: size), animated: true, shouldMeasureAsync: false)
             }
             .store(in: &subscriptions)
-        
+
         Preferences
             .standard
             .preferencesChangedSubject
@@ -97,11 +99,10 @@ class ImageNode: ASCellNode {
             }
             .store(in: &subscriptions)
     }
-    
-
 }
 
 // MARK: - Node State
+
 extension ImageNode {
     override func didEnterDisplayState() {
         super.didEnterDisplayState()
@@ -111,12 +112,12 @@ extension ImageNode {
         }
         displayImage(image)
     }
-    
+
     override func didEnterPreloadState() {
         super.didEnterPreloadState()
         loadImage()
     }
-    
+
     override func didEnterVisibleState() {
         super.didEnterVisibleState()
         guard imageNode.image == nil else { return }
@@ -128,9 +129,8 @@ extension ImageNode {
         if isZoomed { return }
         cancel()
         checkIfChapterDelegateShouldBeCalled()
-
     }
-    
+
     override func interfaceStateDidChange(_ newState: ASInterfaceState, from oldState: ASInterfaceState) {
         super.interfaceStateDidChange(newState, from: oldState)
         guard newState == .preload, oldState == .display else { return }
@@ -139,6 +139,7 @@ extension ImageNode {
 }
 
 // MARK: - Layout
+
 extension ImageNode {
     override func animateLayoutTransition(_ context: ASContextTransitioning) {
         UIView.animate(withDuration: 0.33, delay: 0, options: [.transitionCrossDissolve, .allowUserInteraction, .curveEaseInOut]) { [unowned self] in
@@ -199,16 +200,15 @@ extension ImageNode {
             return ASRatioLayoutSpec(ratio: ratio, child: progressNode)
         }
     }
-
 }
 
-
 // MARK: - Image
-extension ImageNode {
 
+extension ImageNode {
     func setImage(_ image: UIImage) {
         self.image = image
     }
+
     func didLoadImage(_ image: UIImage) {
         setImage(image)
         guard isNodeLoaded else { return }
@@ -216,21 +216,21 @@ extension ImageNode {
         resetTasks()
     }
 
-
     func handleProgressBlock(_ progress: Double) {
         (progressNode.view as? CircularProgressView)?
             .setProgress(to: progress, withAnimation: false)
     }
 
-    func handleImageFailure(_ error: Error) {
+    func handleImageFailure(_: Error) {
         progressNode.isHidden = false
         imageNode.isHidden = true
     }
-    
+
     private func resetTasks() {
         imageTask = nil
         nukeTask = nil
     }
+
     private func cancel() {
         imageTask?.cancel()
         nukeTask?.cancel()
@@ -245,7 +245,7 @@ extension ImageNode {
             displayImage(image)
             return
         }
-        
+
         guard !isWorking else {
             return
         }
@@ -259,9 +259,9 @@ extension ImageNode {
             await PanelActor.run { [weak self] in
                 do {
                     let request = try await PanelActor.shared.loadPage(for: data)
-                    
+
                     guard !Task.isCancelled else { return }
-                    
+
                     for await progress in request.progress {
                         // Update progress
                         let p = Double(progress.fraction)
@@ -269,17 +269,17 @@ extension ImageNode {
                             self?.handleProgressBlock(p)
                         }
                     }
-                    
+
                     guard !Task.isCancelled else { return }
 
                     let image = try await request.image
-                    
+
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run { [weak self] in
                         self?.didLoadImage(image)
                     }
-                    
+
                 } catch {
                     if error is CancellationError { return }
                     Logger.shared.error(error, page.page.chapter.sourceId)
@@ -287,16 +287,14 @@ extension ImageNode {
                         self?.handleImageFailure(error)
                     }
                 }
-                
+
                 await MainActor.run { [weak self] in
                     self?.nukeTask = nil
                 }
             }
-
         }
-        
-        
     }
+
     func displayImage(_ image: UIImage) {
         guard imageNode.image == nil else { return }
         imageNode.image = image
@@ -312,15 +310,15 @@ extension ImageNode {
             self?.postImageSetSetup()
         }
     }
-    
+
     func postImageSetSetup() {
         listen()
     }
-    
+
     func hardReset() {
         // Reset
         if isZoomed { return }
-        
+
         imageTask?.cancel()
         nukeTask?.cancel()
 
@@ -337,30 +335,29 @@ extension ImageNode {
         subscriptions.forEach { $0.cancel() }
         subscriptions.removeAll()
     }
-    
+
     func checkIfChapterDelegateShouldBeCalled() {
         guard page.page.isLastPage,
               !hasTriggeredChapterDelegateCall,
               let delegate,
               let indexPath,
               let maxY = delegate.frameOfItem(at: indexPath)?.maxY,
-              maxY < delegate.offset  else { return }
-        
+              maxY < delegate.offset else { return }
+
         delegate.didCompleteChapter(page.page.chapter)
         hasTriggeredChapterDelegateCall = true
     }
-
 }
 
-
 // MARK: - Bare Bones Image Node
+
 class BareBonesImageNode: ASDisplayNode {
     var image: UIImage?
-    
+
     class Params: NSObject {
         var image: UIImage?
     }
-    
+
     override func calculateSizeThatFits(_ constrainedSize: CGSize) -> CGSize {
         guard let image else {
             let prepped = super.calculateSizeThatFits(constrainedSize)
@@ -368,21 +365,18 @@ class BareBonesImageNode: ASDisplayNode {
         }
         return image.size.scaledTo(UIScreen.main.bounds.size)
     }
-    
-    override func drawParameters(forAsyncLayer layer: _ASDisplayLayer) -> NSObjectProtocol? {
+
+    override func drawParameters(forAsyncLayer _: _ASDisplayLayer) -> NSObjectProtocol? {
         let params = Params()
         params.image = image
         return params
     }
-    
-    override class func display(withParameters parameters: Any?, isCancelled isCancelledBlock: () -> Bool) -> UIImage? {
+
+    override class func display(withParameters parameters: Any?, isCancelled _: () -> Bool) -> UIImage? {
         guard let params = parameters as? Params, let image = params.image else {
             return nil
         }
-        
+
         return image
     }
-
 }
-
-

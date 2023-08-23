@@ -9,7 +9,7 @@ import Foundation
 
 @globalActor actor RunnerActor: GlobalActor {
     static var shared = RunnerActor()
-    public static func run<T>(resultType: T.Type = T.self, body: @Sendable () throws -> T) async rethrows -> T where T : Sendable {
+    public static func run<T>(resultType _: T.Type = T.self, body: @Sendable () throws -> T) async rethrows -> T where T: Sendable {
         try body()
     }
 }
@@ -55,16 +55,15 @@ protocol DSKPageDelegate {
     func getBrowsePageLinks() async throws -> [DSKCommon.PageLinkLabel]
 }
 
-
 extension DSKRunnerDelegate {
     var runnerID: String {
         info.id
     }
-    
+
     var id: String {
         info.id
     }
-    
+
     var instanceID: String {
         info.id + "::" + instance.id
     }
@@ -76,12 +75,11 @@ extension DSKRunnerDelegate {
     var version: Double {
         info.version
     }
-    
+
     var environment: RunnerEnvironment {
         self is ContentSource ? .source : self is ContentTracker ? .tracker : .unknown
     }
 }
-
 
 extension DSKRunnerDelegate {
     func saveState() {
@@ -89,7 +87,6 @@ extension DSKRunnerDelegate {
         UserDefaults.standard.set(intents.pageLinkResolver, forKey: STTKeys.PageLinkResolver(id))
     }
 }
-
 
 protocol DSKRunner: DSKRunnerDelegate, DSKAuthDelegate, DSKPreferenceDelegate, DSKDirectoryDelegate, DSKPageDelegate {}
 

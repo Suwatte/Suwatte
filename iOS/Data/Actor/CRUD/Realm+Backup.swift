@@ -41,7 +41,7 @@ extension RealmActor {
             .freeze()
 
         var backup = Backup()
-        
+
         backup.readLater = readLater.toArray()
         backup.progressMarkers = progressMarkers.toArray()
         backup.library = libraryEntries.toArray()

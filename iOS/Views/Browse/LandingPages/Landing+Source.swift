@@ -1,5 +1,5 @@
 //
-//  ContentSourceLandingPage.swift
+//  Landing+Source.swift
 //  Suwatte (iOS)
 //
 //  Created by Mantton on 2023-07-13.
@@ -37,22 +37,22 @@ struct SourceLandingPage: View {
     }
 }
 
-
 struct LoadableSourceView<V: View>: View {
     let sourceID: String
     let content: (AnyContentSource) -> V
     @State var loadable: Loadable<AnyContentSource> = .idle
-    
+
     init(sourceID: String, @ViewBuilder _ content: @escaping (AnyContentSource) -> V) {
         self.sourceID = sourceID
         self.content = content
     }
+
     var body: some View {
         LoadableView(load, $loadable) { value in
             content(value)
         }
     }
-    
+
     func load() async throws {
         await MainActor.run {
             loadable = .loading

@@ -46,25 +46,25 @@ extension DSK {
         let actor = await RealmActor()
         let library = await actor.getTitlesPendingUpdate(source.id)
         Logger.shared.log("[\(source.id)] [Updates Checker] Updating \(library.count) titles")
-        
+
         let updates = await withTaskGroup(of: Int.self, body: { group in
             for entry in library {
                 group.addTask { [weak self] in
                     await self?.getUpdates(for: entry, source: source) ?? 0
                 }
             }
-            
+
             var updates = 0
             for await result in group {
                 updates += result
             }
-            
+
             return updates
         })
 
         return updates
     }
-    
+
     private func getUpdates(for entry: LibraryEntry, source: AnyContentSource) async -> Int {
         guard let contentId = entry.content?.contentId else {
             return 0
@@ -113,10 +113,10 @@ extension DSK {
         if updates == 0 {
             return 0
         }
-        
+
         let date = chapters?.sorted(by: { $0.date > $1.date }).first?.date ?? .now
         await actor.didFindUpdates(for: entry.id, count: updates, date: date, onLinked: linkedHasUpdate)
-        
+
         guard let chapters = chapters else {
             await actor.updateUnreadCount(for: entry.content!.ContentIdentifier)
             return updates
@@ -125,7 +125,7 @@ extension DSK {
         let stored = chapters.map { $0.toStoredChapter(withSource: sourceId) }
         await actor.storeChapters(stored)
         await actor.updateUnreadCount(for: entry.content!.ContentIdentifier)
-        
+
         return updates
     }
 
@@ -139,7 +139,7 @@ extension DSK {
         let chapters = try await source.getContentChapters(contentId: id)
         return chapters
     }
-    
+
     private func updateProfile(for id: String, with source: AnyContentSource) async throws -> [DSKCommon.Chapter]? {
         do {
             let profile = try await source
@@ -160,16 +160,16 @@ extension DSK {
         let linkedTitles = await actor.getLinkedContent(for: id)
 
         let result = await withTaskGroup(of: Bool.self, body: { group in
-            
+
             for title in linkedTitles {
                 group.addTask { [unowned self] in
                     await checkLinked(title: title, min: lowerChapterLimit)
                 }
             }
-            
+
             var value = false
             for await result in group {
-                if !value && result {
+                if !value, result {
                     value = true
                 }
             }
@@ -177,7 +177,7 @@ extension DSK {
         })
         return result
     }
-    
+
     func checkLinked(title: StoredContent, min: Double?) async -> Bool {
         let actor = await RealmActor()
         guard let source = await DSK.shared.getSource(id: title.sourceId) else { return false }
@@ -188,7 +188,7 @@ extension DSK {
         if source.intents.chapterSyncHandler {
             marked = (try? await source.getReadChapterMarkers(contentId: title.contentId)) ?? []
         }
-        
+
         let lastFetched = await actor.getLatestStoredChapter(source.id, title.contentId)
         if Task.isCancelled { return false }
         var filtered = chapters

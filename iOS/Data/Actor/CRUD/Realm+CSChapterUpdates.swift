@@ -8,7 +8,6 @@
 import Foundation
 import RealmSwift
 
-
 extension RealmActor {
     func getTitlesPendingUpdate(_ sourceId: String) -> [LibraryEntry] {
         let date = UserDefaults.standard.object(forKey: STTKeys.LastFetchedUpdates) as! Date
@@ -19,7 +18,7 @@ extension RealmActor {
             .where { $0.dateAdded < date }
             .where { $0.content.sourceId == sourceId }
             .where { $0.content.status.in(validStatuses) }
-        
+
         // Flag Not Set to Reading Skip Condition
         if skipConditions.contains(.INVALID_FLAG) {
             results = results
@@ -37,22 +36,22 @@ extension RealmActor {
                 .objects(ProgressMarker.self)
                 .where { $0.id.in(ids) }
                 .map(\.id) as [String]
-            
+
             results = results
                 .where { $0.id.in(startedTitles) }
         }
         let library = Array(results.freeze())
         return library
     }
-    
+
     func didFindUpdates(for id: String, count: Int, date: Date, onLinked: Bool) async {
         let target = realm
             .objects(LibraryEntry.self)
             .where { $0.id == id }
             .first
-        
+
         guard let target else { return }
-        
+
         try! await realm.asyncWrite {
             target.lastUpdated = date
             target.updateCount += count

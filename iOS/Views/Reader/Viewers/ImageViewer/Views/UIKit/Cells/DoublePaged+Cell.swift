@@ -33,7 +33,7 @@ class DoublePagedViewerImageCell: UICollectionViewCell, CancellableImageCell {
         pageView = DoublePagedDisplayHolder()
         pageView?.panel = page
         pageView?.delegate = delegate
-        
+
         guard let pageView else { fatalError("Holder Cannot Be Nil") }
         pageView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(pageView)

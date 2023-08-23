@@ -76,7 +76,7 @@ final class RunnerInstance: Object, CKRecordConvertible, CKRecordRecoverable {
     @Persisted var instanceOf: StoredRunnerObject?
     @Persisted var preferredName: String?
     @Persisted var isDeleted = false
-    
+
     var name: String {
         preferredName ?? instanceOf?.name ?? ""
     }

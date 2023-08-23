@@ -7,36 +7,35 @@
 
 import Foundation
 
-
-extension WKRunner : DSKPageDelegate {
+extension WKRunner: DSKPageDelegate {
     func willRequestImage(imageURL: URL) async throws -> DSKCommon.Request {
         try await eval(script("let data = await RunnerObject.willRequestImage(url)"),
                        ["url": imageURL.absoluteString])
     }
-    
-    func getSectionsForPage<T>(link: DSKCommon.PageLink) async throws -> [DaisukeEngine.Structs.PageSection<T>] where T : Parsable, T : Hashable {
+
+    func getSectionsForPage<T>(link: DSKCommon.PageLink) async throws -> [DaisukeEngine.Structs.PageSection<T>] where T: Parsable, T: Hashable {
         try await eval(script("let data = await RunnerObject.getSectionsForPage(link)"),
-                       ["link": try link.asDictionary()])
+                       ["link": link.asDictionary()])
     }
-    
+
     func willResolveSectionsForPage(link: DSKCommon.PageLink) async throws {
-        let script = """
+        let script = try """
             if (!RunnerObject.willResolveSectionsForPage) return;
             await RunnerObject.willResolveSectionsForPage(link);
         """
         try await eval(script,
-                       ["link": try link.asDictionary()])
+                       ["link": link.asDictionary()])
     }
-    
-    func resolvePageSection<T>(link: DSKCommon.PageLink, section: String) async throws -> DaisukeEngine.Structs.ResolvedPageSection<T> where T : Parsable, T : Hashable {
+
+    func resolvePageSection<T>(link: DSKCommon.PageLink, section: String) async throws -> DaisukeEngine.Structs.ResolvedPageSection<T> where T: Parsable, T: Hashable {
         try await eval(script("let data = await RunnerObject.resolvePageSection(link, section)"),
-                       ["link": try link.asDictionary(), "section": section])
+                       ["link": link.asDictionary(), "section": section])
     }
-    
+
     func getLibraryPageLinks() async throws -> [DSKCommon.PageLinkLabel] {
-       try await eval(script("let data = await RunnerObject.getLibraryPageLinks()"))
+        try await eval(script("let data = await RunnerObject.getLibraryPageLinks()"))
     }
-    
+
     func getBrowsePageLinks() async throws -> [DSKCommon.PageLinkLabel] {
         try await eval(script("let data = await RunnerObject.getBrowsePageLinks()"))
     }

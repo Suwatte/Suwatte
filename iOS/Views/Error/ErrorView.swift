@@ -65,6 +65,7 @@ struct ErrorView: View {
             Logger.shared.error(error)
         }
     }
+
     func getMessage(for error: Error) -> String {
         if case let DecodingError.valueNotFound(_, context) = error {
             return "JSON Decoding Error (Value not Found): \(context.debugDescription)"

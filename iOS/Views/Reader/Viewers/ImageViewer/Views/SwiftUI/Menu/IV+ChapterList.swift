@@ -12,10 +12,11 @@ struct IVChapterListView: View {
     @State private var showDate = false
     @State private var chapters: [ThreadSafeChapter] = []
     @EnvironmentObject private var model: IVViewModel
-    
+
     private var activeChapter: ThreadSafeChapter {
         model.viewerState.chapter
     }
+
     var body: some View {
         NavigationView {
             ScrollViewReader { proxy in
@@ -64,17 +65,17 @@ struct IVChapterListView: View {
 extension IVChapterListView {
     func didSelect(_ chapter: ThreadSafeChapter) {
         let id = activeChapter.id
-        
+
         guard id != chapter.id else {
             return
         }
-        
+
         model.pendingState = .init(chapter: chapter)
         withAnimation {
             model.toggleChapterList()
         }
     }
-    
+
     func loadSource() async {
         let sourceId = activeChapter.sourceId
         if STTHelpers.isInternalSource(sourceId) { return }
@@ -82,7 +83,7 @@ extension IVChapterListView {
         showLangFlag = source.ablityNotDisabled(\.disableLanguageFlags)
         showDate = source.ablityNotDisabled(\.disableChapterDates)
     }
-    
+
     func loadChapters() async {
         let cache = model.dataCache
         chapters = Array(await cache.chapters)

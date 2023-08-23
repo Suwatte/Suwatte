@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import RealmSwift
 import IceCream
+import RealmSwift
 
 extension RealmActor {
     func saveRunnerList(_ data: RunnerList, at url: URL) async {
@@ -82,12 +82,12 @@ extension RealmActor {
             .executable?
             .filePath
     }
-    
-    func getAllRunnerNames() -> [String:String] {
+
+    func getAllRunnerNames() -> [String: String] {
         let kvSq = realm
             .objects(StoredRunnerObject.self)
             .map { ($0.id, $0.name) }
-        
+
         return Dictionary(uniqueKeysWithValues: kvSq)
     }
 
@@ -97,6 +97,7 @@ extension RealmActor {
             .where { $0.enabled == true && $0.isDeleted == false && $0.environment == .source }
             .sorted(by: [SortDescriptor(keyPath: "name", ascending: true)])
     }
+
     func getSavedAndEnabledSources() -> [StoredRunnerObject] {
         realm
             .objects(StoredRunnerObject.self)
@@ -105,7 +106,7 @@ extension RealmActor {
             .freeze()
             .toArray()
     }
-    
+
     func getSearchableSources() -> [StoredRunnerObject] {
         let disabledRunnerIDs: [String] = Array(Preferences.standard.disabledGlobalSearchSources)
         return getSavedAndEnabledSources()

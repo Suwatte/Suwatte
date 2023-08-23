@@ -317,7 +317,7 @@ extension MigrationView {
     }
 
     @ViewBuilder
-    private func ItemCellResult(_ state: ItemState, _ initial: StoredContent) -> some View {
+    private func ItemCellResult(_ state: ItemState, _: StoredContent) -> some View {
         Group {
             switch state {
             case .idle, .searching:
@@ -352,7 +352,7 @@ extension MigrationView {
         await MainActor.run(body: {
             operationState = .searching
         })
-        
+
         let actor = await RealmActor()
         for content in contents {
             let lastChapter = await actor.getLatestStoredChapter(content.sourceId, content.contentId)?.number
@@ -500,7 +500,7 @@ extension MigrationView {
         }
     }
 
-    func migrate(data: [String: ItemState]) {
+    func migrate(data _: [String: ItemState]) {
         Task { @MainActor in
             ToastManager.shared.loading = true
             ToastManager.shared.info("Migration In Progress\nYour Data has been backed up.")

@@ -6,7 +6,7 @@
 //
 
 import UIKit
-fileprivate typealias Controller = WebtoonController
+private typealias Controller = WebtoonController
 
 extension Controller {
     func requestAutoPlay() {
@@ -16,7 +16,7 @@ extension Controller {
             timer = Timer.scheduledTimer(timeInterval: 0.15, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
         }
     }
-    
+
     @objc func timerAction() {
         DispatchQueue.main.async {
             let amount = (UIScreen.main.bounds.height / Preferences.standard.verticalAutoScrollSpeed) * 0.15

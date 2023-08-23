@@ -32,7 +32,7 @@ extension SDM {
         await fetchQueue()
     }
 
-    internal func download() async {
+    func download() async {
         // Mark as active
         isIdle = false
 

@@ -1,5 +1,5 @@
 //
-//  StateManager.swift
+//  Logger.swift
 //  Suwatte (iOS)
 //
 //  Created by Mantton on 2022-09-27.

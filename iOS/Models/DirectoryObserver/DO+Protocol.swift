@@ -53,7 +53,6 @@ enum DirectorySortOption: Int, CaseIterable, UserDefaultsSerializable {
             return "Creation Date"
         case .dateAdded:
             return "Date Added"
-
         }
     }
 }

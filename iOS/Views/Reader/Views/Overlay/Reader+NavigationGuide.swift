@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 struct NavigationGuide: View {
     @Binding var presenting: Bool
     var body: some View {

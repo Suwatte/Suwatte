@@ -23,7 +23,7 @@ struct SearchView: View {
                 HistoryView()
                     .transition(.opacity)
             } else {
-                if case .loaded(_) = model.state, model.results.isEmpty {
+                if case .loaded = model.state, model.results.isEmpty {
                     NoResultsView()
                         .transition(.opacity)
                 } else {
@@ -74,9 +74,9 @@ struct SearchView: View {
             initial.toggle()
         }
         .animation(.default, value: model.query)
-        .hiddenNav(presenting: $presentImageSearch, {
+        .hiddenNav(presenting: $presentImageSearch) {
             ImageSearchView()
-        })
+        }
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 StatusView
@@ -87,7 +87,7 @@ struct SearchView: View {
             model.stopObserving()
         }
     }
-    
+
     var MenuView: some View {
         Menu {
             Button {
@@ -96,7 +96,7 @@ struct SearchView: View {
                 Label("Image Search", systemImage: "photo")
             }
             Divider()
-            Button (role: .destructive) {
+            Button(role: .destructive) {
                 Task {
                     let actor = await RealmActor()
                     await actor.deleteSearchHistory()
@@ -104,13 +104,12 @@ struct SearchView: View {
                 }
             } label: {
                 Label("Clear History", systemImage: "xmark")
-                
             }
         } label: {
             Image(systemName: "ellipsis.circle")
         }
     }
-    
+
     var StatusView: some View {
         Group {
             switch model.state {
@@ -133,15 +132,14 @@ struct SearchView: View {
             default:
                 EmptyView()
                     .transition(.opacity)
-
             }
         }
     }
-    
+
     var hasFailing: Bool {
         !model.incomplete.failing.isEmpty
     }
-    
+
     var hasEmpty: Bool {
         !model.incomplete.noResults.isEmpty
     }

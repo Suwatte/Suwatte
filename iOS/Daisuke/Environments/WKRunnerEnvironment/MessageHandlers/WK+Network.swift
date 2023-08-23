@@ -5,10 +5,9 @@
 //  Created by Mantton on 2023-08-03.
 //
 
-import Foundation
 import Alamofire
+import Foundation
 import WebKit
-
 
 extension WKHandler {
     class NetworkHandler: NSObject, WKScriptMessageHandlerWithReply {
@@ -18,19 +17,18 @@ extension WKHandler {
             configuration.headers.add(.userAgent(Preferences.standard.userAgent))
             return .init(configuration: configuration)
         }()
-        
-        func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) async -> (Any?, String?) {
-            
+
+        func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) async -> (Any?, String?) {
             let body = await MainActor.run {
                 message.body
             }
-            
+
             // Check JSON Validity
             let isValidJSON = JSONSerialization.isValidJSONObject(body)
             guard isValidJSON else {
                 return (nil, DSK.Errors.InvalidJSONObject.localizedDescription)
             }
-            
+
             do {
                 let data = try JSONSerialization.data(withJSONObject: body)
                 let message = try JSONDecoder().decode(Message.self, from: data)
@@ -42,8 +40,6 @@ extension WKHandler {
         }
     }
 }
-
-
 
 private typealias H = WKHandler.NetworkHandler
 
@@ -78,4 +74,3 @@ extension H {
         return response
     }
 }
-

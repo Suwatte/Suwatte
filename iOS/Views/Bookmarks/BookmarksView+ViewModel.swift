@@ -13,17 +13,16 @@ extension BookmarksView {
     final class ViewModel: ObservableObject {
         private var token: NotificationToken?
         @MainActor @Published var results: [UpdatedBookmark]?
-        
+
         func observe(id: String) async {
             let actor = await RealmActor()
-            
+
             token = await actor
                 .observeBookmarks(for: id) { [weak self] bookmarks in
                     self?.setValues(bookmarks)
                 }
-            
         }
-        
+
         func setValues(_ data: [UpdatedBookmark]) {
             Task { @MainActor in
                 withAnimation {
@@ -36,6 +35,5 @@ extension BookmarksView {
             token?.invalidate()
             token = nil
         }
-        
     }
 }

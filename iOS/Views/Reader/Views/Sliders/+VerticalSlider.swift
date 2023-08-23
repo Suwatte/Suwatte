@@ -18,7 +18,7 @@ struct ReaderVSlider: View {
     func scrollColor() -> Color {
         isScrolling || value >= range.upperBound ? Color.accentColor : Color(hex: "77777d")
     }
-    
+
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .top) {
@@ -31,7 +31,7 @@ struct ReaderVSlider: View {
                 RoundedRectangle(cornerRadius: 50)
                     .foregroundColor(scrollColor())
                     .frame(width: 5, height: $value.wrappedValue.map(from: range, to: (knobSize.width) ... (geometry.size.height)))
-                
+
                 // Knob
                 RoundedRectangle(cornerRadius: 50)
                     .frame(width: knobSize.width, height: knobSize.height)
@@ -42,11 +42,11 @@ struct ReaderVSlider: View {
                         DragGesture(minimumDistance: 0)
                             .onChanged { value in
                                 isScrolling = true
-                                
+
                                 if abs(value.translation.height) < 0.1 {
                                     lastOffset = $value.wrappedValue.map(from: range, to: 0 ... (geometry.size.height - knobSize.height))
                                 }
-                                
+
                                 let sliderPos = max(0, min(lastOffset + value.translation.height, geometry.size.height - knobSize.width))
                                 let sliderVal = sliderPos.map(from: 0 ... (geometry.size.height - knobSize.width), to: range)
                                 self.value = sliderVal

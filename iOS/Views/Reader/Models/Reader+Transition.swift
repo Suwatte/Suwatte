@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 struct ReaderTransition: Hashable, Sendable {
     let from: ThreadSafeChapter
     let pageCount: Int?

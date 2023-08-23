@@ -8,23 +8,21 @@
 import SwiftUI
 import UIKit
 
-
-struct DoublePagedImageViewer : UIViewControllerRepresentable {
+struct DoublePagedImageViewer: UIViewControllerRepresentable {
     @EnvironmentObject private var model: IVViewModel
     typealias UIViewControllerType = IVPagingController
-    
-    func makeUIViewController(context: Context) -> IVPagingController {
+
+    func makeUIViewController(context _: Context) -> IVPagingController {
         let controller = IVPagingController(collectionViewLayout: UICollectionViewFlowLayout())
         controller.model = model
         controller.isDoublePager = true
         return controller
     }
-    
-    func updateUIViewController(_ uiViewController: IVPagingController, context: Context) {}
+
+    func updateUIViewController(_: IVPagingController, context _: Context) {}
 }
 
 protocol DoublePageResolverDelegate: NSObject {
     func primaryIsWide(for page: PanelPage)
     func secondaryIsWide(for page: PanelPage)
 }
-

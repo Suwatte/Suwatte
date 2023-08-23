@@ -8,10 +8,8 @@
 import Foundation
 import WebKit
 
-
 extension DSK {
-    
-    internal func startWKRunner(with url: URL, of instance: InstanceInformation) async throws -> WKRunner {
+    func startWKRunner(with url: URL, of instance: InstanceInformation) async throws -> WKRunner {
         func generate(for path: URL) async throws -> WKUserScript {
             var content = try String(contentsOfFile: path.relativePath, encoding: String.Encoding.utf8)
             if path.lastPathComponent == "wkFills.js" {
@@ -29,28 +27,28 @@ extension DSK {
             .applicationSupport
             .appendingPathComponent("Runners", isDirectory: true)
             .appendingPathComponent("common.js")
-        
+
         let messageHandlerFiles = [
             Bundle.main.url(forResource: "wkFills", withExtension: "js")!,
             Bundle.main.url(forResource: "log", withExtension: "js")!,
             Bundle.main.url(forResource: "store", withExtension: "js")!,
             Bundle.main.url(forResource: "network", withExtension: "js")!,
         ]
-        
+
         let bootstrapFile = Bundle.main.url(forResource: "bridge", withExtension: "js")!
-        
+
         var scripts: [WKUserScript] = []
-        
-        await scripts.append(try generate(for: commonsPath))
+
+        try await scripts.append(generate(for: commonsPath))
         for messageHandlerFile in messageHandlerFiles {
-            await scripts.append(try generate(for: messageHandlerFile))
+            try await scripts.append(generate(for: messageHandlerFile))
         }
-        await scripts.append(try generate(for: url))
-        await scripts.append(try generate(for: bootstrapFile))
-        
+        try await scripts.append(generate(for: url))
+        try await scripts.append(generate(for: bootstrapFile))
+
         // Add Handlers
         let s = scripts
-        let task =  Task { @MainActor in
+        let task = Task { @MainActor in
             // Define Handlers
             let logger = WKHandler.LogHandler()
             let network = WKHandler.NetworkHandler()
@@ -61,7 +59,7 @@ extension DSK {
             // SMHWR
             userContentController.addScriptMessageHandler(network, contentWorld: .defaultClient, name: "networking")
             userContentController.addScriptMessageHandler(store, contentWorld: .defaultClient, name: "store")
-            
+
             // Scripts
             s.forEach(userContentController.addUserScript)
             let config = WKWebViewConfiguration()
@@ -72,14 +70,14 @@ extension DSK {
             await bootstrapper.prepare()
             return wv
         }
-        
+
         let wv = await task.value
-        
+
         let environment = try await wv
             .evaluateJavaScript("(function(){ return RunnerEnvironment })()", contentWorld: .defaultClient)
             .flatMap { $0 as? String }
             .flatMap(DSKCommon.RunnerEnvironment.init(rawValue:)) ?? .unknown
-        
+
         var runner: WKRunner? = nil
         switch environment {
         case .source:
@@ -89,12 +87,11 @@ extension DSK {
         default:
             break
         }
-        
+
         guard let runner else {
             throw DSK.Errors.NamedError(name: "Engine", message: "Failed to recognize runner environment.")
         }
-        
+
         return runner
-        
     }
 }

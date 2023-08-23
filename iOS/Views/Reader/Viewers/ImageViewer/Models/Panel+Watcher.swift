@@ -5,14 +5,12 @@
 //  Created by Mantton on 2023-08-06.
 //
 
-import Foundation
 import Combine
-
-
+import Foundation
 
 final class PanelPublisher {
     static let shared = PanelPublisher()
-    
+
     let willSplitPage = PassthroughSubject<PanelPage, Never>()
     let sliderPct = PassthroughSubject<Double, Never>()
     let didEndScrubbing = PassthroughSubject<Void, Never>()

@@ -10,48 +10,46 @@ import UIKit
 private typealias Controller = WebtoonController
 
 extension Controller {
-    internal func startup() {
+    func startup() {
         Task { [weak self] in
             guard let self else { return }
             await self.initialLoad()
         }
     }
-    
-    internal func initialLoad() async {
+
+    func initialLoad() async {
         guard let pendingState = model.pendingState else {
             Logger.shared.warn("calling initialLoad() without any pending state")
             return
         }
         let chapter = pendingState.chapter
         let isLoaded = model.loadState[chapter] != nil
-        
+
         if let index = pendingState.pageIndex, let offset = pendingState.pageOffset {
             resumptionPosition = (index, offset)
         }
 
-        
         if !isLoaded {
             // Load Chapter Data
             _ = await load(chapter)
         } else {
             // Data has already been loaded, just apply instead
             await apply(chapter)
-
         }
-                        
+
         // Retrieve chapter data
         guard let chapterIndex = await dataCache.chapters.firstIndex(of: chapter) else {
             Logger.shared.warn("load complete but page list is empty", "ImageViewer")
             return
         }
-        
+
         guard let page = await dataCache.get(chapter.id)?.getOrNil(pendingState.pageIndex ?? 0) else {
             Logger.shared.warn("Unable to get the requested page or the first page in the chapter", "WebtoonController")
             return
         }
         model.updateViewerStateChapter(chapter)
         model.updateViewerState(with: page)
-        
+
         let isFirstChapter = chapterIndex == 0
         let requestedPageIndex = (pendingState.pageIndex ?? 0) + (isFirstChapter ? 1 : 0)
         let indexPath = IndexPath(item: requestedPageIndex, section: 0)
@@ -66,7 +64,6 @@ extension Controller {
     }
 }
 
-
 extension Controller {
     func load(_ chapter: ThreadSafeChapter) async {
         do {
@@ -80,7 +77,7 @@ extension Controller {
             return
         }
     }
-    
+
     @MainActor
     func loadPrevChapter() async {
         guard let current = pathAtCenterOfScreen, // Current Index
@@ -89,13 +86,13 @@ extension Controller {
               currentReadingIndex != 0, // Is not the first chapter
               let next = await dataCache.chapters.getOrNil(currentReadingIndex - 1), // Next Chapter in List
               model.loadState[next] == nil else { return } // is not already loading/loaded
-        
+
         await loadAtHead(next)
     }
-    
+
     func loadAtHead(_ chapter: ThreadSafeChapter) async {
         model.updateChapterState(for: chapter, state: .loading)
-        
+
         do {
             try await dataCache.load(for: chapter)
             model.updateChapterState(for: chapter, state: .loaded(true))
@@ -107,7 +104,7 @@ extension Controller {
             let section = 0
             let paths = pages.indices.map { IndexPath(item: $0, section: section) }
             let set = IndexSet(integer: section)
-            
+
             preparingToInsertAtHead()
             await collectionNode.performBatch(animated: false) { [weak self] in
                 self?.collectionNode.insertSections(set)
@@ -119,7 +116,6 @@ extension Controller {
             model.updateChapterState(for: chapter, state: .failed(error))
             ToastManager.shared.error("Failed to load chapter.")
         }
-
     }
 }
 
@@ -138,11 +134,11 @@ extension Controller {
             self?.collectionNode.insertItems(at: paths)
         }
     }
-    
+
     func build(for chapter: ThreadSafeChapter) async -> [PanelViewerItem] {
         await dataCache.prepare(chapter.id) ?? []
     }
-    
+
     func preparingToInsertAtHead() {
         let layout = collectionNode.view.collectionViewLayout as? OffsetPreservingLayout
         layout?.isInsertingCellsToTop = true

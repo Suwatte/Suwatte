@@ -1,5 +1,5 @@
 //
-//  FeedsView.swift
+//  UpdateFeedView.swift
 //  Suwatte (iOS)
 //
 //  Created by Mantton on 2022-02-28.
@@ -8,13 +8,10 @@
 import RealmSwift
 import SwiftUI
 
-
-
 struct UpdateFeedView: View {
     @State var selection: HighlightIdentifier?
     @StateObject var model = ViewModel()
     var body: some View {
-        
         List {
             ForEach(model.data, id: \.header.hashValue) {
                 SectionGroup(title: $0.header, entries: $0.content)
@@ -70,7 +67,7 @@ struct UpdateFeedView: View {
         }
         .headerProminence(.increased)
     }
-    
+
     func clear(for id: String) {
         Task {
             let actor = await RealmActor()
@@ -84,13 +81,13 @@ extension UpdateFeedView {
         private var token: NotificationToken?
         @Published var data: [UpdateFeedGroup] = []
         func observe() async {
-           let actor = await RealmActor()
+            let actor = await RealmActor()
             token = await actor
-                .observeUpdateFeed({ feed in
+                .observeUpdateFeed { feed in
                     Task { @MainActor [weak self] in
                         self?.data = feed
                     }
-                })
+                }
         }
 
         func disconnect() {

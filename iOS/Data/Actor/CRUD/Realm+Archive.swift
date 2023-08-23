@@ -9,9 +9,7 @@ import Foundation
 import RealmSwift
 
 extension RealmActor {
-    
     func saveArchivedFile(_ file: File) async {
-
         let directory = CloudDataManager
             .shared
             .getDocumentDiretoryURL()

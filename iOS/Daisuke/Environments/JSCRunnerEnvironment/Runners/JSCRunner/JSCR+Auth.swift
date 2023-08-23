@@ -42,4 +42,3 @@ extension JSCRunner: DSKAuthDelegate {
         try await callOptionalVoidMethod(method: "handleOAuthCallback", arguments: [response])
     }
 }
-

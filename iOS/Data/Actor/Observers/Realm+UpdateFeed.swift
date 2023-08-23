@@ -14,8 +14,7 @@ struct UpdateFeedGroup: Hashable {
 }
 
 extension RealmActor {
-    func observeUpdateFeed(_ callback: @escaping Callback<[UpdateFeedGroup]>)  async -> NotificationToken {
-        
+    func observeUpdateFeed(_ callback: @escaping Callback<[UpdateFeedGroup]>) async -> NotificationToken {
         // Updates going 2 months back
         let date = Calendar.current.date(byAdding: .month, value: -2, to: .now)!
         let collection = realm
@@ -25,8 +24,8 @@ extension RealmActor {
             .where { $0.updateCount > 0 }
             .where { $0.lastUpdated >= date }
             .sorted(by: \.lastUpdated, ascending: false)
-        
-        func generate(entries: Array<LibraryEntry>) -> [UpdateFeedGroup] {
+
+        func generate(entries: [LibraryEntry]) -> [UpdateFeedGroup] {
             let grouped = Dictionary(grouping: entries,
                                      by: { $0.lastUpdated.timeAgoGrouped() })
             let sortedKeys = grouped
@@ -39,7 +38,7 @@ extension RealmActor {
 
             return data
         }
-        
+
         func didUpdate(_ results: Results<LibraryEntry>) {
             let data = results
                 .freeze()
@@ -49,7 +48,7 @@ extension RealmActor {
                 callback(grouped)
             }
         }
-        
+
         return await observeCollection(collection: collection, didUpdate)
     }
 }

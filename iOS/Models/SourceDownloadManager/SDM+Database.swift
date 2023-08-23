@@ -18,7 +18,7 @@ extension SDM {
     func getRealmActor() async -> Realm {
         try! await Realm(actor: self)
     }
-    
+
     func fetchQueue() async {
         let realm = await getRealmActor()
         let collection = realm
@@ -157,7 +157,7 @@ extension SDM {
         pausedTasks = pausedTasks.subtracting(ids)
     }
 
-    func pause(ids: [String]) async  {
+    func pause(ids: [String]) async {
         await update(ids: ids, status: .paused)
         pausedTasks = pausedTasks.union(ids)
     }

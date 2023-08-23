@@ -5,16 +5,16 @@
 //  Created by Mantton on 2023-08-02.
 //
 
-import SwiftUI
 import ASCollectionView
+import SwiftUI
 
 extension SearchView {
-    struct CollectionView : View {
+    struct CollectionView: View {
         @EnvironmentObject var model: ViewModel
         var body: some View {
             ASCollectionView(sections: CollectionSections)
                 .alwaysBounceVertical()
-                .layout(scrollDirection: .vertical, interSectionSpacing: 7, layoutPerSection: { sectionID in
+                .layout(scrollDirection: .vertical, interSectionSpacing: 7, layoutPerSection: { _ in
                     LoadedLayout()
                 })
                 .animateOnDataRefresh(true)
@@ -24,14 +24,14 @@ extension SearchView {
 }
 
 // MARK: Sections
+
 extension SearchView.CollectionView {
-    
     var CollectionSections: [ASCollectionViewSection<String>] {
         model
             .results
             .map(CollectionSection(_:))
     }
-    
+
     func CollectionSection(_ result: SearchView.ResultGroup) -> ASCollectionViewSection<String> {
         .init(id: result.sourceID, data: result.result.results) { data, _ in
             CollectionCell(data: data, sourceID: result.sourceID)
@@ -43,17 +43,18 @@ extension SearchView.CollectionView {
 }
 
 // MARK: Layout
+
 extension SearchView.CollectionView {
     func LoadedLayout() -> ASCollectionLayoutSection {
         return ASCollectionLayoutSection { _ in
             let style = TileStyle(rawValue: UserDefaults.standard.integer(forKey: STTKeys.TileStyle)) ?? .COMPACT
-            
+
             let isSeparated = style == .SEPARATED
             let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1),
                 heightDimension: .fractionalHeight(1)
             ))
-            
+
             let itemsGroup = NSCollectionLayoutGroup.vertical(
                 layoutSize: NSCollectionLayoutSize(
                     widthDimension: .absolute(150),
@@ -61,7 +62,7 @@ extension SearchView.CollectionView {
                 ),
                 subitem: item, count: 1
             )
-            
+
             //            itemsGroup.interItemSpacing = .fixed(10)
             let section = NSCollectionLayoutSection(group: itemsGroup)
             section.interGroupSpacing = 7
@@ -75,6 +76,7 @@ extension SearchView.CollectionView {
 }
 
 // MARK: Header
+
 extension SearchView.CollectionView {
     @ViewBuilder
     func CollectionHeader(_ group: SearchView.ResultGroup) -> some View {
@@ -111,6 +113,7 @@ extension SearchView.CollectionView {
 }
 
 // MARK: Cell
+
 extension SearchView.CollectionView {
     struct CollectionCell: View {
         let data: DSKCommon.Highlight
@@ -125,19 +128,20 @@ extension SearchView.CollectionView {
             .buttonStyle(NeutralButtonStyle())
             .coloredBadge(badge)
         }
-        
+
         // Computed :]
         var identifier: String {
             ContentIdentifier(contentId: data.contentId, sourceId: sourceID).id
         }
+
         var inLibrary: Bool {
             model.library.contains(identifier)
         }
-        
+
         var inReadLater: Bool {
             model.savedForLater.contains(identifier)
         }
-        
+
         var badge: Color? {
             if inLibrary { return .accentColor }
             if inReadLater { return .yellow }

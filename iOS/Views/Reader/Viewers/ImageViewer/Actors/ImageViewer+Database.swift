@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 final class IVManager {
     func didChangePage() {}
     func didChangeChapter() {}

@@ -70,30 +70,29 @@ extension TrackerManagementView {
         @MainActor @Published var linkedTrackers: [AnyContentTracker] = []
         @MainActor @Published var unlinkedTrackers: [AnyContentTracker] = []
         private var matches: [String: String] = [:]
-        
 
         init(id: String, _ titles: [String]) {
             contentID = id
             self.titles = titles
         }
-        
-        func loadTrackers (_ keys: [String]) async {
+
+        func loadTrackers(_ keys: [String]) async {
             let data = await DSK.shared.getActiveTrackers()
-                
+
             await MainActor.run {
                 self.linkedTrackers = data
-                    .filter{ keys.contains($0.id) }
+                    .filter { keys.contains($0.id) }
                 self.unlinkedTrackers = data
-                    .filter{ !keys.contains($0.id) }
+                    .filter { !keys.contains($0.id) }
             }
         }
 
         func prepare() async {
             let actor = await RealmActor()
             matches = await actor.getTrackerLinks(for: contentID)
-            
+
             await loadTrackers(Array(matches.keys))
-            
+
             Task { @MainActor in
                 for tracker in linkedTrackers {
                     Task { @MainActor in
@@ -109,15 +108,14 @@ extension TrackerManagementView {
             await withTaskGroup(of: Void.self) { group in
                 for (key, value) in matches {
                     guard let tracker = await engine.getTracker(id: key) else { continue }
-                    
+
                     group.addTask {
                         await self.load(for: tracker, id: value)
                     }
                 }
             }
-
         }
-        
+
         func load(for tracker: AnyContentTracker, id: String) async {
             do {
                 let trackItem = try await tracker.getTrackItem(id: id)
@@ -139,7 +137,7 @@ extension TrackerManagementView {
         func unlink(tracker: AnyContentTracker) async {
             let keys = tracker.links
             let actor = await RealmActor()
-            await withTaskGroup(of: Void.self, body: { group in
+            await withTaskGroup(of: Void.self, body: { _ in
                 for key in keys {
                     await actor.removeLinkKey(for: contentID, key: key)
                 }
@@ -234,7 +232,7 @@ extension TrackerManagementView {
                             Divider()
                             Button(role: .destructive) {
                                 Task {
-                                   await model.unlink(tracker: tracker)
+                                    await model.unlink(tracker: tracker)
                                 }
                             } label: {
                                 Label("Remove Link", systemImage: "trash")

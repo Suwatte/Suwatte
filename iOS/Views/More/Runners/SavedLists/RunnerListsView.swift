@@ -68,7 +68,6 @@ extension RunnerListsView {
         } catch {
             ToastManager.shared.error(error)
             Logger.shared.error(error)
-
         }
         presentAlert = false
     }

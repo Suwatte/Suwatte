@@ -41,7 +41,7 @@ struct ManageContentLinks: View {
                 }
             }
         }
-        .sheet(isPresented: $presentAddSheet, onDismiss: { Task { await fetch() }}){
+        .sheet(isPresented: $presentAddSheet, onDismiss: { Task { await fetch() }}) {
             NavigationView {
                 AddContentLink(content: content)
                     .closeButton()
@@ -60,7 +60,7 @@ struct ManageContentLinks: View {
             linked = data
         }
     }
-    
+
     func unlink(_ title: StoredContent) async {
         let actor = await RealmActor()
         await actor.unlinkContent(title.id, content.id)

@@ -8,7 +8,6 @@
 import Foundation
 import JavaScriptCore
 
-
 // MARK: - Bootstrap
 
 extension DaisukeEngine {
@@ -37,7 +36,7 @@ extension DaisukeEngine {
         context.evaluateScript(script)
     }
 
-    internal func bootstrapJSCRunner(_ scriptURL: URL) throws -> JSValue {
+    func bootstrapJSCRunner(_ scriptURL: URL) throws -> JSValue {
         // Generate New Context
         let context = newJSCContext()
 
@@ -93,9 +92,8 @@ extension DaisukeEngine {
     }
 }
 
-
 extension DaisukeEngine {
-    func startJSCRunner(with url: URL, for instance : InstanceInformation) async throws -> AnyRunner {
+    func startJSCRunner(with url: URL, for instance: InstanceInformation) async throws -> AnyRunner {
         let runnerObject = try bootstrapJSCRunner(url)
 
         // Get Runner Environment
@@ -117,7 +115,7 @@ extension DaisukeEngine {
         guard let runner else {
             throw DSK.Errors.NamedError(name: "Engine", message: "Failed to recognize runner environment.")
         }
-        
+
         return runner
     }
 }

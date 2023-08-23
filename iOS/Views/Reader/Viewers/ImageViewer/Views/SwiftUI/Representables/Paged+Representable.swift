@@ -10,12 +10,12 @@ import SwiftUI
 struct PagedImageViewer: UIViewControllerRepresentable {
     @EnvironmentObject private var model: IVViewModel
     typealias UIViewControllerType = IVPagingController
-    
-    func makeUIViewController(context: Context) -> IVPagingController {
+
+    func makeUIViewController(context _: Context) -> IVPagingController {
         let controller = IVPagingController(collectionViewLayout: UICollectionViewFlowLayout())
         controller.model = model
         return controller
     }
-    
-    func updateUIViewController(_ uiViewController: IVPagingController, context: Context) {}
+
+    func updateUIViewController(_: IVPagingController, context _: Context) {}
 }

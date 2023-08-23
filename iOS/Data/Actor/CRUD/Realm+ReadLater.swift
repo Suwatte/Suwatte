@@ -16,21 +16,20 @@ extension RealmActor {
             .where { $0.isDeleted == false }
             .first
     }
-    
+
     func isSavedForLater(_ id: String) -> Bool {
-        
         return !realm
             .objects(ReadLater.self)
             .where { $0.id == id }
             .where { $0.isDeleted == false }
             .isEmpty
     }
-    
+
     func toggleReadLater(_ source: String, _ content: String) async {
         let id = ContentIdentifier(contentId: content, sourceId: source).id
 
         let isSaved = isSavedForLater(id)
-        
+
         if isSaved {
             await removeFromReadLater(source, content: content)
             return
@@ -60,18 +59,18 @@ extension RealmActor {
         }
         let obj = ReadLater()
         obj.content = content
-        
+
         try! await realm.asyncWrite {
             realm.add(obj, update: .modified)
         }
     }
-    
+
     func queryAndSaveForLater(_ sourceId: String, _ contentId: String) async {
         guard let source = await DSK.shared.getSource(id: sourceId) else {
             Logger.shared.warn("Source not Found", "RealmActor")
             return
         }
-        
+
         do {
             let content = try await source.getContent(id: contentId)
             let storedContent = try content.toStoredContent(withSource: sourceId)

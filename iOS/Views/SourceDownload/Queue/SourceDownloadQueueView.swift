@@ -257,7 +257,7 @@ extension SDQV {
 // MARK: Active Chapter View
 
 extension SDQV {
-    func didRecievePub(_ info: (String, SDM.DownloadState)?)  async{
+    func didRecievePub(_ info: (String, SDM.DownloadState)?) async {
         guard model.initialDataFetchComplete else { return }
         guard let info else {
             // Reset
@@ -280,7 +280,7 @@ extension SDQV {
         }
         let actor = await RealmActor()
         let target = await actor.getActiveDownload(id)
-        
+
         guard let target else {
             withAnimation {
                 activeDownload = nil

@@ -41,4 +41,3 @@ extension JSCRunner {
         try await callMethodReturningDecodable(method: "getBrowsePageLinks", arguments: [], resolvesTo: [DSKCommon.PageLinkLabel].self)
     }
 }
-

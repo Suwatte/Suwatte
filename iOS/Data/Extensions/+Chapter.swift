@@ -13,7 +13,6 @@ extension StoredChapter {
     }
 }
 
-
 extension StoredChapter {
     func generateReference() -> ChapterReference {
         let object = ChapterReference()
@@ -65,7 +64,6 @@ extension DaisukeEngine.Structs.Chapter {
         return chapter
     }
 }
-
 
 extension StoredChapter {
     static func == (lhs: StoredChapter, rhs: StoredChapter) -> Bool {

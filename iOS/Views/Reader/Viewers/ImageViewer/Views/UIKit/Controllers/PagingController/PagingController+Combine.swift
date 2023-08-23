@@ -7,7 +7,7 @@
 
 import Foundation
 
-fileprivate typealias Controller = IVPagingController
+private typealias Controller = IVPagingController
 
 extension Controller {
     func subscribeAll() {
@@ -19,6 +19,7 @@ extension Controller {
 }
 
 // MARK: State
+
 extension Controller {
     func subToSplitPagePublisher() {
         // Listens for when a page is marked to be split
@@ -32,7 +33,7 @@ extension Controller {
                 }
             }
             .store(in: &subscriptions)
-        
+
         PanelPublisher
             .shared
             .didChangeSplitMode
@@ -41,33 +42,31 @@ extension Controller {
             }
             .store(in: &subscriptions)
     }
-    
+
     func subToReadingDirectionPublisher() {
         guard readingMode.isHorizontalPager else { return }
         PanelPublisher
-             .shared
-             .didChangeHorizontalDirection
-             .sink {value in
-                 Task { @MainActor [weak self] in
-                     self?.setReadingOrder()
-                     self?.collectionView.collectionViewLayout.invalidateLayout()
-                 }
-             }
-             .store(in: &subscriptions)
+            .shared
+            .didChangeHorizontalDirection
+            .sink { _ in
+                Task { @MainActor [weak self] in
+                    self?.setReadingOrder()
+                    self?.collectionView.collectionViewLayout.invalidateLayout()
+                }
+            }
+            .store(in: &subscriptions)
     }
-    
+
     func subToSliderPublisher() {
-       PanelPublisher
+        PanelPublisher
             .shared
             .sliderPct
             .sink { [weak self] value in
                 self?.handleSliderPositionChange(value)
             }
             .store(in: &subscriptions)
-
     }
-    
-    
+
     func subToScrubEventPublisher() {
         PanelPublisher
             .shared

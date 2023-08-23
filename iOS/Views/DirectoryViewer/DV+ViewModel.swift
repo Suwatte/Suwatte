@@ -112,7 +112,8 @@ extension DirectoryViewer {
                                       chapters: [chapter],
                                       requestedPage: nil,
                                       requestedOffset: nil,
-                                      readingMode: nil) { [weak self] in
+                                      readingMode: nil)
+            { [weak self] in
                 self?.currentlyReading = nil
             }
             Task { @MainActor in

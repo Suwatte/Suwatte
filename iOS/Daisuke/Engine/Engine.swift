@@ -15,18 +15,18 @@ final actor DaisukeEngine {
 
     static let shared = DaisukeEngine()
 
-    internal let directory = FileManager
+    let directory = FileManager
         .default
         .applicationSupport
         .appendingPathComponent("Runners", isDirectory: true)
 
-    internal var commons: URL {
+    var commons: URL {
         directory
             .appendingPathComponent("common.js")
     }
 
     private var runners: [String: AnyRunner] = [:]
-    internal let vm: JSVirtualMachine
+    let vm: JSVirtualMachine
 
     init() {
         // Create Directory if required
@@ -64,7 +64,6 @@ final actor DaisukeEngine {
         }
     }
 }
-
 
 extension DaisukeEngine {
     private func executeableURL(for id: String) -> URL {
@@ -108,7 +107,7 @@ extension DaisukeEngine {
         let hasWKDirective = content.contains("stt webkit")
         let instance: InstanceInformation = .init(name: "", id: "")
         let runner = try await hasWKDirective ? startWKRunner(with: url, of: instance) : startJSCRunner(with: url, for: instance)
-        
+
         didStartRunner(runner)
         return runner
     }
@@ -121,7 +120,7 @@ extension DaisukeEngine {
         if let runner = runners[id] {
             return runner
         }
-        
+
         return try await startRunner(id)
     }
 
@@ -297,7 +296,7 @@ extension DaisukeEngine {
 // MARK: - Source Management
 
 extension DaisukeEngine {
-    func getSource(id: String) async  -> AnyContentSource? {
+    func getSource(id: String) async -> AnyContentSource? {
         let runner = await getRunner(id)
 
         guard let runner, let source = runner as? AnyContentSource else { return nil }
@@ -317,38 +316,39 @@ extension DaisukeEngine {
     func getActiveSources() async -> [AnyContentSource] {
         let actor = await RealmActor()
         let runners = await actor.getSavedAndEnabledSources().map(\.id)
-        
+
         let sources = await withTaskGroup(of: AnyContentSource?.self, body: { group in
             for runner in runners {
                 group.addTask {
                     await self.getSource(id: runner)
                 }
             }
-            
+
             var sources: [AnyContentSource] = []
             for await runner in group {
                 guard let runner else { continue }
                 sources.append(runner)
             }
-            
+
             return sources
         })
-        
+
         return sources
             .sorted(by: \.name)
     }
-    
+
     func getSourcesForSearching() async -> [AnyContentSource] {
         let disabled: Set<String> = Preferences.standard.disabledGlobalSearchSources
-        
+
         return await getActiveSources()
             .filter { !disabled.contains($0.id) }
     }
+
     func getSourcesForLinking() async -> [AnyContentSource] {
         await getSourcesForSearching()
             .filter { $0.ablityNotDisabled(\.disableContentLinking) }
     }
-    
+
     func getSourcesForUpdateCheck() async -> [AnyContentSource] {
         await getActiveSources()
             .filter { $0.ablityNotDisabled(\.disableUpdateChecks) }
@@ -378,23 +378,23 @@ extension DaisukeEngine {
     func getActiveTrackers() async -> [AnyContentTracker] {
         let actor = await RealmActor()
         let runners = await actor.getEnabledRunners(for: .tracker).map(\.id)
-        
+
         let trackers = await withTaskGroup(of: AnyContentTracker?.self, body: { group in
             for runner in runners {
                 group.addTask {
                     await self.getTracker(id: runner)
                 }
             }
-            
+
             var trackers: [AnyContentTracker] = []
             for await runner in group {
                 guard let runner else { continue }
                 trackers.append(runner)
             }
-            
+
             return trackers
         })
-        
+
         return trackers
             .sorted(by: \.name)
     }

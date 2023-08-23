@@ -8,43 +8,40 @@
 import Foundation
 import WebKit
 
-
-
 public class WKRunner: DSKRunner {
     var info: RunnerInfo
     let instance: InstanceInformation
     var intents: RunnerIntents
-    internal let wv: WKWebView!
-    internal var configCache: [String : DSKCommon.DirectoryConfig] = [:]
-    
-    
+    let wv: WKWebView!
+    var configCache: [String: DSKCommon.DirectoryConfig] = [:]
+
     init(instance: InstanceInformation, webview: WKWebView) async throws {
         self.instance = instance
-        self.wv = webview
-        self.info = .init(id: "default", name: "", version: 1.0, website: "", minSupportedAppVersion: nil, thumbnail: nil, supportedLanguages: nil, nsfw: nil)
-        self.intents = .init(preferenceMenuBuilder: false, authenticatable: false, authenticationMethod: .unknown, basicAuthLabel: nil, imageRequestHandler: false, pageLinkResolver: false, libraryPageLinkProvider: false, browsePageLinkProvider: false, chapterEventHandler: false, contentEventHandler: false, chapterSyncHandler: false, librarySyncHandler: false, hasTagsView: false, pageReadHandler: false, providesReaderContext: false, canRefreshHighlight: false, isContextMenuProvider: false, advancedTracker: false)
-        
+        wv = webview
+        info = .init(id: "default", name: "", version: 1.0, website: "", minSupportedAppVersion: nil, thumbnail: nil, supportedLanguages: nil, nsfw: nil)
+        intents = .init(preferenceMenuBuilder: false, authenticatable: false, authenticationMethod: .unknown, basicAuthLabel: nil, imageRequestHandler: false, pageLinkResolver: false, libraryPageLinkProvider: false, browsePageLinkProvider: false, chapterEventHandler: false, contentEventHandler: false, chapterSyncHandler: false, librarySyncHandler: false, hasTagsView: false, pageReadHandler: false, providesReaderContext: false, canRefreshHighlight: false, isContextMenuProvider: false, advancedTracker: false)
+
         let infoScript = """
             return JSON.stringify(RunnerObject.info)
         """
-        
+
         let intentsScript = """
             return JSON.stringify(RunnerIntents)
         """
-        self.info = try await eval(infoScript)
-        self.intents = try await eval(intentsScript)
+        info = try await eval(infoScript)
+        intents = try await eval(intentsScript)
     }
 }
 
-
-class WKBootstrapper : NSObject {
-    private weak var  wv: WKWebView?
-    internal var isClientReady = false
+class WKBootstrapper: NSObject {
+    private weak var wv: WKWebView?
+    var isClientReady = false
     fileprivate var continuation: CheckedContinuation<Void, Never>?
     init(wv: WKWebView) {
         self.wv = wv
         super.init()
     }
+
     private var HTML: String {
         """
         <!DOCTYPE html>
@@ -69,7 +66,6 @@ class WKBootstrapper : NSObject {
     }
 }
 
-
 extension WKBootstrapper: WKScriptMessageHandler {
     private func didEnterReadyState() {
         isClientReady = true
@@ -77,8 +73,8 @@ extension WKBootstrapper: WKScriptMessageHandler {
         continuation = nil
         wv?.configuration.userContentController.removeScriptMessageHandler(forName: "state", contentWorld: .defaultClient)
         wv = nil
-
     }
+
     public func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) {
         let msg = message.body as? String
         guard let msg else { return }

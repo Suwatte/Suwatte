@@ -50,7 +50,7 @@ extension RealmActor {
         }
         await storeContent(stored)
     }
-    
+
     func updateStreamable(id: String, _ value: Bool) async {
         let target = realm
             .objects(StoredContent.self)

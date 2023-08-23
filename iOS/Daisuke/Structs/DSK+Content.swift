@@ -38,21 +38,21 @@ enum ReadingMode: Int, CaseIterable, Hashable, UserDefaultsSerializable {
             return true
         }
     }
-    
+
     var isVertical: Bool {
         [Self.PAGED_VERTICAL, .VERTICAL].contains(self)
     }
-    
+
     var isInverted: Bool {
         [Self.NOVEL_PAGED_MANGA, .PAGED_MANGA].contains(self)
     }
-    
+
     var isHorizontalPager: Bool {
-        self.isIn([.PAGED_COMIC, .PAGED_MANGA])
+        isIn([.PAGED_COMIC, .PAGED_MANGA])
     }
 
     static func PanelCases() -> [Self] {
-        Self.allCases.filter { $0.isPanelMode }
+        allCases.filter { $0.isPanelMode }
     }
 
     static var defaultPanelMode: Self {

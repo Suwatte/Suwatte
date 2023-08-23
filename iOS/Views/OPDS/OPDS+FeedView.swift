@@ -40,7 +40,7 @@ extension OPDSView {
         func load() async throws {
             loadable = .loading
             let feed = try await client.getFeed(url: url)
-            
+
             await MainActor.run {
                 withAnimation {
                     loadable = .loaded(feed)

@@ -5,63 +5,60 @@
 //  Created by Mantton on 2023-08-08.
 //
 
-import UIKit
 import Combine
+import UIKit
 
 extension Hashable {
-    func isIn(_ set : Set<Self>) -> Bool {
+    func isIn(_ set: Set<Self>) -> Bool {
         set.contains(self)
     }
 }
 
-
 class IVPagingController: UICollectionViewController {
-    internal var preRotationPath: IndexPath?
-    internal var subscriptions = Set<AnyCancellable>()
-    internal var lastIndexPath: IndexPath = .init(item: 0, section: 0)
-    internal var currentChapterRange: (min: CGFloat, max: CGFloat) = (min: .zero, max: .zero)
-    internal var didTriggerBackTick = false
-    internal var lastKnownScrollPosition: CGFloat = 0.0
-    internal var scrollPositionUpdateThreshold: CGFloat = 20.0
-    internal var dataSource: UICollectionViewDiffableDataSource<String, PanelViewerItem>!
-    internal var widePages: Set<String> = []
-    internal var onPageReadTask: Task<Void, Never>?
+    var preRotationPath: IndexPath?
+    var subscriptions = Set<AnyCancellable>()
+    var lastIndexPath: IndexPath = .init(item: 0, section: 0)
+    var currentChapterRange: (min: CGFloat, max: CGFloat) = (min: .zero, max: .zero)
+    var didTriggerBackTick = false
+    var lastKnownScrollPosition: CGFloat = 0.0
+    var scrollPositionUpdateThreshold: CGFloat = 20.0
+    var dataSource: UICollectionViewDiffableDataSource<String, PanelViewerItem>!
+    var widePages: Set<String> = []
+    var onPageReadTask: Task<Void, Never>?
     var model: IVViewModel!
-    
+
     var isVertical = false
     var isDoublePager = false
-    
+
     var dataCache: IVDataCache {
         model.dataCache
     }
-    
+
     var isInverted: Bool {
         model.readingMode.isInverted
     }
-    
+
     var readingMode: ReadingMode {
         model.readingMode
     }
-    
+
     var offset: CGFloat {
         isVertical ? collectionView.contentOffset.y : collectionView.contentOffset.x
     }
-    
+
     deinit {
         Logger.shared.debug("controller deallocated", "PagingController")
     }
-
 }
 
 typealias IVCC = IVPagingController
 
-fileprivate typealias Controller = IVPagingController
-
+private typealias Controller = IVPagingController
 
 extension Controller {
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         // General
         collectionView.isPagingEnabled = true
         collectionView.isHidden = true
@@ -70,39 +67,40 @@ extension Controller {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.contentInsetAdjustmentBehavior = .never
-        
+
         // Layout Specific
         let layout = isVertical ? VImageViewerLayout() : HImageViewerLayout()
         collectionView.setCollectionViewLayout(layout, animated: false)
-        
+
         // Final setup calls
         setReadingOrder()
         addTapGestures()
         subscribeAll()
         configureDataSource()
-        
-        // start 
+
+        // start
         startup()
     }
-    func updateReaderState(with chapter: ThreadSafeChapter, indexPath: IndexPath, offset: CGFloat?) async {
+
+    func updateReaderState(with chapter: ThreadSafeChapter, indexPath: IndexPath, offset _: CGFloat?) async {
         let hasNext = await dataCache.getChapter(after: chapter) != nil
         let hasPrev = await dataCache.getChapter(before: chapter) != nil
         let pages = await dataCache.getCount(chapter.id)
         let item = dataSource.itemIdentifier(for: indexPath)
-        guard case .page(let page) = item else {
+        guard case let .page(page) = item else {
             Logger.shared.warn("invalid reader state", "updateReaderState")
             return
         }
-        
+
         let state: CurrentViewerState = .init(chapter: chapter,
                                               page: page.page.number,
                                               pageCount: pages,
                                               hasPreviousChapter: hasPrev,
                                               hasNextChapter: hasNext)
-        
+
         model.setViewerState(state)
     }
-    
+
     func startup() {
         Task { [weak self] in
             guard let self else { return }
@@ -117,17 +115,16 @@ extension Controller {
         preRotationPath = collectionView.currentPath
         collectionView.collectionViewLayout.invalidateLayout()
     }
-    
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         subscriptions.forEach { $0.cancel() }
         subscriptions.removeAll()
     }
-    
 }
 
-
 // MARK: Transform
+
 extension Controller {
     func setReadingOrder() {
         guard !isVertical else { return }
@@ -142,47 +139,46 @@ extension Controller: UICollectionViewDelegateFlowLayout {
 }
 
 // MARK: Data Source
+
 extension Controller {
     func configureDataSource() {
-        let SingleImageCellRegistration = UICollectionView.CellRegistration<PagedViewerImageCell, PanelPage> { [weak self] cell, indexPath, data in
+        let SingleImageCellRegistration = UICollectionView.CellRegistration<PagedViewerImageCell, PanelPage> { [weak self] cell, _, data in
             cell.set(page: data, delegate: self)
             cell.setImage()
         }
-        
-        let DoubleImageCellRegistration = UICollectionView.CellRegistration<DoublePagedViewerImageCell, PanelPage> { [weak self] cell, indexPath, data in
+
+        let DoubleImageCellRegistration = UICollectionView.CellRegistration<DoublePagedViewerImageCell, PanelPage> { [weak self] cell, _, data in
             cell.set(page: data, delegate: self)
             cell.setImage()
         }
-        
-        let TransitionCellRegistration = UICollectionView.CellRegistration<TransitionCell, ReaderTransition> { cell, indexPath, data in
+
+        let TransitionCellRegistration = UICollectionView.CellRegistration<TransitionCell, ReaderTransition> { cell, _, data in
             cell.configure(data)
         }
-        
-        
+
         dataSource = UICollectionViewDiffableDataSource(collectionView: collectionView) {
             collectionView, indexPath, item -> UICollectionViewCell in
             switch item {
-            case .page(let page):
+            case let .page(page):
                 if page.secondaryPage == nil {
                     return collectionView.dequeueConfiguredReusableCell(using: SingleImageCellRegistration, for: indexPath, item: page)
                 } else {
                     return collectionView.dequeueConfiguredReusableCell(using: DoubleImageCellRegistration, for: indexPath, item: page)
                 }
-                
-            case .transition(let transition):
+
+            case let .transition(transition):
                 return collectionView.dequeueConfiguredReusableCell(using: TransitionCellRegistration, for: indexPath, item: transition)
             }
         }
     }
-
 }
 
-
 // MARK: - Did End Displaying / Task Cancellation
+
 extension Controller {
-    override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        let data = dataSource.itemIdentifier(for:  indexPath)
-        if case .transition(let transition) = data, transition.to != nil {
+    override func collectionView(_: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let data = dataSource.itemIdentifier(for: indexPath)
+        if case let .transition(transition) = data, transition.to != nil {
             STTHelpers.triggerHaptic()
         }
         guard let cell = cell as? CancellableImageCell else { return }
@@ -191,49 +187,47 @@ extension Controller {
 }
 
 // MARK: - Will Display / Chapter Preloading
+
 extension Controller {
-    
-    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        let data = dataSource.itemIdentifier(for:  indexPath)
-        
+    override func collectionView(_: UICollectionView, willDisplay _: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let data = dataSource.itemIdentifier(for: indexPath)
+
         guard let data else { return }
-        
-        guard case .page(let target) = data else { return }
+
+        guard case let .page(target) = data else { return }
         let page = target.secondaryPage ?? target.page
         let current = page.number
-        let count =  page.chapterPageCount
-        let chapter =  page.chapter
-        
+        let count = page.chapterPageCount
+        let chapter = page.chapter
+
         // Chapter Completed
         if page.isLastPage {
             didCompleteChapter(chapter)
         }
-        
+
         // Preloading
         let inPreloadRange = count - current < 5 || page.isLastPage
-        
+
         guard inPreloadRange else { return }
-        
+
         Task { [weak self] in
             await self?.preload(after: chapter)
         }
     }
-    
+
     func preload(after chapter: ThreadSafeChapter) async {
         let index = await dataCache.chapters.firstIndex(of: chapter)
-        
+
         guard let index else { return } // should always pass
-        
+
         let next = await dataCache.chapters.getOrNil(index + 1)
-        
+
         guard let next else { return }
-        
+
         let currentState = model.loadState[next]
-        
+
         guard currentState == nil else { return } // only trigger if the chapter has not been loaded
-        
+
         await load(next)
     }
 }
-
-

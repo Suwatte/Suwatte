@@ -5,17 +5,17 @@
 //  Created by Mantton on 2023-08-01.
 //
 
-import RealmSwift
 import Foundation
+import RealmSwift
 
 extension RealmActor {
-    
-    func getLibraryCollection( for id: String) -> LibraryCollection? {
+    func getLibraryCollection(for id: String) -> LibraryCollection? {
         realm
             .objects(LibraryCollection.self)
             .where { $0.id == id && !$0.isDeleted }
             .first
     }
+
     func addCollection(withName name: String) async {
         try! await realm.asyncWrite {
             let collection = LibraryCollection()
@@ -29,11 +29,10 @@ extension RealmActor {
         let collections = realm
             .objects(LibraryCollection.self)
             .where { !$0.isDeleted }
-        
+
         try! await realm.asyncWrite {
             for collection in collections {
                 collection.order = incoming.firstIndex(of: collection.id) ?? 999
-                
             }
         }
     }
@@ -61,12 +60,11 @@ extension RealmActor {
     }
 }
 
-
 extension RealmActor {
     func toggleCollectionFilters(id: String, value: Bool) async {
         let collection = getLibraryCollection(for: id)
         guard let collection else { return }
-        
+
         try! await realm.asyncWrite {
             if value {
                 if collection.filter == nil {
@@ -80,7 +78,7 @@ extension RealmActor {
             }
         }
     }
-    
+
     func saveCollectionFilters(for id: String, filter: LibraryCollectionFilter) async {
         let collection = getLibraryCollection(for: id)
         guard let collection else { return }

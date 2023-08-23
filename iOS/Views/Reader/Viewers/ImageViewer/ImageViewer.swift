@@ -5,18 +5,18 @@
 //  Created by Mantton on 2023-08-04.
 //
 
-import SwiftUI
 import Nuke
+import SwiftUI
 
 struct ImageViewer: View {
     var initial: InitialIVState
-    
+
     @Preference(\.isDoublePagedEnabled)
     var doublePaged
-    
+
     @StateObject
     private var model = IVViewModel()
-    
+
     var body: some View {
         LoadableView(startup, $model.presentationState) { _ in
             MainView
@@ -66,10 +66,10 @@ extension ImageViewer {
 }
 
 extension ImageViewer {
-    private func startup() async  {
+    private func startup() async {
         await model.consume(initial)
     }
-    
+
     private var StandardAnimation: Animation {
         .easeInOut(duration: 0.3)
     }

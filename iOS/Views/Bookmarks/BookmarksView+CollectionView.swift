@@ -1,13 +1,13 @@
 //
-//  File.swift
+//  BookmarksView+CollectionView.swift
 //  Suwatte (iOS)
 //
 //  Created by Mantton on 2023-08-22.
 //
 
 import ASCollectionView
-import SwiftUI
 import NukeUI
+import SwiftUI
 
 extension BookmarksView {
     struct CollectionsView: View {
@@ -20,7 +20,8 @@ extension BookmarksView {
             ASCollectionView {
                 ASCollectionViewSection(id: 0,
                                         data: results,
-                                        dataID: \.hashValue) { data, _ in
+                                        dataID: \.hashValue)
+                { data, _ in
                     Cell(data: data)
                         .onTapGesture {
                             selection = data.id
@@ -35,13 +36,13 @@ extension BookmarksView {
                                 Label("Remove", systemImage: "trash")
                             }
                             Divider()
-                        
+
                             Button {
                                 selection = data.id
                             } label: {
                                 Label("Enlarge", systemImage: "eye")
                             }
-                            
+
                             Button {
                                 StateManager.shared.open(bookmark: data)
                             } label: {
@@ -73,12 +74,10 @@ extension BookmarksView {
                 PagerView(pages: Binding.constant(results), selection: id)
             }
         }
-
     }
 }
 
-fileprivate typealias CollectionsView = BookmarksView.CollectionsView
-
+private typealias CollectionsView = BookmarksView.CollectionsView
 
 extension CollectionsView {
     struct Cell: View {
@@ -90,7 +89,7 @@ extension CollectionsView {
                 VStack(alignment: .leading) {
                     ImageView()
                         .frame(width: size.width, height: size.height)
-                        
+
                     TitleView()
                         .frame(height: 44)
                 }
@@ -112,9 +111,9 @@ extension CollectionsView {
                 Color.clear
             }
         }
-        
+
         func TitleView() -> some View {
-            VStack (alignment: .leading) {
+            VStack(alignment: .leading) {
                 Text(chapter.displayName)
                     .font(.headline)
                 Text("Page \(data.page)")
@@ -123,21 +122,21 @@ extension CollectionsView {
                     .font(.caption2)
             }
         }
-        
+
         // Methods
         var chapter: ChapterReference {
             data.chapter!
         }
-        
+
         func load(_ size: CGSize) {
             if loader.image != nil { return }
             loader.priority = .normal
             loader.transaction = .init(animation: .easeInOut(duration: 0.25))
             loader.processors = [NukeDownsampleProcessor(size: size)]
-            
+
             guard let imageData = data.asset?.storedData() else { return }
             let request = ImageRequest(id: "bookmark::\(data.id)") {
-                return imageData
+                imageData
             }
             loader.load(request)
         }

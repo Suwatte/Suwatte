@@ -5,9 +5,9 @@
 ////  Created by Mantton on 2022-10-01.
 ////
 //
-//import SwiftUI
+// import SwiftUI
 //
-//struct ManualDestinationSelectionView: View {
+// struct ManualDestinationSelectionView: View {
 //    var content: StoredContent
 //    @Binding var states: [String: MigrationView.ItemState]
 //    @StateObject private var model = SearchView.ViewModel()
@@ -124,4 +124,4 @@
 //        states[content.id] = .found((s, h))
 //        isPresenting.toggle()
 //    }
-//}
+// }

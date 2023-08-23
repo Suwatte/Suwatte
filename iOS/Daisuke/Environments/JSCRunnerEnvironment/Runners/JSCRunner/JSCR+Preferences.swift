@@ -8,7 +8,8 @@
 import Foundation
 
 // MARK: - Preferences
-extension JSCRunner : DSKPreferenceDelegate {
+
+extension JSCRunner: DSKPreferenceDelegate {
     // Preference
     func buildPreferenceMenu() async throws -> [DSKCommon.PreferenceGroup] {
         return try await callContextMethod(method: "generatePreferenceMenu", resolvesTo: [DSKCommon.PreferenceGroup].self)
@@ -25,4 +26,3 @@ extension JSCRunner : DSKPreferenceDelegate {
         })
     }
 }
-

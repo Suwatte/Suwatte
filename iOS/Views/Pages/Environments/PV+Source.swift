@@ -14,11 +14,11 @@ struct ContentSourcePageView: View {
     @StateObject var manager = LocalAuthManager.shared
     @Preference(\.protectContent) var protectContent
     @State private var selection: HighlightIdentifier?
-    
+
     var pageKey: String {
         link.key
     }
-    
+
     var body: some View {
         DSKPageView<DSKCommon.Highlight, Cell>(model: .init(runner: source, link: link)) { item in
             let identifier = ContentIdentifier(contentId: item.contentId,
@@ -55,11 +55,11 @@ struct ContentSourcePageView: View {
             }
         }
     }
-    
+
     var hideLibrayBadges: Bool {
         protectContent && manager.isExpired
     }
-    
+
     struct Cell: View {
         let source: AnyContentSource
         @State var item: DSKCommon.Highlight
@@ -77,33 +77,33 @@ struct ContentSourcePageView: View {
                          additionalCovers: item.additionalCovers,
                          info: item.info,
                          badge: inLibrary || inReadLater ? nil : item.badge)
-            .coloredBadge(inLibrary ? .accentColor : inReadLater ? .yellow : nil)
-            .contextMenu {
-                if source.ablityNotDisabled(\.disableLibraryActions) {
-                    ReadLaterButton
-                    Divider()
-                }
-                if let acqStr = item.acquisitionLink {
-                    if let url = URL(string: acqStr) {
-                        Button {
-                            download(url)
-                        } label: {
-                            Label("Download", systemImage: "externaldrive.badge.plus")
+                .coloredBadge(inLibrary ? .accentColor : inReadLater ? .yellow : nil)
+                .contextMenu {
+                    if source.ablityNotDisabled(\.disableLibraryActions) {
+                        ReadLaterButton
+                        Divider()
+                    }
+                    if let acqStr = item.acquisitionLink {
+                        if let url = URL(string: acqStr) {
+                            Button {
+                                download(url)
+                            } label: {
+                                Label("Download", systemImage: "externaldrive.badge.plus")
+                            }
+                        } else {
+                            Text("Invalid URL Format for Acquisition Link")
                         }
-                    } else {
-                        Text("Invalid URL Format for Acquisition Link")
+                    }
+
+                    if source.intents.isContextMenuProvider {
+                        buildActions()
                     }
                 }
-                
-                if source.intents.isContextMenuProvider {
-                    buildActions()
+                .onTapGesture {
+                    handleTap()
                 }
-            }
-            .onTapGesture {
-                handleTap()
-            }
         }
-        
+
         func badgeColor() -> Color? {
             let libraryBadge = (inLibrary || inReadLater) && !hideLibraryBadges
             if libraryBadge {
@@ -134,26 +134,25 @@ extension ContentSourcePageView.Cell {
 // MARK: - Context Actions
 
 extension ContentSourcePageView.Cell {
-    
     func loadActions() async {
         actions = .loading
         do {
             let data = try await source.getContextActions(highlight: item)
-            self.actions = .loaded(data)
+            actions = .loaded(data)
         } catch {
             Logger.shared.error(error, source.id)
-            self.actions = .loaded([])
+            actions = .loaded([])
         }
     }
-    
+
     func didTriggerActions(key: String) {
         Task {
             do {
                 try await source.didTriggerContextActon(highlight: item, key: key)
-                
+
                 guard source.intents.canRefreshHighlight else { return }
                 let data = try await source.getHighlight(highlight: item)
-                
+
                 Task { @MainActor in
                     item = data
                 }
@@ -162,7 +161,7 @@ extension ContentSourcePageView.Cell {
             }
         }
     }
-    
+
     @ViewBuilder
     func buildActions() -> some View {
         LoadableView(loadActions, $actions) { groups in
@@ -192,17 +191,17 @@ extension ContentSourcePageView.Cell {
 extension ContentSourcePageView.Cell {
     func handleTap() {
         let isStreamable = item.streamable ?? false
-        
+
         guard isStreamable else {
             selection = (source.id, item)
             return
         }
-        
+
         guard source.intents.providesReaderContext else {
             StateManager.shared.alert(title: "Bad Configuation", message: "\(source.name) stated that this title can be streamed but has not implemented the 'provideReaderContext' method.")
             return
         }
-        
+
         handleReadContent()
     }
 }
@@ -230,7 +229,7 @@ extension ContentSourcePageView.Cell {
                         thumbnailRequest = try (await source.willRequestImage(imageURL: thumbnailURL)).toURLRequest()
                     }
                 }
-                
+
                 let downloadRequest = try await source.overrrideDownloadRequest(url.absoluteString)?.toURLRequest() ?? defaultRequest
                 let download = DirectoryViewer.DownloadManager.DownloadObject(url: url, request: downloadRequest, title: title, thumbnailReqeust: thumbnailRequest)
                 DirectoryViewer.DownloadManager.shared.addToQueue(download)

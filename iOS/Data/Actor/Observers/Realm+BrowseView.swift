@@ -9,12 +9,11 @@ import Foundation
 import RealmSwift
 
 extension RealmActor {
-    
     func observeInstalledRunners(onlyEnabled: Bool = true, _ callback: @escaping Callback<[StoredRunnerObject]>) async -> NotificationToken {
         var collection = realm
             .objects(StoredRunnerObject.self)
             .where { !$0.isDeleted }
-        
+
         if onlyEnabled {
             collection = collection
                 .where { $0.enabled }
@@ -26,7 +25,7 @@ extension RealmActor {
             let list = results
                 .freeze()
                 .toArray()
-            
+
             callback(list)
         }
         return await observeCollection(collection: collection, didUpdate)

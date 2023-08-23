@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 protocol IVKeyboardNavigationDelegate: NSObject {
     func handleMenuKey()
     func handleLeftKey()

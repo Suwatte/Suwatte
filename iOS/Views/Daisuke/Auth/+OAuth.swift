@@ -84,4 +84,3 @@ final class WebAuthAnchor: NSObject, ASWebAuthenticationPresentationContextProvi
         KEY_WINDOW!
     }
 }
-

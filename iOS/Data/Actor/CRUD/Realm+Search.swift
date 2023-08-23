@@ -5,7 +5,6 @@
 //  Created by Mantton on 2023-08-01.
 //
 
-
 import Foundation
 import RealmSwift
 
@@ -28,11 +27,11 @@ extension RealmActor {
     }
 
     func deleteSearch(_ id: String) async {
-       let target = realm
+        let target = realm
             .objects(UpdatedSearchHistory.self)
             .where { $0.id == id }
             .first
-        
+
         guard let target else { return }
         try! await realm.asyncWrite {
             target.isDeleted = true
@@ -42,7 +41,6 @@ extension RealmActor {
 
 extension RealmActor {
     func getSearchHistory(for sourceId: String) -> [UpdatedSearchHistory] {
-
         return realm
             .objects(UpdatedSearchHistory.self)
             .where { $0.sourceId == sourceId }
@@ -53,7 +51,6 @@ extension RealmActor {
 
     // No Source ID means it was an all source search
     func getAllSearchHistory() -> [UpdatedSearchHistory] {
-
         return realm
             .objects(UpdatedSearchHistory.self)
             .where { $0.sourceId == nil }
@@ -65,24 +62,23 @@ extension RealmActor {
 
 extension RealmActor {
     func deleteSearchHistory(for sourceId: String) async {
-
         let objects = realm
             .objects(UpdatedSearchHistory.self)
             .where { $0.sourceId == sourceId }
             .where { !$0.isDeleted }
-        
+
         try! await realm.asyncWrite {
             for object in objects {
                 object.isDeleted = true
             }
         }
     }
-    
+
     func deleteSearchHistory() async {
         let objects = realm
             .objects(UpdatedSearchHistory.self)
             .where { $0.sourceId == nil }
-        
+
         try! await realm.asyncWrite {
             for object in objects {
                 object.isDeleted = true

@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: - Directory Handler
 
-extension JSCRunner : DSKDirectoryDelegate {
+extension JSCRunner: DSKDirectoryDelegate {
     func getDirectory<T: Codable>(request: DSKCommon.DirectoryRequest) async throws -> DSKCommon.PagedResult<T> {
         let object = try request.asDictionary()
         return try await callMethodReturningDecodable(method: "getDirectory", arguments: [object], resolvesTo: DSKCommon.PagedResult<T>.self)
@@ -24,4 +24,3 @@ extension JSCRunner : DSKDirectoryDelegate {
         return data
     }
 }
-

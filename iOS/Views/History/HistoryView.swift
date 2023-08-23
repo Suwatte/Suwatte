@@ -8,8 +8,6 @@
 import RealmSwift
 import SwiftUI
 
-
-
 struct HistoryView: View {
     @StateObject var model = ViewModel()
     @Environment(\.scenePhase) var scenePhase // Updates view when scene phase changes so URL ubiquitous download status are rechecked
@@ -83,12 +81,12 @@ extension HistoryView {
         func observe() async {
             guard notificationToken == nil else { return }
             let actor = await RealmActor()
-            notificationToken = await actor.observeHistory({ value in
+            notificationToken = await actor.observeHistory { value in
                 Task { @MainActor [weak self] in
                     self?.markers = value
                     self?.dataFetchComplete = true
                 }
-            })
+            }
             await MainActor.run {
                 readerLock = false
             }

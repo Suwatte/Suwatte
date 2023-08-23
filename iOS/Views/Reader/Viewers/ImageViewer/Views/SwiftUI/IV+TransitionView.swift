@@ -5,7 +5,6 @@
 //  Created by Mantton on 2023-08-07.
 //
 
-
 import RealmSwift
 import SwiftUI
 
@@ -215,7 +214,7 @@ struct ReaderTransitionView: View {
                         .fontWeight(.light)
                         .foregroundColor(.primary.opacity(0.75))
                 }
-                
+
                 ChapterStatusView
                     .frame(width: 15, height: 15, alignment: .center)
             }

@@ -15,7 +15,7 @@ struct ReaderGateWay: View {
     var pageOffset: Double?
     var title: String?
     @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
-    
+
     var body: some View {
         Group {
             if readingMode.isPanelMode {
@@ -39,7 +39,7 @@ struct ReaderGateWay: View {
 
 struct WebReader: View {
     var chapter: StoredChapter
-    
+
     var body: some View {
         NavigationView {
             STTWebView(url: URL(string: chapter.webUrl ?? ""))

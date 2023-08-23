@@ -18,27 +18,28 @@ struct NukeWhitespaceProcessor: ImageProcessing, Hashable {
         guard let rect else {
             return image
         }
-        
+
         // Reference: https://www.advancedswift.com/crop-image/
         // Not the most efficient solution but this prevents a very annoying memeory leak when uisng CGImage.cropping(to:) on a background thread.
         let out = UIGraphicsImageRenderer(
             size: rect.size,
-            format: image.imageRendererFormat).image { context in
-                // If rect.origin != (0,0) image is slightly offset in canvas, fix by moving the drawing position to start at the origin of the canvas
-                image.draw(at: CGPoint(x: -rect.origin.x, y: -rect.origin.y))
-            }
-        
+            format: image.imageRendererFormat
+        ).image { _ in
+            // If rect.origin != (0,0) image is slightly offset in canvas, fix by moving the drawing position to start at the origin of the canvas
+            image.draw(at: CGPoint(x: -rect.origin.x, y: -rect.origin.y))
+        }
+
         return out
     }
 
     var identifier: String {
         Bundle.main.bundleIdentifier! + ".image_processor.whitespace"
     }
-    
+
     var hashableIdentifier: AnyHashable {
         self
     }
-    
+
     // Reference : https://stackoverflow.com/a/40780523
     func croppedWhitespaceRect(_ cgImage: CGImage) throws -> CGRect? {
         var out: CGRect? = nil
@@ -46,11 +47,11 @@ struct NukeWhitespaceProcessor: ImageProcessing, Hashable {
         let cgHeight = cgImage.height
         let bitmapBytesPerRow = cgWidth * 4
         let bitmapByteCount = bitmapBytesPerRow * cgHeight
-        
+
         let colorSpace = CGColorSpaceCreateDeviceRGB()
-        
+
         let pointer = UnsafeMutablePointer<UInt8>.allocate(capacity: bitmapByteCount)
-        
+
         let context = CGContext(data: pointer,
                                 width: cgWidth,
                                 height: cgHeight,
@@ -61,29 +62,27 @@ struct NukeWhitespaceProcessor: ImageProcessing, Hashable {
         defer {
             pointer.deallocate()
         }
-        
-        guard let context else  {
+
+        guard let context else {
             return nil
         }
-        
-        
+
         let height = CGFloat(cgImage.height)
         let width = CGFloat(cgImage.width)
-        
+
         let rect = CGRect(x: 0, y: 0, width: width, height: height)
         context.clear(rect)
         context.draw(cgImage, in: rect)
-        
+
         guard let data = context.data?.assumingMemoryBound(to: UInt8.self) else {
             return nil
         }
-        
-        
+
         var lowX = width
         var lowY = height
         var highX: CGFloat = 0
         var highY: CGFloat = 0
-        
+
         let heightInt = Int(height)
         let widthInt = Int(width)
         let whiteThreshold = 0xE0
@@ -106,12 +105,11 @@ struct NukeWhitespaceProcessor: ImageProcessing, Hashable {
                 highY = max(highY, y)
             }
         }
-        
+
         out = CGRect(x: lowX, y: lowY, width: highX - lowX, height: highY - lowY)
         context.clear(rect)
         return out
     }
-    
 }
 
 struct NukeDownsampleProcessor: ImageProcessing, Hashable {
@@ -141,7 +139,7 @@ struct NukeDownsampleProcessor: ImageProcessing, Hashable {
         guard let data, let out = ds(data, size, image.scale) else {
             return nil
         }
-        
+
         return .init(cgImage: out, scale: image.scale, orientation: image.imageOrientation)
     }
 
@@ -152,8 +150,8 @@ struct NukeDownsampleProcessor: ImageProcessing, Hashable {
     var hashableIdentifier: AnyHashable {
         self
     }
-    
-    func ds(_ data: Data, _ size: CGSize, _ scale: CGFloat) -> CGImage? {
+
+    func ds(_ data: Data, _ size: CGSize, _: CGFloat) -> CGImage? {
         let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
         guard let imageSource = CGImageSourceCreateWithData(data as CFData, imageSourceOptions) else {
             return nil
@@ -173,7 +171,6 @@ struct NukeDownsampleProcessor: ImageProcessing, Hashable {
     }
 }
 
-
 struct NukeSplitWidePageProcessor: ImageProcessing, Hashable {
     private let half: UIImage.ImageHalf
     private let page: PanelPage
@@ -181,45 +178,45 @@ struct NukeSplitWidePageProcessor: ImageProcessing, Hashable {
         self.half = half
         self.page = page
     }
-    
+
     func process(_ image: Nuke.PlatformImage) -> Nuke.PlatformImage? {
         let isWide = image.size.ratio > 1
-        
+
         if isWide && !page.isSplitPageChild { // fire if the page is wide AND is the primary page
             PanelPublisher.shared.willSplitPage.send(page)
         }
         return isWide ? split(take: half, image: image) : image
     }
-    
+
     var identifier: String {
         Bundle.main.bundleIdentifier! + ".image_processor.split_wide?h=\(half)"
     }
-    
+
     var hashableIdentifier: AnyHashable {
         self
     }
-    
+
     func split(take half: UIImage.ImageHalf, image: UIImage) -> UIImage? {
         let size = image.size
         func getRect() -> CGRect {
             switch half {
             case .left:
-                return CGRect(x: 0, y: 0, width: size.width/2, height: size.height)
+                return CGRect(x: 0, y: 0, width: size.width / 2, height: size.height)
             case .right:
-                return CGRect(x: size.width/2, y: 0, width: size.width/2, height: size.height)
+                return CGRect(x: size.width / 2, y: 0, width: size.width / 2, height: size.height)
             }
         }
-        
+
         let rect = getRect()
-        
+
         let out = UIGraphicsImageRenderer(
-           size: rect.size,
-           format: image.imageRendererFormat).image { context in
-               // If rect.origin != (0,0) image is slightly offset in canvas, fix by moving the drawing position to start at the origin of the canvas
-               image.draw(at: CGPoint(x: -rect.origin.x, y: -rect.origin.y))
-           }
-        
+            size: rect.size,
+            format: image.imageRendererFormat
+        ).image { _ in
+            // If rect.origin != (0,0) image is slightly offset in canvas, fix by moving the drawing position to start at the origin of the canvas
+            image.draw(at: CGPoint(x: -rect.origin.x, y: -rect.origin.y))
+        }
+
         return out
-        
     }
 }

@@ -5,8 +5,8 @@
 //  Created by Mantton on 2023-08-22.
 //
 
-import SwiftUI
 import NukeUI
+import SwiftUI
 
 extension BookmarksView {
     struct PagerView: View {
@@ -30,7 +30,7 @@ extension BookmarksView {
                 .closeButton()
             }
         }
-        
+
         struct PagerCell: View {
             let page: UpdatedBookmark
             @Binding var presentationMode: PresentationMode
@@ -38,7 +38,7 @@ extension BookmarksView {
 
             var body: some View {
                 GeometryReader { proxy in
-                    ZStack (alignment: .center) {
+                    ZStack(alignment: .center) {
                         ImageView()
                             .task {
                                 load(proxy.size)
@@ -46,8 +46,8 @@ extension BookmarksView {
                     }
                     .frame(width: proxy.size.width, height: proxy.size.height)
                 }
-                
             }
+
             @ViewBuilder
             func ImageView() -> some View {
                 if let image = loader.image {
@@ -66,38 +66,36 @@ extension BookmarksView {
                             } label: {
                                 Label("Save To Photos", systemImage: "square.and.arrow.down")
                             }
-                            
+
                             Divider()
-                            
+
                             Button {
                                 presentationMode.dismiss()
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                     StateManager.shared.open(bookmark: page)
                                 }
-                                
+
                             } label: {
                                 Label("Continue Reading", systemImage: "play")
                             }
-
                         }
                 } else {
                     Color.clear
                 }
             }
-            
+
             func load(_ size: CGSize) {
                 if loader.image != nil { return }
                 loader.priority = .normal
                 loader.transaction = .init(animation: .easeInOut(duration: 0.25))
                 loader.processors = [NukeDownsampleProcessor(size: size)]
-                
+
                 guard let imageData = page.asset?.storedData() else { return }
                 let request = ImageRequest(id: "bookmark::\(page.id)") {
-                    return imageData
+                    imageData
                 }
                 loader.load(request)
             }
-
         }
     }
 }

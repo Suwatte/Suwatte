@@ -17,18 +17,18 @@ struct LoadableView<Value, Idle, Loading, Failure, Content>: View where Idle: Vi
     let idle: () -> Idle
     let loading: () -> Loading
     let failure: (_ error: Error) -> Failure
-    let action: (() async throws -> Void)
+    let action: () async throws -> Void
     @State private var loaded = false
 
     init(
         loadable: Binding<Loadable<Value>>,
-        _ action:  @escaping () async throws -> Void,
+        _ action: @escaping () async throws -> Void,
         @ViewBuilder _ idle: @escaping () -> Idle,
         @ViewBuilder _ loading: @escaping () -> Loading,
         @ViewBuilder _ failure: @escaping (_ error: Error) -> Failure,
         @ViewBuilder _ content: @escaping (_ value: Value) -> Content
     ) {
-        self._loadable = loadable
+        _loadable = loadable
         self.content = content
         self.loading = loading
         self.failure = failure
@@ -59,7 +59,7 @@ struct LoadableView<Value, Idle, Loading, Failure, Content>: View where Idle: Vi
             await load()
         }
     }
-    
+
     func load() async {
         guard !loaded else { return }
         do {
@@ -78,7 +78,6 @@ extension LoadableView where Idle == DefaultNotRequestedView, Loading == Default
         _ loadable: Binding<Loadable<Value>>,
         @ViewBuilder _ content: @escaping (_ value: Value) -> Content
     ) {
-        
         self.init(loadable: loadable, action, { DefaultNotRequestedView() }, { DefaultLoadingView() }, { ErrorView(error: $0, action: action) }, content)
     }
 }

@@ -7,8 +7,6 @@
 
 import UIKit
 
-
-
 class VImageViewerLayout: UICollectionViewFlowLayout, OffsetPreservingLayout {
     override init() {
         super.init()
@@ -17,7 +15,6 @@ class VImageViewerLayout: UICollectionViewFlowLayout, OffsetPreservingLayout {
         sectionInset = UIEdgeInsets.zero
         updateSpacing()
     }
-    
 
     @available(*, unavailable)
     required init?(coder _: NSCoder) {
@@ -49,7 +46,7 @@ class VImageViewerLayout: UICollectionViewFlowLayout, OffsetPreservingLayout {
             isInsertingCellsToTop = false
         }
     }
-    
+
     func updateSpacing() {
         minimumLineSpacing = CGFloat(Preferences.standard.VerticalPagePadding ? Preferences.standard.verticalPagePaddingAmount : 0)
     }

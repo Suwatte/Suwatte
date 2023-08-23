@@ -5,16 +5,16 @@
 //  Created by Mantton on 2023-08-04.
 //
 
-import Foundation
-import UIKit
-import Nuke
-import KeychainSwift
 import Alamofire
+import Foundation
+import KeychainSwift
+import Nuke
+import UIKit
 
 // Global actor that handl
 @globalActor actor PanelActor: GlobalActor {
     static var shared = PanelActor()
-    public static func run<T>(resultType: T.Type = T.self, body: @Sendable () async throws -> T) async rethrows -> T where T : Sendable {
+    public static func run<T>(resultType _: T.Type = T.self, body: @Sendable () async throws -> T) async rethrows -> T where T: Sendable {
         try await body()
     }
 }
@@ -25,12 +25,12 @@ extension PanelActor {
         let size: CGSize
         let fitToWidth: Bool
         let isPad: Bool
-        
+
         var page: ReaderPage {
             data.page
         }
     }
-    
+
     func loadPage(for data: PageData) async throws -> AsyncImageTask {
         let request = try await getImageRequest(for: data)
         guard let request else {
@@ -42,7 +42,6 @@ extension PanelActor {
     }
 }
 
-
 extension PanelActor {
     private func prepareProcessors(for data: PageData) -> [ImageProcessing] {
         let page = data.page
@@ -50,19 +49,17 @@ extension PanelActor {
         var processors = [ImageProcessing]()
         let cropWhiteSpaces = Preferences.standard.cropWhiteSpaces
         let downSampleImage = Preferences.standard.downsampleImages
-        
+
         let readingMode = STTHelpers.getReadingMode(for: data.page.chapter.STTContentIdentifier)
         let shouldSplit = [ReadingMode.PAGED_COMIC, .PAGED_MANGA].contains(readingMode) && !Preferences.standard.zoomWidePages && Preferences.standard.splitWidePages && Preferences.standard.imageScaleType != .height && Preferences.standard.imageScaleType != .stretch
-        
+
         if shouldSplit && !data.isPad { // Don't split on ipads
             let isSecondaryPage = data.data.isSplitPageChild
             let useRight = (readingMode == .PAGED_COMIC && isSecondaryPage) || (readingMode == .PAGED_MANGA && !isSecondaryPage)
             let half: UIImage.ImageHalf = useRight ? .right : .left
-            
+
             processors.append(NukeSplitWidePageProcessor(half: half, page: data.data))
-            
         }
-        
 
         if downSampleImage || page.isLocal { // Always Downsample Local Images
             if data.fitToWidth {
@@ -87,11 +84,10 @@ extension PanelActor {
 }
 
 extension PanelActor {
-    
     private func getImageRequest(for data: PageData) async throws -> ImageRequest? {
-        var request: ImageRequest? = nil
+        var request: ImageRequest?
         let page = data.page
-        
+
         // Hosted Image
         if let hostedURL = page.hostedURL, let url = URL(string: hostedURL) {
             // Load Hosted Image
@@ -116,8 +112,6 @@ extension PanelActor {
         return request
     }
 
-    
-    
     private func prepareImageURL(_ url: URL, _ data: PageData) async throws -> URLRequest {
         let base = URLRequest(url: url)
         let page = data.page
@@ -148,7 +142,6 @@ extension PanelActor {
         let request = try response.toURLRequest()
         return request
     }
-
 
     private func loadImageFromNetwork(_ url: URL, _ data: PageData) async throws -> ImageRequest {
         let request = try await prepareImageURL(url, data)
@@ -181,10 +174,9 @@ extension PanelActor {
         var request = ImageRequest(id: key) {
             try ArchiveHelper().getImageData(for: file, at: path)
         }
-        
+
         request.options = .disableDiskCache
         request.processors = prepareProcessors(for: data)
         return request
     }
 }
-

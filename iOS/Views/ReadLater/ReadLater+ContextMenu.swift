@@ -28,7 +28,7 @@ extension LibraryView.ReadLaterView.CollectionView {
                         let actor = await RealmActor()
                         await actor
                             .removeFromReadLater(content.sourceId,
-                                            content: content.contentId)
+                                                 content: content.contentId)
                     }
                 }
                 actions.append(removeAction)

@@ -369,7 +369,7 @@ extension CollectionManagementView.FilterSections {
 extension CollectionManagementView {
     func handleToggleFilterEnabled(_ value: Bool) {
         let id = collection.id
-        
+
         Task {
             let actor = await RealmActor()
             await actor.toggleCollectionFilters(id: id, value: value)

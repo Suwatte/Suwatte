@@ -15,45 +15,45 @@ enum PageState {
     case loading, error, set
 }
 
-
 class PagedViewerImageHolder: UIView {
     // Core Properties
     weak var delegate: UIContextMenuInteractionDelegate?
     var page: PanelPage!
-    
+
     // Views
     let imageView = UIImageView()
     let scrollView = ZoomingScrollView()
     let progressView = CircularProgressView()
     var errorView: UIView?
-    
+
     // Tasks
     private weak var nukeTask: AsyncImageTask?
     private var imageTask: Task<Void, Never>?
-    
+
     // Image Constraints
     var heightContraint: NSLayoutConstraint?
     var widthConstraint: NSLayoutConstraint?
-    
+
     // State
     var subscriptions = Set<AnyCancellable>()
-    
+
     // Vision
     var visionInteraction: UIInteraction?
-    
+
     // Init
-    
+
     lazy var visionPressGesuture: UITapGestureRecognizer = {
         let press = UITapGestureRecognizer(target: self, action: #selector(handleVisionRequest(_:)))
         press.numberOfTapsRequired = 2
         press.numberOfTouchesRequired = 2
         return press
     }()
-    
-    required init?(coder: NSCoder) {
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     init(page: PanelPage, frame: CGRect) {
         super.init(frame: frame)
         self.page = page
@@ -69,11 +69,11 @@ extension PagedViewerImageHolder {
         progressView.translatesAutoresizingMaskIntoConstraints = false
         imageView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        
+
         // Add Core Wrapper & Progress View
         addSubview(progressView)
         addSubview(scrollView)
-        
+
         // Misc Set Up
         scrollView.setup() // Set Up Internal Scroll Wrapper
         scrollView.target = imageView // Set the Scroll Wrapper's Target to our ImageView (This Also Adds it to the View Heirachy)
@@ -83,7 +83,7 @@ extension PagedViewerImageHolder {
         scrollView.wrapper.backgroundColor = .clear
         imageView.backgroundColor = .clear
         backgroundColor = .clear
-        
+
         // Activate Required 4 Corner Pin Constraints
         NSLayoutConstraint.activate([
             // Scroll
@@ -91,7 +91,7 @@ extension PagedViewerImageHolder {
             scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
             scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            
+
             // Progress
             progressView.widthAnchor.constraint(equalTo: widthAnchor),
             progressView.heightAnchor.constraint(equalTo: heightAnchor),
@@ -107,14 +107,13 @@ extension PagedViewerImageHolder {
         // Disable Constraints
         heightContraint?.isActive = false
         widthConstraint?.isActive = false
-        
+
         // Reset
         heightContraint = nil
         widthConstraint = nil
         scrollView.resetConstraints()
-
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
         constrain()
@@ -128,7 +127,7 @@ extension PagedViewerImageHolder {
             .preferencesChangedSubject
             .filter { changedKeyPath in
                 changedKeyPath == \Preferences.downsampleImages ||
-                changedKeyPath == \Preferences.cropWhiteSpaces
+                    changedKeyPath == \Preferences.cropWhiteSpaces
             }
             .sink { [weak self] _ in
                 Task { @MainActor [weak self] in
@@ -150,7 +149,6 @@ extension PagedViewerImageHolder {
             }
             .store(in: &subscriptions)
     }
-    
 }
 
 extension PagedViewerImageHolder {
@@ -166,13 +164,12 @@ extension PagedViewerImageHolder {
 
 extension PagedViewerImageHolder {
     func load() {
-        
         let locked = imageView.image != nil || nukeTask != nil
-        
+
         guard !locked else {
             return
         }
-        
+
         setVisible(.loading)
         let rPage = page.page
         let isPad = UIDevice.current.userInterfaceIdiom == .pad
@@ -180,14 +177,14 @@ extension PagedViewerImageHolder {
                                               size: frame.size,
                                               fitToWidth: false,
                                               isPad: isPad)
-        
+
         imageTask = Task { [weak self] in
             await PanelActor.run { [weak self] in
                 do {
                     let request = try await PanelActor.shared.loadPage(for: data)
-                    
+
                     guard !Task.isCancelled else { return }
-                    
+
                     for await progress in request.progress {
                         // Update progress
                         let p = Double(progress.fraction)
@@ -195,17 +192,17 @@ extension PagedViewerImageHolder {
                             self?.setProgress(p)
                         }
                     }
-                    
+
                     guard !Task.isCancelled else { return }
 
                     let image = try await request.image
-                    
+
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run { [weak self] in
                         self?.displayImage(image: image)
                     }
-                    
+
                 } catch {
                     Logger.shared.error(error, rPage.chapter.sourceId)
                     if error is CancellationError { return }
@@ -213,14 +210,12 @@ extension PagedViewerImageHolder {
                         self?.setError(error)
                     }
                 }
-                
+
                 await MainActor.run { [weak self] in
                     self?.nukeTask = nil
                 }
             }
-
         }
-
     }
 }
 
@@ -228,36 +223,33 @@ extension PagedViewerImageHolder {
     func reset() {
         cancel()
         resetConstraints()
-        
+
         imageView.image = nil
         errorView?.removeFromSuperview()
         errorView = nil
-        
+
         imageView.interactions.removeAll()
-        
+
         imageView.image = nil
         imageView.interactions.removeAll()
         imageView.removeFromSuperview()
     }
-    
+
     func reload() {
         Task { @MainActor [weak self] in
             self?.cancel()
             self?.load()
         }
-        
     }
 }
 
 extension PagedViewerImageHolder {
-    
-    
     func displayImage(image: UIImage) {
         setProgress(1)
         constrain(size: image.size)
         addVisionInteraction()
         setVisible(.set)
-        
+
         Task { @MainActor [weak self] in
             guard let self else { return }
             UIView.transition(with: self.imageView,
@@ -267,11 +259,11 @@ extension PagedViewerImageHolder {
                               completion: { [weak self] _ in self?.didSetImage() })
         }
     }
-    
+
     func setImage(image: UIImage) {
         imageView.image = image
     }
-    
+
     func didSetImage() {
         scrollView.addGestures()
         imageTask = nil
@@ -284,10 +276,11 @@ extension PagedViewerImageHolder {
         guard let size = imageView.image?.size else { return }
         constrain(size: size)
     }
+
     func constrain(size: CGSize) {
         // Reset Existing Constrains
         resetConstraints()
-        
+
         // Define Constraints
         switch Preferences.standard.imageScaleType {
         case .screen:
@@ -299,19 +292,18 @@ extension PagedViewerImageHolder {
         case .stretch:
             activateStretchConstraint(size)
         }
-        
+
         // Activate
         heightContraint?.isActive = true
         widthConstraint?.isActive = true
 
-        
         // Set Priority
         heightContraint?.priority = .required
         widthConstraint?.priority = .required
-        
+
         scrollView.setZoomPosition()
     }
-    
+
     func activateFitScreenConstraint(_ size: CGSize) {
         let height = min((size.height / size.width) * frame.width, frame.height)
         let width = min(height * size.ratio, frame.width)
@@ -319,28 +311,26 @@ extension PagedViewerImageHolder {
         heightContraint = imageView.heightAnchor.constraint(equalToConstant: height)
         scrollView.didUpdateSize(size: .init(width: width, height: height))
     }
-    
+
     func activateFitWidthConstraint(_ size: CGSize) {
         let multiplier = size.height / size.width
         let height = bounds.width * multiplier
         widthConstraint = imageView.widthAnchor.constraint(equalTo: widthAnchor)
         heightContraint = imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: multiplier)
         scrollView.didUpdateSize(size: .init(width: bounds.width, height: height))
-
     }
-    
+
     func activateFitHeightConstraint(_ size: CGSize) {
         let multiplier = size.width / size.height
         let width = bounds.height * multiplier
         heightContraint = imageView.heightAnchor.constraint(equalTo: heightAnchor)
         widthConstraint = imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: multiplier)
         scrollView.didUpdateSize(size: .init(width: width, height: bounds.height))
-
     }
-    
+
     func activateStretchConstraint(_ size: CGSize) {
         let ratio = size.ratio
-        
+
         if ratio < 1 {
             let multiplier = size.height / size.width
             let height = bounds.width * multiplier
@@ -361,12 +351,11 @@ extension PagedViewerImageHolder {
     func setProgress(_ value: Double) {
         progressView.setProgress(to: value, withAnimation: false)
     }
-    
+
     func setError(_ error: Error) {
         errorView?.removeFromSuperview()
         errorView = nil
-        
-        
+
         let display = ErrorView(error: error, runnerID: page.page.chapter.sourceId, action: reload)
         errorView = UIHostingController(rootView: display).view
         guard let errorView else { return }
@@ -379,11 +368,11 @@ extension PagedViewerImageHolder {
             errorView.trailingAnchor.constraint(equalTo: trailingAnchor),
             errorView.leadingAnchor.constraint(equalTo: leadingAnchor),
         ])
-        
+
         // Display
         setVisible(.error)
     }
-    
+
     func setVisible(_ s: PageState) {
         switch s {
         case .loading:
@@ -396,7 +385,7 @@ extension PagedViewerImageHolder {
             errorView?.isHidden = false
             scrollView.isHidden = true
             progressView.isHidden = true
-            
+
         case .set:
             scrollView.isHidden = false
             errorView?.isHidden = true
@@ -430,7 +419,7 @@ extension PagedViewerImageHolder {
 extension PagedViewerImageHolder {
     @objc func handleVisionRequest(_: UITapGestureRecognizer) {
         guard #available(iOS 16, *), ImageAnalyzer.isSupported else { return }
-        
+
         guard let visionInteraction = visionInteraction as? ImageAnalysisInteraction else { return }
         // Currently Display Live Text
         if visionInteraction.analysis != nil {

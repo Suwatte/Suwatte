@@ -4,18 +4,17 @@
 //
 //  Created by Mantton on 2023-08-01.
 //
-import RealmSwift
 import Foundation
+import RealmSwift
 
 extension RealmActor {
-    
     func getLibraryEntry(for id: String) -> LibraryEntry? {
         realm
             .objects(LibraryEntry.self)
             .where { $0.id == id }
             .first
     }
-    
+
     func setReadingFlag(for id: String, to flag: LibraryFlag) async {
         let target = getLibraryEntry(for: id)
         guard let target else { return }
@@ -27,7 +26,8 @@ extension RealmActor {
         guard let id = target.content?.contentId,
               let sourceId = target.content?.sourceId,
               let source = await DSK.shared.getSource(id: sourceId),
-              source.intents.contentEventHandler else {
+              source.intents.contentEventHandler
+        else {
             return
         }
         Task {
@@ -41,7 +41,6 @@ extension RealmActor {
     }
 
     func bulkSetReadingFlag(for ids: Set<String>, to flag: LibraryFlag) async {
-
         let targets = realm
             .objects(LibraryEntry.self)
             .where { $0.id.in(ids) }
@@ -124,7 +123,7 @@ extension RealmActor {
     }
 
     func isInLibrary(id: String) -> Bool {
-         !realm
+        !realm
             .objects(LibraryEntry.self)
             .where { $0.id == id }
             .isEmpty
@@ -133,7 +132,6 @@ extension RealmActor {
     // MARK: Collections
 
     func clearCollections(for id: String) async {
-        
         guard let entry = getLibraryEntry(for: id) else {
             return
         }
@@ -169,7 +167,7 @@ extension RealmActor {
                 object.isDeleted = true
             }
         }
-        
+
         let grouped = Dictionary(grouping: ids, by: { $0.sourceId })
 
         for (key, value) in grouped {
@@ -246,7 +244,6 @@ extension RealmActor {
     }
 
     func updateUnreadCount(for id: ContentIdentifier) async {
-
         let target = realm
             .objects(LibraryEntry.self)
             .where { $0.content.contentId == id.contentId }
@@ -273,31 +270,29 @@ extension RealmActor {
             target.lastRead = .now
         }
     }
-    
+
     func fetchAndPruneLibraryEntry(for id: String) async -> LibraryEntry? {
         guard let target = getLibraryEntry(for: id) else {
             return nil
         }
-        
+
         let collections = realm
             .objects(LibraryCollection.self)
             .where { !$0.isDeleted }
             .map(\.id)
 
-        
         let currentCollections = target.collections
         let fixed = currentCollections.filter { collections.contains($0) }
-        
+
         try! await realm.asyncWrite {
             target.collections.removeAll()
             target.collections.append(objectsIn: fixed)
         }
-        
-        
+
         return target
             .freeze()
     }
-    
+
     func getLibraryCollections() -> [LibraryCollection] {
         realm
             .objects(LibraryCollection.self)
@@ -309,7 +304,6 @@ extension RealmActor {
 
 extension RealmActor {
     func contentInLibrary(s: String, c: String) -> Bool {
-
         return !realm
             .objects(LibraryEntry.self)
             .where { $0.content.contentId == c && $0.content.sourceId == s }
@@ -317,7 +311,6 @@ extension RealmActor {
     }
 
     func contentSavedForLater(s: String, c: String) -> Bool {
-
         return !realm
             .objects(ReadLater.self)
             .where { $0.content.contentId == c && $0.content.sourceId == s }

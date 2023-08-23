@@ -9,7 +9,7 @@ import JavaScriptCore
 
 final class JSCContentSource: JSCRunner, ContentSource {
     var config: SourceConfig?
-    internal var directoryTags: [DSKCommon.Property]?
+    var directoryTags: [DSKCommon.Property]?
 
     override init(instance: InstanceInformation, object: JSValue) async throws {
         try await super.init(instance: instance, object: object)

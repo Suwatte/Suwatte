@@ -80,15 +80,13 @@ extension ToastManager {
     }
 }
 
-
 extension ToastManager {
-    func block(_ action: @escaping () async throws -> Void ) {
-        
+    func block(_ action: @escaping () async throws -> Void) {
         Task {
             await MainActor.run {
                 loading = true
             }
-            
+
             do {
                 try await action()
                 await MainActor.run {

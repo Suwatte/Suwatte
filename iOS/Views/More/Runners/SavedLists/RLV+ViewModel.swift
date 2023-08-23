@@ -5,20 +5,20 @@
 //  Created by Mantton on 2023-08-15.
 //
 
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 extension RunnerListsView {
     final class ViewModel: ObservableObject {
         @Published var savedRunners: [String: StoredRunnerObject] = [:]
         @Published var savedLists: [StoredRunnerList] = []
-        
+
         private var runnersToken: NotificationToken?
         private var listToken: NotificationToken?
-        
+
         func observe() async {
             let actor = await RealmActor()
-            
+
             // Runners
             runnersToken = await actor
                 .observeInstalledRunners(onlyEnabled: false) { value in
@@ -28,7 +28,7 @@ extension RunnerListsView {
                         self?.savedRunners = prepped
                     }
                 }
-            
+
             // Lists
             listToken = await actor
                 .observeSavedRunnerLists { value in
@@ -37,11 +37,11 @@ extension RunnerListsView {
                     }
                 }
         }
-        
+
         func stopObserving() {
             runnersToken?.invalidate()
             listToken?.invalidate()
-            
+
             runnersToken = nil
             listToken = nil
         }

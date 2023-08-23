@@ -18,7 +18,7 @@ extension ProfileView.Skeleton.ChapterView {
         @EnvironmentObject var model: ProfileView.ViewModel
         var body: some View {
             HStack {
-                LoadableView({await model.loadChapters()}, $model.chapters) { chapters in
+                LoadableView({ await model.loadChapters() }, $model.chapters) { chapters in
                     if !chapters.isEmpty {
                         LoadedView(chapters)
                             .transition(.opacity)

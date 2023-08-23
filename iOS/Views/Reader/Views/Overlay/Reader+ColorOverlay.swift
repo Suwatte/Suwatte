@@ -7,12 +7,11 @@
 
 import SwiftUI
 
-
 struct ColorOverlay: View {
     @AppStorage(STTKeys.EnableOverlay) var overlayEnabled = false
     @AppStorage(STTKeys.OverlayColor) var overlayColor: Color = .clear
     @AppStorage(STTKeys.ReaderFilterBlendMode) var readerBlendMode = STTBlendMode.normal
-    
+
     var body: some View {
         overlayColor
             .allowsHitTesting(false)
@@ -21,10 +20,9 @@ struct ColorOverlay: View {
     }
 }
 
-
 enum STTBlendMode: Int, CaseIterable {
     case normal, screen, multiply
-    
+
     var description: String {
         switch self {
         case .multiply:
@@ -35,7 +33,7 @@ enum STTBlendMode: Int, CaseIterable {
             return "Screen"
         }
     }
-    
+
     var blendMode: BlendMode {
         switch self {
         case .normal:
@@ -47,4 +45,3 @@ enum STTBlendMode: Int, CaseIterable {
         }
     }
 }
-

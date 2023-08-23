@@ -6,12 +6,10 @@
 //
 
 import UIKit
-fileprivate typealias Controller = WebtoonController
-
+private typealias Controller = WebtoonController
 
 extension Controller: UICollectionViewDelegate {
-    
-    func collectionView(_ collectionView: UICollectionView, targetContentOffsetForProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
+    func collectionView(_: UICollectionView, targetContentOffsetForProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
         guard let preRotationPath, let preRotationOffset else {
             return proposedContentOffset
         }
@@ -21,10 +19,10 @@ extension Controller: UICollectionViewDelegate {
         current.y = min(maxY, max(offset + preRotationOffset, 0))
         self.preRotationPath = nil
         self.preRotationOffset = nil
-        
+
         return current
     }
-    
+
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         cancelAutoScroll()

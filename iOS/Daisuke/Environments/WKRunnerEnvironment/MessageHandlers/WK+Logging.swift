@@ -10,7 +10,6 @@ import WebKit
 
 struct WKHandler {}
 
-
 extension WKHandler {
     class LogHandler: NSObject, WKScriptMessageHandler {
         func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) {

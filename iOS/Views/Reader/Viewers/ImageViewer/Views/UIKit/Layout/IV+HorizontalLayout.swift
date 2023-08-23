@@ -7,11 +7,11 @@
 
 import UIKit
 
-protocol OffsetPreservingLayout : NSObject {
+protocol OffsetPreservingLayout: NSObject {
     var isInsertingCellsToTop: Bool { get set }
 }
+
 class HImageViewerLayout: UICollectionViewFlowLayout, OffsetPreservingLayout {
-    
     override init() {
         super.init()
         scrollDirection = .horizontal
@@ -20,11 +20,12 @@ class HImageViewerLayout: UICollectionViewFlowLayout, OffsetPreservingLayout {
         sectionInset = UIEdgeInsets.zero
         estimatedItemSize = .zero
     }
-    
-    required init?(coder: NSCoder) {
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     var isInsertingCellsToTop: Bool = false {
         didSet {
             if isInsertingCellsToTop {
@@ -62,4 +63,3 @@ class HImageViewerLayout: UICollectionViewFlowLayout, OffsetPreservingLayout {
         return layoutAttributes
     }
 }
-

@@ -146,28 +146,28 @@ final class Preferences {
 
     @UserDefault(STTKeys.MoveDownloadToArchive)
     var archiveSourceDownload = false
-    
+
     @UserDefault(STTKeys.PagedSplitsWide)
     var splitWidePages = false
-    
+
     @UserDefault(STTKeys.PagedZoomWide)
     var zoomWidePages = false
-    
+
     @UserDefault(STTKeys.VerticalNavigator)
     var verticalNavigator = ReaderNavigation.Modes.lNav
-    
+
     @UserDefault(STTKeys.PagedNavigator)
     var horizontalNavigator = ReaderNavigation.Modes.standard
-    
+
     @UserDefault(STTKeys.CurrentReadingMode)
     var currentReadingMode = ReadingMode.PAGED_COMIC
-    
+
     @UserDefault(STTKeys.SourcesDisabledFromHistory)
     var disabledHistorySources = Set<String>()
-    
+
     @UserDefault(STTKeys.SourcesDisabledFromGlobalSearch)
     var disabledGlobalSearchSources = Set<String>()
-    
+
     @UserDefault(STTKeys.VerticalPagePaddingAmount)
     var verticalPagePaddingAmount: Int = 5
 }

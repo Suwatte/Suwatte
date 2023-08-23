@@ -7,7 +7,6 @@
 
 import UIKit
 
-
 class ZoomingScrollView: UIScrollView, UIScrollViewDelegate {
     // The Actual Content
     weak var target: UIView? {
@@ -189,13 +188,13 @@ extension ZoomingScrollView {
         target = nil
         wrapper.removeFromSuperview()
     }
-    
+
     func resetConstraints() {
         for constraint in postImageSetConstraints {
             constraint.isActive = false
             constraint.priority = .defaultLow
         }
-        
+
         postImageSetConstraints.removeAll()
     }
 }

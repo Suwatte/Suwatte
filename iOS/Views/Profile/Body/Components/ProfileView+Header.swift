@@ -115,20 +115,20 @@ private extension Skeleton {
                     Image(systemName: EntryInLibrary ? "folder.fill" : "folder.badge.plus")
                 }
                 .disabled(!model.source.ablityNotDisabled(\.disableLibraryActions))
-                
+
                 Button {
                     model.presentTrackersSheet.toggle()
                 } label: {
                     Image(systemName: "checklist")
                 }
                 .disabled(!model.source.ablityNotDisabled(\.disableTrackerLinking))
-                
+
                 NavigationLink {
                     BookmarksView(contentID: model.contentIdentifier)
                 } label: {
                     Image(systemName: "bookmark")
                 }
-                
+
                 Button {
                     model.presentSafariView.toggle()
                 } label: {
@@ -143,7 +143,7 @@ private extension Skeleton {
         var EntryInLibrary: Bool {
             model.inLibrary
         }
-        
+
         func handleLibraryAction() async {
             let actor = await RealmActor()
             Task { @MainActor in

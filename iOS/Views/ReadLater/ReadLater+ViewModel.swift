@@ -21,7 +21,6 @@ extension LibraryView.ReadLaterView {
         @Published var ascending = false {
             didSet {
                 obs()
-
             }
         }
 
@@ -40,33 +39,34 @@ extension LibraryView.ReadLaterView {
         private var libraryNotificationToken: NotificationToken?
         private var readLaterNotificationToken: NotificationToken?
 
-        
         func obs() {
             Task {
                 await observe()
             }
         }
+
         func observe() async {
             await MainActor.run { [weak self] in
                 self?.disconnect()
             }
             let actor = await RealmActor()
             libraryNotificationToken = await actor
-                .observeLibraryIDs({ values in
+                .observeLibraryIDs { values in
                     Task { @MainActor [weak self] in
                         self?.library = values
                     }
-                })
+                }
 
             readLaterNotificationToken = await actor
                 .observeReadLater(query: query,
                                   ascending: ascending,
-                                  sort: sort, { values in
-                    Task { @MainActor [weak self] in
-                        self?.readLater = values
-                        self?.initialFetchComplete = true
-                    }
-                })
+                                  sort: sort)
+            { values in
+                Task { @MainActor [weak self] in
+                    self?.readLater = values
+                    self?.initialFetchComplete = true
+                }
+            }
         }
 
         func disconnect() {

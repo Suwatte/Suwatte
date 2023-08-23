@@ -1,5 +1,5 @@
 //
-//  CPV+Body.swift
+//  ProfileView+Skeleton.swift
 //  Suwatte
 //
 //  Created by Mantton on 2022-03-07.

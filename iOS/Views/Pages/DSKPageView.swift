@@ -89,11 +89,10 @@ struct RunnerPageView: View {
     var link: DSKCommon.PageLink
     var body: some View {
         Group {
-            
             if let runner = runner as? AnyContentSource {
                 ContentSourcePageView(source: runner, link: link)
             } else if let runner = runner as? AnyContentTracker {
-                ContentTrackerPageView(tracker: runner , link: link)
+                ContentTrackerPageView(tracker: runner, link: link)
             } else {
                 Text("No Environment")
             }

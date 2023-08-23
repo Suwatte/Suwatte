@@ -39,7 +39,6 @@ extension ProfileView.Sheets {
 
         var body: some View {
             NavigationView {
-                
                 Group {
                     if let entry {
                         List {
@@ -136,7 +135,6 @@ extension ProfileView.Sheets {
                 Button(role: .destructive) {
                     guard let ci = entry?.content?.ContentIdentifier else { return }
                     Task {
-                        
                         let actor = await RealmActor()
                         await actor.toggleLibraryState(for: ci)
                     }

@@ -1,5 +1,5 @@
 //
-//  Extension+Strig.swift
+//  STT+String.swift
 //  Suwatte (iOS)
 //
 //  Created by Mantton on 2022-03-05.

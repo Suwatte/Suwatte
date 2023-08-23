@@ -116,12 +116,11 @@ extension LibraryView.LibraryGrid {
             let targets = zip(entries.indices, entries)
                 .filter { model.selectedIndexes.contains($0.0) }
                 .map { $0.1.id }
-            
+
             Task {
                 let actor = await Suwatte.RealmActor()
                 await actor.batchRemoveFromLibrary(with: Set(targets))
             }
-            
 
             DispatchQueue.main.async {
                 model.selectedIndexes.removeAll()

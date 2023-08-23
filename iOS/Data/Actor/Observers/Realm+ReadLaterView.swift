@@ -9,7 +9,7 @@ import Foundation
 import RealmSwift
 
 extension RealmActor {
-    func observeReadLater(query: String, ascending: Bool, sort: LibraryView.ReadLaterView.ContentSort ,_ callback: @escaping Callback<[ReadLater]>)  async -> NotificationToken {
+    func observeReadLater(query: String, ascending: Bool, sort: LibraryView.ReadLaterView.ContentSort, _ callback: @escaping Callback<[ReadLater]>) async -> NotificationToken {
         var collection = realm
             .objects(ReadLater.self)
             .where { $0.content != nil && $0.isDeleted == false }
@@ -21,8 +21,7 @@ extension RealmActor {
                 .filter("ANY content.additionalTitles CONTAINS[cd] %@ OR content.title CONTAINS[cd] %@ OR content.summary CONTAINS[cd] %@",
                         query, query, query)
         }
-        
-        
+
         func didUpdate(_ results: Results<ReadLater>) {
             let data = results
                 .freeze()
@@ -31,9 +30,7 @@ extension RealmActor {
                 callback(data)
             }
         }
-        
-        return await observeCollection(collection: collection, didUpdate)
-        
-    }
 
+        return await observeCollection(collection: collection, didUpdate)
+    }
 }

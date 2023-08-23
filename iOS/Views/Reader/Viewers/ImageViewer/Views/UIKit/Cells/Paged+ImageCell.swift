@@ -38,7 +38,7 @@ class PagedViewerImageCell: UICollectionViewCell, CancellableImageCell {
         // Initialize
         pageView = PagedViewerImageHolder(page: page, frame: frame)
         pageView?.delegate = delegate
-        
+
         guard let pageView else { fatalError("Holder Cannot Be Nil") }
         pageView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(pageView)

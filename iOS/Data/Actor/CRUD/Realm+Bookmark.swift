@@ -5,20 +5,18 @@
 //  Created by Mantton on 2023-08-01.
 //
 
-import UIKit
-import RealmSwift
 import IceCream
+import RealmSwift
+import UIKit
 
 extension RealmActor {
-    
     func addBookmark(for chapter: ThreadSafeChapter, at page: Int, with image: UIImage, on offset: Double? = nil) async -> Bool {
-        
         let image = image.imageFlippedForRightToLeftLayoutDirection()
         guard let data = image.pngData() ?? image.jpegData(compressionQuality: 1) else {
             Logger.shared.error("Invalid Image Data")
             return false
         }
-        
+
         var reference: ChapterReference?
 
         switch chapter.sourceId {
@@ -40,13 +38,12 @@ extension RealmActor {
             reference = chapter.toStored().generateReference()
             reference?.content = getStoredContent(chapter.STTContentIdentifier)
         }
-        
+
         guard let reference, reference.isValid else {
             Logger.shared.error("Invalid Chapter Reference")
             return false
         }
-        
-        
+
         let bookmark = UpdatedBookmark()
         bookmark.chapter = reference
         bookmark.page = page

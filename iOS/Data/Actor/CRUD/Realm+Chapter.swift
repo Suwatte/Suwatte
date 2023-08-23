@@ -16,7 +16,6 @@ extension RealmActor {
     }
 }
 
-
 extension RealmActor {
     func validateChapterReference(id: String) async {
         let target = realm
@@ -49,15 +48,14 @@ extension RealmActor {
     }
 }
 
-
 extension RealmActor {
     func getChapters(_ source: String, content: String) -> [StoredChapter] {
         realm.objects(StoredChapter.self)
-        .where { $0.contentId == content }
-        .where { $0.sourceId == source }
-        .sorted(by: \.index, ascending: true)
-        .freeze()
-        .toArray()
+            .where { $0.contentId == content }
+            .where { $0.sourceId == source }
+            .sorted(by: \.index, ascending: true)
+            .freeze()
+            .toArray()
     }
 
     func getStoredChapter(_ id: String) -> StoredChapter? {

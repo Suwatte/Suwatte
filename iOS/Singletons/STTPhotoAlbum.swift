@@ -1,5 +1,5 @@
 //
-//  PhotoAlbum.swift
+//  STTPhotoAlbum.swift
 //  Suwatte (iOS)
 //
 //  Created by Mantton on 2022-03-15.
@@ -20,7 +20,7 @@ import UIKit
     private(set) var albumTitle: String
 
     /// This album's asset collection
-    internal var assetCollection: PHAssetCollection?
+    var assetCollection: PHAssetCollection?
 
     /// Initialize a new instance of this class.
     ///
@@ -61,7 +61,7 @@ import UIKit
     }
 }
 
-internal extension STTPhotoAlbum {
+extension STTPhotoAlbum {
     /// Request authorization and create the album if that went well.
     ///
     /// - Parameter completion: Called upon completion.

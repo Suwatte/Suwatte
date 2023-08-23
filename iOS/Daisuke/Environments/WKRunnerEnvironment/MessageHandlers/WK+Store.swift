@@ -8,11 +8,9 @@
 import Foundation
 import WebKit
 
-
 extension WKHandler {
     class StoreHandler: NSObject, WKScriptMessageHandlerWithReply {
-        
-        func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) async -> (Any?, String?) {
+        func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) async -> (Any?, String?) {
             let task = Task { @MainActor () -> String? in
                 guard let webview = message.webView else {
                     return nil
@@ -28,7 +26,7 @@ extension WKHandler {
             guard let id = await task.value else {
                 return (nil, "Unable to find Runner Instance ID")
             }
-            
+
             let body = await MainActor.run {
                 message.body
             }
@@ -37,7 +35,7 @@ extension WKHandler {
             guard isValidJSON else {
                 return (nil, DSK.Errors.InvalidJSONObject.localizedDescription)
             }
-            
+
             do {
                 let data = try JSONSerialization.data(withJSONObject: body)
                 let message = try JSONDecoder().decode(Message.self, from: data)

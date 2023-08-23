@@ -72,7 +72,6 @@ extension RealmActor {
             return []
         }
 
-        
         var arr = Array(ids)
         if removeQuery {
             arr.removeAll(where: { $0 == id })

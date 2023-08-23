@@ -173,6 +173,7 @@ struct PageLinkView: View {
         }
         .navigationBarTitle(pageLink.title)
     }
+
     func load() async {
         loadable = .loading
         do {
@@ -185,24 +186,23 @@ struct PageLinkView: View {
 }
 
 // MARK: ViewModel
+
 extension BrowseView {
     final actor ViewModel: ObservableObject {
-        
         @MainActor
         @Published
         var runners: [StoredRunnerObject] = []
-        
+
         @MainActor
         @Published
-        var links :  [String: [DSKCommon.PageLinkLabel]] = [:]
-        
+        var links: [String: [DSKCommon.PageLinkLabel]] = [:]
+
         private var token: NotificationToken?
-        
-        
+
         func observe() async {
             guard token == nil else { return }
             let actor = await RealmActor()
-            self.token = await actor.observeInstalledRunners { value in
+            token = await actor.observeInstalledRunners { value in
                 Task { @MainActor in
                     withAnimation {
                         self.runners = value
@@ -211,37 +211,37 @@ extension BrowseView {
                 }
             }
         }
-        
+
         func stopObserving() {
             token?.invalidate()
             token = nil
         }
-        
+
         func getLinkProviders() async -> [AnyRunner] {
             let ids = await runners
                 .filter(\.isBrowsePageLinkProvider)
                 .map(\.id)
-            
+
             let results = await withTaskGroup(of: AnyRunner?.self) { group in
-                
+
                 for id in ids {
                     group.addTask {
                         await DSK.shared.getRunner(id)
                     }
                 }
-                
+
                 var out: [AnyRunner] = []
                 for await result in group {
                     guard let result else { continue }
                     out.append(result)
                 }
-                
+
                 return out
             }
-            
+
             return results
         }
-        
+
         func getPageLinks() async {
             await MainActor.run {
                 links.removeAll()
@@ -255,14 +255,14 @@ extension BrowseView {
                 }
             }
         }
-        
+
         func load(for runner: AnyRunner) async {
             guard runner.intents.browsePageLinkProvider else { return }
             do {
                 let pageLinks = try await runner.getBrowsePageLinks()
                 guard !pageLinks.isEmpty else { return }
                 Task { @MainActor in
-                    self.links.updateValue(pageLinks,forKey: runner.id)
+                    self.links.updateValue(pageLinks, forKey: runner.id)
                 }
             } catch {
                 Logger.shared.error(error, runner.id)

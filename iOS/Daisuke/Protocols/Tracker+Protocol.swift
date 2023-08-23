@@ -11,8 +11,7 @@ struct TrackerConfig: Parsable {
     let linkKeys: [String]?
 }
 
-
-protocol ContentTracker : DSKRunner {
+protocol ContentTracker: DSKRunner {
     var config: TrackerConfig? { get }
 
     func getEntryForm(id: String) async throws -> DSKCommon.TrackForm

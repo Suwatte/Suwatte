@@ -42,7 +42,6 @@ struct AddContentLink: View {
         }
     }
 
-
     @ViewBuilder
     func SourceSection(result: SearchView.ResultGroup) -> some View {
         let data = result.result
@@ -66,7 +65,7 @@ struct AddContentLink: View {
                         ToastManager.shared.info("Linked Contents!")
                     }
                 }
-                presentationMode.wrappedValue.dismiss()               
+                presentationMode.wrappedValue.dismiss()
             }
         } message: {
             if let selection {

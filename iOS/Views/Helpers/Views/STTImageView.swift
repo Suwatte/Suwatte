@@ -47,15 +47,15 @@ struct STTImageView: View {
             }
         }
     }
-    
+
     func load(_ size: CGSize) async {
         if loader.image != nil { return }
         loader.priority = .normal
         loader.transaction = .init(animation: .easeInOut(duration: 0.25))
         loader.processors = [NukeDownsampleProcessor(size: size)]
-        
+
         guard let url else { return }
-        
+
         if identifier.sourceId == STTHelpers.OPDS_CONTENT_ID {
             let actor = await RealmActor()
             let pub = await actor.getPublication(id: identifier.contentId)
@@ -76,7 +76,7 @@ struct STTImageView: View {
             if appState.titleHasCustomThumbs.contains(identifier.id) {
                 let actor = await RealmActor()
                 let thumbnailURL = await actor.getCustomThumb(id: identifier.id)?.file?.filePath
-                
+
                 if let thumbnailURL {
                     loader.load(thumbnailURL)
                     return
@@ -87,13 +87,13 @@ struct STTImageView: View {
                 loader.load(url)
                 return
             }
-            
+
             let runner = await DSK.shared.getRunner(identifier.sourceId)
             guard let runner, runner.intents.imageRequestHandler else {
                 loader.load(url)
                 return
             }
-            
+
             do {
                 let response = try await runner.willRequestImage(imageURL: url)
                 let request = try ImageRequest(urlRequest: response.toURLRequest())
@@ -114,7 +114,7 @@ struct BaseImageView: View {
     @StateObject private var loader = FetchImage()
     @State var isVisible = false
     @Environment(\.placeholderImageShimmer) var shimmer
-    
+
     var body: some View {
         GeometryReader { proxy in
             let size: CGSize = .init(width: proxy.size.width, height: proxy.size.width * 1.6)
@@ -146,7 +146,7 @@ struct BaseImageView: View {
             }
         }
     }
-    
+
     func load(_ size: CGSize, _ url: URL?) async {
         isVisible = true
         if loader.image != nil { return }
@@ -158,9 +158,9 @@ struct BaseImageView: View {
             loader.load(request)
             return
         }
-        
+
         guard let url else { return }
-        
+
         guard url.isHTTP else {
             loader.load(url)
             return
@@ -174,7 +174,7 @@ struct BaseImageView: View {
             loader.load(url)
             return
         }
-        
+
         do {
             let response = try await runner.willRequestImage(imageURL: url)
             let request = try ImageRequest(urlRequest: response.toURLRequest())
@@ -184,7 +184,7 @@ struct BaseImageView: View {
             loader.load(url)
         }
     }
-    
+
     func onImageEvent(_ result: Result<ImageResponse, Error>) {
         switch result {
         case .success:

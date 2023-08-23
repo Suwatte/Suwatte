@@ -47,7 +47,7 @@ struct MoreView: View {
         } header: {
             Text("Info")
         }
-        
+
         Section {
             Link("Discord Server", destination: URL(string: "https://discord.gg/8wmkXsT6h5")!)
                 .badge("\(Image(systemName: "arrow.up.right.circle"))")
@@ -58,7 +58,7 @@ struct MoreView: View {
             Text("Links")
         }
         .buttonStyle(.plain)
-        
+
         Section {
             Link("Support on KoFi", destination: URL(string: "https://ko-fi.com/mantton")!)
                 .badge("\(Image(systemName: "arrow.up.right.circle"))")
@@ -70,7 +70,6 @@ struct MoreView: View {
             Text("Support")
         }
         .buttonStyle(.plain)
-
     }
 
     var DataSection: some View {

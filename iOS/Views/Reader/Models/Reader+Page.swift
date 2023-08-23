@@ -7,34 +7,33 @@
 
 import Foundation
 
-
 struct ReaderPage: Hashable, Sendable {
     let index: Int
     let chapterPageCount: Int
     var isLocal: Bool {
         archivePath != nil || downloadURL != nil
     }
-    
+
     var number: Int {
         index + 1
     }
-    
+
     var isLastPage: Bool {
         number == chapterPageCount
     }
-    
+
     let chapter: ThreadSafeChapter
-    
+
     let downloadURL: URL?
     let hostedURL: String?
     let rawData: String?
     let archivePath: String?
     let archiveFile: URL?
-    
+
     let opds: OPDSInfo?
-    
+
     let CELL_KEY: String
-    init(index: Int, count: Int, chapter: ThreadSafeChapter, downloadURL: URL? = nil, hostedURL: String?  = nil, rawData: String? = nil, archivePath: String? = nil, archiveFile: URL? = nil, opds: OPDSInfo? = nil) {
+    init(index: Int, count: Int, chapter: ThreadSafeChapter, downloadURL: URL? = nil, hostedURL: String? = nil, rawData: String? = nil, archivePath: String? = nil, archiveFile: URL? = nil, opds: OPDSInfo? = nil) {
         self.index = index
         self.chapter = chapter
         self.downloadURL = downloadURL
@@ -43,7 +42,7 @@ struct ReaderPage: Hashable, Sendable {
         self.archivePath = archivePath
         self.archiveFile = archiveFile
         self.opds = opds
-        self.chapterPageCount = count
-        self.CELL_KEY = "\(chapter.id)||\(index)"
+        chapterPageCount = count
+        CELL_KEY = "\(chapter.id)||\(index)"
     }
 }

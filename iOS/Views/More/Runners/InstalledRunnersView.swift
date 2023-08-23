@@ -12,23 +12,22 @@ struct InstalledRunnersView: View {
     private let engine = DSK.shared
     @StateObject var model = ViewModel()
     @State var showAddSheet = false
-    
-    var groups: Dictionary<RunnerEnvironment, [StoredRunnerObject]> {
+
+    var groups: [RunnerEnvironment: [StoredRunnerObject]] {
         Dictionary(grouping: model.runners, by: \.environment)
     }
-        
-    private var items : [RunnerEnvironment] {
+
+    private var items: [RunnerEnvironment] {
         [.source, .tracker]
     }
-    
-    
+
     var body: some View {
         List {
             ForEach(items, id: \.hashValue) { environment in
                 let runners = groups[environment] ?? []
                 Section {
                     ForEach(runners) { runner in
-                       Cell(runner)
+                        Cell(runner)
                     }
                 } header: {
                     Text(environment.description)
@@ -73,7 +72,7 @@ struct InstalledRunnersView: View {
             }
         }
     }
-    
+
     func Cell(_ runner: StoredRunnerObject) -> some View {
         NavigationLink {
             Gateway(runnerID: runner.id)
@@ -103,7 +102,6 @@ struct InstalledRunnersView: View {
             .tint(.red)
         }
     }
-
 }
 
 extension InstalledRunnersView {
@@ -114,9 +112,9 @@ extension InstalledRunnersView {
         func observe() async {
             token?.invalidate()
             token = nil
-            
+
             let actor = await RealmActor()
-            
+
             token = await actor
                 .observeInstalledRunners(onlyEnabled: false) { value in
                     Task { @MainActor in
@@ -132,7 +130,6 @@ extension InstalledRunnersView {
     }
 }
 
-
 extension InstalledRunnersView {
     struct Gateway: View {
         let runnerID: String
@@ -146,7 +143,7 @@ extension InstalledRunnersView {
                 }
             }
         }
-        
+
         func load() async throws {
             loadable = .loading
             let runner = try await DSK.shared.getDSKRunner(runnerID)

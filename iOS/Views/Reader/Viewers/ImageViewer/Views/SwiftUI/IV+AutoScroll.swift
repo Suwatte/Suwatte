@@ -37,7 +37,7 @@ struct AutoScrollOverlay: View {
             isScrolling = false
         }
     }
-    
+
     func action() {
         publisher.autoScrollDidStart.send(!isScrolling)
     }

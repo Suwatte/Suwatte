@@ -6,13 +6,13 @@
 //
 
 import Foundation
-fileprivate typealias Controller = IVPagingController
+private typealias Controller = IVPagingController
 
 extension Controller: DoublePageResolverDelegate {
     func primaryIsWide(for page: PanelPage) {
         pageMarkedAsWide(page.page)
     }
-    
+
     func secondaryIsWide(for page: PanelPage) {
         guard let target = page.secondaryPage else {
             Logger.shared.warn("requesting to mark a secondary page that is not defined")
@@ -20,7 +20,7 @@ extension Controller: DoublePageResolverDelegate {
         }
         pageMarkedAsWide(target)
     }
-    
+
     func pageMarkedAsWide(_ page: ReaderPage) {
         let key = page.CELL_KEY
         guard !widePages.contains(key) else { return }

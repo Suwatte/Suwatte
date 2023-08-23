@@ -6,7 +6,7 @@
 //
 
 import UIKit
-fileprivate typealias Controller = WebtoonController
+private typealias Controller = WebtoonController
 
 extension Controller {
     func subscribeAll() {
@@ -18,20 +18,18 @@ extension Controller {
 }
 
 // MARK: Slider
+
 extension Controller {
-    
     func subToSliderPublisher() {
-       PanelPublisher
+        PanelPublisher
             .shared
             .sliderPct
             .sink { [weak self] value in
                 self?.handleSliderPositionChange(value)
             }
             .store(in: &subscriptions)
-
     }
-    
-    
+
     func subToScrubEventPublisher() {
         PanelPublisher
             .shared
@@ -41,7 +39,7 @@ extension Controller {
             }
             .store(in: &subscriptions)
     }
-    
+
     func subToAutoScrollPublisher() {
         PanelPublisher
             .shared
@@ -55,7 +53,7 @@ extension Controller {
             }
             .store(in: &subscriptions)
     }
-    
+
     func subToPagePaddingPublisher() {
         // Padding
         Preferences
@@ -63,7 +61,7 @@ extension Controller {
             .preferencesChangedSubject
             .filter { keyPath in
                 keyPath == \Preferences.VerticalPagePadding ||
-                keyPath == \Preferences.verticalPagePaddingAmount
+                    keyPath == \Preferences.verticalPagePaddingAmount
             }
             .sink { [weak self] _ in
                 (self?.collectionNode.view.collectionViewLayout as? VImageViewerLayout)?
@@ -72,6 +70,5 @@ extension Controller {
                 self?.collectionNode.view.setNeedsLayout()
             }
             .store(in: &subscriptions)
-
     }
 }

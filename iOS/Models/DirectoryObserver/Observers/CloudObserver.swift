@@ -10,8 +10,8 @@ import Fuzi
 
 class CloudObserver: DirectoryObserver {
     private let metadataQuery = NSMetadataQuery()
-    internal let extensions: [String]
-    internal let path: URL
+    let extensions: [String]
+    let path: URL
     private var callback: ((Folder) -> Void)?
 
     init(extensions: [String], url: URL) {

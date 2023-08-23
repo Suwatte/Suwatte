@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 extension SearchView {
     struct HistoryView: View {
         @EnvironmentObject var model: ViewModel
@@ -16,7 +15,7 @@ extension SearchView {
                 ForEach(model.history) { entry in
                     Cell(entry: entry)
                         .swipeActions {
-                            Button ("Delete", role: .destructive) {
+                            Button("Delete", role: .destructive) {
                                 Task {
                                     let actor = await RealmActor()
                                     await actor.deleteSearch(entry.id)
@@ -25,7 +24,6 @@ extension SearchView {
                             }
                         }
                 }
-                
             }
             .task {
                 await model.loadSearchHistory()
@@ -60,7 +58,7 @@ extension SearchView.HistoryView {
 }
 
 extension SearchView.ViewModel {
-    func loadSearchHistory () async {
+    func loadSearchHistory() async {
         let actor = await RealmActor()
         let data = await actor.getAllSearchHistory()
         await MainActor.run {
