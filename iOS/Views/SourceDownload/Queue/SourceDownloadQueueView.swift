@@ -22,7 +22,7 @@ struct SourceDownloadQueueView: View {
         }
         .navigationBarTitle("Queue")
         .task {
-            model.watch()
+            await model.watch()
         }
         .onDisappear(perform: model.stop)
         .onReceive(SDM.shared.activeDownload) { value in

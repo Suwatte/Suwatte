@@ -15,8 +15,12 @@ enum DownloadStatus: Int, PersistableEnum {
 // MARK: Queue Helpers
 
 extension SDM {
-    func fetchQueue() {
-        let realm = try! Realm()
+    func getRealmActor() async -> Realm {
+        try! await Realm(actor: self)
+    }
+    
+    func fetchQueue() async {
+        let realm = await getRealmActor()
         let collection = realm
             .objects(SourceDownload.self)
             .where { $0.status == .queued }
@@ -27,8 +31,8 @@ extension SDM {
         setQueue(collection)
     }
 
-    func update(ids: [String], status: DownloadStatus) {
-        let realm = try! Realm()
+    func update(ids: [String], status: DownloadStatus) async {
+        let realm = await getRealmActor()
         let collection = realm
             .objects(SourceDownload.self)
             .where { $0.id.in(ids) }
@@ -38,11 +42,11 @@ extension SDM {
                 download.status = status
             }
         }
-        fetchQueue()
+        await fetchQueue()
     }
 
-    func add(chapters: [String]) {
-        let realm = try! Realm()
+    func add(chapters: [String]) async {
+        let realm = await getRealmActor()
 
         // Get completed download ids
         let completed = realm
@@ -84,14 +88,13 @@ extension SDM {
         try! realm.safeWrite {
             realm.add(downloads, update: .modified)
         }
-        return // Remove
         if queue.isEmpty {
-            fetchQueue()
+            await fetchQueue()
         }
     }
 
-    func get(_ id: String) -> SourceDownload? {
-        let realm = try! Realm()
+    func get(_ id: String) async -> SourceDownload? {
+        let realm = await getRealmActor()
 
         let target = realm
             .objects(SourceDownload.self)
@@ -101,8 +104,8 @@ extension SDM {
         return target?.freeze()
     }
 
-    func get(_ ids: [String]) -> [SourceDownload] {
-        let realm = try! Realm()
+    func get(_ ids: [String]) async -> [SourceDownload] {
+        let realm = await getRealmActor()
 
         let targets = realm
             .objects(SourceDownload.self)
@@ -113,8 +116,8 @@ extension SDM {
         return targets
     }
 
-    func get(_ status: DownloadStatus) -> [SourceDownload] {
-        let realm = try! Realm()
+    func get(_ status: DownloadStatus) async -> [SourceDownload] {
+        let realm = await getRealmActor()
 
         let targets = realm
             .objects(SourceDownload.self)
@@ -125,8 +128,8 @@ extension SDM {
         return targets
     }
 
-    func finished(_ id: String, url: URL) {
-        let realm = try! Realm()
+    func finished(_ id: String, url: URL) async {
+        let realm = await getRealmActor()
 
         let target = realm
             .objects(SourceDownload.self)
@@ -156,36 +159,36 @@ extension SDM {
 
 //
 extension SDM {
-    func resume(ids: [String]) {
-        update(ids: ids, status: .queued)
+    func resume(ids: [String]) async {
+        await update(ids: ids, status: .queued)
         pausedTasks = pausedTasks.subtracting(ids)
     }
 
-    func pause(ids: [String]) {
-        update(ids: ids, status: .paused)
+    func pause(ids: [String]) async  {
+        await update(ids: ids, status: .paused)
         pausedTasks = pausedTasks.union(ids)
     }
 
-    func cancel(ids: [String]) {
-        let collection = get(ids)
+    func cancel(ids: [String]) async {
+        let collection = await get(ids)
         let completed = collection
             .filter { $0.status == .completed }
             .map(\.id)
         let archives = collection.compactMap(\.archive)
 
-        update(ids: ids, status: .cancelled)
+        await update(ids: ids, status: .cancelled)
 
         archivesMarkedForDeletion = archivesMarkedForDeletion.union(archives)
         foldersMarkedForDeletion = foldersMarkedForDeletion.union(completed)
         cancelledTasks = cancelledTasks.union(ids)
 
         if isIdle {
-            clean()
+            await clean()
         }
     }
 
-    func delete(ids: [String]) {
-        let realm = try! Realm()
+    func delete(ids: [String]) async {
+        let realm = await getRealmActor()
 
         let targets = realm
             .objects(SourceDownload.self)
@@ -196,21 +199,21 @@ extension SDM {
         }
     }
 
-    func reattach() {
+    func reattach() async {
         // Called when restarted, requeue failing downloads
-        let failing = get(.failing)
-        let cancelled = get(.cancelled)
-        let active = get(.active)
+        let failing = await get(.failing)
+        let cancelled = await get(.cancelled)
+        let active = await get(.active)
 
         cancelledTasks = cancelledTasks.union(cancelled.map(\.id)) // Set cancelled tasks to cache, will be clean at next possible interval
-        update(ids: active.map(\.id), status: .queued) // Update prior active tasks to now be requeued
-        update(ids: failing.map(\.id), status: .queued) // update prior failing tasks to be requeued
+        await update(ids: active.map(\.id), status: .queued) // Update prior active tasks to now be requeued
+        await update(ids: failing.map(\.id), status: .queued) // update prior failing tasks to be requeued
     }
 }
 
 extension SDM {
-    func setText(_ id: String, _ text: String) {
-        let realm = try! Realm()
+    func setText(_ id: String, _ text: String) async {
+        let realm = await getRealmActor()
         let download = realm
             .objects(SourceDownload.self)
             .where { $0.id == id }
@@ -264,8 +267,8 @@ extension SDM {
 }
 
 extension SDM {
-    func getActiveDownload(_ id: String) -> SourceDownload? {
-        let realm = try! Realm()
+    func getActiveDownload(_ id: String) async -> SourceDownload? {
+        let realm = await getRealmActor()
 
         return realm
             .objects(SourceDownload.self)

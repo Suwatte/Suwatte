@@ -21,49 +21,27 @@ extension SourceDownloadView {
 }
 
 extension SourceDownloadView.ViewModel {
-    func watch(_ sort: SourceDownloadView.SortOption, _ ascending: Bool) {
-        stop()
-        withAnimation {
-            working = true
-        }
-
-        let realm = try! Realm()
-
-        var collection = realm
-            .objects(SourceDownloadIndex.self)
-            .where { $0.content != nil && $0.count > 0 }
-
-        switch sort {
-        case .title:
-            collection = collection.sorted(by: \.content?.title, ascending: ascending)
-        case .downloadCount:
-            collection = collection.sorted(by: \.count, ascending: ascending)
-        case .dateAdded:
-            collection = collection.sorted(by: \.dateLastAdded, ascending: ascending)
-        }
-        //
-        if !text.isEmpty {
-            collection = collection
-                .filter("ANY content.additionalTitles CONTAINS[cd] %@ OR content.title CONTAINS[cd] %@ OR content.summary CONTAINS[cd] %@", text, text, text)
-        }
-
-        token = collection
-            .observe { _ in
-                let mapped = collection
-                    .freeze()
-                    .toArray()
-
-                Task { @MainActor in
-                    withAnimation {
-                        self.working = false
-                        self.entries = mapped
-
-                        if !self.initialFetchComplete {
-                            self.initialFetchComplete.toggle()
-                        }
-                    }
-                }
+    func watch(_ sort: SourceDownloadView.SortOption, _ ascending: Bool) async {
+        await MainActor.run {
+            stop()
+            withAnimation {
+                working = true
             }
+        }
+        
+        let actor = await RealmActor()
+        
+        token = await actor
+            .observeDownloads(query: text.trimmingCharacters(in: .whitespacesAndNewlines),
+                              ascending: ascending,
+                              sort: sort, { value in
+                Task { @MainActor [weak self] in
+                    self?.entries = value
+                    self?.working = false
+                    self?.initialFetchComplete = true
+                }
+            })
+
     }
 
     func stop() {

@@ -14,17 +14,17 @@ extension SDM {
         pausedTasks.contains(id) || cancelledTasks.contains(id)
     }
 
-    private func didFinishTasksAtHead(id: String, with state: TaskCompletionState) {
+    private func didFinishTasksAtHead(id: String, with state: TaskCompletionState) async {
         if state != .halted {
             // Update Object
-            update(ids: [id], status: state.DownloadState)
+            await update(ids: [id], status: state.DownloadState)
         }
         // Reset Publisher
         announce()
         isIdle = true
-        clean()
+        await clean()
         // Update Queue
-        fetchQueue()
+        await fetchQueue()
     }
 
     internal func download() async {
@@ -36,7 +36,7 @@ extension SDM {
             return
         }
         Logger.shared.log("Working: \(id)", CONTEXT)
-        update(ids: [id], status: .active)
+        await update(ids: [id], status: .active)
         announce(id, state: .fetchingImages)
 
         do {
@@ -45,16 +45,16 @@ extension SDM {
             let completion = try await handleFetchResponse(id: id, urls: data.urls, raws: data.raws, text: data.text)
 
             guard completion else { return }
-            didFinishTasksAtHead(id: id, with: .completed)
+            await didFinishTasksAtHead(id: id, with: .completed)
         } catch {
             Logger.shared.error(error, CONTEXT)
-            didFinishTasksAtHead(id: id, with: .failed)
+            await didFinishTasksAtHead(id: id, with: .failed)
         }
     }
 
     private func handleFetchResponse(id: String, urls: [URL], raws: [Data], text: String?) async throws -> Bool {
         if let text, !text.isEmpty {
-            setText(id, text)
+            await setText(id, text)
             return true
         } else if !urls.isEmpty {
             return try await downloadImages(of: id, with: urls)
@@ -86,7 +86,7 @@ extension SDM {
         while !images.isEmpty {
             // Check Paused or Cancelled
             if halt(id) {
-                didFinishTasksAtHead(id: id, with: .halted)
+                await didFinishTasksAtHead(id: id, with: .halted)
                 return false
             }
 
@@ -139,7 +139,7 @@ extension SDM {
         while !images.isEmpty {
             // Check Paused or Cancelled
             if halt(id) {
-                didFinishTasksAtHead(id: id, with: .halted)
+                await didFinishTasksAtHead(id: id, with: .halted)
                 return false
             }
 
@@ -177,7 +177,7 @@ extension SDM {
             Logger.shared.error("Failed to remove temporary download directory for (\(id), \(error.localizedDescription)", CONTEXT)
         }
         // Final Path can either be directory or an archive, update download object
-        finished(id, url: finalPath)
+        await finished(id, url: finalPath)
     }
 
     // Move Out of temporary directory
@@ -204,7 +204,7 @@ extension SDM {
             try xml.write(to: path, atomically: true, encoding: .utf8)
         }
 
-        let archiveName = prepareArchiveName(for: id) ?? STTHelpers.sha256(of: id)
+        let archiveName = await prepareArchiveName(for: id) ?? STTHelpers.sha256(of: id)
         let fileName = "\(archiveName).cbz"
 
         let archivesDirectory = self.directory
@@ -238,8 +238,8 @@ extension SDM {
 }
 
 extension SDM {
-    private func prepareArchiveName(for id: String) -> String? {
-        let download = get(id)
+    private func prepareArchiveName(for id: String) async -> String? {
+        let download = await get(id)
 
         guard let download else { return nil }
         var name = ""

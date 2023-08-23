@@ -70,12 +70,12 @@ extension SDM {
 // MARK: Public
 
 extension SDM {
-    func appDidStart() {
+    func appDidStart() async {
         Logger.shared.log("Resource Initialized", CONTEXT)
         clearOldDirectory()
-        reattach()
-        clean()
-        fetchQueue()
+        await reattach()
+        await clean()
+        await fetchQueue()
         if !queue.isEmpty {
             ToastManager.shared.info("Downloads Restarted.")
         }
@@ -136,9 +136,9 @@ extension SDM {
 }
 
 extension SDM {
-    func clean() {
+    func clean() async {
         // Delete Records
-        delete(ids: Array(cancelledTasks))
+        await delete(ids: Array(cancelledTasks))
 
         // Delete Physical Locations
         for archive in archivesMarkedForDeletion {
@@ -172,8 +172,8 @@ extension SDM {
 // MARK: Chapter Data Fetcher
 
 extension SDM {
-    func getChapterData(for id: String) throws -> StoredChapterData? {
-        let download = get(id)?.freeze()
+    func getChapterData(for id: String) async throws -> StoredChapterData? {
+        let download = await get(id)?.freeze()
 
         guard let download, download.status == .completed else { return nil }
 

@@ -167,6 +167,7 @@
 		DF62B5AB2A95BB7D00F907CD /* Realm+HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5AA2A95BB7D00F907CD /* Realm+HistoryView.swift */; };
 		DF62B5AD2A95BFB200F907CD /* Realm+UpdateFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5AC2A95BFB200F907CD /* Realm+UpdateFeed.swift */; };
 		DF62B5AF2A95CBB800F907CD /* Realm+ReadLaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5AE2A95CBB800F907CD /* Realm+ReadLaterView.swift */; };
+		DF62B5B12A95D4D700F907CD /* Realm+SourceDownloadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5B02A95D4D700F907CD /* Realm+SourceDownloadView.swift */; };
 		DF67EB8828E3674900076FF5 /* LG+MoveFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */; };
 		DF67EB8A28E39E2200076FF5 /* DSK+Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */; };
 		DF67EB8C28E3F22700076FF5 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8B28E3F22700076FF5 /* Logger.swift */; };
@@ -596,6 +597,7 @@
 		DF62B5AA2A95BB7D00F907CD /* Realm+HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+HistoryView.swift"; sourceTree = "<group>"; };
 		DF62B5AC2A95BFB200F907CD /* Realm+UpdateFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+UpdateFeed.swift"; sourceTree = "<group>"; };
 		DF62B5AE2A95CBB800F907CD /* Realm+ReadLaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+ReadLaterView.swift"; sourceTree = "<group>"; };
+		DF62B5B02A95D4D700F907CD /* Realm+SourceDownloadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+SourceDownloadView.swift"; sourceTree = "<group>"; };
 		DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LG+MoveFlag.swift"; sourceTree = "<group>"; };
 		DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Sync.swift"; sourceTree = "<group>"; };
 		DF67EB8B28E3F22700076FF5 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -2078,6 +2080,7 @@
 				DF62B5AA2A95BB7D00F907CD /* Realm+HistoryView.swift */,
 				DF62B5AC2A95BFB200F907CD /* Realm+UpdateFeed.swift */,
 				DF62B5AE2A95CBB800F907CD /* Realm+ReadLaterView.swift */,
+				DF62B5B02A95D4D700F907CD /* Realm+SourceDownloadView.swift */,
 			);
 			path = Observers;
 			sourceTree = "<group>";
@@ -2575,6 +2578,7 @@
 				DF489C2C2A835804006A21B9 /* DoublePaged+Cell.swift in Sources */,
 				DF11147E2A92E9A500FA8A39 /* WebtoonController+Prefetch.swift in Sources */,
 				DF8D0B972800EE48003E4C3E /* ProfileView.swift in Sources */,
+				DF62B5B12A95D4D700F907CD /* Realm+SourceDownloadView.swift in Sources */,
 				DF32646B2802A6C70066EB08 /* STTImageView.swift in Sources */,
 				DFF09B662A5A8EF500C5CA5E /* +UITextField.swift in Sources */,
 				DFB47EEE2880928C0040A1BD /* RefreshableScrollView.swift in Sources */,

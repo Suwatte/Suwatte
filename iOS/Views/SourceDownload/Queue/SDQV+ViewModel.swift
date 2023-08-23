@@ -14,37 +14,29 @@ extension SourceDownloadQueueView {
         @Published var isWorking = true
         @Published var data = [[SourceDownload]]()
         @Published var initialDataFetchComplete = false
-        private let visisble: [DownloadStatus] = [.queued, .paused, .failing]
-
         private var token: NotificationToken?
     }
 }
 
 extension SourceDownloadQueueView.ViewModel {
-    func watch() {
-        stop()
-
-        let realm = try! Realm()
-
-        let collection = realm
-            .objects(SourceDownload.self)
-            .where { $0.content != nil && $0.chapter != nil }
-            .where { $0.status.in(visisble) }
-            .sectioned(by: \.content?.id, sortDescriptors: [.init(keyPath: "content.id"), .init(keyPath: "dateAdded", ascending: true)])
-
-        token = collection.observe { _ in
-            let build = collection.map { Array($0.freeze()) }
-            Task { @MainActor in
-                withAnimation {
-                    self.data = build
-
-                    if !self.initialDataFetchComplete {
-                        self.initialDataFetchComplete = true
-                    }
-                }
-            }
+    func watch() async {
+        await MainActor.run {
+            stop()
+            isWorking = true
         }
+        let actor = await RealmActor()
+        token = await actor
+            .observeDownloadsQueue({ value in
+                Task { @MainActor [weak self] in
+                    self?.data = value
+                    self?.initialDataFetchComplete = true
+                    self?.isWorking = false
+                }
+            })
     }
 
-    func stop() {}
+    func stop() {
+        token?.invalidate()
+        token = nil
+    }
 }

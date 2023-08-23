@@ -11,7 +11,7 @@ struct SourceDownloadView: View {
     @StateObject var model = ViewModel()
     @AppStorage(STTKeys.DownloadsSortLibrary) var sortOption: SortOption = .downloadCount
     @State var isAscending = true
-
+    @State var watchTask: Task<Void, Never>?
     var body: some View {
         ZStack {
             CollectionView()
@@ -49,22 +49,34 @@ struct SourceDownloadView: View {
         .searchable(text: $model.text, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search")
         .environmentObject(model)
         .task {
-            model.watch(sortOption, isAscending)
+            watchTask?.cancel()
+            await model.watch(sortOption, isAscending)
         }
         .onDisappear(perform: model.stop)
+        .onDisappear {
+            watchTask?.cancel()
+        }
         .onChange(of: sortOption) { newValue in
-            model.watch(newValue, isAscending)
+            watchTask?.cancel()
+            watchTask = Task {
+                await model.watch(newValue, isAscending)
+            }
         }
         .onChange(of: isAscending) { newValue in
-            model.watch(sortOption, newValue)
+            watchTask?.cancel()
+            watchTask = Task {
+                await model.watch(sortOption, newValue)
+            }
         }
         .onChange(of: model.text) { _ in
             model.working = true
         }
         .onReceive(model.$text.debounce(for: .seconds(0.15), scheduler: DispatchQueue.main).dropFirst()) { _ in
-            model.watch(sortOption, isAscending)
+            watchTask?.cancel()
+            watchTask = Task {
+                await model.watch(sortOption, isAscending)
+            }
         }
-
         .navigationBarTitle("Downloads")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -75,7 +87,7 @@ extension SourceDownloadView {
         @EnvironmentObject var model: ViewModel
         var body: some View {
             VStack {
-                Text(isSearching ? "┐(´～｀)┌" : "(ᅌᴗᅌ✿)")
+                Text(isSearching ? "┐(´～｀)┌" : "(oᴗo✿)")
                     .font(.title2)
                     .fontWeight(.semibold)
                 Text(isSearching ? "no results" : "no downloads\ntitles you download from sources will show up here.")
