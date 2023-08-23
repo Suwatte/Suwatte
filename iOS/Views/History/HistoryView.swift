@@ -8,11 +8,7 @@
 import RealmSwift
 import SwiftUI
 
-private let threeMonths = Calendar.current.date(
-    byAdding: .month,
-    value: -3,
-    to: .now
-)!
+
 
 struct HistoryView: View {
     @StateObject var model = ViewModel()
@@ -51,7 +47,7 @@ struct HistoryView: View {
         .navigationTitle("History")
         .task {
             isUserViewing = true
-            model.observe()
+            await model.observe()
         }
         .onDisappear {
             isUserViewing = false
@@ -64,11 +60,14 @@ struct HistoryView: View {
         })
         .onReceive(StateManager.shared.readerClosedPublisher, perform: { _ in
             if isUserViewing {
-                model.observe()
+                Task {
+                    await model.observe()
+                }
             }
         })
         .environmentObject(model)
         .animation(.default, value: model.markers)
+        .animation(.default, value: model.dataFetchComplete)
     }
 }
 
@@ -81,31 +80,18 @@ extension HistoryView {
         private var notificationToken: NotificationToken?
         @Published var readerLock = false
         @Published var dataFetchComplete = false
-        func observe() {
+        func observe() async {
             guard notificationToken == nil else { return }
-            let realm = try! Realm()
-            let collection = realm
-                .objects(ProgressMarker.self)
-                .where {
-                    $0.isDeleted == false &&
-                        $0.currentChapter != nil &&
-                        $0.dateRead != nil &&
-                        $0.dateRead >= threeMonths &&
-                        ($0.currentChapter.content != nil || $0.currentChapter.opds != nil || $0.currentChapter.archive != nil)
+            let actor = await RealmActor()
+            notificationToken = await actor.observeHistory({ value in
+                Task { @MainActor [weak self] in
+                    self?.markers = value
+                    self?.dataFetchComplete = true
                 }
-                .distinct(by: ["id"])
-                .sorted(by: \.dateRead, ascending: false)
-            notificationToken = collection
-                .observe { _ in
-                    let s = collection.freeze().toArray()
-                    DispatchQueue.main.async { [unowned self] in
-                        withAnimation {
-                            self.markers = s
-                            self.dataFetchComplete = true
-                        }
-                    }
-                }
-            readerLock = false
+            })
+            await MainActor.run {
+                readerLock = false
+            }
         }
 
         func disconnect() {
