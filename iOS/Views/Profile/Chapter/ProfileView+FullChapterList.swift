@@ -56,7 +56,9 @@ struct ChapterList: View {
             ChaptersView(visibleChapters)
                 .fullScreenCover(item: $selection, onDismiss: handleReconnection) { chapterId in
                     let chapter = visibleChapters.first(where: { $0.chapterId == chapterId })!
-                    ReaderGateWay(readingMode: model.content.recommendedReadingMode ?? .defaultPanelMode, chapterList: visibleChapters, openTo: chapter)
+                    ReaderGateWay(readingMode: model.content.recommendedReadingMode ?? .defaultPanelMode,
+                                  chapterList: visibleChapters,
+                                  openTo: chapter)
                         .onAppear {
                             model.removeNotifier()
                         }

@@ -137,7 +137,10 @@ extension Target {
                 .alwaysBounceVertical()
                 .animateOnDataRefresh(true)
                 .fullScreenCover(item: $chapter) { chapter in
-                    ReaderGateWay(readingMode: .defaultPanelMode, chapterList: [chapter], openTo: chapter, title: chapter.title)
+                    ReaderGateWay(readingMode: .defaultPanelMode,
+                                  chapterList: [chapter],
+                                  openTo: chapter,
+                                  title: chapter.title)
                 }
                 .animation(.default, value: chapter)
         }

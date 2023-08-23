@@ -12,6 +12,7 @@ struct ReaderGateWay: View {
     var chapterList: [StoredChapter]
     var openTo: StoredChapter
     var pageIndex: Int?
+    var pageOffset: Double?
     var title: String?
     @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
     
@@ -21,7 +22,7 @@ struct ReaderGateWay: View {
                 ImageViewer(initial: .init(chapters: chapterList,
                                            openTo: openTo,
                                            pageIndex: pageIndex,
-                                           pageOffset: nil,
+                                           pageOffset: pageOffset.flatMap(CGFloat.init),
                                            title: title ?? ""))
             } else if readingMode == .WEB {
                 WebReader(chapter: openTo)
