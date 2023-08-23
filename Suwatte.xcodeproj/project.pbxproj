@@ -166,6 +166,7 @@
 		DF62B5A92A95B89C00F907CD /* Realm+StateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5A82A95B89C00F907CD /* Realm+StateManager.swift */; };
 		DF62B5AB2A95BB7D00F907CD /* Realm+HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5AA2A95BB7D00F907CD /* Realm+HistoryView.swift */; };
 		DF62B5AD2A95BFB200F907CD /* Realm+UpdateFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5AC2A95BFB200F907CD /* Realm+UpdateFeed.swift */; };
+		DF62B5AF2A95CBB800F907CD /* Realm+ReadLaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5AE2A95CBB800F907CD /* Realm+ReadLaterView.swift */; };
 		DF67EB8828E3674900076FF5 /* LG+MoveFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */; };
 		DF67EB8A28E39E2200076FF5 /* DSK+Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */; };
 		DF67EB8C28E3F22700076FF5 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8B28E3F22700076FF5 /* Logger.swift */; };
@@ -594,6 +595,7 @@
 		DF62B5A82A95B89C00F907CD /* Realm+StateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+StateManager.swift"; sourceTree = "<group>"; };
 		DF62B5AA2A95BB7D00F907CD /* Realm+HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+HistoryView.swift"; sourceTree = "<group>"; };
 		DF62B5AC2A95BFB200F907CD /* Realm+UpdateFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+UpdateFeed.swift"; sourceTree = "<group>"; };
+		DF62B5AE2A95CBB800F907CD /* Realm+ReadLaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+ReadLaterView.swift"; sourceTree = "<group>"; };
 		DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LG+MoveFlag.swift"; sourceTree = "<group>"; };
 		DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Sync.swift"; sourceTree = "<group>"; };
 		DF67EB8B28E3F22700076FF5 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -2075,6 +2077,7 @@
 				DF62B5A82A95B89C00F907CD /* Realm+StateManager.swift */,
 				DF62B5AA2A95BB7D00F907CD /* Realm+HistoryView.swift */,
 				DF62B5AC2A95BFB200F907CD /* Realm+UpdateFeed.swift */,
+				DF62B5AE2A95CBB800F907CD /* Realm+ReadLaterView.swift */,
 			);
 			path = Observers;
 			sourceTree = "<group>";
@@ -2593,6 +2596,7 @@
 				DFBE483A2A25BBC1000ABA16 /* ChapterReference.swift in Sources */,
 				DF8D0B3B2800EE47003E4C3E /* Constants.swift in Sources */,
 				DFDBF9D82A7DB93E006D49AD /* Reader+ColorOverlay.swift in Sources */,
+				DF62B5AF2A95CBB800F907CD /* Realm+ReadLaterView.swift in Sources */,
 				DF020A692A8C5F9000BC5562 /* PagingController+Event.swift in Sources */,
 				DFDBF9772A7C557B006D49AD /* JSCR+Preferences.swift in Sources */,
 				DF33AC142A700AB100D2993A /* SDM+Fetcher.swift in Sources */,

@@ -14,19 +14,20 @@ extension LibraryView.ReadLaterView {
     final class ViewModel: ObservableObject {
         @Published var query = "" {
             didSet {
-                observe()
+                obs()
             }
         }
 
         @Published var ascending = false {
             didSet {
-                observe()
+                obs()
+
             }
         }
 
         @Published var sort = ContentSort.dateAdded {
             didSet {
-                observe()
+                obs()
             }
         }
 
@@ -39,71 +40,33 @@ extension LibraryView.ReadLaterView {
         private var libraryNotificationToken: NotificationToken?
         private var readLaterNotificationToken: NotificationToken?
 
-        func observe() {
-            disconnect()
-            let realm = try! Realm()
-
-            let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
-            libraryNotificationToken = realm
-                .objects(LibraryEntry.self)
-                .where { $0.content != nil && $0.isDeleted == false }
-                .observe { result in
-                    switch result {
-                    case let .error(error):
-                        Logger.shared.error("\(error)", "ReadLater")
-                    case let .initial(results):
-                        let ids = Set(results.map(\.id))
-                        Task { @MainActor in
-                            withAnimation {
-                                self.library = ids
-                            }
-                        }
-                    case let .update(results, _, _, _):
-                        let ids = Set(results.map(\.id))
-                        Task { @MainActor in
-                            withAnimation {
-                                self.library = ids
-                            }
-                        }
-                    }
-                }
-
-            var readL = realm
-                .objects(ReadLater.self)
-                .where { $0.content != nil && $0.isDeleted == false }
-                .sorted(byKeyPath: sort.KeyPath, ascending: ascending)
-
-            if !query.isEmpty {
-                readL = readL.filter("ANY content.additionalTitles CONTAINS[cd] %@ OR content.title CONTAINS[cd] %@ OR content.summary CONTAINS[cd] %@", query, query, query)
+        
+        func obs() {
+            Task {
+                await observe()
             }
-
-            readLaterNotificationToken = readL
-                .observe { result in
-                    switch result {
-                    case let .error(error):
-                        Logger.shared.error("\(error)")
-                    case let .initial(results):
-                        let items = results.freeze().toArray()
-                        Task { @MainActor in
-                            withAnimation {
-                                self.readLater = items
-                                if !self.initialFetchComplete {
-                                    self.initialFetchComplete.toggle()
-                                }
-                            }
-                        }
-                    case let .update(results, _, _, _):
-                        let items = results.freeze().toArray()
-                        Task { @MainActor in
-                            withAnimation {
-                                self.readLater = items
-                                if !self.initialFetchComplete {
-                                    self.initialFetchComplete.toggle()
-                                }
-                            }
-                        }
+        }
+        func observe() async {
+            await MainActor.run { [weak self] in
+                self?.disconnect()
+            }
+            let actor = await RealmActor()
+            libraryNotificationToken = await actor
+                .observeLibraryIDs({ values in
+                    Task { @MainActor [weak self] in
+                        self?.library = values
                     }
-                }
+                })
+
+            readLaterNotificationToken = await actor
+                .observeReadLater(query: query,
+                                  ascending: ascending,
+                                  sort: sort, { values in
+                    Task { @MainActor [weak self] in
+                        self?.readLater = values
+                        self?.initialFetchComplete = true
+                    }
+                })
         }
 
         func disconnect() {

@@ -32,8 +32,9 @@ extension LibraryView {
             .navigationTitle("Saved For Later")
             .navigationBarTitleDisplayMode(.inline)
             .task {
-                model.observe()
+                await model.observe()
             }
+            .onDisappear(perform: model.disconnect)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
