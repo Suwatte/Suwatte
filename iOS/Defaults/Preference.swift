@@ -170,6 +170,12 @@ final class Preferences {
 
     @UserDefault(STTKeys.VerticalPagePaddingAmount)
     var verticalPagePaddingAmount: Int = 5
+    
+    @UserDefault(STTKeys.GlobalContentLanguages)
+    var globalContentLanguages = Set<String>()
+    
+    @UserDefault(STTKeys.GlobalHideNSFW)
+    var globalHideNSFW = true
 }
 
 @propertyWrapper

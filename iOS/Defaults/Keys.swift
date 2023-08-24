@@ -151,4 +151,8 @@ enum STTKeys {
     static let MoveDownloadToArchive = "APP.archive_sdm_objct"
 
     static let CurrentReadingMode = "READER.current_mode"
+    
+    static let GlobalContentLanguages = "APP.global.content_languages"
+    
+    static let GlobalHideNSFW = "APP.global.hide_nsfw"
 }

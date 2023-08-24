@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct MoreView: View {
-    @Preference(\.incognitoMode) var incognitoMode
     var body: some View {
         NavigationView {
             List {
@@ -88,10 +87,12 @@ struct MoreView: View {
     var GeneralSection: some View {
         Group {
             Section {
-                Toggle("Incognito Mode", isOn: $incognitoMode)
 
-                NavigationLink("Settings") {
+                NavigationLink("App Settings") {
                     SettingsView()
+                }
+                NavigationLink("Content Settings") {
+                    ContentSettingsView()
                 }
                 NavigationLink("Appearance") {
                     AppearanceView()

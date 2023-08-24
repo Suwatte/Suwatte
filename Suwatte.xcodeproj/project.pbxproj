@@ -168,6 +168,8 @@
 		DF62B5AD2A95BFB200F907CD /* Realm+UpdateFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5AC2A95BFB200F907CD /* Realm+UpdateFeed.swift */; };
 		DF62B5AF2A95CBB800F907CD /* Realm+ReadLaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5AE2A95CBB800F907CD /* Realm+ReadLaterView.swift */; };
 		DF62B5B12A95D4D700F907CD /* Realm+SourceDownloadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5B02A95D4D700F907CD /* Realm+SourceDownloadView.swift */; };
+		DF62B5B52A95EDD600F907CD /* ContentSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5B42A95EDD600F907CD /* ContentSettingsView.swift */; };
+		DF62B5B72A96E8E300F907CD /* ContentLanguageSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5B62A96E8E300F907CD /* ContentLanguageSettingsView.swift */; };
 		DF67EB8828E3674900076FF5 /* LG+MoveFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */; };
 		DF67EB8A28E39E2200076FF5 /* DSK+Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */; };
 		DF67EB8C28E3F22700076FF5 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8B28E3F22700076FF5 /* Logger.swift */; };
@@ -598,6 +600,8 @@
 		DF62B5AC2A95BFB200F907CD /* Realm+UpdateFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+UpdateFeed.swift"; sourceTree = "<group>"; };
 		DF62B5AE2A95CBB800F907CD /* Realm+ReadLaterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+ReadLaterView.swift"; sourceTree = "<group>"; };
 		DF62B5B02A95D4D700F907CD /* Realm+SourceDownloadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+SourceDownloadView.swift"; sourceTree = "<group>"; };
+		DF62B5B42A95EDD600F907CD /* ContentSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentSettingsView.swift; sourceTree = "<group>"; };
+		DF62B5B62A96E8E300F907CD /* ContentLanguageSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentLanguageSettingsView.swift; sourceTree = "<group>"; };
 		DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LG+MoveFlag.swift"; sourceTree = "<group>"; };
 		DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Sync.swift"; sourceTree = "<group>"; };
 		DF67EB8B28E3F22700076FF5 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -1330,6 +1334,15 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		DF62B5B32A95EDB500F907CD /* ContentSettings */ = {
+			isa = PBXGroup;
+			children = (
+				DF62B5B42A95EDD600F907CD /* ContentSettingsView.swift */,
+				DF62B5B62A96E8E300F907CD /* ContentLanguageSettingsView.swift */,
+			);
+			path = ContentSettings;
+			sourceTree = "<group>";
+		};
 		DF67EB8D28E4053C00076FF5 /* Log */ = {
 			isa = PBXGroup;
 			children = (
@@ -1595,6 +1608,7 @@
 		DF8D0A2D2800EE47003E4C3E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				DF62B5B32A95EDB500F907CD /* ContentSettings */,
 				DF8D0A582800EE47003E4C3E /* ReadLater */,
 				DF1EA4452A70B78C003E27C7 /* SourceDownload */,
 				DF8D0AAB2800EE47003E4C3E /* Main */,
@@ -2747,6 +2761,7 @@
 				DF8D0B712800EE48003E4C3E /* ManageCollectionsView.swift in Sources */,
 				DF8D0BB52800EE48003E4C3E /* LazyView.swift in Sources */,
 				DF489C112A81C6F2006A21B9 /* IV+Protocol.swift in Sources */,
+				DF62B5B72A96E8E300F907CD /* ContentLanguageSettingsView.swift in Sources */,
 				DF72E492281322A000E40E52 /* ImageSearchView.swift in Sources */,
 				DFDBF9D62A7DB8C7006D49AD /* +VerticalSlider.swift in Sources */,
 				DFDBF9D42A7DB8BF006D49AD /* +HorizontalSlider.swift in Sources */,
@@ -2883,6 +2898,7 @@
 				DFADB58B29D7D04E00CBE22F /* JSCC+Network.swift in Sources */,
 				DF2783552A79A46B0098BBA9 /* Realm+Download.swift in Sources */,
 				DF3318532A47934E000B092B /* DV+DownloadQueue.swift in Sources */,
+				DF62B5B52A95EDD600F907CD /* ContentSettingsView.swift in Sources */,
 				DF8D0BAE2800EE48003E4C3E /* InteractableContent.swift in Sources */,
 				DF8D0B222800EE47003E4C3E /* STTScheduler.swift in Sources */,
 				DF8D0BA82800EE48003E4C3E /* ContentView.swift in Sources */,

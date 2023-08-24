@@ -21,9 +21,8 @@ struct SettingsView: View {
             DownloadsSection()
             CacheSection()
             NetworkSection()
-            RunnersSection()
         }
-        .navigationBarTitle("Settings")
+        .navigationBarTitle("App Settings")
     }
 }
 
@@ -155,19 +154,6 @@ extension SettingsView {
                 Toggle("Haptic Feedback", isOn: $readerHaptics)
             } header: {
                 Text("Reader")
-            }
-        }
-    }
-}
-
-extension SettingsView {
-    struct RunnersSection: View {
-        @AppStorage(STTKeys.HideNSFWRunners) var hideNSFWRunners = false
-        var body: some View {
-            Section {
-                Toggle("Hide NSFW Sources", isOn: $hideNSFWRunners)
-            } header: {
-                Text("Runners")
             }
         }
     }
