@@ -122,7 +122,7 @@ extension DSK {
             return updates
         }
         let sourceId = source.id
-        let stored = chapters.map { $0.toStoredChapter(withSource: sourceId) }
+        let stored = chapters.map { $0.toStoredChapter(sourceID: sourceId, contentID: entry.content!.contentId) }
         await actor.storeChapters(stored)
         await actor.updateUnreadCount(for: entry.content!.ContentIdentifier)
 

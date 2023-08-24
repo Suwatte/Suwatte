@@ -14,48 +14,48 @@ extension ProfileView {
         @StateObject var viewModel: ProfileView.ViewModel
         @Environment(\.presentationMode) var presentationMode
         var body: some View {
-            LoadableView(loadable: $viewModel.loadableContent) {
+            LoadableView(loadable: $viewModel.contentState) {
                 await viewModel.setupObservers()
-                await viewModel.loadContentFromDatabase()
+                await viewModel.load()
             } _: {
                 PLACEHOLDER
             } _: {
                 PLACEHOLDER
             } _: { error in
                 ErrorView(error: error, runnerID: viewModel.source.id) {
-                    viewModel.loadableContent = .loading
-                    await viewModel.loadContentFromNetwork()
+                    await viewModel.load()
                 }
             } _: { _ in
                 ProfileView.Skeleton()
                     .navigationTitle(viewModel.content.title)
                     .transition(.opacity)
                     .fullScreenCover(item: $viewModel.selection) { id in
-                        let chapterList = viewModel.chapters.value ?? []
-                        let chapter = chapterList.first(where: { $0.id == id })
-
-                        Group {
-                            if let chapter = chapter {
-                                ReaderGateWay(readingMode: viewModel.content.recommendedReadingMode ?? .defaultPanelMode,
-                                              chapterList: chapterList,
-                                              openTo: chapter,
-                                              title: viewModel.content.title)
-                                    .onAppear {
-                                        viewModel.removeNotifier()
-                                    }
-                            } else {
-                                NavigationView {
-                                    Text("Invalid Chapter")
-                                        .closeButton()
-                                }
-                            }
-                        }
-                        .onDisappear {
-                            Task {
-                                await handleReconnection()
-                                ImagePipeline.shared.configuration.imageCache?.removeAll()
-                            }
-                        }
+                        Text("id")
+//                        let chapterList = viewModel.chapters.value ?? []
+//                        let chapter = chapterList.first(where: { $0.id == id })
+//
+//                        Group {
+//                            if let chapter = chapter {
+//                                ReaderGateWay(readingMode: viewModel.content.recommendedReadingMode ?? .defaultPanelMode,
+//                                              chapterList: chapterList,
+//                                              openTo: chapter,
+//                                              title: viewModel.content.title)
+//                                    .onAppear {
+//                                        viewModel.removeNotifier()
+//                                    }
+//                            } else {
+//                                NavigationView {
+//                                    Text("Invalid Chapter")
+//                                        .closeButton()
+//                                }
+//                            }
+//                        }
+//                        .onDisappear {
+//                            Task {
+//                                await handleReconnection()
+//                                ImagePipeline.shared.configuration.imageCache?.removeAll()
+//                            }
+//                        }
                     }
             }
 
@@ -63,9 +63,10 @@ extension ProfileView {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     if viewModel.source.intents.chapterSyncHandler {
                         SyncView()
+                            .frame(width: 7, height: 7, alignment: .center)
                             .transition(.opacity)
                     }
-                    if viewModel.working {
+                    if viewModel.isWorking {
                         Circle()
                             .frame(width: 7, height: 7, alignment: .center)
                             .foregroundColor(.orange)
@@ -74,7 +75,6 @@ extension ProfileView {
                 }
             }
             .transition(.opacity)
-            .animation(.default)
             .environmentObject(viewModel)
         }
 

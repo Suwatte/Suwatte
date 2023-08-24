@@ -21,19 +21,23 @@ final class StreamableOPDSContent: Object, CKRecordConvertible, CKRecordRecovera
 }
 
 extension StreamableOPDSContent {
-    func toStoredChapter() -> StoredChapter {
-        let chapter = StoredChapter()
-        chapter.sourceId = STTHelpers.OPDS_CONTENT_ID
-        chapter.contentId = id.components(separatedBy: "||").last ?? id
-        chapter.chapterId = streamLink
-        chapter.id = id
-        chapter.title = contentTitle
-        chapter.thumbnail = contentThumbnail
-        return chapter
+    func toReadableChapter() -> ThreadSafeChapter {
+        return .init(id: id,
+                     sourceId: STTHelpers.OPDS_CONTENT_ID,
+                     chapterId: streamLink,
+                     contentId: id.components(separatedBy: "||").last ?? id,
+                     index: 0,
+                     number: 0,
+                     volume: nil,
+                     title: contentTitle,
+                     language: "unknown",
+                     date: .now,
+                     webUrl: streamLink,
+                     thumbnail: nil)
     }
 
     func read(onDismiss: (() -> Void)? = nil) {
-        let chapter = toStoredChapter()
+        let chapter = toReadableChapter()
         let state = ReaderState(title: contentTitle,
                                 chapter: chapter,
                                 chapters: [chapter],

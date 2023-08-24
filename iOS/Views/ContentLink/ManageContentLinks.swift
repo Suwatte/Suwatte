@@ -9,7 +9,8 @@ import RealmSwift
 import SwiftUI
 
 struct ManageContentLinks: View {
-    var content: StoredContent
+    let id: String
+    let highlight: DSKCommon.Highlight
     @State var presentAddSheet = false
     @State var linked: [StoredContent] = []
     @State var names: [String: String] = [:]
@@ -43,7 +44,7 @@ struct ManageContentLinks: View {
         }
         .sheet(isPresented: $presentAddSheet, onDismiss: { Task { await fetch() }}) {
             NavigationView {
-                AddContentLink(content: content)
+                AddContentLink(id: id, highlight: highlight)
                     .closeButton()
             }
         }
@@ -54,7 +55,7 @@ struct ManageContentLinks: View {
 
     func fetch() async {
         let actor = await RealmActor()
-        let data = await actor.getLinkedContent(for: content.id)
+        let data = await actor.getLinkedContent(for: id)
         names = await actor.getAllRunnerNames()
         withAnimation {
             linked = data
@@ -63,7 +64,7 @@ struct ManageContentLinks: View {
 
     func unlink(_ title: StoredContent) async {
         let actor = await RealmActor()
-        await actor.unlinkContent(title.id, content.id)
+        await actor.unlinkContent(title.id, id)
         await fetch()
     }
 

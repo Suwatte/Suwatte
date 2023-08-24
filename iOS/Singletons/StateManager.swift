@@ -98,7 +98,9 @@ extension StateManager {
         }
 
         // Add Chapters to DB
-        let chapters = context.chapters.map { $0.toStoredChapter(withSource: source) }
+        let chapters = context
+            .chapters
+            .map { $0.toThreadSafe(sourceID: source, contentID: caller.contentId) }
 
         // Open Reader
         let chapter = chapters.first(where: { $0.chapterId == context.target })!
@@ -192,8 +194,8 @@ extension StateManager {
 struct ReaderState: Identifiable {
     var id: String { chapter.id }
     let title: String?
-    let chapter: StoredChapter
-    let chapters: [StoredChapter]
+    let chapter: ThreadSafeChapter
+    let chapters: [ThreadSafeChapter]
     let requestedPage: Int?
     let requestedOffset: Double?
     let readingMode: ReadingMode?
@@ -220,6 +222,7 @@ extension StateManager {
             if let content = reference.content {
                 let chapters = await actor.getChapters(content.sourceId,
                                                        content: content.contentId)
+                    .map { $0.toThreadSafe() }
                 guard let target = chapters.first(where: { $0.id == reference.id }) else {
                     throw errors.NamedError(name: "StateManager", message: "chapter not found")
                 }
@@ -236,7 +239,8 @@ extension StateManager {
                 }
 
             } else if let content = reference.opds {
-                let chapter = content.toStoredChapter()
+                let chapter = content
+                    .toReadableChapter()
                 let state: ReaderState = .init(title: content.contentTitle,
                                                chapter: chapter,
                                                chapters: [chapter],
@@ -251,7 +255,7 @@ extension StateManager {
                 let file = try content
                     .getURL()?
                     .convertToSTTFile()
-                let chapter = file?.toStoredChapter()
+                let chapter = file?.toReadableChapter()
                 guard let file, let chapter else {
                     throw errors.NamedError(name: "StateManager", message: "failed to convert to readable chapter")
                 }

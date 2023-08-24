@@ -125,7 +125,7 @@ extension Target {
         @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
         @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
         @StateObject var manager: DirectoryViewer.DownloadManager = .shared
-        @State var chapter: StoredChapter?
+        @State var chapter: ThreadSafeChapter?
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
         var body: some View {
             ASCollectionView(section: AS_SECTION)
@@ -191,7 +191,7 @@ extension Target {
         @AppStorage(STTKeys.AppAccentColor) var color: Color = .sttDefault
         @State var presentDialog = false
         @State var presentAlert = false
-        @Binding var chapter: StoredChapter?
+        @Binding var chapter: ThreadSafeChapter?
 
         var thumbnailRequest: URLRequest? {
             var headers = HTTPHeaders()
@@ -308,7 +308,7 @@ extension Target {
                 let actor = await RealmActor()
                 do {
                     try await actor.savePublication(publication, client.id)
-                    chapter = try publication.toStoredChapter(clientID: client.id)
+                    chapter = try publication.toReadableChapter(clientID: client.id)
                 } catch {
                     ToastManager.shared.error(error)
                     Logger.shared.error(error, "OPDS")

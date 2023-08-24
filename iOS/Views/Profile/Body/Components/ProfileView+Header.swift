@@ -61,8 +61,7 @@ extension Skeleton {
 
 extension Skeleton.Header {
     var CoverImage: some View {
-        STTImageView(url: URL(string: entry.cover), identifier: model.sttIdentifier())
-
+        STTImageView(url: URL(string: entry.cover), identifier: model.STTIDPair)
             .frame(width: ImageWidth, height: ImageWidth * 1.5)
             .cornerRadius(7)
             .shadow(radius: 3)
@@ -124,7 +123,7 @@ private extension Skeleton {
                 .disabled(!model.source.ablityNotDisabled(\.disableTrackerLinking))
 
                 NavigationLink {
-                    BookmarksView(contentID: model.contentIdentifier)
+                    BookmarksView(contentID: model.identifier)
                 } label: {
                     Image(systemName: "bookmark")
                 }
@@ -149,7 +148,7 @@ private extension Skeleton {
             Task { @MainActor in
                 STTHelpers.triggerHaptic(true)
             }
-            let ids = model.storedContent.ContentIdentifier
+            let ids = model.STTIDPair
             if !EntryInLibrary {
                 await actor.toggleLibraryState(for: ids)
             }
@@ -157,12 +156,13 @@ private extension Skeleton {
                 model.presentCollectionsSheet.toggle()
             } else {
                 if !defaultCollection.isEmpty {
-                    await actor.toggleCollection(for: model.contentIdentifier, withId: defaultCollection)
+                    await actor.toggleCollection(for: model.identifier,
+                                                 withId: defaultCollection)
                 }
 
                 if defaultFlag != .unknown {
                     var s = Set<String>()
-                    s.insert(model.contentIdentifier)
+                    s.insert(model.identifier)
                     await actor.bulkSetReadingFlag(for: s, to: defaultFlag)
                 }
             }

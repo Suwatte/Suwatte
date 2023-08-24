@@ -76,8 +76,8 @@ extension ImageViewer {
 }
 
 struct InitialIVState {
-    let chapters: [StoredChapter]
-    let openTo: StoredChapter
+    let chapters: [ThreadSafeChapter]
+    let openTo: ThreadSafeChapter
     let pageIndex: Int?
     let pageOffset: CGFloat?
     let title: String

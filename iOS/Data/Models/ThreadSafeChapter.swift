@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ThreadSafeChapter: Hashable {
+struct ThreadSafeChapter: Hashable, Identifiable {
     let id: String
     let sourceId: String
     let chapterId: String
@@ -20,6 +20,8 @@ struct ThreadSafeChapter: Hashable {
     let date: Date
     let webUrl: String?
     let thumbnail: String?
+    var providers: [DSKCommon.ChapterProvider]?
+
 
     func toStored() -> StoredChapter {
         let obj = StoredChapter()
@@ -41,6 +43,10 @@ struct ThreadSafeChapter: Hashable {
     var STTContentIdentifier: String {
         ContentIdentifier(contentId: contentId, sourceId: sourceId).id
     }
+    
+    var isInternal: Bool {
+        STTHelpers.isInternalSource(sourceId)
+    }
 
     var chapterType: ChapterType {
         if sourceId == STTHelpers.LOCAL_CONTENT_ID { return .LOCAL }
@@ -55,5 +61,18 @@ struct ThreadSafeChapter: Hashable {
         }
         str += " Chapter \(number.clean)"
         return str.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    var chapterName: String {
+        "Chapter \(number.clean)"
+    }
+
+    var contentIdentifier: ContentIdentifier {
+        .init(contentId: contentId, sourceId: sourceId)
+    }
+    
+    var chapterOrderKey: Double {
+        let d = (volume ?? 99) * 10
+        return d + number
     }
 }

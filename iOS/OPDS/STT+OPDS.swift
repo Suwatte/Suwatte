@@ -548,19 +548,22 @@ public extension Publication {
         streamLink != nil
     }
 
-    internal func toStoredChapter(clientID: String) throws -> StoredChapter {
+    internal func toReadableChapter(clientID: String) throws -> ThreadSafeChapter {
         guard let link = streamLink, let id = metadata.identifier else {
             throw OPDSParserError.documentNotFound
         }
-
-        let chapter = StoredChapter()
-        chapter.sourceId = STTHelpers.OPDS_CONTENT_ID
-        chapter.contentId = id
-        chapter.chapterId = link.href
-        chapter.id = "\(clientID)||\(id)"
-        chapter.title = metadata.title
-        chapter.thumbnail = thumbnailURL
-        // Save To Realm
-        return chapter
+        
+        return .init(id: "\(clientID)||\(id)",
+                     sourceId: STTHelpers.OPDS_CONTENT_ID,
+                     chapterId: link.href,
+                     contentId: id,
+                     index: 0,
+                     number: 1,
+                     volume: nil,
+                     title: metadata.title,
+                     language: "unknown",
+                     date: .now,
+                     webUrl: nil,
+                     thumbnail: nil)
     }
 }

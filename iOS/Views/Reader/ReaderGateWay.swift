@@ -9,8 +9,8 @@ import SwiftUI
 
 struct ReaderGateWay: View {
     var readingMode: ReadingMode = .defaultPanelMode
-    var chapterList: [StoredChapter]
-    var openTo: StoredChapter
+    var chapterList: [ThreadSafeChapter]
+    var openTo: ThreadSafeChapter
     var pageIndex: Int?
     var pageOffset: Double?
     var title: String?
@@ -38,7 +38,7 @@ struct ReaderGateWay: View {
 }
 
 struct WebReader: View {
-    var chapter: StoredChapter
+    var chapter: ThreadSafeChapter
 
     var body: some View {
         NavigationView {

@@ -18,17 +18,24 @@ extension ProfileView.Skeleton.ChapterView {
         @EnvironmentObject var model: ProfileView.ViewModel
         var body: some View {
             HStack {
-                LoadableView({ await model.loadChapters() }, $model.chapters) { chapters in
-                    if !chapters.isEmpty {
-                        LoadedView(chapters)
-                            .transition(.opacity)
-                    } else {
-                        LoadedEmptyView()
-                            .transition(.opacity)
-                    }
+                
+                switch model.chapterState {
+                    case .loaded:
+                        if !model.chapters.isEmpty {
+                            LoadedView(model.chapters)
+                                .transition(.opacity)
+                        } else {
+                            LoadedEmptyView()
+                                .transition(.opacity)
+                        }
+                    case .failed(let error):
+                        ErrorView(error: error, action: {
+                            await model.loadChapters()
+                        })
+                    default:
+                        ProgressView()
                 }
             }
-            .animation(.easeInOut(duration: 0.25), value: model.chapters)
         }
 
         @ViewBuilder
@@ -42,7 +49,7 @@ extension ProfileView.Skeleton.ChapterView {
         }
 
         @ViewBuilder
-        func LoadedView(_ chapters: [StoredChapter]) -> some View {
+        func LoadedView(_ chapters: [ThreadSafeChapter]) -> some View {
             VStack(alignment: .center, spacing: 10) {
                 HStack {
                     Text("\(chapters.count) \(chapters.count > 1 ? "Chapters" : "Chapter")")
@@ -58,7 +65,7 @@ extension ProfileView.Skeleton.ChapterView {
                         let progress = chapterProgress(chapter)
                         let download = getDownload(chapter)
                         VStack(alignment: .leading, spacing: 2) {
-                            ChapterListTile(chapter: chapter,
+                            ChapterListTile(chapter: chapter.toStored(),
                                             isCompleted: completed,
                                             isNewChapter: newChapter,
                                             progress: progress,
@@ -83,7 +90,6 @@ extension ProfileView.Skeleton.ChapterView {
                     NavigationLink {
                         ChapterList()
                             .environmentObject(model)
-                            .defaultAppStorage(.init(suiteName: model.sttIdentifier().id) ?? .standard)
                     } label: {
                         Text(chapters.count >= 5 ? "View All Chapters" : "Manage Chapters")
                             .font(.headline)
@@ -98,32 +104,32 @@ extension ProfileView.Skeleton.ChapterView {
             }
         }
 
-        func preview(_ chapters: [StoredChapter]) -> [StoredChapter] {
+        func preview(_ chapters: [ThreadSafeChapter]) -> [ThreadSafeChapter] {
             chapters.count >= 5 ? Array(chapters[0 ... 4]) : Array(chapters[0...])
         }
     }
 }
 
 extension ProfileView.Skeleton.ChapterView.PreviewView {
-    func isChapterCompleted(_ chapter: StoredChapter) -> Bool {
-        model.readChapters.contains(chapter.number)
+    func isChapterCompleted(_ chapter: ThreadSafeChapter) -> Bool {
+        model.readChapters.contains(chapter.chapterOrderKey)
     }
 
-    func isChapterNew(_ chapter: StoredChapter) -> Bool {
+    func isChapterNew(_ chapter: ThreadSafeChapter) -> Bool {
         guard let date = model.actionState.marker?.date else {
             return false
         }
         return chapter.date > date
     }
 
-    func chapterProgress(_ chapter: StoredChapter) -> Double? {
+    func chapterProgress(_ chapter: ThreadSafeChapter) -> Double? {
         guard let id = model.actionState.chapter?.id, id == chapter.id else {
             return nil
         }
         return model.actionState.marker?.progress
     }
 
-    func getDownload(_ chapter: StoredChapter) -> DownloadStatus? {
+    func getDownload(_ chapter: ThreadSafeChapter) -> DownloadStatus? {
         model.downloads[chapter.id]
     }
 }

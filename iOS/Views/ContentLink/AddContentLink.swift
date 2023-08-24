@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct AddContentLink: View {
-    var content: StoredContent
+    let id: String
+    let highlight: DSKCommon.Highlight
     @StateObject private var model = SearchView.ViewModel(forLinking: true)
     @AppStorage(STTKeys.TileStyle) private var tileStyle = TileStyle.SEPARATED
     @State private var selection: HighlightIdentifier?
@@ -37,7 +38,7 @@ struct AddContentLink: View {
             }
         }
         .task {
-            model.query = content.title
+            model.query = highlight.title
             await model.makeRequests()
         }
     }
@@ -60,7 +61,7 @@ struct AddContentLink: View {
                 guard let selection else { return }
                 Task {
                     let actor = await RealmActor()
-                    let result = await actor.linkContent(content.id, selection.entry, selection.sourceId)
+                    let result = await actor.linkContent(id, selection.entry, selection.sourceId)
                     if result {
                         ToastManager.shared.info("Linked Contents!")
                     }
@@ -69,7 +70,7 @@ struct AddContentLink: View {
             }
         } message: {
             if let selection {
-                Text("Link \(selection.entry.title) to \(content.title)")
+                Text("Link \(selection.entry.title) to \(highlight.title)")
 
             } else {
                 EmptyView()

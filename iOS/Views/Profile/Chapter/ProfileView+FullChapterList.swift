@@ -42,7 +42,7 @@ enum ChapterSortOption: Int, CaseIterable, Identifiable {
 struct ChapterList: View {
     @EnvironmentObject var model: ProfileView.ViewModel
     @State var selection: String?
-    @State var selections = Set<StoredChapter>()
+    @State var selections = Set<ThreadSafeChapter>()
     @State var presentOptions = false
     @AppStorage(STTKeys.ChapterListSortKey, store: .standard) var sortKey = ChapterSortOption.number
     @AppStorage(STTKeys.ChapterListDescending, store: .standard) var sortDesc = true
@@ -50,18 +50,19 @@ struct ChapterList: View {
     @Environment(\.editMode) var editMode
     @AppStorage(STTKeys.FilteredProviders) private var filteredProviders: [String] = []
     @AppStorage(STTKeys.FilteredLanguages) private var filteredLanguages: [String] = []
-    @State var visibleChapters: [StoredChapter] = []
+    @State var visibleChapters: [ThreadSafeChapter] = []
     var body: some View {
         Group {
             ChaptersView(visibleChapters)
                 .fullScreenCover(item: $selection, onDismiss: handleReconnection) { chapterId in
-                    let chapter = visibleChapters.first(where: { $0.chapterId == chapterId })!
-                    ReaderGateWay(readingMode: model.content.recommendedReadingMode ?? .defaultPanelMode,
-                                  chapterList: visibleChapters,
-                                  openTo: chapter)
-                        .onAppear {
-                            model.removeNotifier()
-                        }
+//                    let chapter = visibleChapters.first(where: { $0.chapterId == chapterId })!
+//                    ReaderGateWay(readingMode: model.content.recommendedReadingMode ?? .defaultPanelMode,
+//                                  chapterList: visibleChapters,
+//                                  openTo: chapter)
+//                        .onAppear {
+//                            model.removeNotifier()
+//                        }
+                    Text("Broken")
                 }
         }
         .sheet(isPresented: $presentOptions, content: {
@@ -192,7 +193,7 @@ struct ChapterList: View {
         }
     }
 
-    func ChaptersView(_ chapters: [StoredChapter]) -> some View {
+    func ChaptersView(_ chapters: [ThreadSafeChapter]) -> some View {
         List(chapters, id: \.self, selection: $selections) { chapter in
             let completed = isChapterCompleted(chapter)
             let newChapter = isChapterNew(chapter)
@@ -203,7 +204,7 @@ struct ChapterList: View {
                     selection = chapter.chapterId
                 }
             } label: {
-                ChapterListTile(chapter: chapter,
+                ChapterListTile(chapter: chapter.toStored(),
                                 isCompleted: completed,
                                 isNewChapter: newChapter,
                                 progress: progress,
@@ -218,7 +219,7 @@ struct ChapterList: View {
                 Color.clear
                     .contextMenu {
                         Button {
-                            let id = model.sttIdentifier()
+                            let id = model.STTIDPair
                             Task {
                                 let actor = await RealmActor()
                                 await actor.bulkMarkChapters(for: id,
@@ -249,13 +250,13 @@ struct ChapterList: View {
 
 extension ChapterList {
     func doFilter() {
-        guard let chapters = model.chapters.value else { return }
+        let chapters = model.chapters
         DispatchQueue.global(qos: .background).async {
             filterChapters(chapters: chapters)
         }
     }
 
-    func filterChapters(chapters: [StoredChapter]) {
+    func filterChapters(chapters: [ThreadSafeChapter]) {
         // Core filters
         var base = chapters
             .filter(filterDownloads(_:))
@@ -270,19 +271,8 @@ extension ChapterList {
             base = base
                 .sorted(by: \.index, descending: !sortDesc) // Reverese Source Index
         case .number:
-            var sortedV = base.sorted { lhs, rhs in
-                if lhs.volume == rhs.volume {
-                    return lhs.number < rhs.number
-                }
-                if let lhv = lhs.volume, let rhv = rhs.volume {
-                    return lhv < rhv
-                } else {
-                    return !(rhs.volume == nil && lhs.volume == nil) // In This case nil volumes are higher up the order
-                }
-            }
-
-            if sortDesc { sortedV = sortedV.reversed() }
-            base = sortedV
+                base = base
+                    .sorted(by: \.chapterOrderKey, descending: !sortDesc) // Reverese Source Index
         }
 
         Task { @MainActor in
@@ -292,17 +282,17 @@ extension ChapterList {
         }
     }
 
-    func filterDownloads(_ chapter: StoredChapter) -> Bool {
+    func filterDownloads(_ chapter: ThreadSafeChapter) -> Bool {
         if !showOnlyDownloads { return true }
         return model.downloads[chapter.id] != nil
     }
 
-    func filterProviders(_ chapter: StoredChapter) -> Bool {
+    func filterProviders(_ chapter: ThreadSafeChapter) -> Bool {
         if filteredProviders.isEmpty { return true }
-        return chapter.providers.contains(where: { !filteredProviders.contains($0.id) })
+        return (chapter.providers ?? []).contains(where: { !filteredProviders.contains($0.id) })
     }
 
-    func filterLanguages(_ chapter: StoredChapter) -> Bool {
+    func filterLanguages(_ chapter: ThreadSafeChapter) -> Bool {
         guard let lang = chapter.language else { return true }
         return !filteredLanguages.contains(lang)
     }
@@ -327,53 +317,57 @@ extension ChapterList {
     }
 
     @ViewBuilder
-    func ProviderView(_ chapter: StoredChapter) -> some View {
-        if !chapter.providers.isEmpty {
-            Menu("Providers") {
-                ForEach(chapter.providers) { provider in
-                    Menu(provider.name) {
-                        if provider.links.isEmpty {
-                            Text("No Links")
-                        } else {
-                            ForEach(provider.links, id: \.url) { link in
-                                Link(destination: URL(string: link.url) ?? STTHost.notFound) {
-                                    Text(link.type.description)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    func ProviderView(_ chapter: ThreadSafeChapter) -> some View {
+        let providers = chapter.providers
+//        if let providers, !providers.isEmpty {
+//            Menu("Providers") {
+//                ForEach(providers, id: \.id) { provider in
+//                    Menu(provider.name) {
+//                        if provider.links.isEmpty {
+//                            Text("No Links")
+//                        } else {
+//                            ForEach(provider.links, id: \.url) { link in
+//                                Link(destination: URL(string: link.url) ?? STTHost.notFound) {
+//                                    Text(link.type.description)
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//
+//        }
+        EmptyView()
+
     }
 }
 
 extension ChapterList {
-    func isChapterCompleted(_ chapter: StoredChapter) -> Bool {
-        model.readChapters.contains(chapter.number)
+    func isChapterCompleted(_ chapter: ThreadSafeChapter) -> Bool {
+        model.readChapters.contains(chapter.chapterOrderKey)
     }
 
-    func isChapterNew(_ chapter: StoredChapter) -> Bool {
+    func isChapterNew(_ chapter: ThreadSafeChapter) -> Bool {
         guard let date = model.actionState.marker?.date else {
             return false
         }
         return chapter.date > date
     }
 
-    func chapterProgress(_ chapter: StoredChapter) -> Double? {
+    func chapterProgress(_ chapter: ThreadSafeChapter) -> Double? {
         guard let id = model.actionState.chapter?.id, id == chapter.id else {
             return nil
         }
         return model.actionState.marker?.progress
     }
 
-    func getDownload(_ chapter: StoredChapter) -> DownloadStatus? {
+    func getDownload(_ chapter: ThreadSafeChapter) -> DownloadStatus? {
         model.downloads[chapter.id]
     }
 }
 
 extension ChapterList {
-    func mark(chapter: StoredChapter, read: Bool, above: Bool) {
+    func mark(chapter: ThreadSafeChapter, read: Bool, above: Bool) {
         selections.removeAll()
         selections.insert(chapter)
         if above {
@@ -448,7 +442,7 @@ extension ChapterList {
     }
 
     func markAsRead() {
-        let id = model.sttIdentifier()
+        let id = model.STTIDPair
         let chapters = Array(selections)
         Task {
             let actor = await RealmActor()
@@ -459,7 +453,7 @@ extension ChapterList {
     }
 
     func markAsUnread() {
-        let id = model.sttIdentifier()
+        let id = model.STTIDPair
         let chapters = Array(selections)
         Task {
             let actor = await RealmActor()
@@ -494,7 +488,7 @@ extension ChapterList {
     }
 
     func didMark() { // This is called before the notification is delivered to for model `readChapters` property to update
-        let identifier = model.contentIdentifier
+        let identifier = model.identifier
         Task {
             let actor = await RealmActor()
             let maxRead = await actor

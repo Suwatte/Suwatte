@@ -40,13 +40,13 @@ extension ProfileView.Skeleton.BottomBar {
             NavigationLink {
                 ChapterList()
                     .environmentObject(model)
-                    .defaultAppStorage(.init(suiteName: model.sttIdentifier().id) ?? .standard)
+                    .defaultAppStorage(.init(suiteName: model.identifier) ?? .standard)
             } label: {
                 Image(systemName: "list.bullet")
                     .font(Font.title3.weight(.semibold))
                     .frame(maxWidth: .infinity)
             }
-            .disabled(!model.chapters.LOADED)
+            .disabled(!model.chapterState.LOADED)
             .buttonStyle(.plain)
             .foregroundColor(.primary)
         }
@@ -69,7 +69,7 @@ extension ProfileView.Skeleton.BottomBar {
                 OpenReader()
             } label: {
                 ZStack {
-                    switch model.chapters {
+                    switch model.chapterState {
                     case .loaded:
                         GateWay()
                     default:
@@ -82,7 +82,7 @@ extension ProfileView.Skeleton.BottomBar {
                 .cornerRadius(7)
             }
             .buttonStyle(.plain)
-            .disabled(!model.chapters.LOADED || actionState.state == .none)
+            .disabled(!model.chapterState.LOADED || actionState.state == .none)
             .padding(.vertical, 5)
             .padding(.leading, 5)
         }
@@ -157,7 +157,7 @@ extension ProfileView.Skeleton.BottomBar {
         @EnvironmentObject var model: ProfileView.ViewModel
 
         var sttId: ContentIdentifier {
-            model.sttIdentifier()
+            model.STTIDPair
         }
 
         var body: some View {
@@ -209,7 +209,10 @@ extension ProfileView.Skeleton.BottomBar {
         }
 
         var hasCustomThumb: Bool {
-            StateManager.shared.titleHasCustomThumbs.contains(model.contentIdentifier)
+            StateManager
+                .shared
+                .titleHasCustomThumbs
+                .contains(model.identifier)
         }
 
         var SaveForLaterButton: some View {
@@ -238,7 +241,7 @@ extension ProfileView.Skeleton.BottomBar {
         @ViewBuilder
         var ManageLinkedContentButton: some View {
             Button {
-                model.presentManageContentLinks.toggle()
+                model.presentManageContentLinks = model.identifier
             } label: {
                 Label("Linked Titles", systemImage: "link")
             }

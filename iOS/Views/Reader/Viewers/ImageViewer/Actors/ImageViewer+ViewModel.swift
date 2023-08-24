@@ -59,7 +59,7 @@ extension IVViewModel {
         title = value.title
         presentationState = .loading
         chapterCount = value.chapters.count
-        let requested = value.openTo.toThreadSafe()
+        let requested = value.openTo
         let chapters = value.chapters
         setReadingMode(for: requested.STTContentIdentifier)
 
@@ -68,7 +68,7 @@ extension IVViewModel {
         let sorted = useIndex ? chapters.sorted(by: { $0.index > $1.index }) : chapters.sorted(by: { $0.number > $1.number })
 
         // Set Chapters
-        await dataCache.setChapters(sorted.map { $0.toThreadSafe() })
+        await dataCache.setChapters(sorted)
 
         // Define State
         pendingState = .init(chapter: requested,

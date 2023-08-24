@@ -105,7 +105,7 @@ extension DirectoryViewer {
                 await actor.saveArchivedFile(file)
             }
             // Generate Chapter
-            let chapter = file.toStoredChapter()
+            let chapter = file.toReadableChapter()
 
             let context = ReaderState(title: file.metaData?.title ?? file.name,
                                       chapter: chapter,
@@ -145,23 +145,26 @@ extension DirectoryViewer {
 }
 
 extension File {
-    func toStoredChapter(_ idx: Int? = nil) -> StoredChapter {
-        let chapter = StoredChapter()
-        chapter.index = idx ?? 0
-        chapter.number = metaData?.issue ?? 1
-        chapter.volume = metaData?.volume
-        chapter.title = metaData?.formattedName ?? name
-        chapter.sourceId = STTHelpers.LOCAL_CONTENT_ID
-        chapter.contentId = id
-        chapter.chapterId = id
-        chapter.id = "\(chapter.sourceId)||\(chapter.contentId)"
-        return chapter
+    func toReadableChapter(_ idx: Int? = nil) -> ThreadSafeChapter {
+        return .init(id: id,
+                     sourceId: STTHelpers.LOCAL_CONTENT_ID,
+                     chapterId: id,
+                     contentId: id,
+                     index: idx ?? 0,
+                     number: metaData?.issue ?? 1,
+                     volume: metaData?.volume,
+                     title: metaData?.formattedName ?? name,
+                     language: "unknown",
+                     date: .now,
+                     webUrl: nil,
+                     thumbnail: nil)
     }
 
     func read() {
-        let chapter = toStoredChapter()
+        let chapter = toReadableChapter()
         let context = ReaderState(title: metaData?.title ?? name,
-                                  chapter: chapter, chapters: [chapter],
+                                  chapter: chapter,
+                                  chapters: [chapter],
                                   requestedPage: nil,
                                   requestedOffset: nil,
                                   readingMode: nil,

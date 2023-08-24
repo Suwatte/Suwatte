@@ -9,8 +9,8 @@ import Foundation
 
 @globalActor actor RunnerActor: GlobalActor {
     static var shared = RunnerActor()
-    public static func run<T>(resultType _: T.Type = T.self, body: @Sendable () throws -> T) async rethrows -> T where T: Sendable {
-        try body()
+    public static func run<T>(resultType _: T.Type = T.self, body: @Sendable () async throws -> T) async rethrows -> T where T: Sendable {
+        try await body()
     }
 }
 

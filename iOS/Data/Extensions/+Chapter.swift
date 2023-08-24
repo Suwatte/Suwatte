@@ -25,13 +25,13 @@ extension StoredChapter {
 }
 
 extension DaisukeEngine.Structs.Chapter {
-    func toStoredChapter(withSource sourceId: String) -> StoredChapter {
+    func toStoredChapter(sourceID: String, contentID: String) -> StoredChapter {
         let chapter = StoredChapter()
 
-        chapter.id = "\(sourceId)||\(contentId)||\(chapterId)"
+        chapter.id = "\(sourceID)||\(contentID)||\(chapterId)"
 
-        chapter.sourceId = sourceId
-        chapter.contentId = contentId
+        chapter.sourceId = sourceID
+        chapter.contentId = contentID
         chapter.chapterId = chapterId
 
         chapter.number = number

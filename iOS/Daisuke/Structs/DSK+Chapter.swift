@@ -10,7 +10,6 @@ import Foundation
 extension DaisukeEngine.Structs {
     struct Chapter: Parsable, Hashable {
         var chapterId: String
-        var contentId: String
         var number: Double
         var volume: Double?
         var language: String?
@@ -20,6 +19,7 @@ extension DaisukeEngine.Structs {
         var providers: [DSKCommon.ChapterProvider]?
         var index: Int
         var webUrl: String?
+        var thumbnail: String?
     }
 
     struct ChapterData: Parsable, Hashable {
@@ -63,5 +63,24 @@ extension DaisukeEngine.Structs {
                 return "Patreon"
             }
         }
+    }
+}
+
+
+extension DSKCommon.Chapter {
+    func toThreadSafe(sourceID: String, contentID: String) -> ThreadSafeChapter {
+        .init(id: "\(sourceID)||\(contentID)||\(chapterId)",
+              sourceId: sourceID,
+              chapterId: chapterId,
+              contentId: contentID,
+              index: index,
+              number: number,
+              volume: volume,
+              title: title,
+              language: language,
+              date: date,
+              webUrl: webUrl,
+              thumbnail: thumbnail,
+              providers: providers)
     }
 }

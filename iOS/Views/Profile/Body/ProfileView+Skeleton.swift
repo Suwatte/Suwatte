@@ -16,35 +16,26 @@ extension ProfileView {
         var body: some View {
             Main
                 .fullScreenCover(isPresented: $viewModel.presentCollectionsSheet, content: {
-                    ProfileView.Sheets.LibrarySheet(id: viewModel.contentIdentifier)
+                    ProfileView.Sheets.LibrarySheet(id: viewModel.identifier)
                         .tint(accentColor)
                         .accentColor(accentColor)
                 })
                 .fullScreenCover(isPresented: $viewModel.presentTrackersSheet, content: {
                     let titles = (viewModel.content.additionalTitles ?? []).appending(viewModel.content.title).distinct()
-                    TrackerManagementView(model: .init(id: viewModel.contentIdentifier, titles))
+                    TrackerManagementView(model: .init(id: viewModel.identifier, titles))
                         .tint(accentColor)
                         .accentColor(accentColor)
                 })
-                .fullScreenCover(isPresented: $viewModel.presentManageContentLinks, content: {
+                .fullScreenCover(item: $viewModel.presentManageContentLinks, content: { id in
                     NavigationView {
-                        ManageContentLinks(content: viewModel.storedContent)
+                        ManageContentLinks(id: id,
+                                           highlight: .init(contentId: viewModel.contentID,
+                                                            cover: viewModel.content.cover,
+                                                            title: viewModel.content.title))
                             .closeButton()
                     }
                     .tint(accentColor)
                     .accentColor(accentColor)
-                })
-                .fullScreenCover(isPresented: $viewModel.presentMigrationView, content: {
-                    NavigationView {
-                        MigrationView(contents: [viewModel.storedContent])
-                            .toolbar {
-                                ToolbarItem(placement: .cancellationAction) {
-                                    Button("Cancel") {
-                                        viewModel.presentMigrationView.toggle()
-                                    }
-                                }
-                            }
-                    }
                 })
                 .safariView(isPresented: $viewModel.presentSafariView) {
                     SafariView(

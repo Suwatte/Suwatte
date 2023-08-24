@@ -192,7 +192,7 @@ extension RealmActor {
         }
     }
 
-    func bulkMarkChapters(for id: ContentIdentifier, chapters: [StoredChapter], markAsRead: Bool = true) async {
+    func bulkMarkChapters(for id: ContentIdentifier, chapters: [ThreadSafeChapter], markAsRead: Bool = true) async {
         let nums = Set(chapters.map(\.number))
 
         defer {
