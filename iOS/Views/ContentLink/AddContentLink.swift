@@ -70,7 +70,7 @@ struct AddContentLink: View {
             }
         } message: {
             if let selection {
-                Text("Link \(selection.entry.title) to \(highlight.title)")
+                Text("Link \(selection.entry.title) to [\(result.sourceName)] \(highlight.title)")
 
             } else {
                 EmptyView()

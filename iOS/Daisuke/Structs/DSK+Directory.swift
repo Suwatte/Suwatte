@@ -26,23 +26,22 @@ extension DSKCommon {
         let sort: Sort?
         let filters: [DirectoryFilter]?
         var searchable: Bool?
-        var filterable: Bool?
-        var sortable: Bool?
 
         var canSearch: Bool {
             searchable ?? false
         }
 
         var canFilter: Bool {
-            filterable ?? false
+            filters != nil && !filters!.isEmpty
         }
 
         var canSort: Bool {
-            sortable ?? false
+            sort != nil && !sort!.options.isEmpty
         }
 
         struct Sort: JSCObject {
             let options: [Option]
+            let defaultKey: String
             let canChangeOrder: Bool
         }
     }

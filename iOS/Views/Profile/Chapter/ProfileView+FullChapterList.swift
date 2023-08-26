@@ -293,8 +293,7 @@ extension ChapterList {
     }
 
     func filterLanguages(_ chapter: ThreadSafeChapter) -> Bool {
-        guard let lang = chapter.language else { return true }
-        return !filteredLanguages.contains(lang)
+        return !filteredLanguages.contains(chapter.language)
     }
 }
 

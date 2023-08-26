@@ -8,24 +8,6 @@
 import Foundation
 import SwiftUI
 
-struct CurrentViewerState: Hashable {
-    var chapter: ThreadSafeChapter
-    var page: Int
-    var pageCount: Int
-    var hasPreviousChapter: Bool
-    var hasNextChapter: Bool
-
-    static var placeholder: Self {
-        .init(chapter: .init(id: "", sourceId: "", chapterId: "", contentId: "", index: 0, number: 0, volume: 0, title: nil, language: nil, date: .now, webUrl: nil, thumbnail: nil), page: 0, pageCount: 0, hasPreviousChapter: false, hasNextChapter: false)
-    }
-}
-
-struct PendingViewerState: Hashable {
-    var chapter: ThreadSafeChapter
-    var pageIndex: Int?
-    var pageOffset: CGFloat?
-}
-
 @MainActor
 final class IVViewModel: ObservableObject {
     /// Keeps track of the  current viewer state

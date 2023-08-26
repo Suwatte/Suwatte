@@ -11,8 +11,8 @@ extension DaisukeEngine.Structs {
     struct Chapter: Parsable, Hashable {
         var chapterId: String
         var number: Double
+        var language: String
         var volume: Double?
-        var language: String?
         var title: String?
         var date: Date
         var data: ChapterData?

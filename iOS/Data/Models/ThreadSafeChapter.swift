@@ -16,7 +16,7 @@ struct ThreadSafeChapter: Hashable, Identifiable {
     let number: Double
     let volume: Double?
     let title: String?
-    let language: String?
+    let language: String
     let date: Date
     let webUrl: String?
     let thumbnail: String?
@@ -74,5 +74,9 @@ struct ThreadSafeChapter: Hashable, Identifiable {
     var chapterOrderKey: Double {
         let d = (volume ?? 99) * 10
         return d + number
+    }
+    
+    static func vnPair(from key: Double) -> (Double?, Double) {
+        return (nil, 0)
     }
 }

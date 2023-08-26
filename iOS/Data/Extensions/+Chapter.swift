@@ -9,7 +9,18 @@ import Foundation
 
 extension StoredChapter {
     func toThreadSafe() -> ThreadSafeChapter {
-        return .init(id: id, sourceId: sourceId, chapterId: chapterId, contentId: contentId, index: index, number: number, volume: volume, title: title, language: language, date: date, webUrl: webUrl, thumbnail: thumbnail)
+        return .init(id: id,
+                     sourceId: sourceId,
+                     chapterId: chapterId,
+                     contentId: contentId,
+                     index: index,
+                     number: number,
+                     volume: volume,
+                     title: title,
+                     language: language ?? "unknown",
+                     date: date,
+                     webUrl: webUrl,
+                     thumbnail: thumbnail)
     }
 }
 

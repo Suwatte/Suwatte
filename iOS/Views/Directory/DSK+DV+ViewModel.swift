@@ -26,7 +26,7 @@ extension DirectoryView {
 
         let context: DSKCommon.CodableDict?
         var configSort: DSKCommon.DirectoryConfig.Sort {
-            config?.sort ?? .init(options: [], canChangeOrder: false)
+            config?.sort ?? .init(options: [], defaultKey: "", canChangeOrder: false)
         }
 
         var filters: [DSKCommon.DirectoryFilter] {

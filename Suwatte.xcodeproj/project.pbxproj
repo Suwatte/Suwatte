@@ -177,6 +177,7 @@
 		DF62B5C12A96F29600F907CD /* CPVM+Observers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5C02A96F29600F907CD /* CPVM+Observers.swift */; };
 		DF62B5C32A96F37C00F907CD /* CPVM+Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5C22A96F37C00F907CD /* CPVM+Network.swift */; };
 		DF62B5C52A970BF300F907CD /* CPVM+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5C42A970BF300F907CD /* CPVM+Models.swift */; };
+		DF62B5C72A99898100F907CD /* Reader+State.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5C62A99898100F907CD /* Reader+State.swift */; };
 		DF67EB8828E3674900076FF5 /* LG+MoveFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */; };
 		DF67EB8A28E39E2200076FF5 /* DSK+Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */; };
 		DF67EB8C28E3F22700076FF5 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8B28E3F22700076FF5 /* Logger.swift */; };
@@ -616,6 +617,7 @@
 		DF62B5C02A96F29600F907CD /* CPVM+Observers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPVM+Observers.swift"; sourceTree = "<group>"; };
 		DF62B5C22A96F37C00F907CD /* CPVM+Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPVM+Network.swift"; sourceTree = "<group>"; };
 		DF62B5C42A970BF300F907CD /* CPVM+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPVM+Models.swift"; sourceTree = "<group>"; };
+		DF62B5C62A99898100F907CD /* Reader+State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Reader+State.swift"; sourceTree = "<group>"; };
 		DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LG+MoveFlag.swift"; sourceTree = "<group>"; };
 		DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Sync.swift"; sourceTree = "<group>"; };
 		DF67EB8B28E3F22700076FF5 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -1344,6 +1346,7 @@
 				DFDBF9B82A7DA123006D49AD /* Reader+ChapterData.swift */,
 				DFDBF9BA2A7DA178006D49AD /* Reader+Transition.swift */,
 				DFDBF9C52A7DB6B8006D49AD /* Reader+Navigation.swift */,
+				DF62B5C62A99898100F907CD /* Reader+State.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2795,6 +2798,7 @@
 				DF2783572A79A4950098BBA9 /* Realm+Runner.swift in Sources */,
 				DF4817E42A6DF1BB00CB3A47 /* ComicInfo.swift in Sources */,
 				DFDBF99F2A7C971B006D49AD /* WKR+Page.swift in Sources */,
+				DF62B5C72A99898100F907CD /* Reader+State.swift in Sources */,
 				DF2783432A799F290098BBA9 /* Realm+Search.swift in Sources */,
 				DF248F2B2813B24F00818300 /* BarChartView.swift in Sources */,
 				DF457DCB2A438DE0002B5350 /* DV+Base.swift in Sources */,
