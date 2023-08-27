@@ -25,13 +25,8 @@ extension ViewModel {
 extension ViewModel {
     struct ActionState: Hashable {
         var state: ProgressState
-        var chapter: ChapterInfo?
+        var chapter: ThreadSafeChapter?
         var marker: Marker?
-
-        struct ChapterInfo: Hashable {
-            var name: String
-            var id: String
-        }
 
         struct Marker: Hashable {
             var progress: Double

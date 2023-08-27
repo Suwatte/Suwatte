@@ -57,7 +57,7 @@ final actor IVDataCache {
         let pages = cache[key]
 
         guard let pages, let chapter = pages.first?.chapter, let index = chapters.firstIndex(of: chapter) else {
-            Logger.shared.warn("Unable to get info")
+            Logger.shared.warn("target chapter was not found")
             return nil
         }
 

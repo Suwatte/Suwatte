@@ -36,8 +36,8 @@ extension ViewModel {
             // No Progress marker present, return first chapter
             let chapter = chapters.last!
             return .init(state: .start,
-                         chapter: .init(name: chapter.chapterName,
-                                        id: chapter.id), marker: nil)
+                         chapter: chapter,
+                         marker: nil)
         }
 
         guard let chapterRef = marker.currentChapter else {
@@ -49,7 +49,8 @@ extension ViewModel {
                 // No Maximum Read Chapter, meaning marker exists without any reference or read chapers, point to first chapter instead
                 let chapter = chapters.last!
                 return .init(state: .start,
-                             chapter: .init(name: chapter.chapterName, id: chapter.id), marker: nil)
+                             chapter: chapter,
+                             marker: nil)
             }
 
             // Get The latest chapter
@@ -57,7 +58,7 @@ extension ViewModel {
                 let target = chapters.first!
 
                 return .init(state: .reRead,
-                             chapter: .init(name: target.chapterName, id: target.id))
+                             chapter: target)
             }
             // We currently have the index of the last read chapter, if this index points to the last chapter, represent a reread else get the next up
             guard let currentMaxReadChapter = chapters.get(index: targetIndex) else {
@@ -65,10 +66,10 @@ extension ViewModel {
             }
 
             if currentMaxReadChapter == chapters.first { // Max Read is lastest available chapter
-                return .init(state: .reRead, chapter: .init(name: currentMaxReadChapter.chapterName, id: currentMaxReadChapter.id))
+                return .init(state: .reRead, chapter: currentMaxReadChapter)
             } else if let nextUpChapter = chapters.get(index: max(0, targetIndex - 1)) { // Point to next after max read
                 return .init(state: .upNext,
-                             chapter: .init(name: nextUpChapter.chapterName, id: nextUpChapter.id))
+                             chapter: nextUpChapter)
             }
 
             return .init(state: .none)
@@ -76,20 +77,29 @@ extension ViewModel {
 
         // Fix Situation where the chapter being referenced is not in the joined chapter list by picking the last where the numbers match
         var correctedChapterId = chapterRef.id
-        if !chapters.contains(where: { $0.id == chapterRef.id }), let chapter = chapters.last(where: { $0.number >= chapterRef.number }) {
+        if !chapters.contains(where: { $0.id == chapterRef.id }),
+           let chapter = chapters.last(where: { $0.number >= chapterRef.number }) {
             correctedChapterId = chapter.id
         }
-
-        //
-        let info = ActionState.ChapterInfo(name: chapterRef.chapterName, id: correctedChapterId)
+        
+        let chapter = chapters
+            .first(where: { $0.id == correctedChapterId })
+        
+        guard let chapter else {
+            return .init(state: .start, chapter: chapters.last!)
+            
+        }
 
         if !marker.isCompleted {
             // Marker Exists, Chapter has not been completed, resume
-            return .init(state: .resume, chapter: info, marker: .init(progress: marker.progress ?? 0.0, date: marker.dateRead))
+            return .init(state: .resume,
+                         chapter: chapter,
+                         marker: .init(progress: marker.progress ?? 0.0,
+                                       date: marker.dateRead))
         }
         // Chapter has been completed, Get Current Index
-        guard var index = chapters.firstIndex(where: { $0.id == info.id }) else {
-            return .init(state: .none) // Should never occur due to earlier correction
+        guard var index = chapters.firstIndex(where: { $0.id == correctedChapterId }) else {
+            return .init(state: .start, chapter: chapters.last!) // Should never occur due to earlier correction
         }
 
         // Current Index is equal to that of the last available chapter
@@ -98,15 +108,16 @@ extension ViewModel {
         if index == 0 {
             if content.status == .COMPLETED, let chapter = chapters.last {
                 return .init(state: .restart,
-                             chapter: .init(name: chapter.chapterName, id: chapter.id), marker: nil)
+                             chapter: chapter, marker: nil)
             }
-            return .init(state: .reRead, chapter: info, marker: nil)
+            return .init(state: .reRead, chapter: chapter, marker: nil)
         }
 
         // index not 0, decrement, sourceIndex moves inverted
         index -= 1
         let next = chapters.get(index: index)
         return .init(state: .upNext,
-                     chapter: next.flatMap { .init(name: $0.chapterName, id: $0.id) }, marker: nil)
+                     chapter: next,
+                     marker: nil)
     }
 }

@@ -193,7 +193,7 @@ extension StateManager {
 
 struct ReaderState: Identifiable {
     var id: String { chapter.id }
-    let title: String?
+    let title: String
     let chapter: ThreadSafeChapter
     let chapters: [ThreadSafeChapter]
     let requestedPage: Int?

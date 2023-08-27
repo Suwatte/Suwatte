@@ -38,9 +38,7 @@ extension ProfileView.Skeleton.BottomBar {
         @EnvironmentObject var model: ProfileView.ViewModel
         var body: some View {
             NavigationLink {
-                ChapterList()
-                    .environmentObject(model)
-                    .defaultAppStorage(.init(suiteName: model.identifier) ?? .standard)
+                ChapterList(model: model)
             } label: {
                 Image(systemName: "list.bullet")
                     .font(Font.title3.weight(.semibold))
@@ -110,7 +108,7 @@ extension ProfileView.Skeleton.BottomBar {
                     VStack(alignment: .leading, spacing: 2) {
                         // Chapter Name
                         if let chapter = actionState.chapter {
-                            Text(chapter.name)
+                            Text(chapter.chapterName)
                                 .font(.subheadline)
                                 .bold()
                         }
@@ -141,7 +139,7 @@ extension ProfileView.Skeleton.BottomBar {
             // Haptic
             STTHelpers.triggerHaptic()
             // State
-            model.selection = actionState.chapter?.id
+            model.selection = actionState.chapter
         }
     }
 }
@@ -162,6 +160,7 @@ extension ProfileView.Skeleton.BottomBar {
 
         var body: some View {
             Menu {
+                ReloadButton
                 ManageLinkedContentButton
                 MigrateButton
                 SaveForLaterButton
@@ -263,6 +262,16 @@ extension ProfileView.Skeleton.BottomBar {
                 Label(hasCustomThumb ? "Remove Custom Thumb" : "Set Custom Thumbnail", systemImage: "photo")
             }
             .disabled(!model.source.ablityNotDisabled(\.disableCustomThumbnails))
+        }
+        
+        var ReloadButton: some View {
+            Button {
+                Task {
+                    await model.reload()
+                }
+            } label: {
+                Label("Reload", systemImage: "arrow.clockwise")
+            }
         }
     }
 }

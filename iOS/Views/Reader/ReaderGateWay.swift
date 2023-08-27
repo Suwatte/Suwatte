@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct ReaderGateWay: View {
+    var title: String
     var readingMode: ReadingMode = .defaultPanelMode
     var chapterList: [ThreadSafeChapter]
     var openTo: ThreadSafeChapter
     var pageIndex: Int?
     var pageOffset: Double?
-    var title: String?
     @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
     var body: some View {

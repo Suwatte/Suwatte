@@ -25,25 +25,23 @@ extension ViewModel {
         // Ensure there are linked titles
         guard !entries.isEmpty, !Task.isCancelled else { return }
 
-        let groups = await withTaskGroup(of: ContentLinkSection?.self, body: { group in
+        
+        await withTaskGroup(of: ContentLinkSection?.self, body: { [weak self] group in
             for entry in entries {
                 group.addTask { [weak self] in
                     await self?.getChapterSection(for: entry)
                 }
             }
             
-            var sections = [ContentLinkSection]()
             for await result in group {
                 guard let result else { continue }
-                sections.append(result)
+                await self?.animate { [weak self] in
+                    self?.linked.append(result)
+                }
             }
             
-            return sections
         })
                 
-        await animate { [weak self] in
-            self?.linked = groups
-        }
     }
     
     func getChapterSection(for content: StoredContent) async -> ContentLinkSection? {

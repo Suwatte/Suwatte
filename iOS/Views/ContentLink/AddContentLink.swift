@@ -47,7 +47,7 @@ struct AddContentLink: View {
     func SourceSection(result: SearchView.ResultGroup) -> some View {
         let data = result.result
         Section {
-            ResultGroup(data.results, result.sourceName)
+            ResultGroup(data.results, result.sourceID)
         } header: {
             HStack {
                 Text(result.sourceName)

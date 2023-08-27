@@ -51,6 +51,9 @@ extension ProfileView.Skeleton.ChapterView {
         @ViewBuilder
         func LoadedView(_ chapters: [ThreadSafeChapter]) -> some View {
             VStack(alignment: .center, spacing: 10) {
+                if !model.linked.isEmpty {
+                    ChapterSectionsView()
+                }
                 HStack {
                     Text("\(chapters.count) \(chapters.count > 1 ? "Chapters" : "Chapter")")
                         .font(.title3)
@@ -65,7 +68,7 @@ extension ProfileView.Skeleton.ChapterView {
                         let progress = chapterProgress(chapter)
                         let download = getDownload(chapter)
                         VStack(alignment: .leading, spacing: 2) {
-                            ChapterListTile(chapter: chapter.toStored(),
+                            ChapterListTile(chapter: chapter,
                                             isCompleted: completed,
                                             isNewChapter: newChapter,
                                             progress: progress,
@@ -78,7 +81,7 @@ extension ProfileView.Skeleton.ChapterView {
                             }
                         }
                         .onTapGesture {
-                            model.selection = chapter.id
+                            model.selection = chapter
                         }
                     }
                 }
@@ -88,8 +91,7 @@ extension ProfileView.Skeleton.ChapterView {
 
                 VStack(alignment: .center) {
                     NavigationLink {
-                        ChapterList()
-                            .environmentObject(model)
+                        ChapterList(model: model)
                     } label: {
                         Text(chapters.count >= 5 ? "View All Chapters" : "Manage Chapters")
                             .font(.headline)
@@ -131,5 +133,56 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
 
     func getDownload(_ chapter: ThreadSafeChapter) -> DownloadStatus? {
         model.downloads[chapter.id]
+    }
+}
+
+extension ProfileView.Skeleton.ChapterView.PreviewView {
+     
+    struct ChapterSectionsView: View {
+        @EnvironmentObject private var model: ProfileView.ViewModel
+        
+        private func isSelected(id: String) -> Bool {
+            model.currentChapterSection == id
+        }
+        var body: some View {
+            ScrollView(.horizontal) {
+                HStack {
+                    if isSelected(id: model.sourceID) {
+                        Button(model.source.name) {
+                            model.currentChapterSection = model.sourceID
+                        }
+                        .buttonStyle(.borderedProminent)
+                    } else {
+                        Button(model.source.name) {
+                            model.currentChapterSection = model.sourceID
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.accentColor)
+
+                    }
+
+                    ForEach(model.linked, id: \.source.id) { linked in
+                        if isSelected(id: linked.source.id) {
+                            Button(linked.source.name) {
+                                model.currentChapterSection = linked.source.id
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(.accentColor)
+                            .coloredBadge(.blue)
+                        } else {
+                            Button(linked.source.name) {
+                                model.currentChapterSection = linked.source.id
+                            }
+                            .buttonStyle(.bordered)
+                            .tint(.accentColor)
+                            .coloredBadge(.blue)
+                        }
+                       
+                    }
+                }
+                .padding(.top, 4)
+                .animation(.easeOut(duration: 0.25), value: model.currentChapterSection)
+            }
+        }
     }
 }

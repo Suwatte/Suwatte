@@ -29,36 +29,24 @@ extension ProfileView {
                 ProfileView.Skeleton()
                     .navigationTitle(viewModel.content.title)
                     .transition(.opacity)
-                    .fullScreenCover(item: $viewModel.selection) { id in
-                        Text("id")
-//                        let chapterList = viewModel.chapters.value ?? []
-//                        let chapter = chapterList.first(where: { $0.id == id })
-//
-//                        Group {
-//                            if let chapter = chapter {
-//                                ReaderGateWay(readingMode: viewModel.content.recommendedReadingMode ?? .defaultPanelMode,
-//                                              chapterList: chapterList,
-//                                              openTo: chapter,
-//                                              title: viewModel.content.title)
-//                                    .onAppear {
-//                                        viewModel.removeNotifier()
-//                                    }
-//                            } else {
-//                                NavigationView {
-//                                    Text("Invalid Chapter")
-//                                        .closeButton()
-//                                }
-//                            }
-//                        }
-//                        .onDisappear {
-//                            Task {
-//                                await handleReconnection()
-//                                ImagePipeline.shared.configuration.imageCache?.removeAll()
-//                            }
-//                        }
+                    .fullScreenCover(item: $viewModel.selection) { chapter in
+                        let readingMode = viewModel.readingMode
+                        ReaderGateWay(title: viewModel.content.title,
+                                      readingMode: readingMode,
+                                      chapterList: viewModel.chapters,
+                                      openTo: chapter)
+                        .task {
+                            viewModel.removeNotifier()
+                        }
+                        .onDisappear {
+                            Task {
+                                await handleReconnection()
+                                ImagePipeline.shared.configuration.imageCache?.removeAll()
+                            }
+                        }
                     }
             }
-
+            
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     if viewModel.source.intents.chapterSyncHandler {
@@ -77,43 +65,43 @@ extension ProfileView {
             .transition(.opacity)
             .environmentObject(viewModel)
         }
-
+        
         @ViewBuilder
         var PLACEHOLDER: some View {
             ProgressView()
         }
-
+        
         func handleReconnection() async {
             await viewModel.setupObservers()
         }
     }
-
+    
     struct SyncView: View {
         @EnvironmentObject var model: ProfileView.ViewModel
         @State var isRotated = false
         var body: some View {
             switch model.syncState {
-            case .syncing:
-                Image(systemName: "arrow.triangle.2.circlepath")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 15, height: 15, alignment: .center)
-                    .foregroundColor(.green)
-                    .rotationEffect(Angle.degrees(isRotated ? 360 : 0))
-                    .transition(.scale)
-                    .animation(animation, value: isRotated)
-                    .onAppear {
-                        isRotated.toggle()
-                    }
-            default: EmptyView()
-                .transition(.opacity)
+                case .syncing:
+                    Image(systemName: "arrow.triangle.2.circlepath")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 15, height: 15, alignment: .center)
+                        .foregroundColor(.green)
+                        .rotationEffect(Angle.degrees(isRotated ? 360 : 0))
+                        .transition(.scale)
+                        .animation(animation, value: isRotated)
+                        .onAppear {
+                            isRotated.toggle()
+                        }
+                default: EmptyView()
+                        .transition(.opacity)
             }
         }
-
+        
         var animation: Animation {
             .linear
-                .speed(0.25)
-                .repeatForever(autoreverses: false)
+            .speed(0.25)
+            .repeatForever(autoreverses: false)
         }
     }
 }

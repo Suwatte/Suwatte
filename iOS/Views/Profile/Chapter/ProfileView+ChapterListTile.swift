@@ -9,7 +9,7 @@ import FlagKit
 import RealmSwift
 import SwiftUI
 struct ChapterListTile: View {
-    var chapter: StoredChapter
+    var chapter: ThreadSafeChapter
     var isCompleted: Bool
     var isNewChapter: Bool
     var progress: Double?
@@ -34,28 +34,8 @@ struct ChapterListTile: View {
             }
 
             HStack {
-                Group {
-                    if showLanguageFlag {
-                        if let language = chapter.language {
-                            if let regionCode = Locale(identifier: language).regionCode, let flag = Flag(countryCode: regionCode) {
-                                Image(uiImage: flag.image(style: .none))
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 15, height: 10.7)
-                            } else if let text = Locale.current.localizedString(forLanguageCode: language) {
-                                Text(text)
-                            } else {
-                                Text("Unknown: \(language)")
-                                    .italic()
-                            }
-                        } else {
-                            Text("🏴‍☠️ Unknown")
-                        }
-
-                        if chapter.language != nil && !chapter.providers.isEmpty {
-                            Divider()
-                        }
-                    }
+                if showLanguageFlag {
+                    LanguageView(chapter.language)
                 }
                 ScanlatorView()
                 Spacer()
@@ -128,10 +108,29 @@ struct ChapterListTile: View {
 
     @ViewBuilder
     func ScanlatorView() -> some View {
-        Text(chapter.providers.map { $0.name }.joined(separator: ", "))
-            .font(.footnote)
-            .fontWeight(.light)
-            .lineLimit(2)
+        if let providers = chapter.providers, !providers.isEmpty {
+            Text(providers.map { $0.name }.joined(separator: ", "))
+                .font(.footnote)
+                .fontWeight(.light)
+                .lineLimit(2)
+        }
+        
+    }
+    
+    @ViewBuilder
+    func LanguageView(_ lang: String) -> some View {
+        if let regionCode = Locale(identifier: lang).regionCode,
+           let flag = Flag(countryCode: regionCode) {
+            Image(uiImage: flag.image(style: .none))
+                .resizable()
+                .scaledToFit()
+                .frame(width: 15, height: 10.7)
+        } else if let text = Locale.current.localizedString(forLanguageCode: lang) {
+            Text(text)
+        } else {
+            Text("Unknown: \(lang)")
+                .italic()
+        }
     }
 }
 

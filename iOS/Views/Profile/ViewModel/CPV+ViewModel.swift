@@ -12,7 +12,7 @@ import UIKit
 
 extension ProfileView {
     final class ViewModel: ObservableObject {
-        @Published var entry: DaisukeEngine.Structs.Highlight
+        var entry: DaisukeEngine.Structs.Highlight
         
         var source: AnyContentSource
         var sourceID: String {
@@ -22,8 +22,8 @@ extension ProfileView {
             entry.contentId
         }
         
-        @Published var content: DSKCommon.Content = .placeholder
-        @Published var chapters: [ThreadSafeChapter] = []
+        var content: DSKCommon.Content = .placeholder
+        var chapters: [ThreadSafeChapter] = []
         
         @Published var contentState: Loadable<Bool> = .idle
         @Published var chapterState: Loadable<Bool> = .idle
@@ -44,9 +44,10 @@ extension ProfileView {
         
         @Published var isWorking = false
         @Published var syncState = SyncState.idle
-        @Published var resolvingLinks = false
         @Published var actionState: ActionState = .init(state: .none)
         @Published var linked: [ContentLinkSection] = []
+        @Published var previewChapters: [ThreadSafeChapter] = []
+        @Published var chapterListChapters: [ThreadSafeChapter] = []
         // Tokens
         internal var currentMarkerToken: NotificationToken?
         internal var downloadTrackingToken: NotificationToken?
@@ -66,8 +67,8 @@ extension ProfileView {
             self.currentChapterSection = source.id
         }
         
-        @Published var selection: String?
-        // De Init
+        @Published var selection: ThreadSafeChapter?
+
         deinit {
             disconnect()
             removeNotifier()
@@ -81,6 +82,12 @@ extension ProfileView {
         
         var STTIDPair : ContentIdentifier {
             .init(contentId: contentID, sourceId: sourceID)
+        }
+        
+        var readingMode: ReadingMode {
+            content.isNovel ?? false ?
+                .NOVEL_PAGED_COMIC :
+            content.recommendedPanelMode ?? .defaultPanelMode
         }
     }
 }
@@ -122,14 +129,16 @@ extension ViewModel {
             // Load Content From Network
             do {
                 content = try await getContentFromSource()
-                guard let content else { throw DSK.Errors.InvalidJSONObject }
+                guard var content else { throw DSK.Errors.InvalidJSONObject }
+                let chapters = content.chapters
+                content.chapters = nil
                 await animate { [weak self] in
                     self?.content = content
                     self?.contentState = .loaded(true)
                 }
                 
                 await saveContent(content)
-                await loadChapters(content.chapters)
+                await loadChapters(chapters)
                 
                 
             } catch {
@@ -181,6 +190,15 @@ extension ViewModel {
             }
         }
     }
+    
+    func reload() async {
+        await animate { [weak self] in
+            self?.chapterState = .loading
+            self?.contentState = .loading
+        }
+        
+        await load()
+    }
 }
 
 
@@ -190,9 +208,9 @@ extension ViewModel {
         let id = STTIDPair
         
         // Resolve Links, Sync & Update Action State
-        await resolveLinks()
         await handleSync()
         await setActionState()
+        await resolveLinks()
         await actor.updateUnreadCount(for: id)
         await actor.clearUpdates(id: id.id)
     }
@@ -203,11 +221,11 @@ extension ViewModel {
     func animate(_ execute: @escaping () -> Void) async {
         let task = Task { @MainActor in
             await withCheckedContinuation { continuation in
-                withAnimation(.easeInOut(duration: 0.3)) {
+                withAnimation(.easeInOut(duration: 0.25)) {
                     execute()
                 }
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.325) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.275) {
                     continuation.resume()
                 }
             }

@@ -22,7 +22,7 @@ struct IVChapterListView: View {
             ScrollViewReader { proxy in
                 List {
                     Section {
-                        ChapterListTile(chapter: activeChapter.toStored(),
+                        ChapterListTile(chapter: activeChapter,
                                         isCompleted: false,
                                         isNewChapter: false,
                                         isLinked: false,
@@ -35,7 +35,7 @@ struct IVChapterListView: View {
                     Section {
                         ForEach(chapters, id: \.id) { chapter in
                             Button { didSelect(chapter) } label: {
-                                ChapterListTile(chapter: chapter.toStored(),
+                                ChapterListTile(chapter: chapter,
                                                 isCompleted: false,
                                                 isNewChapter: false,
                                                 isLinked: false,

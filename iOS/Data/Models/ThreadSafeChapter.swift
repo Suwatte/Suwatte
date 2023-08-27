@@ -71,8 +71,11 @@ struct ThreadSafeChapter: Hashable, Identifiable {
         .init(contentId: contentId, sourceId: sourceId)
     }
     
+    var inferredVolume: Double {
+        volume ?? 999
+    }
     var chapterOrderKey: Double {
-        let d = (volume ?? 99) * 10
+        let d = inferredVolume * 100
         return d + number
     }
     

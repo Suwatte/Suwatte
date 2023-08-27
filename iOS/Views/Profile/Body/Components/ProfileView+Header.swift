@@ -128,12 +128,18 @@ private extension Skeleton {
                     Image(systemName: "bookmark")
                 }
 
-                Button {
-                    model.presentSafariView.toggle()
-                } label: {
-                    Image(systemName: "globe")
+                if let url = model.content.webUrl.flatMap({ URL(string: $0) }) {
+                    Link(destination: url, label: {
+                        Image(systemName: "globe")
+                    })
+                } else {
+                    Button {
+                    } label: {
+                        Image(systemName: "globe")
+                    }
+                    .disabled(true)
                 }
-                .disabled(model.content.webUrl == nil)
+                
             }
 
             .font(.title2.weight(.light))

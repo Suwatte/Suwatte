@@ -11,7 +11,7 @@ import KeychainSwift
 import Nuke
 import UIKit
 
-// Global actor that handl
+// Global actor that handles image loading
 @globalActor actor PanelActor: GlobalActor {
     static var shared = PanelActor()
     public static func run<T>(resultType _: T.Type = T.self, body: @Sendable () async throws -> T) async rethrows -> T where T: Sendable {

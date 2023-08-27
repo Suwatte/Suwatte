@@ -12,7 +12,6 @@ extension ProfileView {
     struct Skeleton: View {
         @EnvironmentObject var viewModel: ProfileView.ViewModel
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
-
         var body: some View {
             Main
                 .fullScreenCover(isPresented: $viewModel.presentCollectionsSheet, content: {
@@ -37,21 +36,7 @@ extension ProfileView {
                     .tint(accentColor)
                     .accentColor(accentColor)
                 })
-                .safariView(isPresented: $viewModel.presentSafariView) {
-                    SafariView(
-                        url: URL(string: viewModel.content.webUrl ?? "") ?? STTHost.notFound,
-                        configuration: SafariView.Configuration(
-                            entersReaderIfAvailable: false,
-                            barCollapsingEnabled: true
-                        )
-                    )
-                    .preferredControlAccentColor(accentColor)
-                    .dismissButtonStyle(.close)
-                }
                 .transition(.opacity)
-                .onDisappear {
-                    self.viewModel.currentMarkerToken?.invalidate()
-                }
         }
     }
 }

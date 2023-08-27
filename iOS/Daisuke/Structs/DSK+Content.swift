@@ -22,8 +22,8 @@ enum ContentStatus: Int, CaseIterable, Hashable {
 enum ReadingMode: Int, CaseIterable, Hashable, UserDefaultsSerializable {
     case PAGED_MANGA, // Page 2 <---- Page 1
          PAGED_COMIC, // Page 1 ----> Page 2
+         PAGED_VERTICAL,
          VERTICAL,
-         PAGED_VERTICAL, // A Vertical Pager
          WEB, // Opens using the chapters WebUrl
          NOVEL_PAGED_MANGA,
          NOVEL_PAGED_COMIC,
@@ -132,7 +132,7 @@ extension DaisukeEngine.Structs {
         var additionalTitles: [String]?
         var properties: [Property]?
         var contentType: ExternalContentType?
-        var recommendedReadingMode: ReadingMode?
+        var recommendedPanelMode: ReadingMode?
         var nonInteractiveProperties: [NonInteractiveProperty]?
         var includedCollections: [HighlightCollection]?
         var trackerInfo: [String: String]?
@@ -140,6 +140,8 @@ extension DaisukeEngine.Structs {
 
         var acquisitionLink: String?
         var streamable: Bool?
+        
+        var isNovel: Bool?
 
         var covers: [String] {
             var covers = additionalCovers ?? []

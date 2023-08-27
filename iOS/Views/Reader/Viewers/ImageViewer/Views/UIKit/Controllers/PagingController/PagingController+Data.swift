@@ -83,7 +83,7 @@ extension Controller {
 
     func initialLoad() async {
         guard let pendingState = model.pendingState else {
-            Logger.shared.warn("calling initialLoad() without any pending state")
+            Logger.shared.warn("calling initialLoad() without any pending state", "PagingController")
             return
         }
         let chapter = pendingState.chapter
@@ -99,7 +99,7 @@ extension Controller {
 
         // Retrieve chapter data
         guard let chapterIndex = await dataCache.chapters.firstIndex(of: chapter) else {
-            Logger.shared.warn("load complete but page list is empty", "ImageViewer")
+            Logger.shared.warn("load complete but page list is empty", "PagingController")
             return
         }
 

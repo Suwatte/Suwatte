@@ -13,8 +13,6 @@
 		DF020A412A899C6300BC5562 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DF020A402A899C6300BC5562 /* GoogleService-Info.plist */; };
 		DF020A442A89A07C00BC5562 /* ArchiveHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A432A89A07C00BC5562 /* ArchiveHelper.swift */; };
 		DF020A452A89A07C00BC5562 /* ArchiveHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A432A89A07C00BC5562 /* ArchiveHelper.swift */; };
-		DF020A472A8B118A00BC5562 /* ImageViewer+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A462A8B118A00BC5562 /* ImageViewer+Database.swift */; };
-		DF020A482A8B118A00BC5562 /* ImageViewer+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A462A8B118A00BC5562 /* ImageViewer+Database.swift */; };
 		DF020A4A2A8B120700BC5562 /* IV+ChapterList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A492A8B120700BC5562 /* IV+ChapterList.swift */; };
 		DF020A512A8C43D200BC5562 /* RLV+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A502A8C43D200BC5562 /* RLV+ViewModel.swift */; };
 		DF020A542A8C46AE00BC5562 /* Realm+RunnerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A532A8C46AE00BC5562 /* Realm+RunnerListView.swift */; };
@@ -178,6 +176,7 @@
 		DF62B5C32A96F37C00F907CD /* CPVM+Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5C22A96F37C00F907CD /* CPVM+Network.swift */; };
 		DF62B5C52A970BF300F907CD /* CPVM+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5C42A970BF300F907CD /* CPVM+Models.swift */; };
 		DF62B5C72A99898100F907CD /* Reader+State.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5C62A99898100F907CD /* Reader+State.swift */; };
+		DF62B5C92A9A4F1D00F907CD /* BackgroundActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5C82A9A4F1D00F907CD /* BackgroundActor.swift */; };
 		DF67EB8828E3674900076FF5 /* LG+MoveFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */; };
 		DF67EB8A28E39E2200076FF5 /* DSK+Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */; };
 		DF67EB8C28E3F22700076FF5 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB8B28E3F22700076FF5 /* Logger.swift */; };
@@ -409,6 +408,12 @@
 		DFDBF9F42A7DD588006D49AD /* ImageViewer+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFDBF9F32A7DD588006D49AD /* ImageViewer+ViewModel.swift */; };
 		DFDBF9F62A7DF79A006D49AD /* IV+Modifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFDBF9F52A7DF79A006D49AD /* IV+Modifiers.swift */; };
 		DFDBF9F82A7E2088006D49AD /* IV+ZoomingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFDBF9F72A7E2088006D49AD /* IV+ZoomingScrollView.swift */; };
+		DFE1B0F42A9A58DD00D300DB /* ChapterList+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B0F32A9A58DD00D300DB /* ChapterList+Helpers.swift */; };
+		DFE1B0F62A9A590100D300DB /* ChapterList+Methods.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B0F52A9A590100D300DB /* ChapterList+Methods.swift */; };
+		DFE1B0F82A9A598300D300DB /* ChapterList+MenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B0F72A9A598300D300DB /* ChapterList+MenuButton.swift */; };
+		DFE1B0FA2A9A59F400D300DB /* ChapterList+ContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B0F92A9A59F400D300DB /* ChapterList+ContextMenu.swift */; };
+		DFE1B0FC2A9A5AE400D300DB /* ChapterList+DownloadContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B0FB2A9A5AE400D300DB /* ChapterList+DownloadContext.swift */; };
+		DFE1B0FE2A9A65AE00D300DB /* CPVM+ChapterList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B0FD2A9A65AE00D300DB /* CPVM+ChapterList.swift */; };
 		DFEDACB62A871981002E2B6A /* UIImageViewAligned.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEDACB52A871981002E2B6A /* UIImageViewAligned.swift */; };
 		DFF09B452A58BABC00C5CA5E /* JSCContentTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B442A58BABC00C5CA5E /* JSCContentTracker.swift */; };
 		DFF09B4A2A58C13900C5CA5E /* +WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B492A58C13900C5CA5E /* +WebView.swift */; };
@@ -463,7 +468,6 @@
 		DF01DEEB2A587A680025700B /* Engine+URLHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Engine+URLHandler.swift"; sourceTree = "<group>"; };
 		DF020A402A899C6300BC5562 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		DF020A432A89A07C00BC5562 /* ArchiveHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ArchiveHelper.swift; path = Shared/ArchiveHelper/ArchiveHelper.swift; sourceTree = SOURCE_ROOT; };
-		DF020A462A8B118A00BC5562 /* ImageViewer+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ImageViewer+Database.swift"; sourceTree = "<group>"; };
 		DF020A492A8B120700BC5562 /* IV+ChapterList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IV+ChapterList.swift"; sourceTree = "<group>"; };
 		DF020A502A8C43D200BC5562 /* RLV+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RLV+ViewModel.swift"; sourceTree = "<group>"; };
 		DF020A532A8C46AE00BC5562 /* Realm+RunnerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+RunnerListView.swift"; sourceTree = "<group>"; };
@@ -618,6 +622,7 @@
 		DF62B5C22A96F37C00F907CD /* CPVM+Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPVM+Network.swift"; sourceTree = "<group>"; };
 		DF62B5C42A970BF300F907CD /* CPVM+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPVM+Models.swift"; sourceTree = "<group>"; };
 		DF62B5C62A99898100F907CD /* Reader+State.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Reader+State.swift"; sourceTree = "<group>"; };
+		DF62B5C82A9A4F1D00F907CD /* BackgroundActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundActor.swift; sourceTree = "<group>"; };
 		DF67EB8728E3674900076FF5 /* LG+MoveFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LG+MoveFlag.swift"; sourceTree = "<group>"; };
 		DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Sync.swift"; sourceTree = "<group>"; };
 		DF67EB8B28E3F22700076FF5 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -842,6 +847,12 @@
 		DFDBF9F32A7DD588006D49AD /* ImageViewer+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ImageViewer+ViewModel.swift"; sourceTree = "<group>"; };
 		DFDBF9F52A7DF79A006D49AD /* IV+Modifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IV+Modifiers.swift"; sourceTree = "<group>"; };
 		DFDBF9F72A7E2088006D49AD /* IV+ZoomingScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IV+ZoomingScrollView.swift"; sourceTree = "<group>"; };
+		DFE1B0F32A9A58DD00D300DB /* ChapterList+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChapterList+Helpers.swift"; sourceTree = "<group>"; };
+		DFE1B0F52A9A590100D300DB /* ChapterList+Methods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChapterList+Methods.swift"; sourceTree = "<group>"; };
+		DFE1B0F72A9A598300D300DB /* ChapterList+MenuButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChapterList+MenuButton.swift"; sourceTree = "<group>"; };
+		DFE1B0F92A9A59F400D300DB /* ChapterList+ContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChapterList+ContextMenu.swift"; sourceTree = "<group>"; };
+		DFE1B0FB2A9A5AE400D300DB /* ChapterList+DownloadContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChapterList+DownloadContext.swift"; sourceTree = "<group>"; };
+		DFE1B0FD2A9A65AE00D300DB /* CPVM+ChapterList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CPVM+ChapterList.swift"; sourceTree = "<group>"; };
 		DFEDACB52A871981002E2B6A /* UIImageViewAligned.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageViewAligned.swift; sourceTree = "<group>"; };
 		DFF09B442A58BABC00C5CA5E /* JSCContentTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSCContentTracker.swift; sourceTree = "<group>"; };
 		DFF09B492A58C13900C5CA5E /* +WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+WebView.swift"; sourceTree = "<group>"; };
@@ -1505,6 +1516,7 @@
 				DF3318562A47A63E000B092B /* CloudDownloader.swift */,
 				DF46C3562A22A04B002762C4 /* CloudManager.swift */,
 				DF426C342A463F4D00B79920 /* DirectorySearcher.swift */,
+				DF62B5C82A9A4F1D00F907CD /* BackgroundActor.swift */,
 			);
 			path = Singletons;
 			sourceTree = "<group>";
@@ -1801,6 +1813,7 @@
 				DF62B5BE2A96F23A00F907CD /* CPVM+ContentLink.swift */,
 				DF62B5C22A96F37C00F907CD /* CPVM+Network.swift */,
 				DF62B5C42A970BF300F907CD /* CPVM+Models.swift */,
+				DFE1B0FD2A9A65AE00D300DB /* CPVM+ChapterList.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -1840,6 +1853,7 @@
 		DF8D0A9D2800EE47003E4C3E /* Chapter */ = {
 			isa = PBXGroup;
 			children = (
+				DFE1B0F22A9A58C900D300DB /* ChapterList */,
 				DF8D0A9E2800EE47003E4C3E /* Sheets */,
 				DF8D0AA02800EE47003E4C3E /* ProfileView+FullChapterList.swift */,
 				DF8D0AA12800EE47003E4C3E /* ProfileView+ChapterListTile.swift */,
@@ -2268,7 +2282,6 @@
 			children = (
 				DFDBF9F12A7DD550006D49AD /* ImageViewer+DataCache.swift */,
 				DFDBF9F32A7DD588006D49AD /* ImageViewer+ViewModel.swift */,
-				DF020A462A8B118A00BC5562 /* ImageViewer+Database.swift */,
 			);
 			path = Actors;
 			sourceTree = "<group>";
@@ -2340,6 +2353,18 @@
 				DF489C3A2A8482ED006A21B9 /* Controller */,
 			);
 			path = Paged;
+			sourceTree = "<group>";
+		};
+		DFE1B0F22A9A58C900D300DB /* ChapterList */ = {
+			isa = PBXGroup;
+			children = (
+				DFE1B0F32A9A58DD00D300DB /* ChapterList+Helpers.swift */,
+				DFE1B0F52A9A590100D300DB /* ChapterList+Methods.swift */,
+				DFE1B0F72A9A598300D300DB /* ChapterList+MenuButton.swift */,
+				DFE1B0F92A9A59F400D300DB /* ChapterList+ContextMenu.swift */,
+				DFE1B0FB2A9A5AE400D300DB /* ChapterList+DownloadContext.swift */,
+			);
+			path = ChapterList;
 			sourceTree = "<group>";
 		};
 		DFF09B432A58BAA600C5CA5E /* Tracker */ = {
@@ -2620,6 +2645,7 @@
 				DF32646B2802A6C70066EB08 /* STTImageView.swift in Sources */,
 				DFF09B662A5A8EF500C5CA5E /* +UITextField.swift in Sources */,
 				DFB47EEE2880928C0040A1BD /* RefreshableScrollView.swift in Sources */,
+				DFE1B0FC2A9A5AE400D300DB /* ChapterList+DownloadContext.swift in Sources */,
 				DFDBF99B2A7C9700006D49AD /* WKR+Auth.swift in Sources */,
 				DF1114742A91A01300FA8A39 /* ImageNode.swift in Sources */,
 				DFDBF9B72A7DA0AA006D49AD /* Reader+Page.swift in Sources */,
@@ -2643,6 +2669,7 @@
 				DFDBF9772A7C557B006D49AD /* JSCR+Preferences.swift in Sources */,
 				DF33AC142A700AB100D2993A /* SDM+Fetcher.swift in Sources */,
 				DF020A602A8C5EA000BC5562 /* PagingController+Combine.swift in Sources */,
+				DFE1B0F82A9A598300D300DB /* ChapterList+MenuButton.swift in Sources */,
 				DF62B5BF2A96F23A00F907CD /* CPVM+ContentLink.swift in Sources */,
 				DF27835B2A79A5B60098BBA9 /* Realm+Backup.swift in Sources */,
 				DF8D0B732800EE48003E4C3E /* LibraryView.swift in Sources */,
@@ -2728,6 +2755,7 @@
 				DF489C362A8478C9006A21B9 /* Opacity.swift in Sources */,
 				DF020A632A8C5EAB00BC5562 /* PagingController+Data.swift in Sources */,
 				DF1EA4522A70E0FE003E27C7 /* SourceDownloadQueueView.swift in Sources */,
+				DFE1B0F62A9A590100D300DB /* ChapterList+Methods.swift in Sources */,
 				DF020A5A2A8C5E8A00BC5562 /* PagingController+ContextMenu.swift in Sources */,
 				DFBE48382A25BB53000ABA16 /* Chapter.swift in Sources */,
 				DFD4D86C2A7B1C2500C5AC13 /* Realm+BrowseView.swift in Sources */,
@@ -2852,6 +2880,7 @@
 				DF9BFDF02A425BBB005D0B63 /* LocalObserver.swift in Sources */,
 				DFBE48542A25BEA0000ABA16 /* TrackerLink.swift in Sources */,
 				DF8D0BB02800EE48003E4C3E /* CloseButton.swift in Sources */,
+				DFE1B0FA2A9A59F400D300DB /* ChapterList+ContextMenu.swift in Sources */,
 				DF83DD3328223B680021575B /* ProfileView+TrackersSheet.swift in Sources */,
 				DFF09B612A5A0BAC00C5CA5E /* TrackerEntryFormView.swift in Sources */,
 				DF489C392A8482D3006A21B9 /* IV+HorizontalLayout.swift in Sources */,
@@ -2877,6 +2906,7 @@
 				DF33AC122A70046B00D2993A /* SDM+Database.swift in Sources */,
 				DFDBF9A42A7CC3FB006D49AD /* WKContentSource.swift in Sources */,
 				DF8D0BA22800EE48003E4C3E /* UpdateFeedTile.swift in Sources */,
+				DFE1B0FE2A9A65AE00D300DB /* CPVM+ChapterList.swift in Sources */,
 				DF2783392A799D480098BBA9 /* Realm+Content.swift in Sources */,
 				DF27833F2A799E8D0098BBA9 /* Realm+OPDS.swift in Sources */,
 				DF01DEEA2A587A5D0025700B /* Engine+LibraryUpdate.swift in Sources */,
@@ -2917,7 +2947,6 @@
 				DF4817E62A6DF22700CB3A47 /* ComicInfo+Methods.swift in Sources */,
 				DF62B5AD2A95BFB200F907CD /* Realm+UpdateFeed.swift in Sources */,
 				DF11147C2A92E96300FA8A39 /* WebtoonController+Gesture.swift in Sources */,
-				DF020A472A8B118A00BC5562 /* ImageViewer+Database.swift in Sources */,
 				DF8D0B572800EE47003E4C3E /* Backup+ReadLater.swift in Sources */,
 				DFB47F002881013A0040A1BD /* OPDSClient.swift in Sources */,
 				DF8D0B932800EE48003E4C3E /* BookmarksView.swift in Sources */,
@@ -2927,6 +2956,7 @@
 				DF8D0B9D2800EE48003E4C3E /* ProfileView+Loadable.swift in Sources */,
 				DFDBF9822A7C59C4006D49AD /* Runner+Protocol.swift in Sources */,
 				DFADB58B29D7D04E00CBE22F /* JSCC+Network.swift in Sources */,
+				DF62B5C92A9A4F1D00F907CD /* BackgroundActor.swift in Sources */,
 				DF2783552A79A46B0098BBA9 /* Realm+Download.swift in Sources */,
 				DF3318532A47934E000B092B /* DV+DownloadQueue.swift in Sources */,
 				DF62B5B52A95EDD600F907CD /* ContentSettingsView.swift in Sources */,
@@ -2944,6 +2974,7 @@
 				DFF09B5A2A58ED0500C5CA5E /* ContentTrackerView.swift in Sources */,
 				DF8D0B2E2800EE47003E4C3E /* STT+Data.swift in Sources */,
 				DFDBF98C2A7C6B10006D49AD /* WK+Logging.swift in Sources */,
+				DFE1B0F42A9A58DD00D300DB /* ChapterList+Helpers.swift in Sources */,
 				DF4817E82A6DF83900CB3A47 /* ComicInfo+NameParser.swift in Sources */,
 				DF8D0B342800EE47003E4C3E /* STT+Bundle.swift in Sources */,
 				DFDBF9932A7C74B9006D49AD /* Source+Protocol.swift in Sources */,
@@ -2994,7 +3025,6 @@
 			files = (
 				DF020A452A89A07C00BC5562 /* ArchiveHelper.swift in Sources */,
 				DF9BFE1F2A428A73005D0B63 /* AH+Rar.swift in Sources */,
-				DF020A482A8B118A00BC5562 /* ImageViewer+Database.swift in Sources */,
 				DF9BFE1B2A428A5B005D0B63 /* AH+Zip.swift in Sources */,
 				DF9BFE012A4285BC005D0B63 /* ThumbnailProvider.swift in Sources */,
 			);

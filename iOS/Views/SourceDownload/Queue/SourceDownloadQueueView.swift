@@ -132,7 +132,7 @@ extension SDQV {
     struct Cell: View {
         let download: SourceDownload
         var body: some View {
-            ChapterListTile(chapter: download.chapter!,
+            ChapterListTile(chapter: download.chapter!.toThreadSafe(),
                             isCompleted: false,
                             isNewChapter: false,
                             download: download.status,
@@ -375,7 +375,7 @@ extension SDQV {
             let chapter = download.chapter!
 
             CellHeader(content, chapter)
-            ChapterListTile(chapter: chapter,
+            ChapterListTile(chapter: chapter.toThreadSafe(),
                             isCompleted: false,
                             isNewChapter: false,
                             isLinked: false,

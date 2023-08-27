@@ -43,11 +43,18 @@ extension IVViewModel {
         chapterCount = value.chapters.count
         let requested = value.openTo
         let chapters = value.chapters
+        
+        guard chapters.contains(requested) else {
+            presentationState = .failed(DSK.Errors.NamedError(name: "MismatchError", message: "target chapter was not found in chapter list"))
+            return
+        }
+        
         setReadingMode(for: requested.STTContentIdentifier)
 
         // Sort Chapters
         let useIndex = chapters.map { $0.index }.reduce(0, +) > 0
-        let sorted = useIndex ? chapters.sorted(by: { $0.index > $1.index }) : chapters.sorted(by: { $0.number > $1.number })
+        let sorted = useIndex ? chapters.sorted(by: { $0.index > $1.index }) :
+        chapters.sorted(by: { $0.number > $1.number })
 
         // Set Chapters
         await dataCache.setChapters(sorted)
