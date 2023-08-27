@@ -21,7 +21,9 @@ final class ProgressMarker: Object, Identifiable, CKRecordConvertible, CKRecordR
     @Persisted var isDeleted: Bool = false
 
     var isCompleted: Bool {
-        if let num = currentChapter?.number, readChapters.contains(num) {
+        guard let currentChapter else { return false }
+        
+        if readChapters.contains(currentChapter.chapterOrderKey) {
             return true
         }
         guard let lastPageRead, let totalPageCount, totalPageCount >= 1, lastPageRead >= 1 else {
@@ -47,7 +49,7 @@ extension ProgressMarker {
         return nil
     }
 
-    var maxReadChapter: Double? {
+    var maxReadChapterKey: Double? {
         readChapters.max()
     }
 }

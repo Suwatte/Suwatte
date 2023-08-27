@@ -21,13 +21,8 @@ struct ChapterList: View {
     
     @Environment(\.editMode) var editMode
     var body: some View {
-        Group {
-            if groupByVolume {
-                GroupChapterList()
-            } else {
-                ChaptersView(model.chapterListChapters)
-            }
-        }
+        ChaptersView(model.chapterListChapters)
+
         .sheet(isPresented: $presentOptions, content: {
             FCS_Options()
         })

@@ -41,4 +41,8 @@ final class StoredChapter: Object, Identifiable {
     var contentIdentifier: ContentIdentifier {
         .init(contentId: contentId, sourceId: sourceId)
     }
+    
+    var chapterOrderKey: Double {
+        ThreadSafeChapter.orderKey(volume: volume, number: number)
+    }
 }

@@ -26,7 +26,7 @@ extension RealmActor {
             .appending(getContentMarker(for: id))
             .compactMap { $0 }
             .max { lhs, rhs in
-                (lhs.currentChapter?.number ?? 0.0) < (rhs.currentChapter?.number ?? 0.0)
+                (lhs.currentChapter?.chapterOrderKey ?? 0.0) < (rhs.currentChapter?.chapterOrderKey ?? 0.0)
             }
 
         return maxedMarker?
@@ -80,7 +80,7 @@ extension RealmActor {
                 target.lastPageRead = nil
                 target.totalPageCount = nil
                 target.lastPageOffset = nil
-                target.readChapters.insert(chapter.number)
+                target.readChapters.insert(chapter.chapterOrderKey)
                 target.currentChapter = reference
             }
 
@@ -96,7 +96,7 @@ extension RealmActor {
 
         let marker = ProgressMarker()
         marker.id = id
-        marker.readChapters.insert(chapter.number)
+        marker.readChapters.insert(chapter.chapterOrderKey)
         marker.currentChapter = reference
 
         try! await realm.asyncWrite {
@@ -245,8 +245,9 @@ extension RealmActor {
                     .objects(StoredChapter.self)
                     .where { $0.contentId == id.contentId }
                     .where { $0.sourceId == id.sourceId }
-                    .where { $0.number.in(chapters) }
-                    .map(\.chapterId) as [String]
+                    .toArray()
+                    .filter { chapters.contains($0.chapterOrderKey) }
+                    .map(\.chapterId)
 
                 await notifySourceOfMarkState(identifier: id, chapters: chapterIds, completed: markAsRead)
             }
@@ -265,7 +266,7 @@ extension RealmActor {
                     target.readChapters.insert(objectsIn: chapters)
 
                     // Update Progress if more
-                    guard let chapter = target.currentChapter, let maxRead = chapters.max(), maxRead >= chapter.number else { return }
+                    guard let chapter = target.currentChapter, let maxRead = chapters.max(), maxRead >= ThreadSafeChapter.orderKey(volume: chapter.volume, number: chapter.number) else { return }
                     target.totalPageCount = 1
                     target.lastPageRead = 1
                 } else {
@@ -310,10 +311,10 @@ extension RealmActor {
 
 extension RealmActor {
     /// Fetches the highest marked chapter with respect to content links
-    func getHighestMarkedChapter(id: String) -> Double {
-        let maxReadOnTarget = getContentMarker(for: id)?.maxReadChapter ?? 0.0
+    func getMaxReadChapterOrderKey(id: String) -> Double {
+        let maxReadOnTarget = getContentMarker(for: id)?.maxReadChapterKey ?? 0.0
         let maxReadOnLinked = getLinkedContent(for: id)
-            .map { getContentMarker(for: $0.id)?.maxReadChapter ?? 0.0 }
+            .map { getContentMarker(for: $0.id)?.maxReadChapterKey ?? 0.0 }
             .max() ?? 0.0
 
         return max(maxReadOnTarget, maxReadOnLinked)

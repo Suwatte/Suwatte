@@ -42,10 +42,10 @@ extension ViewModel {
 
         guard let chapterRef = marker.currentChapter else {
             // Marker Exists but there is not reference to the chapter
-            let maxRead = marker.maxReadChapter
+            let maxReadChapterKey = marker.maxReadChapterKey
 
             // Check the max read chapter and use this instead
-            guard let maxRead else {
+            guard let maxReadChapterKey else {
                 // No Maximum Read Chapter, meaning marker exists without any reference or read chapers, point to first chapter instead
                 let chapter = chapters.last!
                 return .init(state: .start,
@@ -54,7 +54,7 @@ extension ViewModel {
             }
 
             // Get The latest chapter
-            guard let targetIndex = chapters.lastIndex(where: { $0.number >= maxRead }) else {
+            guard let targetIndex = chapters.lastIndex(where: { $0.chapterOrderKey >= maxReadChapterKey }) else {
                 let target = chapters.first!
 
                 return .init(state: .reRead,

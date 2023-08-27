@@ -23,7 +23,6 @@ extension ViewModel {
     func syncWithAllParties() async {
         let actor = await RealmActor()
         let identifier = STTIDPair
-        let chapterNumbers = Set(chapters.map(\.number))
         // gets tracker matches in a [TrackerID:EntryID] format
         let matches: [String: String] = await actor.getTrackerLinks(for: identifier.id)
 
@@ -41,7 +40,8 @@ extension ViewModel {
                     do {
                         let item = try await tracker.getTrackItem(id: value)
                         let originMaxReadChapter = item.entry?.progress.lastReadChapter ?? 0
-                        return (tracker.id, originMaxReadChapter)
+                        let originMaxVolume = item.entry?.progress.lastReadVolume
+                        return (tracker.id, ThreadSafeChapter.orderKey(volume: originMaxVolume, number: originMaxReadChapter))
                     } catch {
                         Logger.shared.error(error, tracker.id)
                         return (tracker.id, 0)
@@ -51,8 +51,8 @@ extension ViewModel {
 
             var markers: [String: Double] = [:]
 
-            for await(key, chapter) in group {
-                markers[key] = chapter
+            for await(key, chapterKey) in group {
+                markers[key] = chapterKey
             }
             return markers
         })
@@ -64,7 +64,7 @@ extension ViewModel {
                 let chapterIds = try await source.getReadChapterMarkers(contentId: entry.contentId)
                 sourceOriginHighestRead = chapters
                     .filter { chapterIds.contains($0.chapterId) }
-                    .map(\.number)
+                    .map { ThreadSafeChapter.orderKey(volume: $0.volume, number: $0.number) }
                     .max() ?? 0
             } catch {
                 Logger.shared.error(error, source.id)
@@ -72,12 +72,13 @@ extension ViewModel {
         }
 
         // Prepare the Highest Read Chapter Number
-        let localHighestRead = await actor.getHighestMarkedChapter(id: identifier.id)
+        let localHighestRead = await actor.getMaxReadChapterOrderKey(id: identifier.id)
         let originHighestRead = Array(markers.values).max() ?? 0
         let maxRead = max(localHighestRead, originHighestRead, sourceOriginHighestRead)
 
         // Max Read is 0, do not sync
         guard maxRead != 0 else { return }
+        let (maxReadVolume, maxReadChapter) = ThreadSafeChapter.vnPair(from: maxRead)
 
         // Update Origin Value if outdated
         await withTaskGroup(of: String?.self, body: { group in
@@ -85,7 +86,7 @@ extension ViewModel {
                 guard let tracker = await DSK.shared.getTracker(id: key), maxRead > value, let entryId = matches[key] else { return }
                 group.addTask {
                     do {
-                        try await tracker.didUpdateLastReadChapter(id: entryId, progress: .init(chapter: maxRead, volume: nil))
+                        try await tracker.didUpdateLastReadChapter(id: entryId, progress: .init(chapter: maxReadChapter, volume: maxReadVolume))
                         return tracker.id
                     } catch {
                         Logger.shared.error(error, tracker.id)
@@ -102,7 +103,7 @@ extension ViewModel {
 
         // Update Local Value if outdated, sources are notified if they have the Chapter Event Handler
         guard maxRead != localHighestRead else { return }
-        let chaptersToMark = chapterNumbers.filter { $0 <= maxRead }
+        let chaptersToMark = Set(chapters.map(\.chapterOrderKey)).filter { $0 <= maxRead }
         let linked = await actor.getLinkedContent(for: identifier.id)
         await actor.markChaptersByNumber(for: identifier, chapters: chaptersToMark)
         await withTaskGroup(of: Void.self, body: { group in
