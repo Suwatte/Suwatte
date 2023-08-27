@@ -117,7 +117,7 @@ extension DirectoryView.ResultsView {
         var title: String {
             let current = model.request.sortSelection?.key
             let label = model.configSort.options.first(where: { $0.key == current })?.label
-            return label ?? model.configSort.options.first?.label ?? "Default"
+            return label ?? model.configSort.options.first(where: { $0.key == model.configSort.defaultKey })?.label ?? "Default"
         }
     }
 }

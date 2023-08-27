@@ -64,9 +64,7 @@ extension DirectoryView.ViewModel {
         let key = request.configKey
         request = .init(page: 1, configKey: key)
         request.query = nil
-        if let option = configSort.options.first {
-            request.sortSelection = .init(key: option.key, ascending: false)
-        }
+        request.sortSelection = .init(key: configSort.defaultKey, ascending: false)
     }
 }
 
