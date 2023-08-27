@@ -14,6 +14,7 @@ struct InitialIVState {
     let pageIndex: Int?
     let pageOffset: CGFloat?
     let title: String
+    let mode: ReadingMode
 }
 
 

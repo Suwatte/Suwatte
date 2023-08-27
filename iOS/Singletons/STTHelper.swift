@@ -113,10 +113,10 @@ extension STTHelpers {
 }
 
 extension STTHelpers {
-    static func getReadingMode(for id: String) -> ReadingMode {
+    static func getReadingMode(for id: String) -> ReadingMode? {
         let container = UserDefaults.standard
         let key = STTKeys.ReaderType + "%%" + id
         let value = container.object(forKey: key) as? Int
-        return value.flatMap { ReadingMode(rawValue: $0) } ?? .defaultPanelMode
+        return value.flatMap { ReadingMode(rawValue: $0) }
     }
 }

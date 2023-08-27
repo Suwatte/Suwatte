@@ -23,7 +23,8 @@ struct ReaderGateWay: View {
                                            openTo: openTo,
                                            pageIndex: pageIndex,
                                            pageOffset: pageOffset.flatMap(CGFloat.init),
-                                           title: title ?? ""))
+                                           title: title,
+                                           mode: readingMode))
             } else if readingMode == .WEB {
                 WebReader(chapter: openTo)
             } else {

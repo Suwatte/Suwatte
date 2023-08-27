@@ -49,7 +49,7 @@ extension IVViewModel {
             return
         }
         
-        setReadingMode(for: requested.STTContentIdentifier)
+        setReadingMode(for: requested.STTContentIdentifier, requested: value.mode)
 
         // Sort Chapters
         let useIndex = chapters.map { $0.index }.reduce(0, +) > 0
@@ -105,8 +105,8 @@ extension IVViewModel {
         viewerState = state
     }
 
-    func setReadingMode(for id: String) {
-        readingMode = STTHelpers.getReadingMode(for: id)
+    func setReadingMode(for id: String, requested: ReadingMode?) {
+        readingMode = STTHelpers.getReadingMode(for: id) ?? requested ?? .defaultPanelMode
         Preferences.standard.currentReadingMode = readingMode
     }
 
