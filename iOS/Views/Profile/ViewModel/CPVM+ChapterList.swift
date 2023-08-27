@@ -40,7 +40,6 @@ extension ViewModel {
                     }
                     
                 }
-                var base = chapters
                 
                 if onlyDownloads {
                     let filtered = sort(chapters
@@ -53,9 +52,8 @@ extension ViewModel {
                 
                 let data = sort(STTHelpers.filterChapters(chapters, with: id))
                 
-                let final = sort(chapters)
                 await self?.animate { [weak self] in
-                    self?.chapterListChapters = final
+                    self?.chapterListChapters = data
                 }
             }
         }
