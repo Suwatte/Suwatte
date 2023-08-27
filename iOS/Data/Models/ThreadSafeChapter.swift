@@ -7,7 +7,14 @@
 
 import Foundation
 
-struct ThreadSafeChapter: Hashable, Identifiable {
+protocol STTChapterObject {
+    var number: Double { get }
+    var volume: Double? { get }
+    var language: String { get }
+    var providers: [DSKCommon.ChapterProvider]? { get }
+}
+
+struct ThreadSafeChapter: Hashable, Identifiable, STTChapterObject {
     let id: String
     let sourceId: String
     let chapterId: String
@@ -91,5 +98,57 @@ struct ThreadSafeChapter: Hashable, Identifiable {
     static func orderKey(volume: Double?, number: Double) -> Double {
         let d = (volume  ?? 99) * 1000
         return d + number
+    }
+}
+
+
+extension DSKCommon.Chapter {
+    var orderKey: Double {
+        ThreadSafeChapter.orderKey(volume: volume, number: number)
+    }
+}
+
+
+extension STTHelpers {
+    static func filterChapters<T: STTChapterObject>(_ data: [T], with id: String) -> [T] {
+        let languages = Preferences.standard.globalContentLanguages
+        let blacklisted = STTHelpers.getBlacklistedProviders(for: id)
+        
+        var base = data
+        // By Language
+        if !languages.isEmpty {
+            func lang(_ chapter: T) -> Bool {
+                languages.contains(where: { $0
+                    .lowercased()
+                    .starts(with: chapter.language.lowercased()) })
+            }
+            base = base
+                .filter(lang(_:))
+        }
+        
+        // By Provider
+        if !blacklisted.isEmpty {
+            func provider(_ chapter: T) -> Bool {
+                let providers = chapter.providers?.map(\.id) ?? []
+                if providers.isEmpty { return true }
+                return providers.allSatisfy({ !blacklisted.contains($0) })
+            }
+            base = base
+                .filter(provider(_:))
+        }
+        
+        return base
+    }
+}
+
+extension STTHelpers {
+    static func getBlacklistedProviders(for id: String) -> [String] {
+        let defaults = UserDefaults.standard
+        return defaults.stringArray(forKey: STTKeys.BlackListedProviders(id)) ?? []
+    }
+    
+    static func setBlackListedProviders(for id: String, values: [String]) {
+        let values = Array(Set(values))
+        UserDefaults.standard.setValue(values, forKey: STTKeys.BlackListedProviders(id))
     }
 }

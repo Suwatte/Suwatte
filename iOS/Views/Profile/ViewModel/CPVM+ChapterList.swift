@@ -51,31 +51,7 @@ extension ViewModel {
                     return
                 }
                 
-                let languages = Preferences.standard.globalContentLanguages
-                let blacklisted = self?.getBlacklistedProviders(for: id)
-                
-                
-                // By Language
-                if !languages.isEmpty {
-                    func lang(_ chapter: ThreadSafeChapter) -> Bool {
-                        languages.contains(where: { $0
-                            .lowercased()
-                            .starts(with: chapter.language.lowercased()) })
-                    }
-                    base = base
-                        .filter(lang(_:))
-                }
-                
-                // By Provider
-                if let blacklisted, !blacklisted.isEmpty {
-                    func provider(_ chapter: ThreadSafeChapter) -> Bool {
-                        let providers = chapter.providers?.map(\.id) ?? []
-                        if providers.isEmpty { return true }
-                        return providers.allSatisfy({ !blacklisted.contains($0) })
-                    }
-                    base = base
-                        .filter(provider(_:))
-                }
+                let data = sort(STTHelpers.filterChapters(chapters, with: id))
                 
                 let final = sort(chapters)
                 await self?.animate { [weak self] in
@@ -85,17 +61,4 @@ extension ViewModel {
         }
     }
     
-}
-
-extension ViewModel {
-    func getBlacklistedProviders(for id: String) -> [String] {
-        let defaults = UserDefaults.standard
-        
-        return defaults.stringArray(forKey: STTKeys.BlackListedProviders(id)) ?? []
-    }
-    
-    func setBlackListedProviders(for id: String, values: [String]) {
-        let values = Array(Set(values))
-        UserDefaults.standard.setValue(values, forKey: STTKeys.BlackListedProviders(id))
-    }
 }

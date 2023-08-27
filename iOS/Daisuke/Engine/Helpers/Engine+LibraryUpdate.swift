@@ -74,6 +74,10 @@ extension DSK {
 
         // Fetch Chapters
         let chapters = try? await getChapters(for: contentId, with: source)
+        
+        guard var chapters else { return 0 }
+        chapters = STTHelpers.filterChapters(chapters, with: source.id)
+        
         var marked: [String] = []
 
         if source.intents.chapterSyncHandler {
@@ -82,30 +86,27 @@ extension DSK {
 
         let lastFetched = await actor.getLatestStoredChapter(source.id, contentId)
         // Calculate Update Count
-        var filtered = chapters?
+        var filtered = chapters
             .filter { $0.date > entry.lastUpdated }
             .filter { $0.date > entry.lastOpened }
 
         // Marked As Read on Source
         if !marked.isEmpty {
-            filtered = filtered?
+            filtered = filtered
                 .filter { !marked.contains($0.chapterId) }
         }
 
         // Already Fetched on Source
-        if let lastFetched, let lastFetchedUpdatedIndex = chapters?
-            .first(where: { $0.chapterId == lastFetched.chapterId })?
-            .index
-        {
-            filtered = filtered?
-                .filter { $0.index < lastFetchedUpdatedIndex }
+        if let lastFetched {
+            filtered = filtered
+                .filter { $0.date >= lastFetched.date && $0.orderKey > lastFetched.chapterOrderKey }
         }
-        var updates = filtered?.count ?? 0
+        var updates = filtered.count
 
         let checkLinked = UserDefaults.standard.bool(forKey: STTKeys.CheckLinkedOnUpdateCheck)
         var linkedHasUpdate = false
         if checkLinked {
-            let lowerChapterLimit = filtered?.sorted(by: { $0.number < $1.number }).last?.number ?? lastFetched?.number
+            let lowerChapterLimit = filtered.map(\.orderKey).max() ?? lastFetched?.chapterOrderKey ?? 0
             linkedHasUpdate = await linkedHasUpdates(id: entry.id, lowerChapterLimit: lowerChapterLimit)
             if linkedHasUpdate, updates == 0 { updates += 1 }
         }
@@ -114,13 +115,9 @@ extension DSK {
             return 0
         }
 
-        let date = chapters?.sorted(by: { $0.date > $1.date }).first?.date ?? .now
+        let date = filtered.map(\.date).max() ?? .now
         await actor.didFindUpdates(for: entry.id, count: updates, date: date, onLinked: linkedHasUpdate)
 
-        guard let chapters = chapters else {
-            await actor.updateUnreadCount(for: entry.content!.ContentIdentifier)
-            return updates
-        }
         let sourceId = source.id
         let stored = chapters.map { $0.toStoredChapter(sourceID: sourceId, contentID: entry.content!.contentId) }
         await actor.storeChapters(stored)
@@ -191,11 +188,11 @@ extension DSK {
 
         let lastFetched = await actor.getLatestStoredChapter(source.id, title.contentId)
         if Task.isCancelled { return false }
-        var filtered = chapters
+        var filtered = STTHelpers.filterChapters(chapters, with: source.id)
 
         if let min {
             filtered = filtered
-                .filter { $0.number > min }
+                .filter { $0.orderKey > min }
         }
 
         // Marked As Read on Source
@@ -205,12 +202,9 @@ extension DSK {
         }
 
         // Already Fetched on Source
-        if let lastFetched, let lastFetchedUpdatedIndex = chapters
-            .first(where: { $0.chapterId == lastFetched.chapterId })?
-            .index
-        {
+        if let lastFetched {
             filtered = filtered
-                .filter { $0.index < lastFetchedUpdatedIndex }
+                .filter { $0.orderKey < lastFetched.chapterOrderKey }
         }
 
         return !filtered.isEmpty
