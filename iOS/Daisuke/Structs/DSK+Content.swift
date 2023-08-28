@@ -166,6 +166,12 @@ extension DaisukeEngine.Structs.Highlight {
                   title: .random(length: 20), subtitle: .random(length: 15))
         }
     }
+    
+    static var placeholder: Self {
+        .init(contentId: .random(length: 10),
+              cover: .random(),
+              title: .random(length: 20), subtitle: .random(length: 15))
+    }
 
     static func withId(id: String) -> Self {
         .init(contentId: id, cover: String.random(), title: String.random())

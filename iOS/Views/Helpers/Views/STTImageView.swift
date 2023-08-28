@@ -14,7 +14,6 @@ struct STTImageView: View {
     var url: URL?
     var identifier: ContentIdentifier
     var mode: SwiftUI.ContentMode = .fill
-    @Environment(\.placeholderImageShimmer) var shimmer
     @EnvironmentObject var appState: StateManager
     @StateObject private var loader = FetchImage()
     var body: some View {
@@ -28,7 +27,6 @@ struct STTImageView: View {
                         .transition(.opacity)
                 } else {
                     Color.gray.opacity(0.25)
-                        .shimmering(active: shimmer)
                 }
             }
             .task { await load(size) }
@@ -112,9 +110,6 @@ struct BaseImageView: View {
     var runnerId: String?
     var mode: SwiftUI.ContentMode = .fill
     @StateObject private var loader = FetchImage()
-    @State var isVisible = false
-    @Environment(\.placeholderImageShimmer) var shimmer
-
     var body: some View {
         GeometryReader { proxy in
             let size: CGSize = .init(width: proxy.size.width, height: proxy.size.width * 1.6)
@@ -126,14 +121,12 @@ struct BaseImageView: View {
                         .transition(.opacity)
                 } else {
                     Color.gray.opacity(0.25)
-                        .shimmering(active: shimmer && isVisible)
                 }
             }
             .task { await load(size, url) }
             .onDisappear {
                 loader.reset()
                 loader.priority = .low
-                isVisible = false
             }
             .frame(width: proxy.size.width, height: proxy.size.width * 1.6, alignment: .center)
             .background(Color.gray.opacity(0.25))
@@ -148,7 +141,6 @@ struct BaseImageView: View {
     }
 
     func load(_ size: CGSize, _ url: URL?) async {
-        isVisible = true
         if loader.image != nil { return }
         loader.processors = [NukeDownsampleProcessor(size: size)]
         loader.transaction = .init(animation: .easeInOut(duration: 0.25))
@@ -207,16 +199,5 @@ struct DisabledNavLink: ViewModifier {
                 .opacity(0)
                 //                .disabled(true)
             }
-    }
-}
-
-private struct ImageShimmerKey: EnvironmentKey {
-    static let defaultValue = true
-}
-
-extension EnvironmentValues {
-    var placeholderImageShimmer: Bool {
-        get { self[ImageShimmerKey.self] }
-        set { self[ImageShimmerKey.self] = newValue }
     }
 }

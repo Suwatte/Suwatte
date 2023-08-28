@@ -14,6 +14,16 @@ extension RealmActor {
             .where { $0.id == id }
             .first
     }
+    
+    func getLibraryEntries(for source: String) -> [LibraryEntry] {
+        realm
+            .objects(LibraryEntry.self)
+            .where { $0.content.sourceId == source }
+            .freeze()
+            .toArray()
+    }
+}
+extension RealmActor {
 
     func setReadingFlag(for id: String, to flag: LibraryFlag) async {
         let target = getLibraryEntry(for: id)

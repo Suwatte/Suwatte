@@ -23,6 +23,11 @@ extension LibraryView.LibraryGrid {
         @EnvironmentObject var model: ViewModel
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
+        private var migrationSelections: [TaggedHighlight] {
+            selectedEntries
+                .compactMap(\.content)
+                .map { .init(from: $0.toHighlight(), with: $0.sourceId) }
+        }
         func body(content: Content) -> some View {
             content
                 .fullScreenCover(item: $selectionOption, onDismiss: { model.selectedIndexes.removeAll() }) { option in
@@ -32,7 +37,7 @@ extension LibraryView.LibraryGrid {
                         case .flags: MoveReadingFlag(entries: entries)
                         case .migrate:
                             NavigationView {
-                                MigrationView(contents: selectedEntries.compactMap(\.content))
+                                MigrationView(model: .init(contents: migrationSelections))
                                     .toolbar {
                                         ToolbarItem(placement: .cancellationAction) {
                                             Button("Cancel") {

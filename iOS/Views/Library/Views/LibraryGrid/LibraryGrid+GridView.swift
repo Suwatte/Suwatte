@@ -16,7 +16,7 @@ extension LibraryView.LibraryGrid {
         @AppStorage(STTKeys.TileStyle) var style = TileStyle.COMPACT
         @EnvironmentObject var model: LibraryView.LibraryGrid.ViewModel
         @EnvironmentObject var appState: StateManager
-
+        @State var manageSelection: String?
         var body: some View {
             ASCollectionView(editMode: model.isSelecting) {
                 ASCollectionViewSection(id: 0,
@@ -63,6 +63,9 @@ extension LibraryView.LibraryGrid {
             .ignoresSafeArea(.keyboard, edges: .all)
             .animation(.default, value: model.isSelecting)
             .animation(.default, value: model.selectedIndexes)
+            .sheet(item: $manageSelection) { selection in
+                ProfileView.Sheets.LibrarySheet(id: selection)
+            }
         }
 
         func contextMenuProvider(int _: Int, content: LibraryEntry) -> UIContextMenuConfiguration? {
@@ -84,12 +87,11 @@ extension LibraryView.LibraryGrid {
                     }
 
                     // Edit Categories
-                    if let content = content.content?.thaw() {
+                    if let id = content.content?.id {
                         let editCollectionsAction = UIAction(title: "Manage", image: .init(systemName: "gearshape"))
                             { _ in
                                 //
-                                let controller = UIHostingController(rootView: ProfileView.Sheets.LibrarySheet(id: content.id))
-                                KEY_WINDOW?.rootViewController?.present(controller, animated: true)
+                                manageSelection = id
                             }
 
                         nonDestructiveActions.append(editCollectionsAction)

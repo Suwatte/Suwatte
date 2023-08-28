@@ -49,7 +49,7 @@ struct DefaultTile: View {
                             .foregroundColor(.white.opacity(0.7))
                     }
                 }
-                .shadow(radius: 2)
+                .shadow(radius: 3)
                 .multilineTextAlignment(.leading)
                 .padding(.all, 7)
                 .frame(width: reader.size.width, alignment: .leading)
@@ -62,7 +62,7 @@ struct DefaultTile: View {
         VStack(alignment: .leading, spacing: 0) {
             ImageV
                 .frame(height: reader.size.width * 1.5)
-                .cornerRadius(2.5)
+                .cornerRadius(4.5)
                 .opacity(libraryIsSelecting ? 0.8 : 1)
 
             if reader.size.width >= 100 {

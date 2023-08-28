@@ -77,7 +77,7 @@ extension DSKRunnerDelegate {
     }
 
     var environment: RunnerEnvironment {
-        self is ContentSource ? .source : self is ContentTracker ? .tracker : .unknown
+        self is AnyContentSource ? .source : self is AnyContentTracker ? .tracker : .unknown
     }
 }
 
