@@ -45,6 +45,14 @@ struct PreMigrationView: View {
             .animation(.default, value: model.loaded)
             .navigationTitle("Select Source")
             .closeButton()
+            .onDisappear {
+                model.shouldReset = true
+            }
+            .onAppear {
+                if model.shouldReset {
+                    model.loaded = false
+                }
+            }
         }
     }
 }
@@ -54,7 +62,7 @@ final class PreMigrationController: ObservableObject {
     @Published var data: [String : [TaggedHighlight]] = [:]
     @Published var sources: [AnyContentSource] = []
     @Published var loaded = false
-    
+    var shouldReset = false
     
     func load() async {
         let actor = await RealmActor()

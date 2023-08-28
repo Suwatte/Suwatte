@@ -56,3 +56,37 @@ enum MigrationItemState: Equatable {
         }
     }
 }
+
+
+enum LibraryMigrationStrategy: CaseIterable {
+    case link, replace
+
+    var description: String {
+        switch self {
+        case .link: return "Link"
+        case .replace: return "Replace"
+        }
+    }
+}
+
+enum NotFoundMigrationStrategy: CaseIterable {
+    case remove, skip
+    var description: String {
+        switch self {
+        case .remove: return "Remove"
+        case .skip: return "Skip"
+        }
+    }
+}
+
+enum LowerChapterMigrationStrategy: CaseIterable {
+    case skip, migrate
+
+    var description: String {
+        switch self {
+        case .migrate: return "Migrate Anyway"
+        case .skip: return "Skip"
+        }
+    }
+}
+

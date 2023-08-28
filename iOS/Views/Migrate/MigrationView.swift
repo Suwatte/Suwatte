@@ -55,7 +55,11 @@ struct MigrationView: View {
             Button("Cancel", role: .cancel) {}
             Button("Start", role: .destructive) {
                 Task {
-                    await model.migrate()
+                    let result = await model.migrate()
+                    guard result else { return }
+                    await MainActor.run {
+                        presentationMode.wrappedValue.dismiss()
+                    }
                 }
             }
         } message: {

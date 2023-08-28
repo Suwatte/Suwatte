@@ -12,6 +12,7 @@ extension RealmActor {
         realm
             .objects(LibraryEntry.self)
             .where { $0.id == id }
+            .where { !$0.isDeleted }
             .first
     }
     
@@ -19,6 +20,7 @@ extension RealmActor {
         realm
             .objects(LibraryEntry.self)
             .where { $0.content.sourceId == source }
+            .where { !$0.isDeleted }
             .freeze()
             .toArray()
     }

@@ -62,7 +62,7 @@ struct MigrationEntryListCell: View {
         }
         .swipeActions {
             Button(role: .destructive) {
-                //                removeItem(id: content.id)
+                model.removeItem(id: content.id)
             } label: {
                 Label("Remove", systemImage: "trash")
             }
