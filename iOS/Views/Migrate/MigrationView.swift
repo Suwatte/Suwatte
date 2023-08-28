@@ -47,6 +47,7 @@ struct MigrationView: View {
                     }
             }
         }
+        .toast()
         .navigationTitle("Migrate")
         .navigationBarTitleDisplayMode(.inline)
         .onDisappear(perform: model.cancelOperations)
@@ -66,9 +67,12 @@ struct MigrationView: View {
             Text("Are you sure you want to begin the migration?\nA backup will be automatically generated to protect your data.")
         }
         .sheet(item: $model.selectedToSearch, content: { highlight in
-            Text(highlight.title)
+            NavigationView {
+                MigrationManualDestinationView(content: highlight,
+                                               searchModel: .init(preSources: model.preferredDestinations))
+                    .closeButton()
+            }
         })
-        .toast()
         .environmentObject(model)
     }
 }

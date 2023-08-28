@@ -53,6 +53,7 @@ struct PreMigrationView: View {
                     model.loaded = false
                 }
             }
+            .toast()
         }
     }
 }

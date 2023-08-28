@@ -20,6 +20,10 @@ extension SearchView {
     struct IncompleteSources {
         var failing: [String]
         var noResults: [String]
+        
+        var hasIncomplete: Bool {
+            !failing.isEmpty || !noResults.isEmpty
+        }
     }
 
     @MainActor
@@ -34,15 +38,18 @@ extension SearchView {
         @Published var savedForLater: Set<String> = []
 
         private let isContentLinkModel: Bool
-
         private var libraryToken: NotificationToken?
         private var readLaterToken: NotificationToken?
-
-        init(forLinking: Bool = false) {
+        private var preSources: [AnyContentSource]?
+        init(forLinking: Bool = false, preSources: [AnyContentSource]? = nil) {
             isContentLinkModel = forLinking
+            self.preSources = preSources
         }
 
         private func getSources() async -> [AnyContentSource] {
+            if let preSources {
+                return preSources
+            }
             let engine = DSK.shared
             let sources = await isContentLinkModel ? engine.getSourcesForLinking() : engine.getSourcesForSearching()
             return sources
