@@ -69,7 +69,7 @@ extension H {
 
 extension H {
     func handle(message: Message, id: String) async throws -> String? {
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         switch message.store {
         case .os: // ObjectStore
             switch message.action {

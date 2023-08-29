@@ -69,7 +69,7 @@ extension DirectoryView {
         func saveSearch() async {
             let title = prepareSearch().trimmingCharacters(in: .whitespacesAndNewlines)
             guard !title.isEmpty else { return }
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             await actor.saveSearch(model.request, sourceId: model.runner.id, display: title)
         }
 

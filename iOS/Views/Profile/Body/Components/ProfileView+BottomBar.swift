@@ -180,7 +180,7 @@ extension ProfileView.Skeleton.BottomBar {
             .onChange(of: inputImage) { val in
                 guard let val else { return }
                 Task {
-                    let actor = await RealmActor()
+                    let actor = await RealmActor.shared()
                     await actor.setCustomThumbnail(image: val, id: sttId.id)
                 }
             }
@@ -217,7 +217,7 @@ extension ProfileView.Skeleton.BottomBar {
         var SaveForLaterButton: some View {
             Button {
                 Task {
-                    let actor = await RealmActor()
+                    let actor = await RealmActor.shared()
                     await actor.toggleReadLater(sttId.sourceId, sttId.contentId)
                 }
             } label: {
@@ -252,7 +252,7 @@ extension ProfileView.Skeleton.BottomBar {
             Button {
                 if hasCustomThumb {
                     Task {
-                        let actor = await RealmActor()
+                        let actor = await RealmActor.shared()
                         await actor.removeCustomThumbnail(id: sttId.id)
                     }
                 } else {

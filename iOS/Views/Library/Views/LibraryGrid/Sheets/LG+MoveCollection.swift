@@ -60,7 +60,7 @@ extension LibraryView.LibraryGrid {
                                 .filter { model.selectedIndexes.contains($0.0) }
                                 .map { $0.1.id }
                             Task {
-                                let actor = await Suwatte.RealmActor()
+                                let actor = await Suwatte.RealmActor.shared()
                                 await actor.moveToCollections(entries: Set(targets), cids: selectedCollections)
                             }
                             ToastManager.shared.loading.toggle()

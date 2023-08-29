@@ -66,7 +66,7 @@ extension LibraryView.LibraryGrid {
             ToastManager.shared.loading = true
 
             Task {
-                let actor = await Suwatte.RealmActor()
+                let actor = await Suwatte.RealmActor.shared()
                 for content in library.compactMap(\.content) {
                     await actor.refreshStored(contentId: content.contentId, sourceId: content.sourceId)
                 }

@@ -103,7 +103,7 @@ extension MigrationController {
             operationState = .searching
         })
 
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         for content in contents {
             let lastChapter = await actor.getLatestStoredChapter(content.sourceID,
                                                                  content.contentID)?.number

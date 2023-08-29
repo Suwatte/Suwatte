@@ -80,7 +80,7 @@ extension HistoryView {
         @Published var dataFetchComplete = false
         func observe() async {
             guard notificationToken == nil else { return }
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             notificationToken = await actor.observeHistory { value in
                 Task { @MainActor [weak self] in
                     self?.markers = value
@@ -108,7 +108,7 @@ extension HistoryView {
                 do {
                     let updatedFile = try result.get().convertToSTTFile()
                     Task {
-                        let actor = await RealmActor()
+                        let actor = await RealmActor.shared()
                         await actor.saveArchivedFile(updatedFile)
                     }
 
@@ -221,7 +221,7 @@ extension HistoryView {
 
         private func handleRemoveMarker() {
             Task {
-                let actor = await RealmActor()
+                let actor = await RealmActor.shared()
                 await actor.removeFromHistory(id: id)
             }
         }

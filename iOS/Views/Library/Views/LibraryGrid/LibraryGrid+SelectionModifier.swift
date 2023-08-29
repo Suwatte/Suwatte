@@ -123,7 +123,7 @@ extension LibraryView.LibraryGrid {
                 .map { $0.1.id }
 
             Task {
-                let actor = await Suwatte.RealmActor()
+                let actor = await Suwatte.RealmActor.shared()
                 await actor.batchRemoveFromLibrary(with: Set(targets))
             }
 

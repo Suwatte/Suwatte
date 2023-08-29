@@ -18,7 +18,7 @@ extension ViewModel {
     }
 
     func setupObservers() async {
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
 
         // Observe Progress Markers
         let id = identifier

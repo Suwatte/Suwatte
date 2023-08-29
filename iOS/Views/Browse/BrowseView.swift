@@ -201,7 +201,7 @@ extension BrowseView {
 
         func observe() async {
             guard token == nil else { return }
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             token = await actor.observeInstalledRunners { value in
                 Task { @MainActor in
                     withAnimation {

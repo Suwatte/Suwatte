@@ -101,7 +101,7 @@ extension DirectoryViewer {
 
         func didTapFile(_ file: File) {
             Task {
-                let actor = await RealmActor()
+                let actor = await RealmActor.shared()
                 await actor.saveArchivedFile(file)
             }
             // Generate Chapter
@@ -170,7 +170,7 @@ extension File {
                                   readingMode: nil,
                                   dismissAction: nil)
         Task {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             await actor.saveArchivedFile(self)
         }
         Task { @MainActor in

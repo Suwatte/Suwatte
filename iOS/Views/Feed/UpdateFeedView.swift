@@ -70,7 +70,7 @@ struct UpdateFeedView: View {
 
     func clear(for id: String) {
         Task {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             await actor.clearUpdates(id: id)
         }
     }
@@ -81,7 +81,7 @@ extension UpdateFeedView {
         private var token: NotificationToken?
         @Published var data: [UpdateFeedGroup] = []
         func observe() async {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             token = await actor
                 .observeUpdateFeed { feed in
                     Task { @MainActor [weak self] in

@@ -60,7 +60,7 @@ extension ContentSourceDirectoryView {
                 .contextMenu {
                     Button {
                         Task {
-                            let actor = await RealmActor()
+                            let actor = await RealmActor.shared()
                             await actor.toggleReadLater(sourceID, data.contentId)
                             await MainActor.run {
                                 readLater.toggle()
@@ -92,7 +92,7 @@ extension ContentSourceDirectoryView {
         }
 
         func start(_ sourceID: String) async {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
 
             libraryToken = await actor
                 .observeLibraryIDs(sourceID: sourceID) { [weak self] values in

@@ -20,7 +20,7 @@ extension SDM {
             await update(ids: [id], status: state.DownloadState)
             let contentID = await get(id)?.content?.id
             if let contentID {
-                let actor = await RealmActor()
+                let actor = await RealmActor.shared()
                 await actor.updateDownloadIndex(for: [contentID])
             }
         }
@@ -271,7 +271,7 @@ extension SDM {
     }
 
     private func prepareComicInfo(for id: String) async -> String? {
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         let identifier = parseID(id)
         let content = await actor.getStoredContent(identifier.source, identifier.content)
         let chapter = await actor.getStoredChapter(id)

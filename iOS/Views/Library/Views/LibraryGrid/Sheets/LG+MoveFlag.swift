@@ -60,7 +60,7 @@ extension LibraryView.LibraryGrid {
                 .map { $0.1.id }
             let ids = Set(targets)
             Task {
-                let actor = await Suwatte.RealmActor()
+                let actor = await Suwatte.RealmActor.shared()
                 await actor.bulkSetReadingFlag(for: ids, to: flag)
                 await MainActor.run {
                     presentationMode.wrappedValue.dismiss()

@@ -66,7 +66,7 @@ final class PreMigrationController: ObservableObject {
     var shouldReset = false
     
     func load() async {
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         let sources = await DSK
             .shared
             .getActiveSources()

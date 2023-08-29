@@ -99,7 +99,7 @@ final actor IVDataCache {
 extension IVDataCache {
     func getData(_ chapter: ThreadSafeChapter) async throws -> ReaderChapterData {
         try Task.checkCancellation()
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         switch chapter.chapterType {
         case .LOCAL:
             let id = chapter.contentId

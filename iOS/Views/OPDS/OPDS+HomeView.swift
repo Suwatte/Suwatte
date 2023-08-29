@@ -23,7 +23,7 @@ struct OPDSView: View {
                 .swipeActions {
                     Button("Delete") {
                         Task {
-                            let actor = await RealmActor()
+                            let actor = await RealmActor.shared()
                             await actor.removeOPDServer(id: server.id)
                         }
                     }
@@ -63,7 +63,7 @@ struct OPDSView: View {
             guard let text else { return }
 
             Task {
-                let actor = await RealmActor()
+                let actor = await RealmActor.shared()
                 await actor.renameOPDSServer(id: server.id, name: text)
             }
         }

@@ -54,7 +54,7 @@ extension Controller: UIContextMenuInteractionDelegate {
 
     func addBookmark(for page: ReaderPage, image: UIImage) {
         Task {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             let result = await actor.addBookmark(for: page.chapter, at: page.number, with: image)
             result ? ToastManager.shared.info("Bookmarked!") : ToastManager.shared.error("Failed to bookmark")
         }

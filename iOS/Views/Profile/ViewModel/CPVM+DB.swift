@@ -13,7 +13,7 @@ fileprivate typealias ViewModel = ProfileView.ViewModel
 extension ViewModel {
     func getContentFromDatabase() async -> DSKCommon.Content? {
         // Load From DB
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
 
         Task { @MainActor [weak self] in
             self?.contentState = .loading
@@ -26,7 +26,7 @@ extension ViewModel {
     }
     
     func getChaptersFromDatabase() async -> [StoredChapter]? {
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
 
         let chapters = await actor.getChapters(source.id,
                                                content: entry.contentId)
@@ -42,7 +42,7 @@ extension ViewModel {
     func saveContent(_ content: DSKCommon.Content) async {
         do {
             let content = try content.toStoredContent(withSource: sourceID)
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             await actor.storeContent(content)
         } catch {
             Logger.shared.error(error, "Save Content")
@@ -51,7 +51,7 @@ extension ViewModel {
     
     func saveChapters(_ chapters: [DSKCommon.Chapter]) async {
         let chapters = chapters.map { $0.toStoredChapter(sourceID: sourceID, contentID: contentID) }
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         await actor.storeChapters(chapters)
     }
 }

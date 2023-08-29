@@ -59,7 +59,7 @@ struct SearchView: View {
             let request: DSKCommon.DirectoryRequest = .init(query: model.query, page: 1)
             let display = model.query
             Task {
-                let actor = await RealmActor()
+                let actor = await RealmActor.shared()
                 await actor.saveSearch(request, sourceId: nil, display: display)
             }
             searchTask?.cancel()
@@ -98,7 +98,7 @@ struct SearchView: View {
             Divider()
             Button(role: .destructive) {
                 Task {
-                    let actor = await RealmActor()
+                    let actor = await RealmActor.shared()
                     await actor.deleteSearchHistory()
                     await model.loadSearchHistory()
                 }

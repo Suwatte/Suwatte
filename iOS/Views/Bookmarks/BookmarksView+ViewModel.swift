@@ -15,7 +15,7 @@ extension BookmarksView {
         @MainActor @Published var results: [UpdatedBookmark]?
 
         func observe(id: String) async {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
 
             token = await actor
                 .observeBookmarks(for: id) { [weak self] bookmarks in

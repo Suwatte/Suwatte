@@ -87,7 +87,7 @@ extension DaisukeEngine {
 
 extension DaisukeEngine {
     func startRunner(_ id: String) async throws -> AnyRunner {
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         let file = await actor.getRunnerExecutable(id: id)
 
         guard let file, file.exists else {
@@ -145,7 +145,7 @@ extension DaisukeEngine {
     func removeRunner(_ id: String) {
         runners.removeValue(forKey: id)
         Task {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             let path = await actor.getRunner(id)?.executable?.filePath ?? executeableURL(for: id)
             try? FileManager.default.removeItem(at: path)
             await actor.deleteRunner(id)
@@ -200,7 +200,7 @@ extension DaisukeEngine {
     }
 
     private func upsertStoredRunner(_ runner: AnyRunner, listURL: URL? = nil) async {
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         await actor.saveRunner(runner, listURL: listURL, url: executeableURL(for: runner.id))
     }
 }
@@ -225,7 +225,7 @@ extension DaisukeEngine {
             throw DSK.Errors.NamedError(name: "Validation", message: "Invalid URL")
         }
         let runnerList = try await getRunnerList(at: base)
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         await actor.saveRunnerList(runnerList, at: base)
     }
 
@@ -314,7 +314,7 @@ extension DaisukeEngine {
     }
 
     func getActiveSources() async -> [AnyContentSource] {
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         let runners = await actor.getSavedAndEnabledSources().map(\.id)
 
         let sources = await withTaskGroup(of: AnyContentSource?.self, body: { group in
@@ -376,7 +376,7 @@ extension DaisukeEngine {
     }
 
     func getActiveTrackers() async -> [AnyContentTracker] {
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         let runners = await actor.getEnabledRunners(for: .tracker).map(\.id)
 
         let trackers = await withTaskGroup(of: AnyContentTracker?.self, body: { group in

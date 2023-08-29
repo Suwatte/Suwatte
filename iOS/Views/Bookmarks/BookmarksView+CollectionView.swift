@@ -29,7 +29,7 @@ extension BookmarksView {
                         .contextMenu {
                             Button(role: .destructive) {
                                 Task {
-                                    let actor = await RealmActor()
+                                    let actor = await RealmActor.shared()
                                     await actor.removeBookmark(data.id)
                                 }
                             } label: {

@@ -25,7 +25,7 @@ extension LibraryView.ReadLaterView.CollectionView {
                 let removeAction = UIAction(title: "Remove from Read Later", image: UIImage(systemName: "bookmark.slash"), attributes: .destructive) {
                     _ in
                     Task {
-                        let actor = await RealmActor()
+                        let actor = await RealmActor.shared()
                         await actor
                             .removeFromReadLater(content.sourceId,
                                                  content: content.contentId)
@@ -37,7 +37,7 @@ extension LibraryView.ReadLaterView.CollectionView {
                     let moveAction = UIAction(title: "Move to Library", image: UIImage(systemName: "folder")) {
                         _ in
                         Task {
-                            let actor = await RealmActor()
+                            let actor = await RealmActor.shared()
                             await actor.removeFromReadLater(content.sourceId, content: content.contentId)
                             await actor.toggleLibraryState(for: content.ContentIdentifier)
                         }

@@ -45,7 +45,7 @@ extension DSKAuthView {
 
 extension DSKAuthView.LibrarySyncView {
     func handleContentSync() async throws {
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         let library = await actor.getUpSync(for: source.id)
         let downSynced = try await source.syncUserLibrary(library: library)
 

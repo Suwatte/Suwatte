@@ -14,7 +14,7 @@ extension ViewModel {
     // Handles the addition on linked chapters
     func resolveLinks() async {
         let id = identifier
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         // Contents that this title is linked to
         let entries = await actor
             .getLinkedContent(for: id)
@@ -54,7 +54,7 @@ extension ViewModel {
                 .map { $0.toThreadSafe(sourceID: content.sourceId, contentID: content.contentId) }
             
             Task {
-                let actor = await RealmActor()
+                let actor = await RealmActor.shared()
                 let stored = prepared
                     .map { $0.toStored() }
                 await actor.storeChapters(stored)
@@ -76,7 +76,7 @@ extension ViewModel {
     }
     
     func updateContentLinks() async {
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         let newLinked = await actor.getLinkedContent(for: identifier).map(\.id)
         guard newLinked != linkedContentIDs else { return }
         await MainActor.run { [weak self] in

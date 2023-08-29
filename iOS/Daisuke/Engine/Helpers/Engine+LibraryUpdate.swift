@@ -43,7 +43,7 @@ extension DSK {
 
 extension DSK {
     private func fetchUpdatesForSource(source: AnyContentSource) async throws -> Int {
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         let library = await actor.getTitlesPendingUpdate(source.id)
         Logger.shared.log("[\(source.id)] [Updates Checker] Updating \(library.count) titles")
 
@@ -70,7 +70,7 @@ extension DSK {
             return 0
         }
 
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
 
         // Fetch Chapters
         let chapters = try? await getChapters(for: contentId, with: source)
@@ -143,7 +143,7 @@ extension DSK {
                 .getContent(id: id)
             let content = try profile
                 .toStoredContent(withSource: source.id)
-            let manager = await RealmActor()
+            let manager = await RealmActor.shared()
             await manager.storeContent(content)
             return profile.chapters
         } catch {
@@ -153,7 +153,7 @@ extension DSK {
     }
 
     func linkedHasUpdates(id: String, lowerChapterLimit: Double?) async -> Bool {
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         let linkedTitles = await actor.getLinkedContent(for: id)
 
         let result = await withTaskGroup(of: Bool.self, body: { group in
@@ -176,7 +176,7 @@ extension DSK {
     }
 
     func checkLinked(title: StoredContent, min: Double?) async -> Bool {
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         guard let source = await DSK.shared.getSource(id: title.sourceId) else { return false }
         guard let chapters = try? await source.getContentChapters(contentId: title.contentId) else { return false }
         var marked: [String] = []

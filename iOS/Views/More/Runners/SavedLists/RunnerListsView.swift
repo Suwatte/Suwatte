@@ -121,7 +121,7 @@ extension RunnerListsView {
                 let data = try await DSK.shared.getRunnerList(at: url)
 
                 loadable = .loaded(data)
-                let actor = await RealmActor()
+                let actor = await RealmActor.shared()
                 await actor.saveRunnerList(data, at: url)
             } catch {
                 loadable = .failed(error)

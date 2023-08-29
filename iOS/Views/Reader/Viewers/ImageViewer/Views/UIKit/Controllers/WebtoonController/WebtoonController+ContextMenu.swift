@@ -80,7 +80,7 @@ extension Controller: UIContextMenuInteractionDelegate, UIGestureRecognizerDeleg
         guard let currentPath, let item = dataSource.itemIdentifier(for: currentPath), case let .page(page) = item else { return }
         let offset = calculateCurrentOffset(of: currentPath)
         Task {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             let result = await actor.addBookmark(for: page.page.chapter,
                                                  at: page.page.number,
                                                  with: image,

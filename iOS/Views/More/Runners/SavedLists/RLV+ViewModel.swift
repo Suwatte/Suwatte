@@ -17,7 +17,7 @@ extension RunnerListsView {
         private var listToken: NotificationToken?
 
         func observe() async {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
 
             // Runners
             runnersToken = await actor

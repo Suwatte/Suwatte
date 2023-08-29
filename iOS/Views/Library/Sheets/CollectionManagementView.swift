@@ -55,7 +55,7 @@ struct CollectionManagementView: View {
         }
         let id = collection.id
         Task {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             await actor.renameCollection(id, str)
         }
     }
@@ -121,7 +121,7 @@ extension CollectionManagementView {
                     saveAll()
                 }
                 .task {
-                    let actor = await RealmActor()
+                    let actor = await RealmActor.shared()
                     sources = await actor.getSavedAndEnabledSources()
                 }
         }
@@ -360,7 +360,7 @@ extension CollectionManagementView.FilterSections {
         filter.textContains.append(objectsIn: titleContains)
         filter.statuses.append(objectsIn: contentStatuses)
         Task {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             await actor.saveCollectionFilters(for: collectionId, filter: filter)
         }
     }
@@ -371,7 +371,7 @@ extension CollectionManagementView {
         let id = collection.id
 
         Task {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             await actor.toggleCollectionFilters(id: id, value: value)
         }
     }

@@ -49,7 +49,7 @@ extension LibraryView.ReadLaterView {
             await MainActor.run { [weak self] in
                 self?.disconnect()
             }
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             libraryNotificationToken = await actor
                 .observeLibraryIDs { values in
                     Task { @MainActor [weak self] in

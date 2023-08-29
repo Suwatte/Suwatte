@@ -122,7 +122,7 @@ extension ChapterList {
         let id = model.STTIDPair
         let chapters = Array(selections)
         Task {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             await actor.bulkMarkChapters(for: id, chapters: chapters)
         }
         deselectAll()
@@ -133,7 +133,7 @@ extension ChapterList {
         let id = model.STTIDPair
         let chapters = Array(selections)
         Task {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             await actor.bulkMarkChapters(for: id, chapters: chapters, markAsRead: false)
         }
         deselectAll()
@@ -158,7 +158,7 @@ extension ChapterList {
     func clearChapterData() {
         let ids = selections.map(\.id)
         Task {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             await actor.resetChapterData(for: ids)
         }
         deselectAll()
@@ -167,7 +167,7 @@ extension ChapterList {
     func didMark() { // This is called before the notification is delivered to for model `readChapters` property to update
         let identifier = model.identifier
         Task {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             let maxRead = await actor
                 .getContentMarker(for: identifier)?
                 .readChapters

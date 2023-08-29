@@ -89,7 +89,7 @@ struct ReaderTransitionView: View {
                     ActionButton(label: inLibrary ? "Unfollow" : "Follow", systemImage: inLibrary ? "folder.fill" : "folder.badge.plus") {
                         let cID = entry.ContentIdentifier
                         Task {
-                            let actor = await RealmActor()
+                            let actor = await RealmActor.shared()
                             let result = await actor.toggleLibraryState(for: cID)
                             Task { @MainActor in
                                 inLibrary = result

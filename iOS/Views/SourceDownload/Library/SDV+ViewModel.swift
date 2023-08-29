@@ -29,7 +29,7 @@ extension SourceDownloadView.ViewModel {
             }
         }
 
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
 
         token = await actor
             .observeDownloads(query: text.trimmingCharacters(in: .whitespacesAndNewlines),

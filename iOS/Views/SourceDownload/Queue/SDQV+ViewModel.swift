@@ -24,7 +24,7 @@ extension SourceDownloadQueueView.ViewModel {
             stop()
             isWorking = true
         }
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         token = await actor
             .observeDownloadsQueue { value in
                 Task { @MainActor [weak self] in

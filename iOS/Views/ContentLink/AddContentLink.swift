@@ -60,7 +60,7 @@ struct AddContentLink: View {
             Button("Link") {
                 guard let selection else { return }
                 Task {
-                    let actor = await RealmActor()
+                    let actor = await RealmActor.shared()
                     let result = await actor.linkContent(id, selection.entry, selection.sourceId)
                     if result {
                         ToastManager.shared.info("Linked Contents!")

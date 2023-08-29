@@ -84,7 +84,7 @@ extension StateManager {
         let highlight = context.content ?? caller
         let streamable = highlight.canStream
 
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
 
         let target = await actor.getStoredContent(ContentIdentifier(contentId: highlight.contentId, sourceId: source).id)?.freeze()
 
@@ -174,7 +174,7 @@ extension StateManager {
 
 extension StateManager {
     func observe() async {
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
 
         thumbnailToken = await actor.observeCustomThumbnails { value in
             Task { @MainActor in
@@ -217,7 +217,7 @@ extension StateManager {
                 throw errors.NamedError(name: "StateManager", message: "invalid reference")
             }
 
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             // Content
             if let content = reference.content {
                 let chapters = await actor.getChapters(content.sourceId,

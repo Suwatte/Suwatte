@@ -55,7 +55,7 @@ struct STTImageView: View {
         guard let url else { return }
 
         if identifier.sourceId == STTHelpers.OPDS_CONTENT_ID {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             let pub = await actor.getPublication(id: identifier.contentId)
             let value = pub?.client?.toClient().authHeader
             guard let value else {
@@ -72,7 +72,7 @@ struct STTImageView: View {
             }
         } else {
             if appState.titleHasCustomThumbs.contains(identifier.id) {
-                let actor = await RealmActor()
+                let actor = await RealmActor.shared()
                 let thumbnailURL = await actor.getCustomThumb(id: identifier.id)?.file?.filePath
 
                 if let thumbnailURL {

@@ -158,7 +158,7 @@ extension SDM {
             }
             .distinct()
 
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             await actor.updateDownloadIndex(for: unique)
         }
 

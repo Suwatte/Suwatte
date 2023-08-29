@@ -103,7 +103,7 @@ extension LibraryView.LibraryGrid {
                             _ in
                             let id = content.id
                             Task {
-                                let actor = await Suwatte.RealmActor()
+                                let actor = await Suwatte.RealmActor.shared()
                                 await actor.clearUpdates(id: id)
                             }
                         }
@@ -119,7 +119,7 @@ extension LibraryView.LibraryGrid {
                                 let contentId = content.id
                                 let collectionID = collection.id
                                 Task {
-                                    let actor = await Suwatte.RealmActor()
+                                    let actor = await Suwatte.RealmActor.shared()
                                     await actor.toggleCollection(for: contentId, withId: collectionID)
                                 }
                             }
@@ -133,7 +133,7 @@ extension LibraryView.LibraryGrid {
                             { _ in
                                 let cID = content.ContentIdentifier
                                 Task {
-                                    let actor = await Suwatte.RealmActor()
+                                    let actor = await Suwatte.RealmActor.shared()
                                     await actor.toggleLibraryState(for: cID)
                                 }
                             }

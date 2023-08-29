@@ -299,7 +299,7 @@ extension LibraryView {
                 }
             }
             .task {
-                let actor = await RealmActor()
+                let actor = await RealmActor.shared()
                 priviledgedRunners = await actor.getLibraryPageProviders()
             }
         }
@@ -339,7 +339,7 @@ extension LibraryView {
 extension LibraryView {
     func loadPageLinks() async {
         triggeredLoad = true
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         runners = await actor.getLibraryPageProviders()
         // Get Links
         let runnerIDs = runners.map(\.id)

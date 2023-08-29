@@ -41,7 +41,7 @@ extension Controller {
         guard canMark(chapter: chapter) else { return }
         // Update in Database
         Task {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             await actor.didCompleteChapter(chapter: chapter)
         }
 
@@ -62,7 +62,7 @@ extension Controller {
             .isInternalSource(chapter.sourceId)
         guard !isInternalSource else { return }
         Task {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             let progress = DSKCommon
                 .TrackProgressUpdate(chapter: chapter.number,
                                      volume: chapter.volume)
@@ -77,7 +77,7 @@ extension Controller {
 
         // Update Local DB Marker
         Task {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             await actor.updateContentProgress(chapter: page.chapter,
                                               lastPageRead: page.number,
                                               totalPageCount: page.chapterPageCount)

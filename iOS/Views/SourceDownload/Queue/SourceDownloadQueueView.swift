@@ -278,7 +278,7 @@ extension SDQV {
 
             return
         }
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         let target = await actor.getActiveDownload(id)
 
         guard let target else {

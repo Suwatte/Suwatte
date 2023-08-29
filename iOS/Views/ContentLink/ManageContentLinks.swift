@@ -54,7 +54,7 @@ struct ManageContentLinks: View {
     }
 
     func fetch() async {
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         let data = await actor.getLinkedContent(for: id)
         names = await actor.getAllRunnerNames()
         withAnimation {
@@ -63,7 +63,7 @@ struct ManageContentLinks: View {
     }
 
     func unlink(_ title: StoredContent) async {
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         await actor.unlinkContent(title.id, id)
         await fetch()
     }

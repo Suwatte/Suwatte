@@ -21,7 +21,7 @@ extension ViewModel {
     }
 
     func syncWithAllParties() async {
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         let identifier = STTIDPair
         // gets tracker matches in a [TrackerID:EntryID] format
         let matches: [String: String] = await actor.getTrackerLinks(for: identifier.id)

@@ -65,7 +65,7 @@ extension ProfileView.Sheets {
                 .navigationBarTitleDisplayMode(.inline)
                 .closeButton()
                 .task {
-                    let actor = await RealmActor()
+                    let actor = await RealmActor.shared()
                     let value = await actor.fetchAndPruneLibraryEntry(for: id)
                     Task { @MainActor in
                         entry = value
@@ -126,7 +126,7 @@ extension ProfileView.Sheets {
                         return
                     }
                     Task {
-                        let actor = await RealmActor()
+                        let actor = await RealmActor.shared()
                         await actor.clearCollections(for: entry.id)
                     }
                 } label: {
@@ -135,7 +135,7 @@ extension ProfileView.Sheets {
                 Button(role: .destructive) {
                     guard let ci = entry?.content?.ContentIdentifier else { return }
                     Task {
-                        let actor = await RealmActor()
+                        let actor = await RealmActor.shared()
                         await actor.toggleLibraryState(for: ci)
                     }
                     presentationMode.wrappedValue.dismiss()
@@ -160,7 +160,7 @@ extension ProfileView.Sheets {
             .onChange(of: flag) { newValue in
                 guard let entry else { return }
                 Task {
-                    let actor = await RealmActor()
+                    let actor = await RealmActor.shared()
                     await actor.setReadingFlag(for: entry.id, to: newValue)
                 }
             }
@@ -197,7 +197,7 @@ extension ProfileView.Sheets {
             let contentID = entry.id
             let collectionID = id
             Task {
-                let actor = await RealmActor()
+                let actor = await RealmActor.shared()
                 await actor.toggleCollection(for: contentID, withId: collectionID)
             }
         }

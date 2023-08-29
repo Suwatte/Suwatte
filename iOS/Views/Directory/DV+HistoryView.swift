@@ -27,7 +27,7 @@ extension DirectoryView {
                                 Button("Delete", role: .destructive) {
                                     let id = result.id
                                     Task {
-                                        let actor = await RealmActor()
+                                        let actor = await RealmActor.shared()
                                         await actor.deleteSearch(id)
                                     }
                                 }
@@ -72,7 +72,7 @@ extension DirectoryView.HistoryView {
     func handleClear() {
         let runnerId = model.runner.id
         Task {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             await actor.deleteSearchHistory(for: runnerId)
         }
     }

@@ -113,7 +113,7 @@ extension InstalledRunnersView {
             token?.invalidate()
             token = nil
 
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
 
             token = await actor
                 .observeInstalledRunners(onlyEnabled: false) { value in

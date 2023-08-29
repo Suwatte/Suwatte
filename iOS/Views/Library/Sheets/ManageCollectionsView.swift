@@ -59,7 +59,7 @@ extension MCV {
         arr.move(fromOffsets: source, toOffset: destination)
 
         Task {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             await actor.reorderCollections(arr)
         }
     }
@@ -68,7 +68,7 @@ extension MCV {
         let ids = idxs.compactMap { collections.getOrNil($0)?.id }
         ids.forEach { id in
             Task {
-                let actor = await RealmActor()
+                let actor = await RealmActor.shared()
                 await actor.deleteCollection(id: id)
             }
         }
@@ -104,7 +104,7 @@ extension MCV {
             let val = name
             name = ""
             Task {
-                let actor = await RealmActor()
+                let actor = await RealmActor.shared()
                 await actor.addCollection(withName: val)
             }
         }
@@ -139,7 +139,7 @@ extension MCV {
                     Button("Done") {
                         if !name.isEmpty {
                             Task {
-                                let actor = await RealmActor()
+                                let actor = await RealmActor.shared()
                                 await actor.renameCollection(collection.id, name)
                             }
                         }

@@ -212,7 +212,7 @@ extension ViewModel {
 
 extension ViewModel {
     func didLoadChapters() async {
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         let id = STTIDPair
         
         // Resolve Links, Sync & Update Action State

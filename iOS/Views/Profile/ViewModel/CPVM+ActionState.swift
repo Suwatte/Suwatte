@@ -27,7 +27,7 @@ extension ViewModel {
             return .init(state: .none)
         }
 
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
 
         let marker = await actor
             .getLatestLinkedMarker(for: identifier)

@@ -17,7 +17,7 @@ extension SearchView {
                         .swipeActions {
                             Button("Delete", role: .destructive) {
                                 Task {
-                                    let actor = await RealmActor()
+                                    let actor = await RealmActor.shared()
                                     await actor.deleteSearch(entry.id)
                                     await model.loadSearchHistory()
                                 }
@@ -59,7 +59,7 @@ extension SearchView.HistoryView {
 
 extension SearchView.ViewModel {
     func loadSearchHistory() async {
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         let data = await actor.getAllSearchHistory()
         await MainActor.run {
             withAnimation {

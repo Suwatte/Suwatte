@@ -60,7 +60,7 @@ extension H {
 extension H {
     func handle(message: Message) async throws -> String? {
         let id = try getRunnerID()
-        let actor = await RealmActor()
+        let actor = await RealmActor.shared()
         switch message.store {
         case .os: // ObjectStore
             switch message.action {

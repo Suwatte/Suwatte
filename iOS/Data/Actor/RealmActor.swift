@@ -16,6 +16,16 @@ actor RealmActor {
     init() async {
         realm = try! await Realm(actor: self)
     }
+    static private var sharedTask: Task<RealmActor, Never>?
+    
+    static func shared() async -> RealmActor  {
+        if let sharedTask {
+           return await sharedTask.value
+       }
+       let task = Task { return await RealmActor() }
+       self.sharedTask = task
+       return await task.value
+    }
 
     func close() {
         realm = nil

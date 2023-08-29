@@ -120,7 +120,7 @@ extension ContentSourcePageView.Cell {
     var ReadLaterButton: some View {
         Button {
             Task {
-                let actor = await RealmActor()
+                let actor = await RealmActor.shared()
                 await actor.toggleReadLater(source.id, item.contentId)
                 inReadLater.toggle()
             }

@@ -106,7 +106,7 @@ extension SearchView {
         func observe() async {
             guard libraryToken == nil, readLaterToken == nil else { return }
 
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             libraryToken = await actor.observeLibraryIDs { value in
                 self.library = value
             }

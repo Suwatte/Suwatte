@@ -88,7 +88,7 @@ extension TrackerManagementView {
         }
 
         func prepare() async {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             matches = await actor.getTrackerLinks(for: contentID)
 
             await loadTrackers(Array(matches.keys))
@@ -136,7 +136,7 @@ extension TrackerManagementView {
 
         func unlink(tracker: AnyContentTracker) async {
             let keys = tracker.links
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             await withTaskGroup(of: Void.self, body: { _ in
                 for key in keys {
                     await actor.removeLinkKey(for: contentID, key: key)
@@ -316,7 +316,7 @@ extension TrackerManagementView {
                     ToolbarItem {
                         Button("Add") {
                             Task {
-                                let actor = await RealmActor()
+                                let actor = await RealmActor.shared()
                                 await actor.setTrackerLink(for: contentId, values: selections)
                             }
                             presentationMode.wrappedValue.dismiss()

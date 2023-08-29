@@ -150,7 +150,7 @@ private extension Skeleton {
         }
 
         func handleLibraryAction() async {
-            let actor = await RealmActor()
+            let actor = await RealmActor.shared()
             Task { @MainActor in
                 STTHelpers.triggerHaptic(true)
             }
