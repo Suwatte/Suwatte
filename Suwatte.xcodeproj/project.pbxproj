@@ -96,7 +96,6 @@
 		DF2783642A79BFD00098BBA9 /* +CollectionFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783632A79BFD00098BBA9 /* +CollectionFilter.swift */; };
 		DF2783682A79F73B0098BBA9 /* Realm+CSChapterUpdates.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783672A79F73B0098BBA9 /* Realm+CSChapterUpdates.swift */; };
 		DF29D8A72A770E41006C67B6 /* LibraryGrid+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF29D8A62A770E41006C67B6 /* LibraryGrid+ViewModel.swift */; };
-		DF29D8AA2A771310006C67B6 /* LibraryGrid+RealmActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF29D8A92A771310006C67B6 /* LibraryGrid+RealmActor.swift */; };
 		DF2D842A2A1EFB4D006B17F0 /* STT+Nuke.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2D84292A1EFB4D006B17F0 /* STT+Nuke.swift */; };
 		DF2D842D2A212E72006B17F0 /* IceCream in Frameworks */ = {isa = PBXBuildFile; productRef = DF2D842C2A212E72006B17F0 /* IceCream */; };
 		DF2DA77327CF11C50046FE20 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = DF2DA77227CF11C50046FE20 /* Alamofire */; };
@@ -420,6 +419,7 @@
 		DFE1B1082A9C109700D300DB /* Migration+StrategySelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B1072A9C109700D300DB /* Migration+StrategySelectorView.swift */; };
 		DFE1B10A2A9C124400D300DB /* MigrationView+EntriesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B1092A9C124400D300DB /* MigrationView+EntriesList.swift */; };
 		DFE1B10C2A9D5C2600D300DB /* Migration+ManualDestinationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B10B2A9D5C2600D300DB /* Migration+ManualDestinationView.swift */; };
+		DFE1B10E2A9E98BD00D300DB /* Realm+LibraryGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B10D2A9E98BD00D300DB /* Realm+LibraryGrid.swift */; };
 		DFEDACB62A871981002E2B6A /* UIImageViewAligned.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEDACB52A871981002E2B6A /* UIImageViewAligned.swift */; };
 		DFF09B452A58BABC00C5CA5E /* JSCContentTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B442A58BABC00C5CA5E /* JSCContentTracker.swift */; };
 		DFF09B4A2A58C13900C5CA5E /* +WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B492A58C13900C5CA5E /* +WebView.swift */; };
@@ -553,7 +553,6 @@
 		DF2783632A79BFD00098BBA9 /* +CollectionFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+CollectionFilter.swift"; sourceTree = "<group>"; };
 		DF2783672A79F73B0098BBA9 /* Realm+CSChapterUpdates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+CSChapterUpdates.swift"; sourceTree = "<group>"; };
 		DF29D8A62A770E41006C67B6 /* LibraryGrid+ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LibraryGrid+ViewModel.swift"; sourceTree = "<group>"; };
-		DF29D8A92A771310006C67B6 /* LibraryGrid+RealmActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LibraryGrid+RealmActor.swift"; sourceTree = "<group>"; };
 		DF2D84292A1EFB4D006B17F0 /* STT+Nuke.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+Nuke.swift"; sourceTree = "<group>"; };
 		DF2D842E2A212EDB006B17F0 /* Suwatte (iOS).entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Suwatte (iOS).entitlements"; sourceTree = "<group>"; };
 		DF30193A28C045E30024AA8B /* Backup+Runner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Backup+Runner.swift"; sourceTree = "<group>"; };
@@ -865,6 +864,7 @@
 		DFE1B1072A9C109700D300DB /* Migration+StrategySelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Migration+StrategySelectorView.swift"; sourceTree = "<group>"; };
 		DFE1B1092A9C124400D300DB /* MigrationView+EntriesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MigrationView+EntriesList.swift"; sourceTree = "<group>"; };
 		DFE1B10B2A9D5C2600D300DB /* Migration+ManualDestinationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Migration+ManualDestinationView.swift"; sourceTree = "<group>"; };
+		DFE1B10D2A9E98BD00D300DB /* Realm+LibraryGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+LibraryGrid.swift"; sourceTree = "<group>"; };
 		DFEDACB52A871981002E2B6A /* UIImageViewAligned.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageViewAligned.swift; sourceTree = "<group>"; };
 		DFF09B442A58BABC00C5CA5E /* JSCContentTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSCContentTracker.swift; sourceTree = "<group>"; };
 		DFF09B492A58C13900C5CA5E /* +WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+WebView.swift"; sourceTree = "<group>"; };
@@ -1156,7 +1156,6 @@
 			isa = PBXGroup;
 			children = (
 				DF29D8A62A770E41006C67B6 /* LibraryGrid+ViewModel.swift */,
-				DF29D8A92A771310006C67B6 /* LibraryGrid+RealmActor.swift */,
 			);
 			path = Actors;
 			sourceTree = "<group>";
@@ -2146,6 +2145,7 @@
 				DF62B5AC2A95BFB200F907CD /* Realm+UpdateFeed.swift */,
 				DF62B5AE2A95CBB800F907CD /* Realm+ReadLaterView.swift */,
 				DF62B5B02A95D4D700F907CD /* Realm+SourceDownloadView.swift */,
+				DFE1B10D2A9E98BD00D300DB /* Realm+LibraryGrid.swift */,
 			);
 			path = Observers;
 			sourceTree = "<group>";
@@ -2842,6 +2842,7 @@
 				DF8D0BB52800EE48003E4C3E /* LazyView.swift in Sources */,
 				DF489C112A81C6F2006A21B9 /* IV+Protocol.swift in Sources */,
 				DF62B5B72A96E8E300F907CD /* ContentLanguageSettingsView.swift in Sources */,
+				DFE1B10E2A9E98BD00D300DB /* Realm+LibraryGrid.swift in Sources */,
 				DF72E492281322A000E40E52 /* ImageSearchView.swift in Sources */,
 				DFDBF9D62A7DB8C7006D49AD /* +VerticalSlider.swift in Sources */,
 				DFDBF9D42A7DB8BF006D49AD /* +HorizontalSlider.swift in Sources */,
@@ -2936,7 +2937,6 @@
 				DF01DEEA2A587A5D0025700B /* Engine+LibraryUpdate.swift in Sources */,
 				DF8D0B772800EE48003E4C3E /* Library+CollectionView.swift in Sources */,
 				DFDBF9E52A7DC29B006D49AD /* Paged+Representable.swift in Sources */,
-				DF29D8AA2A771310006C67B6 /* LibraryGrid+RealmActor.swift in Sources */,
 				DF15F590296621C30085DB1F /* SettingsView.swift in Sources */,
 				DF2783532A79A1FC0098BBA9 /* Realm+ContentLink.swift in Sources */,
 				DF27835E2A79B10A0098BBA9 /* +ChapterData.swift in Sources */,

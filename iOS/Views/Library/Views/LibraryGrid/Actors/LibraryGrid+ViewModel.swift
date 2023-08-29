@@ -32,21 +32,21 @@ extension LibraryView.LibraryGrid {
         @Published var navSelection: LibraryEntry?
         @Published var query = ""
         @Published var library: [LibraryEntry]?
-        private var actor: RealmActor?
-
+        private var token: NotificationToken?
         init(collection: LibraryCollection? = nil, readingFlag: LibraryFlag? = nil) {
             self.collection = collection
             self.readingFlag = readingFlag
-            Task {
-                self.actor = try? await RealmActor()
-            }
+        }
+        
+        deinit {
+            Logger.shared.debug("deallocated", "LibraryGridModel")
         }
 
         func disconnect() {
-            Task {
-                await actor?.stop()
-            }
+            token?.invalidate()
+            token = nil
         }
+        
 
         func didSetResult(_ lib: [LibraryEntry]) {
             withAnimation {
@@ -55,9 +55,18 @@ extension LibraryView.LibraryGrid {
         }
 
         func observe(downloadsOnly: Bool, key: KeyPath, order: SortOrder) {
+            let state: LibraryGridState = .init(collection: collection?.freeze(),
+                                                readingFlag: readingFlag,
+                                                query: query,
+                                                sort: key,
+                                                order: order,
+                                                showOnlyDownloadedTitles: downloadsOnly)
             Task {
-                await actor?.set(query, sort: key, order: order, downloads: downloadsOnly)
-                await actor?.observe(didSetResult(_:))
+                token = await RealmActor
+                    .shared()
+                    .observeLibrary(state: state) { [weak self] result in
+                        self?.didSetResult(result)
+                    }
             }
         }
 
