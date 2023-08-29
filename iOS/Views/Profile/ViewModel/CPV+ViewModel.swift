@@ -137,7 +137,11 @@ extension ViewModel {
                     self?.contentState = .loaded(true)
                 }
                 
-                await saveContent(content)
+                let nonIso = content
+                Task { [weak self] in
+                    await self?.saveContent(nonIso)
+                }
+                
                 await loadChapters(chapters)
                 
                 
@@ -166,8 +170,12 @@ extension ViewModel {
                     self?.chapters = prepared
                     self?.chapterState = .loaded(true)
                 }
-                await saveChapters(chapters)
-                await didLoadChapters()
+                Task.detached { [weak self] in
+                    await self?.saveChapters(chapters)
+                }
+                Task.detached { [weak self] in
+                    await self?.didLoadChapters()
+                }
             }
             // Load Chapters From Network
             if let chapters = pre {

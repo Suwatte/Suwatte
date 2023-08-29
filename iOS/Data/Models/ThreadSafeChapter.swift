@@ -28,6 +28,10 @@ struct ThreadSafeChapter: Hashable, Identifiable, STTChapterObject {
     let webUrl: String?
     let thumbnail: String?
     var providers: [DSKCommon.ChapterProvider]?
+    
+    static var placeholder: Self {
+        .init(id: "", sourceId: "", chapterId: "", contentId: "", index: 0, number: 0, volume: 0, title: "Placeholder Title", language: "en_US", date: .now, webUrl: nil, thumbnail: nil)
+    }
 
 
     func toStored() -> StoredChapter {

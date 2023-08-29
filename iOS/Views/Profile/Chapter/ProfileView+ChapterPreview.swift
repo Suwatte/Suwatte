@@ -32,8 +32,12 @@ extension ProfileView.Skeleton.ChapterView {
                         ErrorView(error: error, action: {
                             await model.loadChapters()
                         })
+                        .transition(.opacity)
                     default:
-                        ProgressView()
+                        LoadedView(Array(repeating: .placeholder, count: 6), redacted: true)
+                            .redacted(reason: .placeholder)
+                            .shimmering()
+                            .transition(.opacity)
                 }
             }
         }
@@ -49,7 +53,7 @@ extension ProfileView.Skeleton.ChapterView {
         }
 
         @ViewBuilder
-        func LoadedView(_ chapters: [ThreadSafeChapter]) -> some View {
+        func LoadedView(_ chapters: [ThreadSafeChapter], redacted: Bool = false) -> some View {
             VStack(alignment: .center, spacing: 10) {
                 if !model.linked.isEmpty {
                     ChapterSectionsView()
@@ -81,6 +85,7 @@ extension ProfileView.Skeleton.ChapterView {
                             }
                         }
                         .onTapGesture {
+                            guard !redacted else { return }
                             model.selection = chapter
                         }
                     }
@@ -100,6 +105,7 @@ extension ProfileView.Skeleton.ChapterView {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.bordered)
+                    .disabled(redacted)
                 }
 
                 Divider()
