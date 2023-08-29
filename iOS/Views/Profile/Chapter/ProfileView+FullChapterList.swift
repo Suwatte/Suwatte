@@ -21,7 +21,14 @@ struct ChapterList: View {
     
     @Environment(\.editMode) var editMode
     var body: some View {
-        ChaptersView(model.chapterListChapters)
+        
+        Group {
+            if groupByVolume {
+                GroupChapterList()
+            } else {
+                ChaptersView(model.chapterListChapters)
+            }
+        }
 
         .sheet(isPresented: $presentOptions, content: {
             FCS_Options()
@@ -133,7 +140,7 @@ extension ChapterList {
     }
 
     func ChaptersView(_ chapters: [ThreadSafeChapter]) -> some View {
-        List(chapters, selection: $selections) { chapter in
+        List(chapters, id: \.self, selection: $selections) { chapter in
            BuildTile(chapter)
         }
     }
