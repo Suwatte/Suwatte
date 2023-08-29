@@ -44,7 +44,7 @@ extension RealmActor {
 
                 guard let target else { return }
 
-                try! await realm.asyncWrite {
+                await operation {
                     if let earliest = collection.first {
                         target.dateFirstAdded = earliest.dateAdded
                     }

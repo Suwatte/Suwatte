@@ -52,7 +52,7 @@ extension RealmActor {
 
         guard let target else { return }
 
-        try! await realm.asyncWrite {
+        await operation {
             target.lastUpdated = date
             target.updateCount += count
             if !target.linkedHasUpdates, onLinked {

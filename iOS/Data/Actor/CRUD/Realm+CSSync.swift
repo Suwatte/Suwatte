@@ -21,7 +21,7 @@ extension RealmActor {
 
 extension RealmActor {
     func downSyncLibrary(entries: [DSKCommon.DownSyncedContent], sourceId: String) async {
-        try! await realm.asyncWrite {
+        await operation {
             for entry in entries {
                 let libraryTarget = realm.objects(LibraryEntry.self)
                     .where { $0.content.contentId == entry.id }

@@ -16,7 +16,7 @@ extension RealmActor {
         obj.key = key
         obj.value = value
         obj.prepareID()
-        try! await realm.asyncWrite {
+        await operation {
             realm.add(obj, update: .modified)
         }
     }
@@ -37,7 +37,7 @@ extension RealmActor {
             .where { $0.interactorId == id }
             .first
         if let target {
-            try! await realm.asyncWrite {
+            await operation {
                 target.isDeleted = true
             }
         }

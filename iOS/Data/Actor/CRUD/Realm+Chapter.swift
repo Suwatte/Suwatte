@@ -42,7 +42,7 @@ extension RealmActor {
             return
         }
         // Has no references, delete.
-        try! await realm.asyncWrite {
+        await operation {
             target.isDeleted = true
         }
     }
@@ -85,13 +85,13 @@ extension RealmActor {
                 .where { $0.sourceId == first.sourceId }
                 .where { !$0.chapterId.in(idList) }
 
-            try! await realm.asyncWrite {
+            await operation {
                 realm.delete(toBeDeleted)
             }
         }
 
         // Upsert Chapters List
-        try! await realm.asyncWrite {
+        await operation {
             realm.add(chapters, update: .modified)
         }
     }

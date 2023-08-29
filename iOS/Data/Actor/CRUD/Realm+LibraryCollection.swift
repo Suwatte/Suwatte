@@ -17,7 +17,7 @@ extension RealmActor {
     }
 
     func addCollection(withName name: String) async {
-        try! await realm.asyncWrite {
+        await operation {
             let collection = LibraryCollection()
             collection.name = name
             collection.order = realm.objects(LibraryCollection.self).count
@@ -30,7 +30,7 @@ extension RealmActor {
             .objects(LibraryCollection.self)
             .where { !$0.isDeleted }
 
-        try! await realm.asyncWrite {
+        await operation {
             for collection in collections {
                 collection.order = incoming.firstIndex(of: collection.id) ?? 999
             }
@@ -40,7 +40,7 @@ extension RealmActor {
     func renameCollection(_ collection: String, _ name: String) async {
         let collection = getLibraryCollection(for: collection)
         guard let collection else { return }
-        try! await realm.asyncWrite {
+        await operation {
             collection.name = name
         }
     }
@@ -53,7 +53,7 @@ extension RealmActor {
 
         guard let collection else { return }
 
-        try! await realm.asyncWrite {
+        await operation {
             collection.isDeleted = true
             collection.filter?.isDeleted = true
         }
@@ -65,7 +65,7 @@ extension RealmActor {
         let collection = getLibraryCollection(for: id)
         guard let collection else { return }
 
-        try! await realm.asyncWrite {
+        await operation {
             if value {
                 if collection.filter == nil {
                     collection.filter = LibraryCollectionFilter()
@@ -82,7 +82,7 @@ extension RealmActor {
     func saveCollectionFilters(for id: String, filter: LibraryCollectionFilter) async {
         let collection = getLibraryCollection(for: id)
         guard let collection else { return }
-        try! await realm.asyncWrite {
+        await operation {
             realm.add(filter, update: .modified)
             collection.filter = filter
         }

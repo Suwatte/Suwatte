@@ -43,7 +43,7 @@ extension RealmActor {
 
         guard let target = getReadLater(for: id) else { return }
 
-        try! await realm.asyncWrite {
+        await operation {
             target.isDeleted = true
         }
     }
@@ -60,7 +60,7 @@ extension RealmActor {
         let obj = ReadLater()
         obj.content = content
 
-        try! await realm.asyncWrite {
+        await operation {
             realm.add(obj, update: .modified)
         }
     }
@@ -77,7 +77,7 @@ extension RealmActor {
 
             let obj = ReadLater()
             obj.content = storedContent
-            try! await realm.asyncWrite {
+            await operation {
                 realm.add(storedContent, update: .modified)
                 obj.content = storedContent
                 realm.add(obj, update: .all)

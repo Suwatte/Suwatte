@@ -52,7 +52,7 @@ extension RealmActor {
         bookmark.asset = CreamAsset.create(object: bookmark,
                                            propName: "bookmark",
                                            data: data)
-        try! await realm.asyncWrite {
+        await operation {
             realm.add(bookmark, update: .all)
         }
         return true
@@ -68,7 +68,7 @@ extension RealmActor {
             return
         }
 
-        try! await realm.asyncWrite {
+        await operation {
             target.isDeleted = true
         }
     }

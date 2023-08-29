@@ -16,7 +16,7 @@ extension RealmActor {
             .first
 
         if let target {
-            try! await realm.asyncWrite {
+            await operation {
                 values.forEach { key, value in
                     let pctEncodedKey = key.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
                     target.data.updateValue(value, forKey: pctEncodedKey)
@@ -31,7 +31,7 @@ extension RealmActor {
             let pctEncodedKey = key.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
             obj.data.updateValue(value, forKey: pctEncodedKey)
         }
-        try! await realm.asyncWrite {
+        await operation {
             realm.add(obj, update: .modified)
         }
     }
@@ -47,7 +47,7 @@ extension RealmActor {
         }
         let pctEncodedKey = key.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
 
-        try! await realm.asyncWrite {
+        await operation {
             target.data.removeObject(for: pctEncodedKey) // Realm Error when using not encoded https://github.com/realm/realm-swift/issues/8290
         }
     }

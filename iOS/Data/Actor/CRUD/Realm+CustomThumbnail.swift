@@ -18,7 +18,7 @@ extension RealmActor {
             obj.id = id
             obj.file = CreamAsset.create(object: obj, propName: CustomThumbnail.FILE_KEY, url: result)
             obj.isDeleted = false
-            try! await realm.asyncWrite {
+            await operation {
                 realm.add(obj, update: .modified)
             }
             ToastManager.shared.info("Thumbnail Updated!")
@@ -33,7 +33,7 @@ extension RealmActor {
         guard let target = realm.objects(CustomThumbnail.self).where({ $0.id == id }).first else {
             return
         }
-        try! await realm.asyncWrite {
+        await operation {
             target.isDeleted = true
         }
     }

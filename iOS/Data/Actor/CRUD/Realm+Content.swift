@@ -57,7 +57,7 @@ extension RealmActor {
             .where { $0.id == id }
             .first
         guard let target else { return }
-        try! await realm.asyncWrite {
+        await operation {
             target.streamable = value
         }
     }

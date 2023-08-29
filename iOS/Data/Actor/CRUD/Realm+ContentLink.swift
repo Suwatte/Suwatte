@@ -32,7 +32,7 @@ extension RealmActor {
 
         // A or B already in a linkset
         if let target {
-            try! await realm.asyncWrite {
+            await operation {
                 target.ids.insert(one)
                 target.ids.insert(two)
             }
@@ -40,7 +40,7 @@ extension RealmActor {
             let obj = ContentLink()
             obj.ids.insert(one)
             obj.ids.insert(two)
-            try! await realm.asyncWrite {
+            await operation {
                 realm.add(obj, update: .modified)
             }
         }
@@ -56,7 +56,7 @@ extension RealmActor {
         guard let target else {
             return
         }
-        try! await realm.asyncWrite {
+        await operation {
             target.ids.remove(child)
         }
     }
@@ -92,7 +92,7 @@ extension RealmActor {
         }
 
         let obj = h.toStored(sourceId: sId)
-        try! await realm.asyncWrite {
+        await operation {
             realm.add(obj)
         }
     }

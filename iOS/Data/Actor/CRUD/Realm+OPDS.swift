@@ -32,7 +32,7 @@ extension RealmActor {
 
         obj.client = realm.objects(StoredOPDSServer.self).where { $0.id == clientID && $0.isDeleted == false }.first
 
-        try! await realm.asyncWrite {
+        await operation {
             realm.add(obj, update: .modified)
         }
     }
@@ -63,7 +63,7 @@ extension RealmActor {
         obj.host = entry.host
         obj.userName = entry.userName
 
-        try! await realm.asyncWrite {
+        await operation {
             realm.add(obj)
         }
 
@@ -81,7 +81,7 @@ extension RealmActor {
         keychain.synchronizable = true
         keychain.delete("OPDS_\(target.id)")
 
-        try! await realm.asyncWrite {
+        await operation {
             target.isDeleted = true
         }
     }
@@ -91,7 +91,7 @@ extension RealmActor {
             return
         }
 
-        try! await realm.asyncWrite {
+        await operation {
             target.alias = name
         }
     }

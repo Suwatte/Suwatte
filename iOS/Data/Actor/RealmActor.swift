@@ -21,11 +21,18 @@ actor RealmActor {
         realm = nil
     }
 
-    func operation(_ task: @escaping () async throws -> Void) async {
+    func operation(_ task: (() -> Void)) async {
         do {
-            try await task()
+            try await realm.asyncWrite {
+                task()
+            }
         } catch {
-            Logger.shared.error(error, "RealmActor")
+            if error is CancellationError {
+                Logger.shared.warn("Write Operation Cancelled")
+            } else {
+                Logger.shared.error(error, "RealmActor")
+            }
+            
         }
     }
 }

@@ -18,7 +18,7 @@ extension RealmActor {
             obj.data = data
             obj.displayText = display
             obj.sourceId = sourceId
-            try! await realm.asyncWrite {
+            await operation {
                 realm.add(obj, update: .modified)
             }
         } catch {
@@ -33,7 +33,7 @@ extension RealmActor {
             .first
 
         guard let target else { return }
-        try! await realm.asyncWrite {
+        await operation {
             target.isDeleted = true
         }
     }
@@ -67,7 +67,7 @@ extension RealmActor {
             .where { $0.sourceId == sourceId }
             .where { !$0.isDeleted }
 
-        try! await realm.asyncWrite {
+        await operation {
             for object in objects {
                 object.isDeleted = true
             }
@@ -79,7 +79,7 @@ extension RealmActor {
             .objects(UpdatedSearchHistory.self)
             .where { $0.sourceId == nil }
 
-        try! await realm.asyncWrite {
+        await operation {
             for object in objects {
                 object.isDeleted = true
             }

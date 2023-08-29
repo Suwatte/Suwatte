@@ -68,14 +68,14 @@ extension RealmActor {
         let hasValidReference = reference?.content != nil || reference?.archive != nil || reference?.opds != nil
         guard let reference, hasValidReference else { return }
 
-        try! await realm.asyncWrite {
+        await operation {
             realm.add(reference, update: .modified)
         }
 
         // Has Marker, Update
         if let target {
             let prevMarkerID = target.currentChapter?.id
-            try! await realm.asyncWrite {
+            await operation {
                 target.dateRead = .now
                 target.lastPageRead = nil
                 target.totalPageCount = nil
@@ -99,7 +99,7 @@ extension RealmActor {
         marker.readChapters.insert(chapter.chapterOrderKey)
         marker.currentChapter = reference
 
-        try! await realm.asyncWrite {
+        await operation {
             realm.add(marker, update: .modified)
         }
         await decrementUnreadCount(for: id)
@@ -139,14 +139,14 @@ extension RealmActor {
         // Ensure Chapter Reference has been generated, Save Reference
         guard let reference, reference.isValid else { return }
 
-        try! await realm.asyncWrite {
+        await operation {
             realm.add(reference, update: .modified)
         }
 
         // Target exists, save
         if let target {
             let prevMarkerID = target.currentChapter?.id
-            try! await realm.asyncWrite {
+            await operation {
                 target.dateRead = .now
                 target.lastPageRead = lastPageRead
                 target.totalPageCount = totalPageCount
@@ -170,7 +170,7 @@ extension RealmActor {
         marker.totalPageCount = totalPageCount
         marker.lastPageOffset = lastPageOffset
 
-        try! await realm.asyncWrite {
+        await operation {
             realm.add(marker, update: .modified)
         }
         await updateLastRead(forId: id)
@@ -187,7 +187,7 @@ extension RealmActor {
         guard let target else {
             return
         }
-        try! await realm.asyncWrite {
+        await operation {
             target.dateRead = nil // Simply Removes Date Value so keeps contents read marker.
         }
     }
@@ -210,7 +210,7 @@ extension RealmActor {
 
         // Has Marker, Update
         if let target {
-            try! await realm.asyncWrite {
+            await operation {
                 if markAsRead { // Insert Into Set
                     target.readChapters.insert(objectsIn: nums)
                 } else {
@@ -232,7 +232,7 @@ extension RealmActor {
         marker.readChapters.insert(objectsIn: nums)
         marker.dateRead = nil
 
-        try! await realm.asyncWrite {
+        await operation {
             realm.add(marker)
         }
     }
@@ -261,7 +261,7 @@ extension RealmActor {
 
         // Has Marker, Update
         if let target {
-            try! await realm.asyncWrite {
+            await operation {
                 if markAsRead { // Insert Into Set
                     target.readChapters.insert(objectsIn: chapters)
 
@@ -288,7 +288,7 @@ extension RealmActor {
         marker.readChapters.insert(objectsIn: chapters)
         marker.dateRead = nil
 
-        try! await realm.asyncWrite {
+        await operation {
             realm.add(marker)
         }
     }

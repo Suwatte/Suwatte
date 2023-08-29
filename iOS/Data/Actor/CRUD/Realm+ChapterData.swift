@@ -11,7 +11,7 @@ import RealmSwift
 extension RealmActor {
     func saveChapterData(data: DSKCommon.ChapterData, chapter: ThreadSafeChapter) async {
         let stored = data.toStored(withStoredChapter: chapter.toStored())
-        try! await realm.asyncWrite {
+        await operation {
             realm.add(stored, update: .modified)
         }
     }
@@ -28,7 +28,7 @@ extension RealmActor {
         let target = realm.objects(StoredChapterData.self).first(where: { $0._id == id })
 
         guard let target else { return }
-        try! await realm.asyncWrite {
+        await operation {
             realm.delete(target)
         }
     }
@@ -38,7 +38,7 @@ extension RealmActor {
             .objects(StoredChapterData.self)
             .where { $0._id.in(ids) }
 
-        try! await realm.asyncWrite {
+        await operation {
             realm.delete(targets)
         }
     }

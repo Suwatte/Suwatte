@@ -31,7 +31,7 @@ extension RealmActor {
         let target = getLibraryEntry(for: id)
         guard let target else { return }
 
-        try! await realm.asyncWrite {
+        await operation {
             target.flag = flag
         }
 
@@ -57,7 +57,7 @@ extension RealmActor {
             .objects(LibraryEntry.self)
             .where { $0.id.in(ids) }
 
-        try! await realm.asyncWrite {
+        await operation {
             for target in targets {
                 target.flag = flag
             }
@@ -148,7 +148,7 @@ extension RealmActor {
             return
         }
 
-        try! await realm.asyncWrite {
+        await operation {
             entry.collections.removeAll()
         }
     }
@@ -158,7 +158,7 @@ extension RealmActor {
             return
         }
 
-        try! await realm.asyncWrite {
+        await operation {
             if entry.collections.contains(cid) {
                 entry.collections.remove(at: entry.collections.firstIndex(of: cid)!)
             } else {
@@ -174,7 +174,7 @@ extension RealmActor {
 
         let ids = objects.compactMap { $0.content?.ContentIdentifier }
 
-        try! await realm.asyncWrite {
+        await operation {
             for object in objects {
                 object.isDeleted = true
             }
@@ -198,7 +198,7 @@ extension RealmActor {
     func moveToCollections(entries: Set<String>, cids: [String]) async {
         let objects = realm.objects(LibraryEntry.self)
             .where { $0.id.in(entries) }
-        try! await realm.asyncWrite {
+        await operation {
             objects.forEach {
                 $0.collections.removeAll()
                 $0.collections.append(objectsIn: cids)
@@ -211,7 +211,7 @@ extension RealmActor {
             return
         }
 
-        try! await realm.asyncWrite {
+        await operation {
             entry.updateCount = 0
             entry.lastOpened = .now
         }
@@ -222,7 +222,7 @@ extension RealmActor {
             return
         }
 
-        try! await realm.asyncWrite {
+        await operation {
             entry.lastRead = .now
         }
     }
@@ -267,7 +267,7 @@ extension RealmActor {
         guard let target else { return }
 
         let count = getUnreadCount(for: id)
-        try! await realm.asyncWrite {
+        await operation {
             target.unreadCount = count
         }
     }
@@ -279,7 +279,7 @@ extension RealmActor {
             .first
 
         guard let target else { return }
-        try! await realm.asyncWrite {
+        await operation {
             target.unreadCount -= 1
             target.lastRead = .now
         }
@@ -298,7 +298,7 @@ extension RealmActor {
         let currentCollections = target.collections
         let fixed = currentCollections.filter { collections.contains($0) }
 
-        try! await realm.asyncWrite {
+        await operation {
             target.collections.removeAll()
             target.collections.append(objectsIn: fixed)
         }

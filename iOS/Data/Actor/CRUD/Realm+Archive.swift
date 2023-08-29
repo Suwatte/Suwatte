@@ -21,7 +21,7 @@ extension RealmActor {
         obj.id = file.id
         obj.name = file.metaData?.title ?? file.name
         obj.relativePath = relativePath
-        try! await realm.asyncWrite {
+        await operation {
             realm.add(obj, update: .modified)
         }
     }

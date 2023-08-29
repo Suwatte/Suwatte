@@ -14,14 +14,14 @@ extension RealmActor {
         let obj = StoredRunnerList()
         obj.listName = data.listName
         obj.url = url.absoluteString
-        try! await realm.asyncWrite {
+        await operation {
             realm.add(obj, update: .modified)
         }
     }
 
     func deleteRunner(_ id: String) async {
         let results = realm.objects(StoredRunnerObject.self).where { $0.id == id }
-        try! await realm.asyncWrite {
+        await operation {
             results.forEach { runner in
                 runner.isDeleted = true
             }
@@ -42,7 +42,7 @@ extension RealmActor {
             .first ?? StoredRunnerObject()
 
         let info = runner.info
-        try! await realm.asyncWrite {
+        await operation {
             obj.name = info.name
             if obj.id.isEmpty {
                 obj.id = info.id
