@@ -34,7 +34,7 @@ extension ProfileView.Skeleton.ChapterView {
                         })
                         .transition(.opacity)
                     default:
-                        LoadedView(Array(repeating: .placeholder, count: 6), redacted: true)
+                        LoadedView(ThreadSafeChapter.placeholders(count: 6), redacted: true)
                             .redacted(reason: .placeholder)
                             .shimmering()
                             .transition(.opacity)

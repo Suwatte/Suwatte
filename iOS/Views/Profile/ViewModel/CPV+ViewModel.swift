@@ -218,7 +218,7 @@ extension ViewModel {
         // Resolve Links, Sync & Update Action State
         await handleSync()
         await setActionState()
-        await resolveLinks()
+//        await resolveLinks()
         await actor.updateUnreadCount(for: id)
         await actor.clearUpdates(id: id.id)
     }
