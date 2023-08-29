@@ -22,25 +22,22 @@ extension ProfileView.Sheets {
         @State private var entry: LibraryEntry?
 
         func containsCollection(withID id: String) -> Bool {
-            entry?.collections.contains(id) ?? false
+            selectedCollections.contains(id)
         }
 
         @Environment(\.presentationMode) var presentationMode
         var CollectionLabelName: String {
-            if let entry = entry {
-                let collectionNames = entry.collections.compactMap { id in
-                    collections.first(where: { $0.id == id })?.name
-                }.joined(separator: ", ")
-                return collectionNames
-            } else {
-                return "None"
-            }
+            guard let entry else { return "None" }
+            let collectionNames = entry.collections.compactMap { id in
+                collections.first(where: { $0.id == id })?.name
+            }.joined(separator: ", ")
+            return collectionNames
         }
 
         var body: some View {
             NavigationView {
                 Group {
-                    if let entry {
+                    if entry != nil {
                         List {
                             Section {
                                 // Collections
@@ -61,6 +58,7 @@ extension ProfileView.Sheets {
                 }
                 .animation(.default, value: collections)
                 .animation(.default, value: entry)
+                .animation(.default, value: selectedCollections)
                 .navigationTitle("Manage")
                 .navigationBarTitleDisplayMode(.inline)
                 .closeButton()
@@ -69,6 +67,7 @@ extension ProfileView.Sheets {
                     let value = await actor.fetchAndPruneLibraryEntry(for: id)
                     Task { @MainActor in
                         entry = value
+                        selectedCollections = Set(value?.collections.toArray() ?? [])
                         flag = value?.flag ?? .unknown
                     }
                 }
@@ -98,11 +97,7 @@ extension ProfileView.Sheets {
         @ViewBuilder
         var ANC: some View {
             if collections.count < 3 {
-                Section {
-                    AddCollectionView()
-                } header: {
-                    Text("Create")
-                }
+                AddCollectionView()
             }
         }
 
@@ -196,6 +191,13 @@ extension ProfileView.Sheets {
             }
             let contentID = entry.id
             let collectionID = id
+            Task { @MainActor in
+                if selectedCollections.contains(id) {
+                    selectedCollections.remove(id)
+                } else {
+                    selectedCollections.insert(id)
+                }
+            }
             Task {
                 let actor = await RealmActor.shared()
                 await actor.toggleCollection(for: contentID, withId: collectionID)

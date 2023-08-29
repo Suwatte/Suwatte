@@ -295,14 +295,13 @@ extension RealmActor {
             .where { !$0.isDeleted }
             .map(\.id)
 
-        let currentCollections = target.collections
+        let currentCollections = target.collections.toArray()
         let fixed = currentCollections.filter { collections.contains($0) }
-
         await operation {
             target.collections.removeAll()
             target.collections.append(objectsIn: fixed)
         }
-
+        
         return target
             .freeze()
     }
