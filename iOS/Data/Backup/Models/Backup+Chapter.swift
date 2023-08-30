@@ -13,7 +13,7 @@ extension StoredChapter: Codable {
         case id, sourceId, contentId, chapterId
         case index, sourceIndex, number, volume, title, language, date
         case openInSafari, openAsNovel, webUrl
-        case providers
+        case providers, thumbnail
     }
 
     convenience init(from decoder: Decoder) throws {
@@ -34,6 +34,7 @@ extension StoredChapter: Codable {
         date = try container.decode(Date.self, forKey: .date)
         webUrl = try container.decodeIfPresent(String.self, forKey: .webUrl)
         providers = try container.decodeIfPresent(List<ChapterProvider>.self, forKey: .providers) ?? List<ChapterProvider>() // Schema 6 Addition
+        thumbnail = try container.decodeIfPresent(String.self, forKey: .thumbnail)
     }
 
     func encode(to encoder: Encoder) throws {
@@ -52,6 +53,7 @@ extension StoredChapter: Codable {
         try container.encode(date, forKey: .date)
         try container.encode(webUrl, forKey: .webUrl)
         try container.encode(providers, forKey: .providers)
+        try container.encode(thumbnail, forKey: .thumbnail)
     }
 }
 

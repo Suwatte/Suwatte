@@ -16,7 +16,7 @@ extension DaisukeEngine {
         case FailedToParseRunnerIntents
         case FailedToParseRunnerConfig
         case InvalidRunnerEnvironment
-        case RunnerExecutableNotFound
+        case RunnerExecutableNotFound(id: String)
 
         case RunnerNotFoundOnContainedObject
         case UnableToFetchRunnerIDInContainedObject
@@ -36,7 +36,6 @@ extension DaisukeEngine {
         case NetworkErrorCloudflareProtected
         case LocalFilePathNotFound
         case Cloudflare
-//        case ConversionFailed()
 
         static func nativeError(for errorValue: JSValue) -> Error {
             if let error = errorValue.toObject() as? Error {
@@ -80,7 +79,7 @@ extension DaisukeEngine.Errors: LocalizedError {
         case .FailedToParseRunnerIntents: return .init("Failed to Parse Runner Intents")
         case .FailedToParseRunnerConfig: return .init("Failed to Parse Runner Config")
         case .InvalidRunnerEnvironment: return .init("The Requested Runner is not available in the evironment specified")
-        case .RunnerExecutableNotFound: return .init("Runner Script was not found")
+        case let .RunnerExecutableNotFound(id): return .init("Runner Script was not found\n[\(id)]")
         case let .NetworkError(message, _): return .init("[Network Error] \(message)")
         case .ValueStoreErrorValueNotFound: return .init("[Value Store] NF")
         case .ValueStoreErrorKeyIsNotString: return .init("[Value Store] Key is not String")

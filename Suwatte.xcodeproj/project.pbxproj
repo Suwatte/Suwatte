@@ -242,7 +242,6 @@
 		DF8D0B532800EE47003E4C3E /* Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A242800EE47003E4C3E /* Backup.swift */; };
 		DF8D0B552800EE47003E4C3E /* Backup+Chapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A262800EE47003E4C3E /* Backup+Chapter.swift */; };
 		DF8D0B562800EE47003E4C3E /* Backup+Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A272800EE47003E4C3E /* Backup+Content.swift */; };
-		DF8D0B572800EE47003E4C3E /* Backup+ReadLater.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A282800EE47003E4C3E /* Backup+ReadLater.swift */; };
 		DF8D0B6F2800EE48003E4C3E /* Loadable+View.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A512800EE47003E4C3E /* Loadable+View.swift */; };
 		DF8D0B712800EE48003E4C3E /* ManageCollectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A572800EE47003E4C3E /* ManageCollectionsView.swift */; };
 		DF8D0B722800EE48003E4C3E /* ReadLaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A592800EE47003E4C3E /* ReadLaterView.swift */; };
@@ -421,6 +420,7 @@
 		DFE1B10C2A9D5C2600D300DB /* Migration+ManualDestinationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B10B2A9D5C2600D300DB /* Migration+ManualDestinationView.swift */; };
 		DFE1B10E2A9E98BD00D300DB /* Realm+LibraryGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B10D2A9E98BD00D300DB /* Realm+LibraryGrid.swift */; };
 		DFE1B1102A9EAC2400D300DB /* STT+UIDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B10F2A9EAC2400D300DB /* STT+UIDevice.swift */; };
+		DFE1B1152A9FEFD600D300DB /* Backup+ChapterReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B1142A9FEFD600D300DB /* Backup+ChapterReference.swift */; };
 		DFEDACB62A871981002E2B6A /* UIImageViewAligned.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEDACB52A871981002E2B6A /* UIImageViewAligned.swift */; };
 		DFF09B452A58BABC00C5CA5E /* JSCContentTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B442A58BABC00C5CA5E /* JSCContentTracker.swift */; };
 		DFF09B4A2A58C13900C5CA5E /* +WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B492A58C13900C5CA5E /* +WebView.swift */; };
@@ -693,7 +693,6 @@
 		DF8D0A242800EE47003E4C3E /* Backup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Backup.swift; sourceTree = "<group>"; };
 		DF8D0A262800EE47003E4C3E /* Backup+Chapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Backup+Chapter.swift"; sourceTree = "<group>"; };
 		DF8D0A272800EE47003E4C3E /* Backup+Content.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Backup+Content.swift"; sourceTree = "<group>"; };
-		DF8D0A282800EE47003E4C3E /* Backup+ReadLater.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Backup+ReadLater.swift"; sourceTree = "<group>"; };
 		DF8D0A512800EE47003E4C3E /* Loadable+View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Loadable+View.swift"; sourceTree = "<group>"; };
 		DF8D0A572800EE47003E4C3E /* ManageCollectionsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManageCollectionsView.swift; sourceTree = "<group>"; };
 		DF8D0A592800EE47003E4C3E /* ReadLaterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReadLaterView.swift; sourceTree = "<group>"; };
@@ -867,6 +866,7 @@
 		DFE1B10B2A9D5C2600D300DB /* Migration+ManualDestinationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Migration+ManualDestinationView.swift"; sourceTree = "<group>"; };
 		DFE1B10D2A9E98BD00D300DB /* Realm+LibraryGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+LibraryGrid.swift"; sourceTree = "<group>"; };
 		DFE1B10F2A9EAC2400D300DB /* STT+UIDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+UIDevice.swift"; sourceTree = "<group>"; };
+		DFE1B1142A9FEFD600D300DB /* Backup+ChapterReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Backup+ChapterReference.swift"; sourceTree = "<group>"; };
 		DFEDACB52A871981002E2B6A /* UIImageViewAligned.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageViewAligned.swift; sourceTree = "<group>"; };
 		DFF09B442A58BABC00C5CA5E /* JSCContentTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSCContentTracker.swift; sourceTree = "<group>"; };
 		DFF09B492A58C13900C5CA5E /* +WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+WebView.swift"; sourceTree = "<group>"; };
@@ -1641,9 +1641,9 @@
 				DF8D0A242800EE47003E4C3E /* Backup.swift */,
 				DF8D0A262800EE47003E4C3E /* Backup+Chapter.swift */,
 				DF8D0A272800EE47003E4C3E /* Backup+Content.swift */,
-				DF8D0A282800EE47003E4C3E /* Backup+ReadLater.swift */,
 				DF30193A28C045E30024AA8B /* Backup+Runner.swift */,
 				DFF66BF12A548E4700860B41 /* Backup+ProgressMarker.swift */,
+				DFE1B1142A9FEFD600D300DB /* Backup+ChapterReference.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2975,7 +2975,6 @@
 				DF4817E62A6DF22700CB3A47 /* ComicInfo+Methods.swift in Sources */,
 				DF62B5AD2A95BFB200F907CD /* Realm+UpdateFeed.swift in Sources */,
 				DF11147C2A92E96300FA8A39 /* WebtoonController+Gesture.swift in Sources */,
-				DF8D0B572800EE47003E4C3E /* Backup+ReadLater.swift in Sources */,
 				DFB47F002881013A0040A1BD /* OPDSClient.swift in Sources */,
 				DF8D0B932800EE48003E4C3E /* BookmarksView.swift in Sources */,
 				DF8D0B792800EE48003E4C3E /* LibraryGrid+ProfileModifier.swift in Sources */,
@@ -2995,6 +2994,7 @@
 				DFD4D8722A7B541900C5AC13 /* SearchView+HIstoryView.swift in Sources */,
 				DF8D0B9A2800EE48003E4C3E /* ProfileView+BottomBar.swift in Sources */,
 				DF16F2B82A5F474F00D7AFBB /* DirectoryView.swift in Sources */,
+				DFE1B1152A9FEFD600D300DB /* Backup+ChapterReference.swift in Sources */,
 				DF16F2B32A5F31F000D7AFBB /* DSK+Directory.swift in Sources */,
 				DFF1044228A9A89700E2C3A4 /* STT+JSValue.swift in Sources */,
 				DF1114862A92F04800FA8A39 /* WebtoonController+Slider.swift in Sources */,

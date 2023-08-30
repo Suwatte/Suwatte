@@ -101,6 +101,7 @@ extension DaisukeEngine.Structs {
         var context: CodableDict?
         var acquisitionLink: String?
         var streamable: Bool?
+        var isNSFW: Bool?
 
         var id: String {
             contentId
@@ -128,7 +129,6 @@ extension DaisukeEngine.Structs {
         var status: ContentStatus?
         var creators: [String]?
         var summary: String?
-        var nsfw: Bool?
         var additionalTitles: [String]?
         var properties: [Property]?
         var contentType: ExternalContentType?
@@ -142,6 +142,7 @@ extension DaisukeEngine.Structs {
         var streamable: Bool?
         
         var isNovel: Bool?
+        var isNSFW: Bool?
 
         var covers: [String] {
             var covers = additionalCovers ?? []

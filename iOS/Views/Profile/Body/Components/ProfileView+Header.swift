@@ -21,7 +21,7 @@ extension Skeleton {
 
         var ImageWidth = 150.0
         var body: some View {
-            HStack {
+            HStack(spacing: 10) {
                 CoverImage
 
                 VStack(alignment: .leading, spacing: 10) {
@@ -36,14 +36,27 @@ extension Skeleton {
                     Text(model.source.name)
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                    if let ac = entry.nsfw, ac {
-                        Text("18+")
-                            .font(.caption)
-                            .fontWeight(.light)
-                            .padding(.all, 2)
-                            .background(Color.red.opacity(0.4))
-                            .cornerRadius(5)
+                    HStack(spacing: 3.5) {
+                        if entry.isNovel ?? false {
+                            Text("Novel")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .padding(.vertical, 2)
+                                .padding(.horizontal, 4)
+                                .background(Color.blue.opacity(0.4))
+                                .cornerRadius(3)
+                        }
+                        if entry.isNSFW ?? false {
+                            Text("NSFW")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .padding(.vertical, 2)
+                                .padding(.horizontal, 4)
+                                .background(Color.red.opacity(0.4))
+                                .cornerRadius(3)
+                        }
                     }
+                    
 
                     Spacer()
                     ActionButtons()
@@ -51,7 +64,7 @@ extension Skeleton {
                 .padding(.vertical, 5)
                 Spacer()
             }
-            .frame(height: ImageWidth * 1.5)
+            .frame(height: ImageWidth * 1.5, alignment: .topLeading)
             .padding(.horizontal)
         }
     }

@@ -217,7 +217,7 @@ extension MigrationController {
         }
 
         do {
-            try BackupManager.shared.save(name: "PreMigration")
+            try await BackupManager.shared.save(name: "PreMigration")
         } catch {
             Task { @MainActor in
                 ToastManager.shared.error(error)

@@ -78,15 +78,18 @@ class STTScheduler {
             return
         }
 
-        do {
-            try BackupManager.shared.save(name: "AUTO_BACKUP")
-            Logger.shared.log("[STTScheduler] [\(backup_task)] AutoBackup Created")
-            UserDefaults.standard.set(Date(), forKey: STTKeys.LastAutoBackup)
-            task.setTaskCompleted(success: true)
-        } catch {
-            Logger.shared.log("[STTScheduler] [\(backup_task)] Failed to create automatic backup \(error.localizedDescription)")
-            task.setTaskCompleted(success: false)
+        Task { [task] in
+            do {
+                try await BackupManager.shared.save(name: "AUTO_BACKUP")
+                Logger.shared.log("[STTScheduler] [\(backup_task)] AutoBackup Created")
+                UserDefaults.standard.set(Date(), forKey: STTKeys.LastAutoBackup)
+                task.setTaskCompleted(success: true)
+            } catch {
+                Logger.shared.log("[STTScheduler] [\(backup_task)] Failed to create automatic backup \(error.localizedDescription)")
+                task.setTaskCompleted(success: false)
+            }
         }
+        
     }
 
     func handleLibraryUpdate(task: BGProcessingTask) {

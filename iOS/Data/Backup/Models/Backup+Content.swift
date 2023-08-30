@@ -11,8 +11,9 @@ import RealmSwift
 extension StoredContent: Codable {
     enum CodingKeys: String, CodingKey {
         case id, sourceId, contentId, title, additionalTitles, additionalCovers, cover, creators, status
-        case originalLanuguage, summary, adultContent, webUrl, properties, recommendedReadingMode, contentType, trackerInfo
+        case originalLanuguage, summary, webUrl, properties, recommendedReadingMode, contentType, trackerInfo
         case acquisitionLink, streamable
+        case isNSFW, isNovel
     }
 
     convenience init(from decoder: Decoder) throws {
@@ -35,7 +36,6 @@ extension StoredContent: Codable {
         }
         status = try container.decodeIfPresent(ContentStatus.self, forKey: .status) ?? .UNKNOWN
         summary = try container.decodeIfPresent(String.self, forKey: .summary)
-        adultContent = try container.decodeIfPresent(Bool.self, forKey: .adultContent) ?? false
         webUrl = try container.decodeIfPresent(String.self, forKey: .webUrl)
         if let props = try container.decodeIfPresent(List<StoredProperty>.self, forKey: .properties) {
             properties.append(objectsIn: props)
@@ -48,6 +48,9 @@ extension StoredContent: Codable {
 
         acquisitionLink = try container.decodeIfPresent(String.self, forKey: .acquisitionLink)
         streamable = try container.decodeIfPresent(Bool.self, forKey: .streamable) ?? false
+        
+        isNSFW = try container.decodeIfPresent(Bool.self, forKey: .isNSFW) ?? false
+        isNovel = try container.decodeIfPresent(Bool.self, forKey: .isNovel) ?? false
     }
 
     func encode(to encoder: Encoder) throws {
@@ -63,7 +66,6 @@ extension StoredContent: Codable {
         try container.encode(creators, forKey: .creators)
         try container.encode(status, forKey: .status)
         try container.encode(summary, forKey: .summary)
-        try container.encode(adultContent, forKey: .adultContent)
         try container.encode(webUrl, forKey: .webUrl)
         try container.encode(properties, forKey: .properties)
         try container.encode(recommendedReadingMode, forKey: .recommendedReadingMode)
@@ -71,6 +73,8 @@ extension StoredContent: Codable {
         try container.encode(trackerInfo, forKey: .trackerInfo)
         try container.encode(streamable, forKey: .streamable)
         try container.encode(acquisitionLink, forKey: .acquisitionLink)
+        try container.encode(isNSFW, forKey: .isNSFW)
+        try container.encode(isNovel, forKey: .isNovel)
     }
 }
 

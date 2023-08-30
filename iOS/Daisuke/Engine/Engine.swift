@@ -95,7 +95,7 @@ extension DaisukeEngine {
             if standardLocation.exists {
                 return try await startRunner(standardLocation)
             } else {
-                throw DSK.Errors.RunnerExecutableNotFound
+                throw DSK.Errors.RunnerExecutableNotFound(id: id)
             }
         }
 

@@ -61,7 +61,7 @@ struct BackupsView: View {
                 Menu {
                     Button {
                         Task {
-                            saveNewBackup()
+                            await saveNewBackup()
                         }
                     } label: {
                         Label("Create Backup", systemImage: "plus")
@@ -100,16 +100,9 @@ struct BackupsView: View {
 }
 
 extension BackupsView {
-    func saveNewBackup() {
-        ToastManager.shared.loading.toggle()
-        defer {
-            ToastManager.shared.loading.toggle()
-        }
-        do {
-            try BackupManager.shared.save()
-        } catch {
-            Logger.shared.error("[Backup] [Save New] \(error.localizedDescription)")
-            ToastManager.shared.error(error)
+    func saveNewBackup() async {
+        ToastManager.shared.block {
+            try await BackupManager.shared.save()
         }
     }
 
@@ -123,9 +116,6 @@ extension BackupsView {
 
         restoreTask = Task {
             do {
-                if await !SDM.shared.isLocked() {
-                    throw DSK.Errors.NamedError(name: "ERROR", message: "Active Downloads")
-                }
                 try await manager.restore(from: url)
                 await MainActor.run(body: {
                     ToastManager.shared.loading = false
