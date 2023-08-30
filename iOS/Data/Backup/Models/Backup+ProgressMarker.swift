@@ -37,7 +37,7 @@ extension ChapterReference: Codable {
 
 extension ProgressMarker: Codable {
     enum Keys: String, CodingKey {
-        case id, readChapters, dateRead, lastPageRead, totalPageCount, lastPageOffset, currentChapter
+        case id, readChapters, dateRead, lastPageRead, totalPageCount, lastPageOffsetPCT, currentChapter
     }
 
     convenience init(from decoder: Decoder) throws {
@@ -49,7 +49,7 @@ extension ProgressMarker: Codable {
         dateRead = try container.decodeIfPresent(Date.self, forKey: .dateRead)
         lastPageRead = try container.decodeIfPresent(Int.self, forKey: .lastPageRead)
         totalPageCount = try container.decodeIfPresent(Int.self, forKey: .totalPageCount)
-        lastPageOffset = try container.decodeIfPresent(Double.self, forKey: .lastPageOffset)
+        lastPageOffsetPCT = try container.decodeIfPresent(Double.self, forKey: .lastPageOffsetPCT)
         currentChapter = try container.decodeIfPresent(ChapterReference.self, forKey: .currentChapter)
     }
 
@@ -61,7 +61,7 @@ extension ProgressMarker: Codable {
         try container.encode(dateRead, forKey: .dateRead)
         try container.encode(lastPageRead, forKey: .lastPageRead)
         try container.encode(totalPageCount, forKey: .totalPageCount)
-        try container.encode(lastPageOffset, forKey: .lastPageOffset)
+        try container.encode(lastPageOffsetPCT, forKey: .lastPageOffsetPCT)
         try container.encode(currentChapter, forKey: .currentChapter)
     }
 }

@@ -48,7 +48,7 @@ extension Controller {
         let currentPath = pathAtCenterOfScreen
         guard let currentPath else { return }
 
-        guard currentPath.item != lastIndexPath.item, let page = dataSource.itemIdentifier(for: currentPath) else { return }
+        guard let page = dataSource.itemIdentifier(for: currentPath) else { return }
         didChangePage(page, indexPath: currentPath)
         lastIndexPath = currentPath
 

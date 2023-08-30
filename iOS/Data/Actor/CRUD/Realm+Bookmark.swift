@@ -47,7 +47,7 @@ extension RealmActor {
         let bookmark = UpdatedBookmark()
         bookmark.chapter = reference
         bookmark.page = page
-        bookmark.verticalOffset = offset
+        bookmark.pageOffsetPCT = offset
         bookmark.dateAdded = .now
         bookmark.asset = CreamAsset.create(object: bookmark,
                                            propName: "bookmark",

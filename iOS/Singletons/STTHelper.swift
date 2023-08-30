@@ -60,7 +60,7 @@ class STTHelpers {
             return (0, nil)
         }
 
-        return (lastPageRead - 1, marker.lastPageOffset.flatMap(CGFloat.init))
+        return (lastPageRead - 1, marker.lastPageOffsetPCT.flatMap(CGFloat.init))
     }
 
     static func optionalCompare<T: Comparable>(firstVal: T?, secondVal: T?) -> Bool {

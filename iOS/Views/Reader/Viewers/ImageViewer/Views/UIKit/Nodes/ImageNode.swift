@@ -165,10 +165,12 @@ extension ImageNode {
         let Y = manager.collectionViewLayout.layoutAttributesForItem(at: indexPath)?.frame.origin.y
         guard let Y else { return }
         layout.isInsertingCellsToTop = Y < manager.contentOffset.y
-        guard let savedOffset, savedOffset <= imageNode.frame.height else {
+        guard let savedOffset else {
             return
         }
-        manager.contentOffset.y += savedOffset
+        
+        let requestedOffset = imageNode.frame.height * savedOffset
+        manager.contentOffset.y += requestedOffset
         self.savedOffset = nil
         delegate?.clearResumption()
     }

@@ -82,7 +82,7 @@ extension Controller {
             await actor.updateContentProgress(chapter: page.chapter,
                                               lastPageRead: page.number,
                                               totalPageCount: page.chapterPageCount,
-                                              lastPageOffset: offset)
+                                              lastPageOffsetPCT: offset)
         }
 
         // Update on Source
@@ -105,8 +105,10 @@ extension Controller {
 
     func calculateCurrentOffset(of path: IndexPath) -> Double? {
         guard let frame = frameOfItem(at: path) else { return nil }
-        let pageOffset = frame.minY
+        let size = frame.size
+        let pageTop = frame.minY
         let currentOffset = offset
-        return Double(currentOffset - pageOffset)
+        let pageOffset =  Double(currentOffset - pageTop) / size.height
+        return pageOffset
     }
 }

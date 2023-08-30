@@ -15,11 +15,13 @@ extension Controller: UICollectionViewDelegate {
         }
         let maxY = collectionNode.view.contentSize.height
         collectionNode.scrollToItem(at: preRotationPath, at: .top, animated: false)
+        let frame = frameOfItem(at: preRotationPath)?.size
+        guard let frame else { return .init(x: 0, y: offset) }
+        let additionalOffset = frame.height * preRotationOffset
         var current = collectionNode.contentOffset
-        current.y = min(maxY, max(offset + preRotationOffset, 0))
+        current.y = min(maxY, max(offset + additionalOffset, 0))
         self.preRotationPath = nil
         self.preRotationOffset = nil
-
         return current
     }
 
@@ -29,11 +31,8 @@ extension Controller: UICollectionViewDelegate {
         defer {
             collectionNode.collectionViewLayout.invalidateLayout()
         }
-        preRotationPath = pathAtCenterOfScreen
-        preRotationOffset = 0
-        guard let preRotationPath else { return }
-        let minY = frameOfItem(at: preRotationPath)?.minY
-        guard let minY else { return }
-        preRotationOffset = offset - minY
+        guard let path = pathAtCenterOfScreen else { return }
+        preRotationPath = path
+        preRotationOffset = calculateCurrentOffset(of: path).flatMap(CGFloat.init)
     }
 }

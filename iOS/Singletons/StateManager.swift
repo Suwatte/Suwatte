@@ -231,7 +231,7 @@ extension StateManager {
                                                chapter: target,
                                                chapters: chapters,
                                                requestedPage: bookmark.page - 1, // Bookmark uses page rather than index
-                                               requestedOffset: bookmark.verticalOffset,
+                                               requestedOffset: bookmark.pageOffsetPCT,
                                                readingMode: content.recommendedReadingMode,
                                                dismissAction: nil)
                 await MainActor.run { [weak self] in
@@ -245,7 +245,7 @@ extension StateManager {
                                                chapter: chapter,
                                                chapters: [chapter],
                                                requestedPage: bookmark.page - 1,
-                                               requestedOffset: bookmark.verticalOffset,
+                                               requestedOffset: bookmark.pageOffsetPCT,
                                                readingMode: nil,
                                                dismissAction: nil)
                 await MainActor.run { [weak self] in
@@ -264,7 +264,7 @@ extension StateManager {
                                                chapter: chapter,
                                                chapters: [chapter],
                                                requestedPage: bookmark.page - 1,
-                                               requestedOffset: bookmark.verticalOffset,
+                                               requestedOffset: bookmark.pageOffsetPCT,
                                                readingMode: nil,
                                                dismissAction: nil)
                 await MainActor.run { [weak self] in

@@ -79,7 +79,7 @@ extension RealmActor {
                 target.dateRead = .now
                 target.lastPageRead = nil
                 target.totalPageCount = nil
-                target.lastPageOffset = nil
+                target.lastPageOffsetPCT = nil
                 target.readChapters.insert(chapter.chapterOrderKey)
                 target.currentChapter = reference
             }
@@ -105,7 +105,7 @@ extension RealmActor {
         await decrementUnreadCount(for: id)
     }
 
-    func updateContentProgress(chapter: ThreadSafeChapter, lastPageRead: Int, totalPageCount: Int, lastPageOffset: Double? = nil) async {
+    func updateContentProgress(chapter: ThreadSafeChapter, lastPageRead: Int, totalPageCount: Int, lastPageOffsetPCT: Double? = nil) async {
         let id = chapter.STTContentIdentifier
         // Get Object
         let target = realm
@@ -150,7 +150,7 @@ extension RealmActor {
                 target.dateRead = .now
                 target.lastPageRead = lastPageRead
                 target.totalPageCount = totalPageCount
-                target.lastPageOffset = lastPageOffset
+                target.lastPageOffsetPCT = lastPageOffsetPCT
                 target.currentChapter = reference
             }
 
@@ -168,7 +168,7 @@ extension RealmActor {
         marker.currentChapter = reference
         marker.lastPageRead = lastPageRead
         marker.totalPageCount = totalPageCount
-        marker.lastPageOffset = lastPageOffset
+        marker.lastPageOffsetPCT = lastPageOffsetPCT
 
         await operation {
             realm.add(marker, update: .modified)
