@@ -87,6 +87,11 @@ extension ProfileView.Skeleton.ChapterView {
                         }
                         .onTapGesture {
                             guard !redacted else { return }
+                            
+                            if model.content.isNovel ?? false {
+                                StateManager.shared.alert(title: "Novel Reading", message: "Novel reading is currently not supported until version 6.1")
+                                return
+                            }
                             model.selection = chapter
                         }
                     }
