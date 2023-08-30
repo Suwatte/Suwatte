@@ -13,7 +13,7 @@ actor RealmActor {
     // An implicitly-unwrapped optional is used here to let us pass `self` to
     // `Realm(actor:)` within `init`
     var realm: Realm!
-    init() async {
+    private init() async {
         realm = try! await Realm(actor: self)
     }
     static private var sharedTask: Task<RealmActor, Never>?

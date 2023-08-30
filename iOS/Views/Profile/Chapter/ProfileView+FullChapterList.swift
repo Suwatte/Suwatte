@@ -29,7 +29,7 @@ struct ChapterList: View {
                 ChaptersView(model.chapterListChapters)
             }
         }
-
+        .animation(.default, value: model.bookmarkedChapters)
         .sheet(isPresented: $presentOptions, content: {
             FCS_Options()
         })
@@ -100,7 +100,7 @@ extension ChapterList {
         let newChapter = isChapterNew(chapter)
         let progress = chapterProgress(chapter)
         let download = getDownload(chapter)
-        
+        let isBookmarked = model.bookmarkedChapters.contains(chapter.id)
         Button {
             if editMode?.wrappedValue != .active {
                 selection = chapter
@@ -113,19 +113,23 @@ extension ChapterList {
                             download: download,
                             isLinked: chapter.sourceId != model.source.id,
                             showLanguageFlag: model.source.ablityNotDisabled(\.disableLanguageFlags),
-                            showDate: model.source.ablityNotDisabled(\.disableChapterDates))
+                            showDate: model.source.ablityNotDisabled(\.disableChapterDates),
+                            isBookmarked: isBookmarked)
         }
         .buttonStyle(.plain)
 
         .background(
             Color.clear
                 .contextMenu {
-                    MenuView(for: chapter, completed: completed, status: download)
+                    MenuView(for: chapter,
+                             completed: completed,
+                             status: download,
+                             isBookmarked: isBookmarked)
                 }
-                .id(genId(chapter.id, completed, download))
+                .id(genId(chapter.id, completed, download, isBookmarked))
         )
     }
-    func genId(_ id: String, _ completed: Bool, _ status: DownloadStatus?) -> String {
+    func genId(_ id: String, _ completed: Bool, _ status: DownloadStatus?, _ isBookmarked: Bool) -> String {
         var id = id
 
         id += completed.description
@@ -134,6 +138,10 @@ extension ChapterList {
             id += status.rawValue.description
         } else {
             id += "none"
+        }
+        
+        if isBookmarked {
+            id += "::bookmarked"
         }
 
         return id

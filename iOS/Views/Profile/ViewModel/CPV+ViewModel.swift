@@ -54,12 +54,14 @@ extension ProfileView {
         internal var progressToken: NotificationToken?
         internal var libraryTrackingToken: NotificationToken?
         internal var readLaterToken: NotificationToken?
+        internal var chapterBookmarkToken: NotificationToken?
         
         internal var linkedContentIDs = [String]()
         @Published var downloads: [String: DownloadStatus] = [:]
         @Published var readChapters = Set<Double>()
         @Published var savedForLater: Bool = false
         @Published var inLibrary: Bool = false
+        @Published var bookmarkedChapters = Set<String>()
         
         init(_ entry: DaisukeEngine.Structs.Highlight, _ source: AnyContentSource) {
             self.entry = entry
@@ -70,7 +72,6 @@ extension ProfileView {
         @Published var selection: ThreadSafeChapter?
 
         deinit {
-            disconnect()
             removeNotifier()
             Logger.shared.debug("deallocated", "ProfileViewModel")
             

@@ -9,14 +9,15 @@ import FlagKit
 import RealmSwift
 import SwiftUI
 struct ChapterListTile: View {
-    var chapter: ThreadSafeChapter
-    var isCompleted: Bool
-    var isNewChapter: Bool
-    var progress: Double?
-    var download: DownloadStatus?
-    var isLinked: Bool
-    var showLanguageFlag: Bool
-    var showDate: Bool
+    let chapter: ThreadSafeChapter
+    let isCompleted: Bool
+    let isNewChapter: Bool
+    let progress: Double?
+    let download: DownloadStatus?
+    let isLinked: Bool
+    let showLanguageFlag: Bool
+    let showDate: Bool
+    let isBookmarked: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -29,6 +30,7 @@ struct ChapterListTile: View {
                     DownloadIndicatorView
                     IsNewView
                     LinkedIndicator
+                    BookmarkedIndicator
                 }
                 .font(.body.weight(.light))
             }
@@ -76,6 +78,17 @@ struct ChapterListTile: View {
     var LinkedIndicator: some View {
         if isLinked {
             Image(systemName: "link")
+                .resizable()
+                .scaledToFit()
+                .foregroundColor(.primary.opacity(0.5))
+                .frame(width: 15, height: 15, alignment: .center)
+        }
+    }
+    
+    @ViewBuilder
+    var BookmarkedIndicator: some View {
+        if isBookmarked {
+            Image(systemName: "bookmark.fill")
                 .resizable()
                 .scaledToFit()
                 .foregroundColor(.primary.opacity(0.5))

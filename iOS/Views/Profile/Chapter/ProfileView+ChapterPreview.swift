@@ -79,7 +79,8 @@ extension ProfileView.Skeleton.ChapterView {
                                             download: download,
                                             isLinked: chapter.sourceId != model.source.id,
                                             showLanguageFlag: model.source.ablityNotDisabled(\.disableLanguageFlags),
-                                            showDate: model.source.ablityNotDisabled(\.disableChapterDates))
+                                            showDate: model.source.ablityNotDisabled(\.disableChapterDates),
+                                            isBookmarked: model.bookmarkedChapters.contains(chapter.id))
                             if chapter.chapterId != preview(chapters).last?.chapterId {
                                 Divider().padding(.top, 6)
                             }
@@ -93,6 +94,7 @@ extension ProfileView.Skeleton.ChapterView {
                 .padding()
                 .background(Color.fadedPrimary)
                 .cornerRadius(12)
+                .animation(.default, value: model.bookmarkedChapters)
 
                 VStack(alignment: .center) {
                     NavigationLink {

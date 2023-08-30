@@ -135,10 +135,12 @@ extension SDQV {
             ChapterListTile(chapter: download.chapter!.toThreadSafe(),
                             isCompleted: false,
                             isNewChapter: false,
+                            progress: nil,
                             download: download.status,
                             isLinked: false,
                             showLanguageFlag: false,
-                            showDate: false)
+                            showDate: false,
+                            isBookmarked: false)
                 .modifier(CellActions(id: download.id, status: download.status))
         }
     }
@@ -378,9 +380,12 @@ extension SDQV {
             ChapterListTile(chapter: chapter.toThreadSafe(),
                             isCompleted: false,
                             isNewChapter: false,
+                            progress: nil,
+                            download: nil,
                             isLinked: false,
                             showLanguageFlag: false,
-                            showDate: false)
+                            showDate: false,
+                            isBookmarked: false)
         }
     }
 }

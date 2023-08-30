@@ -25,9 +25,12 @@ struct IVChapterListView: View {
                         ChapterListTile(chapter: activeChapter,
                                         isCompleted: false,
                                         isNewChapter: false,
+                                        progress: nil,
+                                        download: nil,
                                         isLinked: false,
                                         showLanguageFlag: showLangFlag,
-                                        showDate: showDate)
+                                        showDate: showDate,
+                                        isBookmarked: false)
                     } header: {
                         Text("Currently Reading")
                     }
@@ -38,9 +41,12 @@ struct IVChapterListView: View {
                                 ChapterListTile(chapter: chapter,
                                                 isCompleted: false,
                                                 isNewChapter: false,
+                                                progress: nil,
+                                                download: nil,
                                                 isLinked: false,
                                                 showLanguageFlag: showLangFlag,
-                                                showDate: showDate)
+                                                showDate: showDate,
+                                                isBookmarked: false)
                             }
                             .listRowBackground(activeChapter.id == chapter.id ? Color.accentColor.opacity(0.05) : nil)
                         }

@@ -83,3 +83,24 @@ extension RealmActor {
         return await observeCollection(collection: collection, didUpdate)
     }
 }
+
+
+extension RealmActor {
+    func observeChapterBookmarks(_ callback: @escaping Callback<Set<String>>) async -> NotificationToken {
+
+        let collection = realm
+            .objects(ChapterBookmark.self)
+            .where { !$0.isDeleted }
+            .where { $0.chapter != nil }
+
+        func didUpdate(_ results: Results<ChapterBookmark>) {
+            let data = Set(results.map(\.id))
+            
+            Task { @MainActor in
+                callback(data)
+            }
+        }
+
+        return await observeCollection(collection: collection, didUpdate)
+    }
+}

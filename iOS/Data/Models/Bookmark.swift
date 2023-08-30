@@ -15,6 +15,14 @@ final class UpdatedBookmark: Object, CKRecordConvertible, CKRecordRecoverable, I
     @Persisted var isDeleted: Bool = false
     @Persisted var page: Int
     @Persisted var verticalOffset: Double?
-    @Persisted var dateAdded: Date
+    @Persisted var dateAdded: Date = .now
     @Persisted var asset: CreamAsset?
+}
+
+
+final class ChapterBookmark: Object, CKRecordConvertible, CKRecordRecoverable, Identifiable {
+    @Persisted(primaryKey: true) var id: String = UUID().uuidString
+    @Persisted var chapter: ChapterReference?
+    @Persisted var dateAdded: Date = .now
+    @Persisted var isDeleted: Bool = false
 }

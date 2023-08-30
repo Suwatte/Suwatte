@@ -11,7 +11,7 @@ import SwiftUI
 extension ChapterList {
     
     @ViewBuilder
-    func MenuView(for chapter: ThreadSafeChapter, completed: Bool, status: DownloadStatus?) -> some View {
+    func MenuView(for chapter: ThreadSafeChapter, completed: Bool, status: DownloadStatus?, isBookmarked: Bool) -> some View {
         Button {
             let id = model.STTIDPair
             Task {
@@ -24,6 +24,29 @@ extension ChapterList {
         } label: {
             Label(completed ? "Mark as Unread" : "Mark as Read", systemImage: completed ? "eye.slash.circle" : "eye.circle")
         }
+        
+        if isBookmarked {
+            Button(role: .destructive) {
+                Task {
+                    let actor = await RealmActor.shared()
+                    _ = await actor.toggleBookmark(for: chapter)
+                }
+            } label: {
+                Label("Remove Bookmark", systemImage: "bookmark.slash")
+            }
+        } else {
+            Button {
+                Task {
+                    let actor = await RealmActor.shared()
+                    _ = await actor.toggleBookmark(for: chapter)
+                }
+            } label: {
+                Label("Bookmark Chapter", systemImage: "bookmark")
+            }
+        }
+        
+        
+        Divider()
         Menu("Mark Below") {
             Button { mark(chapter: chapter, read: true, above: false) } label: {
                 Label("As Read", systemImage: "eye.circle")

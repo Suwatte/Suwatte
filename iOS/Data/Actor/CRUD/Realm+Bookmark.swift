@@ -73,3 +73,34 @@ extension RealmActor {
         }
     }
 }
+
+
+extension RealmActor {
+    func toggleBookmark(for chapter: ThreadSafeChapter) async -> Bool {
+        
+        let target = realm
+            .objects(ChapterBookmark.self)
+            .where { !$0.isDeleted && $0.id == chapter.id }
+            .first
+        
+        if let target {
+            await operation {
+                target.isDeleted = true
+            }
+            await validateChapterReference(id: target.id)
+            return false
+        }
+        
+        let reference = chapter.toStored().generateReference()
+        
+        let object = ChapterBookmark()
+        object.id = chapter.id
+        object.chapter = reference
+        
+        await operation {
+            realm.add(object, update: .modified)
+        }
+        
+        return true
+    }
+}

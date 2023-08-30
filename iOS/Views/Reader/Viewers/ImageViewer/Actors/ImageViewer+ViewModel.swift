@@ -5,6 +5,7 @@
 //  Created by Mantton on 2023-08-04.
 //
 
+import RealmSwift
 import Foundation
 import SwiftUI
 
@@ -207,5 +208,19 @@ extension IVViewModel {
         Task { @MainActor in
             control.comments.toggle()
         }
+    }
+}
+
+
+extension IVViewModel {
+    func isChapterBookmarked(id: String) -> Bool {
+        let realm = try! Realm()
+        
+        let target = realm
+            .objects(ChapterBookmark.self)
+            .where { $0.id == id && !$0.isDeleted }
+            .first
+        
+        return target != nil
     }
 }

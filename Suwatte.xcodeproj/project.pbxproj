@@ -420,6 +420,7 @@
 		DFE1B10A2A9C124400D300DB /* MigrationView+EntriesList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B1092A9C124400D300DB /* MigrationView+EntriesList.swift */; };
 		DFE1B10C2A9D5C2600D300DB /* Migration+ManualDestinationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B10B2A9D5C2600D300DB /* Migration+ManualDestinationView.swift */; };
 		DFE1B10E2A9E98BD00D300DB /* Realm+LibraryGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B10D2A9E98BD00D300DB /* Realm+LibraryGrid.swift */; };
+		DFE1B1102A9EAC2400D300DB /* STT+UIDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B10F2A9EAC2400D300DB /* STT+UIDevice.swift */; };
 		DFEDACB62A871981002E2B6A /* UIImageViewAligned.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEDACB52A871981002E2B6A /* UIImageViewAligned.swift */; };
 		DFF09B452A58BABC00C5CA5E /* JSCContentTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B442A58BABC00C5CA5E /* JSCContentTracker.swift */; };
 		DFF09B4A2A58C13900C5CA5E /* +WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B492A58C13900C5CA5E /* +WebView.swift */; };
@@ -865,6 +866,7 @@
 		DFE1B1092A9C124400D300DB /* MigrationView+EntriesList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MigrationView+EntriesList.swift"; sourceTree = "<group>"; };
 		DFE1B10B2A9D5C2600D300DB /* Migration+ManualDestinationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Migration+ManualDestinationView.swift"; sourceTree = "<group>"; };
 		DFE1B10D2A9E98BD00D300DB /* Realm+LibraryGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+LibraryGrid.swift"; sourceTree = "<group>"; };
+		DFE1B10F2A9EAC2400D300DB /* STT+UIDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+UIDevice.swift"; sourceTree = "<group>"; };
 		DFEDACB52A871981002E2B6A /* UIImageViewAligned.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageViewAligned.swift; sourceTree = "<group>"; };
 		DFF09B442A58BABC00C5CA5E /* JSCContentTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSCContentTracker.swift; sourceTree = "<group>"; };
 		DFF09B492A58C13900C5CA5E /* +WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+WebView.swift"; sourceTree = "<group>"; };
@@ -1595,6 +1597,7 @@
 				DFADB58C29D7F19900CBE22F /* STT+URLRequest.swift */,
 				DF2D84292A1EFB4D006B17F0 /* STT+Nuke.swift */,
 				DF489C312A8462EA006A21B9 /* STT+UICollectionView.swift */,
+				DFE1B10F2A9EAC2400D300DB /* STT+UIDevice.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -2722,6 +2725,7 @@
 				DF8D0B362800EE47003E4C3E /* STT+CGFloat.swift in Sources */,
 				DF27834B2A79A0E80098BBA9 /* Realm+LibraryCollection.swift in Sources */,
 				DF2783592A79A5780098BBA9 /* Realm+CSSync.swift in Sources */,
+				DFE1B1102A9EAC2400D300DB /* STT+UIDevice.swift in Sources */,
 				DFE1B10A2A9C124400D300DB /* MigrationView+EntriesList.swift in Sources */,
 				DF9BFDF52A42754B005D0B63 /* DV+ViewModel.swift in Sources */,
 				DFDBF98E2A7C6BCB006D49AD /* WK+Store.swift in Sources */,

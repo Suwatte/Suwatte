@@ -9,13 +9,6 @@ import Foundation
 
 fileprivate typealias ViewModel = ProfileView.ViewModel
 extension ViewModel {
-    func disconnect() {
-        currentMarkerToken?.invalidate()
-        progressToken?.invalidate()
-        downloadTrackingToken?.invalidate()
-        libraryTrackingToken?.invalidate()
-        readLaterToken?.invalidate()
-    }
 
     func setupObservers() async {
         let actor = await RealmActor.shared()
@@ -47,6 +40,14 @@ extension ViewModel {
             .observeDownloadStatus(for: id) { [weak self] value in
                 self?.downloads = value
             }
+        
+        // Observe Chapter Bookmarks
+        chapterBookmarkToken = await actor
+            .observeChapterBookmarks({ value in
+                Task { @MainActor [weak self] in
+                    self?.bookmarkedChapters = value
+                }
+            })
     }
 
     func removeNotifier() {
@@ -64,5 +65,8 @@ extension ViewModel {
 
         readLaterToken?.invalidate()
         readLaterToken = nil
+        
+        chapterBookmarkToken?.invalidate()
+        chapterBookmarkToken = nil
     }
 }
