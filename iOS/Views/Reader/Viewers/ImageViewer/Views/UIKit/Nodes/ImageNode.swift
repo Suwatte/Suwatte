@@ -59,10 +59,11 @@ class ImageNode: ASCellNode {
         progressNode.backgroundColor = .clear
         imageNode.backgroundColor = .clear
         imageNode.isUserInteractionEnabled = false
+        imageNode.shouldAnimateSizeChanges = false
         imageNode.alpha = 0
 
         imageNode.isLayerBacked = true
-        imageNode.backgroundColor = .randomColor()
+        imageNode.backgroundColor = .clear
         // ;-;
         imageNode.shadowRadius = .zero
         imageNode.shadowOffset = .zero
