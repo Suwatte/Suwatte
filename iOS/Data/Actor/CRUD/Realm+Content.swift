@@ -27,9 +27,8 @@ extension RealmActor {
 
     func getStoredContent(_ id: String) -> StoredContent? {
         return realm
-            .objects(StoredContent.self)
-            .where { $0.id == id }
-            .first
+            .object(ofType: StoredContent.self,
+                    forPrimaryKey: id)
     }
 
     func getStoredContents(ids: [String]) -> Results<StoredContent> {
@@ -52,10 +51,7 @@ extension RealmActor {
     }
 
     func updateStreamable(id: String, _ value: Bool) async {
-        let target = realm
-            .objects(StoredContent.self)
-            .where { $0.id == id }
-            .first
+        let target = getStoredContent(id)
         guard let target else { return }
         await operation {
             target.streamable = value

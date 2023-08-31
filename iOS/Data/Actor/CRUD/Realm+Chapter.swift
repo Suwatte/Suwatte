@@ -59,9 +59,7 @@ extension RealmActor {
     }
 
     func getStoredChapter(_ id: String) -> StoredChapter? {
-        return realm.objects(StoredChapter.self)
-            .where { $0.id == id }
-            .first
+        return realm.object(ofType: StoredChapter.self, forPrimaryKey: id)
     }
 
     func getLatestStoredChapter(_ sourceId: String, _ contentId: String) -> StoredChapter? {

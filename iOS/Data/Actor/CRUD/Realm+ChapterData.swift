@@ -17,11 +17,7 @@ extension RealmActor {
     }
 
     func getChapterData(forId id: String) -> StoredChapterData? {
-        return realm
-            .objects(StoredChapterData.self)
-            .where { $0._id == id }
-            .first?
-            .freeze()
+        return realm.object(ofType: StoredChapterData.self, forPrimaryKey: id)
     }
 
     func resetChapterData(forId id: String) async {
