@@ -39,7 +39,7 @@ final class StoredContent: Object, Identifiable, CKRecordConvertible, CKRecordRe
 
     @Persisted var creators: List<String>
     @Persisted var status: ContentStatus = .UNKNOWN
-    @Persisted var recommendedReadingMode: ReadingMode = .PAGED_MANGA
+    @Persisted var recommendedPanelMode: ReadingMode = .PAGED_COMIC
     @Persisted var contentType: ExternalContentType = .unknown
     @Persisted var trackerInfo: Map<String, String>
 

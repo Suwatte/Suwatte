@@ -232,7 +232,7 @@ extension StateManager {
                                                chapters: chapters,
                                                requestedPage: bookmark.page - 1, // Bookmark uses page rather than index
                                                requestedOffset: bookmark.pageOffsetPCT,
-                                               readingMode: content.recommendedReadingMode,
+                                               readingMode: content.recommendedPanelMode,
                                                dismissAction: nil)
                 await MainActor.run { [weak self] in
                     self?.openReader(state: state)

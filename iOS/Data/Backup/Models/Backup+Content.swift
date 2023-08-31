@@ -11,7 +11,7 @@ import RealmSwift
 extension StoredContent: Codable {
     enum CodingKeys: String, CodingKey {
         case id, sourceId, contentId, title, additionalTitles, additionalCovers, cover, creators, status
-        case originalLanuguage, summary, webUrl, properties, recommendedReadingMode, contentType, trackerInfo
+        case originalLanuguage, summary, webUrl, properties, recommendedPanelMode, contentType, trackerInfo
         case acquisitionLink, streamable
         case isNSFW, isNovel
     }
@@ -40,7 +40,7 @@ extension StoredContent: Codable {
         if let props = try container.decodeIfPresent(List<StoredProperty>.self, forKey: .properties) {
             properties.append(objectsIn: props)
         }
-        recommendedReadingMode = try container.decodeIfPresent(ReadingMode.self, forKey: .recommendedReadingMode) ?? .PAGED_MANGA
+        recommendedPanelMode = try container.decodeIfPresent(ReadingMode.self, forKey: .recommendedPanelMode) ?? .PAGED_COMIC
         contentType = try container.decodeIfPresent(ExternalContentType.self, forKey: .contentType) ?? .unknown
         if let info = try container.decodeIfPresent(Map<String, String>.self, forKey: .trackerInfo) {
             trackerInfo = info
@@ -68,7 +68,7 @@ extension StoredContent: Codable {
         try container.encode(summary, forKey: .summary)
         try container.encode(webUrl, forKey: .webUrl)
         try container.encode(properties, forKey: .properties)
-        try container.encode(recommendedReadingMode, forKey: .recommendedReadingMode)
+        try container.encode(recommendedPanelMode, forKey: .recommendedPanelMode)
         try container.encode(contentType, forKey: .contentType)
         try container.encode(trackerInfo, forKey: .trackerInfo)
         try container.encode(streamable, forKey: .streamable)
