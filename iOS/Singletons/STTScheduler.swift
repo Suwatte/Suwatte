@@ -68,9 +68,9 @@ class STTScheduler {
         let lastChecked = UserDefaults.standard.object(forKey: STTKeys.LastAutoBackup) as? Date ?? .distantPast
         let next = Calendar.current.date(
             byAdding: .day,
-            value: 7,
+            value: 14,
             to: lastChecked
-        )! // 7 Days Interval
+        )! // 14 Days Interval
 
         if Date.now < next {
             task.setTaskCompleted(success: true)

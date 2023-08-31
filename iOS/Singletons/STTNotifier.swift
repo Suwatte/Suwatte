@@ -16,7 +16,7 @@ class STTNotifier {
         // Content
         let content = UNMutableNotificationContent()
         content.title = "New Chapters Available"
-        content.body = "\(count) New Update(s) in your library"
+        content.body = "\(count) New Update\(count == 1 ? "" : "s") in your library"
         let currentBadgeCount = UIApplication.shared.applicationIconBadgeNumber
         content.badge = (count + currentBadgeCount) as NSNumber
         content.sound = UNNotificationSound.default
