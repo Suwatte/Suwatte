@@ -38,7 +38,7 @@ struct Runner: Codable, Hashable, Identifiable {
     var website: String?
     var supportedLanguages: [String]?
     var path: String
-    var nsfw: Bool?
+    let rating: CatalogRating?
     var environment: RunnerEnvironment = .unknown
     var thumbnail: String?
     var minSupportedAppVersion: String?

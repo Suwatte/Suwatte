@@ -133,7 +133,7 @@ extension RunnerListsView {
         var list: RunnerList
         var listURL: String
         @Binding var text: String
-        @AppStorage(STTKeys.HideNSFWRunners) var hideNSFW = true
+        @Preference(\.globalHideNSFW) var hideNSFW
         @State var presentFilterSheet = false
         @State var selectedLanguages = Set<String>()
         @State var langSearchText = ""
@@ -256,6 +256,10 @@ extension RunnerListsView {
             if !selectedLanguages.isEmpty {
                 base = base.filter { !Set($0.supportedLanguages ?? []).intersection(selectedLanguages).isEmpty }
             }
+            
+            if hideNSFW {
+                base = base.filter { $0.rating != .NSFW }
+            }
 
             return base.sorted(by: \.name, descending: false)
         }
@@ -367,10 +371,19 @@ extension RunnerListsView.RunnerListInfo {
                             .fontWeight(.thin)
                     }
                     HStack {
-                        if runner.nsfw ?? false {
-                            Text("18+")
-                                .padding(.all, 2)
+                        if runner.rating == .NSFW {
+                            Text("NSFW")
+                                .padding(.vertical, 2)
+                                .padding(.horizontal, 4)
                                 .background(Color.red.opacity(0.3))
+                                .cornerRadius(5)
+                        }
+                        
+                        if runner.rating == .MIXED {
+                            Text("Suggestive")
+                                .padding(.vertical, 2)
+                                .padding(.horizontal, 4)
+                                .background(Color.yellow.opacity(0.3))
                                 .cornerRadius(5)
                         }
                     }

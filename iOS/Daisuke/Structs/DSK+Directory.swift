@@ -41,7 +41,7 @@ extension DSKCommon {
 
         struct Sort: JSCObject {
             let options: [Option]
-            let defaultKey: String
+            let defaultKey: String?
             let canChangeOrder: Bool
         }
     }
