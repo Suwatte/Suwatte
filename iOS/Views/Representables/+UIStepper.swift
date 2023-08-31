@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct StepperView: UIViewRepresentable {
+struct UIStepperView: UIViewRepresentable {
     @Binding var value: Double
     var step: Double = 1
     var range: ClosedRange<Int> = 1 ... 10

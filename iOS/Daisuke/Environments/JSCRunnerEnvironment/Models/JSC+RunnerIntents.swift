@@ -18,7 +18,7 @@ struct RunnerIntents: Parsable {
     let libraryPageLinkProvider: Bool
     let browsePageLinkProvider: Bool
 
-    // JSCCS
+    // CS
     let chapterEventHandler: Bool
     let contentEventHandler: Bool
     let chapterSyncHandler: Bool
@@ -33,8 +33,11 @@ struct RunnerIntents: Parsable {
     // Context Menu
     let isContextMenuProvider: Bool
 
-    // JSC CT
+    // CT
     let advancedTracker: Bool
+    
+    // Setup
+    let requiresSetup: Bool
 
     enum AuthenticationMethod: String, Codable {
         case webview, basic, oauth, unknown

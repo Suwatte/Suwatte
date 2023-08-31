@@ -14,7 +14,7 @@ struct TrackerConfig: Parsable {
 protocol ContentTracker: DSKRunner {
     var config: TrackerConfig? { get }
 
-    func getEntryForm(id: String) async throws -> DSKCommon.TrackForm
+    func getEntryForm(id: String) async throws -> DSKCommon.Form
 
     func didSubmitEntryForm(id: String, form: DSKCommon.CodableDict) async throws
 

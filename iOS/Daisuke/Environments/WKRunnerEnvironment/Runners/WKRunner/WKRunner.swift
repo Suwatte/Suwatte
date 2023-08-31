@@ -17,7 +17,7 @@ public class WKRunner: DSKRunner {
     init(webview: WKWebView) async throws {
         wv = webview
         info = .init(id: "default", name: "", version: 1.0, website: "", rating: .SAFE, minSupportedAppVersion: nil, thumbnail: nil, supportedLanguages: nil)
-        intents = .init(preferenceMenuBuilder: false, authenticatable: false, authenticationMethod: .unknown, basicAuthLabel: nil, imageRequestHandler: false, pageLinkResolver: false, libraryPageLinkProvider: false, browsePageLinkProvider: false, chapterEventHandler: false, contentEventHandler: false, chapterSyncHandler: false, librarySyncHandler: false, hasTagsView: false, pageReadHandler: false, providesReaderContext: false, canRefreshHighlight: false, isContextMenuProvider: false, advancedTracker: false)
+        intents = .init(preferenceMenuBuilder: false, authenticatable: false, authenticationMethod: .unknown, basicAuthLabel: nil, imageRequestHandler: false, pageLinkResolver: false, libraryPageLinkProvider: false, browsePageLinkProvider: false, chapterEventHandler: false, contentEventHandler: false, chapterSyncHandler: false, librarySyncHandler: false, hasTagsView: false, pageReadHandler: false, providesReaderContext: false, canRefreshHighlight: false, isContextMenuProvider: false, advancedTracker: false, requiresSetup: false)
 
         let infoScript = """
             return JSON.stringify(RunnerObject.info)

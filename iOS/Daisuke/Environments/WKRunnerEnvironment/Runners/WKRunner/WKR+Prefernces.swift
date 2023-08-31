@@ -8,7 +8,7 @@
 import Foundation
 
 extension WKRunner: DSKPreferenceDelegate {
-    func updateSourcePreference(key: String, value: Any) async {
+    func updatePreference(key: String, value: Any) async {
         do {
             let arguments: [String: Any] = ["key": key, "value": value]
             try await eval("await updateSourcePreferences(key, value)", arguments)
@@ -18,7 +18,18 @@ extension WKRunner: DSKPreferenceDelegate {
         }
     }
 
-    func buildPreferenceMenu() async throws -> [DSKCommon.PreferenceGroup] {
-        try await eval(script("let data = await generatePreferenceMenu();"))
+    func getPreferenceMenu() async throws -> DSKCommon.Form {
+        try await eval(script("let data = await RunnerObject.getPreferenceMenu();"))
+    }
+}
+
+
+extension WKRunner: DSKSetupDelegate {
+    func getSetupMenu() async throws -> DSKCommon.Form {
+        try await eval(script("let data = await RunnerObject.getSetupMenu();"))
+    }
+    
+    func validateSetupForm(form: DSKCommon.CodableDict) async throws {
+        try await eval("await RunnerObject.validateSetupForm(form);", ["form": form.asDictionary()])
     }
 }

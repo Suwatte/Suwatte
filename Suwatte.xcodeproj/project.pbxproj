@@ -26,6 +26,8 @@
 		DF020A702A90249A00BC5562 /* WebtoonController+Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A6F2A90249A00BC5562 /* WebtoonController+Delegate.swift */; };
 		DF020A722A9024D100BC5562 /* Webtoon+Representable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A712A9024D100BC5562 /* Webtoon+Representable.swift */; };
 		DF03F73A2846FAB800602E59 /* ReaderButtonModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF03F7392846FAB800602E59 /* ReaderButtonModifier.swift */; };
+		DF0B02882AA05B76004345BA /* DSK+Form.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0B02872AA05B76004345BA /* DSK+Form.swift */; };
+		DF0B028B2AA06063004345BA /* DSKFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0B028A2AA06063004345BA /* DSKFormView.swift */; };
 		DF0D96062824892C00E592D9 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = DF0D96052824892C00E592D9 /* Realm */; };
 		DF11146F2A917B5E00FA8A39 /* WebtoonController+Setup.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF11146E2A917B5E00FA8A39 /* WebtoonController+Setup.swift */; };
 		DF1114742A91A01300FA8A39 /* ImageNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1114732A91A01300FA8A39 /* ImageNode.swift */; };
@@ -183,7 +185,6 @@
 		DF67EB9928E7B07700076FF5 /* AddContentLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB9828E7B07700076FF5 /* AddContentLink.swift */; };
 		DF67EB9B28E7B08400076FF5 /* ManageContentLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EB9A28E7B08400076FF5 /* ManageContentLinks.swift */; };
 		DF67EBA428EA34DE00076FF5 /* DSK+Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF67EBA328EA34DE00076FF5 /* DSK+Common.swift */; };
-		DF68249C28A5CF6D00AB30A1 /* DSK+Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */; };
 		DF68249F28A5D2CF00AB30A1 /* ContentSourceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68249E28A5D2CF00AB30A1 /* ContentSourceView.swift */; };
 		DF6824A728A5FD8000AB30A1 /* DSKAuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6824A628A5FD8000AB30A1 /* DSKAuthView.swift */; };
 		DF6883822A608028009B5642 /* PV+Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6883812A608028009B5642 /* PV+Source.swift */; };
@@ -428,11 +429,9 @@
 		DFF09B502A58C33800C5CA5E /* +ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B4F2A58C33800C5CA5E /* +ViewModel.swift */; };
 		DFF09B522A58CE8600C5CA5E /* +UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B512A58CE8600C5CA5E /* +UserView.swift */; };
 		DFF09B542A58D2FD00C5CA5E /* +LibrarySyncView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B532A58D2FD00C5CA5E /* +LibrarySyncView.swift */; };
-		DFF09B582A58D54100C5CA5E /* DSKPreferenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B572A58D54100C5CA5E /* DSKPreferenceView.swift */; };
 		DFF09B5A2A58ED0500C5CA5E /* ContentTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B592A58ED0500C5CA5E /* ContentTrackerView.swift */; };
 		DFF09B5C2A59FE7600C5CA5E /* DSK+Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B5B2A59FE7600C5CA5E /* DSK+Tracker.swift */; };
 		DFF09B5E2A5A04C600C5CA5E /* JSCCT+Implementation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B5D2A5A04C600C5CA5E /* JSCCT+Implementation.swift */; };
-		DFF09B612A5A0BAC00C5CA5E /* TrackerEntryFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B602A5A0BAC00C5CA5E /* TrackerEntryFormView.swift */; };
 		DFF09B642A5A847500C5CA5E /* +UIStepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B632A5A847500C5CA5E /* +UIStepper.swift */; };
 		DFF09B662A5A8EF500C5CA5E /* +UITextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B652A5A8EF500C5CA5E /* +UITextField.swift */; };
 		DFF1043E28A9963D00E2C3A4 /* AnyCodable in Frameworks */ = {isa = PBXBuildFile; productRef = DFF1043D28A9963D00E2C3A4 /* AnyCodable */; };
@@ -487,6 +486,8 @@
 		DF020A6F2A90249A00BC5562 /* WebtoonController+Delegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebtoonController+Delegate.swift"; sourceTree = "<group>"; };
 		DF020A712A9024D100BC5562 /* Webtoon+Representable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Webtoon+Representable.swift"; sourceTree = "<group>"; };
 		DF03F7392846FAB800602E59 /* ReaderButtonModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderButtonModifier.swift; sourceTree = "<group>"; };
+		DF0B02872AA05B76004345BA /* DSK+Form.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Form.swift"; sourceTree = "<group>"; };
+		DF0B028A2AA06063004345BA /* DSKFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DSKFormView.swift; sourceTree = "<group>"; };
 		DF11146E2A917B5E00FA8A39 /* WebtoonController+Setup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebtoonController+Setup.swift"; sourceTree = "<group>"; };
 		DF1114732A91A01300FA8A39 /* ImageNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageNode.swift; sourceTree = "<group>"; };
 		DF1114752A92E86600FA8A39 /* WebtoonController+Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebtoonController+Navigation.swift"; sourceTree = "<group>"; };
@@ -637,7 +638,6 @@
 		DF67EB9828E7B07700076FF5 /* AddContentLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddContentLink.swift; sourceTree = "<group>"; };
 		DF67EB9A28E7B08400076FF5 /* ManageContentLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageContentLinks.swift; sourceTree = "<group>"; };
 		DF67EBA328EA34DE00076FF5 /* DSK+Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Common.swift"; sourceTree = "<group>"; };
-		DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Preferences.swift"; sourceTree = "<group>"; };
 		DF68249E28A5D2CF00AB30A1 /* ContentSourceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentSourceView.swift; sourceTree = "<group>"; };
 		DF6824A628A5FD8000AB30A1 /* DSKAuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DSKAuthView.swift; sourceTree = "<group>"; };
 		DF6883812A608028009B5642 /* PV+Source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PV+Source.swift"; sourceTree = "<group>"; };
@@ -874,11 +874,9 @@
 		DFF09B4F2A58C33800C5CA5E /* +ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+ViewModel.swift"; sourceTree = "<group>"; };
 		DFF09B512A58CE8600C5CA5E /* +UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+UserView.swift"; sourceTree = "<group>"; };
 		DFF09B532A58D2FD00C5CA5E /* +LibrarySyncView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+LibrarySyncView.swift"; sourceTree = "<group>"; };
-		DFF09B572A58D54100C5CA5E /* DSKPreferenceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DSKPreferenceView.swift; sourceTree = "<group>"; };
 		DFF09B592A58ED0500C5CA5E /* ContentTrackerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentTrackerView.swift; sourceTree = "<group>"; };
 		DFF09B5B2A59FE7600C5CA5E /* DSK+Tracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Tracker.swift"; sourceTree = "<group>"; };
 		DFF09B5D2A5A04C600C5CA5E /* JSCCT+Implementation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCCT+Implementation.swift"; sourceTree = "<group>"; };
-		DFF09B602A5A0BAC00C5CA5E /* TrackerEntryFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerEntryFormView.swift; sourceTree = "<group>"; };
 		DFF09B632A5A847500C5CA5E /* +UIStepper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+UIStepper.swift"; sourceTree = "<group>"; };
 		DFF09B652A5A8EF500C5CA5E /* +UITextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+UITextField.swift"; sourceTree = "<group>"; };
 		DFF1043F28A9A6B800E2C3A4 /* DSK+Networking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Networking.swift"; sourceTree = "<group>"; };
@@ -1015,6 +1013,14 @@
 				DF1114962A93FC4900FA8A39 /* WebtoonController+AutoScroll.swift */,
 			);
 			path = WebtoonController;
+			sourceTree = "<group>";
+		};
+		DF0B02892AA06052004345BA /* Forms */ = {
+			isa = PBXGroup;
+			children = (
+				DF0B028A2AA06063004345BA /* DSKFormView.swift */,
+			);
+			path = Forms;
 			sourceTree = "<group>";
 		};
 		DF1114702A91937400FA8A39 /* Nodes */ = {
@@ -1402,8 +1408,7 @@
 		DF68249D28A5D2BB00AB30A1 /* Daisuke */ = {
 			isa = PBXGroup;
 			children = (
-				DFF09B5F2A5A0B2B00C5CA5E /* ContentTracker */,
-				DFF09B562A58D53400C5CA5E /* Preferences */,
+				DF0B02892AA06052004345BA /* Forms */,
 				DFF09B552A58D52B00C5CA5E /* Runners */,
 				DFF09B482A58C12500C5CA5E /* Auth */,
 			);
@@ -1993,13 +1998,13 @@
 				DF9BD6452891C16D006628D0 /* DSK+Tag.swift */,
 				DF9BD6472891D5B3006628D0 /* DSK+Content.swift */,
 				DF9BD6492891D837006628D0 /* DSK+Chapter.swift */,
-				DF68249B28A5CF6D00AB30A1 /* DSK+Preferences.swift */,
 				DFF1043F28A9A6B800E2C3A4 /* DSK+Networking.swift */,
 				DF67EB8928E39E2200076FF5 /* DSK+Sync.swift */,
 				DF67EBA328EA34DE00076FF5 /* DSK+Common.swift */,
 				DFF09B5B2A59FE7600C5CA5E /* DSK+Tracker.swift */,
 				DF16F2B02A5F31E000D7AFBB /* DSK+Page.swift */,
 				DF16F2B22A5F31F000D7AFBB /* DSK+Directory.swift */,
+				DF0B02872AA05B76004345BA /* DSK+Form.swift */,
 			);
 			path = Structs;
 			sourceTree = "<group>";
@@ -2413,22 +2418,6 @@
 			path = Runners;
 			sourceTree = "<group>";
 		};
-		DFF09B562A58D53400C5CA5E /* Preferences */ = {
-			isa = PBXGroup;
-			children = (
-				DFF09B572A58D54100C5CA5E /* DSKPreferenceView.swift */,
-			);
-			path = Preferences;
-			sourceTree = "<group>";
-		};
-		DFF09B5F2A5A0B2B00C5CA5E /* ContentTracker */ = {
-			isa = PBXGroup;
-			children = (
-				DFF09B602A5A0BAC00C5CA5E /* TrackerEntryFormView.swift */,
-			);
-			path = ContentTracker;
-			sourceTree = "<group>";
-		};
 		DFF09B622A5A844C00C5CA5E /* Representables */ = {
 			isa = PBXGroup;
 			children = (
@@ -2830,7 +2819,6 @@
 				DF8D0B532800EE47003E4C3E /* Backup.swift in Sources */,
 				DF62B5BB2A96F1E600F907CD /* CPVM+ActionState.swift in Sources */,
 				DF62B5C32A96F37C00F907CD /* CPVM+Network.swift in Sources */,
-				DF68249C28A5CF6D00AB30A1 /* DSK+Preferences.swift in Sources */,
 				DF11148C2A93EF0500FA8A39 /* ZoomViewController.swift in Sources */,
 				DFDBF96B2A7C4470006D49AD /* Realm+HighlightGrid.swift in Sources */,
 				DF16F2C32A5F5F1700D7AFBB /* DV+FilterView.swift in Sources */,
@@ -2858,6 +2846,7 @@
 				DFDBF9BF2A7DAE0E006D49AD /* Panel+Page.swift in Sources */,
 				DF91D9742859ADD60099D864 /* CloudflareErrorView.swift in Sources */,
 				DF8D0BAD2800EE48003E4C3E /* BackupsView.swift in Sources */,
+				DF0B028B2AA06063004345BA /* DSKFormView.swift in Sources */,
 				DFBE483C2A25BC2B000ABA16 /* ThreadSafeChapter.swift in Sources */,
 				DFB47EFD2880E9C90040A1BD /* OPDS+AddServer.swift in Sources */,
 				DF6883852A608FD7009B5642 /* AllTagsView.swift in Sources */,
@@ -2907,9 +2896,7 @@
 				DF8D0BB02800EE48003E4C3E /* CloseButton.swift in Sources */,
 				DFE1B0FA2A9A59F400D300DB /* ChapterList+ContextMenu.swift in Sources */,
 				DF83DD3328223B680021575B /* ProfileView+TrackersSheet.swift in Sources */,
-				DFF09B612A5A0BAC00C5CA5E /* TrackerEntryFormView.swift in Sources */,
 				DF489C392A8482D3006A21B9 /* IV+HorizontalLayout.swift in Sources */,
-				DFF09B582A58D54100C5CA5E /* DSKPreferenceView.swift in Sources */,
 				DF68249F28A5D2CF00AB30A1 /* ContentSourceView.swift in Sources */,
 				DF8D0BB12800EE48003E4C3E /* ViewHeightReader.swift in Sources */,
 				DFBE485C2A2FA20E000ABA16 /* ReadLater+ViewModel.swift in Sources */,
@@ -2987,6 +2974,7 @@
 				DF8D0B222800EE47003E4C3E /* STTScheduler.swift in Sources */,
 				DF8D0BA82800EE48003E4C3E /* ContentView.swift in Sources */,
 				DF457DD02A439F5C002B5350 /* ArchivedContent.swift in Sources */,
+				DF0B02882AA05B76004345BA /* DSK+Form.swift in Sources */,
 				DFD4D8722A7B541900C5AC13 /* SearchView+HIstoryView.swift in Sources */,
 				DF8D0B9A2800EE48003E4C3E /* ProfileView+BottomBar.swift in Sources */,
 				DF16F2B82A5F474F00D7AFBB /* DirectoryView.swift in Sources */,

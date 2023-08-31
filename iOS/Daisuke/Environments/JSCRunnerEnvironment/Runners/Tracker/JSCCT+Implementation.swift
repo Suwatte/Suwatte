@@ -9,8 +9,8 @@ import Foundation
 
 extension JSCContentTracker: ContentTracker {
     /// Returns the form to present to the user to update the entry form.
-    func getEntryForm(id: String) async throws -> DSKCommon.TrackForm {
-        try await callMethodReturningDecodable(method: "getEntryForm", arguments: [id], resolvesTo: DSKCommon.TrackForm.self)
+    func getEntryForm(id: String) async throws -> DSKCommon.Form {
+        try await callMethodReturningDecodable(method: "getEntryForm", arguments: [id], resolvesTo: DSKCommon.Form.self)
     }
 
     /// Called when the user submits the entry form

@@ -126,7 +126,8 @@ struct TrackerContextModifier: ViewModifier {
             }
         }
         .hiddenNav(presenting: $presentEntryFormView) {
-            TrackerEntryFormView(model: .init(tracker: tracker, id: item.id), title: item.title)
+            DSKLoadableForm(runner: tracker, context: .tracker(id: item.id))
+                .navigationTitle(item.title)
         }
     }
 }

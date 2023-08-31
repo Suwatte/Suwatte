@@ -8,7 +8,7 @@
 import Foundation
 
 extension WKTracker: ContentTracker {
-    func getEntryForm(id: String) async throws -> DSKCommon.TrackForm {
+    func getEntryForm(id: String) async throws -> DSKCommon.Form {
         try await eval(script("let data = await RunnerObject.getEntryForm(id);"), ["id": id])
     }
 

@@ -24,7 +24,7 @@ struct ContentSourceInfoView: View {
             if source.intents.preferenceMenuBuilder {
                 Section {
                     NavigationLink("Preferences") {
-                        DSKPreferenceView(runner: source)
+                        DSKLoadableForm(runner: source, context: .preference)
                             .navigationTitle("Preferences")
                     }
                 } header: {

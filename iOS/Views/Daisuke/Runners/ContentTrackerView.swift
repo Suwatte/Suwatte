@@ -22,7 +22,7 @@ struct ContentTrackerInfoView: View {
             if tracker.intents.preferenceMenuBuilder {
                 Section {
                     NavigationLink("Preferences") {
-                        DSKPreferenceView(runner: tracker)
+                        DSKLoadableForm(runner: tracker, context: .preference)
                             .navigationTitle("Preferences")
                     }
                 } header: {

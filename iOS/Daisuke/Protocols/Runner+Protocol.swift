@@ -21,8 +21,8 @@ protocol DSKRunnerDelegate {
 }
 
 protocol DSKPreferenceDelegate {
-    func updateSourcePreference(key: String, value: Any) async
-    func buildPreferenceMenu() async throws -> [DSKCommon.PreferenceGroup]
+    func updatePreference(key: String, value: Any) async
+    func getPreferenceMenu() async throws -> DSKCommon.Form
 }
 
 protocol DSKAuthDelegate {
@@ -47,6 +47,11 @@ protocol DSKPageDelegate {
     func resolvePageSection<T: JSCObject>(link: DSKCommon.PageLink, section: String) async throws -> DSKCommon.ResolvedPageSection<T>
     func getLibraryPageLinks() async throws -> [DSKCommon.PageLinkLabel]
     func getBrowsePageLinks() async throws -> [DSKCommon.PageLinkLabel]
+}
+
+protocol DSKSetupDelegate {
+    func getSetupMenu() async throws -> DSKCommon.Form
+    func validateSetupForm(form: DSKCommon.CodableDict) async throws
 }
 
 extension DSKRunnerDelegate {
@@ -78,7 +83,7 @@ extension DSKRunnerDelegate {
     }
 }
 
-protocol DSKRunner: DSKRunnerDelegate, DSKAuthDelegate, DSKPreferenceDelegate, DSKDirectoryDelegate, DSKPageDelegate {}
+protocol DSKRunner: DSKRunnerDelegate, DSKAuthDelegate, DSKPreferenceDelegate, DSKDirectoryDelegate, DSKPageDelegate, DSKSetupDelegate {}
 
 typealias AnyRunner = (any DSKRunner)
 typealias DSK = DaisukeEngine

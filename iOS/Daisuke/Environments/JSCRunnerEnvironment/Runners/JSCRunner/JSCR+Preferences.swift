@@ -11,11 +11,13 @@ import Foundation
 
 extension JSCRunner: DSKPreferenceDelegate {
     // Preference
-    func buildPreferenceMenu() async throws -> [DSKCommon.PreferenceGroup] {
-        return try await callContextMethod(method: "generatePreferenceMenu", resolvesTo: [DSKCommon.PreferenceGroup].self)
+    func getPreferenceMenu() async throws -> DSKCommon.Form {
+        try await callMethodReturningDecodable(method: "getPreferenceMenu",
+                                                      arguments: [],
+                                                      resolvesTo: DSKCommon.Form.self)
     }
 
-    func updateSourcePreference(key: String, value: Any) async {
+    func updatePreference(key: String, value: Any) async {
         let context = runnerClass.context!
         let function = context.evaluateScript("updateSourcePreferences")
         function?.daisukeCall(arguments: [key, value], onSuccess: { _ in
@@ -25,4 +27,17 @@ extension JSCRunner: DSKPreferenceDelegate {
 
         })
     }
+}
+
+extension JSCRunner: DSKSetupDelegate {
+    func getSetupMenu() async throws -> DSKCommon.Form {
+        try await callMethodReturningDecodable(method: "getSetupMenu",
+                                                      arguments: [],
+                                                      resolvesTo: DSKCommon.Form.self)
+    }
+    
+    func validateSetupForm(form: DSKCommon.CodableDict) async throws {
+        let object = try form.asDictionary()
+        return try await callOptionalVoidMethod(method: "validateSetupForm", arguments: [object])
+    }    
 }

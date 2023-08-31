@@ -4,6 +4,7 @@ let RunnerEnvironment = "unknown";
 let RunnerIntents = {
   // Core
   preferenceMenuBuilder: false,
+  requiresSetup: false,
   authenticatable: false,
   authenticationMethod: "unknown",
   pageLinkResolver: false,
@@ -22,7 +23,7 @@ let RunnerIntents = {
   isAcquisitionEnabled: false,
 
   // Context Provider
-providesReaderContext: false,
+  providesReaderContext: false,
   isContextMenuProvider: false,
   canRefreshHighlight: false,
 
@@ -99,16 +100,14 @@ const bootstrap = () => {
 
   // Log
   console.log(`Ready!`);
-    
-    try {
-        if (window) {
-            window.addEventListener("load", function (event) {
-              window.webkit.messageHandlers.state.postMessage("loaded");
-            });
-        }
-    } catch (err) {
-        
+
+  try {
+    if (window) {
+      window.addEventListener("load", function (event) {
+        window.webkit.messageHandlers.state.postMessage("loaded");
+      });
     }
+  } catch (err) {}
 };
 
 //
@@ -116,7 +115,11 @@ function setupSourceConfig() {
   try {
     ctx = RunnerObject;
     // Preference menu
-    RunnerIntents.preferenceMenuBuilder = !!ctx.buildPreferenceMenu;
+    RunnerIntents.preferenceMenuBuilder = !!ctx.getPreferenceMenu;
+
+    // Requires Setup
+    RunnerIntents.requiresSetup == !!ctx.getSetupMenu &&
+      !!ctx.validateSetupForm;
 
     //Image Handler
     RunnerIntents.imageRequestHandler = !!ctx.willRequestImage;
@@ -166,7 +169,7 @@ function setupSourceConfig() {
 
       // MSB
       RunnerIntents.pageReadHandler = !!ctx.onPageRead;
-      RunnerIntents.providesReaderContext = !!ctx.provideReaderContext
+      RunnerIntents.providesReaderContext = !!ctx.provideReaderContext;
 
       // Context
       RunnerIntents.isContextMenuProvider =
@@ -188,28 +191,16 @@ function setupSourceConfig() {
 }
 
 // Helper Methods
-const generatePreferenceMenu = async () => {
-  const data = await RunnerObject.buildPreferenceMenu();
-  for (const [index, group] of data.entries()) {
-    const populated = await Promise.all(
-      group.children.map(async (v) => ({
-        ...v,
-        value: v.action ? "" : await v.value.get(),
-      }))
-    );
-    data[index].children = populated;
-  }
-  return data;
-};
-
 const updateSourcePreferences = async (key, value) => {
-  const groups = await RunnerObject.buildPreferenceMenu();
-  const pref = groups.flatMap((v) => v.children).find((v) => v.key === key);
+  const form = await RunnerObject.getPreferenceMenu();
+  const pref = form.sections
+    .flatMap((v) => v.children)
+    .find((v) => v.key === key);
   if (!pref) return;
   if (pref.action) {
     return pref.action();
   } else {
-    return pref.value.set(value);
+    return pref.didChange?.(value);
   }
 };
 
