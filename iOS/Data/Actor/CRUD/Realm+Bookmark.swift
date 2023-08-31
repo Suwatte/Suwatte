@@ -11,8 +11,11 @@ import UIKit
 
 extension RealmActor {
     func addBookmark(for chapter: ThreadSafeChapter, at page: Int, with image: UIImage, on offset: Double? = nil) async -> Bool {
-        let image = image.imageFlippedForRightToLeftLayoutDirection()
-        guard let data = image.pngData() ?? image.jpegData(compressionQuality: 1) else {
+        
+        let processor = await NukeDownsampleProcessor(width: UIScreen.main.bounds.width / 2)
+        let processedImage = processor.process(image)
+        
+        guard let data = processedImage?.pngData() ?? image.pngData() ?? image.jpegData(compressionQuality: 1) else {
             Logger.shared.error("Invalid Image Data")
             return false
         }
