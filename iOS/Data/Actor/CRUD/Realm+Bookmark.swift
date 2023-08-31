@@ -50,7 +50,7 @@ extension RealmActor {
         bookmark.pageOffsetPCT = offset
         bookmark.dateAdded = .now
         bookmark.asset = CreamAsset.create(object: bookmark,
-                                           propName: "bookmark",
+                                           folder: "bookmark",
                                            data: data)
         await operation {
             realm.add(bookmark, update: .all)

@@ -58,7 +58,7 @@ extension RealmActor {
             }
 
             if obj.executable == nil || url.exists {
-                obj.executable = CreamAsset.create(object: obj, propName: StoredRunnerObject.RUNNER_KEY, url: url)
+                obj.executable = CreamAsset.create(object: obj, folder: StoredRunnerObject.RUNNER_KEY, url: url)
             }
             if let thumbnail = info.thumbnail {
                 if thumbnail.contains("http") {
