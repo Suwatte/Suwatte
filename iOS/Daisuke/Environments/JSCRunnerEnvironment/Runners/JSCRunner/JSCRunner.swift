@@ -13,14 +13,12 @@ protocol JSCContextWrapper {
 }
 
 public class JSCRunner: DSKRunner, JSCContextWrapper {
-    let instance: InstanceInformation
     let runnerClass: JSValue
     let info: RunnerInfo
     let intents: RunnerIntents
     var configCache: [String: DSKCommon.DirectoryConfig] = [:]
-    init(instance: InstanceInformation, object: JSValue) async throws {
+    init(object: JSValue) async throws {
         runnerClass = object
-        self.instance = instance
         let ctx = runnerClass.context
         // Prepare Runner Info
         guard let ctx, let dictionary = runnerClass.forProperty("info"), dictionary.isObject else {

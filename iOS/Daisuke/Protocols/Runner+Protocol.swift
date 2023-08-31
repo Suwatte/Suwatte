@@ -14,14 +14,8 @@ import Foundation
     }
 }
 
-struct InstanceInformation {
-    let name: String
-    let id: String
-}
-
 protocol DSKRunnerDelegate {
     var info: RunnerInfo { get }
-    var instance: InstanceInformation { get }
     var intents: RunnerIntents { get }
     var configCache: [String: DSKCommon.DirectoryConfig] { get set }
 }
@@ -62,10 +56,6 @@ extension DSKRunnerDelegate {
 
     var id: String {
         info.id
-    }
-
-    var instanceID: String {
-        info.id + "::" + instance.id
     }
 
     var name: String {

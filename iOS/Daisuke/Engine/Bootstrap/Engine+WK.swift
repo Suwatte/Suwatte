@@ -9,7 +9,7 @@ import Foundation
 import WebKit
 
 extension DSK {
-    func startWKRunner(with url: URL, of instance: InstanceInformation) async throws -> WKRunner {
+    func startWKRunner(with url: URL) async throws -> WKRunner {
         func generate(for path: URL) async throws -> WKUserScript {
             var content = try String(contentsOfFile: path.relativePath, encoding: String.Encoding.utf8)
             if path.lastPathComponent == "wkFills.js" {
@@ -81,9 +81,9 @@ extension DSK {
         var runner: WKRunner? = nil
         switch environment {
         case .source:
-            runner = try await WKContentSource(instance: instance, webview: wv)
+            runner = try await WKContentSource(webview: wv)
         case .tracker:
-            runner = try await WKTracker(instance: instance, webview: wv)
+            runner = try await WKTracker(webview: wv)
         default:
             break
         }

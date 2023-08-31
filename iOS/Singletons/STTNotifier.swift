@@ -23,7 +23,7 @@ class STTNotifier {
 
         // Request
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 10, repeats: false)
-        let request = UNNotificationRequest(identifier: "stt-update-notif", content: content, trigger: trigger)
+        let request = UNNotificationRequest(identifier: "com.ceres.suwatte.library_update", content: content, trigger: trigger)
 
         // Schedule
         let center = UNUserNotificationCenter.current()

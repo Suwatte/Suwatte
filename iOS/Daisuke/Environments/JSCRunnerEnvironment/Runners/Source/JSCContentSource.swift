@@ -11,8 +11,8 @@ final class JSCContentSource: JSCRunner, ContentSource {
     var config: SourceConfig?
     var directoryTags: [DSKCommon.Property]?
 
-    override init(instance: InstanceInformation, object: JSValue) async throws {
-        try await super.init(instance: instance, object: object)
+    override init(object: JSValue) async throws {
+        try await super.init(object: object)
         // Get Config
         if let dictionary = runnerClass.forProperty("config"), dictionary.isObject {
             config = try SourceConfig(value: dictionary)

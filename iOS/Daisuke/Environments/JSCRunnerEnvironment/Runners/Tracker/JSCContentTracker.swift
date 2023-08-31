@@ -11,8 +11,8 @@ import JavaScriptCore
 final class JSCContentTracker: JSCRunner {
     var config: TrackerConfig?
 
-    override init(instance: InstanceInformation, object: JSValue) async throws {
-        try await super.init(instance: instance, object: object)
+    override init(object: JSValue) async throws {
+        try await super.init(object: object)
         // Get Config
         if let dictionary = object.forProperty("config"), dictionary.isObject {
             config = try TrackerConfig(value: dictionary)
