@@ -37,7 +37,7 @@ extension Skeleton {
                         .font(.subheadline)
                         .fontWeight(.semibold)
                     HStack(spacing: 3.5) {
-                        if entry.isNovel ?? false {
+                        if entry.contentType == .novel {
                             Text("Novel")
                                 .font(.caption)
                                 .fontWeight(.semibold)

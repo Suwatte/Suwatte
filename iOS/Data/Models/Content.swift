@@ -47,7 +47,6 @@ final class StoredContent: Object, Identifiable, CKRecordConvertible, CKRecordRe
     @Persisted var streamable: Bool = false
     
     @Persisted var isNSFW = false
-    @Persisted var isNovel = false
 
     var ContentIdentifier: ContentIdentifier {
         return .init(contentId: contentId, sourceId: sourceId)

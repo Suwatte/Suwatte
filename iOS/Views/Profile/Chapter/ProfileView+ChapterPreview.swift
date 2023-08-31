@@ -88,7 +88,7 @@ extension ProfileView.Skeleton.ChapterView {
                         .onTapGesture {
                             guard !redacted else { return }
                             
-                            if model.content.isNovel ?? false {
+                            if model.content.contentType == .novel {
                                 StateManager.shared.alert(title: "Novel Reading", message: "Novel reading is currently not supported until version 6.1")
                                 return
                             }

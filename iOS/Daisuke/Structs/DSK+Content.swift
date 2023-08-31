@@ -141,7 +141,6 @@ extension DaisukeEngine.Structs {
         var acquisitionLink: String?
         var streamable: Bool?
         
-        var isNovel: Bool?
         var isNSFW: Bool?
 
         var covers: [String] {

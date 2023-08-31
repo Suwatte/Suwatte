@@ -13,7 +13,7 @@ extension StoredContent: Codable {
         case id, sourceId, contentId, title, additionalTitles, additionalCovers, cover, creators, status
         case originalLanuguage, summary, webUrl, properties, recommendedPanelMode, contentType, trackerInfo
         case acquisitionLink, streamable
-        case isNSFW, isNovel
+        case isNSFW
     }
 
     convenience init(from decoder: Decoder) throws {
@@ -50,7 +50,6 @@ extension StoredContent: Codable {
         streamable = try container.decodeIfPresent(Bool.self, forKey: .streamable) ?? false
         
         isNSFW = try container.decodeIfPresent(Bool.self, forKey: .isNSFW) ?? false
-        isNovel = try container.decodeIfPresent(Bool.self, forKey: .isNovel) ?? false
     }
 
     func encode(to encoder: Encoder) throws {
@@ -74,7 +73,6 @@ extension StoredContent: Codable {
         try container.encode(streamable, forKey: .streamable)
         try container.encode(acquisitionLink, forKey: .acquisitionLink)
         try container.encode(isNSFW, forKey: .isNSFW)
-        try container.encode(isNovel, forKey: .isNovel)
     }
 }
 

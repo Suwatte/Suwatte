@@ -86,7 +86,7 @@ extension ProfileView {
         }
         
         var readingMode: ReadingMode {
-            content.isNovel ?? false ?
+            content.contentType == .novel ?
                 .NOVEL_PAGED_COMIC :
             content.recommendedPanelMode ?? .defaultPanelMode
         }
