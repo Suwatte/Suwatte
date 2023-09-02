@@ -37,7 +37,7 @@ extension Skeleton {
                         .font(.subheadline)
                         .fontWeight(.semibold)
                     HStack(spacing: 3.5) {
-                        if entry.contentType == .novel {
+                        if let contentType = entry.contentType, contentType == .novel {
                             Text("Novel")
                                 .font(.caption)
                                 .fontWeight(.semibold)
@@ -73,8 +73,13 @@ extension Skeleton {
 // MARK: Thumbnail
 
 extension Skeleton.Header {
+    
+    var imageURL : URL? {
+        URL(string: model.contentState.LOADED ? model.content.cover : model.entry.cover)
+    }
+    
     var CoverImage: some View {
-        STTImageView(url: URL(string: entry.cover), identifier: model.STTIDPair)
+        STTImageView(url: imageURL, identifier: model.STTIDPair)
             .frame(width: ImageWidth, height: ImageWidth * 1.5)
             .cornerRadius(7)
             .shadow(radius: 3)

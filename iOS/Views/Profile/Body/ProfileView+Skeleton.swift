@@ -35,6 +35,13 @@ extension ProfileView {
                     .tint(accentColor)
                     .accentColor(accentColor)
                 })
+                .fullScreenCover(isPresented: $viewModel.presentMigrationView, content: {
+                    let tagged = TaggedHighlight(from: viewModel.entry, with: viewModel.sourceID)
+                    NavigationView {
+                        MigrationView(model: .init(contents: [tagged]))
+                            .closeButton()
+                    }
+                })
                 .transition(.opacity)
         }
     }
