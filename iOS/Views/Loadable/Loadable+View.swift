@@ -63,6 +63,9 @@ struct LoadableView<Value, Idle, Loading, Failure, Content>: View where Idle: Vi
     func load() async {
         guard !loaded else { return }
         do {
+            await MainActor.run {
+                loadable = .loading
+            }
             try await action()
             loaded = true
         } catch {

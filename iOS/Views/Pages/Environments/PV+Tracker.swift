@@ -31,9 +31,15 @@ struct ContentTrackerPageView: View {
         let tracker: AnyContentTracker
         @State var item: DSKCommon.TrackItem
         var body: some View {
-            PageViewTile(runnerID: tracker.id, id: item.id, title: item.title, subtitle: nil, cover: item.cover, additionalCovers: nil, info: nil, badge: nil)
-                .coloredBadge(item.entry?.status.color)
-                .modifier(TrackerContextModifier(tracker: tracker, item: $item, status: item.entry?.status ?? .CURRENT))
+            NavigationLink {
+                DSKLoadableTrackerView(tracker: tracker, item: item)
+            } label: {
+                PageViewTile(runnerID: tracker.id, id: item.id, title: item.title, subtitle: nil, cover: item.cover, additionalCovers: nil, info: nil, badge: nil)
+                    .coloredBadge(item.entry?.status.color)
+                    .modifier(TrackerContextModifier(tracker: tracker, item: $item, status: item.entry?.status ?? .CURRENT))
+            }
+            .buttonStyle(NeutralButtonStyle())
+            
         }
     }
 }

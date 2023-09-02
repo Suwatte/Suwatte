@@ -28,6 +28,7 @@
 		DF03F73A2846FAB800602E59 /* ReaderButtonModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF03F7392846FAB800602E59 /* ReaderButtonModifier.swift */; };
 		DF0B02882AA05B76004345BA /* DSK+Form.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0B02872AA05B76004345BA /* DSK+Form.swift */; };
 		DF0B028B2AA06063004345BA /* DSKFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0B028A2AA06063004345BA /* DSKFormView.swift */; };
+		DF0B028E2AA1477C004345BA /* DSKTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0B028D2AA1477C004345BA /* DSKTrackerView.swift */; };
 		DF0D96062824892C00E592D9 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = DF0D96052824892C00E592D9 /* Realm */; };
 		DF11146F2A917B5E00FA8A39 /* WebtoonController+Setup.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF11146E2A917B5E00FA8A39 /* WebtoonController+Setup.swift */; };
 		DF1114742A91A01300FA8A39 /* ImageNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1114732A91A01300FA8A39 /* ImageNode.swift */; };
@@ -488,6 +489,7 @@
 		DF03F7392846FAB800602E59 /* ReaderButtonModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderButtonModifier.swift; sourceTree = "<group>"; };
 		DF0B02872AA05B76004345BA /* DSK+Form.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Form.swift"; sourceTree = "<group>"; };
 		DF0B028A2AA06063004345BA /* DSKFormView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DSKFormView.swift; sourceTree = "<group>"; };
+		DF0B028D2AA1477C004345BA /* DSKTrackerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DSKTrackerView.swift; sourceTree = "<group>"; };
 		DF11146E2A917B5E00FA8A39 /* WebtoonController+Setup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebtoonController+Setup.swift"; sourceTree = "<group>"; };
 		DF1114732A91A01300FA8A39 /* ImageNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageNode.swift; sourceTree = "<group>"; };
 		DF1114752A92E86600FA8A39 /* WebtoonController+Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebtoonController+Navigation.swift"; sourceTree = "<group>"; };
@@ -1023,6 +1025,14 @@
 			path = Forms;
 			sourceTree = "<group>";
 		};
+		DF0B028C2AA1476D004345BA /* TrackerView */ = {
+			isa = PBXGroup;
+			children = (
+				DF0B028D2AA1477C004345BA /* DSKTrackerView.swift */,
+			);
+			path = TrackerView;
+			sourceTree = "<group>";
+		};
 		DF1114702A91937400FA8A39 /* Nodes */ = {
 			isa = PBXGroup;
 			children = (
@@ -1408,6 +1418,7 @@
 		DF68249D28A5D2BB00AB30A1 /* Daisuke */ = {
 			isa = PBXGroup;
 			children = (
+				DF0B028C2AA1476D004345BA /* TrackerView */,
 				DF0B02892AA06052004345BA /* Forms */,
 				DFF09B552A58D52B00C5CA5E /* Runners */,
 				DFF09B482A58C12500C5CA5E /* Auth */,
@@ -2685,6 +2696,7 @@
 				DF489C022A8040DF006A21B9 /* Panel+Watcher.swift in Sources */,
 				DFC39E9728A0B0BC00450EC4 /* Runner.swift in Sources */,
 				DF457DD42A43B216002B5350 /* History+Archive.swift in Sources */,
+				DF0B028E2AA1477C004345BA /* DSKTrackerView.swift in Sources */,
 				DFDBF9B32A7DA08E006D49AD /* Reader+Chapter.swift in Sources */,
 				DF1EA4542A70E7B8003E27C7 /* SDQV+ViewModel.swift in Sources */,
 				DF1EA44F2A70C700003E27C7 /* SDV+CollectionView.swift in Sources */,

@@ -172,6 +172,7 @@ struct PageLinkView: View {
             }
         }
         .navigationBarTitle(pageLink.title)
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     func load() async {

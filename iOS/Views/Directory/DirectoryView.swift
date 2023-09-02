@@ -20,7 +20,7 @@ struct DirectoryView<T: Codable & Hashable, C: View>: View {
     }
 
     var fullSearch: Bool {
-        model.request.tag == nil && (model.config?.searchable ?? true)
+        model.request.tag == nil && (model.config?.searchable ?? true) && model.result.LOADED
     }
 
     var body: some View {

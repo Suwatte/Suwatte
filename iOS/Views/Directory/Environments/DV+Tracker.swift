@@ -26,13 +26,14 @@ extension ContentTrackerDirectoryView {
         @State var data: DSKCommon.TrackItem
         let tracker: AnyContentTracker
         var body: some View {
-            ZStack(alignment: .topTrailing) {
+            NavigationLink {
+                DSKLoadableTrackerView(tracker: tracker, item: data)
+            } label: {
                 DefaultTile(entry: .init(contentId: data.id, cover: data.cover, title: data.title))
-                if let entry = data.entry {
-                    ColoredBadge(color: entry.status.color)
-                }
+                    .coloredBadge(data.entry?.status.color)
+                .modifier(TrackerContextModifier(tracker: tracker, item: $data, status: data.entry?.status ?? .CURRENT))
             }
-            .modifier(TrackerContextModifier(tracker: tracker, item: $data, status: data.entry?.status ?? .CURRENT))
+            .buttonStyle(NeutralButtonStyle())
         }
     }
 }

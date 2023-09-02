@@ -23,6 +23,7 @@ extension DSKCommon {
         let webUrl: String
         var entry: TrackEntry?
         let info: [String]?
+        let isNSFW: Bool?;
     }
 
     struct TrackProgress: Parsable, Hashable {
@@ -92,5 +93,41 @@ extension DSKCommon.TrackStatus {
         case .REPEATING:
             return .cyan
         }
+    }
+}
+
+
+extension DSKCommon {
+    struct FullTrackItem: Parsable, Hashable {
+        let id: String
+        let title: String
+        let cover: String
+        let webUrl: String
+        var entry: TrackEntry?
+        let info: [String]?
+        let isNSFW: Bool?;
+
+        let summary: String?
+        let properites: [Property]?
+        let bannerCover: String?
+        let isFavorite: Bool?
+        let relatedTitles: [TrackItem]?
+        let recommendedTitles: [TrackItem]?
+        let links: [TrackItemLink]?
+        let additionalTitles: [String]?
+        let status: ContentStatus?
+        let characters: [TrackItemCharacter]?
+    }
+    
+    struct TrackItemCharacter: Parsable, Hashable {
+        let name: String
+        let role: String?
+        let image: String?
+        let summary: String?
+    }
+    
+    struct TrackItemLink: Parsable, Hashable {
+        let label: String
+        let url: String
     }
 }
