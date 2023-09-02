@@ -10,7 +10,6 @@
 		C3423ED4E5A2EFB664586F1B /* Pods_Suwatte__iOS_.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C120369C705B6397F32D3640 /* Pods_Suwatte__iOS_.framework */; };
 		DF01DEEA2A587A5D0025700B /* Engine+LibraryUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF01DEE92A587A5D0025700B /* Engine+LibraryUpdate.swift */; };
 		DF01DEEC2A587A680025700B /* Engine+URLHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF01DEEB2A587A680025700B /* Engine+URLHandler.swift */; };
-		DF020A412A899C6300BC5562 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DF020A402A899C6300BC5562 /* GoogleService-Info.plist */; };
 		DF020A442A89A07C00BC5562 /* ArchiveHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A432A89A07C00BC5562 /* ArchiveHelper.swift */; };
 		DF020A452A89A07C00BC5562 /* ArchiveHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A432A89A07C00BC5562 /* ArchiveHelper.swift */; };
 		DF020A4A2A8B120700BC5562 /* IV+ChapterList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A492A8B120700BC5562 /* IV+ChapterList.swift */; };
@@ -63,8 +62,6 @@
 		DF16F2CC2A5F8FAA00D7AFBB /* PageView+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF16F2CB2A5F8FAA00D7AFBB /* PageView+CollectionView.swift */; };
 		DF16F2CE2A5F998A00D7AFBB /* PageView+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF16F2CD2A5F998A00D7AFBB /* PageView+Layout.swift */; };
 		DF16F2D02A5F99BE00D7AFBB /* PageView+Tile.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF16F2CF2A5F99BE00D7AFBB /* PageView+Tile.swift */; };
-		DF1BE5F32A40AB3400E48572 /* R2Shared in Frameworks */ = {isa = PBXBuildFile; productRef = DF1BE5F22A40AB3400E48572 /* R2Shared */; };
-		DF1BE5F52A40AB3400E48572 /* ReadiumOPDS in Frameworks */ = {isa = PBXBuildFile; productRef = DF1BE5F42A40AB3400E48572 /* ReadiumOPDS */; };
 		DF1EA4472A70B7FF003E27C7 /* SourceDownloadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1EA4462A70B7FF003E27C7 /* SourceDownloadView.swift */; };
 		DF1EA4492A70B81B003E27C7 /* SDV+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1EA4482A70B81B003E27C7 /* SDV+ViewModel.swift */; };
 		DF1EA44F2A70C700003E27C7 /* SDV+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1EA44E2A70C700003E27C7 /* SDV+CollectionView.swift */; };
@@ -292,6 +289,9 @@
 		DF8D0BB72800EE48003E4C3E /* STTWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0AC22800EE47003E4C3E /* STTWebView.swift */; };
 		DF8D0BB82800EE48003E4C3E /* SelectionLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0AC32800EE47003E4C3E /* SelectionLabel.swift */; };
 		DF8D0BB92800EE48003E4C3E /* MSLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0AC42800EE47003E4C3E /* MSLabelView.swift */; };
+		DF90419F2AA3E78E00B72ACC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DF90419E2AA3E78E00B72ACC /* GoogleService-Info.plist */; };
+		DF9041A22AA3E7E600B72ACC /* R2Shared in Frameworks */ = {isa = PBXBuildFile; productRef = DF9041A12AA3E7E600B72ACC /* R2Shared */; };
+		DF9041A42AA3E7E600B72ACC /* ReadiumOPDS in Frameworks */ = {isa = PBXBuildFile; productRef = DF9041A32AA3E7E600B72ACC /* ReadiumOPDS */; };
 		DF91D9742859ADD60099D864 /* CloudflareErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF91D9732859ADD50099D864 /* CloudflareErrorView.swift */; };
 		DF977E162A0ECB3900AA1E90 /* StateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF977E152A0ECB3900AA1E90 /* StateManager.swift */; };
 		DF9BD6462891C16D006628D0 /* DSK+Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BD6452891C16D006628D0 /* DSK+Tag.swift */; };
@@ -472,7 +472,6 @@
 		D2C64E4EA8CA62D2029277CC /* Pods-Suwatte (iOS).release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Suwatte (iOS).release.xcconfig"; path = "Target Support Files/Pods-Suwatte (iOS)/Pods-Suwatte (iOS).release.xcconfig"; sourceTree = "<group>"; };
 		DF01DEE92A587A5D0025700B /* Engine+LibraryUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Engine+LibraryUpdate.swift"; sourceTree = "<group>"; };
 		DF01DEEB2A587A680025700B /* Engine+URLHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Engine+URLHandler.swift"; sourceTree = "<group>"; };
-		DF020A402A899C6300BC5562 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		DF020A432A89A07C00BC5562 /* ArchiveHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ArchiveHelper.swift; path = Shared/ArchiveHelper/ArchiveHelper.swift; sourceTree = SOURCE_ROOT; };
 		DF020A492A8B120700BC5562 /* IV+ChapterList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IV+ChapterList.swift"; sourceTree = "<group>"; };
 		DF020A502A8C43D200BC5562 /* RLV+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RLV+ViewModel.swift"; sourceTree = "<group>"; };
@@ -744,6 +743,7 @@
 		DF8D0AC22800EE47003E4C3E /* STTWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = STTWebView.swift; sourceTree = "<group>"; };
 		DF8D0AC32800EE47003E4C3E /* SelectionLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectionLabel.swift; sourceTree = "<group>"; };
 		DF8D0AC42800EE47003E4C3E /* MSLabelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MSLabelView.swift; sourceTree = "<group>"; };
+		DF90419E2AA3E78E00B72ACC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		DF91D9732859ADD50099D864 /* CloudflareErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudflareErrorView.swift; sourceTree = "<group>"; };
 		DF977E152A0ECB3900AA1E90 /* StateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateManager.swift; sourceTree = "<group>"; };
 		DF9BD6452891C16D006628D0 /* DSK+Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Tag.swift"; sourceTree = "<group>"; };
@@ -895,20 +895,20 @@
 				DF59C988285054670027F19D /* Unrar in Frameworks */,
 				DF248F0C2813844C00818300 /* KeychainSwift in Frameworks */,
 				DF2DA77327CF11C50046FE20 /* Alamofire in Frameworks */,
+				DF9041A22AA3E7E600B72ACC /* R2Shared in Frameworks */,
 				DF9C9EF0297AE3A9004A3BC5 /* FirebaseAnalytics in Frameworks */,
 				DFB7FB03297B965D00599097 /* OrderedCollections in Frameworks */,
 				DFA17F662A4916C300179850 /* ASCollectionView in Frameworks */,
-				DF1BE5F32A40AB3400E48572 /* R2Shared in Frameworks */,
 				DF70234F29DA852A0076AAD0 /* Nuke in Frameworks */,
 				DF730CD329411F1B00C62C71 /* FlagKit in Frameworks */,
 				DF482F012955A56F002D3308 /* RealmSwift in Frameworks */,
 				DF0D96062824892C00E592D9 /* Realm in Frameworks */,
-				DF1BE5F52A40AB3400E48572 /* ReadiumOPDS in Frameworks */,
 				DFF1043E28A9963D00E2C3A4 /* AnyCodable in Frameworks */,
 				DF70235129DA852A0076AAD0 /* NukeUI in Frameworks */,
 				DFE1B11C2AA0188900D300DB /* IceCream in Frameworks */,
 				DF59C97D285004860027F19D /* ZIPFoundation in Frameworks */,
 				C3423ED4E5A2EFB664586F1B /* Pods_Suwatte__iOS_.framework in Frameworks */,
+				DF9041A42AA3E7E600B72ACC /* ReadiumOPDS in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1553,8 +1553,8 @@
 			children = (
 				DF3DA8E72A5730C000E8E3BD /* JS */,
 				DF8D09E82800EE47003E4C3E /* SuwatteInfo.plist */,
+				DF90419E2AA3E78E00B72ACC /* GoogleService-Info.plist */,
 				DF8D09E92800EE47003E4C3E /* Assets.xcassets */,
-				DF020A402A899C6300BC5562 /* GoogleService-Info.plist */,
 				DF86CAC9285841BA0008B17A /* STTLaunchScreen.storyboard */,
 			);
 			path = Resources;
@@ -2486,10 +2486,10 @@
 				DFB7FB02297B965D00599097 /* OrderedCollections */,
 				DF70234E29DA852A0076AAD0 /* Nuke */,
 				DF70235029DA852A0076AAD0 /* NukeUI */,
-				DF1BE5F22A40AB3400E48572 /* R2Shared */,
-				DF1BE5F42A40AB3400E48572 /* ReadiumOPDS */,
 				DFA17F652A4916C300179850 /* ASCollectionView */,
 				DFE1B11B2AA0188900D300DB /* IceCream */,
+				DF9041A12AA3E7E600B72ACC /* R2Shared */,
+				DF9041A32AA3E7E600B72ACC /* ReadiumOPDS */,
 			);
 			productName = "Suwatte (iOS)";
 			productReference = DFCE6EAF280108EA002E220C /* Suwatte.app */;
@@ -2554,9 +2554,9 @@
 				DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections" */,
 				DF70234D29DA852A0076AAD0 /* XCRemoteSwiftPackageReference "Nuke" */,
-				DF1BE5F12A40AB3400E48572 /* XCRemoteSwiftPackageReference "swift-toolkit" */,
 				DFA17F642A4916C300179850 /* XCRemoteSwiftPackageReference "ASCollectionView" */,
 				DFE1B11A2AA0188900D300DB /* XCRemoteSwiftPackageReference "IceCream" */,
+				DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit" */,
 			);
 			productRefGroup = DF2DA6FF27CD82430046FE20;
 			projectDirPath = "";
@@ -2574,7 +2574,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DFDBF9A12A7CABAD006D49AD /* wkFills.js in Resources */,
-				DF020A412A899C6300BC5562 /* GoogleService-Info.plist in Resources */,
+				DF90419F2AA3E78E00B72ACC /* GoogleService-Info.plist in Resources */,
 				DF3DA8EE2A5730D400E8E3BD /* store.js in Resources */,
 				DF3DA8ED2A5730D400E8E3BD /* bridge.js in Resources */,
 				DF3DA8EF2A5730D400E8E3BD /* log.js in Resources */,
@@ -3378,14 +3378,6 @@
 				kind = branch;
 			};
 		};
-		DF1BE5F12A40AB3400E48572 /* XCRemoteSwiftPackageReference "swift-toolkit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/readium/swift-toolkit.git";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
@@ -3432,6 +3424,14 @@
 			requirement = {
 				branch = master;
 				kind = branch;
+			};
+		};
+		DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/readium/swift-toolkit.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 2.5.0;
 			};
 		};
 		DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
@@ -3482,16 +3482,6 @@
 			package = DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = Realm;
 		};
-		DF1BE5F22A40AB3400E48572 /* R2Shared */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DF1BE5F12A40AB3400E48572 /* XCRemoteSwiftPackageReference "swift-toolkit" */;
-			productName = R2Shared;
-		};
-		DF1BE5F42A40AB3400E48572 /* ReadiumOPDS */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DF1BE5F12A40AB3400E48572 /* XCRemoteSwiftPackageReference "swift-toolkit" */;
-			productName = ReadiumOPDS;
-		};
 		DF248F0B2813844C00818300 /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift" */;
@@ -3531,6 +3521,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit" */;
 			productName = FlagKit;
+		};
+		DF9041A12AA3E7E600B72ACC /* R2Shared */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit" */;
+			productName = R2Shared;
+		};
+		DF9041A32AA3E7E600B72ACC /* ReadiumOPDS */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit" */;
+			productName = ReadiumOPDS;
 		};
 		DF9BFE242A4295F5005D0B63 /* Unrar */ = {
 			isa = XCSwiftPackageProductDependency;

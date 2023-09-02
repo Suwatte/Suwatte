@@ -5,7 +5,6 @@
 //  Created by Mantton on 2022-03-07.
 //
 
-import BetterSafariView
 import RealmSwift
 import SwiftUI
 extension ProfileView {
