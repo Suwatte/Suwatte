@@ -14,12 +14,17 @@ extension ProfileView {
 
 extension ProfileView.Sheets {
     struct LibrarySheet: View {
-        @ObservedResults(LibraryCollection.self, where: { $0.isDeleted == false }) private var collections
         private typealias AddCollectionView = LibraryView.ManageCollectionsView.AddCollectionView
         let id: String
         @State private var flag: LibraryFlag = .unknown
         @State private var selectedCollections = Set<String>()
         @State private var entry: LibraryEntry?
+        
+        @EnvironmentObject private var stateManager: StateManager
+
+        private var collections: [LibraryCollection] {
+            stateManager.collections
+        }
 
         func containsCollection(withID id: String) -> Bool {
             selectedCollections.contains(id)

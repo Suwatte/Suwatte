@@ -224,8 +224,13 @@ extension LibraryView {
 
 extension LibraryView {
     struct CollectionsSectionView: View {
-        @ObservedResults(LibraryCollection.self, where: { $0.isDeleted == false }, sortDescriptor: SortDescriptor(keyPath: "order", ascending: true)) var collections
         @Binding var isActive: Bool
+        @EnvironmentObject private var stateManager: StateManager
+
+        private var collections: [LibraryCollection] {
+            stateManager.collections
+        }
+        
         var body: some View {
             Section {
                 NavigationLink(destination: LibraryGrid(model: .init()), isActive: $isActive) {

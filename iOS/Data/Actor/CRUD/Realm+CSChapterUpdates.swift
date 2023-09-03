@@ -12,6 +12,7 @@ extension RealmActor {
     func getTitlesPendingUpdate(_ sourceId: String) -> [LibraryEntry] {
         let date = UserDefaults.standard.object(forKey: STTKeys.LastFetchedUpdates) as! Date
         let skipConditions = Preferences.standard.skipConditions
+        let approvedCollections = Array(Preferences.standard.updatesUseCollections ? Preferences.standard.approvedUpdateCollections : [])
         let validStatuses = [ContentStatus.ONGOING, .HIATUS, .UNKNOWN]
         var results = realm.objects(LibraryEntry.self)
             .where { $0.content != nil && $0.isDeleted == false }
@@ -19,6 +20,10 @@ extension RealmActor {
             .where { $0.content.sourceId == sourceId }
             .where { $0.content.status.in(validStatuses) }
 
+        if !approvedCollections.isEmpty {
+            results = results
+                .where { $0.collections.containsAny(in: approvedCollections) }
+        }
         // Flag Not Set to Reading Skip Condition
         if skipConditions.contains(.INVALID_FLAG) {
             results = results
@@ -40,7 +45,7 @@ extension RealmActor {
             results = results
                 .where { $0.id.in(startedTitles) }
         }
-        let library = Array(results.freeze())
+        let library = results.freeze().toArray()
         return library
     }
 

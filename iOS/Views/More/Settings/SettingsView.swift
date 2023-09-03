@@ -62,6 +62,9 @@ extension SettingsView {
         @AppStorage(STTKeys.CheckLinkedOnUpdateCheck) var checkLinkedOnUpdate = false
         @AppStorage(STTKeys.UpdateContentData) var updateContent = false
         @Preference(\.skipConditions) var skipConditions
+        @Preference(\.updatesUseCollections) var onlyCheckCollections
+        @Preference(\.approvedUpdateCollections) var approvedCollections
+        @EnvironmentObject private var model: StateManager
         var body: some View {
             Section {
                 // Update Interval
@@ -72,16 +75,32 @@ extension SettingsView {
                     }
                 }
                 NavigationLink("Skip Conditions") {
-                    MultiSelectionView(options: SkipCondition.allCases, selection: BINDING) { condition in
+                    MultiSelectionView(options: SkipCondition.allCases, selection: SKIP_CONDITIONS) { condition in
                         Text(condition.description)
                     }
                     .buttonStyle(.plain)
                     .navigationTitle("Skip Conditions")
                 }
+                
+                Toggle("Update Specific Collections", isOn: $onlyCheckCollections)
+                    .disabled(!onlyCheckCollections && model.collections.isEmpty)
+                
+                if onlyCheckCollections {
+                    NavigationLink("Selected Collections") {
+                        MultiSelectionView(options: model.collections, selection: SELECTED_COLLECTIONS) { collection in
+                            Text(collection.name)
+                        }
+                        .buttonStyle(.plain)
+                        .navigationTitle("Selected Collections")
+                    }
+                    .transition(.opacity)
+                }
+                
 
             } header: {
                 Text("Updates")
             }
+            .animation(.default, value: onlyCheckCollections)
 
             Section {
                 // Check Linked
@@ -92,11 +111,19 @@ extension SettingsView {
             }
         }
 
-        var BINDING: Binding<Set<SkipCondition>> {
+        var SKIP_CONDITIONS: Binding<Set<SkipCondition>> {
             .init {
                 Set(skipConditions)
             } set: { value in
                 skipConditions = Array(value)
+            }
+        }
+        
+        var SELECTED_COLLECTIONS: Binding<Set<LibraryCollection>> {
+            .init {
+                Set(model.collections.filter({ approvedCollections.contains($0.id) }))
+            } set: { selections in
+                approvedCollections = Set(selections.map(\.id))
             }
         }
     }
@@ -178,9 +205,14 @@ enum SkipCondition: Int, CaseIterable, Identifiable, UserDefaultsSerializable {
 extension SettingsView {
     struct LibrarySection: View {
         @AppStorage(STTKeys.AlwaysAskForLibraryConfig) private var alwaysAsk = true
-        @ObservedResults(LibraryCollection.self, where: { $0.isDeleted == false }, sortDescriptor: .init(keyPath: "order", ascending: true)) private var collections
         @AppStorage(STTKeys.DefaultCollection) var defaultCollection: String = ""
         @AppStorage(STTKeys.DefaultReadingFlag) var defaultFlag = LibraryFlag.unknown
+        @EnvironmentObject private var stateManager: StateManager
+
+        private var collections: [LibraryCollection] {
+            stateManager.collections
+        }
+        
         var body: some View {
             Section {
                 Toggle("Always Prompt", isOn: $alwaysAsk)

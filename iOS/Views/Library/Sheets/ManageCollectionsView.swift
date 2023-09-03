@@ -10,8 +10,12 @@ import SwiftUI
 
 extension LibraryView {
     struct ManageCollectionsView: View {
-        @Environment(\.presentationMode) var presentationMode
-        @ObservedResults(LibraryCollection.self, where: { $0.isDeleted == false }, sortDescriptor: SortDescriptor(keyPath: "order", ascending: true)) var collections
+        @Environment(\.presentationMode) private var presentationMode
+        @EnvironmentObject private var model: StateManager
+        
+        var collections: [LibraryCollection] {
+            model.collections
+        }
 
         var body: some View {
             NavigationView {
@@ -25,6 +29,7 @@ extension LibraryView {
                     EditButton()
                 })
                 .closeButton()
+                .animation(.default, value: collections)
             }
         }
     }

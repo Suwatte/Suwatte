@@ -112,7 +112,7 @@ final class Preferences {
     var readerType = ReadingMode.PAGED_COMIC
 
     @UserDefault(STTKeys.UpdateSkipConditions)
-    var skipConditions: [SkipCondition] = SkipCondition.allCases
+    var skipConditions: [SkipCondition] =  [SkipCondition.HAS_UNREAD, SkipCondition.NO_MARKERS]
 
     @UserDefault(STTKeys.VerticalPillarBoxEnabled)
     var usePillarBox = false
@@ -176,6 +176,12 @@ final class Preferences {
     
     @UserDefault(STTKeys.GlobalHideNSFW)
     var globalHideNSFW = true
+    
+    @UserDefault(STTKeys.OnlyCheckForUpdateInSpecificCollections)
+    var updatesUseCollections = false
+    
+    @UserDefault(STTKeys.UpdateApprovedCollections)
+    var approvedUpdateCollections = Set<String>()
 }
 
 @propertyWrapper

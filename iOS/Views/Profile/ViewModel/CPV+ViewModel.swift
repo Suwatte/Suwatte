@@ -116,7 +116,6 @@ extension ViewModel {
                 let chapters = await getChaptersFromDatabase()
                 if let chapters {
                     let prepared = chapters.map { $0.toThreadSafe() }
-                    
                     await animate { [weak self] in
                         self?.chapters = prepared
                         self?.chapterState = .loaded(true)
@@ -138,9 +137,8 @@ extension ViewModel {
                     self?.contentState = .loaded(true)
                 }
                 
-                let nonIso = content
-                Task { [weak self] in
-                    await self?.saveContent(nonIso)
+                Task { [weak self, content] in
+                    await self?.saveContent(content)
                 }
                 
                 await loadChapters(chapters)

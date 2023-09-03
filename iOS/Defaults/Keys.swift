@@ -162,4 +162,7 @@ enum STTKeys {
     
     static let GroupByVolume = "APP.chapter_list.group_by_volume"
     static let GroupByChapter = "APP.chapter_list.group_by_chapter"
+    
+    static let OnlyCheckForUpdateInSpecificCollections = "APP.updates.use_collections"
+    static let UpdateApprovedCollections = "APP.updates.collections"
 }
