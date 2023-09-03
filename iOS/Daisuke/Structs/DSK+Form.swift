@@ -53,6 +53,7 @@ extension DSKCommon {
         let placeholder: String?;
         let secure: Bool?;
         let keyboard: FormKeyboardType?
+        let multiline: Bool?
         
         // Stepper
         let upperBound: Double?;
@@ -71,5 +72,7 @@ extension DSKCommon {
         var allowsDecimal: Bool {
             !(allowDecimal == nil || allowDecimal?.value == nil)
         }
+        
+        
     }
 }

@@ -44,6 +44,7 @@ extension RealmActor {
         let info = runner.info
         await operation {
             obj.name = info.name
+            
             if obj.id.isEmpty {
                 obj.id = info.id
             }
@@ -57,7 +58,6 @@ extension RealmActor {
             }
             
             obj.version = info.version
-            obj.enabled = true
             obj.environment = runner.environment
             obj.isBrowsePageLinkProvider = runner.intents.browsePageLinkProvider
             obj.isLibraryPageLinkProvider = runner.intents.libraryPageLinkProvider

@@ -85,9 +85,17 @@ struct InstalledRunnersView: View {
                 VStack(alignment: .leading, spacing: 2.5) {
                     Text(runner.name)
                         .fontWeight(.semibold)
-                    Text("v" + runner.version.description)
-                        .font(.footnote.weight(.light))
-                        .foregroundColor(.secondary)
+                    HStack (alignment: .lastTextBaseline) {
+                        Text("v" + runner.version.description)
+                            .font(.footnote.weight(.light))
+                            .foregroundColor(.secondary)
+                        
+                        if runner.isInstantiable {
+                            Text("\(Image(systemName: "doc.on.doc"))")
+                                .font(.footnote.weight(.light))
+                                .foregroundColor(.secondary)
+                        }
+                    }
                 }
             }
         }
@@ -102,7 +110,7 @@ struct InstalledRunnersView: View {
             }
             .tint(.red)
             
-            if runner.isInstantiable {
+            if runner.isInstantiable && runner.enabled {
                 Button {
                     Task {
                         let actor = await RealmActor.shared()

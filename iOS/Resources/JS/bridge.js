@@ -118,9 +118,9 @@ function setupSourceConfig() {
     RunnerIntents.preferenceMenuBuilder = !!ctx.getPreferenceMenu;
 
     // Requires Setup
-    RunnerIntents.requiresSetup == !!ctx.getSetupMenu &&
+    RunnerIntents.requiresSetup = !!ctx.getSetupMenu &&
       !!ctx.validateSetupForm;
-
+      
     //Image Handler
     RunnerIntents.imageRequestHandler = !!ctx.willRequestImage;
 

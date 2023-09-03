@@ -25,18 +25,18 @@ struct DSKLoadableForm: View {
             loadable = .loading
         }
         switch context {
-            case .tracker(let id):
-                guard let tracker = runner as? AnyContentTracker else {
-                    throw DSK.Errors.NamedError(name: "Invalid Runner", message: "A Tracker Must Request This")
-                }
-                let form = try await tracker.getEntryForm(id: id)
-                loadable = .loaded(form)
-            case .preference:
-                let form = try await runner.getPreferenceMenu()
-                loadable = .loaded(form)
-            case .setup:
-                let form = try await runner.getSetupMenu()
-                loadable = .loaded(form)
+        case .tracker(let id):
+            guard let tracker = runner as? AnyContentTracker else {
+                throw DSK.Errors.NamedError(name: "Invalid Runner", message: "A Tracker Must Request This")
+            }
+            let form = try await tracker.getEntryForm(id: id)
+            loadable = .loaded(form)
+        case .preference:
+            let form = try await runner.getPreferenceMenu()
+            loadable = .loaded(form)
+        case .setup:
+            let form = try await runner.getSetupMenu()
+            loadable = .loaded(form)
         }
     }
 }
@@ -46,12 +46,14 @@ struct DSKFormView: View {
     @StateObject var model: ViewModel
     let form: DSKCommon.Form
     
+    
     var body: some View {
         List {
             ForEach(form.sections, id: \.hashValue) { section in
                 Section {
                     ForEach(section.children, id: \.key) { component in
                         ComponentBuilder(component: component)
+                            
                     }
                 } header: {
                     if let header  = section.header {
@@ -64,13 +66,16 @@ struct DSKFormView: View {
                 }
             }
         }
+        .task {
+            model.seed(with: form)
+        }
         .environmentObject(model)
-        .toast()
         .toolbar {
             if model.context.hasSubmitButton {
                 Button("Submit") {
                     model.submit()
                 }
+                .disabled(!model.formHasChanged)
             }
         }
     }
@@ -83,8 +88,8 @@ extension DSKFormView {
         
         var hasSubmitButton: Bool {
             switch self {
-                case .preference: return false
-                default: return true
+            case .preference: return false
+            default: return true
             }
         }
     }
@@ -98,19 +103,20 @@ extension DSKFormView {
         
         @Published var disabled: Set<String> = []
         @Published var form: [String: AnyCodable] = [:]
-        
+        @Published var formHasChanged = false
         init(context: FormContext, runner: AnyRunner) {
             self.context = context
             self.runner = runner
         }
-
+        
         
         func didSet(_ value: Codable, for component: DSKCommon.FormComponent) {
+            formHasChanged = true
             switch context {
-                case .preference:
-                    triggerSettingUpdate(key: component.key, value: value)
-                case .tracker, .setup:
-                    update(component.key, value)
+            case .preference:
+                triggerSettingUpdate(key: component.key, value: value)
+            case .tracker, .setup:
+                update(component.key, value)
             }
         }
         
@@ -135,24 +141,35 @@ extension DSKFormView {
             ToastManager.shared.block { [runner, form] in
                 try await runner
                     .validateSetupForm(form: form)
+                ToastManager.shared.info("\(runner.name) Setup!")
             }
         }
         
         func update(_ key: String, _ value: Codable) {
             form[key] = AnyCodable(value)
         }
-
-       func remove(_ key: String) {
-           form.removeValue(forKey: key)
-       }
+        
+        func remove(_ key: String) {
+            form.removeValue(forKey: key)
+        }
         
         func submit() {
             switch context {
-                case .preference: break
-                case .setup:
-                    triggerSetupMenuSubmission()
-                case .tracker(let id ):
-                    triggerTrackerFormSubmission(for: id)
+            case .preference: break
+            case .setup:
+                triggerSetupMenuSubmission()
+            case .tracker(let id ):
+                triggerTrackerFormSubmission(for: id)
+            }
+        }
+        
+        func seed(with form: DSKCommon.Form) {
+            let components = form.sections.flatMap({ $0.children })
+            for component in components {
+                let key = component.key
+                if let value = component.value {
+                    self.form[key] = value
+                }
             }
         }
     }
@@ -201,13 +218,13 @@ extension DSKFormView {
         @ViewBuilder
         func Builder(_ type: DSKCommon.UIComponentType) -> some View {
             switch type {
-                case .button: ButtonView(component: component)
-                case .datepicker: DatePickerView(component: component)
-                case .multipicker: MultiPickerView(component: component)
-                case .picker: PickerView(component: component)
-                case .stepper: StepperView(component: component)
-                case .textfield: TextFieldView(component: component)
-                case .toggle: ToggleView(component: component)
+            case .button: ButtonView(component: component)
+            case .datepicker: DatePickerView(component: component)
+            case .multipicker: MultiPickerView(component: component)
+            case .picker: PickerView(component: component)
+            case .stepper: StepperView(component: component)
+            case .textfield: TextFieldView(component: component)
+            case .toggle: ToggleView(component: component)
             }
         }
     }
@@ -372,28 +389,28 @@ extension DSKFormView {
         
         private func presentAlert(_ current: Double) {
             let alertController = UIAlertController(title: "Update \(component.label)", message: nil, preferredStyle: .alert)
-
+            
             alertController.addTextField { textField in
                 textField.placeholder = current.clean
                 textField.keyboardType = component.allowsDecimal ? .decimalPad : .numberPad
             }
-
+            
             let confirmAction = UIAlertAction(title: "Update", style: .default) { _ in
                 guard let textField = alertController.textFields?.first, let text = textField.text else {
                     return
                 }
-
+                
                 var prepped = Double(text) ?? current
                 prepped = max(Double(lowerBound), value)
                 prepped = min(Double(upperBound), value)
                 value = prepped
             }
-
+            
             let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-
+            
             alertController.addAction(confirmAction)
             alertController.addAction(cancelAction)
-
+            
             KEY_WINDOW?.rootViewController?.present(alertController, animated: true, completion: nil)
         }
         private var UpperBoundString: String {
@@ -407,11 +424,11 @@ extension DSKFormView {
         private var step: Double {
             component.step ?? 1
         }
-
+        
         private var upperBound: Int {
             Int(component.upperBound ?? 9999)
         }
-
+        
         private var lowerBound: Int {
             Int(component.lowerBound ?? 0)
         }
@@ -430,10 +447,19 @@ extension DSKFormView {
             self._text = State(initialValue: component.value?.value as? String ?? "")
         }
         var body: some View {
-            TextEditor(text: $text)
-                .onSubmit {
-                    model.didSet(text, for: component)
-                }
+            if component.multiline ?? false {
+                TextEditor(text: $text)
+                    .onChange(of: text, perform: { newValue in
+                        model.didSet(newValue, for: component)
+                    })
+                
+            } else {
+                TextField(component.label, text: $text)
+                    .onSubmit {
+                        model.didSet(text, for: component)
+                    }
+            }
+            
         }
     }
 }

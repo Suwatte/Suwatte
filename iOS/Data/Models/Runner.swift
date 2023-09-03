@@ -56,7 +56,7 @@ final class StoredRunnerObject: Object, Identifiable, CKRecordConvertible, CKRec
     @Persisted var environment: RunnerEnvironment = .unknown
 
     @Persisted var dateAdded: Date = .init()
-    @Persisted var enabled: Bool
+    @Persisted var enabled: Bool = true
 
     @Persisted var listURL: String
     @Persisted var thumbnail: String

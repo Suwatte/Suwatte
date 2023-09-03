@@ -21,16 +21,25 @@ struct ContentSourceInfoView: View {
                 DSKAuthView(model: .init(runner: source))
             }
 
-            if source.intents.preferenceMenuBuilder {
-                Section {
+            Section {
+                if source.intents.requiresSetup {
+                    NavigationLink("Setup") {
+                        DSKLoadableForm(runner: source, context: .setup)
+                            .navigationTitle("Setup")
+                    }
+                }
+                
+                if source.intents.preferenceMenuBuilder {
                     NavigationLink("Preferences") {
                         DSKLoadableForm(runner: source, context: .preference)
                             .navigationTitle("Preferences")
                     }
-                } header: {
-                    Text("Settings")
                 }
+
+            } header: {
+                Text("Settings")
             }
+           
 
             Section {
                 Toggle("Disable Progress Marking", isOn: .init(get: {
