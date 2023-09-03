@@ -108,7 +108,7 @@ extension DSKPageView.CollectionView {
         let section = NSCollectionLayoutSection(group: itemsGroup)
         itemsGroup.interItemSpacing = .fixed(10)
         section.interGroupSpacing = 7
-        section.contentInsets = NSDirectionalEdgeInsets(top: 7, leading: 20, bottom: 7, trailing: 20)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 20, bottom: 15, trailing: 20)
         section.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
         let supp = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: .init(widthDimension: .fractionalWidth(1), heightDimension: .estimated(44)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
         section.boundarySupplementaryItems = [supp]

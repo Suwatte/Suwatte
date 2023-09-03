@@ -1058,7 +1058,7 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
-		DF16F2B52A5F472700D7AFBB /* DSKDirectory */ = {
+		DF16F2B52A5F472700D7AFBB /* DSKDirectoryView */ = {
 			isa = PBXGroup;
 			children = (
 				DF16F2BD2A5F552E00D7AFBB /* Environments */,
@@ -1068,7 +1068,7 @@
 				DF16F2C02A5F5F0D00D7AFBB /* DV+HistoryView.swift */,
 				DF16F2C22A5F5F1700D7AFBB /* DV+FilterView.swift */,
 			);
-			path = DSKDirectory;
+			path = DSKDirectoryView;
 			sourceTree = "<group>";
 		};
 		DF16F2BD2A5F552E00D7AFBB /* Environments */ = {
@@ -1080,7 +1080,7 @@
 			path = Environments;
 			sourceTree = "<group>";
 		};
-		DF16F2C42A5F88D700D7AFBB /* Pages */ = {
+		DF16F2C42A5F88D700D7AFBB /* DSKPagesView */ = {
 			isa = PBXGroup;
 			children = (
 				DF6883802A607FF4009B5642 /* Environments */,
@@ -1089,7 +1089,7 @@
 				DF16F2CD2A5F998A00D7AFBB /* PageView+Layout.swift */,
 				DF16F2CF2A5F99BE00D7AFBB /* PageView+Tile.swift */,
 			);
-			path = Pages;
+			path = DSKPagesView;
 			sourceTree = "<group>";
 		};
 		DF1EA4452A70B78C003E27C7 /* SourceDownload */ = {
@@ -1670,8 +1670,8 @@
 				DF1EA4452A70B78C003E27C7 /* SourceDownload */,
 				DF8D0AAB2800EE47003E4C3E /* Main */,
 				DF6883832A608FC1009B5642 /* Tags */,
-				DF16F2C42A5F88D700D7AFBB /* Pages */,
-				DF16F2B52A5F472700D7AFBB /* DSKDirectory */,
+				DF16F2C42A5F88D700D7AFBB /* DSKPagesView */,
+				DF16F2B52A5F472700D7AFBB /* DSKDirectoryView */,
 				DFF09B622A5A844C00C5CA5E /* Representables */,
 				DF9BFDF12A427525005D0B63 /* DirectoryViewer */,
 				DF8D0A502800EE47003E4C3E /* Loadable */,
