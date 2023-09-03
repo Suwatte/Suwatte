@@ -81,6 +81,14 @@ extension Controller {
         // start
         startup()
     }
+    
+    override var prefersHomeIndicatorAutoHidden: Bool {
+        true
+    }
+    
+    override var canBecomeFirstResponder: Bool {
+        true
+    }
 
     func updateReaderState(with chapter: ThreadSafeChapter, indexPath: IndexPath, offset _: CGFloat?) async {
         let hasNext = await dataCache.getChapter(after: chapter) != nil
@@ -120,6 +128,12 @@ extension Controller {
         super.viewDidDisappear(animated)
         subscriptions.forEach { $0.cancel() }
         subscriptions.removeAll()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        becomeFirstResponder()
+        setNeedsUpdateOfHomeIndicatorAutoHidden()
     }
 }
 

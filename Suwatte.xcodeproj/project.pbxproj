@@ -131,7 +131,6 @@
 		DF4817F32A6F8B0300CB3A47 /* SDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4817F22A6F8B0300CB3A47 /* SDM.swift */; };
 		DF482F012955A56F002D3308 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DF482F002955A56F002D3308 /* RealmSwift */; };
 		DF489C022A8040DF006A21B9 /* Panel+Watcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF489C012A8040DF006A21B9 /* Panel+Watcher.swift */; };
-		DF489C082A806A0E006A21B9 /* Paged+Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF489C072A806A0E006A21B9 /* Paged+Controller.swift */; };
 		DF489C0C2A817F38006A21B9 /* IV+TransitionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF489C0B2A817F38006A21B9 /* IV+TransitionView.swift */; };
 		DF489C112A81C6F2006A21B9 /* IV+Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF489C102A81C6F2006A21B9 /* IV+Protocol.swift */; };
 		DF489C162A81D02C006A21B9 /* IV+Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF489C152A81D02C006A21B9 /* IV+Menu.swift */; };
@@ -314,6 +313,8 @@
 		DF9BFE272A4295FD005D0B63 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = DF9BFE262A4295FD005D0B63 /* ZIPFoundation */; };
 		DF9C9EF0297AE3A9004A3BC5 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = DF9C9EEF297AE3A9004A3BC5 /* FirebaseAnalytics */; };
 		DFA17F662A4916C300179850 /* ASCollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = DFA17F652A4916C300179850 /* ASCollectionView */; };
+		DFA25FEC2AA5075200A1369E /* PagingController+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA25FEB2AA5075200A1369E /* PagingController+Keyboard.swift */; };
+		DFA25FEE2AA50E8D00A1369E /* WebtoonController+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA25FED2AA50E8D00A1369E /* WebtoonController+Keyboard.swift */; };
 		DFAC77982815D48D00AF6394 /* STTHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAC77972815D48D00AF6394 /* STTHelper.swift */; };
 		DFADB58B29D7D04E00CBE22F /* JSCC+Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFADB58A29D7D04E00CBE22F /* JSCC+Network.swift */; };
 		DFADB58D29D7F19900CBE22F /* STT+URLRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFADB58C29D7F19900CBE22F /* STT+URLRequest.swift */; };
@@ -589,7 +590,6 @@
 		DF4817F02A6F88A800CB3A47 /* SourceDownload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceDownload.swift; sourceTree = "<group>"; };
 		DF4817F22A6F8B0300CB3A47 /* SDM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDM.swift; sourceTree = "<group>"; };
 		DF489C012A8040DF006A21B9 /* Panel+Watcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Panel+Watcher.swift"; sourceTree = "<group>"; };
-		DF489C072A806A0E006A21B9 /* Paged+Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Paged+Controller.swift"; sourceTree = "<group>"; };
 		DF489C0B2A817F38006A21B9 /* IV+TransitionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IV+TransitionView.swift"; sourceTree = "<group>"; };
 		DF489C102A81C6F2006A21B9 /* IV+Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IV+Protocol.swift"; sourceTree = "<group>"; };
 		DF489C152A81D02C006A21B9 /* IV+Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IV+Menu.swift"; sourceTree = "<group>"; };
@@ -761,6 +761,8 @@
 		DF9BFE022A4285BC005D0B63 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DF9BFE192A428A5B005D0B63 /* AH+Zip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AH+Zip.swift"; sourceTree = "<group>"; };
 		DF9BFE1D2A428A73005D0B63 /* AH+Rar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AH+Rar.swift"; sourceTree = "<group>"; };
+		DFA25FEB2AA5075200A1369E /* PagingController+Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagingController+Keyboard.swift"; sourceTree = "<group>"; };
+		DFA25FED2AA50E8D00A1369E /* WebtoonController+Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebtoonController+Keyboard.swift"; sourceTree = "<group>"; };
 		DFAC77972815D48D00AF6394 /* STTHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STTHelper.swift; sourceTree = "<group>"; };
 		DFADB58A29D7D04E00CBE22F /* JSCC+Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCC+Network.swift"; sourceTree = "<group>"; };
 		DFADB58C29D7F19900CBE22F /* STT+URLRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+URLRequest.swift"; sourceTree = "<group>"; };
@@ -991,6 +993,7 @@
 				DF020A652A8C5F7900BC5562 /* PagingController+DoublePage.swift */,
 				DF020A682A8C5F9000BC5562 /* PagingController+Event.swift */,
 				DF1114982A9407AD00FA8A39 /* PagingController+Gesture.swift */,
+				DFA25FEB2AA5075200A1369E /* PagingController+Keyboard.swift */,
 			);
 			path = PagingController;
 			sourceTree = "<group>";
@@ -1013,6 +1016,7 @@
 				DF1114872A92F6E300FA8A39 /* WebtoonController+Combine.swift */,
 				DF1114922A93F0DD00FA8A39 /* WebtoonController+Zoom.swift */,
 				DF1114962A93FC4900FA8A39 /* WebtoonController+AutoScroll.swift */,
+				DFA25FED2AA50E8D00A1369E /* WebtoonController+Keyboard.swift */,
 			);
 			path = WebtoonController;
 			sourceTree = "<group>";
@@ -1306,14 +1310,6 @@
 				DF020A492A8B120700BC5562 /* IV+ChapterList.swift */,
 			);
 			path = Menu;
-			sourceTree = "<group>";
-		};
-		DF489C3A2A8482ED006A21B9 /* Controller */ = {
-			isa = PBXGroup;
-			children = (
-				DF489C072A806A0E006A21B9 /* Paged+Controller.swift */,
-			);
-			path = Controller;
 			sourceTree = "<group>";
 		};
 		DF489C402A84842B006A21B9 /* Layout */ = {
@@ -2284,7 +2280,6 @@
 				DF489C0F2A81C6D7006A21B9 /* Protocols */,
 				DFDBF9C92A7DB79A006D49AD /* Views */,
 				DFDBF9C82A7DB774006D49AD /* Actors */,
-				DFDBF9C72A7DB76A006D49AD /* Modes */,
 				DFDBF9AE2A7D9FFB006D49AD /* Models */,
 				DFDBF9DF2A7DC044006D49AD /* ImageViewer.swift */,
 			);
@@ -2297,14 +2292,6 @@
 				DFDBF9C32A7DB60D006D49AD /* ImageViewer */,
 			);
 			path = Viewers;
-			sourceTree = "<group>";
-		};
-		DFDBF9C72A7DB76A006D49AD /* Modes */ = {
-			isa = PBXGroup;
-			children = (
-				DFDBF9E12A7DC255006D49AD /* Paged */,
-			);
-			path = Modes;
 			sourceTree = "<group>";
 		};
 		DFDBF9C82A7DB774006D49AD /* Actors */ = {
@@ -2375,14 +2362,6 @@
 				DFDBF9D52A7DB8C7006D49AD /* +VerticalSlider.swift */,
 			);
 			path = Sliders;
-			sourceTree = "<group>";
-		};
-		DFDBF9E12A7DC255006D49AD /* Paged */ = {
-			isa = PBXGroup;
-			children = (
-				DF489C3A2A8482ED006A21B9 /* Controller */,
-			);
-			path = Paged;
 			sourceTree = "<group>";
 		};
 		DFE1B0F22A9A58C900D300DB /* ChapterList */ = {
@@ -2654,6 +2633,7 @@
 				DFBE48362A25BAD5000ABA16 /* Content.swift in Sources */,
 				DFDBF9AB2A7D858A006D49AD /* WKTracker.swift in Sources */,
 				DF52FBBE289487C6008FAD3A /* STTGridView.swift in Sources */,
+				DFA25FEE2AA50E8D00A1369E /* WebtoonController+Keyboard.swift in Sources */,
 				DF8D0BA02800EE48003E4C3E /* ProfileView+ChapterListTile.swift in Sources */,
 				DF1114802A92E9BF00FA8A39 /* WebtoonController+DataSource.swift in Sources */,
 				DFE1B10C2A9D5C2600D300DB /* Migration+ManualDestinationView.swift in Sources */,
@@ -2734,7 +2714,7 @@
 				DF020A442A89A07C00BC5562 /* ArchiveHelper.swift in Sources */,
 				DF020A512A8C43D200BC5562 /* RLV+ViewModel.swift in Sources */,
 				DFE1B1082A9C109700D300DB /* Migration+StrategySelectorView.swift in Sources */,
-				DF489C082A806A0E006A21B9 /* Paged+Controller.swift in Sources */,
+				DFA25FEC2AA5075200A1369E /* PagingController+Keyboard.swift in Sources */,
 				DFBE48522A25BE7B000ABA16 /* CustomThumbnail.swift in Sources */,
 				DF16F2B12A5F31E000D7AFBB /* DSK+Page.swift in Sources */,
 				DF2783602A79B12A0098BBA9 /* +Chapter.swift in Sources */,
