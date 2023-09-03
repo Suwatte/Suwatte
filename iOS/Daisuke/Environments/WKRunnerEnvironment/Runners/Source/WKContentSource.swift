@@ -12,8 +12,8 @@ final class WKContentSource: WKRunner {
     var config: SourceConfig?
     var directoryTags: [DSKCommon.Property]?
 
-    override init(webview: WKWebView) async throws {
-        try await super.init(webview: webview)
+    override init(webview: WKWebView, for id: String?) async throws {
+        try await super.init(webview: webview, for: id)
 
         let script = """
             const config = RunnerObject.config;

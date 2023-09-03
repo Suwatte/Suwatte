@@ -93,7 +93,7 @@ extension DaisukeEngine {
 }
 
 extension DaisukeEngine {
-    func startJSCRunner(with url: URL) async throws -> AnyRunner {
+    func startJSCRunner(with url: URL, for id: String?) async throws -> AnyRunner {
         let runnerObject = try bootstrapJSCRunner(url)
 
         // Get Runner Environment
@@ -105,9 +105,9 @@ extension DaisukeEngine {
         var runner: JSCRunner? = nil
         switch environment {
         case .source:
-            runner = try await JSCContentSource(object: runnerObject)
+            runner = try await JSCContentSource(object: runnerObject, for: id)
         case .tracker:
-            runner = try await JSCContentTracker(object: runnerObject)
+            runner = try await JSCContentTracker(object: runnerObject, for: id)
         default:
             break
         }

@@ -10,7 +10,7 @@ import SwiftUI
 struct ErrorView: View {
     @State var error: Error
     var runnerID: String?
-    var action: () async throws -> Void
+    var action: () async -> Void
     var body: some View {
         Group {
             VStack(alignment: .center) {
@@ -59,11 +59,7 @@ struct ErrorView: View {
     }
 
     func handle() async {
-        do {
-            try await action()
-        } catch {
-            Logger.shared.error(error)
-        }
+        await action()
     }
 
     func getMessage(for error: Error) -> String {

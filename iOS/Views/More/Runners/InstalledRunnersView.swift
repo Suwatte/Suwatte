@@ -76,6 +76,7 @@ struct InstalledRunnersView: View {
     func Cell(_ runner: StoredRunnerObject) -> some View {
         NavigationLink {
             Gateway(runnerID: runner.id)
+                .navigationTitle(runner.name)
         } label: {
             HStack(spacing: 15) {
                 STTThumbView(url: URL(string: runner.thumbnail))
@@ -100,6 +101,18 @@ struct InstalledRunnersView: View {
                 Label("Delete", systemImage: "trash")
             }
             .tint(.red)
+            
+            if runner.isInstantiable {
+                Button {
+                    Task {
+                        let actor = await RealmActor.shared()
+                        await actor.createNewInstance(of: runner.id)
+                    }
+                } label: {
+                    Label("New", systemImage: "plus")
+                }
+                .tint(.blue)
+            }
         }
     }
 }

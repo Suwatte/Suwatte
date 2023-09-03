@@ -141,7 +141,6 @@ extension RunnerListsView {
             List {
                 let sources = filteredRunners.filter { $0.environment == .source }
                 let trackers = filteredRunners.filter { $0.environment == .tracker }
-                let plugins = filteredRunners.filter { $0.environment == .plugin }
 
                 if !sources.isEmpty {
                     Section {
@@ -165,16 +164,6 @@ extension RunnerListsView {
                     }
                 }
 
-                if !plugins.isEmpty {
-                    Section {
-                        ForEach(plugins) { plugin in
-                            RunnerListInfo.RunnerListCell(listURL: listURL, list: list, runner: plugin)
-                                .frame(height: 60)
-                        }
-                    } header: {
-                        Text("Plugins")
-                    }
-                }
             }
             .animation(.default, value: text)
             .toolbar(content: {

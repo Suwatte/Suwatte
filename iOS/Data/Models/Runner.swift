@@ -10,16 +10,14 @@ import IceCream
 import RealmSwift
 
 enum RunnerEnvironment: String, PersistableEnum, Codable, Hashable {
-    case unknown, tracker, source, plugin
+    case unknown, tracker, source
 
     var description: String {
         switch self {
         case .tracker:
             return "Trackers"
         case .source:
-            return "Content Sources"
-        case .plugin:
-            return "Plugins"
+            return "Sources"
         case .unknown:
             return "Unknown"
         }
@@ -47,12 +45,12 @@ struct Runner: Codable, Hashable, Identifiable {
 final class StoredRunnerList: Object, ObjectKeyIdentifiable, CKRecordConvertible, CKRecordRecoverable {
     @Persisted var listName: String?
     @Persisted(primaryKey: true) var url: String
-    @Persisted var hosted: Bool = false
     @Persisted var isDeleted = false
 }
 
 final class StoredRunnerObject: Object, Identifiable, CKRecordConvertible, CKRecordRecoverable {
     @Persisted(primaryKey: true) var id: String
+    @Persisted var parentRunnerID: String?
     @Persisted var name: String
     @Persisted var version: Double
     @Persisted var environment: RunnerEnvironment = .unknown
@@ -66,18 +64,8 @@ final class StoredRunnerObject: Object, Identifiable, CKRecordConvertible, CKRec
 
     @Persisted var isLibraryPageLinkProvider = false
     @Persisted var isBrowsePageLinkProvider = false
+    @Persisted var isInstantiable = false
 
     static let RUNNER_KEY = "bundle"
     @Persisted var executable: CreamAsset?
-}
-
-final class RunnerInstance: Object, CKRecordConvertible, CKRecordRecoverable {
-    @Persisted(primaryKey: true) var instanceID = UUID().uuidString
-    @Persisted var instanceOf: StoredRunnerObject?
-    @Persisted var preferredName: String?
-    @Persisted var isDeleted = false
-
-    var name: String {
-        preferredName ?? instanceOf?.name ?? ""
-    }
 }

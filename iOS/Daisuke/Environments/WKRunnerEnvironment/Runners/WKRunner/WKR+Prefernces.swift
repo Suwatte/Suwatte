@@ -12,7 +12,7 @@ extension WKRunner: DSKPreferenceDelegate {
         do {
             let arguments: [String: Any] = ["key": key, "value": value]
             try await eval("await updateSourcePreferences(key, value)", arguments)
-            Logger.shared.log("[\(key)] Preference Updated", runnerID)
+            Logger.shared.log("[\(key)] Preference Updated", id)
         } catch {
             Logger.shared.error("[\(key)] Preference Failed To Update: \(error)")
         }

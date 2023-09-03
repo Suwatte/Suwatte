@@ -93,19 +93,19 @@ extension DaisukeEngine {
         guard let file, file.exists else {
             let standardLocation = executeableURL(for: id)
             if standardLocation.exists {
-                return try await startRunner(standardLocation)
+                return try await startRunner(standardLocation, for: id)
             } else {
                 throw DSK.Errors.RunnerExecutableNotFound(id: id)
             }
         }
 
-        return try await startRunner(file)
+        return try await startRunner(file, for: id)
     }
 
-    func startRunner(_ url: URL) async throws -> AnyRunner {
+    func startRunner(_ url: URL, for id: String? = nil) async throws -> AnyRunner {
         let content = try String(contentsOf: url, encoding: .utf8)
-        let hasWKDirective = content.contains("stt webkit")
-        let runner = try await hasWKDirective ? startWKRunner(with: url) : startJSCRunner(with: url)
+        let hasWKDirective = content.contains("dsk use webkit")
+        let runner = try await hasWKDirective ? startWKRunner(with: url, for: id) : startJSCRunner(with: url, for: id)
 
         didStartRunner(runner)
         return runner

@@ -18,6 +18,8 @@ protocol DSKRunnerDelegate {
     var info: RunnerInfo { get }
     var intents: RunnerIntents { get }
     var configCache: [String: DSKCommon.DirectoryConfig] { get set }
+    var customID: String? { get }
+    var customName: String? { get }
 }
 
 protocol DSKPreferenceDelegate {
@@ -55,16 +57,13 @@ protocol DSKSetupDelegate {
 }
 
 extension DSKRunnerDelegate {
-    var runnerID: String {
-        info.id
-    }
-
+    
     var id: String {
-        info.id
+        customID ?? info.id
     }
 
     var name: String {
-        info.name
+        customName ?? info.name
     }
 
     var version: Double {

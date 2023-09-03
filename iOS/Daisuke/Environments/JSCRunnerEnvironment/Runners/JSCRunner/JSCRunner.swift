@@ -17,8 +17,20 @@ public class JSCRunner: DSKRunner, JSCContextWrapper {
     let info: RunnerInfo
     let intents: RunnerIntents
     var configCache: [String: DSKCommon.DirectoryConfig] = [:]
-    init(object: JSValue) async throws {
+    
+    var customID: String?
+    var customName: String?
+    
+    init(object: JSValue, for customID: String?) async throws {
+        self.customID = customID
         runnerClass = object
+        
+        if let customID {
+            let actor = await RealmActor.shared()
+            customName = await actor.getRunner(customID)?.name
+            object.context.evaluateScript("RunnerObject.info.id = '\(customID)';IDENTIFIER = '\(customID)'")
+        }
+        
         let ctx = runnerClass.context
         // Prepare Runner Info
         guard let ctx, let dictionary = runnerClass.forProperty("info"), dictionary.isObject else {

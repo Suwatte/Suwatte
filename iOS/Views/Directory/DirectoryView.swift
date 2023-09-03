@@ -129,14 +129,12 @@ struct RunnerDirectoryView: View {
     var body: some View {
         Group {
             switch runner.environment {
-            case .plugin:
-                EmptyView()
             case .tracker:
                 ContentTrackerDirectoryView(tracker: runner as! AnyContentTracker, request: request)
             case .source:
                 ContentSourceDirectoryView(source: runner as! AnyContentSource, request: request)
             case .unknown:
-                EmptyView()
+               Text("Unknown Runner Environment")
             }
         }
     }

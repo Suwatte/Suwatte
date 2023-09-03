@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct LoadableView<Value, Idle, Loading, Failure, Content>: View where Idle: View,
-    Loading: View,
-    Failure: View,
-    Content: View
+                                                                        Loading: View,
+                                                                        Failure: View,
+                                                                        Content: View
 {
     @Binding var loadable: Loadable<Value>
     let content: (_ value: Value) -> Content
@@ -19,7 +19,7 @@ struct LoadableView<Value, Idle, Loading, Failure, Content>: View where Idle: Vi
     let failure: (_ error: Error) -> Failure
     let action: () async throws -> Void
     @State private var loaded = false
-
+    
     init(
         loadable: Binding<Loadable<Value>>,
         _ action: @escaping () async throws -> Void,
@@ -35,7 +35,7 @@ struct LoadableView<Value, Idle, Loading, Failure, Content>: View where Idle: Vi
         self.idle = idle
         self.action = action
     }
-
+    
     var body: some View {
         Group {
             switch loadable {
@@ -45,11 +45,11 @@ struct LoadableView<Value, Idle, Loading, Failure, Content>: View where Idle: Vi
             case .loading:
                 loading()
                     .transition(.opacity)
-
+                
             case let .loaded(value):
                 content(value)
                     .transition(.opacity)
-
+                
             case let .failed(error):
                 failure(error)
                     .transition(.opacity)
@@ -59,7 +59,7 @@ struct LoadableView<Value, Idle, Loading, Failure, Content>: View where Idle: Vi
             await load()
         }
     }
-
+    
     func load() async {
         guard !loaded else { return }
         do {
@@ -81,7 +81,17 @@ extension LoadableView where Idle == DefaultNotRequestedView, Loading == Default
         _ loadable: Binding<Loadable<Value>>,
         @ViewBuilder _ content: @escaping (_ value: Value) -> Content
     ) {
-        self.init(loadable: loadable, action, { DefaultNotRequestedView() }, { DefaultLoadingView() }, { ErrorView(error: $0, action: action) }, content)
+        self.init(loadable: loadable,
+                  action,
+                  { DefaultNotRequestedView() },
+                  { DefaultLoadingView() },
+                  { ErrorView(error: $0, action: {
+            do {
+                try await action()
+            } catch {
+                loadable.wrappedValue = .failed(error)
+            }
+        }) }, content)
     }
 }
 

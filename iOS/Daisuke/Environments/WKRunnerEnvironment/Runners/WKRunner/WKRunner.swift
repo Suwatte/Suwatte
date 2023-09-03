@@ -14,10 +14,22 @@ public class WKRunner: DSKRunner {
     let wv: WKWebView!
     var configCache: [String: DSKCommon.DirectoryConfig] = [:]
 
-    init(webview: WKWebView) async throws {
+    var customID: String?
+    var customName: String?
+    
+    init(webview: WKWebView, for id: String?) async throws {
         wv = webview
+        customID = id
+        
         info = .init(id: "default", name: "", version: 1.0, website: "", rating: .SAFE, minSupportedAppVersion: nil, thumbnail: nil, supportedLanguages: nil)
         intents = .init(preferenceMenuBuilder: false, authenticatable: false, authenticationMethod: .unknown, basicAuthLabel: nil, imageRequestHandler: false, pageLinkResolver: false, libraryPageLinkProvider: false, browsePageLinkProvider: false, chapterEventHandler: false, contentEventHandler: false, chapterSyncHandler: false, librarySyncHandler: false, hasTagsView: false, pageReadHandler: false, providesReaderContext: false, canRefreshHighlight: false, isContextMenuProvider: false, advancedTracker: false, requiresSetup: false)
+        
+        if let customID {
+            let actor = await RealmActor.shared()
+            customName = await actor.getRunner(customID)?.name
+            let idScript = "RunnerObject.info.id = '\(customID)';IDENTIFIER = '\(customID)'"
+            try await eval(idScript)
+        }
 
         let infoScript = """
             return JSON.stringify(RunnerObject.info)

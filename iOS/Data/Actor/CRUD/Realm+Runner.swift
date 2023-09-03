@@ -47,12 +47,22 @@ extension RealmActor {
             if obj.id.isEmpty {
                 obj.id = info.id
             }
+            
+            // Instance
+            if let runner = runner as? AnyContentSource {
+                let allowsInstances = runner.config?.allowsMultipleInstances ?? false
+                if !obj.isInstantiable && allowsInstances && obj.parentRunnerID == nil {
+                    obj.isInstantiable = true
+                }
+            }
+            
             obj.version = info.version
             obj.enabled = true
             obj.environment = runner.environment
             obj.isBrowsePageLinkProvider = runner.intents.browsePageLinkProvider
             obj.isLibraryPageLinkProvider = runner.intents.libraryPageLinkProvider
             obj.isDeleted = false
+            
             if let listURL {
                 obj.listURL = listURL.absoluteString
             }
@@ -127,5 +137,28 @@ extension RealmActor {
             .objects(StoredRunnerObject.self)
             .where { $0.enabled == true && $0.isDeleted == false && $0.environment == environment }
             .sorted(by: [SortDescriptor(keyPath: "name", ascending: true)])
+    }
+}
+
+
+extension RealmActor {
+    func createNewInstance(of id: String) async {
+        let target = getRunner(id)
+        
+        guard let target else { return }
+        let count = realm
+            .objects(StoredRunnerObject.self)
+            .where { $0.parentRunnerID == target.id  && $0.isDeleted == false }
+            .count + 1
+        
+        let object = StoredRunnerObject(value: target)
+        object.parentRunnerID = target.id
+        object.id = "\(target.id)-\(UUID().uuidString)"
+        object.name = "\(target.name) \(count)"
+        object.isInstantiable = false
+        
+        await operation {
+            realm.add(object, update: .modified)
+        }
     }
 }

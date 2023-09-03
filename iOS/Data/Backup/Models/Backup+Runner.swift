@@ -30,7 +30,7 @@ extension StoredRunnerList: Codable {
 
 extension StoredRunnerObject: Codable {
     enum Keys: String, CodingKey {
-        case id, name, listURL, thumbnail, order
+        case id, parentRunnerID, name, version, environment, enabled, listURL, thumbnail, isLibraryPageLinkProvider, isBrowsePageLinkProvider
     }
 
     convenience init(from decoder: Decoder) throws {
@@ -41,6 +41,13 @@ extension StoredRunnerObject: Codable {
         name = try container.decode(String.self, forKey: .name)
         listURL = try container.decodeIfPresent(String.self, forKey: .listURL) ?? ""
         thumbnail = try container.decodeIfPresent(String.self, forKey: .thumbnail) ?? ""
+        parentRunnerID = try container.decodeIfPresent(String.self, forKey: .parentRunnerID)
+        version = try container.decode(Double.self, forKey: .version)
+        environment = try container.decodeIfPresent(RunnerEnvironment.self, forKey: .environment) ?? .unknown
+        enabled = try container.decodeIfPresent(Bool.self, forKey: .enabled) ?? true
+        isLibraryPageLinkProvider = try container.decodeIfPresent(Bool.self, forKey: .isLibraryPageLinkProvider) ?? false
+        isBrowsePageLinkProvider = try container.decodeIfPresent(Bool.self, forKey: .isBrowsePageLinkProvider) ?? false
+        dateAdded = .now
     }
 
     func encode(to encoder: Encoder) throws {
@@ -50,5 +57,11 @@ extension StoredRunnerObject: Codable {
         try container.encode(name, forKey: .name)
         try container.encode(listURL, forKey: .listURL)
         try container.encode(thumbnail, forKey: .thumbnail)
+        try container.encode(parentRunnerID, forKey: .parentRunnerID)
+        try container.encode(environment, forKey: .environment)
+        try container.encode(enabled, forKey: .enabled)
+        try container.encode(isLibraryPageLinkProvider, forKey: .isLibraryPageLinkProvider)
+        try container.encode(isBrowsePageLinkProvider, forKey: .isBrowsePageLinkProvider)
+        try container.encode(version, forKey: .version)
     }
 }
