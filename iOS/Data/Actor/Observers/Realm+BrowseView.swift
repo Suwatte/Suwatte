@@ -13,6 +13,7 @@ extension RealmActor {
         var collection = realm
             .objects(StoredRunnerObject.self)
             .where { !$0.isDeleted }
+            .sorted(by: \.name, ascending: true)
 
         if onlyEnabled {
             collection = collection
