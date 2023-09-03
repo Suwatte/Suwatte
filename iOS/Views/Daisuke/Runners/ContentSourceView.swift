@@ -89,11 +89,18 @@ struct ContentSourceInfoView: View {
                         Text("Supported Languages")
                     }
                 } else {
-                    HStack {
+                    if languages.first?.lowercased() == "universal" {
                         Text("Supported Language")
-                        Spacer()
-                        LanguageCellView(language: languages.first ?? "Unknown")
-                            .foregroundColor(.gray)
+                            .badge("All")
+                    } else {
+                        HStack {
+                            Text("Supported Language")
+
+                            Spacer()
+                            
+                            LanguageCellView(language: languages.first ?? "Unknown")
+                                .foregroundColor(.gray)
+                        }
                     }
                 }
             }

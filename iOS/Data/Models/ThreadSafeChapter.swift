@@ -130,7 +130,7 @@ extension STTHelpers {
             func lang(_ chapter: T) -> Bool {
                 languages.contains(where: { $0
                     .lowercased()
-                    .starts(with: chapter.language.lowercased()) })
+                    .starts(with: chapter.language.lowercased()) }) || chapter.language == "UNIVERSAL"
             }
             base = base
                 .filter(lang(_:))

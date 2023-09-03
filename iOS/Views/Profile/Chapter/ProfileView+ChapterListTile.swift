@@ -141,8 +141,12 @@ struct ChapterListTile: View {
         } else if let text = Locale.current.localizedString(forLanguageCode: lang) {
             Text(text)
         } else {
-            Text("Unknown: \(lang)")
-                .italic()
+            if lang == "UNIVERSAL" {
+                EmptyView()
+            } else {
+                Text("Unknown: \(lang)")
+                    .italic()
+            }
         }
     }
 }

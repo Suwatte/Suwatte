@@ -72,14 +72,13 @@ extension LibraryView.LibraryGrid {
 
         func refresh() {
             guard let library, !library.isEmpty else { return }
-            ToastManager.shared.loading = true
+            ToastManager.shared.info("Refreshing Database.")
 
-            Task {
+            Task { [library] in
                 let actor = await Suwatte.RealmActor.shared()
                 for content in library.compactMap(\.content) {
                     await actor.refreshStored(contentId: content.contentId, sourceId: content.sourceId)
                 }
-                ToastManager.shared.loading = false
                 ToastManager.shared.info("Database Refreshed")
             }
         }
