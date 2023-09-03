@@ -43,9 +43,8 @@ extension DirectoryView {
                     PaginationView()
                 }
             }
-
             .layout(createCustomLayout: {
-                DynamicGridLayout(header: hasHeader ? .estimated(32) : .absolute(1), footer: .estimated(44))
+                DynamicGridLayout(header: hasHeader ? .estimated(5) : .absolute(1), footer: .estimated(44))
             }, configureCustomLayout: { layout in
                 layout.invalidateLayout()
             })
@@ -93,7 +92,6 @@ extension DirectoryView.ResultsView {
                 }
             }
             .font(.footnote.weight(.light))
-            .padding(.top)
             .confirmationDialog("Sort Options", isPresented: $dialog, titleVisibility: .visible) {
                 ForEach(model.configSort.options, id: \.key) { sorter in
                     Button(sorter.label) {

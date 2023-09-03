@@ -191,7 +191,7 @@ func DynamicGridLayout(header: NSCollectionLayoutDimension? = nil, footer: NSCol
         )
         group.interItemSpacing = .fixed(SPACING)
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .init(top: 13, leading: INSET, bottom: 20, trailing: INSET)
+        section.contentInsets = .init(top: 10, leading: INSET, bottom: 20, trailing: INSET)
         section.interGroupSpacing = SPACING
 
         var items: [NSCollectionLayoutBoundarySupplementaryItem] = []

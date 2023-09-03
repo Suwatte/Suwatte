@@ -29,12 +29,13 @@ struct DirectoryView<T: Codable & Hashable, C: View>: View {
                 NoResultsView()
             } else {
                 ResultsView(entries: value, builder: content)
+                    .conditional(fullSearch, transform: { view in
+                        view
+                            .searchable(text: $model.query, placement: .navigationBarDrawer(displayMode: .always))
+                    })
             }
         }
-        .conditional(fullSearch, transform: { view in
-            view
-                .searchable(text: $model.query, placement: .navigationBarDrawer(displayMode: .always))
-        })
+
         .navigationBarTitleDisplayMode(.inline)
         .onReceive(model.$query.debounce(for: .seconds(0.45), scheduler: DispatchQueue.main), perform: didRecieveQuery(_:))
         .fullScreenCover(isPresented: $model.presentFilters) {
@@ -73,10 +74,8 @@ struct DirectoryView<T: Codable & Hashable, C: View>: View {
         }
     }
 
-    func load() {
-        Task {
-            await model.makeRequest()
-        }
+    func load() async {
+        await model.makeRequest()
     }
 
     func didRecieveQuery(_ val: String) {
