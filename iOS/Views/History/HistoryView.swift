@@ -23,6 +23,7 @@ struct HistoryView: View {
                         action(marker)
                     }
             }
+            .animation(.default, value: model.markers)
             .opacity(model.markers.isEmpty ? 0 : 1)
 
             ProgressView()
@@ -82,9 +83,11 @@ extension HistoryView {
             guard notificationToken == nil else { return }
             let actor = await RealmActor.shared()
             notificationToken = await actor.observeHistory { value in
-                Task { @MainActor [weak self] in
-                    self?.markers = value
-                    self?.dataFetchComplete = true
+                Task { @MainActor in
+                    withAnimation { [weak self] in
+                        self?.markers = value
+                        self?.dataFetchComplete = true
+                    }
                 }
             }
             await MainActor.run {

@@ -32,13 +32,18 @@ extension RealmActor {
             .objects(UpdatedBookmark.self)
             .where { $0.isDeleted == false && $0.chapter.id == id }
             .isEmpty
+        
+        let hasChapterBookmarks = !realm
+            .objects(ChapterReference.self)
+            .where { !$0.isDeleted && $0.id == id }
+            .isEmpty
 
         let hasMarker = !realm
             .objects(ProgressMarker.self)
             .where { $0.isDeleted == false && $0.currentChapter.id == id }
             .isEmpty
 
-        guard !hasBookmarks, !hasMarker else {
+        guard !hasBookmarks, !hasMarker, !hasChapterBookmarks else {
             return
         }
         // Has no references, delete.
