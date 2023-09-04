@@ -26,4 +26,3 @@ extension RealmActor {
         return await observeCollection(collection: collection, didUpdate)
     }
 }
-

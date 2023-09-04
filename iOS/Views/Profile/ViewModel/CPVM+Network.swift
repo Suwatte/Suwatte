@@ -7,14 +7,14 @@
 
 import Foundation
 
-fileprivate typealias ViewModel = ProfileView.ViewModel
+private typealias ViewModel = ProfileView.ViewModel
 
 extension ViewModel {
     func getContentFromSource() async throws -> DSKCommon.Content {
         try await source
             .getContent(id: entry.id)
     }
-    
+
     func getChaptersFromSource() async throws -> [DSKCommon.Chapter] {
         try await source
             .getContentChapters(contentId: entry.id)

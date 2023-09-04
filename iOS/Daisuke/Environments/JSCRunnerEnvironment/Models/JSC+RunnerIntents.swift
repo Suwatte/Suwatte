@@ -35,7 +35,7 @@ struct RunnerIntents: Parsable {
 
     // CT
     let advancedTracker: Bool
-    
+
     // Setup
     let requiresSetup: Bool
 

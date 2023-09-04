@@ -84,7 +84,7 @@ struct ChapterListTile: View {
                 .frame(width: 15, height: 15, alignment: .center)
         }
     }
-    
+
     @ViewBuilder
     var BookmarkedIndicator: some View {
         if isBookmarked {
@@ -127,13 +127,13 @@ struct ChapterListTile: View {
                 .fontWeight(.light)
                 .lineLimit(2)
         }
-        
     }
-    
+
     @ViewBuilder
     func LanguageView(_ lang: String) -> some View {
         if let regionCode = Locale(identifier: lang).regionCode,
-           let flag = Flag(countryCode: regionCode) {
+           let flag = Flag(countryCode: regionCode)
+        {
             Image(uiImage: flag.image(style: .none))
                 .resizable()
                 .scaledToFit()

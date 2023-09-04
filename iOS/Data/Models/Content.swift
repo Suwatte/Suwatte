@@ -45,7 +45,7 @@ final class StoredContent: Object, Identifiable, CKRecordConvertible, CKRecordRe
 
     @Persisted var acquisitionLink: String?
     @Persisted var streamable: Bool = false
-    
+
     @Persisted var isNSFW = false
 
     var ContentIdentifier: ContentIdentifier {

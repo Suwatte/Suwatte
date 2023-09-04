@@ -58,22 +58,21 @@ struct PreMigrationView: View {
     }
 }
 
-
 final class PreMigrationController: ObservableObject {
-    @Published var data: [String : [TaggedHighlight]] = [:]
+    @Published var data: [String: [TaggedHighlight]] = [:]
     @Published var sources: [AnyContentSource] = []
     @Published var loaded = false
     var shouldReset = false
-    
+
     func load() async {
         let actor = await RealmActor.shared()
         let sources = await DSK
             .shared
             .getActiveSources()
             .filter { $0.ablityNotDisabled(\.disableMigrationDestination) }
-        
-        var prepped: [String : [TaggedHighlight]] = [:]
-        
+
+        var prepped: [String: [TaggedHighlight]] = [:]
+
         for source in sources {
             let data = await actor
                 .getLibraryEntries(for: source.id)

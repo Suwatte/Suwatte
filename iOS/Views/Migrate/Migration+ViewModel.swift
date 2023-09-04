@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 final class MigrationController: ObservableObject {
     @Published var contents: [TaggedHighlight]
@@ -15,33 +15,33 @@ final class MigrationController: ObservableObject {
     @Published var notFoundStrat = NotFoundMigrationStrategy.skip
     @Published var lessChapterSrat = LowerChapterMigrationStrategy.skip
     @Published var operationState = MigrationOperationState.idle
-    
+
     @Published var presentConfirmationAlert = false
-    @Published var selectedToSearch: TaggedHighlight? = nil 
+    @Published var selectedToSearch: TaggedHighlight? = nil
 
     @Published var operations: [String: MigrationItemState] = [:]
     @Published var preferredDestinations: [AnyContentSource] = []
     @Published var availableDestinations: [AnyContentSource] = []
     @Published var sources: [String: AnyContentSource] = [:]
-    
-    
+
     @Published var hasLoadedSources: Bool = false
     @Published var hasSortedContent: Bool = false
     var operationsTask: Task<Void, Never>?
-    
+
     init(contents: [TaggedHighlight]) {
         self.contents = contents
     }
 }
 
 // MARK: Initial Loading
+
 extension MigrationController {
     func loadSources() async {
         let sources = await DSK
             .shared
             .getActiveSources()
-            .filter { $0.ablityNotDisabled(\.disableMigrationDestination)}
-        var nonIsolatedDict: Dictionary<String, AnyContentSource> = [:]
+            .filter { $0.ablityNotDisabled(\.disableMigrationDestination) }
+        var nonIsolatedDict: [String: AnyContentSource] = [:]
         for source in sources {
             nonIsolatedDict[source.id] = source
         }
@@ -52,15 +52,15 @@ extension MigrationController {
             self?.hasLoadedSources = true
         }
     }
+
     func sortContents() async {
         let prepped = contents
             .sorted(by: \.title, descending: false)
-        
+
         await MainActor.run { [weak self] in
             self?.contents = prepped
             self?.hasSortedContent = true
         }
-        
     }
 }
 
@@ -76,13 +76,13 @@ extension MigrationController {
             operations.removeValue(forKey: id)
         }
     }
-    
+
     func filterNonMatches() {
         let cases = contents.filter { content in
             let data = operations[content.id]
             guard let data else { return true }
             switch data {
-                case .found, .lowerFind: return false
+            case .found, .lowerFind: return false
             default: return true
             }
         }.map(\.id)
@@ -97,6 +97,7 @@ extension MigrationController {
 }
 
 // MARK: Searching
+
 extension MigrationController {
     func search() async {
         await MainActor.run(body: {
@@ -191,7 +192,6 @@ extension MigrationController {
 
         guard let target, let chapter, target.number >= chapter else { return nil }
 
-        
         return (TaggedHighlight(from: result, with: source.id), target.number)
     }
 
@@ -200,17 +200,14 @@ extension MigrationController {
     }
 }
 
-
-
 extension MigrationController {
-
-    func migrate() async -> Bool  {
+    func migrate() async -> Bool {
         defer {
             Task { @MainActor in
                 ToastManager.shared.loading = false
             }
         }
-        
+
         await MainActor.run {
             ToastManager.shared.loading = true
             ToastManager.shared.info("Migration In Progress\nYour Data is being backed up.")
@@ -224,18 +221,16 @@ extension MigrationController {
             }
             return false
         }
-        
+
         let realm = try! await Realm(actor: BGActor.shared)
-        
-        
+
         func get(_ id: String) -> LibraryEntry? {
             realm
                 .objects(LibraryEntry.self)
                 .where { $0.id == id }
                 .first
         }
-        
-        
+
         func link(_ entry: LibraryEntry, with highlight: TaggedHighlight) {
             let one = entry.id
             let two = highlight.id
@@ -264,80 +259,75 @@ extension MigrationController {
                 realm.add(object, update: .modified)
             }
         }
-        
-        
+
         func remove(_ entry: LibraryEntry) {
             entry.isDeleted = true
         }
-        
-        
+
         func replace(_ entry: LibraryEntry, with highlight: TaggedHighlight) {
             let object = LibraryEntry()
             object.content = findOrCreate(highlight)
             object.collections = entry.collections
             object.flag = entry.flag
             object.dateAdded = entry.dateAdded
-            
+
             // CRUD
             realm.add(object, update: .all)
             entry.isDeleted = true
         }
-        
-        
+
         func findOrCreate(_ entry: TaggedHighlight) -> StoredContent {
             let target = realm
                 .objects(StoredContent.self)
                 .where { $0.id == entry.id }
                 .first
-            
+
             if let target {
                 return target
             }
-            
+
             let object = StoredContent()
             object.contentId = entry.contentID
             object.cover = entry.coverURL
             object.title = entry.title
             object.sourceId = entry.sourceID
-            
+
             realm.add(object)
             return object
         }
-        
+
         let operations = self.operations
         let libraryStrat = self.libraryStrat
         let lessChapterSrat = self.lessChapterSrat
-        
+
         func start() {
             for (id, state) in operations {
                 if Task.isCancelled { return }
                 guard let libEntry = get(id) else { continue }
                 switch state {
-                    case .idle, .noMatches, .searching:
-                        continue
-                    
-                    case .found(let result):
-                        switch libraryStrat {
-                            case .link:
-                                link(libEntry, with: result)
-                            case .replace:
-                                replace(libEntry, with: result)
-                        }
-                    case .lowerFind(let result, _, _):
-                        if lessChapterSrat == .skip { continue }
-                        switch libraryStrat {
-                            case .link:
-                                link(libEntry, with: result)
-                            case .replace:
-                                replace(libEntry, with: result)
-                        }
+                case .idle, .noMatches, .searching:
+                    continue
+
+                case let .found(result):
+                    switch libraryStrat {
+                    case .link:
+                        link(libEntry, with: result)
+                    case .replace:
+                        replace(libEntry, with: result)
+                    }
+                case let .lowerFind(result, _, _):
+                    if lessChapterSrat == .skip { continue }
+                    switch libraryStrat {
+                    case .link:
+                        link(libEntry, with: result)
+                    case .replace:
+                        replace(libEntry, with: result)
+                    }
                 }
             }
         }
-        
 
         do {
-            
             try await realm
                 .asyncWrite {
                     start()
@@ -347,7 +337,7 @@ extension MigrationController {
             ToastManager.shared.error("Migration Failed")
             return false
         }
-        
+
         ToastManager.shared.info("Migration Complete!")
         return true
     }

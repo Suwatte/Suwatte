@@ -48,7 +48,7 @@ extension StoredContent: Codable {
 
         acquisitionLink = try container.decodeIfPresent(String.self, forKey: .acquisitionLink)
         streamable = try container.decodeIfPresent(Bool.self, forKey: .streamable) ?? false
-        
+
         isNSFW = try container.decodeIfPresent(Bool.self, forKey: .isNSFW) ?? false
     }
 

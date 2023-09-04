@@ -23,7 +23,7 @@ extension DSKCommon {
         let webUrl: String
         var entry: TrackEntry?
         let info: [String]?
-        let isNSFW: Bool?;
+        let isNSFW: Bool?
     }
 
     struct TrackProgress: Parsable, Hashable {
@@ -96,7 +96,6 @@ extension DSKCommon.TrackStatus {
     }
 }
 
-
 extension DSKCommon {
     struct FullTrackItem: Parsable, Hashable {
         let id: String
@@ -118,24 +117,23 @@ extension DSKCommon {
         let status: ContentStatus?
         let characters: [TrackItemCharacter]?
     }
-    
+
     struct TrackItemCharacter: Parsable, Hashable {
         let name: String
         let role: String?
         let image: String?
         let summary: String?
     }
-    
+
     struct TrackItemLink: Parsable, Hashable, Identifiable {
         let label: String
         let url: String
-        
+
         var id: Int {
             hashValue
         }
     }
 }
-
 
 extension DSKCommon.FullTrackItem {
     static var placeholder: Self {

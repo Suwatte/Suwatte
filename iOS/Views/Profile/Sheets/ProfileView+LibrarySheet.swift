@@ -19,7 +19,7 @@ extension ProfileView.Sheets {
         @State private var flag: LibraryFlag = .unknown
         @State private var selectedCollections = Set<String>()
         @State private var entry: LibraryEntry?
-        
+
         @EnvironmentObject private var stateManager: StateManager
 
         private var collections: [LibraryCollection] {

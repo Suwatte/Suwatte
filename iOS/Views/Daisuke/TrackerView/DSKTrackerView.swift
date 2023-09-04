@@ -15,7 +15,6 @@ extension UINavigationController {
     }
 }
 
-
 struct DSKLoadableTrackerView: View {
     let tracker: AnyContentTracker
     let item: DSKCommon.TrackItem
@@ -32,7 +31,7 @@ struct DSKLoadableTrackerView: View {
         .navigationBarHidden(true)
         .navigationBarTitleDisplayMode(.inline)
     }
-    
+
     func load() async throws {
         let data = try await tracker.getFullInformation(id: item.id)
         withAnimation(.easeInOut(duration: 0.33)) {
@@ -48,7 +47,7 @@ struct DSKTrackerView: View {
     @State private var lineLimit: Int? = 3
     @State private var status: DSKCommon.TrackStatus?
     @State private var isFavorite: Bool?
-    
+
     @State private var presentStatusDialog = false
     @State private var presentSearchView = false
     @State private var presentEntryForm = false
@@ -56,11 +55,11 @@ struct DSKTrackerView: View {
     var body: some View {
         ScrollView {
             VStack {
-                VStack (spacing: 5) {
+                VStack(spacing: 5) {
                     StickyHeader
                     HeaderView
                 }
-                VStack (spacing: 15) {
+                VStack(spacing: 15) {
                     TrackerEntryView
                     LinksView
                     PropertiesView
@@ -74,9 +73,7 @@ struct DSKTrackerView: View {
         .animation(.default, value: lineLimit)
         .confirmationDialog("Track Status", isPresented: $presentStatusDialog) {
             ForEach(DSKCommon.TrackStatus.allCases, id: \.rawValue) { option in
-                Button(option.description) {
-                    
-                }
+                Button(option.description) {}
             }
         }
         .fullScreenCover(isPresented: $presentEntryForm) {
@@ -94,25 +91,26 @@ struct DSKTrackerView: View {
 }
 
 // MARK: Header
+
 extension DSKTrackerView {
-    
     private var info: [String] {
         var titles = [String]()
         if content.isNSFW ?? false {
             titles.append("NSFW")
         }
-        
+
         let status = (content.status ?? ContentStatus.UNKNOWN).description
         titles.append(status)
-        
+
         titles.append(contentsOf: content.info ?? [])
-        
+
         return titles
     }
+
     private var bannerURL: URL? {
-        (content.bannerCover ?? content.cover).flatMap({ URL(string: $0) })
+        (content.bannerCover ?? content.cover).flatMap { URL(string: $0) }
     }
-    
+
     @MainActor
     private var StickyHeader: some View {
         GeometryReader { proxy in
@@ -120,7 +118,7 @@ extension DSKTrackerView {
             let minY = frame.minY
             let size = proxy.size
             let height = max(size.height + minY, size.height)
-            
+
             LazyImage(url: bannerURL) { state in
                 if let image = state.image {
                     image
@@ -128,7 +126,6 @@ extension DSKTrackerView {
                         .aspectRatio(contentMode: .fill)
                         .blur(radius: 2.5)
                         .offset(x: 0, y: -4)
-                    
                 }
             }
             .frame(width: size.width, height: height, alignment: .top)
@@ -150,7 +147,7 @@ extension DSKTrackerView {
                                     SearchView(initialQuery: content.title)
                                 }
                                 .font(.title3)
-                                
+
                                 if let url = URL(string: content.webUrl) {
                                     Link(destination: url) {
                                         Text("\(Image(systemName: "square.and.arrow.up"))")
@@ -159,11 +156,9 @@ extension DSKTrackerView {
                                 }
                             }
                             .foregroundColor(.white)
-                            
-                            
                         }
                         .frame(height: KEY_WINDOW?.safeAreaInsets.top ?? 0)
-                        
+
                         Spacer()
                         HStack(alignment: .bottom) {
                             BaseImageView(url: URL(string: content.cover))
@@ -180,8 +175,6 @@ extension DSKTrackerView {
                                     .cornerRadius(3)
                             }
                         }
-                        
-                        
                     }
                     .padding(.horizontal)
                     .padding(.top, KEY_WINDOW?.safeAreaInsets.top ?? 0)
@@ -192,16 +185,15 @@ extension DSKTrackerView {
         }
         .frame(maxWidth: .infinity)
         .frame(height: 300, alignment: .center)
-        
     }
-    
+
     private var HeaderView: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
                 Text(content.title)
                     .font(.title3)
                     .fontWeight(.semibold)
-                
+
                 if let summary = content.summary?.trimmingCharacters(in: .whitespacesAndNewlines) {
                     HTMLStringView(text: summary)
                         .font(.body.weight(.light))
@@ -218,20 +210,20 @@ extension DSKTrackerView {
             Divider()
         }
         .padding(.horizontal)
-        
     }
 }
 
 // MARK: TrackerEntryView
+
 extension DSKTrackerView {
     private var trackEntry: DSKCommon.TrackEntry? {
         content.entry
     }
-    
+
     private var entryColor: Color {
         status?.color ?? .accentColor
     }
-    
+
     private var TrackerEntryView: some View {
         HStack {
             Button {
@@ -245,7 +237,7 @@ extension DSKTrackerView {
                     .foregroundColor(entryColor.isDark ? .white : .black)
                     .cornerRadius(7)
             }
-            
+
             if status != nil {
                 Button { presentEntryForm.toggle() } label: {
                     Image(systemName: "pencil")
@@ -260,9 +252,9 @@ extension DSKTrackerView {
                 }
                 .transition(.slide)
             }
-            
+
             if let favorite = isFavorite {
-                Button {  } label: {
+                Button {} label: {
                     Image(systemName: favorite ? "heart.fill" : "heart")
                         .resizable()
                         .scaledToFit()
@@ -281,7 +273,6 @@ extension DSKTrackerView {
     }
 }
 
-
 extension DSKTrackerView {
     private func load() {
         guard !initialLoad else { return }
@@ -291,19 +282,19 @@ extension DSKTrackerView {
     }
 }
 
-
 // MARK: Properties
+
 extension DSKTrackerView {
     @ViewBuilder
     private var PropertiesView: some View {
         Group {
             if let properties = content.properites {
                 ForEach(properties) { property in
-                    VStack (alignment: .leading, spacing: 5) {
+                    VStack(alignment: .leading, spacing: 5) {
                         Text(property.label)
                             .font(.subheadline)
                             .fontWeight(.bold)
-                        
+
                         InteractiveTagView(property.tags) { tag in
                             InteractiveTagCell(tag.label) {
                                 ContentTrackerDirectoryView(tracker: tracker,
@@ -315,14 +306,13 @@ extension DSKTrackerView {
                     }
                 }
             }
-            
         }
         .padding(.horizontal)
-        
     }
 }
 
 // MARK: Links View
+
 extension DSKTrackerView {
     private var LinksView: some View {
         Group {
@@ -330,10 +320,9 @@ extension DSKTrackerView {
                 InteractiveTagView(links) { tag in
                     Link("\(Image(systemName: "link")) \(tag.label)",
                          destination: URL(string: tag.url) ?? STTHost.notFound)
-                    .buttonStyle(.bordered)
+                        .buttonStyle(.bordered)
                         .controlSize(.small)
                         .font(.caption)
-                        
                 }
             }
         }
@@ -342,13 +331,14 @@ extension DSKTrackerView {
 }
 
 // MARK: Collections View
+
 extension DSKTrackerView {
     private var CollectionsView: some View {
         VStack {
             if let collection = content.relatedTitles, !collection.isEmpty {
                 CollectionView(tracker: tracker, title: "Related Titles", collection: collection)
             }
-            
+
             if let collection = content.recommendedTitles, !collection.isEmpty {
                 CollectionView(tracker: tracker, title: "Recommended Titles", collection: collection)
             }
@@ -390,9 +380,8 @@ extension DSKTrackerView {
             } label: {
                 DefaultTile(entry: .init(contentId: data.id, cover: data.cover, title: data.title))
                     .coloredBadge(data.entry?.status.color)
-                .modifier(TrackerContextModifier(tracker: tracker, item: $data, status: data.entry?.status ?? .CURRENT))
-                .frame(width: 150, height: CELL_HEIGHT)
-
+                    .modifier(TrackerContextModifier(tracker: tracker, item: $data, status: data.entry?.status ?? .CURRENT))
+                    .frame(width: 150, height: CELL_HEIGHT)
             }
             .buttonStyle(NeutralButtonStyle())
         }

@@ -39,7 +39,6 @@ struct ContentTrackerPageView: View {
                     .modifier(TrackerContextModifier(tracker: tracker, item: $item, status: item.entry?.status ?? .CURRENT))
             }
             .buttonStyle(NeutralButtonStyle())
-            
         }
     }
 }

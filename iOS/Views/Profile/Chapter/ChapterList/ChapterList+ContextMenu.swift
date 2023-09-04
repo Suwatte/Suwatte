@@ -7,9 +7,7 @@
 
 import SwiftUI
 
-
 extension ChapterList {
-    
     @ViewBuilder
     func MenuView(for chapter: ThreadSafeChapter, completed: Bool, status: DownloadStatus?, isBookmarked: Bool) -> some View {
         Button {
@@ -24,7 +22,7 @@ extension ChapterList {
         } label: {
             Label(completed ? "Mark as Unread" : "Mark as Read", systemImage: completed ? "eye.slash.circle" : "eye.circle")
         }
-        
+
         if isBookmarked {
             Button(role: .destructive) {
                 Task {
@@ -44,8 +42,7 @@ extension ChapterList {
                 Label("Bookmark Chapter", systemImage: "bookmark")
             }
         }
-        
-        
+
         Divider()
         Menu("Mark Below") {
             Button { mark(chapter: chapter, read: true, above: false) } label: {

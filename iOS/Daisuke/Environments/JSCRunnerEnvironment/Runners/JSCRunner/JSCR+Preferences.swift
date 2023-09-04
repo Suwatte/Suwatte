@@ -13,8 +13,8 @@ extension JSCRunner: DSKPreferenceDelegate {
     // Preference
     func getPreferenceMenu() async throws -> DSKCommon.Form {
         try await callMethodReturningDecodable(method: "getPreferenceMenu",
-                                                      arguments: [],
-                                                      resolvesTo: DSKCommon.Form.self)
+                                               arguments: [],
+                                               resolvesTo: DSKCommon.Form.self)
     }
 
     func updatePreference(key: String, value: Any) async {
@@ -32,12 +32,12 @@ extension JSCRunner: DSKPreferenceDelegate {
 extension JSCRunner: DSKSetupDelegate {
     func getSetupMenu() async throws -> DSKCommon.Form {
         try await callMethodReturningDecodable(method: "getSetupMenu",
-                                                      arguments: [],
-                                                      resolvesTo: DSKCommon.Form.self)
+                                               arguments: [],
+                                               resolvesTo: DSKCommon.Form.self)
     }
-    
+
     func validateSetupForm(form: DSKCommon.CodableDict) async throws {
         let object = try form.asDictionary()
         return try await callOptionalVoidMethod(method: "validateSetupForm", arguments: [object])
-    }    
+    }
 }

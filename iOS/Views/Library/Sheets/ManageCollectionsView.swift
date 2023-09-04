@@ -12,7 +12,7 @@ extension LibraryView {
     struct ManageCollectionsView: View {
         @Environment(\.presentationMode) private var presentationMode
         @EnvironmentObject private var model: StateManager
-        
+
         var collections: [LibraryCollection] {
             model.collections
         }

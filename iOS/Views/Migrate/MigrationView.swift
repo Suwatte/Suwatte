@@ -12,7 +12,6 @@ struct MigrationView: View {
     @StateObject var model: MigrationController
     @Environment(\.presentationMode) var presentationMode
     var body: some View {
-        
         Group {
             if model.hasLoadedSources && model.hasSortedContent {
                 List {
@@ -113,7 +112,7 @@ extension MigrationView {
         var label = "No Selections"
         let count = model.preferredDestinations.count
         if count == 1 {
-            label =  model.preferredDestinations.first?.name ?? ""
+            label = model.preferredDestinations.first?.name ?? ""
         } else if count != 0 {
             label = "\(count) Sources"
         }

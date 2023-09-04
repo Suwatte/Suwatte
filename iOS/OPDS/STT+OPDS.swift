@@ -552,7 +552,7 @@ public extension Publication {
         guard let link = streamLink, let id = metadata.identifier else {
             throw OPDSParserError.documentNotFound
         }
-        
+
         return .init(id: "\(clientID)||\(id)",
                      sourceId: STTHelpers.OPDS_CONTENT_ID,
                      chapterId: link.href,

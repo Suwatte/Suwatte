@@ -7,10 +7,9 @@
 
 import Foundation
 
-fileprivate typealias ViewModel = ProfileView.ViewModel
+private typealias ViewModel = ProfileView.ViewModel
 
 extension ViewModel {
-
     func setActionState() async {
         let state = await calculateActionState()
         await animate { [weak self] in
@@ -78,16 +77,16 @@ extension ViewModel {
         // Fix Situation where the chapter being referenced is not in the joined chapter list by picking the last where the numbers match
         var correctedChapterId = chapterRef.id
         if !chapters.contains(where: { $0.id == chapterRef.id }),
-           let chapter = chapters.last(where: { $0.number >= chapterRef.number }) {
+           let chapter = chapters.last(where: { $0.number >= chapterRef.number })
+        {
             correctedChapterId = chapter.id
         }
-        
+
         let chapter = chapters
             .first(where: { $0.id == correctedChapterId })
-        
+
         guard let chapter else {
             return .init(state: .start, chapter: chapters.last!)
-            
         }
 
         if !marker.isCompleted {

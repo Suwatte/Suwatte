@@ -56,7 +56,6 @@ extension Skeleton {
                                 .cornerRadius(3)
                         }
                     }
-                    
 
                     Spacer()
                     ActionButtons()
@@ -73,11 +72,10 @@ extension Skeleton {
 // MARK: Thumbnail
 
 extension Skeleton.Header {
-    
-    var imageURL : URL? {
+    var imageURL: URL? {
         URL(string: model.contentState.LOADED ? model.content.cover : model.entry.cover)
     }
-    
+
     var CoverImage: some View {
         STTImageView(url: imageURL, identifier: model.STTIDPair)
             .frame(width: ImageWidth, height: ImageWidth * 1.5)
@@ -151,13 +149,11 @@ private extension Skeleton {
                         Image(systemName: "globe")
                     })
                 } else {
-                    Button {
-                    } label: {
+                    Button {} label: {
                         Image(systemName: "globe")
                     }
                     .disabled(true)
                 }
-                
             }
 
             .font(.title2.weight(.light))

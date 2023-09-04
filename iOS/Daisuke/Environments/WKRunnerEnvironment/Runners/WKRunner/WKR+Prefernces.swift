@@ -23,12 +23,11 @@ extension WKRunner: DSKPreferenceDelegate {
     }
 }
 
-
 extension WKRunner: DSKSetupDelegate {
     func getSetupMenu() async throws -> DSKCommon.Form {
         try await eval(script("let data = await RunnerObject.getSetupMenu();"))
     }
-    
+
     func validateSetupForm(form: DSKCommon.CodableDict) async throws {
         try await eval("await RunnerObject.validateSetupForm(form);", ["form": form.asDictionary()])
     }

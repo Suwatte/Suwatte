@@ -11,7 +11,7 @@ import RealmSwift
 struct Backup: Codable {
     var lists: [StoredRunnerList]?
     var runners: [StoredRunnerObject]?
-    
+
     var library: [LibraryEntry]?
     var collections: [LibraryCollection]?
     var markers: [ProgressMarker]?

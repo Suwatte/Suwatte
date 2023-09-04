@@ -31,7 +31,7 @@ extension Controller: UIContextMenuInteractionDelegate, UIGestureRecognizerDeleg
     func contextMenuInteraction(_: UIContextMenuInteraction, configurationForMenuAtLocation _: CGPoint) -> UIContextMenuConfiguration? {
         guard let currentPath,
               let item = dataSource.itemIdentifier(for: currentPath),
-              case .page(let page) = item else { return nil }
+              case let .page(page) = item else { return nil }
         let image = captureVisibleRect(of: collectionNode.view)
         return UIContextMenuConfiguration(identifier: nil, previewProvider: {
             // Create and return a preview for the visible portion of the image
@@ -62,8 +62,8 @@ extension Controller: UIContextMenuInteractionDelegate, UIGestureRecognizerDeleg
             var menu = UIMenu(title: "Actions", children: [panelMenu])
 
             let bookmarkPanelAction = UIAction(title: "Bookmark",
-                                          image: UIImage(systemName: "bookmark"),
-                                          attributes: [])
+                                               image: UIImage(systemName: "bookmark"),
+                                               attributes: [])
             { [weak self] _ in
 
                 self?.addBookmark(image: image)
@@ -74,21 +74,21 @@ extension Controller: UIContextMenuInteractionDelegate, UIGestureRecognizerDeleg
                 return menu
             }
             let chapter = page.page.chapter
-            
+
             let isBookmarked = self.model.isChapterBookmarked(id: chapter.id)
             let actionTitle = !isBookmarked ? "Bookmark Chapter" : "Remove Chapter Bookmark"
-            let actionImage = !isBookmarked ?  "book.closed" : "trash"
+            let actionImage = !isBookmarked ? "book.closed" : "trash"
             let bookmarkChapterAction = UIAction(title: actionTitle,
                                                  image: UIImage(systemName: actionImage),
-                                                 attributes: isBookmarked ? [.destructive] : []) { [weak self] _ in
+                                                 attributes: isBookmarked ? [.destructive] : [])
+            { [weak self] _ in
                 self?.addChapterBookmark(for: chapter)
             }
-            
-            
+
             let bookmarkMenu = UIMenu(title: "",
                                       options: .displayInline,
                                       children: [bookmarkChapterAction, bookmarkPanelAction])
-            
+
             menu = menu.replacingChildren([panelMenu, bookmarkMenu])
             return menu
         })
@@ -110,7 +110,7 @@ extension Controller: UIContextMenuInteractionDelegate, UIGestureRecognizerDeleg
             result ? ToastManager.shared.info("Bookmarked!") : ToastManager.shared.error("Failed to bookmark")
         }
     }
-    
+
     func addChapterBookmark(for chapter: ThreadSafeChapter) {
         Task {
             let actor = await RealmActor.shared()

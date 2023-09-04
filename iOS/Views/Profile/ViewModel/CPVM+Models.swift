@@ -6,7 +6,7 @@
 //
 
 import Foundation
-fileprivate typealias ViewModel = ProfileView.ViewModel
+private typealias ViewModel = ProfileView.ViewModel
 
 extension ViewModel {
     struct ContentLinkSection {

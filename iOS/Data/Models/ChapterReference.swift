@@ -42,7 +42,7 @@ final class ChapterReference: Object, CKRecordConvertible, CKRecordRecoverable, 
     var isValid: Bool {
         content != nil || opds != nil || archive != nil
     }
-    
+
     var chapterOrderKey: Double {
         ThreadSafeChapter.orderKey(volume: volume, number: number)
     }

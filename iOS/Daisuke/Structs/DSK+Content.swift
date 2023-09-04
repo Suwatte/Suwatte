@@ -140,7 +140,7 @@ extension DaisukeEngine.Structs {
 
         var acquisitionLink: String?
         var streamable: Bool?
-        
+
         var isNSFW: Bool?
 
         var covers: [String] {
@@ -166,7 +166,7 @@ extension DaisukeEngine.Structs.Highlight {
                   title: .random(length: 20), subtitle: .random(length: 15))
         }
     }
-    
+
     static var placeholder: Self {
         .init(contentId: .random(length: 10),
               cover: .random(),

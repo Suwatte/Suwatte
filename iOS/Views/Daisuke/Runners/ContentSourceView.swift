@@ -28,7 +28,7 @@ struct ContentSourceInfoView: View {
                             .navigationTitle("Setup")
                     }
                 }
-                
+
                 if source.intents.preferenceMenuBuilder {
                     NavigationLink("Preferences") {
                         DSKLoadableForm(runner: source, context: .preference)
@@ -39,7 +39,6 @@ struct ContentSourceInfoView: View {
             } header: {
                 Text("Settings")
             }
-           
 
             Section {
                 Toggle("Disable Progress Marking", isOn: .init(get: {
@@ -106,7 +105,7 @@ struct ContentSourceInfoView: View {
                             Text("Supported Language")
 
                             Spacer()
-                            
+
                             LanguageCellView(language: languages.first ?? "Unknown")
                                 .foregroundColor(.gray)
                         }

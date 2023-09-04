@@ -15,7 +15,7 @@ extension RealmActor {
             .where { !$0.isDeleted }
             .first
     }
-    
+
     func getLibraryEntries(for source: String) -> [LibraryEntry] {
         realm
             .objects(LibraryEntry.self)
@@ -25,8 +25,8 @@ extension RealmActor {
             .toArray()
     }
 }
-extension RealmActor {
 
+extension RealmActor {
     func setReadingFlag(for id: String, to flag: LibraryFlag) async {
         let target = getLibraryEntry(for: id)
         guard let target else { return }
@@ -253,7 +253,7 @@ extension RealmActor {
             .distinct()
             .filter { $0 > maxReadChapterKey }
             .count
-        
+
         return unread
     }
 
@@ -301,7 +301,7 @@ extension RealmActor {
             target.collections.removeAll()
             target.collections.append(objectsIn: fixed)
         }
-        
+
         return target
             .freeze()
     }

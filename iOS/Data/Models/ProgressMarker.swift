@@ -22,7 +22,7 @@ final class ProgressMarker: Object, Identifiable, CKRecordConvertible, CKRecordR
 
     var isCompleted: Bool {
         guard let currentChapter else { return false }
-        
+
         if readChapters.contains(currentChapter.chapterOrderKey) {
             return true
         }

@@ -31,7 +31,7 @@ extension ContentTrackerDirectoryView {
             } label: {
                 DefaultTile(entry: .init(contentId: data.id, cover: data.cover, title: data.title))
                     .coloredBadge(data.entry?.status.color)
-                .modifier(TrackerContextModifier(tracker: tracker, item: $data, status: data.entry?.status ?? .CURRENT))
+                    .modifier(TrackerContextModifier(tracker: tracker, item: $data, status: data.entry?.status ?? .CURRENT))
             }
             .buttonStyle(NeutralButtonStyle())
         }

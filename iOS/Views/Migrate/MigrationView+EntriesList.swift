@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-
 struct MigrationEntryListView: View {
     @EnvironmentObject private var model: MigrationController
-    
+
     private var entries: [TaggedHighlight] {
         model.contents
     }
+
     var body: some View {
         Section {
             ForEach(entries) { content in
@@ -25,16 +25,14 @@ struct MigrationEntryListView: View {
         }
         .headerProminence(.increased)
     }
-    
 }
-
 
 struct MigrationEntryListCell: View {
     let content: TaggedHighlight
     let state: MigrationItemState
     @EnvironmentObject private var model: MigrationController
     @AppStorage(STTKeys.TileStyle) private var tileStyle = TileStyle.SEPARATED
-    
+
     var body: some View {
         VStack {
             // Warning
@@ -71,33 +69,34 @@ struct MigrationEntryListCell: View {
 }
 
 // MARK: Result Cell
-struct MigrationEntryListResultCell : View {
+
+struct MigrationEntryListResultCell: View {
     let state: MigrationItemState
     let content: TaggedHighlight
-    
+
     @EnvironmentObject private var model: MigrationController
-    
+
     var body: some View {
         Group {
             switch state {
-                case .idle, .searching:
-                    DefaultTile(entry: .placeholder)
-                        .redacted(reason: .placeholder)
-                case .noMatches:
-                    Button {
-                        model.selectedToSearch = content
-                    } label : {
-                        VStack(alignment: .trailing) {
-                            Text("No Matches")
-                            Text("Tap To Search")
-                                .font(.callout)
-                                .fontWeight(.light)
-                        }
+            case .idle, .searching:
+                DefaultTile(entry: .placeholder)
+                    .redacted(reason: .placeholder)
+            case .noMatches:
+                Button {
+                    model.selectedToSearch = content
+                } label: {
+                    VStack(alignment: .trailing) {
+                        Text("No Matches")
+                        Text("Tap To Search")
+                            .font(.callout)
+                            .fontWeight(.light)
                     }
-                    .buttonStyle(.plain)
-                    
-                case let .found(entry), let .lowerFind(entry, _, _):
-                    DefaultTile(entry: entry.highlight, sourceId: entry.sourceID)
+                }
+                .buttonStyle(.plain)
+
+            case let .found(entry), let .lowerFind(entry, _, _):
+                DefaultTile(entry: entry.highlight, sourceId: entry.sourceID)
             }
         }
     }

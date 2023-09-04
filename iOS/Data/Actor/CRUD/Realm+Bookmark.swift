@@ -11,10 +11,9 @@ import UIKit
 
 extension RealmActor {
     func addBookmark(for chapter: ThreadSafeChapter, at page: Int, with image: UIImage, on offset: Double? = nil) async -> Bool {
-        
         let processor = await NukeDownsampleProcessor(width: UIScreen.main.bounds.width / 2)
         let processedImage = processor.process(image)
-        
+
         guard let data = processedImage?.pngData() ?? image.pngData() ?? image.jpegData(compressionQuality: 1) else {
             Logger.shared.error("Invalid Image Data")
             return false
@@ -77,15 +76,13 @@ extension RealmActor {
     }
 }
 
-
 extension RealmActor {
     func toggleBookmark(for chapter: ThreadSafeChapter) async -> Bool {
-        
         let target = realm
             .objects(ChapterBookmark.self)
             .where { !$0.isDeleted && $0.id == chapter.id }
             .first
-        
+
         if let target {
             await operation {
                 target.isDeleted = true
@@ -93,17 +90,17 @@ extension RealmActor {
             await validateChapterReference(id: target.id)
             return false
         }
-        
+
         let reference = chapter.toStored().generateReference()
-        
+
         let object = ChapterBookmark()
         object.id = chapter.id
         object.chapter = reference
-        
+
         await operation {
             realm.add(object, update: .modified)
         }
-        
+
         return true
     }
 }

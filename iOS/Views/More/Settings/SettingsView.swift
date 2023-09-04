@@ -81,10 +81,10 @@ extension SettingsView {
                     .buttonStyle(.plain)
                     .navigationTitle("Skip Conditions")
                 }
-                
+
                 Toggle("Update Specific Collections", isOn: $onlyCheckCollections)
                     .disabled(!onlyCheckCollections && model.collections.isEmpty)
-                
+
                 if onlyCheckCollections {
                     NavigationLink("Selected Collections") {
                         MultiSelectionView(options: model.collections, selection: SELECTED_COLLECTIONS) { collection in
@@ -95,7 +95,6 @@ extension SettingsView {
                     }
                     .transition(.opacity)
                 }
-                
 
             } header: {
                 Text("Updates")
@@ -118,10 +117,10 @@ extension SettingsView {
                 skipConditions = Array(value)
             }
         }
-        
+
         var SELECTED_COLLECTIONS: Binding<Set<LibraryCollection>> {
             .init {
-                Set(model.collections.filter({ approvedCollections.contains($0.id) }))
+                Set(model.collections.filter { approvedCollections.contains($0.id) })
             } set: { selections in
                 approvedCollections = Set(selections.map(\.id))
             }
@@ -212,7 +211,7 @@ extension SettingsView {
         private var collections: [LibraryCollection] {
             stateManager.collections
         }
-        
+
         var body: some View {
             Section {
                 Toggle("Always Prompt", isOn: $alwaysAsk)

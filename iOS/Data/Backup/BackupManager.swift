@@ -68,7 +68,7 @@ class BackupManager: ObservableObject {
     func restore(from url: URL) async throws {
         // Load
         var backup: Backup?
-        
+
         do {
             backup = try Backup.load(from: url)
         } catch {

@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 extension ChapterList {
     func MenuButton() -> some View {
         Menu {
@@ -54,7 +53,6 @@ extension ChapterList {
         }
     }
 }
-
 
 extension ChapterList {
     @ViewBuilder

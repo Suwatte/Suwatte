@@ -13,15 +13,14 @@ struct ChapterList: View {
     @State var selection: ThreadSafeChapter?
     @State var selections = Set<ThreadSafeChapter>()
     @State var presentOptions = false
-    
+
     @AppStorage(STTKeys.ChapterListSortKey) var sortKey = ChapterSortOption.number
     @AppStorage(STTKeys.ChapterListDescending) var sortDesc = true
     @AppStorage(STTKeys.ChapterListShowOnlyDownloaded) var showOnlyDownloads = false
     @AppStorage(STTKeys.GroupByVolume) var groupByVolume = false
-    
+
     @Environment(\.editMode) var editMode
     var body: some View {
-        
         Group {
             if groupByVolume {
                 GroupChapterList()
@@ -71,9 +70,9 @@ struct ChapterList: View {
                           readingMode: readingMode,
                           chapterList: model.chapterListChapters,
                           openTo: chapter)
-            .task {
-                model.removeNotifier()
-            }
+                .task {
+                    model.removeNotifier()
+                }
         }
     }
 
@@ -133,6 +132,7 @@ extension ChapterList {
                 .id(genId(chapter.id, completed, download, isBookmarked))
         )
     }
+
     func genId(_ id: String, _ completed: Bool, _ status: DownloadStatus?, _ isBookmarked: Bool) -> String {
         var id = id
 
@@ -143,7 +143,7 @@ extension ChapterList {
         } else {
             id += "none"
         }
-        
+
         if isBookmarked {
             id += "::bookmarked"
         }
@@ -153,11 +153,10 @@ extension ChapterList {
 
     func ChaptersView(_ chapters: [ThreadSafeChapter]) -> some View {
         List(chapters, id: \.self, selection: $selections) { chapter in
-           BuildTile(chapter)
+            BuildTile(chapter)
         }
     }
 }
-
 
 extension ChapterList {
     @ViewBuilder
@@ -181,9 +180,8 @@ extension ChapterList {
                 .headerProminence(.increased)
             }
         }
-        
     }
-    
+
     func GroupedByVolume() -> [Double: [ThreadSafeChapter]] {
         Dictionary(grouping: model.chapterListChapters, by: \.inferredVolume)
     }

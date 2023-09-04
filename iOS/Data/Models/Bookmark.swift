@@ -19,7 +19,6 @@ final class UpdatedBookmark: Object, CKRecordConvertible, CKRecordRecoverable, I
     @Persisted var asset: CreamAsset?
 }
 
-
 final class ChapterBookmark: Object, CKRecordConvertible, CKRecordRecoverable, Identifiable {
     @Persisted(primaryKey: true) var id: String = UUID().uuidString
     @Persisted var chapter: ChapterReference?

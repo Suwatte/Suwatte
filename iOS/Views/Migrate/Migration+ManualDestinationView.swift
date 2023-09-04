@@ -15,7 +15,6 @@ struct MigrationManualDestinationView: View {
     @State var searchTask: Task<Void, Never>? = nil
     var body: some View {
         Group {
-            
             if !searchModel.results.isEmpty {
                 List {
                     ForEach(searchModel.results, id: \.sourceID) { group in
@@ -59,10 +58,8 @@ struct MigrationManualDestinationView: View {
                 }
             }
         }
-        
     }
 }
-
 
 struct MigrationManualDestinationResultGroupCell: View {
     let result: SearchView.ResultGroup
@@ -87,14 +84,13 @@ struct MigrationManualDestinationResultGroupCell: View {
                 .frame(height: CELL_HEIGHT)
                 .padding(.leading)
             }
-            
+
         } header: {
             Text(result.sourceName)
                 .padding(.horizontal)
         }
-        
     }
-    
+
     private var CELL_HEIGHT: CGFloat {
         (150 * 1.5) + (tileStyle == .SEPARATED ? 50 : 0)
     }

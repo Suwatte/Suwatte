@@ -151,18 +151,18 @@ enum STTKeys {
     static let MoveDownloadToArchive = "APP.archive_sdm_objct"
 
     static let CurrentReadingMode = "READER.current_mode"
-    
+
     static let GlobalContentLanguages = "APP.global.content_languages"
-    
+
     static let GlobalHideNSFW = "APP.global.hide_nsfw"
-    
+
     static func BlackListedProviders(_ id: String) -> String {
         return "RUNNER.BLP:\(id)"
     }
-    
+
     static let GroupByVolume = "APP.chapter_list.group_by_volume"
     static let GroupByChapter = "APP.chapter_list.group_by_chapter"
-    
+
     static let OnlyCheckForUpdateInSpecificCollections = "APP.updates.use_collections"
     static let UpdateApprovedCollections = "APP.updates.collections"
 }

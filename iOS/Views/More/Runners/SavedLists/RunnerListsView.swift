@@ -163,7 +163,6 @@ extension RunnerListsView {
                         Text("Trackers")
                     }
                 }
-
             }
             .animation(.default, value: text)
             .toolbar(content: {
@@ -245,7 +244,7 @@ extension RunnerListsView {
             if !selectedLanguages.isEmpty {
                 base = base.filter { !Set($0.supportedLanguages ?? []).intersection(selectedLanguages).isEmpty }
             }
-            
+
             if hideNSFW {
                 base = base.filter { $0.rating != .NSFW }
             }
@@ -367,7 +366,7 @@ extension RunnerListsView.RunnerListInfo {
                                 .background(Color.red.opacity(0.3))
                                 .cornerRadius(5)
                         }
-                        
+
                         if runner.rating == .MIXED {
                             Text("Suggestive")
                                 .padding(.vertical, 2)

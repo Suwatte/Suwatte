@@ -82,7 +82,7 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
             SyncObject(type: ReadLater.self),
             SyncObject(type: StreamableOPDSContent.self),
             SyncObject(type: ArchivedContent.self),
-            SyncObject(type: ChapterBookmark.self)
+            SyncObject(type: ChapterBookmark.self),
         ])
 
         application.registerForRemoteNotifications()

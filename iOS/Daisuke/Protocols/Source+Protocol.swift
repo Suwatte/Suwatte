@@ -18,7 +18,7 @@ struct SourceConfig: Parsable {
     let disableCustomThumbnails: Bool?
     let disableContentLinking: Bool?
     let disableMigrationDestination: Bool?
-    
+
     var cloudflareResolutionURL: String?
     let allowsMultipleInstances: Bool?
 }

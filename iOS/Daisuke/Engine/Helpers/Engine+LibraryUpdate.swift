@@ -74,10 +74,10 @@ extension DSK {
 
         // Fetch Chapters
         let chapters = try? await getChapters(for: contentId, with: source)
-        
+
         guard var chapters else { return 0 }
         chapters = STTHelpers.filterChapters(chapters, with: source.id)
-        
+
         var marked: [String] = []
 
         if source.intents.chapterSyncHandler {

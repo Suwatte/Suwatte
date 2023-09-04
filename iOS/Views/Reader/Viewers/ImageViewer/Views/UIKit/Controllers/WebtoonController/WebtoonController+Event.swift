@@ -108,7 +108,7 @@ extension Controller {
         let size = frame.size
         let pageTop = frame.minY
         let currentOffset = offset
-        let pageOffset =  Double(currentOffset - pageTop) / size.height
+        let pageOffset = Double(currentOffset - pageTop) / size.height
         return pageOffset
     }
 }

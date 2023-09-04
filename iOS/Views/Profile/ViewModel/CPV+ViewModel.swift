@@ -13,21 +13,22 @@ import UIKit
 extension ProfileView {
     final class ViewModel: ObservableObject {
         var entry: DaisukeEngine.Structs.Highlight
-        
+
         var source: AnyContentSource
         var sourceID: String {
             source.id
         }
+
         var contentID: String {
             entry.contentId
         }
-        
+
         var content: DSKCommon.Content = .placeholder
         var chapters: [ThreadSafeChapter] = []
-        
+
         @Published var contentState: Loadable<Bool> = .idle
         @Published var chapterState: Loadable<Bool> = .idle
-        
+
         @Published var currentChapterSection: String
         @Published var presentCollectionsSheet = false
         @Published var presentTrackersSheet = false
@@ -41,7 +42,7 @@ extension ProfileView {
                 }
             }
         }
-        
+
         @Published var isWorking = false
         @Published var syncState = SyncState.idle
         @Published var actionState: ActionState = .init(state: .none)
@@ -55,45 +56,44 @@ extension ProfileView {
         internal var libraryTrackingToken: NotificationToken?
         internal var readLaterToken: NotificationToken?
         internal var chapterBookmarkToken: NotificationToken?
-        
+
         internal var linkedContentIDs = [String]()
         @Published var downloads: [String: DownloadStatus] = [:]
         @Published var readChapters = Set<Double>()
         @Published var savedForLater: Bool = false
         @Published var inLibrary: Bool = false
         @Published var bookmarkedChapters = Set<String>()
-        
+
         init(_ entry: DaisukeEngine.Structs.Highlight, _ source: AnyContentSource) {
             self.entry = entry
             self.source = source
-            self.currentChapterSection = source.id
+            currentChapterSection = source.id
         }
-        
+
         @Published var selection: ThreadSafeChapter?
 
         deinit {
             removeNotifier()
             Logger.shared.debug("deallocated", "ProfileViewModel")
-            
         }
-        
+
         var identifier: String {
             STTIDPair.id
         }
-        
-        var STTIDPair : ContentIdentifier {
+
+        var STTIDPair: ContentIdentifier {
             .init(contentId: contentID, sourceId: sourceID)
         }
-        
+
         var readingMode: ReadingMode {
             content.contentType == .novel ?
                 .NOVEL_PAGED_COMIC :
-            content.recommendedPanelMode ?? .defaultPanelMode
+                content.recommendedPanelMode ?? .defaultPanelMode
         }
     }
 }
 
-fileprivate typealias ViewModel = ProfileView.ViewModel
+private typealias ViewModel = ProfileView.ViewModel
 
 extension ViewModel {
     func load() async {
@@ -104,14 +104,14 @@ extension ViewModel {
             }
             // Load Content From DB
             var content = await getContentFromDatabase()
-            
+
             if let content {
                 // Set Content
                 await animate { [weak self] in
                     self?.content = content
                     self?.contentState = .loaded(true)
                 }
-                
+
                 // Set Chapters
                 let chapters = await getChaptersFromDatabase()
                 if let chapters {
@@ -120,12 +120,12 @@ extension ViewModel {
                         self?.chapters = prepared
                         self?.chapterState = .loaded(true)
                     }
-                    
+
                     // Update Action State
                     await setActionState()
                 }
             }
-            
+
             // Load Content From Network
             do {
                 content = try await getContentFromSource()
@@ -136,14 +136,13 @@ extension ViewModel {
                     self?.content = content
                     self?.contentState = .loaded(true)
                 }
-                
+
                 Task { [weak self, content] in
                     await self?.saveContent(content)
                 }
-                
+
                 await loadChapters(chapters)
-                
-                
+
             } catch {
                 Logger.shared.error(error, "Content Info")
                 await animate { [weak self] in
@@ -152,13 +151,13 @@ extension ViewModel {
                     }
                 }
             }
-            
+
             await animate { [weak self] in
                 self?.isWorking = false
             }
         }
     }
-    
+
     func loadChapters(_ pre: [DSKCommon.Chapter]? = nil) async {
         await RunnerActor.run {
             func prepare(chapters: [DSKCommon.Chapter]) async {
@@ -197,23 +196,22 @@ extension ViewModel {
             }
         }
     }
-    
+
     func reload() async {
         await animate { [weak self] in
             self?.chapterState = .loading
             self?.contentState = .loading
         }
-        
+
         await load()
     }
 }
-
 
 extension ViewModel {
     func didLoadChapters() async {
         let actor = await RealmActor.shared()
         let id = STTIDPair
-        
+
         // Resolve Links, Sync & Update Action State
         await handleSync()
         await setActionState()
@@ -231,13 +229,13 @@ extension ViewModel {
                 withAnimation(.easeInOut(duration: 0.25)) {
                     execute()
                 }
-                
+
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.275) {
                     continuation.resume()
                 }
             }
         }
-        
+
         await task.value
     }
 }

@@ -39,12 +39,12 @@ extension WKTracker: ContentTracker {
     func didUpdateStatus(id: String, status: DSKCommon.TrackStatus) async throws {
         try await eval("await RunnerObject.didUpdateStatus(id, status);", ["id": id, "status": status.rawValue])
     }
-    
+
     func getFullInformation(id: String) async throws -> DSKCommon.FullTrackItem {
         try await eval(script("let data = await RunnerObject.getFullInformation(id);"),
                        ["id": id])
     }
-    
+
     func toggleFavorite(state: Bool) async throws {
         try await eval("await RunnerObject.toggleFavorite(state);", ["state": state])
     }

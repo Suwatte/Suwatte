@@ -11,6 +11,7 @@ import RealmSwift
 enum CatalogRating: Int, CaseIterable, PersistableEnum, Parsable {
     case SAFE, MIXED, NSFW
 }
+
 struct RunnerInfo: Parsable {
     let id: String
     let name: String

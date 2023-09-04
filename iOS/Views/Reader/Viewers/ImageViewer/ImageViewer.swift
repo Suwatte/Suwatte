@@ -42,7 +42,7 @@ struct ImageViewer: View {
             }
         }
         .onRotate(perform: { orientation in
-            guard UIDevice.current.userInterfaceIdiom == .pad, orientation.isLandscape && !doublePaged else {
+            guard UIDevice.current.userInterfaceIdiom == .pad, orientation.isLandscape, !doublePaged else {
                 return
             }
             model.producePendingState()
@@ -81,4 +81,3 @@ extension ImageViewer {
         .easeInOut(duration: 0.3)
     }
 }
-

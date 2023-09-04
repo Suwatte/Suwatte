@@ -45,7 +45,6 @@ extension DirectoryView {
                         } label: {
                             Image(systemName: "ellipsis.circle")
                         }
-                       
                     }
                 }
                 .closeButton()
@@ -102,15 +101,14 @@ extension DirectoryView.HistoryView {
     }
 }
 
-
 extension DirectoryView.HistoryView {
     func observe() async {
         let actor = await RealmActor.shared()
-        token = await actor.observeSearchHistory(id: model.runner.id ) { value in
+        token = await actor.observeSearchHistory(id: model.runner.id) { value in
             results = value
         }
     }
-    
+
     func cancel() {
         token?.invalidate()
         token = nil

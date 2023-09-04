@@ -169,7 +169,6 @@ struct DirectoryViewer: View {
                 DownloadQueueSheet()
                     .closeButton()
             }
-            
         }
         .animation(.default, value: isEditing)
     }

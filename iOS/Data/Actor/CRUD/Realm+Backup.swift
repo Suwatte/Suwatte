@@ -9,6 +9,7 @@ import Foundation
 import RealmSwift
 
 // MARK: - Create
+
 extension RealmActor {
     func createBackup() -> Backup {
         let libraryEntries = realm
@@ -48,12 +49,12 @@ extension RealmActor {
     }
 }
 
-
 // MARK: - Restore
+
 extension RealmActor {
     func restoreBackup(backup: Backup) async throws {
         try await resetDB()
-        
+
         try await realm.asyncWrite {
             if let libraryEntries = backup.library {
                 let contents = libraryEntries.compactMap { $0.content }
@@ -82,12 +83,12 @@ extension RealmActor {
             .objects(SourceDownload.self)
             .where { $0.status == .active || $0.status == .queued || $0.status == .idle }
             .isEmpty
-                
+
         guard noActiveDownloads else {
             throw DSK.Errors.NamedError(name: "Active Downloads",
                                         message: "You currently have downloads that are either active or queued.")
         }
-        
+
         try await realm.asyncWrite {
             realm.objects(LibraryEntry.self).setValue(true, forKey: "isDeleted")
             realm.objects(LibraryCollection.self).setValue(true, forKey: "isDeleted")
@@ -123,13 +124,12 @@ extension RealmActor {
                 .objects(StoredContent.self)
                 .where { !$0.id.in(downloadedTitles) }
                 .setValue(true, forKey: "isDeleted")
-            
+
             let chapters = realm
                 .objects(StoredChapter.self)
                 .where { !$0.id.in(downloadedChapters) }
-            
+
             realm.delete(chapters)
-            
         }
     }
 }

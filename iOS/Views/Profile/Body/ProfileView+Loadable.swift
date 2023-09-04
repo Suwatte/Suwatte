@@ -35,18 +35,18 @@ extension ProfileView {
                                       readingMode: readingMode,
                                       chapterList: viewModel.chapters,
                                       openTo: chapter)
-                        .task {
-                            viewModel.removeNotifier()
-                        }
-                        .onDisappear {
-                            Task {
-                                await handleReconnection()
-                                ImagePipeline.shared.configuration.imageCache?.removeAll()
+                            .task {
+                                viewModel.removeNotifier()
                             }
-                        }
+                            .onDisappear {
+                                Task {
+                                    await handleReconnection()
+                                    ImagePipeline.shared.configuration.imageCache?.removeAll()
+                                }
+                            }
                     }
             }
-            
+
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     if viewModel.source.intents.chapterSyncHandler {
@@ -65,43 +65,43 @@ extension ProfileView {
             .transition(.opacity)
             .environmentObject(viewModel)
         }
-        
+
         @ViewBuilder
         var PLACEHOLDER: some View {
             ProgressView()
         }
-        
+
         func handleReconnection() async {
             await viewModel.setupObservers()
         }
     }
-    
+
     struct SyncView: View {
         @EnvironmentObject var model: ProfileView.ViewModel
         @State var isRotated = false
         var body: some View {
             switch model.syncState {
-                case .syncing:
-                    Image(systemName: "arrow.triangle.2.circlepath")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 15, height: 15, alignment: .center)
-                        .foregroundColor(.green)
-                        .rotationEffect(Angle.degrees(isRotated ? 360 : 0))
-                        .transition(.scale)
-                        .animation(animation, value: isRotated)
-                        .onAppear {
-                            isRotated.toggle()
-                        }
-                default: EmptyView()
-                        .transition(.opacity)
+            case .syncing:
+                Image(systemName: "arrow.triangle.2.circlepath")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 15, height: 15, alignment: .center)
+                    .foregroundColor(.green)
+                    .rotationEffect(Angle.degrees(isRotated ? 360 : 0))
+                    .transition(.scale)
+                    .animation(animation, value: isRotated)
+                    .onAppear {
+                        isRotated.toggle()
+                    }
+            default: EmptyView()
+                .transition(.opacity)
             }
         }
-        
+
         var animation: Animation {
             .linear
-            .speed(0.25)
-            .repeatForever(autoreverses: false)
+                .speed(0.25)
+                .repeatForever(autoreverses: false)
         }
     }
 }

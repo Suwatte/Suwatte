@@ -126,7 +126,7 @@ extension Controller {
         guard let path = preRotationPath else {
             return proposedContentOffset
         }
-                
+
         let frame = collectionView.layoutAttributesForItem(at: path)?.frame
 
         let value = isVertical ? frame?.minY : frame?.minX

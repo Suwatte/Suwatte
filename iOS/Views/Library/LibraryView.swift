@@ -230,7 +230,7 @@ extension LibraryView {
         private var collections: [LibraryCollection] {
             stateManager.collections
         }
-        
+
         var body: some View {
             Section {
                 NavigationLink(destination: LibraryGrid(model: .init()), isActive: $isActive) {

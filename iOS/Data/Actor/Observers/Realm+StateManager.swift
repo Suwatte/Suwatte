@@ -23,8 +23,8 @@ extension RealmActor {
 
         return await observeCollection(collection: collection, didUpdate(_:))
     }
-    
-    func observeLibraryCollection(_ callback: @escaping Callback<Array<LibraryCollection>>) async -> NotificationToken {
+
+    func observeLibraryCollection(_ callback: @escaping Callback<[LibraryCollection]>) async -> NotificationToken {
         let collection = realm
             .objects(LibraryCollection.self)
             .where { !$0.isDeleted }
@@ -41,5 +41,4 @@ extension RealmActor {
 
         return await observeCollection(collection: collection, didUpdate(_:))
     }
-    
 }

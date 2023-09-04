@@ -38,7 +38,7 @@ enum MigrationItemState: Equatable {
             return entry
         }
     }
-    
+
     var color: Color {
         switch self {
         case .idle: return .gray
@@ -48,15 +48,14 @@ enum MigrationItemState: Equatable {
         case .found: return .green
         }
     }
-    
+
     var found: Bool {
         switch self {
-            case .idle, .searching, .noMatches: return false
-            default: return true
+        case .idle, .searching, .noMatches: return false
+        default: return true
         }
     }
 }
-
 
 enum LibraryMigrationStrategy: CaseIterable {
     case link, replace
@@ -89,4 +88,3 @@ enum LowerChapterMigrationStrategy: CaseIterable {
         }
     }
 }
-

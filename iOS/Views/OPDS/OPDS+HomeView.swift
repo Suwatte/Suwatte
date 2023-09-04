@@ -78,13 +78,12 @@ struct OPDSView: View {
     }
 }
 
-
 extension OPDSView {
     func cancel() {
         token?.invalidate()
         token = nil
     }
-    
+
     func observe() async {
         let actor = await RealmActor.shared()
         token = await actor.observeOPDSServers { value in

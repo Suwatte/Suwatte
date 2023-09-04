@@ -30,7 +30,6 @@ final class StateManager: ObservableObject {
     // Tokens
     private var thumbnailToken: NotificationToken?
     private var collectionToken: NotificationToken?
-    
 
     func initialize() {
         registerNetworkObserver()
@@ -160,7 +159,7 @@ extension StateManager {
         case .inactive:
             break
         case .active:
-            if thumbnailToken == nil && collectionToken == nil {
+            if thumbnailToken == nil, collectionToken == nil {
                 Task {
                     await observe()
                 }
@@ -184,18 +183,18 @@ extension StateManager {
                 self?.titleHasCustomThumbs = value
             }
         }
-        
-        collectionToken = await actor.observeLibraryCollection({ value in
+
+        collectionToken = await actor.observeLibraryCollection { value in
             Task { @MainActor [weak self] in
                 self?.collections = value
             }
-        })
+        }
     }
 
     func stopObservingRealm() {
         thumbnailToken?.invalidate()
         thumbnailToken = nil
-        
+
         collectionToken?.invalidate()
         collectionToken = nil
     }

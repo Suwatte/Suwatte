@@ -64,7 +64,7 @@ extension CGSize {
     var ratio: CGFloat {
         width / height
     }
-    
+
     var isLandscape: Bool {
         width > height
     }

@@ -17,12 +17,12 @@ extension Controller: UIContextMenuInteractionDelegate {
         guard let indexPath,
               case let .page(page) = dataSource.itemIdentifier(for: indexPath)
         else { return nil }
-        
+
         guard let imageView = (interaction.view as? UIImageView),
-              let image = imageView.image else {
+              let image = imageView.image
+        else {
             return nil
         }
-        
 
         let chapter = page.page.chapter
         let midPoint = collectionView.frame.midX
@@ -43,12 +43,12 @@ extension Controller: UIContextMenuInteractionDelegate {
             }
 
             let photoMenu = UIMenu(title: "", options: .displayInline, children: [saveToAlbum, sharePhotoAction])
-            
+
             var target = page.page
-            
+
             if isDoublePager {
                 let isFirstPage = imageView.frame.minX < midPoint
-                if isInverted && isFirstPage {
+                if isInverted, isFirstPage {
                     target = page.secondaryPage ?? page.page
                 }
             }
@@ -61,26 +61,26 @@ extension Controller: UIContextMenuInteractionDelegate {
             let bookmarkPanelAction = UIAction(title: "Bookmark Panel", image: UIImage(systemName: "bookmark"), attributes: []) { [weak self] _ in
                 self?.addBookmark(for: target, image: image)
             }
-            
+
             guard !STTHelpers.isInternalSource(target.chapter.sourceId) else {
                 menu = menu.replacingChildren([photoMenu, bookmarkPanelAction])
                 return menu
             }
-            
+
             let isBookmarked = self.model.isChapterBookmarked(id: chapter.id)
             let actionTitle = !isBookmarked ? "Bookmark Chapter" : "Remove Chapter Bookmark"
-            let actionImage = !isBookmarked ?  "book.closed" : "trash"
+            let actionImage = !isBookmarked ? "book.closed" : "trash"
             let bookmarkChapterAction = UIAction(title: actionTitle,
                                                  image: UIImage(systemName: actionImage),
-                                                 attributes: isBookmarked ? [.destructive] : []) { [weak self] _ in
+                                                 attributes: isBookmarked ? [.destructive] : [])
+            { [weak self] _ in
                 self?.addChapterBookmark(for: chapter)
             }
-            
-            
+
             let bookmarkMenu = UIMenu(title: "",
                                       options: .displayInline,
                                       children: [bookmarkChapterAction, bookmarkPanelAction])
-            
+
             menu = menu.replacingChildren([photoMenu, bookmarkMenu])
             return menu
         })
@@ -93,7 +93,7 @@ extension Controller: UIContextMenuInteractionDelegate {
             result ? ToastManager.shared.info("Bookmarked!") : ToastManager.shared.error("Failed to bookmark")
         }
     }
-    
+
     func addChapterBookmark(for chapter: ThreadSafeChapter) {
         Task {
             let actor = await RealmActor.shared()

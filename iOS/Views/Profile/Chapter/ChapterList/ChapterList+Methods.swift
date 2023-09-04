@@ -17,7 +17,6 @@ extension ChapterList {
     }
 }
 
-
 extension ChapterList {
     func isChapterCompleted(_ chapter: ThreadSafeChapter) -> Bool {
         model.readChapters.contains(chapter.chapterOrderKey)
@@ -41,7 +40,6 @@ extension ChapterList {
         model.downloads[chapter.id]
     }
 }
-
 
 extension ChapterList {
     func mark(chapter: ThreadSafeChapter, read: Bool, above: Bool) {

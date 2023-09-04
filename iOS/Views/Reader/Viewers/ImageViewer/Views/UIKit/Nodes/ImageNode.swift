@@ -169,7 +169,7 @@ extension ImageNode {
         guard let savedOffset else {
             return
         }
-        
+
         let requestedOffset = imageNode.frame.height * savedOffset
         manager.contentOffset.y += requestedOffset
         self.savedOffset = nil

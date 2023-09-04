@@ -57,7 +57,6 @@ protocol DSKSetupDelegate {
 }
 
 extension DSKRunnerDelegate {
-    
     var id: String {
         customID ?? info.id
     }

@@ -18,7 +18,7 @@ struct ContentSettingsView: View {
             } footer: {
                 Text("Your search and reading progress will not be saved when enabled.")
             }
-            
+
             Section {
                 Toggle("Hide NSFW Sources & Titles", isOn: $hideNSFW)
             } header: {

@@ -5,8 +5,8 @@
 //  Created by Mantton on 2023-08-04.
 //
 
-import RealmSwift
 import Foundation
+import RealmSwift
 import SwiftUI
 
 @MainActor
@@ -44,18 +44,18 @@ extension IVViewModel {
         chapterCount = value.chapters.count
         let requested = value.openTo
         let chapters = value.chapters
-        
+
         guard chapters.contains(requested) else {
             presentationState = .failed(DSK.Errors.NamedError(name: "MismatchError", message: "target chapter was not found in chapter list"))
             return
         }
-        
+
         setReadingMode(for: requested.STTContentIdentifier, requested: value.mode)
 
         // Sort Chapters
         let useIndex = chapters.map { $0.index }.reduce(0, +) > 0
         let sorted = useIndex ? chapters.sorted(by: { $0.index > $1.index }) :
-        chapters.sorted(by: { $0.number > $1.number })
+            chapters.sorted(by: { $0.number > $1.number })
 
         // Set Chapters
         await dataCache.setChapters(sorted)
@@ -211,16 +211,15 @@ extension IVViewModel {
     }
 }
 
-
 extension IVViewModel {
     func isChapterBookmarked(id: String) -> Bool {
         let realm = try! Realm()
-        
+
         let target = realm
             .objects(ChapterBookmark.self)
             .where { $0.id == id && !$0.isDeleted }
             .first
-        
+
         return target != nil
     }
 }

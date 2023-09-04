@@ -18,26 +18,25 @@ extension ProfileView.Skeleton.ChapterView {
         @EnvironmentObject var model: ProfileView.ViewModel
         var body: some View {
             HStack {
-                
                 switch model.chapterState {
-                    case .loaded:
-                        if !model.chapters.isEmpty {
-                            LoadedView(model.chapters)
-                                .transition(.opacity)
-                        } else {
-                            LoadedEmptyView()
-                                .transition(.opacity)
-                        }
-                    case .failed(let error):
-                        ErrorView(error: error, action: {
-                            await model.loadChapters()
-                        })
-                        .transition(.opacity)
-                    default:
-                        LoadedView(ThreadSafeChapter.placeholders(count: 6), redacted: true)
-                            .redacted(reason: .placeholder)
-                            .shimmering()
+                case .loaded:
+                    if !model.chapters.isEmpty {
+                        LoadedView(model.chapters)
                             .transition(.opacity)
+                    } else {
+                        LoadedEmptyView()
+                            .transition(.opacity)
+                    }
+                case let .failed(error):
+                    ErrorView(error: error, action: {
+                        await model.loadChapters()
+                    })
+                    .transition(.opacity)
+                default:
+                    LoadedView(ThreadSafeChapter.placeholders(count: 6), redacted: true)
+                        .redacted(reason: .placeholder)
+                        .shimmering()
+                        .transition(.opacity)
                 }
             }
         }
@@ -87,7 +86,7 @@ extension ProfileView.Skeleton.ChapterView {
                         }
                         .onTapGesture {
                             guard !redacted else { return }
-                            
+
                             if model.content.contentType == .novel {
                                 StateManager.shared.alert(title: "Novel Reading", message: "Novel reading is currently not supported until version 6.1")
                                 return
@@ -150,13 +149,13 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
 }
 
 extension ProfileView.Skeleton.ChapterView.PreviewView {
-     
     struct ChapterSectionsView: View {
         @EnvironmentObject private var model: ProfileView.ViewModel
-        
+
         private func isSelected(id: String) -> Bool {
             model.currentChapterSection == id
         }
+
         var body: some View {
             ScrollView(.horizontal) {
                 HStack {
@@ -171,7 +170,6 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
                         }
                         .buttonStyle(.bordered)
                         .tint(.accentColor)
-
                     }
 
                     ForEach(model.linked, id: \.source.id) { linked in
@@ -190,7 +188,6 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
                             .tint(.accentColor)
                             .coloredBadge(.blue)
                         }
-                       
                     }
                 }
                 .padding(.top, 4)

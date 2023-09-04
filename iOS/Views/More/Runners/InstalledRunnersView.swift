@@ -85,11 +85,11 @@ struct InstalledRunnersView: View {
                 VStack(alignment: .leading, spacing: 2.5) {
                     Text(runner.name)
                         .fontWeight(.semibold)
-                    HStack (alignment: .lastTextBaseline) {
+                    HStack(alignment: .lastTextBaseline) {
                         Text("v" + runner.version.description)
                             .font(.footnote.weight(.light))
                             .foregroundColor(.secondary)
-                        
+
                         if runner.isInstantiable {
                             Text("\(Image(systemName: "doc.on.doc"))")
                                 .font(.footnote.weight(.light))
@@ -109,7 +109,7 @@ struct InstalledRunnersView: View {
                 Label("Delete", systemImage: "trash")
             }
             .tint(.red)
-            
+
             if runner.isInstantiable && runner.enabled {
                 Button {
                     Task {

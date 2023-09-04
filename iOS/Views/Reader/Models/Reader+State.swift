@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 struct InitialIVState {
     let chapters: [ThreadSafeChapter]
     let openTo: ThreadSafeChapter
@@ -16,7 +15,6 @@ struct InitialIVState {
     let title: String
     let mode: ReadingMode
 }
-
 
 struct CurrentViewerState: Hashable {
     var chapter: ThreadSafeChapter

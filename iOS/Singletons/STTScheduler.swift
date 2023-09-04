@@ -89,7 +89,6 @@ class STTScheduler {
                 task.setTaskCompleted(success: false)
             }
         }
-        
     }
 
     func handleLibraryUpdate(task: BGProcessingTask) {

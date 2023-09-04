@@ -37,7 +37,7 @@ extension LibraryView.LibraryGrid {
             self.collection = collection
             self.readingFlag = readingFlag
         }
-        
+
         deinit {
             Logger.shared.debug("deallocated", "LibraryGridModel")
         }
@@ -46,7 +46,6 @@ extension LibraryView.LibraryGrid {
             token?.invalidate()
             token = nil
         }
-        
 
         func didSetResult(_ lib: [LibraryEntry]) {
             withAnimation {

@@ -8,15 +8,13 @@
 import Foundation
 import RealmSwift
 
-
-
 extension RealmActor {
     func observeSearchHistory(id: String? = nil, _ callback: @escaping Callback<[UpdatedSearchHistory]>) async -> NotificationToken {
         var collection = realm
             .objects(UpdatedSearchHistory.self)
             .where { !$0.isDeleted }
             .sorted(by: \.date, ascending: false)
-        
+
         if let id {
             collection = collection
                 .where { $0.sourceId == id }
@@ -34,5 +32,3 @@ extension RealmActor {
         return await observeCollection(collection: collection, didUpdate)
     }
 }
-
-

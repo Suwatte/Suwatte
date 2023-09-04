@@ -263,7 +263,7 @@ extension ProfileView.Skeleton.BottomBar {
             }
             .disabled(!model.source.ablityNotDisabled(\.disableCustomThumbnails))
         }
-        
+
         var ReloadButton: some View {
             Button {
                 Task {

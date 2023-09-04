@@ -48,11 +48,11 @@ extension JSCContentTracker: ContentTracker {
     func didUpdateStatus(id: String, status: DSKCommon.TrackStatus) async throws {
         try await callOptionalVoidMethod(method: "didUpdateStatus", arguments: [id, status.rawValue])
     }
-    
+
     func getFullInformation(id: String) async throws -> DSKCommon.FullTrackItem {
         try await callMethodReturningDecodable(method: "getFullInformation", arguments: [id], resolvesTo: DSKCommon.FullTrackItem.self)
     }
-    
+
     func toggleFavorite(state: Bool) async throws {
         try await callOptionalVoidMethod(method: "toggleFavorite", arguments: [state])
     }

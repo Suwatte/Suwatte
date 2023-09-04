@@ -7,18 +7,17 @@
 
 import SwiftUI
 
-
 struct ContentLanguageSettingsView: View {
     private let locales = Locale
         .isoLanguageCodes
         .compactMap { (Locale.current.localizedString(forIdentifier: $0) ?? $0, $0) }
-    
+
     @State
     private var text: String = ""
-    
+
     @Preference(\.globalContentLanguages)
     private var selections
-    
+
     private var prepared: [(String, String)] {
         if text.isEmpty {
             return locales
@@ -26,25 +25,26 @@ struct ContentLanguageSettingsView: View {
         } else {
             return locales
                 .filter { $0.0.lowercased()
-                        .contains(text.lowercased()
-                            .trimmingCharacters(in: .whitespacesAndNewlines)) }
+                    .contains(text.lowercased()
+                        .trimmingCharacters(in: .whitespacesAndNewlines))
+                }
                 .sorted(by: \.0, descending: false)
         }
     }
-    
-    private var preparedSelections : [(String, String)] {
+
+    private var preparedSelections: [(String, String)] {
         selections
             .compactMap { (Locale.current.localizedString(forIdentifier: $0) ?? $0, $0) }
             .sorted(by: \.0, descending: false)
-        
     }
+
     var body: some View {
         List {
             Section {
                 if selections.isEmpty {
                     Text("All Languages")
                 } else {
-                    ForEach(preparedSelections, id: \.1) { (name, id) in
+                    ForEach(preparedSelections, id: \.1) { name, id in
                         HStack {
                             Text(name)
                             Spacer()
@@ -64,9 +64,9 @@ struct ContentLanguageSettingsView: View {
                     Text("Suwatte will only display chapters in the languages above.")
                 }
             }
-            
+
             Section {
-                ForEach(prepared, id: \.1) { (name, id) in
+                ForEach(prepared, id: \.1) { name, id in
                     HStack {
                         Text(name)
                         Spacer()
@@ -86,7 +86,6 @@ struct ContentLanguageSettingsView: View {
             } header: {
                 Text("All")
             }
-            
         }
         .searchable(text: $text,
                     placement: .navigationBarDrawer(displayMode: .always),

@@ -24,9 +24,10 @@ struct MigrationDestinationsLoadingView: View {
         .animation(.default, value: model.hasLoadedSources)
     }
 }
+
 struct PreferredMigrationDestinationsView: View {
     @EnvironmentObject private var model: MigrationController
-    
+
     var body: some View {
         List {
             Section {
@@ -67,20 +68,21 @@ struct PreferredMigrationDestinationsView: View {
         .animation(.default, value: preferred.map(\.id))
         .animation(.default, value: available.map(\.id))
     }
+
     private var preferred: [AnyContentSource] {
         model.preferredDestinations
     }
-    
+
     private var available: [AnyContentSource] {
         model.availableDestinations
     }
-    
+
     private func move(from source: IndexSet, to destination: Int) {
         model
             .preferredDestinations
             .move(fromOffsets: source, toOffset: destination)
     }
-    
+
     private func remove(source: AnyContentSource) {
         model
             .availableDestinations
@@ -89,9 +91,8 @@ struct PreferredMigrationDestinationsView: View {
         model
             .preferredDestinations
             .removeAll(where: { $0.id == source.id })
-
     }
-    
+
     private func add(source: AnyContentSource) {
         model
             .preferredDestinations
@@ -99,6 +100,5 @@ struct PreferredMigrationDestinationsView: View {
         model
             .availableDestinations
             .removeAll(where: { $0.id == source.id })
-        
     }
 }

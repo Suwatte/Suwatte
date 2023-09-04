@@ -81,11 +81,11 @@ extension Controller {
         // start
         startup()
     }
-    
+
     override var prefersHomeIndicatorAutoHidden: Bool {
         true
     }
-    
+
     override var canBecomeFirstResponder: Bool {
         true
     }
@@ -129,7 +129,7 @@ extension Controller {
         subscriptions.forEach { $0.cancel() }
         subscriptions.removeAll()
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         becomeFirstResponder()

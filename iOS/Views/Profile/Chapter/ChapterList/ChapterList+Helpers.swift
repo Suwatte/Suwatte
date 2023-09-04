@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 public extension Sequence {
     func sorted<Value: Comparable>(
         by keyPath: KeyPath<Self.Element, Value>, descending: Bool = true

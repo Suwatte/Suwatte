@@ -14,26 +14,23 @@ struct FCS_Options: View {
 
     var body: some View {
         NavigationView {
-            List {
-               
-            }
-            .closeButton()
-            .navigationBarTitle("Filter")
-            .animation(.default, value: filteredProviders)
+            List {}
+                .closeButton()
+                .navigationBarTitle("Filter")
+                .animation(.default, value: filteredProviders)
         }
         .navigationViewStyle(.stack)
     }
 
     var ProvidersSection: some View {
-        Section {
-            
-        } header: {
+        Section {} header: {
             Text("Providers")
         }
     }
 }
+
 //
-//extension FCS_Options {
+// extension FCS_Options {
 //    var AllProviders: [DSKCommon.ChapterProvider] {
 //        let providers = model
 //            .threadSafeChapters?
@@ -52,9 +49,9 @@ struct FCS_Options: View {
 //            filteredProviders.append(provider.id)
 //        }
 //    }
-//}
+// }
 //
-//extension FCS_Options {
+// extension FCS_Options {
 //    var AllLanugages: [String] {
 //        (model
 //            .threadSafeChapters?
@@ -89,4 +86,4 @@ struct FCS_Options: View {
 //            Text("Languages")
 //        }
 //    }
-//}
+// }

@@ -28,6 +28,7 @@ extension LibraryView.LibraryGrid {
                 .compactMap(\.content)
                 .map { .init(from: $0.toHighlight(), with: $0.sourceId) }
         }
+
         func body(content: Content) -> some View {
             content
                 .fullScreenCover(item: $selectionOption, onDismiss: { model.selectedIndexes.removeAll() }) { option in

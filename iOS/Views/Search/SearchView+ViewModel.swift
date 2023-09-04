@@ -11,16 +11,16 @@ import SwiftUI
 extension SearchView {
     typealias PagedResult = DSKCommon.PagedHighlight
 
-    struct ResultGroup : Hashable {
+    struct ResultGroup: Hashable {
         let sourceID: String
         let sourceName: String
         let result: PagedResult
     }
 
-    struct IncompleteSources : Hashable {
+    struct IncompleteSources: Hashable {
         var failing: [String]
         var noResults: [String]
-        
+
         var hasIncomplete: Bool {
             !failing.isEmpty || !noResults.isEmpty
         }

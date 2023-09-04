@@ -21,9 +21,8 @@ extension ChapterReference: Codable {
         chapterId = try container.decode(String.self, forKey: .chapterId)
         volume = try container.decodeIfPresent(Double.self, forKey: .volume)
         number = try container.decode(Double.self, forKey: .number)
-        
+
         content = try container.decodeIfPresent(StoredContent.self, forKey: .content)
-        
     }
 
     func encode(to encoder: Encoder) throws {

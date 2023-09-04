@@ -14,7 +14,7 @@ struct LibraryGridState {
     let query: String
     let sort: LibraryView.LibraryGrid.KeyPath
     let order: LibraryView.LibraryGrid.SortOrder
-    let showOnlyDownloadedTitles : Bool
+    let showOnlyDownloadedTitles: Bool
 }
 
 extension RealmActor {
@@ -109,8 +109,7 @@ extension RealmActor {
         let keyPath = state.sort.path
         library = library
             .sorted(byKeyPath: keyPath, ascending: ascending)
-        
-        
+
         func didUpdate(_ results: Results<LibraryEntry>) {
             let data = results
                 .freeze()
@@ -119,7 +118,7 @@ extension RealmActor {
                 callback(data)
             }
         }
-        
+
         return await observeCollection(collection: library, didUpdate(_:))
     }
 }

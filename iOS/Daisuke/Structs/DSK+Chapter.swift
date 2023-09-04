@@ -66,7 +66,6 @@ extension DaisukeEngine.Structs {
     }
 }
 
-
 extension DSKCommon.Chapter {
     func toThreadSafe(sourceID: String, contentID: String) -> ThreadSafeChapter {
         .init(id: "\(sourceID)||\(contentID)||\(chapterId)",
