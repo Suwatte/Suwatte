@@ -41,6 +41,13 @@ struct ImageViewer: View {
                 ImageCache.shared.removeAll()
             }
         }
+        .onRotate(perform: { orientation in
+            guard UIDevice.current.userInterfaceIdiom == .pad, orientation.isLandscape && !doublePaged else {
+                return
+            }
+            model.producePendingState()
+            doublePaged = true
+        })
         .toast()
     }
 }

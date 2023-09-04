@@ -15,12 +15,18 @@ extension Controller: UIContextMenuInteractionDelegate {
         let indexPath = collectionView.indexPathForItem(at: point)
 
         guard let indexPath,
-              case let .page(page) = dataSource.itemIdentifier(for: indexPath),
-              let image = (interaction.view as? UIImageView)?.image
+              case let .page(page) = dataSource.itemIdentifier(for: indexPath)
         else { return nil }
+        
+        guard let imageView = (interaction.view as? UIImageView),
+              let image = imageView.image else {
+            return nil
+        }
+        
 
         let chapter = page.page.chapter
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { _ in
+        let midPoint = collectionView.frame.midX
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { [isInverted, isDoublePager] _ in
 
             // Image Actions menu
             // Save to Photos
@@ -37,17 +43,26 @@ extension Controller: UIContextMenuInteractionDelegate {
             }
 
             let photoMenu = UIMenu(title: "", options: .displayInline, children: [saveToAlbum, sharePhotoAction])
+            
+            var target = page.page
+            
+            if isDoublePager {
+                let isFirstPage = imageView.frame.minX < midPoint
+                if isInverted && isFirstPage {
+                    target = page.secondaryPage ?? page.page
+                }
+            }
 
-            var menu = UIMenu(title: "Page \(page.page.index + 1)", children: [photoMenu])
+            var menu = UIMenu(title: "Page \(target.index + 1)", children: [photoMenu])
 
             guard !STTHelpers.isInternalSource(chapter.sourceId) else { return menu }
 
             // Bookmark Actions
             let bookmarkPanelAction = UIAction(title: "Bookmark Panel", image: UIImage(systemName: "bookmark"), attributes: []) { [weak self] _ in
-                self?.addBookmark(for: page.page, image: image)
+                self?.addBookmark(for: target, image: image)
             }
             
-            guard !STTHelpers.isInternalSource(page.page.chapter.sourceId) else {
+            guard !STTHelpers.isInternalSource(target.chapter.sourceId) else {
                 menu = menu.replacingChildren([photoMenu, bookmarkPanelAction])
                 return menu
             }

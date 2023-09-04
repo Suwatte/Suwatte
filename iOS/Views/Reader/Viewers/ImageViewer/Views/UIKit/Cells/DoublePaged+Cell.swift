@@ -20,7 +20,7 @@ class DoublePagedViewerImageCell: UICollectionViewCell, CancellableImageCell {
     }
 
     override func prepareForReuse() {
-//        pageView?.reset()
+        pageView?.reset()
         pageView?.removeFromSuperview()
         pageView = nil
         NSLayoutConstraint.deactivate(pageViewContraints)
@@ -39,8 +39,6 @@ class DoublePagedViewerImageCell: UICollectionViewCell, CancellableImageCell {
         contentView.addSubview(pageView)
         pageView.setup()
 
-        // Add Context Menu Interaction
-
         // AutoLayout
         pageViewContraints = [
             pageView.widthAnchor.constraint(equalTo: contentView.widthAnchor),
@@ -49,7 +47,6 @@ class DoublePagedViewerImageCell: UICollectionViewCell, CancellableImageCell {
             pageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
         ]
         NSLayoutConstraint.activate(pageViewContraints)
-//        pageView.subscribe()
     }
 
     var pageViewContraints: [NSLayoutConstraint] = []
@@ -59,6 +56,6 @@ class DoublePagedViewerImageCell: UICollectionViewCell, CancellableImageCell {
     }
 
     func cancelTasks() {
-//        pageView?.cancel()
+        pageView?.cancel()
     }
 }

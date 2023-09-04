@@ -22,7 +22,7 @@ struct DoublePagedImageViewer: UIViewControllerRepresentable {
     func updateUIViewController(_: IVPagingController, context _: Context) {}
 }
 
-protocol DoublePageResolverDelegate: NSObject {
+protocol DoublePageResolverDelegate: NSObject, UIContextMenuInteractionDelegate {
     func primaryIsWide(for page: PanelPage)
     func secondaryIsWide(for page: PanelPage)
 }

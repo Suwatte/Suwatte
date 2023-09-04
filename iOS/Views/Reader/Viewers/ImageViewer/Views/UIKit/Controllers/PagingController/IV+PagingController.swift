@@ -120,7 +120,7 @@ extension Controller {
 extension Controller {
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        preRotationPath = collectionView.currentPath
+        preRotationPath = collectionView.pathAtCenterOfScreen
         collectionView.collectionViewLayout.invalidateLayout()
     }
 

@@ -315,6 +315,8 @@
 		DFA17F662A4916C300179850 /* ASCollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = DFA17F652A4916C300179850 /* ASCollectionView */; };
 		DFA25FEC2AA5075200A1369E /* PagingController+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA25FEB2AA5075200A1369E /* PagingController+Keyboard.swift */; };
 		DFA25FEE2AA50E8D00A1369E /* WebtoonController+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA25FED2AA50E8D00A1369E /* WebtoonController+Keyboard.swift */; };
+		DFA25FF02AA540C400A1369E /* UIImageViewAligned.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA25FEF2AA540C400A1369E /* UIImageViewAligned.swift */; };
+		DFA25FF22AA56A9200A1369E /* IV+BasicZoomingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA25FF12AA56A9200A1369E /* IV+BasicZoomingScrollView.swift */; };
 		DFAC77982815D48D00AF6394 /* STTHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAC77972815D48D00AF6394 /* STTHelper.swift */; };
 		DFADB58B29D7D04E00CBE22F /* JSCC+Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFADB58A29D7D04E00CBE22F /* JSCC+Network.swift */; };
 		DFADB58D29D7F19900CBE22F /* STT+URLRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFADB58C29D7F19900CBE22F /* STT+URLRequest.swift */; };
@@ -423,7 +425,6 @@
 		DFE1B1102A9EAC2400D300DB /* STT+UIDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B10F2A9EAC2400D300DB /* STT+UIDevice.swift */; };
 		DFE1B1152A9FEFD600D300DB /* Backup+ChapterReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B1142A9FEFD600D300DB /* Backup+ChapterReference.swift */; };
 		DFE1B11C2AA0188900D300DB /* IceCream in Frameworks */ = {isa = PBXBuildFile; productRef = DFE1B11B2AA0188900D300DB /* IceCream */; };
-		DFEDACB62A871981002E2B6A /* UIImageViewAligned.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEDACB52A871981002E2B6A /* UIImageViewAligned.swift */; };
 		DFF09B452A58BABC00C5CA5E /* JSCContentTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B442A58BABC00C5CA5E /* JSCContentTracker.swift */; };
 		DFF09B4A2A58C13900C5CA5E /* +WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B492A58C13900C5CA5E /* +WebView.swift */; };
 		DFF09B4C2A58C14300C5CA5E /* +Basic.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B4B2A58C14300C5CA5E /* +Basic.swift */; };
@@ -763,6 +764,8 @@
 		DF9BFE1D2A428A73005D0B63 /* AH+Rar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AH+Rar.swift"; sourceTree = "<group>"; };
 		DFA25FEB2AA5075200A1369E /* PagingController+Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagingController+Keyboard.swift"; sourceTree = "<group>"; };
 		DFA25FED2AA50E8D00A1369E /* WebtoonController+Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebtoonController+Keyboard.swift"; sourceTree = "<group>"; };
+		DFA25FEF2AA540C400A1369E /* UIImageViewAligned.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageViewAligned.swift; sourceTree = "<group>"; };
+		DFA25FF12AA56A9200A1369E /* IV+BasicZoomingScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IV+BasicZoomingScrollView.swift"; sourceTree = "<group>"; };
 		DFAC77972815D48D00AF6394 /* STTHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STTHelper.swift; sourceTree = "<group>"; };
 		DFADB58A29D7D04E00CBE22F /* JSCC+Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCC+Network.swift"; sourceTree = "<group>"; };
 		DFADB58C29D7F19900CBE22F /* STT+URLRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+URLRequest.swift"; sourceTree = "<group>"; };
@@ -870,7 +873,6 @@
 		DFE1B10D2A9E98BD00D300DB /* Realm+LibraryGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+LibraryGrid.swift"; sourceTree = "<group>"; };
 		DFE1B10F2A9EAC2400D300DB /* STT+UIDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+UIDevice.swift"; sourceTree = "<group>"; };
 		DFE1B1142A9FEFD600D300DB /* Backup+ChapterReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Backup+ChapterReference.swift"; sourceTree = "<group>"; };
-		DFEDACB52A871981002E2B6A /* UIImageViewAligned.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageViewAligned.swift; sourceTree = "<group>"; };
 		DFF09B442A58BABC00C5CA5E /* JSCContentTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSCContentTracker.swift; sourceTree = "<group>"; };
 		DFF09B492A58C13900C5CA5E /* +WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+WebView.swift"; sourceTree = "<group>"; };
 		DFF09B4B2A58C14300C5CA5E /* +Basic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+Basic.swift"; sourceTree = "<group>"; };
@@ -1048,8 +1050,10 @@
 		DF11148D2A93EF1400FA8A39 /* Zoom */ = {
 			isa = PBXGroup;
 			children = (
+				DFA25FEF2AA540C400A1369E /* UIImageViewAligned.swift */,
 				DF11148B2A93EF0500FA8A39 /* ZoomViewController.swift */,
 				DF1114902A93EF6300FA8A39 /* ImageScrollView.swift */,
+				DFA25FF12AA56A9200A1369E /* IV+BasicZoomingScrollView.swift */,
 			);
 			path = Zoom;
 			sourceTree = "<group>";
@@ -1344,7 +1348,6 @@
 			isa = PBXGroup;
 			children = (
 				DF11148D2A93EF1400FA8A39 /* Zoom */,
-				DFEDACB52A871981002E2B6A /* UIImageViewAligned.swift */,
 				DFDBF9DB2A7DBAE9006D49AD /* IV+ProgressView.swift */,
 				DFDBF9F72A7E2088006D49AD /* IV+ZoomingScrollView.swift */,
 			);
@@ -2651,7 +2654,6 @@
 				DF30193B28C045E30024AA8B /* Backup+Runner.swift in Sources */,
 				DF8D0B762800EE48003E4C3E /* LG+MoveCollection.swift in Sources */,
 				DFDBF9802A7C59A8006D49AD /* WKRunner.swift in Sources */,
-				DFEDACB62A871981002E2B6A /* UIImageViewAligned.swift in Sources */,
 				DFDBF9992A7C96F8006D49AD /* WKR+Prefernces.swift in Sources */,
 				DFDBF97B2A7C5595006D49AD /* JSCR+Directory.swift in Sources */,
 				DF248F36281474A100818300 /* STT+Encodable.swift in Sources */,
@@ -2785,6 +2787,7 @@
 				DF9BFE1A2A428A5B005D0B63 /* AH+Zip.swift in Sources */,
 				DF6C25CD282DC110002BE1AA /* STT+Conditional.swift in Sources */,
 				DF8D0B2B2800EE47003E4C3E /* Loadable.swift in Sources */,
+				DFA25FF02AA540C400A1369E /* UIImageViewAligned.swift in Sources */,
 				DF8D0B2F2800EE47003E4C3E /* STT+ContentStatus.swift in Sources */,
 				DFDBF9852A7C6049006D49AD /* Engine+JSC.swift in Sources */,
 				DF2783472A799FAB0098BBA9 /* Realm+Library.swift in Sources */,
@@ -2992,6 +2995,7 @@
 				DF8D0BA72800EE48003E4C3E /* AppDelegate.swift in Sources */,
 				DF67EB9928E7B07700076FF5 /* AddContentLink.swift in Sources */,
 				DF67EB9B28E7B08400076FF5 /* ManageContentLinks.swift in Sources */,
+				DFA25FF22AA56A9200A1369E /* IV+BasicZoomingScrollView.swift in Sources */,
 				DF8D0B3D2800EE47003E4C3E /* Preference.swift in Sources */,
 				DFBE48502A25BE4A000ABA16 /* Bookmark.swift in Sources */,
 				DF8D0BA92800EE48003E4C3E /* SuwatteApp.swift in Sources */,

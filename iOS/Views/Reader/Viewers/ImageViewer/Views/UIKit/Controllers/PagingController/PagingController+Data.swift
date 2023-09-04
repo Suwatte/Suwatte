@@ -111,6 +111,7 @@ extension Controller {
         model.updateViewerState(with: page)
 
         var path = IndexPath(item: 0, section: 0)
+
         if !isDoublePager {
             let isFirstChapter = chapterIndex == 0
             let requestedPageIndex = (pendingState.pageIndex ?? 0) + (isFirstChapter ? 1 : 0)
@@ -118,10 +119,11 @@ extension Controller {
         } else {
             let snapshot = dataSource.snapshot().itemIdentifiers(inSection: chapter.id)
             let index = snapshot.firstIndex { item in
-                guard case let .page(v) = item, v.isHolding(page) else {
+                guard case let .page(v) = item else {
                     return false
                 }
-                return true
+                let index = v.secondaryPage?.index ?? v.page.index
+                return index == (pendingState.pageIndex ?? 0)
             }
 
             if let index {

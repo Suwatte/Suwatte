@@ -64,6 +64,10 @@ extension CGSize {
     var ratio: CGFloat {
         width / height
     }
+    
+    var isLandscape: Bool {
+        width > height
+    }
 }
 
 enum ImageScaleOption: Int, CaseIterable, UserDefaultsSerializable {
