@@ -120,7 +120,7 @@ final class DirectorySearcher {
         var rootFolder = Folder(url: path)
         for item in items {
             guard let url = item.value(forAttribute: NSMetadataItemURLKey) as? URL else { continue } // Get URL
-            guard url.deletingLastPathComponent() == path else { continue } // Is File in this directory
+//            guard url.deletingLastPathComponent() == path else { continue } // Is File in this directory
 
             // Folder
             if url.hasDirectoryPath {
