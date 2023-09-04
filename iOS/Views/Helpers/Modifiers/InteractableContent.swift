@@ -62,13 +62,13 @@ struct V1<A: View>: ViewModifier {
     var child: () -> A
     func body(content: Content) -> some View {
         content
-            .background(
-                NavigationLink(isActive: $isActive, destination: {
+            .background {
+                NavigationLink(isActive: $isActive) {
                     child()
-                }, label: {
+                } label: {
                     EmptyView()
-                })
-            )
+                }
+            }
     }
 }
 

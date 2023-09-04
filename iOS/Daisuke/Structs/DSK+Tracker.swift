@@ -105,7 +105,7 @@ extension DSKCommon {
         let webUrl: String
         var entry: TrackEntry?
         let info: [String]?
-        let isNSFW: Bool?;
+        let isNSFW: Bool?
 
         let summary: String?
         let properites: [Property]?
@@ -126,8 +126,34 @@ extension DSKCommon {
         let summary: String?
     }
     
-    struct TrackItemLink: Parsable, Hashable {
+    struct TrackItemLink: Parsable, Hashable, Identifiable {
         let label: String
         let url: String
+        
+        var id: Int {
+            hashValue
+        }
+    }
+}
+
+
+extension DSKCommon.FullTrackItem {
+    static var placeholder: Self {
+        .init(id: "",
+              title: "Placeholder Title",
+              cover: "https://i.scdn.co/image/ab67616100005174d2d167f018561742f26a0997",
+              webUrl: "https://google.com",
+              info: nil,
+              isNSFW: false,
+              summary: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+              properites: nil,
+              bannerCover: nil,
+              isFavorite: false,
+              relatedTitles: nil,
+              recommendedTitles: nil,
+              links: nil,
+              additionalTitles: ["Cheolhyeolgeomga Sanyanggaeui Hoegwi", "Yeokdaegeup Changgisaui", "Tama ni wa Uso wo Tsuku", "2 Level Hoegwihan Musin"],
+              status: .ONGOING,
+              characters: nil)
     }
 }

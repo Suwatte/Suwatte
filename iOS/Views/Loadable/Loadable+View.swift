@@ -95,6 +95,27 @@ extension LoadableView where Idle == DefaultNotRequestedView, Loading == Default
     }
 }
 
+extension LoadableView where Failure == ErrorView, Idle == Loading {
+    init(
+        _ action: @escaping () async throws -> Void,
+        _ loadable: Binding<Loadable<Value>>,
+        @ViewBuilder placeholder: @escaping () -> Idle,
+        @ViewBuilder content: @escaping (_ value: Value) -> Content
+    ) {
+        self.init(loadable: loadable,
+                  action,
+                  { placeholder() },
+                  { placeholder() },
+                  { ErrorView(error: $0, action: {
+            do {
+                try await action()
+            } catch {
+                loadable.wrappedValue = .failed(error)
+            }
+        }) }, content)
+    }
+}
+
 struct DefaultNotRequestedView: View {
     var body: some View {
         DefaultLoadingView()
