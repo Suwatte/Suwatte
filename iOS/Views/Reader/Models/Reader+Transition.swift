@@ -23,10 +23,4 @@ struct ReaderTransition: Hashable, Sendable {
         self.type = type
         self.pageCount = pageCount
     }
-
-    static func == (lhs: ReaderTransition, rhs: ReaderTransition) -> Bool {
-        if lhs.from == rhs.from, lhs.to == rhs.to { return true }
-        if lhs.to == rhs.from, lhs.from == rhs.to { return true }
-        return false
-    }
 }

@@ -41,6 +41,7 @@ struct SearchView: View {
             }
         }
         .animation(.default, value: model.state)
+        .animation(.default, value: model.results)
         .environmentObject(model)
         .navigationTitle("Search All")
         .navigationBarTitleDisplayMode(.large)
