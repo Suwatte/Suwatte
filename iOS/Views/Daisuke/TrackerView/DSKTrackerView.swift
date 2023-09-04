@@ -68,7 +68,6 @@ struct DSKTrackerView: View {
                 }
                 .padding(.bottom)
             }
-            .padding(.horizontal)
         }
         .coordinateSpace(name: "scroll")
         .ignoresSafeArea(edges: .top)
@@ -191,7 +190,8 @@ extension DSKTrackerView {
             }
             .offset(y: minY > 0 ? -minY : 0)
         }
-        .frame(width: UIScreen.main.bounds.width, height: 300, alignment: .center)
+        .frame(maxWidth: .infinity)
+        .frame(height: 300, alignment: .center)
         
     }
     
