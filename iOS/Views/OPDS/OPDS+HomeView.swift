@@ -12,7 +12,8 @@ struct OPDSView: View {
     @State private var presentAddNewServer = false
     @State private var presentRenameAlert = false
     @State private var server: StoredOPDSServer? = nil
-    @ObservedResults(StoredOPDSServer.self, where: { $0.isDeleted == false }, sortDescriptor: .init(keyPath: "alias", ascending: true)) var servers
+    @State private var servers: [StoredOPDSServer] = []
+    @State private var token: NotificationToken?
     var body: some View {
         List {
             ForEach(servers) { server in
@@ -51,6 +52,10 @@ struct OPDSView: View {
         })
         .navigationTitle("OPDS")
         .animation(.default, value: servers)
+        .task {
+            await observe()
+        }
+        .onDisappear(perform: cancel)
     }
 
     func renamePrompt(server: StoredOPDSServer) {
@@ -70,5 +75,22 @@ struct OPDSView: View {
         ac.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         ac.addAction(submitAction)
         KEY_WINDOW?.rootViewController?.present(ac, animated: true)
+    }
+}
+
+
+extension OPDSView {
+    func cancel() {
+        token?.invalidate()
+        token = nil
+    }
+    
+    func observe() async {
+        let actor = await RealmActor.shared()
+        token = await actor.observeOPDSServers { value in
+            Task { @MainActor in
+                servers = value
+            }
+        }
     }
 }

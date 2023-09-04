@@ -10,18 +10,16 @@ import SwiftUI
 
 extension DirectoryView {
     struct HistoryView: View {
-        @ObservedResults(UpdatedSearchHistory.self, where: { $0.isDeleted == false }) var results
-        @ObservedObject var toastManager = ToastManager()
-
         @EnvironmentObject var model: DirectoryView.ViewModel
         @Environment(\.presentationMode) var presentationMode
 
         @State var presentAlert = false
+        @State var token: NotificationToken?
+        @State var results: [UpdatedSearchHistory] = []
         var body: some View {
-            let filtered = results.where { $0.sourceId == model.runner.id }
             NavigationView {
                 List {
-                    ForEach(filtered) { result in
+                    ForEach(results) { result in
                         Cell(for: result)
                             .swipeActions {
                                 Button("Delete", role: .destructive) {
@@ -38,9 +36,16 @@ extension DirectoryView {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("\(Image(systemName: "trash"))") { presentAlert.toggle() }
-                            .buttonStyle(.plain)
-                            .foregroundColor(.red)
+                        Menu {
+                            Button(role: .destructive) {
+                                presentAlert.toggle()
+                            } label: {
+                                Label("Clear History", systemImage: "trash")
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis.circle")
+                        }
+                       
                     }
                 }
                 .closeButton()
@@ -52,6 +57,10 @@ extension DirectoryView {
                 }
                 .toast()
                 .animation(.default, value: results)
+                .task {
+                    await observe()
+                }
+                .onDisappear(perform: cancel)
             }
         }
     }
@@ -90,5 +99,20 @@ extension DirectoryView.HistoryView {
             ToastManager.shared.error(error)
         }
         presentationMode.wrappedValue.dismiss()
+    }
+}
+
+
+extension DirectoryView.HistoryView {
+    func observe() async {
+        let actor = await RealmActor.shared()
+        token = await actor.observeSearchHistory(id: model.runner.id ) { value in
+            results = value
+        }
+    }
+    
+    func cancel() {
+        token?.invalidate()
+        token = nil
     }
 }
