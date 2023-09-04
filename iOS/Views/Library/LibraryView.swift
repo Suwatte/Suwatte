@@ -392,7 +392,7 @@ extension LibraryView {
                 }
 
                 NavigationLink {
-                    EmptyView()
+                    DirectoryViewer.DownloadQueueSheet()
                 } label: {
                     Label("File Queue", systemImage: "list.bullet.indent")
                 }

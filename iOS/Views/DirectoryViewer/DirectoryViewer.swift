@@ -165,7 +165,11 @@ struct DirectoryViewer: View {
             SettingsSheet()
         }
         .sheet(isPresented: $presentDownloadQueueSheet) {
-            DownloadQueueSheet()
+            NavigationView {
+                DownloadQueueSheet()
+                    .closeButton()
+            }
+            
         }
         .animation(.default, value: isEditing)
     }

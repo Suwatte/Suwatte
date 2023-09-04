@@ -29,7 +29,7 @@ class CloudDataManager {
 
     // Return true if iCloud is enabled
     var isCloudEnabled: Bool {
-        return DocumentsDirectory.iCloudDocumentsURL != nil
+        return DocumentsDirectory.iCloudDocumentsURL != nil && Preferences.standard.useCloudForLocal
     }
 
     // Delete All files at URL
