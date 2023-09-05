@@ -39,7 +39,16 @@ extension ArchiveHelper {
                 throw ArchiveHelper.Errors.ArchiveNotFound
             }
 
-            return try archive.extract(entry)
+            var out = Data()
+
+            try archive.extract(entry, handler: { data, progress in
+                if Task.isCancelled {
+                    progress.cancel()
+                } else {
+                    out.append(data)
+                }
+            })
+            return out
         }
 
         func getItemCount(for path: URL) throws -> Int {
