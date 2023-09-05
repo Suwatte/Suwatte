@@ -33,6 +33,15 @@ struct RunnerListsView: View {
                         }
                     }
                 }
+                .swipeActions(allowsFullSwipe: true) {
+                    Button {
+                        Task {
+                            await RealmActor.shared().removeRunnerList(with: list.url)
+                        }
+                    } label : {
+                        Label("Delete", systemImage: "trash")
+                    }
+                }
             }
 //            .onDelete(perform: $runnerLists.remove(atOffsets:))
         }
@@ -55,6 +64,8 @@ struct RunnerListsView: View {
             await model.observe()
         }
         .onDisappear(perform: model.stopObserving)
+        .animation(.default, value: model.savedLists)
+        .animation(.default, value: model.savedRunners)
     }
 }
 
@@ -107,7 +118,7 @@ extension RunnerListsView {
             }
             .animation(.default, value: loadable)
             .refreshable {
-                loadable = .idle
+                await load()
             }
             .searchable(text: $text, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search...")
         }
@@ -137,6 +148,8 @@ extension RunnerListsView {
         @State var presentFilterSheet = false
         @State var selectedLanguages = Set<String>()
         @State var langSearchText = ""
+        @StateObject var model: RunnerListsView.ViewModel = .init()
+
         var body: some View {
             List {
                 let sources = filteredRunners.filter { $0.environment == .source }
@@ -164,6 +177,12 @@ extension RunnerListsView {
                     }
                 }
             }
+            .task {
+                await model.observe()
+            }
+            .onDisappear(perform: model.stopObserving)
+            .environmentObject(model)
+            .animation(.default, value: model.savedRunners)
             .animation(.default, value: text)
             .toolbar(content: {
                 ToolbarItem {
