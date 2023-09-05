@@ -59,9 +59,18 @@ extension Controller {
         }
         var action = navigator.mode.action(for: point, ofSize: view.frame.size)
 
-        if preferences.invertTapSidesToNavigate {
+        
+        func invertAction(_ action: inout ReaderNavigation.NavigationType) {
             if action == .LEFT { action = .RIGHT }
             else if action == .RIGHT { action = .LEFT }
+        }
+
+        if isInverted {
+            invertAction(&action)
+        }
+
+        if preferences.invertTapSidesToNavigate {
+            invertAction(&action)
         }
 
         switch action {

@@ -119,8 +119,8 @@ extension IVViewModel {
 
     @MainActor
     func resetToChapter(_ chapter: ThreadSafeChapter) async {
-        presentationState = .loading
         pendingState = .init(chapter: chapter)
+        presentationState = .loading
         // Load Initial Chapter
         do {
             try await dataCache.load(for: chapter)

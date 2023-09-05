@@ -75,21 +75,32 @@ final actor IVDataCache {
 
         // Add Transition to next
         let next = chapters.getOrNil(index + 1)
-        let showTransitions = Preferences.standard.forceTransitions
+        
+        if Preferences.standard.currentReadingMode == .VERTICAL {
+            let transition = ReaderTransition(from: chapter,
+                                              to: next,
+                                              type: .NEXT,
+                                              pageCount: readerPages.count)
+            objects.append(.transition(transition))
+        } else {
+            let showTransitions = Preferences.standard.forceTransitions
+            
 
-        guard showTransitions || next == nil else {
-            return objects
+            guard showTransitions || next == nil else {
+                return objects
+            }
+
+            guard next == nil || pages.count >= 10 else {
+                return objects
+            }
+
+            let transition = ReaderTransition(from: chapter,
+                                              to: next,
+                                              type: .NEXT,
+                                              pageCount: readerPages.count)
+            objects.append(.transition(transition))
         }
 
-        guard next == nil || pages.count >= 10 else {
-            return objects
-        }
-
-        let transition = ReaderTransition(from: chapter,
-                                          to: next,
-                                          type: .NEXT,
-                                          pageCount: readerPages.count)
-        objects.append(.transition(transition))
 
         // Return generated pages
         return objects

@@ -37,8 +37,10 @@ extension Controller {
         PanelPublisher
             .shared
             .didChangeSplitMode
-            .sink { [weak self] in
-                // TODO: Fetch and Rebuild Section
+            .sink {
+                Task { [weak self] in
+                    await self?.reload(removeSplits: !Preferences.standard.splitWidePages)
+                }
             }
             .store(in: &subscriptions)
     }

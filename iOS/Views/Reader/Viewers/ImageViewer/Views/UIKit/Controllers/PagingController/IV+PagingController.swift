@@ -26,6 +26,8 @@ class IVPagingController: UICollectionViewController {
     var widePages: Set<String> = []
     var onPageReadTask: Task<Void, Never>?
     var model: IVViewModel!
+    var isLoaded = false
+    var loadingTask: Task<Void, Never>?
 
     var isVertical = false
     var isDoublePager = false
@@ -110,10 +112,22 @@ extension Controller {
     }
 
     func startup() {
-        Task { [weak self] in
+        loadingTask = Task { [weak self] in
             guard let self else { return }
             await self.initialLoad()
+            self.loadingTask = nil
         }
+    }
+    
+    func hardReset() {
+        lastIndexPath = .init(item: 0, section: 0)
+        currentChapterRange = (min: .zero, max: .zero)
+        didTriggerBackTick = false
+        scrollPositionUpdateThreshold = 20.0
+        widePages = []
+
+        let snapshot = NSDiffableDataSourceSnapshot<String, PanelViewerItem>()
+        dataSource.apply(snapshot, animatingDifferences: false)
     }
 }
 

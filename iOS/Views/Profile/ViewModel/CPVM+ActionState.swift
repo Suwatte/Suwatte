@@ -29,7 +29,7 @@ extension ViewModel {
         let actor = await RealmActor.shared()
 
         let marker = await actor
-            .getLatestLinkedMarker(for: identifier)
+            .getContentMarker(for: identifier)
 
         guard let marker else {
             // No Progress marker present, return first chapter

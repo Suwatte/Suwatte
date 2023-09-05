@@ -17,5 +17,9 @@ struct PagedImageViewer: UIViewControllerRepresentable {
         return controller
     }
 
-    func updateUIViewController(_: IVPagingController, context _: Context) {}
+    func updateUIViewController(_ controller: IVPagingController, context _: Context) {
+        guard model.pendingState != nil && controller.isLoaded , controller.loadingTask == nil else { return }
+        controller.hardReset()
+        controller.startup()
+    }
 }

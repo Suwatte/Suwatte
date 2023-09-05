@@ -169,7 +169,7 @@ extension Controller {
         var sectionMinOffset: CGFloat = .zero
         var sectionMaxOffset: CGFloat = .zero
         // Get Current IP
-        guard let path = collectionView.currentPath else {
+        guard let path = collectionView.pathAtCenterOfScreen else {
             return def
         }
         let snapshot = dataSource.snapshot()
@@ -178,7 +178,7 @@ extension Controller {
         let section = snapshot.itemIdentifiers(inSection: item.chapter.id)
 
         let minIndex = section.firstIndex(where: \.isPage) // O(1)
-        let maxIndex = max(section.endIndex - 2, 0)
+        let maxIndex = max(section.endIndex - (section.count <= 10 ? 1 : 2), 0)
 
         // Get Min
         if let minIndex {

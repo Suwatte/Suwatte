@@ -29,9 +29,8 @@ extension Controller {
         var snapshot = dataSource.snapshot()
         snapshot.appendSections([id])
         snapshot.appendItems(pages, toSection: id)
-        let s = snapshot
-        await MainActor.run { [weak self] in
-            self?.dataSource.apply(s, animatingDifferences: false)
+        await MainActor.run { [weak self, snapshot] in
+            self?.dataSource.apply(snapshot, animatingDifferences: false)
         }
     }
 
@@ -139,6 +138,8 @@ extension Controller {
             updateChapterScrollRange()
             setScrollPCT()
             collectionView.isHidden = false
+            self.isLoaded = true
+            
         }
     }
 
@@ -253,5 +254,30 @@ extension Controller {
               model.loadState[next] == nil else { return } // is not already loading/loaded
 
         await loadAtHead(next)
+    }
+}
+
+
+extension Controller {
+    func reload(removeSplits: Bool) async {
+        
+        let chapter = model.viewerState.chapter
+        var snapshot = dataSource.snapshot()
+
+        if removeSplits {
+            let items = snapshot.itemIdentifiers(inSection: chapter.id).filter { item in
+                guard case let .page(page) = item else { return false }
+                return page.isSplitPageChild
+            }
+            
+            snapshot.deleteItems(items)
+        } else {
+            snapshot.reloadSections([chapter.id])
+        }
+
+        
+        await MainActor.run { [weak self, snapshot] in
+            self?.dataSource.apply(snapshot, animatingDifferences: false)
+        }
     }
 }
