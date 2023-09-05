@@ -18,6 +18,11 @@ struct AppearanceView: View {
         Form {
             Section {
                 ColorPicker("Accent Color", selection: $appAccentColor)
+                    .swipeActions {
+                        Button("Reset") {
+                            appAccentColor = .sttDefault
+                        }
+                    }
             } header: {
                 Text("Colors")
             }
