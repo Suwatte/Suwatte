@@ -30,6 +30,8 @@ extension ViewModel {
 
         let marker = await actor
             .getContentMarker(for: identifier)
+        
+        _ = STTHelpers.getReadingMode(for: identifier) // To Update Reading Mode
 
         guard let marker else {
             // No Progress marker present, return first chapter

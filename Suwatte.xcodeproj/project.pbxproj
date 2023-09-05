@@ -443,6 +443,8 @@
 		DFF363262863E4AF006D02C5 /* MigrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF363252863E4AF006D02C5 /* MigrationView.swift */; };
 		DFF435192AA66A9900FAAD8B /* Realm+OPDSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF435182AA66A9900FAAD8B /* Realm+OPDSView.swift */; };
 		DFF4351B2AA66DCD00FAAD8B /* Realm+SearchHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF4351A2AA66DCD00FAAD8B /* Realm+SearchHistory.swift */; };
+		DFF4351E2AA6D09800FAAD8B /* Zephyr in Frameworks */ = {isa = PBXBuildFile; productRef = DFF4351D2AA6D09800FAAD8B /* Zephyr */; };
+		DFF435202AA6D0B500FAAD8B /* UserDefaultsSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF4351F2AA6D0B500FAAD8B /* UserDefaultsSync.swift */; };
 		DFF66BF22A548E4700860B41 /* Backup+ProgressMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF66BF12A548E4700860B41 /* Backup+ProgressMarker.swift */; };
 /* End PBXBuildFile section */
 
@@ -892,6 +894,7 @@
 		DFF363252863E4AF006D02C5 /* MigrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationView.swift; sourceTree = "<group>"; };
 		DFF435182AA66A9900FAAD8B /* Realm+OPDSView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+OPDSView.swift"; sourceTree = "<group>"; };
 		DFF4351A2AA66DCD00FAAD8B /* Realm+SearchHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+SearchHistory.swift"; sourceTree = "<group>"; };
+		DFF4351F2AA6D0B500FAAD8B /* UserDefaultsSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsSync.swift; sourceTree = "<group>"; };
 		DFF66BF12A548E4700860B41 /* Backup+ProgressMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Backup+ProgressMarker.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -904,6 +907,7 @@
 				DF248F0C2813844C00818300 /* KeychainSwift in Frameworks */,
 				DF2DA77327CF11C50046FE20 /* Alamofire in Frameworks */,
 				DF9041A22AA3E7E600B72ACC /* R2Shared in Frameworks */,
+				DFF4351E2AA6D09800FAAD8B /* Zephyr in Frameworks */,
 				DF9C9EF0297AE3A9004A3BC5 /* FirebaseAnalytics in Frameworks */,
 				DFB7FB03297B965D00599097 /* OrderedCollections in Frameworks */,
 				DFA17F662A4916C300179850 /* ASCollectionView in Frameworks */,
@@ -1547,6 +1551,7 @@
 				DF46C3562A22A04B002762C4 /* CloudManager.swift */,
 				DF426C342A463F4D00B79920 /* DirectorySearcher.swift */,
 				DF62B5C82A9A4F1D00F907CD /* BackgroundActor.swift */,
+				DFF4351F2AA6D0B500FAAD8B /* UserDefaultsSync.swift */,
 			);
 			path = Singletons;
 			sourceTree = "<group>";
@@ -2478,6 +2483,7 @@
 				DFE1B11B2AA0188900D300DB /* IceCream */,
 				DF9041A12AA3E7E600B72ACC /* R2Shared */,
 				DF9041A32AA3E7E600B72ACC /* ReadiumOPDS */,
+				DFF4351D2AA6D09800FAAD8B /* Zephyr */,
 			);
 			productName = "Suwatte (iOS)";
 			productReference = DFCE6EAF280108EA002E220C /* Suwatte.app */;
@@ -2545,6 +2551,7 @@
 				DFA17F642A4916C300179850 /* XCRemoteSwiftPackageReference "ASCollectionView" */,
 				DFE1B11A2AA0188900D300DB /* XCRemoteSwiftPackageReference "IceCream" */,
 				DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit" */,
+				DFF4351C2AA6D09800FAAD8B /* XCRemoteSwiftPackageReference "Zephyr" */,
 			);
 			productRefGroup = DF2DA6FF27CD82430046FE20;
 			projectDirPath = "";
@@ -2767,6 +2774,7 @@
 				DFDBF9872A7C60B4006D49AD /* Engine+WK.swift in Sources */,
 				DF489C362A8478C9006A21B9 /* Opacity.swift in Sources */,
 				DF020A632A8C5EAB00BC5562 /* PagingController+Data.swift in Sources */,
+				DFF435202AA6D0B500FAAD8B /* UserDefaultsSync.swift in Sources */,
 				DF1EA4522A70E0FE003E27C7 /* SourceDownloadQueueView.swift in Sources */,
 				DFE1B0F62A9A590100D300DB /* ChapterList+Methods.swift in Sources */,
 				DF020A5A2A8C5E8A00BC5562 /* PagingController+ContextMenu.swift in Sources */,
@@ -3466,6 +3474,14 @@
 				minimumVersion = 0.6.5;
 			};
 		};
+		DFF4351C2AA6D09800FAAD8B /* XCRemoteSwiftPackageReference "Zephyr" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ArtSabintsev/Zephyr.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -3558,6 +3574,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DFF1043C28A9963C00E2C3A4 /* XCRemoteSwiftPackageReference "AnyCodable" */;
 			productName = AnyCodable;
+		};
+		DFF4351D2AA6D09800FAAD8B /* Zephyr */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DFF4351C2AA6D09800FAAD8B /* XCRemoteSwiftPackageReference "Zephyr" */;
+			productName = Zephyr;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

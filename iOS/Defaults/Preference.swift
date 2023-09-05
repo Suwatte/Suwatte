@@ -126,12 +126,6 @@ final class Preferences {
     @UserDefault(STTKeys.EnableReaderHaptics)
     var enableReaderHaptics = true
 
-    @UserDefault(STTKeys.ShowNSFWContentInSearch)
-    var includeNSFWInAnilistSearchResult = false
-
-    @UserDefault(STTKeys.BlurNSFWContent)
-    var blurNSFWContentInSearch = true
-
     @UserDefault(STTKeys.LocalStorageUsesICloud)
     var useCloudForLocal = true
 

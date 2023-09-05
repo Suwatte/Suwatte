@@ -21,6 +21,7 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
 
         // Set Default UD Values
         UserDefaults.standard.register(defaults: STTUserDefaults)
+        UDSync.sync()
 
         // Nuke Requests
         let nukeConfig = DataLoader.defaultConfiguration

@@ -10,10 +10,6 @@ enum STTKeys {
     static let OpenAllTitlesOnAppear = "LIBRARY.open_all"
 
     static let TileStyle = "APP.tile_style"
-    static let TileSize = "App.tile_size"
-
-    static let AdultContent = "APP.adult_content"
-    static let LiveNotifications = "APP.live_notifs"
 
     static let LibraryGridSortKey = "LIBRARY.sort_key"
     static let LibraryGridSortOrder = "LIBRARY.sort_order"
@@ -67,12 +63,6 @@ enum STTKeys {
     static let LibraryShowBadges = "LIBRARY.badges"
     static let LibraryBadgeType = "LIBRARY.badge_type"
     static let ShowNavigationOverlay = "READER.display_overlay"
-
-    static let anilistAccessToken = "ANILIST.ACCESS_TOKEN"
-    static let anilistRefreshToken = "ANILIST.REFRESH_TOKEN"
-    static let anilistClientId = "8119"
-    static let anilistClientSecret = "35dSqhnynKICceBLJ8dsRFNFNptCJihuj1BW5j55"
-    static let anilistRedirectUrl = "suwatte://anilistCallback"
 
     // Novel Reader
     static let NovelFontSize = "NOVEL.font_size"
@@ -133,8 +123,6 @@ enum STTKeys {
     static let EnableReaderHaptics = "READER.haptics"
     static let PagedSplitsWide = "READER.split_wide"
     static let PagedZoomWide = "READER.zoom_wide"
-    static let BlurNSFWContent = "APP.blur_nsfw"
-    static let ShowNSFWContentInSearch = "APP.filter_nsfw"
 
     static let LocalStorageUsesICloud = "APP.local_use_icloud"
 

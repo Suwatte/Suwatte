@@ -25,9 +25,12 @@ struct HistoryView: View {
             }
             .animation(.default, value: model.markers)
             .opacity(model.markers.isEmpty ? 0 : 1)
+            .transition(.opacity)
 
             ProgressView()
                 .opacity(model.dataFetchComplete ? 0 : 1)
+                .transition(.opacity)
+
 
             VStack {
                 Text("(￣ε￣＠)")
@@ -40,6 +43,8 @@ struct HistoryView: View {
             }
             .foregroundColor(.gray)
             .opacity(model.markers.isEmpty && model.dataFetchComplete ? 1 : 0)
+            .transition(.opacity)
+
         }
         .modifier(InteractableContainer(selection: $model.csSelection))
         .listStyle(.plain)
