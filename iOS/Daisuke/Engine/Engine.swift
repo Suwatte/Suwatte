@@ -103,6 +103,7 @@ extension DaisukeEngine {
     }
 
     func startRunner(_ url: URL, for id: String? = nil) async throws -> AnyRunner {
+        print("Starting", url.relativePath)
         let content = try String(contentsOf: url, encoding: .utf8)
         let hasWKDirective = content.contains("dsk use webkit")
         let runner = try await hasWKDirective ? startWKRunner(with: url, for: id) : startJSCRunner(with: url, for: id)

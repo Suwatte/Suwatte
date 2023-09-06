@@ -41,7 +41,7 @@ extension DSKCommon {
 
         struct Sort: JSCObject {
             let options: [Option]
-            let defaultKey: String?
+            let `default`: DirectoryRequest.SortSelection?
             let canChangeOrder: Bool
         }
     }
@@ -67,7 +67,7 @@ extension DSKCommon {
         var tag: RequestTag?
         var context: [String: AnyCodable]?
         var configKey: String?
-        var sortSelection: SortSelection?
+        var sort: SortSelection?
 
         struct RequestTag: Parsable, Hashable {
             var tagId: String

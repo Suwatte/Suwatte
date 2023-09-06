@@ -70,6 +70,7 @@
 		DF248F0C2813844C00818300 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DF248F0B2813844C00818300 /* KeychainSwift */; };
 		DF248F2B2813B24F00818300 /* BarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF248F2A2813B24F00818300 /* BarChartView.swift */; };
 		DF248F36281474A100818300 /* STT+Encodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF248F35281474A100818300 /* STT+Encodable.swift */; };
+		DF256AA42AA9028E00F4180B /* IceCream in Frameworks */ = {isa = PBXBuildFile; productRef = DF256AA32AA9028E00F4180B /* IceCream */; };
 		DF2783342A799BEF0098BBA9 /* RealmActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783332A799BEF0098BBA9 /* RealmActor.swift */; };
 		DF2783372A799C7E0098BBA9 /* Realm+ProgressMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783362A799C7E0098BBA9 /* Realm+ProgressMarker.swift */; };
 		DF2783392A799D480098BBA9 /* Realm+Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783382A799D480098BBA9 /* Realm+Content.swift */; };
@@ -424,7 +425,6 @@
 		DFE1B10E2A9E98BD00D300DB /* Realm+LibraryGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B10D2A9E98BD00D300DB /* Realm+LibraryGrid.swift */; };
 		DFE1B1102A9EAC2400D300DB /* STT+UIDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B10F2A9EAC2400D300DB /* STT+UIDevice.swift */; };
 		DFE1B1152A9FEFD600D300DB /* Backup+ChapterReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B1142A9FEFD600D300DB /* Backup+ChapterReference.swift */; };
-		DFE1B11C2AA0188900D300DB /* IceCream in Frameworks */ = {isa = PBXBuildFile; productRef = DFE1B11B2AA0188900D300DB /* IceCream */; };
 		DFF09B452A58BABC00C5CA5E /* JSCContentTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B442A58BABC00C5CA5E /* JSCContentTracker.swift */; };
 		DFF09B4A2A58C13900C5CA5E /* +WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B492A58C13900C5CA5E /* +WebView.swift */; };
 		DFF09B4C2A58C14300C5CA5E /* +Basic.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF09B4B2A58C14300C5CA5E /* +Basic.swift */; };
@@ -917,8 +917,8 @@
 				DF0D96062824892C00E592D9 /* Realm in Frameworks */,
 				DFF1043E28A9963D00E2C3A4 /* AnyCodable in Frameworks */,
 				DF70235129DA852A0076AAD0 /* NukeUI in Frameworks */,
-				DFE1B11C2AA0188900D300DB /* IceCream in Frameworks */,
 				DF59C97D285004860027F19D /* ZIPFoundation in Frameworks */,
+				DF256AA42AA9028E00F4180B /* IceCream in Frameworks */,
 				C3423ED4E5A2EFB664586F1B /* Pods_Suwatte__iOS_.framework in Frameworks */,
 				DF9041A42AA3E7E600B72ACC /* ReadiumOPDS in Frameworks */,
 			);
@@ -1425,6 +1425,8 @@
 		DF68249D28A5D2BB00AB30A1 /* Daisuke */ = {
 			isa = PBXGroup;
 			children = (
+				DF16F2C42A5F88D700D7AFBB /* DSKPagesView */,
+				DF16F2B52A5F472700D7AFBB /* DSKDirectoryView */,
 				DF0B028C2AA1476D004345BA /* TrackerView */,
 				DF0B02892AA06052004345BA /* Forms */,
 				DFF09B552A58D52B00C5CA5E /* Runners */,
@@ -1678,8 +1680,6 @@
 				DF1EA4452A70B78C003E27C7 /* SourceDownload */,
 				DF8D0AAB2800EE47003E4C3E /* Main */,
 				DF6883832A608FC1009B5642 /* Tags */,
-				DF16F2C42A5F88D700D7AFBB /* DSKPagesView */,
-				DF16F2B52A5F472700D7AFBB /* DSKDirectoryView */,
 				DFF09B622A5A844C00C5CA5E /* Representables */,
 				DF9BFDF12A427525005D0B63 /* DirectoryViewer */,
 				DF8D0A502800EE47003E4C3E /* Loadable */,
@@ -2480,10 +2480,10 @@
 				DF70234E29DA852A0076AAD0 /* Nuke */,
 				DF70235029DA852A0076AAD0 /* NukeUI */,
 				DFA17F652A4916C300179850 /* ASCollectionView */,
-				DFE1B11B2AA0188900D300DB /* IceCream */,
 				DF9041A12AA3E7E600B72ACC /* R2Shared */,
 				DF9041A32AA3E7E600B72ACC /* ReadiumOPDS */,
 				DFF4351D2AA6D09800FAAD8B /* Zephyr */,
+				DF256AA32AA9028E00F4180B /* IceCream */,
 			);
 			productName = "Suwatte (iOS)";
 			productReference = DFCE6EAF280108EA002E220C /* Suwatte.app */;
@@ -2549,9 +2549,9 @@
 				DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections" */,
 				DF70234D29DA852A0076AAD0 /* XCRemoteSwiftPackageReference "Nuke" */,
 				DFA17F642A4916C300179850 /* XCRemoteSwiftPackageReference "ASCollectionView" */,
-				DFE1B11A2AA0188900D300DB /* XCRemoteSwiftPackageReference "IceCream" */,
 				DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit" */,
 				DFF4351C2AA6D09800FAAD8B /* XCRemoteSwiftPackageReference "Zephyr" */,
+				DF256AA22AA9028E00F4180B /* XCRemoteSwiftPackageReference "IceCream" */,
 			);
 			productRefGroup = DF2DA6FF27CD82430046FE20;
 			projectDirPath = "";
@@ -3374,13 +3374,21 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-swift.git";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.42.1;
 			};
 		};
 		DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		DF256AA22AA9028E00F4180B /* XCRemoteSwiftPackageReference "IceCream" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Suwatte/IceCream";
 			requirement = {
 				branch = master;
 				kind = branch;
@@ -3458,14 +3466,6 @@
 				kind = branch;
 			};
 		};
-		DFE1B11A2AA0188900D300DB /* XCRemoteSwiftPackageReference "IceCream" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Suwatte/IceCream";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
 		DFF1043C28A9963C00E2C3A4 /* XCRemoteSwiftPackageReference "AnyCodable" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Flight-School/AnyCodable";
@@ -3494,6 +3494,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift" */;
 			productName = KeychainSwift;
+		};
+		DF256AA32AA9028E00F4180B /* IceCream */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF256AA22AA9028E00F4180B /* XCRemoteSwiftPackageReference "IceCream" */;
+			productName = IceCream;
 		};
 		DF2DA77227CF11C50046FE20 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -3564,11 +3569,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections" */;
 			productName = OrderedCollections;
-		};
-		DFE1B11B2AA0188900D300DB /* IceCream */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DFE1B11A2AA0188900D300DB /* XCRemoteSwiftPackageReference "IceCream" */;
-			productName = IceCream;
 		};
 		DFF1043D28A9963D00E2C3A4 /* AnyCodable */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -53,7 +53,7 @@ struct DSKTrackerView: View {
     @State private var presentEntryForm = false
     @State private var initialLoad = false
     var body: some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             VStack {
                 VStack(spacing: 5) {
                     StickyHeader
@@ -364,6 +364,7 @@ extension DSKTrackerView {
                         }
                     }
                     .padding(.horizontal)
+                    .padding(.vertical, 5)
                 }
             }
         }

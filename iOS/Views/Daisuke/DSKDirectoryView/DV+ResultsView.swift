@@ -82,7 +82,7 @@ extension DirectoryView.ResultsView {
                     } label: {
                         HStack {
                             Text(title)
-                            Image(systemName: model.request.sortSelection?.ascending ?? false ? "chevron.up" : "chevron.down")
+                            Image(systemName: model.request.sort?.ascending ?? false ? "chevron.up" : "chevron.down")
                         }
                     }
                     .buttonStyle(.bordered)
@@ -96,10 +96,10 @@ extension DirectoryView.ResultsView {
                 ForEach(model.configSort.options, id: \.key) { sorter in
                     Button(sorter.label) {
                         withAnimation {
-                            if let currentSelection = model.request.sortSelection, currentSelection.key == sorter.key, model.configSort.canChangeOrder {
-                                model.request.sortSelection = .init(key: sorter.key, ascending: !currentSelection.ascending)
+                            if let currentSelection = model.request.sort, currentSelection.key == sorter.key, model.configSort.canChangeOrder {
+                                model.request.sort = .init(key: sorter.key, ascending: !currentSelection.ascending)
                             } else {
-                                model.request.sortSelection = .init(key: sorter.key, ascending: false)
+                                model.request.sort = .init(key: sorter.key, ascending: false)
                             }
                             model.request.page = 1
                             Task {
@@ -113,9 +113,9 @@ extension DirectoryView.ResultsView {
         }
 
         var title: String {
-            let current = model.request.sortSelection?.key
+            let current = model.request.sort?.key
             let label = model.configSort.options.first(where: { $0.key == current })?.label
-            return label ?? model.configSort.options.first(where: { $0.key == model.configSort.defaultKey })?.label ?? "Default"
+            return label ?? model.configSort.options.first(where: { $0.key == model.configSort.default?.key })?.label ?? "Default"
         }
     }
 }

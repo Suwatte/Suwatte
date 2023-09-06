@@ -26,7 +26,7 @@ extension DirectoryView {
 
         let context: DSKCommon.CodableDict?
         var configSort: DSKCommon.DirectoryConfig.Sort {
-            config?.sort ?? .init(options: [], defaultKey: "", canChangeOrder: false)
+            config?.sort ?? .init(options: [], default: nil, canChangeOrder: false)
         }
 
         var filters: [DSKCommon.DirectoryFilter] {
@@ -42,20 +42,14 @@ extension DirectoryView {
 }
 
 extension DirectoryView.ViewModel {
-    func getConfig() {
+    private func getConfig() async throws {
         guard config == nil else {
             return
         }
-        Task {
-            do {
-                let config = try await runner.getDirectoryConfig(key: request.configKey)
-                await MainActor.run {
-                    withAnimation {
-                        self.config = config
-                    }
-                }
-            } catch {
-                Logger.shared.error(error, runner.id)
+        let config = try await runner.getDirectoryConfig(key: request.configKey)
+        await MainActor.run {
+            withAnimation {
+                self.config = config
             }
         }
     }
@@ -64,7 +58,7 @@ extension DirectoryView.ViewModel {
         let key = request.configKey
         request = .init(page: 1, configKey: key)
         request.query = nil
-        request.sortSelection = .init(key: configSort.defaultKey ?? configSort.options.first?.key ?? "", ascending: false)
+        request.sort = configSort.default
     }
 }
 
@@ -73,13 +67,18 @@ extension DirectoryView.ViewModel {
         // Update State
         await MainActor.run {
             result = .loading
-            if request.sortSelection == nil, let option = configSort.options.first {
-                request.sortSelection = .init(key: option.key, ascending: false)
-            }
-            request.context = context
         }
-
         do {
+            if config == nil {
+                try await getConfig()
+            }
+            
+            if request.sort == nil {
+                await MainActor.run {
+                    request.sort = configSort.default
+                    request.context = context
+                }
+            }
             let data: DSKCommon.PagedResult<T> = try await runner.getDirectory(request: request)
 
             await MainActor.run {

@@ -58,9 +58,6 @@ struct DirectoryView<T: Codable & Hashable, C: View>: View {
             guard let query = model.request.query, !model.result.LOADED else { return }
             model.query = query
         }
-        .task {
-            model.getConfig()
-        }
 
         .environmentObject(model)
         .toolbar {
