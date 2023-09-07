@@ -22,7 +22,7 @@ struct DirectoryView<T: Codable & Hashable, C: View>: View {
     }
 
     var fullSearch: Bool {
-        model.request.tag == nil && (model.config?.searchable ?? true)
+        model.request.tag == nil && (model.config == nil ? false : model.config?.searchable ?? true)
     }
 
     var body: some View {
@@ -42,6 +42,7 @@ struct DirectoryView<T: Codable & Hashable, C: View>: View {
             } else {
                 LoadableResultsView
             }
+            
         }
         .navigationBarTitleDisplayMode(.inline)
         .fullScreenCover(isPresented: $model.presentFilters) {
@@ -66,7 +67,6 @@ struct DirectoryView<T: Codable & Hashable, C: View>: View {
                     Button { model.presentFilters.toggle() } label: {
                         Image(systemName: "line.3.horizontal.decrease")
                     }
-                    .badge(model.request.filters?.count ?? 0)
                     .disabled(model.filters.isEmpty)
 
                     Button { model.presentHistory.toggle() } label: {

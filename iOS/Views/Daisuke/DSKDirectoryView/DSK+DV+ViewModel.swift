@@ -76,9 +76,13 @@ extension DirectoryView.ViewModel {
             if request.sort == nil {
                 await MainActor.run {
                     request.sort = configSort.default
-                    request.context = context
                 }
             }
+            
+            await MainActor.run {
+                request.context = context
+            }
+            
             let data: DSKCommon.PagedResult<T> = try await runner.getDirectory(request: request)
 
             await MainActor.run {
