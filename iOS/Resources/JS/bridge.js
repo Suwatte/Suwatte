@@ -52,7 +52,7 @@ const evaluateEnvironment = () => {
   )
     return "source";
 
-  // Runner Has Implemented all methods required of a "Content Plugin"
+  // Runner Has Implemented all methods required of a "Content Plugin"star
 
   if (RunnerObject.getHomeFeed && RunnerObject.getFeed) return "plugin";
 
@@ -63,7 +63,6 @@ const evaluateEnvironment = () => {
     RunnerObject.getResultsForTitles &&
     RunnerObject.getTrackItem &&
     RunnerObject.beginTracking &&
-    RunnerObject.stopTracking &&
     RunnerObject.getEntryForm &&
     RunnerObject.didSubmitEntryForm
   )

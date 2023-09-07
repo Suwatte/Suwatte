@@ -74,11 +74,17 @@ struct DSKTrackerView: View {
         .coordinateSpace(name: "scroll")
         .ignoresSafeArea(edges: .top)
         .animation(.default, value: lineLimit)
-        .confirmationDialog("Track Status", isPresented: $presentStatusDialog) {
-            ForEach(DSKCommon.TrackStatus.allCases, id: \.rawValue) { option in
-                Button(option.description) {}
+        .modifier(TrackStatusModifier(title: nil,
+                                      tracker: tracker,
+                                      contentID: content.id,
+                                      alreadyTracking: Binding.constant(status != nil),
+                                      isPresenting: $presentStatusDialog,
+                                      callback: { s in
+            withAnimation {
+                status = s
             }
-        }
+            
+        }))
         .fullScreenCover(isPresented: $presentEntryForm) {
             NavigationView {
                 DSKLoadableForm(runner: tracker, context: .tracker(id: content.id))
@@ -232,7 +238,7 @@ extension DSKTrackerView {
             Button {
                 presentStatusDialog.toggle()
             } label: {
-                Text(trackEntry?.status.description ?? "Track")
+                Text(status?.description ?? "Track")
                     .font(.headline.weight(.semibold))
                     .padding()
                     .frame(maxWidth: .infinity)
@@ -434,5 +440,41 @@ extension DSKTrackerView {
             height += 50
         }
         return height
+    }
+}
+
+
+struct TrackStatusModifier: ViewModifier {
+    let title: String?
+    let tracker: AnyContentTracker
+    let contentID: String
+    @Binding var alreadyTracking: Bool
+    @Binding var isPresenting: Bool
+    let callback: ((DSKCommon.TrackStatus) -> Void)?
+    func body(content: Content) -> some View {
+        content
+            .confirmationDialog(title ?? "Status", isPresented: $isPresenting) {
+                ForEach(DSKCommon.TrackStatus.allCases, id: \.rawValue) { option in
+                    Button(option.description) {
+                        update(with: option)
+                    }
+                }
+            }
+    }
+    
+    private func update(with status: DSKCommon.TrackStatus) {
+        Task {
+            do {
+                if alreadyTracking {
+                    try await tracker.didUpdateStatus(id: contentID, status: status)
+                } else {
+                    try await tracker.beginTracking(id: contentID, status: status)
+                }
+                callback?(status)
+            } catch {
+                Logger.shared.error(error)
+                ToastManager.shared.error(error)
+            }
+        }
     }
 }

@@ -39,11 +39,6 @@ extension JSCContentTracker: ContentTracker {
         try await callOptionalVoidMethod(method: "beginTracking", arguments: [id, status.rawValue])
     }
 
-    // Called to stop tracking an entry
-    func stopTracking(id: String) async throws {
-        try await callOptionalVoidMethod(method: "stopTracking", arguments: [id])
-    }
-
     // Called to update the status of an entry
     func didUpdateStatus(id: String, status: DSKCommon.TrackStatus) async throws {
         try await callOptionalVoidMethod(method: "didUpdateStatus", arguments: [id, status.rawValue])

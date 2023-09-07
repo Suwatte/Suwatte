@@ -32,10 +32,6 @@ extension WKTracker: ContentTracker {
         try await eval("await RunnerObject.beginTracking(id, status);", ["id": id, "status": status.rawValue])
     }
 
-    func stopTracking(id: String) async throws {
-        try await eval("await RunnerObject.stopTracking(id);", ["id": id])
-    }
-
     func didUpdateStatus(id: String, status: DSKCommon.TrackStatus) async throws {
         try await eval("await RunnerObject.didUpdateStatus(id, status);", ["id": id, "status": status.rawValue])
     }

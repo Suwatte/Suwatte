@@ -26,8 +26,6 @@ protocol ContentTracker: DSKRunner {
 
     func beginTracking(id: String, status: DSKCommon.TrackStatus) async throws
 
-    func stopTracking(id: String) async throws
-
     func didUpdateStatus(id: String, status: DSKCommon.TrackStatus) async throws
 
     func getFullInformation(id: String) async throws -> DSKCommon.FullTrackItem

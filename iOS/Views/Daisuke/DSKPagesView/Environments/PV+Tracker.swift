@@ -48,7 +48,7 @@ struct TrackerContextModifier: ViewModifier {
     @Binding var item: DSKCommon.TrackItem
     @State var presentEntryFormView = false
     @State var status: DSKCommon.TrackStatus
-
+    @State var presentStatusDialog = false
     func trackerAction(_ action: @escaping () async throws -> Void) {
         let prev = item
         Task {
@@ -106,9 +106,7 @@ struct TrackerContextModifier: ViewModifier {
 
                     } else {
                         Button {
-                            trackerAction {
-                                try await tracker.beginTracking(id: item.id, status: .CURRENT)
-                            }
+                            presentStatusDialog.toggle()
                         } label: {
                             Label("Start Tracking", systemImage: "pin")
                         }
@@ -123,13 +121,25 @@ struct TrackerContextModifier: ViewModifier {
         }
         .animation(.default, value: item.entry)
         .onChange(of: status) { newValue in
+            guard newValue != item.entry?.status else { return }
             trackerAction {
-                await MainActor.run {
-                    item.entry?.status = newValue
-                }
                 try await tracker.didUpdateStatus(id: item.id, status: newValue)
+                let newEntry = try await tracker.getTrackItem(id: item.id)
+                await MainActor.run {
+                    self.item = newEntry
+                }
             }
         }
+        .modifier(TrackStatusModifier(title: nil,
+                                      tracker: tracker,
+                                      contentID: item.id,
+                                      alreadyTracking: .constant( item.entry?.status != nil ),
+                                      isPresenting: $presentStatusDialog,
+                                      callback: { updatedStatus in
+            withAnimation {
+                status = updatedStatus
+            }
+        }))
         .hiddenNav(presenting: $presentEntryFormView) {
             DSKLoadableForm(runner: tracker, context: .tracker(id: item.id))
                 .navigationTitle(item.title)
