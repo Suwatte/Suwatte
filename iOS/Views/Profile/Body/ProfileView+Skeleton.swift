@@ -69,7 +69,7 @@ private extension ProfileView.Skeleton {
                     .padding(.horizontal)
 
                 VStack(alignment: .leading, spacing: 20) {
-                    if let collections = viewModel.content.includedCollections, !collections.isEmpty {
+                    if let collections = viewModel.content.collections, !collections.isEmpty {
                         RelatedContentView(collections: collections)
                     }
                 }

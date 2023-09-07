@@ -13,7 +13,7 @@ extension StoredContent: Codable {
         case id, sourceId, contentId, title, additionalTitles, additionalCovers, cover, creators, status
         case originalLanuguage, summary, webUrl, properties, recommendedPanelMode, contentType, trackerInfo
         case acquisitionLink, streamable
-        case isNSFW
+        case isNSFW, info
     }
 
     convenience init(from decoder: Decoder) throws {
@@ -21,9 +21,9 @@ extension StoredContent: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         id = try container.decodeIfPresent(String.self, forKey: .id) ?? "" // Can be Null as it can also be set with the CID & SID
-        sourceId = try container.decodeIfPresent(String.self, forKey: .sourceId) ?? UUID().uuidString
-        contentId = try container.decode(String.self, forKey: .contentId)
-        title = try container.decode(String.self, forKey: .title)
+        sourceId = try container.decodeIfPresent(String.self, forKey: .sourceId) ?? ""
+        contentId = try container.decodeIfPresent(String.self, forKey: .contentId) ?? ""
+        title = try container.decodeIfPresent(String.self, forKey: .title) ?? ""
         cover = try container.decodeIfPresent(String.self, forKey: .cover) ?? ""
         if let covers = try container.decodeIfPresent(List<String>.self, forKey: .additionalCovers) {
             additionalCovers.append(objectsIn: covers)
@@ -40,7 +40,7 @@ extension StoredContent: Codable {
         if let props = try container.decodeIfPresent(List<StoredProperty>.self, forKey: .properties) {
             properties.append(objectsIn: props)
         }
-        recommendedPanelMode = try container.decodeIfPresent(ReadingMode.self, forKey: .recommendedPanelMode) ?? .PAGED_COMIC
+        recommendedPanelMode = try container.decodeIfPresent(ReadingMode.self, forKey: .recommendedPanelMode)
         contentType = try container.decodeIfPresent(ExternalContentType.self, forKey: .contentType) ?? .unknown
         if let info = try container.decodeIfPresent(Map<String, String>.self, forKey: .trackerInfo) {
             trackerInfo = info
@@ -49,7 +49,8 @@ extension StoredContent: Codable {
         acquisitionLink = try container.decodeIfPresent(String.self, forKey: .acquisitionLink)
         streamable = try container.decodeIfPresent(Bool.self, forKey: .streamable) ?? false
 
-        isNSFW = try container.decodeIfPresent(Bool.self, forKey: .isNSFW) ?? false
+        isNSFW = try container.decodeIfPresent(Bool.self, forKey: .isNSFW)
+        info = try container.decodeIfPresent(List<String>.self, forKey: .info) ?? .init()
     }
 
     func encode(to encoder: Encoder) throws {
@@ -73,6 +74,7 @@ extension StoredContent: Codable {
         try container.encode(streamable, forKey: .streamable)
         try container.encode(acquisitionLink, forKey: .acquisitionLink)
         try container.encode(isNSFW, forKey: .isNSFW)
+        try container.encode(info, forKey: .info)
     }
 }
 

@@ -150,3 +150,17 @@ extension Color {
         .init(uiColor: .systemBackground)
     }
 }
+
+
+extension Color {
+    static var random: Color {
+        .init(uiColor: .randomColor())
+    }
+}
+
+struct ColoredLabel: Identifiable {
+    var text: String
+    var color: Color
+    
+    let id = UUID().uuidString
+}

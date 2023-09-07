@@ -123,7 +123,7 @@ extension DaisukeEngine.Structs {
         var contentId: String
         var title: String
         var cover: String
-
+        var info: [String]?
         var additionalCovers: [String]?
         var webUrl: String?
         var status: ContentStatus?
@@ -133,8 +133,7 @@ extension DaisukeEngine.Structs {
         var properties: [Property]?
         var contentType: ExternalContentType?
         var recommendedPanelMode: ReadingMode?
-        var nonInteractiveProperties: [NonInteractiveProperty]?
-        var includedCollections: [HighlightCollection]?
+        var collections: [HighlightCollection]?
         var trackerInfo: [String: String]?
         var chapters: [Chapter]?
 

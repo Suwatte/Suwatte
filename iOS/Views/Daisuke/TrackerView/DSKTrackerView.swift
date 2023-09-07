@@ -180,7 +180,7 @@ extension DSKTrackerView {
                                     .fontWeight(.semibold)
                                     .padding(.vertical, 2)
                                     .padding(.horizontal, 4)
-                                    .background((tag == "NSFW" ? .red : Color(uiColor: .randomColor())).opacity(0.65))
+                                    .background((tag == "NSFW" ? Color.red : Color.random).opacity(0.65))
                                     .cornerRadius(3)
                             }
                         }

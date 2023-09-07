@@ -18,14 +18,6 @@ extension StoredContent {
               streamable: streamable)
     }
 
-    func convertProperties() -> [DSKCommon.Property] {
-        properties.map { prop in
-            let tags: [DSKCommon.Tag] = prop.tags.map { .init(id: $0.id, label: $0.label, nsfw: $0.adultContent) }
-
-            return .init(id: UUID().uuidString, label: prop.label, tags: tags)
-        }
-    }
-
     func toDSKContent() throws -> DSKCommon.Content {
         let data = try DaisukeEngine.encode(value: self)
         return try DaisukeEngine.decode(data: data, to: DSKCommon.Content.self)

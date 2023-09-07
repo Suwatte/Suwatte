@@ -50,11 +50,6 @@ extension ProfileView.Skeleton {
             VStack(alignment: .leading, spacing: 0) {
                 if let properties = model.content.properties, !properties.isEmpty, let core = properties.get(index: 0) {
                     PropertyTagsView(property: core, source: model.source)
-                } else if let nonInteractive = model.content.nonInteractiveProperties, !nonInteractive.isEmpty, let core = nonInteractive.first {
-                    InteractiveTagView(core.tags) { tag in
-                        Text(tag)
-                            .modifier(ProfileTagStyle())
-                    }
                 }
             }
         }
@@ -65,7 +60,7 @@ extension ProfileView.Skeleton {
         var source: AnyContentSource
         var body: some View {
             InteractiveTagView(property.tags) { tag in
-                if source.ablityNotDisabled(\.disableTagNavigation) {
+                if source.ablityNotDisabled(\.disableTagNavigation) && !tag.isNonInteractive {
                     NavigationLink {
                         ContentSourceDirectoryView(source: source, request: generateSearchRequest(tagId: tag.id, propertyId: property.id))
                             .navigationBarTitle(tag.label)

@@ -18,16 +18,16 @@ extension DaisukeEngine.Structs {
         var tags: [Tag]
     }
 
-    struct NonInteractiveProperty: Parsable, Hashable, Identifiable {
-        var id: String
-        var label: String
-        var tags: [String]
-    }
-
     struct Tag: Parsable, Hashable, Identifiable {
         var id: String
         var label: String
         var nsfw: Bool?
         var image: String?
+        var noninteractive: Bool?
+        
+        
+        var isNonInteractive: Bool {
+            noninteractive ?? false
+        }
     }
 }

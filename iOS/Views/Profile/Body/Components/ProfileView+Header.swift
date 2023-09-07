@@ -9,6 +9,8 @@ import RealmSwift
 import SwiftUI
 
 private typealias Skeleton = ProfileView.Skeleton
+
+
 extension Skeleton {
     struct Header: View {
         @EnvironmentObject var model: ProfileView.ViewModel
@@ -25,37 +27,7 @@ extension Skeleton {
                 CoverImage
 
                 VStack(alignment: .leading, spacing: 10) {
-                    if let creators = entry.creators, !creators.isEmpty {
-                        Text("By: \(creators.joined(separator: ", "))")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .multilineTextAlignment(.leading)
-                    }
-
-                    Status
-                    Text(model.source.name)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                    HStack(spacing: 3.5) {
-                        if let contentType = entry.contentType, contentType == .novel {
-                            Text("Novel")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .padding(.vertical, 2)
-                                .padding(.horizontal, 4)
-                                .background(Color.blue.opacity(0.4))
-                                .cornerRadius(3)
-                        }
-                        if entry.isNSFW ?? false {
-                            Text("NSFW")
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .padding(.vertical, 2)
-                                .padding(.horizontal, 4)
-                                .background(Color.red.opacity(0.4))
-                                .cornerRadius(3)
-                        }
-                    }
+                    LabelsView
 
                     Spacer()
                     ActionButtons()
@@ -65,6 +37,48 @@ extension Skeleton {
             }
             .frame(height: ImageWidth * 1.5, alignment: .topLeading)
             .padding(.horizontal)
+        }
+    }
+}
+
+extension Skeleton.Header {
+    func buildLabels() -> [ColoredLabel] {
+        var data = Array<ColoredLabel>()
+        
+        if let creators = entry.creators, !creators.isEmpty {
+            data.append(contentsOf: creators.map( { .init(text: $0, color: .accentColor) }))
+        }
+        
+        if let status = entry.status {
+            data.append(.init(text: status.description, color: status.color))
+        }
+        
+        data.append(.init(text: model.source.name, color: .accentColor))
+        
+        if let contentType = entry.contentType, contentType == .novel {
+            data.append(.init(text: "Novel", color: .blue))
+        }
+        
+        if entry.isNSFW ?? false {
+            data.append(.init(text: "NSFW", color: .red))
+        }
+        
+        if let info = entry.info {
+            data.append(contentsOf: info.map( { .init(text: $0, color: .accentColor) }))
+        }
+        
+        return data
+    }
+    
+    var LabelsView: some View {
+        InteractiveTagView(buildLabels()) { label in
+            Text(label.text)
+                .font(.caption)
+                .fontWeight(.semibold)
+                .padding(.vertical, 2)
+                .padding(.horizontal, 4)
+                .background(label.color.opacity(0.65))
+                .cornerRadius(3)
         }
     }
 }

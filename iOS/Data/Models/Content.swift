@@ -37,16 +37,17 @@ final class StoredContent: Object, Identifiable, CKRecordConvertible, CKRecordRe
     @Persisted var additionalCovers: List<String>
     @Persisted var properties: List<StoredProperty>
 
+    @Persisted var info: List<String>
     @Persisted var creators: List<String>
-    @Persisted var status: ContentStatus = .UNKNOWN
-    @Persisted var recommendedPanelMode: ReadingMode = .PAGED_COMIC
-    @Persisted var contentType: ExternalContentType = .unknown
+    @Persisted var status: ContentStatus?
+    @Persisted var recommendedPanelMode: ReadingMode?
+    @Persisted var contentType: ExternalContentType?
     @Persisted var trackerInfo: Map<String, String>
 
     @Persisted var acquisitionLink: String?
     @Persisted var streamable: Bool = false
 
-    @Persisted var isNSFW = false
+    @Persisted var isNSFW: Bool?
 
     var ContentIdentifier: ContentIdentifier {
         return .init(contentId: contentId, sourceId: sourceId)
