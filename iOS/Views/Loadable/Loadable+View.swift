@@ -42,6 +42,12 @@ struct LoadableView<Value, Idle, Loading, Failure, Content>: View where Idle: Vi
             case .idle:
                 idle()
                     .transition(.opacity)
+                    .task {
+                        if loaded {
+                            loaded = false
+                            await load()
+                        }
+                    }
             case .loading:
                 loading()
                     .transition(.opacity)
@@ -70,7 +76,9 @@ struct LoadableView<Value, Idle, Loading, Failure, Content>: View where Idle: Vi
             loaded = true
         } catch {
             Logger.shared.error(error)
-            loadable = .failed(error)
+            await MainActor.run {
+                loadable = .failed(error)
+            }
         }
     }
 }
