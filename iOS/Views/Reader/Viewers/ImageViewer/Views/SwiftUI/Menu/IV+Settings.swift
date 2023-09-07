@@ -44,7 +44,7 @@ struct IVSettingsView: View {
     @EnvironmentObject var model: IVViewModel
 
     var body: some View {
-        NavigationView {
+        SmartNavigationView {
             Form {
                 // Reading Mode
                 Section {

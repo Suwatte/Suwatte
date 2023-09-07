@@ -24,7 +24,7 @@ extension LibraryView.LibraryGrid {
         @AppStorage(STTKeys.ShowOnlyDownloadedTitles) var showDownloadsOnly = false
         var collection: LibraryCollection?
         var body: some View {
-            NavigationView {
+            SmartNavigationView {
                 List {
                     Section {
                         Toggle("Show Badges", isOn: $showBadges)

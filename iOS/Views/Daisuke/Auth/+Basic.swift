@@ -54,7 +54,7 @@ extension DSKAuthView.BasicAuthView {
         }
 
         var body: some View {
-            NavigationView {
+            SmartNavigationView {
                 VStack {
                     ThumbnailView
                     Text("Sign In to \(model.runner.name)")

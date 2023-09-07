@@ -37,7 +37,7 @@ extension LibraryView.LibraryGrid {
                         case .collections: MoveCollectionsView(entries: entries)
                         case .flags: MoveReadingFlag(entries: entries)
                         case .migrate:
-                            NavigationView {
+                            SmartNavigationView {
                                 MigrationView(model: .init(contents: migrationSelections))
                                     .toolbar {
                                         ToolbarItem(placement: .cancellationAction) {
@@ -47,7 +47,6 @@ extension LibraryView.LibraryGrid {
                                         }
                                     }
                             }
-                            .navigationViewStyle(.stack)
                         }
                     }
                     .accentColor(accentColor)

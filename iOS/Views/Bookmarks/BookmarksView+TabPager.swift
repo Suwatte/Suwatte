@@ -14,7 +14,7 @@ extension BookmarksView {
         @State var selection: String = ""
         @Environment(\.presentationMode) var presentationMode
         var body: some View {
-            NavigationView {
+            SmartNavigationView {
                 ZStack(alignment: .bottomTrailing) {
                     TabView(selection: $selection) {
                         ForEach(pages) { page in

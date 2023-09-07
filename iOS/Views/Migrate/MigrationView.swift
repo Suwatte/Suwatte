@@ -66,7 +66,7 @@ struct MigrationView: View {
             Text("Are you sure you want to begin the migration?\nA backup will be automatically generated to protect your data.")
         }
         .sheet(item: $model.selectedToSearch, content: { highlight in
-            NavigationView {
+            SmartNavigationView {
                 MigrationManualDestinationView(content: highlight,
                                                searchModel: .init(preSources: model.preferredDestinations))
                     .closeButton()

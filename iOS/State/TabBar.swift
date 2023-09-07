@@ -23,11 +23,10 @@ enum AppTabs: Int, CaseIterable {
                 .protectContent()
 
         case .feed:
-            NavigationView {
+            SmartNavigationView {
                 UpdateFeedView()
             }
             .protectContent()
-            .navigationViewStyle(.stack)
 
         case .more:
             MoreView()
@@ -36,11 +35,10 @@ enum AppTabs: Int, CaseIterable {
         case .browse:
             BrowseView()
         case .history:
-            NavigationView {
+            SmartNavigationView {
                 HistoryView()
             }
             .protectContent()
-            .navigationViewStyle(.stack)
         }
     }
 
@@ -80,4 +78,17 @@ enum AppTabs: Int, CaseIterable {
     }
 
     static var defaultSettings: [AppTabs] = [.library, .feed, .history, .browse, .more]
+}
+
+struct SmartNavigationView<Content>: View where Content: View {
+    @ViewBuilder var content: () -> Content
+
+    var body: some View {
+        if #available(iOS 16, *) {
+            NavigationStack(root: content)
+        } else {
+            NavigationView(content: content)
+                .navigationViewStyle(.stack)
+        }
+    }
 }

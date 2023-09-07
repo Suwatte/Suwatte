@@ -12,7 +12,7 @@ extension DirectoryViewer {
         @AppStorage(STTKeys.LocalThumnailOnly) var showOnlyThumbs = false
         @AppStorage(STTKeys.LocalHideInfo) var showTitleOnly = false
         var body: some View {
-            NavigationView {
+            SmartNavigationView {
                 List {
                     Section {
                         Toggle("Show Only Thumbnails", isOn: $showOnlyThumbs)
@@ -29,7 +29,6 @@ extension DirectoryViewer {
                 .animation(.default, value: showOnlyThumbs)
                 .animation(.default, value: showTitleOnly)
             }
-            .navigationViewStyle(.stack)
         }
     }
 }

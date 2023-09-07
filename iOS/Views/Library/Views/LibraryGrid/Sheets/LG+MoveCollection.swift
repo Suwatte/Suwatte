@@ -22,7 +22,7 @@ extension LibraryView.LibraryGrid {
         }
 
         var body: some View {
-            NavigationView {
+            SmartNavigationView {
                 List {
                     Section {
                         ForEach(collections) { collection in

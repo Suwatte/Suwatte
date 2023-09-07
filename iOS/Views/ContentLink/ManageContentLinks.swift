@@ -43,7 +43,7 @@ struct ManageContentLinks: View {
             }
         }
         .sheet(isPresented: $presentAddSheet, onDismiss: { Task { await fetch() }}) {
-            NavigationView {
+            SmartNavigationView {
                 AddContentLink(id: id, highlight: highlight)
                     .closeButton()
             }

@@ -86,7 +86,7 @@ struct DSKTrackerView: View {
             
         }))
         .fullScreenCover(isPresented: $presentEntryForm) {
-            NavigationView {
+            SmartNavigationView {
                 DSKLoadableForm(runner: tracker, context: .tracker(id: content.id))
                     .navigationBarTitleDisplayMode(.inline)
                     .navigationTitle(content.title)

@@ -19,7 +19,7 @@ extension LibraryView.LibraryGrid {
         @EnvironmentObject var model: ViewModel
 
         var body: some View {
-            NavigationView {
+            SmartNavigationView {
                 List {
                     Section {
                         ForEach(LibraryFlag.allCases) { flag in

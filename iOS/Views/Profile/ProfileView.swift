@@ -18,7 +18,6 @@ struct ProfileView: View {
         }
         .navigationTitle(entry.title)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationViewStyle(.stack)
     }
 
     func loadSource() async {

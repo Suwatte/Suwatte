@@ -18,7 +18,7 @@ extension LibraryView {
         }
 
         var body: some View {
-            NavigationView {
+            SmartNavigationView {
                 List {
                     AdditionSection
                     EditorSection

@@ -194,7 +194,7 @@ extension RunnerListsView {
                 }
             })
             .sheet(isPresented: $presentFilterSheet) {
-                NavigationView {
+                SmartNavigationView {
                     List {
                         if !flaggedLanguages.isEmpty {
                             Section {

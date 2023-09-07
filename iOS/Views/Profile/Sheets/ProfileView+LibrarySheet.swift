@@ -40,7 +40,7 @@ extension ProfileView.Sheets {
         }
 
         var body: some View {
-            NavigationView {
+            SmartNavigationView {
                 Group {
                     if entry != nil {
                         List {

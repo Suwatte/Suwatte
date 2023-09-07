@@ -50,7 +50,7 @@ extension DSKAuthView {
                     }
                 }
                 .fullScreenCover(isPresented: $presentWebView, onDismiss: model.load) {
-                    NavigationView {
+                    SmartNavigationView {
                         WebViewAuthView.WebViewRepresentable(isSignIn: false)
                             .navigationBarTitle("Login", displayMode: .inline)
                             .closeButton(title: "Done")

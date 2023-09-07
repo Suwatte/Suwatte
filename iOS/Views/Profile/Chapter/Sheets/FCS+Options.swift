@@ -13,13 +13,12 @@ struct FCS_Options: View {
     @AppStorage(STTKeys.FilteredLanguages) private var filteredLanguages: [String] = []
 
     var body: some View {
-        NavigationView {
+        SmartNavigationView {
             List {}
                 .closeButton()
                 .navigationBarTitle("Filter")
                 .animation(.default, value: filteredProviders)
         }
-        .navigationViewStyle(.stack)
     }
 
     var ProvidersSection: some View {

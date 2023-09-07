@@ -12,7 +12,7 @@ struct PreMigrationView: View {
     @StateObject private var model = PreMigrationController()
     private let manager = DSK.shared
     var body: some View {
-        NavigationView {
+        SmartNavigationView {
             Group {
                 if model.loaded {
                     List {

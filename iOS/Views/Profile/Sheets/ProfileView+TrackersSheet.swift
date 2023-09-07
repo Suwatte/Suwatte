@@ -14,7 +14,7 @@ struct TrackerManagementView: View {
     @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
     var body: some View {
-        NavigationView {
+        SmartNavigationView {
             ScrollView {
                 ForEach(model.linkedTrackers, id: \.id) { tracker in
                     let loadable = model.dict[tracker.id] ?? .idle
@@ -300,7 +300,7 @@ extension TrackerManagementView {
         @State private var selections: [String: String] = [:]
         @Environment(\.presentationMode) var presentationMode
         var body: some View {
-            NavigationView {
+            SmartNavigationView {
                 ScrollView {
                     VStack(alignment: .center) {
                         ForEach(trackers, id: \.id) {
@@ -325,7 +325,6 @@ extension TrackerManagementView {
                     }
                 }
             }
-            .navigationViewStyle(.stack)
         }
     }
 

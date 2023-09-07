@@ -14,7 +14,7 @@ extension ProfileView {
         @Environment(\.presentationMode) var presentMode
         @EnvironmentObject var model: ProfileView.ViewModel
         var body: some View {
-            NavigationView {
+            SmartNavigationView {
                 TabView {
                     ForEach(covers, id: \.self) { cover in
                         BaseImageView(url: .init(string: cover), runnerId: model.source.id)
@@ -42,7 +42,6 @@ extension ProfileView {
                 }
                 .tabViewStyle(.page)
                 .navigationTitle("Covers")
-                .navigationViewStyle(.stack)
             }
             .toast()
         }

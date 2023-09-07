@@ -12,7 +12,7 @@ struct BrowseView: View {
     @StateObject private var model = ViewModel()
     @State var triggeredLoad = false
     var body: some View {
-        NavigationView {
+        SmartNavigationView {
             List {
                 InstalledSourcesSection
                 InstalledTrackersSection

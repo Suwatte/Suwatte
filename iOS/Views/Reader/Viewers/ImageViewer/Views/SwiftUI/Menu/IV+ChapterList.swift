@@ -18,7 +18,7 @@ struct IVChapterListView: View {
     }
 
     var body: some View {
-        NavigationView {
+        SmartNavigationView {
             ScrollViewReader { proxy in
                 List {
                     Section {

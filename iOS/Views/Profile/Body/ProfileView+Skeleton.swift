@@ -25,7 +25,7 @@ extension ProfileView {
                         .accentColor(accentColor)
                 })
                 .fullScreenCover(item: $viewModel.presentManageContentLinks, content: { id in
-                    NavigationView {
+                    SmartNavigationView {
                         ManageContentLinks(id: id,
                                            highlight: .init(contentId: viewModel.contentID,
                                                             cover: viewModel.content.cover,
@@ -37,7 +37,7 @@ extension ProfileView {
                 })
                 .fullScreenCover(isPresented: $viewModel.presentMigrationView, content: {
                     let tagged = TaggedHighlight(from: viewModel.entry, with: viewModel.sourceID)
-                    NavigationView {
+                    SmartNavigationView {
                         MigrationView(model: .init(contents: [tagged]))
                             .closeButton()
                     }

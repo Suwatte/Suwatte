@@ -21,7 +21,7 @@ struct LibraryView: View {
     @State var triggeredLoad = false
 
     var body: some View {
-        NavigationView {
+        SmartNavigationView {
             List {
                 ForEach(sections) { section in
                     LibrarySectionBuilder(key: section, openFirstCollection: $openFirstCollection, links: $pageLinks, runners: $runners)
@@ -53,14 +53,13 @@ struct LibraryView: View {
 
             })
             .sheet(isPresented: $presentOrderSheet, content: {
-                NavigationView {
+                SmartNavigationView {
                     LibrarySectionOrderSheet()
                         .environment(\.editMode, .constant(.active))
                         .navigationTitle("Library Sections")
                         .navigationBarTitleDisplayMode(.inline)
                         .closeButton()
                 }
-                .navigationViewStyle(.stack)
 
             })
         }
@@ -74,7 +73,6 @@ struct LibraryView: View {
             }
         }
         .protectContent()
-        .navigationViewStyle(.stack)
         .sheet(isPresented: $presentCollectionSheet) {
             ManageCollectionsView()
         }

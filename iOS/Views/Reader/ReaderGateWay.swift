@@ -42,7 +42,7 @@ struct WebReader: View {
     var chapter: ThreadSafeChapter
 
     var body: some View {
-        NavigationView {
+        SmartNavigationView {
             STTWebView(url: URL(string: chapter.webUrl ?? ""))
                 .closeButton()
                 .navigationTitle(chapter.displayName)

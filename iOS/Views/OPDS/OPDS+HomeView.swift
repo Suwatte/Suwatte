@@ -44,7 +44,7 @@ struct OPDSView: View {
             }
         }
         .sheet(isPresented: $presentAddNewServer, content: {
-            NavigationView {
+            SmartNavigationView {
                 AddNewServerSheet()
                     .closeButton()
             }

@@ -165,7 +165,7 @@ struct DirectoryViewer: View {
             SettingsSheet()
         }
         .sheet(isPresented: $presentDownloadQueueSheet) {
-            NavigationView {
+            SmartNavigationView {
                 DownloadQueueSheet()
                     .closeButton()
             }

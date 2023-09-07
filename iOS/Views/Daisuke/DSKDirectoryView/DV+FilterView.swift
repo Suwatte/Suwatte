@@ -15,7 +15,7 @@ extension DirectoryView {
         @State private var data: [String: AnyCodable] = [:]
         @EnvironmentObject private var model: ViewModel
         var body: some View {
-            NavigationView {
+            SmartNavigationView {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
                         ForEach(filters, id: \.id) {
@@ -63,7 +63,6 @@ extension DirectoryView {
                     }
                 }
             }
-            .navigationViewStyle(.stack)
         }
 
         func saveSearch() async {

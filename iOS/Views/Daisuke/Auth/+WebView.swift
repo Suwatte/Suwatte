@@ -23,7 +23,7 @@ extension DSKAuthView {
             }
             .buttonStyle(.plain)
             .fullScreenCover(isPresented: $presentSheet, onDismiss: model.load) {
-                NavigationView {
+                SmartNavigationView {
                     WebViewRepresentable()
                         .navigationBarTitle("Login", displayMode: .inline)
                         .closeButton(title: "Done")

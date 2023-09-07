@@ -47,7 +47,7 @@ struct CloudFlareErrorView: View {
             .buttonStyle(PlainButtonStyle())
         }
         .fullScreenCover(isPresented: $showSheet, onDismiss: { Task { await action() }}) {
-            NavigationView {
+            SmartNavigationView {
                 CloudFlareWebView(sourceID: sourceID)
                     .navigationBarTitle("Cloudflare Resolve", displayMode: .inline)
                     .closeButton()

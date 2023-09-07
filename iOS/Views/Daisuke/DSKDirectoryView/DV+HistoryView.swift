@@ -17,7 +17,7 @@ extension DirectoryView {
         @State var token: NotificationToken?
         @State var results: [UpdatedSearchHistory] = []
         var body: some View {
-            NavigationView {
+            SmartNavigationView {
                 List {
                     ForEach(results) { result in
                         Cell(for: result)
