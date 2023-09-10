@@ -52,7 +52,7 @@ struct STTImageView: View {
         loader.transaction = .init(animation: .easeInOut(duration: 0.25))
         loader.processors = [NukeDownsampleProcessor(size: size)]
 
-        guard let url else { return }
+        guard let url, url.isHTTP || url.isFileURL else { return }
 
         if identifier.sourceId == STTHelpers.OPDS_CONTENT_ID {
             let actor = await RealmActor.shared()
@@ -85,7 +85,7 @@ struct STTImageView: View {
                 loader.load(url)
                 return
             }
-
+            
             let runner = await DSK.shared.getRunner(identifier.sourceId)
             guard let runner, runner.intents.imageRequestHandler else {
                 loader.load(url)
@@ -97,7 +97,7 @@ struct STTImageView: View {
                 let request = try ImageRequest(urlRequest: response.toURLRequest())
                 loader.load(request)
             } catch {
-                Logger.shared.error(error.localizedDescription)
+                Logger.shared.error(error.localizedDescription, "ImageView")
                 loader.load(url)
             }
         }
@@ -151,7 +151,7 @@ struct BaseImageView: View {
             return
         }
 
-        guard let url else { return }
+        guard let url, url.isHTTP || url.isFileURL else { return }
 
         guard url.isHTTP else {
             loader.load(url)

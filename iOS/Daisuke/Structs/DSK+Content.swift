@@ -102,6 +102,8 @@ extension DaisukeEngine.Structs {
         var acquisitionLink: String?
         var streamable: Bool?
         var isNSFW: Bool?
+        var link: Linkable?
+        var noninteractive: Bool?
 
         var id: String {
             contentId
@@ -109,6 +111,10 @@ extension DaisukeEngine.Structs {
 
         var canStream: Bool {
             streamable ?? false
+        }
+        
+        var isNonInteractive: Bool {
+            noninteractive ?? false
         }
     }
 

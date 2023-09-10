@@ -313,6 +313,8 @@
 		DF9BFE252A4295F5005D0B63 /* Unrar in Frameworks */ = {isa = PBXBuildFile; productRef = DF9BFE242A4295F5005D0B63 /* Unrar */; };
 		DF9BFE272A4295FD005D0B63 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = DF9BFE262A4295FD005D0B63 /* ZIPFoundation */; };
 		DF9C9EF0297AE3A9004A3BC5 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = DF9C9EEF297AE3A9004A3BC5 /* FirebaseAnalytics */; };
+		DF9FDD762AAE751A0016BD5E /* DSKPageLInkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9FDD752AAE751A0016BD5E /* DSKPageLInkView.swift */; };
+		DF9FDD782AAE7AE40016BD5E /* DSKHighlightTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9FDD772AAE7AE40016BD5E /* DSKHighlightTile.swift */; };
 		DFA17F662A4916C300179850 /* ASCollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = DFA17F652A4916C300179850 /* ASCollectionView */; };
 		DFA25FEC2AA5075200A1369E /* PagingController+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA25FEB2AA5075200A1369E /* PagingController+Keyboard.swift */; };
 		DFA25FEE2AA50E8D00A1369E /* WebtoonController+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA25FED2AA50E8D00A1369E /* WebtoonController+Keyboard.swift */; };
@@ -766,6 +768,8 @@
 		DF9BFE022A4285BC005D0B63 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DF9BFE192A428A5B005D0B63 /* AH+Zip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AH+Zip.swift"; sourceTree = "<group>"; };
 		DF9BFE1D2A428A73005D0B63 /* AH+Rar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AH+Rar.swift"; sourceTree = "<group>"; };
+		DF9FDD752AAE751A0016BD5E /* DSKPageLInkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DSKPageLInkView.swift; sourceTree = "<group>"; };
+		DF9FDD772AAE7AE40016BD5E /* DSKHighlightTile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DSKHighlightTile.swift; sourceTree = "<group>"; };
 		DFA25FEB2AA5075200A1369E /* PagingController+Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagingController+Keyboard.swift"; sourceTree = "<group>"; };
 		DFA25FED2AA50E8D00A1369E /* WebtoonController+Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebtoonController+Keyboard.swift"; sourceTree = "<group>"; };
 		DFA25FEF2AA540C400A1369E /* UIImageViewAligned.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageViewAligned.swift; sourceTree = "<group>"; };
@@ -1425,6 +1429,7 @@
 		DF68249D28A5D2BB00AB30A1 /* Daisuke */ = {
 			isa = PBXGroup;
 			children = (
+				DF9FDD742AAE750E0016BD5E /* Misc */,
 				DF16F2C42A5F88D700D7AFBB /* DSKPagesView */,
 				DF16F2B52A5F472700D7AFBB /* DSKDirectoryView */,
 				DF0B028C2AA1476D004345BA /* TrackerView */,
@@ -2093,6 +2098,15 @@
 			path = Controllers;
 			sourceTree = "<group>";
 		};
+		DF9FDD742AAE750E0016BD5E /* Misc */ = {
+			isa = PBXGroup;
+			children = (
+				DF9FDD752AAE751A0016BD5E /* DSKPageLInkView.swift */,
+				DF9FDD772AAE7AE40016BD5E /* DSKHighlightTile.swift */,
+			);
+			path = Misc;
+			sourceTree = "<group>";
+		};
 		DFB47EF52880C1E70040A1BD /* OPDS */ = {
 			isa = PBXGroup;
 			children = (
@@ -2675,6 +2689,7 @@
 				DF62B5AB2A95BB7D00F907CD /* Realm+HistoryView.swift in Sources */,
 				DF541ED32A57448C0022C7EE /* JSCCS+Implementation.swift in Sources */,
 				DF62B5A92A95B89C00F907CD /* Realm+StateManager.swift in Sources */,
+				DF9FDD762AAE751A0016BD5E /* DSKPageLInkView.swift in Sources */,
 				DFBE483A2A25BBC1000ABA16 /* ChapterReference.swift in Sources */,
 				DF8D0B3B2800EE47003E4C3E /* Constants.swift in Sources */,
 				DFDBF9D82A7DB93E006D49AD /* Reader+ColorOverlay.swift in Sources */,
@@ -2802,6 +2817,7 @@
 				DF6C25CD282DC110002BE1AA /* STT+Conditional.swift in Sources */,
 				DF8D0B2B2800EE47003E4C3E /* Loadable.swift in Sources */,
 				DFA25FF02AA540C400A1369E /* UIImageViewAligned.swift in Sources */,
+				DF9FDD782AAE7AE40016BD5E /* DSKHighlightTile.swift in Sources */,
 				DF8D0B2F2800EE47003E4C3E /* STT+ContentStatus.swift in Sources */,
 				DFDBF9852A7C6049006D49AD /* Engine+JSC.swift in Sources */,
 				DF2783472A799FAB0098BBA9 /* Realm+Library.swift in Sources */,

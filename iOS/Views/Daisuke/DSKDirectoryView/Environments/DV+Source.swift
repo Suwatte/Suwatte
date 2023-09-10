@@ -15,17 +15,23 @@ struct ContentSourceDirectoryView: View {
     let request: DSKCommon.DirectoryRequest
     @State var selection: HighlightIdentifier?
     @StateObject var model = ViewModel()
+    
+    @StateObject var manager = LocalAuthManager.shared
+    @Preference(\.protectContent) var protectContent
+    
     var body: some View {
-        DirectoryView<DSKCommon.Highlight, Cell>(model: .init(runner: source, request: request)) { data in
+        DirectoryView<DSKCommon.Highlight, DSKHighlightTile>(model: .init(runner: source, request: request)) { data in
             let identifier = ContentIdentifier(contentId: data.contentId,
                                                sourceId: source.id).id
             let inLibrary = model.library.contains(identifier)
             let inReadLater = model.readLater.contains(identifier)
-            Cell(data: data,
-                 sourceID: source.id,
-                 inLibrary: inLibrary,
-                 readLater: inReadLater,
-                 selection: $selection)
+           
+            DSKHighlightTile(data: data,
+                             source: source,
+                             inLibrary: inLibrary,
+                             inReadLater: inReadLater,
+                             selection: $selection,
+                             hideLibraryBadges: hideLibrayBadges)
         }
         .modifier(InteractableContainer(selection: $selection))
         .task {
@@ -36,41 +42,9 @@ struct ContentSourceDirectoryView: View {
         .animation(.default, value: model.readLater)
         .animation(.default, value: model.library)
     }
-}
-
-// MARK: - Cell
-
-extension ContentSourceDirectoryView {
-    struct Cell: View {
-        var data: DSKCommon.Highlight
-        var sourceID: String
-        @State var inLibrary: Bool
-        @State var readLater: Bool
-        @Binding var selection: HighlightIdentifier?
-        var body: some View {
-            DefaultTile(entry: data, sourceId: sourceID)
-                .coloredBadge(inLibrary ? .accentColor : readLater ? .yellow : nil)
-                .onTapGesture {
-                    if data.canStream {
-                        StateManager.shared.stream(item: data, sourceId: sourceID)
-                    } else {
-                        selection = (sourceID, data)
-                    }
-                }
-                .contextMenu {
-                    Button {
-                        Task {
-                            let actor = await RealmActor.shared()
-                            await actor.toggleReadLater(sourceID, data.contentId)
-                            await MainActor.run {
-                                readLater.toggle()
-                            }
-                        }
-                    } label: {
-                        Label(readLater ? "Remove from Read Later" : "Add to Read Later", systemImage: readLater ? "bookmark.slash" : "bookmark")
-                    }
-                }
-        }
+    
+    private var hideLibrayBadges: Bool {
+        protectContent && manager.isExpired
     }
 }
 

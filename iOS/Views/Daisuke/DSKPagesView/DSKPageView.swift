@@ -61,9 +61,14 @@ extension DSKPageView {
             }
             do {
                 let data: DSKCommon.ResolvedPageSection<T> = try await runner.resolvePageSection(link: link, section: sectionID)
-                await MainActor.run {
-                    loadables[sectionID] = .loaded(data)
+                await MainActor.run{
+                    if data.items.isEmpty {
+                        loadables.removeValue(forKey: sectionID)
+                    } else {
+                        loadables[sectionID] = .loaded(data)
+                    }
                 }
+
             } catch {
                 Logger.shared.error(error, runner.id)
                 await MainActor.run {

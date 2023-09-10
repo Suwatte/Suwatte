@@ -140,7 +140,7 @@ extension BrowseView {
         Section {
             ForEach(links, id: \.hashValue) { pageLink in
                 NavigationLink {
-                    PageLinkView(pageLink: pageLink, runnerID: runner.id)
+                    PageLinkView(link: pageLink.link, title: pageLink.title, runnerID: runner.id)
                 } label: {
                     HStack {
                         STTThumbView(url: URL(string: pageLink.cover ?? runner.thumbnail))
@@ -157,37 +157,8 @@ extension BrowseView {
     }
 }
 
-struct PageLinkView: View {
-    let pageLink: DSKCommon.PageLinkLabel
-    let runnerID: String
-    @State var loadable: Loadable<AnyRunner> = .idle
-    var body: some View {
-        LoadableView(load, $loadable) { runner in
-            Group {
-                if pageLink.link.isPageLink {
-                    RunnerPageView(runner: runner, link: pageLink.link.getPageLink())
-                } else {
-                    RunnerDirectoryView(runner: runner, request: pageLink.link.getDirectoryRequest())
-                }
-            }
-        }
-        .navigationBarTitle(pageLink.title)
-        .navigationBarTitleDisplayMode(.inline)
-    }
-
-    func load() async {
-        loadable = .loading
-        do {
-            let runner = try await DSK.shared.getDSKRunner(runnerID)
-            loadable = .loaded(runner)
-        } catch {
-            loadable = .failed(error)
-        }
-    }
-}
 
 // MARK: ViewModel
-
 extension BrowseView {
     final actor ViewModel: ObservableObject {
         @MainActor

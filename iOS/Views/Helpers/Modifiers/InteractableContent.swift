@@ -73,7 +73,7 @@ struct V1<A: View>: ViewModifier {
 }
 
 extension View {
-    func hiddenNav<T: View>(presenting: Binding<Bool>, _ view: @escaping () -> T) -> some View {
+    func hiddenNav<T: View>(presenting: Binding<Bool>, @ViewBuilder _ view: @escaping () -> T) -> some View {
         modifier(V1(isActive: presenting, child: view))
     }
 }

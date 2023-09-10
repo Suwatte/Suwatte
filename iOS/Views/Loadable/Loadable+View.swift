@@ -97,7 +97,9 @@ extension LoadableView where Idle == DefaultNotRequestedView, Loading == Default
                       do {
                           try await action()
                       } catch {
-                          loadable.wrappedValue = .failed(error)
+                          await MainActor.run {
+                              loadable.wrappedValue = .failed(error)
+                          }
                       }
                   }) }, content)
     }

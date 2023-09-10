@@ -77,7 +77,7 @@ enum AppTabs: Int, CaseIterable {
         }
     }
 
-    static var defaultSettings: [AppTabs] = [.library, .feed, .history, .browse, .more]
+    static let defaultSettings: [AppTabs] = [.library, .feed, .history, .browse, .more]
 }
 
 struct SmartNavigationView<Content>: View where Content: View {

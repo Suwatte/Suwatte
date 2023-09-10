@@ -135,7 +135,7 @@ extension LibraryView {
             Section {
                 ForEach(pageLinks, id: \.hashValue) { pageLink in
                     NavigationLink {
-                        PageLinkView(pageLink: pageLink, runnerID: runner.id)
+                        PageLinkView(link: pageLink.link, title: pageLink.title, runnerID: runner.id)
                     } label: {
                         HStack {
                             STTThumbView(url: URL(string: pageLink.cover ?? runner.thumbnail))
