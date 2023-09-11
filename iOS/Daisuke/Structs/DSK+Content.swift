@@ -187,9 +187,9 @@ extension DSKCommon {
     struct ReaderContext: JSCObject {
         let target: String
         let chapters: [Chapter]
+        let content: Highlight
 
         let requestedPage: Int?
         let readingMode: ReadingMode?
-        let content: Highlight?
     }
 }

@@ -83,7 +83,7 @@ extension StateManager {
         }
 
         // Save Content, if not saved
-        let highlight = context.content ?? caller
+        let highlight = context.content
         let streamable = highlight.canStream
 
         let actor = await RealmActor.shared()
@@ -98,11 +98,11 @@ extension StateManager {
             let content = highlight.toStored(sourceId: source)
             await actor.storeContent(content)
         }
-
+        
         // Add Chapters to DB
         let chapters = context
             .chapters
-            .map { $0.toThreadSafe(sourceID: source, contentID: caller.contentId) }
+            .map { $0.toThreadSafe(sourceID: source, contentID: highlight.contentId) }
 
         // Open Reader
         let chapter = chapters.first(where: { $0.chapterId == context.target })!
@@ -135,21 +135,24 @@ extension StateManager {
             do {
                 let source = try await DSK.shared.getContentSource(id: sourceId)
                 let context = try await source.provideReaderContext(for: item.contentId)
-                Task {
-                    await MainActor.run {
-                        ToastManager.shared.loading = false
-                    }
-                    await StateManager.shared.openReader(context: context, caller: item, source: sourceId)
-                }
-            } catch {
-                Task { @MainActor in
+                await MainActor.run {
                     ToastManager.shared.loading = false
+                }
+                await StateManager.shared.openReader(context: context, caller: item, source: sourceId)
+            } catch {
+                await MainActor.run {
                     StateManager.shared.alert(title: "Error",
                                               message: "\(error.localizedDescription)")
                 }
                 Logger.shared.error(error, sourceId)
             }
+            await MainActor.run {
+                ToastManager.shared.loading = false
+
+            }
         }
+        
+
     }
 
     func didScenePhaseChange(_ phase: ScenePhase) {
