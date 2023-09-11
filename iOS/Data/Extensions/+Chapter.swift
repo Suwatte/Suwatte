@@ -53,6 +53,7 @@ extension DaisukeEngine.Structs.Chapter {
         chapter.date = date
         chapter.index = index
         chapter.webUrl = webUrl
+        chapter.thumbnail = thumbnail
 
         let providers = providers?.map { provider -> ChapterProvider in
             let links = provider.links?.map { link -> ChapterProviderLink in

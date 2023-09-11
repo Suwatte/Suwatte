@@ -20,47 +20,74 @@ struct ChapterListTile: View {
     let isBookmarked: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            HStack {
-                DisplayNameView
-                Spacer()
+        HStack (spacing: 7) {
+            if let url = chapter.thumbnail.flatMap({ URL(string: $0) }) {
+                STTImageView(url: url, identifier: chapter.contentIdentifier)
+                    .frame(width: 60, height: 75)
+                    .cornerRadius(7)
+            }
+            
+            VStack(alignment: .leading, spacing: 5) {
+                HStack {
+                    DisplayNameView
+                    Spacer()
+
+                    HStack {
+                        ProgressSubview
+                        DownloadIndicatorView
+                        IsNewView
+                        LinkedIndicator
+                        BookmarkedIndicator
+                    }
+                    .font(.caption.weight(.light))
+                }
 
                 HStack {
-                    ProgressSubview
-                    DownloadIndicatorView
-                    IsNewView
-                    LinkedIndicator
-                    BookmarkedIndicator
+                    if showLanguageFlag {
+                        LanguageView(chapter.language)
+                    }
+                    if  hasProviders {
+                        ScanlatorView()
+                    }
+                    
+                    if showLanguageFlag || hasProviders {
+                        Spacer()
+                    }
+                    if showDate {
+                        Text(chapter.date.timeAgoGrouped())
+                    }
+                    
+                    if !showLanguageFlag && !hasProviders && showDate {
+                        Spacer()
+                    }
+                    
+                    if !showLanguageFlag && !hasProviders && !showDate {
+                        Text(chapter.number.description)
+                    }
                 }
-                .font(.body.weight(.light))
+                .font(.footnote.weight(.semibold))
+                .foregroundColor(Color.gray.opacity(0.5))
             }
-
-            HStack {
-                if showLanguageFlag {
-                    LanguageView(chapter.language)
-                }
-                ScanlatorView()
-                Spacer()
-                if showDate {
-                    Text(chapter.date.timeAgoGrouped())
-                }
-            }
-            .font(.footnote.weight(.semibold))
-            .foregroundColor(Color.gray.opacity(0.5))
         }
         .contentShape(Rectangle())
     }
-
+    
+    var hasProviders : Bool {
+        chapter.providers != nil && !chapter.providers!.isEmpty
+    }
+    
     @ViewBuilder
     var DisplayNameView: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text(chapter.displayName)
-                .font(.title3)
+                .lineLimit(1)
+                .font(.headline)
                 .foregroundColor(!isCompleted ? Color.primary : Color.gray.opacity(0.5))
             Text(chapter.title ?? chapter.chapterName)
-                .font(.subheadline)
+                .font(.footnote)
                 .fontWeight(.semibold)
-                .lineLimit(1)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
                 .foregroundColor(Color.gray.opacity(isCompleted ? 0.5 : 0.65))
         }
     }
