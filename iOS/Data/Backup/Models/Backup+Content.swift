@@ -82,7 +82,7 @@ extension StoredContent: Codable {
 
 extension StoredTag: Codable {
     enum CodingKeys: String, CodingKey {
-        case id, label, adultContent
+        case id, label, title, adultContent
     }
 
     convenience init(from decoder: Decoder) throws {
@@ -91,7 +91,7 @@ extension StoredTag: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         id = try container.decode(String.self, forKey: .id)
-        label = try container.decode(String.self, forKey: .label)
+        label = try container.decodeIfPresent(String.self, forKey: .label) ?? container.decodeIfPresent(String.self, forKey: .title) ?? ""
         adultContent = try container.decodeIfPresent(Bool.self, forKey: .adultContent) ?? false
     }
 
@@ -108,7 +108,7 @@ extension StoredTag: Codable {
 
 extension StoredProperty: Codable {
     enum Keys: String, CodingKey {
-        case label, tags, id
+        case label, tags, id, title
     }
 
     convenience init(from decoder: Decoder) throws {
@@ -117,7 +117,7 @@ extension StoredProperty: Codable {
         let container = try decoder.container(keyedBy: Keys.self)
 
         tags = try container.decode(List<StoredTag>.self, forKey: .tags)
-        label = try container.decode(String.self, forKey: .label)
+        label = try container.decodeIfPresent(String.self, forKey: .label) ?? container.decodeIfPresent(String.self, forKey: .title) ?? ""
         id = try container.decode(String.self, forKey: .id)
     }
 
