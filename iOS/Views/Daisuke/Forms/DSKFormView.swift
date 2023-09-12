@@ -292,7 +292,7 @@ extension DSKFormView {
         init(component: DSKCommon.FormComponent) {
             self.component = component
             if let value = component.value?.value as? [String] {
-                let chosen = Set(component.options?.filter { value.contains($0.key) } ?? [])
+                let chosen = Set(component.options?.filter { value.contains($0.id) } ?? [])
                 _selections = State(initialValue: chosen)
             }
         }
@@ -300,11 +300,11 @@ extension DSKFormView {
         var body: some View {
             NavigationLink {
                 MultiSelectionView(options: component.options ?? [], selection: $selections) { value in
-                    Text(value.label)
+                    Text(value.title)
                 }
                 .navigationTitle(component.label)
                 .onChange(of: selections) { newValue in
-                    let out = newValue.map { $0.key }
+                    let out = newValue.map { $0.id }
                     model.didSet(out, for: component)
                 }
                 .animation(.default, value: selections)
@@ -332,8 +332,8 @@ extension DSKFormView {
         var body: some View {
             Picker(component.label, selection: $selection) {
                 ForEach(component.options ?? []) { option in
-                    Text(option.label)
-                        .tag(option.key)
+                    Text(option.title)
+                        .tag(option.id)
                 }
             }
             .animation(.default, value: selection)

@@ -94,18 +94,18 @@ extension DirectoryView {
                         texts.append(label)
                     }
                 case .select:
-                    if let val = target.value as? String, let option = options.first(where: { $0.key == val }) {
-                        texts.append("Including \(label): \(option.label)")
+                    if let val = target.value as? String, let option = options.first(where: { $0.id == val }) {
+                        texts.append("Including \(label): \(option.title)")
                     }
                 case .multiselect:
                     if let val = target.value as? [String] {
-                        let selected = options.filter { val.contains($0.key) }
+                        let selected = options.filter { val.contains($0.id) }
                         if selected.isEmpty { continue }
-                        texts.append("Including \(label): \(selected.map(\.label).joined(separator: ", "))")
+                        texts.append("Including \(label): \(selected.map(\.title).joined(separator: ", "))")
                     } else if let val = target.value as? Set<String> {
-                        let selected = options.filter { val.contains($0.key) }
+                        let selected = options.filter { val.contains($0.id) }
                         if selected.isEmpty { continue }
-                        texts.append("Including \(label): \(selected.map(\.label).joined(separator: ", "))")
+                        texts.append("Including \(label): \(selected.map(\.title).joined(separator: ", "))")
                     }
                 case .excludableMultiselect:
                     var val: DSKCommon.ExcludableMultiSelectProp? = nil
@@ -116,8 +116,8 @@ extension DirectoryView {
                     }
 
                     guard let val else { continue }
-                    let included = options.filter { val.included.contains($0.key) }.map(\.label).joined(separator: ", ")
-                    let excluded = options.filter { val.excluded.contains($0.key) }.map(\.label).joined(separator: ", ")
+                    let included = options.filter { val.included.contains($0.id) }.map(\.title).joined(separator: ", ")
+                    let excluded = options.filter { val.excluded.contains($0.id) }.map(\.title).joined(separator: ", ")
                     if !included.isEmpty {
                         let txt = "Including \(label): \(included)"
                         texts.append(txt)
@@ -202,10 +202,10 @@ extension DirectoryView.FilterView.Cell {
 
             if !query.isEmpty {
                 ops = ops.filter {
-                    $0.label.lowercased().contains(query.lowercased())
+                    $0.title.lowercased().contains(query.lowercased())
                 }
             }
-            return ops.sorted(by: \.label, descending: false)
+            return ops.sorted(by: \.title, descending: false)
         }
 
         var body: some View {
@@ -215,7 +215,7 @@ extension DirectoryView.FilterView.Cell {
                         handle(tag)
                     }
                 } label: {
-                    Text(tag.label)
+                    Text(tag.title)
                         .modifier(ActionStyleModifier(color: optionColor(tag)))
                 }
                 .buttonStyle(.plain)
@@ -248,13 +248,13 @@ extension DirectoryView.FilterView.Cell {
         // MARK: Methods
 
         func optionColor(_ option: DSKCommon.Option) -> Color {
-            if props.included.contains(option.key) { return .green }
-            if props.excluded.contains(option.key) { return .red }
+            if props.included.contains(option.id) { return .green }
+            if props.excluded.contains(option.id) { return .red }
             return .primary.opacity(0.1)
         }
 
         func handle(_ option: DSKCommon.Option) {
-            let id = option.key
+            let id = option.id
             switch filter.type {
             case .select:
                 if props.included.contains(id) {

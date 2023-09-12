@@ -93,13 +93,13 @@ extension DirectoryView.ResultsView {
             }
             .font(.footnote.weight(.light))
             .confirmationDialog("Sort Options", isPresented: $dialog, titleVisibility: .visible) {
-                ForEach(model.configSort.options, id: \.key) { sorter in
-                    Button(sorter.label) {
+                ForEach(model.configSort.options, id: \.id) { sorter in
+                    Button(sorter.title) {
                         withAnimation {
-                            if let currentSelection = model.request.sort, currentSelection.key == sorter.key, model.configSort.canChangeOrder {
-                                model.request.sort = .init(key: sorter.key, ascending: !currentSelection.ascending)
+                            if let currentSelection = model.request.sort, currentSelection.key == sorter.id, model.configSort.canChangeOrder {
+                                model.request.sort = .init(key: sorter.id, ascending: !currentSelection.ascending)
                             } else {
-                                model.request.sort = .init(key: sorter.key, ascending: false)
+                                model.request.sort = .init(key: sorter.id, ascending: false)
                             }
                             model.request.page = 1
                             Task {
@@ -114,8 +114,8 @@ extension DirectoryView.ResultsView {
 
         var title: String {
             let current = model.request.sort?.key
-            let label = model.configSort.options.first(where: { $0.key == current })?.label
-            return label ?? model.configSort.options.first(where: { $0.key == model.configSort.default?.key })?.label ?? "Default"
+            let label = model.configSort.options.first(where: { $0.id == current })?.title
+            return label ?? model.configSort.options.first(where: { $0.id == model.configSort.default?.key })?.title ?? "Default"
         }
     }
 }

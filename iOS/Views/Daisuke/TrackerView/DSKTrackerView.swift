@@ -300,17 +300,17 @@ extension DSKTrackerView {
             if let properties = content.properties {
                 ForEach(properties) { property in
                     VStack(alignment: .leading, spacing: 5) {
-                        Text(property.label)
+                        Text(property.title)
                             .font(.subheadline)
                             .fontWeight(.bold)
                         
                         InteractiveTagView(property.tags) { tag in
-                            InteractiveTagCell(tag.label) {
+                            InteractiveTagCell(tag.title) {
                                 ContentTrackerDirectoryView(tracker: tracker,
                                                             request: .init(page: 1,
                                                                            tag: .init(tagId: tag.id,
                                                                                       propertyId: property.id)))
-                                .navigationTitle(tag.label + " Titles")
+                                .navigationTitle(tag.title + " Titles")
                             }
                         }
                     }

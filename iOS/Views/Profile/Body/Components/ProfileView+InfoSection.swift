@@ -63,14 +63,14 @@ extension ProfileView.Skeleton {
                 if source.ablityNotDisabled(\.disableTagNavigation) && !tag.isNonInteractive {
                     NavigationLink {
                         ContentSourceDirectoryView(source: source, request: generateSearchRequest(tagId: tag.id, propertyId: property.id))
-                            .navigationBarTitle(tag.label)
+                            .navigationBarTitle(tag.title)
                     } label: {
-                        Text(tag.label)
+                        Text(tag.title)
                             .modifier(ProfileTagStyle())
                     }
                     .buttonStyle(.plain)
                 } else {
-                    Text(tag.label)
+                    Text(tag.title)
                         .modifier(ProfileTagStyle())
                 }
             }

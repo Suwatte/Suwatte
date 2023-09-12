@@ -36,7 +36,7 @@ extension AllTagsView {
                             Cell(for: $0, propertyId: property.id)
                         }
                     } header: {
-                        Text(property.label)
+                        Text(property.title)
                     }
                 }
             }
@@ -44,14 +44,14 @@ extension AllTagsView {
     }
 
     func tagsForProperty(_ property: DaisukeEngine.Structs.Property) -> [DSKCommon.Tag] {
-        property.tags.sorted(by: { $0.label < $1.label }).filter { text.isEmpty ? true : $0.label.lowercased().contains(text.lowercased()) }
+        property.tags.sorted(by: { $0.title < $1.title }).filter { text.isEmpty ? true : $0.title.lowercased().contains(text.lowercased()) }
     }
 
     func Cell(for tag: DaisukeEngine.Structs.Tag, propertyId: String) -> some View {
-        NavigationLink(tag.label) {
+        NavigationLink(tag.title) {
             let request = DSKCommon.DirectoryRequest(page: 1, tag: .init(tagId: tag.id, propertyId: propertyId))
             ContentSourceDirectoryView(source: source, request: request)
-                .navigationBarTitle("\(tag.label)")
+                .navigationBarTitle("\(tag.title)")
         }
     }
 }

@@ -13,15 +13,6 @@ extension DSKCommon {
         case toggle, select, multiselect, excludableMultiselect, text, info
     }
 
-    struct Option: Parsable, Hashable, Identifiable {
-        let key: String
-        let label: String
-
-        var id: String {
-            key
-        }
-    }
-
     struct DirectoryConfig: Parsable, Hashable {
         let sort: Sort?
         let filters: [DirectoryFilter]?

@@ -26,10 +26,10 @@ extension ProfileView.Skeleton {
         @ViewBuilder
         var AdditionalProperties: some View {
             if let props = entry.properties, props.count > 1 {
-                ForEach(props[1...], id: \.label) { property in
+                ForEach(props[1...], id: \.title) { property in
 
                     VStack(alignment: .leading, spacing: 3) {
-                        Text(property.label)
+                        Text(property.title)
                             .font(.headline)
                             .fontWeight(.semibold)
                         ProfileView.Skeleton.PropertyTagsView(property: property, source: model.source)

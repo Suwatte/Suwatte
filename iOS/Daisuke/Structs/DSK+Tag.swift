@@ -14,13 +14,13 @@ extension DaisukeEngine {
 extension DaisukeEngine.Structs {
     struct Property: Parsable, Identifiable, Hashable {
         var id: String
-        var label: String
+        var title: String
         var tags: [Tag]
     }
 
     struct Tag: Parsable, Hashable, Identifiable {
         var id: String
-        var label: String
+        var title: String
         var nsfw: Bool?
         var image: String?
         var noninteractive: Bool?
@@ -29,5 +29,11 @@ extension DaisukeEngine.Structs {
         var isNonInteractive: Bool {
             noninteractive ?? false
         }
+    }
+    
+    struct Option: Parsable, Hashable, Identifiable {
+        let id: String
+        let title: String
+
     }
 }
