@@ -142,7 +142,7 @@ extension DSK {
             let profile = try await source
                 .getContent(id: id)
             let content = try profile
-                .toStoredContent(withSource: source.id)
+                .toStoredContent(with: .init(contentId: id, sourceId: source.id))
             let manager = await RealmActor.shared()
             await manager.storeContent(content)
             return profile.chapters

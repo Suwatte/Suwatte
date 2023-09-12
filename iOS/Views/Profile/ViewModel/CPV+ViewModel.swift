@@ -20,7 +20,7 @@ extension ProfileView {
         }
 
         var contentID: String {
-            entry.contentId
+            entry.id
         }
 
         @Published var content: DSKCommon.Content = .placeholder

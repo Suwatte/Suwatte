@@ -388,7 +388,7 @@ extension DSKTrackerView {
             NavigationLink {
                 DSKLoadableTrackerView(tracker: tracker, item: data)
             } label: {
-                DefaultTile(entry: .init(contentId: data.id, cover: data.cover, title: data.title))
+                DefaultTile(entry: .init(id: data.id, cover: data.cover, title: data.title))
                     .coloredBadge(data.entry?.status.color)
                     .modifier(TrackerContextModifier(tracker: tracker, item: $data, status: data.entry?.status ?? .CURRENT))
                     .frame(width: 150, height: CELL_HEIGHT)
@@ -419,7 +419,7 @@ extension DSKTrackerView {
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack {
                         ForEach(characters, id: \.hashValue) { character in
-                            DefaultTile(entry: .init(contentId: content.id, cover: character.image ?? "", title: character.name))
+                            DefaultTile(entry: .init(id: content.id, cover: character.image ?? "", title: character.name))
                                 .frame(width: 150, height: CELL_HEIGHT)
 
                         }

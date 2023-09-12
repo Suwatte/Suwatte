@@ -86,7 +86,7 @@ extension PageViewTile {
 
 extension PageViewTile {
     var NORMAL: some View {
-        DefaultTile(entry: .init(contentId: id, cover: cover, title: title, subtitle: subtitle), sourceId: runnerID)
+        DefaultTile(entry: .init(id: id, cover: cover, title: title, subtitle: subtitle), sourceId: runnerID)
             .dskBadge(badge)
     }
 }
@@ -343,7 +343,7 @@ extension PageViewTile {
 
 extension PageViewTile {
     var GRID: some View {
-        DefaultTile(entry: .init(contentId: id, cover: cover, title: title), sourceId: runnerID)
+        DefaultTile(entry: .init(id: id, cover: cover, title: title), sourceId: runnerID)
             .dskBadge(badge)
     }
 }

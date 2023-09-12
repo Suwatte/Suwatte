@@ -61,7 +61,7 @@ extension ViewModel {
         var sourceOriginHighestRead: Double = 0
         if source.intents.chapterSyncHandler {
             do {
-                let chapterIds = try await source.getReadChapterMarkers(contentId: entry.contentId)
+                let chapterIds = try await source.getReadChapterMarkers(contentId: entry.id)
                 sourceOriginHighestRead = chapters
                     .filter { chapterIds.contains($0.chapterId) }
                     .map { ThreadSafeChapter.orderKey(volume: $0.volume, number: $0.number) }

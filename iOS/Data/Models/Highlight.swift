@@ -19,7 +19,7 @@ struct TaggedHighlight: Identifiable, Hashable {
 
     init(from highlight: DSKCommon.Highlight, with sourceID: String) {
         self.sourceID = sourceID
-        contentID = highlight.contentId
+        contentID = highlight.id
         title = highlight.title
         coverURL = highlight.cover
     }
@@ -29,6 +29,6 @@ struct TaggedHighlight: Identifiable, Hashable {
     }
 
     var highlight: DSKCommon.Highlight {
-        .init(contentId: contentID, cover: coverURL, title: title)
+        .init(id: contentID, cover: coverURL, title: title)
     }
 }

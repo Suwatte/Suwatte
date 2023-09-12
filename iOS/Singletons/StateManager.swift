@@ -88,7 +88,7 @@ extension StateManager {
 
         let actor = await RealmActor.shared()
 
-        let target = await actor.getStoredContent(ContentIdentifier(contentId: highlight.contentId, sourceId: source).id)?.freeze()
+        let target = await actor.getStoredContent(ContentIdentifier(contentId: highlight.id, sourceId: source).id)?.freeze()
 
         // Target Title is already in the db, Just update the streamble flag
         if let target, target.streamable != streamable {
@@ -102,7 +102,7 @@ extension StateManager {
         // Add Chapters to DB
         let chapters = context
             .chapters
-            .map { $0.toThreadSafe(sourceID: source, contentID: highlight.contentId) }
+            .map { $0.toThreadSafe(sourceID: source, contentID: highlight.id) }
 
         // Open Reader
         let chapter = chapters.first(where: { $0.chapterId == context.target })!
@@ -134,7 +134,7 @@ extension StateManager {
         Task {
             do {
                 let source = try await DSK.shared.getContentSource(id: sourceId)
-                let context = try await source.provideReaderContext(for: item.contentId)
+                let context = try await source.provideReaderContext(for: item.id)
                 await MainActor.run {
                     ToastManager.shared.loading = false
                 }

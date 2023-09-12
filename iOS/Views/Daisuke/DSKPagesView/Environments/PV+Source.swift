@@ -21,7 +21,7 @@ struct ContentSourcePageView: View {
 
     var body: some View {
         DSKPageView<DSKCommon.Highlight, DSKHighlightTile>(model: .init(runner: source, link: link)) { item in
-            let identifier = ContentIdentifier(contentId: item.contentId,
+            let identifier = ContentIdentifier(contentId: item.id,
                                                sourceId: source.id).id
             
              DSKHighlightTile(data: item,

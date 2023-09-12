@@ -131,7 +131,7 @@ extension SearchView.CollectionView {
 
         // Computed :]
         var identifier: String {
-            ContentIdentifier(contentId: data.contentId, sourceId: sourceID).id
+            ContentIdentifier(contentId: data.id, sourceId: sourceID).id
         }
 
         var inLibrary: Bool {

@@ -23,7 +23,7 @@ struct DSKHighlightTile: View {
     
     var body: some View {
         PageViewTile(runnerID: source.id,
-                     id: data.contentId,
+                     id: data.id,
                      title: data.title,
                      subtitle: data.subtitle,
                      cover: data.cover,
@@ -81,7 +81,7 @@ extension DSKHighlightTile {
         Button {
             Task {
                 let actor = await RealmActor.shared()
-                await actor.toggleReadLater(source.id, data.contentId)
+                await actor.toggleReadLater(source.id, data.id)
                 inReadLater.toggle()
             }
         } label: {

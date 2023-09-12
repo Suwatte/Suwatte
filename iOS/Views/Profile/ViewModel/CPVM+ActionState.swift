@@ -22,10 +22,6 @@ extension ViewModel {
             return .init(state: .none)
         }
 
-        guard content.contentId == entry.contentId else {
-            return .init(state: .none)
-        }
-
         let actor = await RealmActor.shared()
 
         let marker = await actor

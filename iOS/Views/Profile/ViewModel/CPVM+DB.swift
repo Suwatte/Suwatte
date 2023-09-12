@@ -30,7 +30,7 @@ extension ViewModel {
         let actor = await RealmActor.shared()
 
         let chapters = await actor.getChapters(source.id,
-                                               content: entry.contentId)
+                                               content: entry.id)
 
         if chapters.isEmpty { return nil }
         return chapters
@@ -42,7 +42,7 @@ extension ViewModel {
 extension ViewModel {
     func saveContent(_ content: DSKCommon.Content) async {
         do {
-            let content = try content.toStoredContent(withSource: sourceID)
+            let content = try content.toStoredContent(with: .init(contentId: entry.id, sourceId: sourceID))
             let actor = await RealmActor.shared()
             await actor.storeContent(content)
         } catch {

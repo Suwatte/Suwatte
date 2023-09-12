@@ -73,7 +73,7 @@ extension RealmActor {
 
         do {
             let content = try await source.getContent(id: contentId)
-            let storedContent = try content.toStoredContent(withSource: sourceId)
+            let storedContent = try content.toStoredContent(with: .init(contentId: contentId, sourceId: sourceId))
 
             let obj = ReadLater()
             obj.content = storedContent

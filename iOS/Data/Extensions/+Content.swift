@@ -10,7 +10,7 @@ import RealmSwift
 
 extension StoredContent {
     func toHighlight() -> DaisukeEngine.Structs.Highlight {
-        .init(contentId: contentId,
+        .init(id: contentId,
               cover: cover,
               title: title,
               additionalCovers: additionalCovers.toArray(),
@@ -25,10 +25,11 @@ extension StoredContent {
 }
 
 extension DaisukeEngine.Structs.Content {
-    func toStoredContent(withSource source: String) throws -> StoredContent {
+    func toStoredContent(with identifier: ContentIdentifier) throws -> StoredContent {
         let data = try DaisukeEngine.encode(value: self)
         let stored = try DaisukeEngine.decode(data: data, to: StoredContent.self)
-        stored.sourceId = source
+        stored.sourceId = identifier.sourceId
+        stored.contentId = identifier.contentId
         return stored
     }
 }
@@ -64,7 +65,7 @@ extension DSKCommon.Highlight {
     func toStored(sourceId: String) -> StoredContent {
         let stored = StoredContent()
         stored.title = title
-        stored.contentId = contentId
+        stored.contentId = id
         stored.sourceId = sourceId
         stored.cover = cover
         stored.acquisitionLink = acquisitionLink

@@ -179,13 +179,14 @@ extension MigrationController {
         let result = data?.results.first
 
         guard let result else { return nil }
-        let content = try? await source.getContent(id: result.contentId)
+        let contentId = result.id
+        let content = try? await source.getContent(id: contentId)
         guard let content else { return nil }
 
         var chapters = content.chapters
 
         if chapters == nil {
-            chapters = await getChapters(for: source, id: content.contentId)
+            chapters = await getChapters(for: source, id: contentId)
         }
 
         let target = chapters?.first

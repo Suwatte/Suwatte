@@ -29,7 +29,7 @@ extension ContentTrackerDirectoryView {
             NavigationLink {
                 DSKLoadableTrackerView(tracker: tracker, item: data)
             } label: {
-                DefaultTile(entry: .init(contentId: data.id, cover: data.cover, title: data.title))
+                DefaultTile(entry: .init(id: data.id, cover: data.cover, title: data.title))
                     .coloredBadge(data.entry?.status.color)
                     .modifier(TrackerContextModifier(tracker: tracker, item: $data, status: data.entry?.status ?? .CURRENT))
             }

@@ -44,7 +44,7 @@ extension RealmActor {
         }
 
         let data = try? await source.getContent(id: contentId)
-        guard let stored = try? data?.toStoredContent(withSource: sourceId) else {
+        guard let stored = try? data?.toStoredContent(with: .init(contentId: contentId, sourceId: sourceId)) else {
             return
         }
         await storeContent(stored)

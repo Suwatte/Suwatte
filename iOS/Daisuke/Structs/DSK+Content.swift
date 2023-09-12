@@ -90,7 +90,7 @@ extension DaisukeEngine.Structs {
     }
 
     struct Highlight: Parsable, Identifiable, Hashable {
-        var contentId: String
+        var id: String
         var cover: String
         var title: String
 
@@ -104,10 +104,6 @@ extension DaisukeEngine.Structs {
         var isNSFW: Bool?
         var link: Linkable?
         var noninteractive: Bool?
-
-        var id: String {
-            contentId
-        }
 
         var canStream: Bool {
             streamable ?? false
@@ -126,7 +122,6 @@ extension DaisukeEngine.Structs {
 
 extension DaisukeEngine.Structs {
     struct Content: Parsable, Hashable {
-        var contentId: String
         var title: String
         var cover: String
         var info: [String]?
@@ -159,27 +154,27 @@ extension DaisukeEngine.Structs {
             streamable ?? false
         }
 
-        static let placeholder: Self = .init(contentId: .random(), title: .random(), cover: .random())
+        static let placeholder: Self = .init(title: .random(), cover: .random())
     }
 }
 
 extension DaisukeEngine.Structs.Highlight {
     static func placeholders() -> [Self] {
         (0 ... 30).map { _ in
-            .init(contentId: .random(length: 10),
+            .init(id: .random(length: 10),
                   cover: .random(),
                   title: .random(length: 20), subtitle: .random(length: 15))
         }
     }
 
     static var placeholder: Self {
-        .init(contentId: .random(length: 10),
+        .init(id: .random(length: 10),
               cover: .random(),
               title: .random(length: 20), subtitle: .random(length: 15))
     }
 
     static func withId(id: String) -> Self {
-        .init(contentId: id, cover: String.random(), title: String.random())
+        .init(id: id, cover: String.random(), title: String.random())
     }
 }
 

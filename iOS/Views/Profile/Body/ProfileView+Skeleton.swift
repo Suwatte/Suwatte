@@ -27,7 +27,7 @@ extension ProfileView {
                 .fullScreenCover(item: $viewModel.presentManageContentLinks, content: { id in
                     SmartNavigationView {
                         ManageContentLinks(id: id,
-                                           highlight: .init(contentId: viewModel.contentID,
+                                           highlight: .init(id: viewModel.contentID,
                                                             cover: viewModel.content.cover,
                                                             title: viewModel.content.title))
                             .closeButton()

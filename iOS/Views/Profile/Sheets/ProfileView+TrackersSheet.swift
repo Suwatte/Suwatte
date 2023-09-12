@@ -378,7 +378,7 @@ extension TrackerManagementView {
 
         func Cell(_ item: DSKCommon.TrackItem) -> some View {
             ZStack(alignment: .topTrailing) {
-                DefaultTile(entry: .init(contentId: item.id, cover: item.cover, title: item.title))
+                DefaultTile(entry: .init(id: item.id, cover: item.cover, title: item.title))
                     .frame(width: 120, height: 230)
                 ColoredBadge(color: .accentColor)
                     .opacity(selections[linkKey] == item.id ? 1 : 0)

@@ -10,7 +10,7 @@ import RealmSwift
 
 extension RealmActor {
     func linkContent(_ parent: String, _ child: DSKCommon.Highlight, _ sourceId: String) async -> Bool {
-        let id = ContentIdentifier(contentId: child.contentId, sourceId: sourceId).id
+        let id = ContentIdentifier(contentId: child.id, sourceId: sourceId).id
         await saveIfNeeded(child, sourceId)
         return await linkContent(parent, id)
     }
@@ -86,7 +86,7 @@ extension RealmActor {
     func saveIfNeeded(_ h: DSKCommon.Highlight, _ sId: String) async {
         let result = realm
             .objects(StoredContent.self)
-            .where { $0.sourceId == sId && $0.contentId == h.contentId }
+            .where { $0.sourceId == sId && $0.contentId == h.id }
         guard result.isEmpty else {
             return
         }
