@@ -21,7 +21,7 @@ extension ProfileView.Skeleton.ChapterView {
                 switch model.chapterState {
                 case .loaded:
                     if !model.chapters.isEmpty {
-                        LoadedView(model.chapters)
+                        LoadedView(model.previewChapters)
                             .transition(.opacity)
                     } else {
                         LoadedEmptyView()
@@ -65,7 +65,7 @@ extension ProfileView.Skeleton.ChapterView {
                 }
 
                 VStack(alignment: .leading, spacing: 6) {
-                    ForEach(preview(chapters)) { chapter in
+                    ForEach(chapters) { chapter in
                         let completed = isChapterCompleted(chapter)
                         let newChapter = isChapterNew(chapter)
                         let progress = chapterProgress(chapter)
@@ -80,7 +80,7 @@ extension ProfileView.Skeleton.ChapterView {
                                             showLanguageFlag: model.source.ablityNotDisabled(\.disableLanguageFlags),
                                             showDate: model.source.ablityNotDisabled(\.disableChapterDates),
                                             isBookmarked: model.bookmarkedChapters.contains(chapter.id))
-                            if chapter.chapterId != preview(chapters).last?.chapterId {
+                            if chapter.chapterId != chapters.last?.chapterId {
                                 Divider().padding(.top, 6)
                             }
                         }
@@ -116,10 +116,6 @@ extension ProfileView.Skeleton.ChapterView {
 
                 Divider()
             }
-        }
-
-        func preview(_ chapters: [ThreadSafeChapter]) -> [ThreadSafeChapter] {
-            chapters.count >= 5 ? Array(chapters[0 ... 4]) : Array(chapters[0...])
         }
     }
 }

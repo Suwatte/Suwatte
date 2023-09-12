@@ -34,7 +34,7 @@ extension DaisukeEngine.Structs {
         var raw: String?
     }
 
-    struct ChapterProvider: Parsable, Hashable {
+    struct ChapterProvider: Parsable, Hashable, Identifiable {
         var id: String
         var name: String
         var links: [ChapterProviderLink]?

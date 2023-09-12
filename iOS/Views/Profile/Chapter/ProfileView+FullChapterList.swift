@@ -31,6 +31,9 @@ struct ChapterList: View {
         .animation(.default, value: model.bookmarkedChapters)
         .sheet(isPresented: $presentOptions, content: {
             FCS_Options()
+                .onDisappear {
+                    doFilter()
+                }
         })
         .onChange(of: editMode?.wrappedValue, perform: { _ in
             selections.removeAll()
@@ -74,6 +77,7 @@ struct ChapterList: View {
                     model.removeNotifier()
                 }
         }
+        .environmentObject(model)
     }
 
     var filterCases: [ChapterSortOption] {

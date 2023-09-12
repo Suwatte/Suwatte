@@ -24,7 +24,7 @@ extension ProfileView {
         }
 
         @Published var content: DSKCommon.Content = .placeholder
-        @Published var chapters: [ThreadSafeChapter] = []
+        var chapters: [ThreadSafeChapter] = []
 
         @Published var contentState: Loadable<Bool> = .idle
         @Published var chapterState: Loadable<Bool> = .idle
@@ -116,8 +116,9 @@ extension ViewModel {
                 let chapters = await getChaptersFromDatabase()
                 if let chapters {
                     let prepared = chapters.map { $0.toThreadSafe() }
+                    self.chapters = prepared
+                    await preparePreview()
                     await animate { [weak self] in
-                        self?.chapters = prepared
                         self?.chapterState = .loaded(true)
                     }
 
@@ -164,8 +165,9 @@ extension ViewModel {
                 let prepared = chapters
                     .sorted(by: \.index, descending: false)
                     .map { $0.toThreadSafe(sourceID: sourceID, contentID: contentID) }
+                self.chapters = prepared
+                await preparePreview()
                 await animate { [weak self] in
-                    self?.chapters = prepared
                     self?.chapterState = .loaded(true)
                 }
                 Task.detached { [weak self] in

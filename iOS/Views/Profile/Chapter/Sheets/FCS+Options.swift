@@ -9,80 +9,65 @@ import SwiftUI
 
 struct FCS_Options: View {
     @EnvironmentObject var model: ProfileView.ViewModel
-    @AppStorage(STTKeys.FilteredProviders) private var filteredProviders: [String] = []
-    @AppStorage(STTKeys.FilteredLanguages) private var filteredLanguages: [String] = []
-
+    @State var providers: [DSKCommon.ChapterProvider] = []
+    @State var blacklisted: Set<String> = []
+    
     var body: some View {
         SmartNavigationView {
-            List {}
-                .closeButton()
-                .navigationBarTitle("Filter")
-                .animation(.default, value: filteredProviders)
+            List {
+                ProvidersSection
+            }
+            .closeButton()
+            .navigationBarTitle("Filters")
+            .navigationBarTitleDisplayMode(.inline)
+            .animation(.default, value: providers)
+            .task {
+                getProviders()
+                getBlacklisted()
+            }
         }
     }
-
+    
     var ProvidersSection: some View {
-        Section {} header: {
+        Section {
+            ForEach(providers) { provider in
+                Button {
+                    toggleBlacklist(provider.id)
+                } label: {
+                    HStack {
+                        Text(provider.name)
+                        Spacer()
+                        Image(systemName: "checkmark")
+                            .resizable()
+                            .opacity(blacklisted.contains(provider.id) ? 0 : 1)
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+
+            }
+        } header: {
             Text("Providers")
         }
+        .headerProminence(.increased)
+    }
+    
+    func getProviders() {
+        providers = model.chapters.compactMap(\.providers).flatMap({ $0 })
+    }
+    
+    func getBlacklisted() {
+        let id = model.sourceID
+        blacklisted = Set(STTHelpers.getBlacklistedProviders(for: id))
+    }
+    
+    func toggleBlacklist(_ id: String) {
+        if blacklisted.contains(id) {
+            blacklisted.remove(id)
+        } else {
+            blacklisted.insert(id)
+        }
+        
+        STTHelpers.setBlackListedProviders(for: model.sourceID, values: Array(blacklisted))
     }
 }
-
-//
-// extension FCS_Options {
-//    var AllProviders: [DSKCommon.ChapterProvider] {
-//        let providers = model
-//            .threadSafeChapters?
-//            .map { $0.providers ?? [] }
-//            .flatMap { $0 } ?? []
-//
-//        return providers
-//            .distinct()
-//            .sorted(by: \.name, descending: false)
-//    }
-//
-//    func toggleProvider(_ provider: DSKCommon.ChapterProvider) {
-//        if filteredProviders.contains(provider.id) {
-//            filteredProviders.removeAll(where: { $0 == provider.id })
-//        } else {
-//            filteredProviders.append(provider.id)
-//        }
-//    }
-// }
-//
-// extension FCS_Options {
-//    var AllLanugages: [String] {
-//        (model
-//            .threadSafeChapters?
-//            .compactMap { $0.language } ?? [])
-//            .distinct()
-//    }
-//
-//    func toggleLangauge(_ lang: String) {
-//        if filteredLanguages.contains(lang) {
-//            filteredLanguages.removeAll(where: { $0 == lang })
-//        } else {
-//            filteredLanguages.append(lang)
-//        }
-//    }
-//
-//    var LanguagesSection: some View {
-//        Section {
-//            ForEach(AllLanugages) { lang in
-//                Button { toggleLangauge(lang) } label: {
-//                    HStack {
-//                        LanguageCellView(language: lang)
-//                        Spacer()
-//                        Image(systemName: "eye.slash")
-//                            .foregroundColor(.red)
-//                            .opacity(filteredLanguages.contains(lang) ? 1 : 0)
-//                    }
-//                    .contentShape(Rectangle())
-//                }
-//                .buttonStyle(.plain)
-//            }
-//        } header: {
-//            Text("Languages")
-//        }
-//    }
-// }

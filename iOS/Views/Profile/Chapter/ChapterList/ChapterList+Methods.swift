@@ -11,9 +11,9 @@ import SwiftUI
 extension ChapterList {
     func doFilter() {
         model
-            .getFilteredChapters(onlyDownloads: showOnlyDownloads,
-                                 sortMethod: sortKey,
-                                 desc: !sortDesc)
+           .prepareChapterList(onlyDownloads: showOnlyDownloads,
+                                sortMethod: sortKey,
+                                desc: !sortDesc)
     }
 }
 
