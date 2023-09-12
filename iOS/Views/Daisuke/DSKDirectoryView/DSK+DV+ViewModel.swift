@@ -70,14 +70,20 @@ extension DirectoryView.ViewModel {
         }
         do {
             if config == nil {
-                try await getConfig()
-            }
-            
-            if request.sort == nil {
-                await MainActor.run {
-                    request.sort = configSort.default
+                do {
+                    try await getConfig()
+                } catch {
+                    Logger.shared.error(error)
                 }
             }
+            if config != nil && request.sort == nil {
+                if request.sort == nil {
+                    await MainActor.run {
+                        request.sort = configSort.default
+                    }
+                }
+            }
+
             
             await MainActor.run {
                 request.context = context

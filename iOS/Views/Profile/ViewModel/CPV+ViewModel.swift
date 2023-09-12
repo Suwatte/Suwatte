@@ -23,8 +23,8 @@ extension ProfileView {
             entry.contentId
         }
 
-        var content: DSKCommon.Content = .placeholder
-        var chapters: [ThreadSafeChapter] = []
+        @Published var content: DSKCommon.Content = .placeholder
+        @Published var chapters: [ThreadSafeChapter] = []
 
         @Published var contentState: Loadable<Bool> = .idle
         @Published var chapterState: Loadable<Bool> = .idle

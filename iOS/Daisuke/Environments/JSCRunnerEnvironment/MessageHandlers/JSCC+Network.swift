@@ -49,7 +49,7 @@ extension H {
     func makeRequest(with request: Message) async throws -> DSKCommon.Response {
         let urlRequest = try request.toURLRequest()
         let afResponse = await session.request(urlRequest)
-            .serializingString()
+            .serializingString(encoding: .utf8)
             .response
         session.session.configuration.timeoutIntervalForResource = request.timeout ?? 30
 
