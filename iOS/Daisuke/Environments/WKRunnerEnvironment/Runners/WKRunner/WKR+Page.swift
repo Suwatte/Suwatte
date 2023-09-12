@@ -13,13 +13,13 @@ extension WKRunner: DSKPageDelegate {
                        ["url": imageURL.absoluteString])
     }
 
-    func getSectionsForPage<T>(link: DSKCommon.PageLink) async throws -> [DaisukeEngine.Structs.PageSection<T>] where T: Parsable, T: Hashable {
+    func getSectionsForPage(link: DSKCommon.PageLink) async throws -> [DaisukeEngine.Structs.PageSection] {
         try await eval(script("let data = await RunnerObject.getSectionsForPage(link)"),
                        ["link": link.asDictionary()])
     }
 
     func willResolveSectionsForPage(link: DSKCommon.PageLink) async throws {
-        let script = try """
+        let script = """
             if (!RunnerObject.willResolveSectionsForPage) return;
             await RunnerObject.willResolveSectionsForPage(link);
         """
@@ -27,7 +27,7 @@ extension WKRunner: DSKPageDelegate {
                        ["link": link.asDictionary()])
     }
 
-    func resolvePageSection<T>(link: DSKCommon.PageLink, section: String) async throws -> DaisukeEngine.Structs.ResolvedPageSection<T> where T: Parsable, T: Hashable {
+    func resolvePageSection(link: DSKCommon.PageLink, section: String) async throws -> DaisukeEngine.Structs.ResolvedPageSection {
         try await eval(script("let data = await RunnerObject.resolvePageSection(link, section)"),
                        ["link": link.asDictionary(), "section": section])
     }

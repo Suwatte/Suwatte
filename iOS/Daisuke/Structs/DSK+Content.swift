@@ -104,6 +104,8 @@ extension DaisukeEngine.Structs {
         var isNSFW: Bool?
         var link: Linkable?
         var noninteractive: Bool?
+        var webUrl: String?
+        var entry: TrackEntry?
 
         var canStream: Bool {
             streamable ?? false

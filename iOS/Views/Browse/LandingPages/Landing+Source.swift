@@ -28,7 +28,7 @@ struct SourceLandingPage: View {
         var body: some View {
             Group {
                 if source.intents.pageLinkResolver {
-                    ContentSourcePageView(source: source, link: .init(key: "home", context: nil))
+                    ContentSourcePageView(source: source, link: .init(id: "home", context: nil))
                 } else {
                     ContentSourceDirectoryView(source: source, request: .init(page: 1))
                 }

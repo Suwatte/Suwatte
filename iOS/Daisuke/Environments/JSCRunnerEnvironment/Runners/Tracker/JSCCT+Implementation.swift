@@ -20,8 +20,8 @@ extension JSCContentTracker: ContentTracker {
     }
 
     /// Called to an item in the trackers database,
-    func getTrackItem(id: String) async throws -> DSKCommon.TrackItem {
-        try await callMethodReturningDecodable(method: "getTrackItem", arguments: [id], resolvesTo: DSKCommon.TrackItem.self)
+    func getTrackItem(id: String) async throws -> DSKCommon.Highlight {
+        try await callMethodReturningDecodable(method: "getTrackItem", arguments: [id], resolvesTo: DSKCommon.Highlight.self)
     }
 
     /// Called to update an entries progress.
@@ -30,8 +30,8 @@ extension JSCContentTracker: ContentTracker {
         try await callOptionalVoidMethod(method: "didUpdateLastReadChapter", arguments: [id, object])
     }
 
-    func getResultsForTitles(titles: [String]) async throws -> [DSKCommon.TrackItem] {
-        try await callMethodReturningDecodable(method: "getResultsForTitles", arguments: [titles], resolvesTo: [DSKCommon.TrackItem].self)
+    func getResultsForTitles(titles: [String]) async throws -> [DSKCommon.Highlight] {
+        try await callMethodReturningDecodable(method: "getResultsForTitles", arguments: [titles], resolvesTo: [DSKCommon.Highlight].self)
     }
 
     // Called to begin tracking an entry

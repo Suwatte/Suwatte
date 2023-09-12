@@ -14,9 +14,9 @@ extension JSCRunner: DSKPageDelegate {
         return try await callMethodReturningDecodable(method: "willRequestImage", arguments: [imageURL.absoluteString], resolvesTo: DSKCommon.Request.self)
     }
 
-    func getSectionsForPage<T: JSCObject>(link: DSKCommon.PageLink) async throws -> [DSKCommon.PageSection<T>] {
+    func getSectionsForPage(link: DSKCommon.PageLink) async throws -> [DSKCommon.PageSection] {
         let pageLink = try link.asDictionary()
-        return try await callMethodReturningDecodable(method: "getSectionsForPage", arguments: [pageLink], resolvesTo: [DSKCommon.PageSection<T>].self)
+        return try await callMethodReturningDecodable(method: "getSectionsForPage", arguments: [pageLink], resolvesTo: [DSKCommon.PageSection].self)
     }
 
     func willResolveSectionsForPage(link: DSKCommon.PageLink) async throws {
@@ -24,9 +24,9 @@ extension JSCRunner: DSKPageDelegate {
         try await callOptionalVoidMethod(method: "willResolveSectionsForPage", arguments: [pageLink])
     }
 
-    func resolvePageSection<T: JSCObject>(link: DSKCommon.PageLink, section: String) async throws -> DSKCommon.ResolvedPageSection<T> {
+    func resolvePageSection(link: DSKCommon.PageLink, section: String) async throws -> DSKCommon.ResolvedPageSection {
         let pageLink = try link.asDictionary()
-        return try await callMethodReturningDecodable(method: "resolvePageSection", arguments: [pageLink, section], resolvesTo: DSKCommon.ResolvedPageSection<T>.self)
+        return try await callMethodReturningDecodable(method: "resolvePageSection", arguments: [pageLink, section], resolvesTo: DSKCommon.ResolvedPageSection.self)
     }
 }
 

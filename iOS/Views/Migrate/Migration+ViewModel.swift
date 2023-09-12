@@ -175,7 +175,7 @@ extension MigrationController {
     }
 
     private func searchSource(query: String, chapter: Double?, source: AnyContentSource) async -> ReturnValue? {
-        let data: DSKCommon.PagedResult<DSKCommon.Highlight>? = try? await source.getDirectory(request: .init(query: query, page: 1))
+        let data: DSKCommon.PagedResult? = try? await source.getDirectory(request: .init(query: query, page: 1))
         let result = data?.results.first
 
         guard let result else { return nil }

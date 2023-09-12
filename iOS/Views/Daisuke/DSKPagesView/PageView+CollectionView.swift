@@ -10,7 +10,7 @@ import SwiftUI
 
 extension DSKPageView {
     struct CollectionView: View {
-        let pageSections: [DSKCommon.PageSection<T>]
+        let pageSections: [DSKCommon.PageSection]
         let runner: AnyRunner
         let tileModifier: PageItemModifier
         @State var locked = false
@@ -19,7 +19,7 @@ extension DSKPageView {
         @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
         @EnvironmentObject var model: ViewModel
 
-        init(sections: [DSKCommon.PageSection<T>], runner: AnyRunner, @ViewBuilder _ tileModifier: @escaping PageItemModifier) {
+        init(sections: [DSKCommon.PageSection], runner: AnyRunner, @ViewBuilder _ tileModifier: @escaping PageItemModifier) {
             pageSections = sections
             self.runner = runner
             self.tileModifier = tileModifier
@@ -52,7 +52,7 @@ extension DSKPageView.CollectionView {
     func loadAll(force: Bool = false) {
         guard !locked && !force else { return }
         locked = true // prevent from refiring
-        let unresolved = pageSections.filter { $0.items == nil }.map(\.key)
+        let unresolved = pageSections.filter { $0.items == nil }.map(\.id)
 
         Task {
             await withTaskGroup(of: Void.self, body: { group in
@@ -70,7 +70,7 @@ extension DSKPageView.CollectionView {
 
 extension DSKPageView.CollectionView {
     var layout: ASCollectionLayout<String> {
-        let cache = Dictionary(uniqueKeysWithValues: pageSections.map { ($0.key, $0.sectionStyle) })
+        let cache = Dictionary(uniqueKeysWithValues: pageSections.map { ($0.id, $0.sectionStyle) })
         return ASCollectionLayout { sectionID in
             let errors = model.errors
             // Errored Out, Show Error Layout
@@ -124,7 +124,7 @@ extension DSKPageView.CollectionView {
     var sections: [ASCollectionViewSection<String>] {
         let loadables = model.loadables
         return pageSections.map { section -> ASCollectionViewSection<String> in
-            let key = section.key
+            let key = section.id
             // Section was preloaded
             if let data = section.items {
                 return LoadedSection(section, data)
@@ -176,8 +176,8 @@ extension DSKPageView.CollectionView {
 // MARK: - Section Builders
 
 extension DSKPageView.CollectionView {
-    func PageNotFoundSection(_ section: DSKCommon.PageSection<T>) -> ASCollectionViewSection<String> {
-        ASCollectionViewSection(id: section.key) {
+    func PageNotFoundSection(_ section: DSKCommon.PageSection) -> ASCollectionViewSection<String> {
+        ASCollectionViewSection(id: section.id) {
             Text("Section not found.")
         }
         .sectionHeader {
@@ -190,14 +190,14 @@ extension DSKPageView.CollectionView {
         }
     }
 
-    func ErrorSection(_ section: DSKCommon.PageSection<T>, error: Error) -> ASCollectionViewSection<String> {
-        ASCollectionViewSection(id: section.key) {
+    func ErrorSection(_ section: DSKCommon.PageSection, error: Error) -> ASCollectionViewSection<String> {
+        ASCollectionViewSection(id: section.id) {
             ErrorView(error: error, runnerID: runner.id) {
                 Task.detached {
                     if case DaisukeEngine.Errors.Cloudflare = error {
                         await loadAll(force: true)
                     } else {
-                        await model.load(section.key)
+                        await model.load(section.id)
                     }
                 }
             }
@@ -212,8 +212,8 @@ extension DSKPageView.CollectionView {
         }
     }
 
-    func LoadedSection(_ section: DSKCommon.PageSection<T>, _ items: [DSKCommon.PageItem<T>], _ resolved: DSKCommon.ResolvedPageSection<T>? = nil) -> ASCollectionViewSection<String> {
-        ASCollectionViewSection(id: section.key, data: items, dataID: \.hashValue) { data, _ in
+    func LoadedSection(_ section: DSKCommon.PageSection, _ items: [DSKCommon.Highlight], _ resolved: DSKCommon.ResolvedPageSection? = nil) -> ASCollectionViewSection<String> {
+        ASCollectionViewSection(id: section.id, data: items, dataID: \.hashValue) { data, _ in
             buildPageItemView(data)
                 .environment(\.pageSectionStyle, section.sectionStyle)
         }
@@ -227,8 +227,8 @@ extension DSKPageView.CollectionView {
         }
     }
 
-    func LoadingSection(_ section: DSKCommon.PageSection<T>) -> ASCollectionViewSection<String> {
-        ASCollectionViewSection(id: section.key, data: DSKCommon.Highlight.placeholders()) { data, _ in
+    func LoadingSection(_ section: DSKCommon.PageSection) -> ASCollectionViewSection<String> {
+        ASCollectionViewSection(id: section.id, data: DSKCommon.Highlight.placeholders()) { data, _ in
             PageViewTile(runnerID: runner.id,
                          id: data.id,
                          title: data.title,
@@ -278,17 +278,24 @@ extension DSKPageView.CollectionView {
         }
     }
 
-    func buildPageItemView(_ data: DSKCommon.PageItem<T>) -> some View {
+    func buildPageItemView(_ data: DSKCommon.Highlight) -> some View {
         Group {
             if let link = data.link {
                 NavigationLink {
-                    PageLinkView(link: link.link, title: link.title, runnerID: runner.id)
+                    PageLinkView(link: link, title: data.title, runnerID: runner.id)
                 } label: {
-                    PageViewTile(runnerID: runner.id, id: link.hashValue.description, title: link.title, subtitle: link.subtitle, cover: link.cover ?? "", additionalCovers: nil, info: nil, badge: link.badge)
+                    PageViewTile(runnerID: runner.id,
+                                 id: data.id,
+                                 title: data.title,
+                                 subtitle: data.subtitle,
+                                 cover: data.cover,
+                                 additionalCovers: nil,
+                                 info: data.info,
+                                 badge: data.badge)
                 }
-                .buttonStyle(NeutralButtonStyle())
-            } else if let item = data.item {
-                tileModifier(item)
+                    .buttonStyle(NeutralButtonStyle())
+            } else {
+                tileModifier(data)
             }
         }
     }

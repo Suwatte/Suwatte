@@ -190,11 +190,11 @@ function setupSourceConfig() {
 }
 
 // Helper Methods
-const updateSourcePreferences = async (key, value) => {
+const updateSourcePreferences = async (id, value) => {
   const form = await RunnerObject.getPreferenceMenu();
   const pref = form.sections
     .flatMap((v) => v.children)
-    .find((v) => v.key === key);
+    .find((v) => v.id === id);
   if (!pref) return;
   if (pref.action) {
     return pref.action();

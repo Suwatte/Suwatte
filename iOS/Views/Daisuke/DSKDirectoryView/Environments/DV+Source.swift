@@ -20,7 +20,7 @@ struct ContentSourceDirectoryView: View {
     @Preference(\.protectContent) var protectContent
     
     var body: some View {
-        DirectoryView<DSKCommon.Highlight, DSKHighlightTile>(model: .init(runner: source, request: request)) { data in
+        DirectoryView(model: .init(runner: source, request: request)) { data in
             let identifier = ContentIdentifier(contentId: data.id,
                                                sourceId: source.id).id
             let inLibrary = model.library.contains(identifier)

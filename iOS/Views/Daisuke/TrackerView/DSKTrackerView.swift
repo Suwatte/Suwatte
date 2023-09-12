@@ -17,7 +17,7 @@ extension UINavigationController {
 
 struct DSKLoadableTrackerView: View {
     let tracker: AnyContentTracker
-    let item: DSKCommon.TrackItem
+    let item: DSKCommon.Highlight
     @State var loadable: Loadable<DSKCommon.FullTrackItem> = .idle
     
     var body: some View {
@@ -328,7 +328,7 @@ extension DSKTrackerView {
         Group {
             if let links = content.links {
                 InteractiveTagView(links) { tag in
-                    Link("\(Image(systemName: "link")) \(tag.label)",
+                    Link("\(Image(systemName: "link")) \(tag.title)",
                          destination: URL(string: tag.url) ?? STTHost.notFound)
                     .buttonStyle(.bordered)
                     .controlSize(.small)
@@ -360,7 +360,7 @@ extension DSKTrackerView {
     struct CollectionView: View {
         let tracker: AnyContentTracker
         let title: String
-        let collection: [DSKCommon.TrackItem]
+        let collection: [DSKCommon.Highlight]
         
         var body: some View {
             VStack(alignment: .leading, spacing: 5) {
@@ -382,7 +382,7 @@ extension DSKTrackerView {
     struct Cell: View {
         @AppStorage(STTKeys.TileStyle) private var style = TileStyle.SEPARATED
         @State var tracker: AnyContentTracker
-        @State var data: DSKCommon.TrackItem
+        @State var data: DSKCommon.Highlight
         
         var body: some View {
             NavigationLink {

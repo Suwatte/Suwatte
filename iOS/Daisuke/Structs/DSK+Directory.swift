@@ -66,18 +66,16 @@ extension DSKCommon {
         }
 
         struct SortSelection: JSCObject {
-            let key: String
+            let id: String
             var ascending: Bool
         }
     }
 
-    struct PagedResult<T>: Codable, Hashable where T: Codable, T: Hashable {
-        var results: [T]
+    struct PagedResult: JSCObject {
+        var results: [Highlight]
         var isLastPage: Bool
         var totalResultCount: Int?
     }
-
-    typealias PagedHighlight = PagedResult<DSKCommon.Highlight>
 
     struct HighlightCollection: Parsable, Identifiable, Hashable {
         var id: String

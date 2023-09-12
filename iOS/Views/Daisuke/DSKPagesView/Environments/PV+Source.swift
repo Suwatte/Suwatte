@@ -16,11 +16,11 @@ struct ContentSourcePageView: View {
     @State private var selection: HighlightIdentifier?
 
     var pageKey: String {
-        link.key
+        link.id
     }
 
     var body: some View {
-        DSKPageView<DSKCommon.Highlight, DSKHighlightTile>(model: .init(runner: source, link: link)) { item in
+        DSKPageView(model: .init(runner: source, link: link)) { item in
             let identifier = ContentIdentifier(contentId: item.id,
                                                sourceId: source.id).id
             

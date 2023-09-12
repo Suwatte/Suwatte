@@ -38,15 +38,15 @@ protocol DSKAuthDelegate {
 }
 
 protocol DSKDirectoryDelegate {
-    func getDirectory<T: Codable>(request: DSKCommon.DirectoryRequest) async throws -> DSKCommon.PagedResult<T>
+    func getDirectory(request: DSKCommon.DirectoryRequest) async throws -> DSKCommon.PagedResult
     func getDirectoryConfig(key: String?) async throws -> DSKCommon.DirectoryConfig
 }
 
 protocol DSKPageDelegate {
     func willRequestImage(imageURL: URL) async throws -> DSKCommon.Request
-    func getSectionsForPage<T: JSCObject>(link: DSKCommon.PageLink) async throws -> [DSKCommon.PageSection<T>]
+    func getSectionsForPage(link: DSKCommon.PageLink) async throws -> [DSKCommon.PageSection]
     func willResolveSectionsForPage(link: DSKCommon.PageLink) async throws
-    func resolvePageSection<T: JSCObject>(link: DSKCommon.PageLink, section: String) async throws -> DSKCommon.ResolvedPageSection<T>
+    func resolvePageSection(link: DSKCommon.PageLink, section: String) async throws -> DSKCommon.ResolvedPageSection
     func getLibraryPageLinks() async throws -> [DSKCommon.PageLinkLabel]
     func getBrowsePageLinks() async throws -> [DSKCommon.PageLinkLabel]
 }

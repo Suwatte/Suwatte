@@ -125,18 +125,18 @@ extension DSKHighlightTile {
     @ViewBuilder
     func buildActions() -> some View {
         LoadableView(loadActions, $actions) { groups in
-            ForEach(groups, id: \.key) { group in
-                ForEach(group.actions, id: \.key) { action in
+            ForEach(groups, id: \.id) { group in
+                ForEach(group.actions, id: \.id) { action in
                     if action.displayAsLabel {
-                        Text(action.label)
+                        Text(action.title)
                     } else {
                         Button(role: action.isDestructive ? .destructive : .none) {
-                            didTriggerActions(key: action.key)
+                            didTriggerActions(key: action.id)
                         } label: {
                             if let systemImage = action.systemImage {
-                                Label(action.label, systemImage: systemImage)
+                                Label(action.title, systemImage: systemImage)
                             } else {
-                                Text(action.label)
+                                Text(action.title)
                             }
                         }
                     }

@@ -62,7 +62,7 @@ struct TrackerManagementView: View {
 
 extension TrackerManagementView {
     final class ViewModel: ObservableObject {
-        typealias TrackItem = DSKCommon.TrackItem
+        typealias TrackItem = DSKCommon.Highlight
 
         var contentID: String
         var titles: [String]
@@ -154,7 +154,7 @@ extension TrackerManagementView {
 extension TrackerManagementView {
     struct TrackerItemCell: View {
         @EnvironmentObject var model: ViewModel
-        @State var item: DSKCommon.TrackItem
+        @State var item: DSKCommon.Highlight
         let tracker: AnyContentTracker
         @State var status: DSKCommon.TrackStatus
         private let size = 140.0
@@ -237,7 +237,7 @@ extension TrackerManagementView {
                             } label: {
                                 Label("Remove Link", systemImage: "trash")
                             }
-                            if let url = URL(string: item.webUrl) {
+                            if let url = URL(string: item.webUrl ?? "") {
                                 Link(destination: url) {
                                     Label("View on \(tracker.name)", systemImage: "square.and.arrow.up")
                                 }
@@ -331,7 +331,7 @@ extension TrackerManagementView {
     struct TrackerResultsSection: View {
         var tracker: AnyContentTracker
         var titles: [String]
-        @State private var loadable: Loadable<[DSKCommon.TrackItem]> = .idle
+        @State private var loadable: Loadable<[DSKCommon.Highlight]> = .idle
         @Binding var selections: [String: String]
 
         var body: some View {
@@ -364,7 +364,7 @@ extension TrackerManagementView {
 
         // MARK: Views
 
-        func ScrollableResultView(_ results: [DSKCommon.TrackItem]) -> some View {
+        func ScrollableResultView(_ results: [DSKCommon.Highlight]) -> some View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(results) { item in
@@ -376,7 +376,7 @@ extension TrackerManagementView {
             }
         }
 
-        func Cell(_ item: DSKCommon.TrackItem) -> some View {
+        func Cell(_ item: DSKCommon.Highlight) -> some View {
             ZStack(alignment: .topTrailing) {
                 DefaultTile(entry: .init(id: item.id, cover: item.cover, title: item.title))
                     .frame(width: 120, height: 230)

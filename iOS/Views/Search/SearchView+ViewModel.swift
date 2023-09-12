@@ -9,7 +9,7 @@ import RealmSwift
 import SwiftUI
 
 extension SearchView {
-    typealias PagedResult = DSKCommon.PagedHighlight
+    typealias PagedResult = DSKCommon.PagedResult
 
     struct ResultGroup: Hashable {
         let sourceID: String

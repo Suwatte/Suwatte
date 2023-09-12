@@ -13,7 +13,7 @@ struct ContentTrackerDirectoryView: View {
     let tracker: AnyContentTracker
     let request: DSKCommon.DirectoryRequest
     var body: some View {
-        DirectoryView<DSKCommon.TrackItem, Cell>(model: .init(runner: tracker, request: request)) { data in
+        DirectoryView(model: .init(runner: tracker, request: request)) { data in
             Cell(data: data, tracker: tracker)
         }
     }
@@ -23,7 +23,7 @@ struct ContentTrackerDirectoryView: View {
 
 extension ContentTrackerDirectoryView {
     struct Cell: View {
-        @State var data: DSKCommon.TrackItem
+        @State var data: DSKCommon.Highlight
         let tracker: AnyContentTracker
         var body: some View {
             NavigationLink {

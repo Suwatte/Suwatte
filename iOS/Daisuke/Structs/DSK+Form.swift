@@ -36,8 +36,8 @@ extension DSKCommon {
     }
 
     struct FormComponent: Parsable, Hashable {
-        let key: String
-        let label: String
+        let id: String
+        let title: String
         let type: UIComponentType
         let options: [Option]?
 

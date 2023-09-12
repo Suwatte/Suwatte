@@ -11,7 +11,7 @@ struct ContentTrackerPageView: View {
     let tracker: AnyContentTracker
     var link: DSKCommon.PageLink
     var body: some View {
-        DSKPageView<DSKCommon.TrackItem, Cell>(model: .init(runner: tracker, link: link)) { item in
+        DSKPageView(model: .init(runner: tracker, link: link)) { item in
             Cell(tracker: tracker, item: item)
         }
         .toolbar {
@@ -22,14 +22,14 @@ struct ContentTrackerPageView: View {
                 } label: {
                     Image(systemName: "magnifyingglass")
                 }
-                .opacity(link.key == "home" ? 1 : 0)
+                .opacity(link.id == "home" ? 1 : 0)
             }
         }
     }
 
     struct Cell: View {
         let tracker: AnyContentTracker
-        @State var item: DSKCommon.TrackItem
+        @State var item: DSKCommon.Highlight
         var body: some View {
             NavigationLink {
                 DSKLoadableTrackerView(tracker: tracker, item: item)
@@ -45,7 +45,7 @@ struct ContentTrackerPageView: View {
 
 struct TrackerContextModifier: ViewModifier {
     let tracker: AnyContentTracker
-    @Binding var item: DSKCommon.TrackItem
+    @Binding var item: DSKCommon.Highlight
     @State var presentEntryFormView = false
     @State var status: DSKCommon.TrackStatus
     @State var presentStatusDialog = false
@@ -112,7 +112,7 @@ struct TrackerContextModifier: ViewModifier {
                         }
                     }
                     Divider()
-                    if let url = URL(string: item.webUrl) {
+                    if let url = item.webUrl.flatMap ({ URL(string: $0) }) {
                         Link(destination: url) {
                             Label("View on \(tracker.name)", systemImage: "square.and.arrow.up")
                         }

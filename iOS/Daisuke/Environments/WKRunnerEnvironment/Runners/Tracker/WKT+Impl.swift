@@ -16,7 +16,7 @@ extension WKTracker: ContentTracker {
         try await eval("await RunnerObject.didSubmitEntryForm(id, form);", ["id": id, "form": form.asDictionary()])
     }
 
-    func getTrackItem(id: String) async throws -> DSKCommon.TrackItem {
+    func getTrackItem(id: String) async throws -> DSKCommon.Highlight {
         try await eval(script("let data = await RunnerObject.getTrackItem(id);"), ["id": id])
     }
 
@@ -24,7 +24,7 @@ extension WKTracker: ContentTracker {
         try await eval("await RunnerObject.didUpdateLastReadChapter(id, progress);", ["id": id, "progress": progress.asDictionary()])
     }
 
-    func getResultsForTitles(titles: [String]) async throws -> [DSKCommon.TrackItem] {
+    func getResultsForTitles(titles: [String]) async throws -> [DSKCommon.Highlight] {
         try await eval(script("let data = await RunnerObject.getResultsForTitles(titles);"), ["titles": titles])
     }
 

@@ -16,16 +16,6 @@ extension DSKCommon {
         case CURRENT, PLANNING, COMPLETED, PAUSED, DROPPED, REPEATING
     }
 
-    struct TrackItem: Parsable, Hashable, Identifiable {
-        let id: String
-        let title: String
-        let cover: String
-        let webUrl: String
-        var entry: TrackEntry?
-        let info: [String]?
-        let isNSFW: Bool?
-    }
-
     struct TrackProgress: Parsable, Hashable {
         var lastReadChapter: Double
         var lastReadVolume: Double?
@@ -110,8 +100,8 @@ extension DSKCommon {
         let properties: [Property]?
         let bannerCover: String?
         let isFavorite: Bool?
-        let relatedTitles: [TrackItem]?
-        let recommendedTitles: [TrackItem]?
+        let relatedTitles: [Highlight]?
+        let recommendedTitles: [Highlight]?
         let links: [TrackItemLink]?
         let additionalTitles: [String]?
         let status: ContentStatus?
@@ -126,7 +116,7 @@ extension DSKCommon {
     }
 
     struct TrackItemLink: Parsable, Hashable, Identifiable {
-        let label: String
+        let title: String
         let url: String
 
         var id: Int {

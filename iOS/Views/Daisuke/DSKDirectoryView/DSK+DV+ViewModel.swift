@@ -12,7 +12,7 @@ extension DirectoryView {
         var runner: AnyRunner
 
         // Core
-        @Published var result = Loadable<[T]>.idle
+        @Published var result = Loadable<[DSKCommon.Highlight]>.idle
         @Published var config: DSKCommon.DirectoryConfig?
         @Published var request: DSKCommon.DirectoryRequest
         @Published var pagination = PaginationStatus.IDLE
@@ -89,7 +89,7 @@ extension DirectoryView.ViewModel {
                 request.context = context
             }
             
-            let data: DSKCommon.PagedResult<T> = try await runner.getDirectory(request: request)
+            let data: DSKCommon.PagedResult = try await runner.getDirectory(request: request)
 
             await MainActor.run {
                 withAnimation {
@@ -125,7 +125,7 @@ extension DirectoryView.ViewModel {
         }
 
         do {
-            let data: DSKCommon.PagedResult<T> = try await runner.getDirectory(request: request)
+            let data: DSKCommon.PagedResult = try await runner.getDirectory(request: request)
             if data.results.isEmpty {
                 await MainActor.run {
                     self.pagination = .END

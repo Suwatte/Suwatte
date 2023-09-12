@@ -8,7 +8,7 @@
 import Foundation
 
 extension WKRunner: DSKDirectoryDelegate {
-    func getDirectory<T>(request: DSKCommon.DirectoryRequest) async throws -> DaisukeEngine.Structs.PagedResult<T> where T: Decodable, T: Encodable, T: Hashable {
+    func getDirectory(request: DSKCommon.DirectoryRequest) async throws -> DaisukeEngine.Structs.PagedResult {
         let args = try ["request": request.asDictionary()]
         return try await eval(script("let data = await RunnerObject.getDirectory(request)"), args)
     }

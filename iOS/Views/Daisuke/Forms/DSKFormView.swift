@@ -52,7 +52,7 @@ struct DSKFormView: View {
         List {
             ForEach(form.sections, id: \.hashValue) { section in
                 Section {
-                    ForEach(section.children, id: \.key) { component in
+                    ForEach(section.children, id: \.id) { component in
                         ComponentBuilder(component: component)
                     }
                 } header: {
@@ -115,9 +115,9 @@ extension DSKFormView {
             formHasChanged = true
             switch context {
             case .preference:
-                triggerSettingUpdate(key: component.key, value: value)
+                triggerSettingUpdate(key: component.id, value: value)
             case .tracker, .setup:
-                update(component.key, value)
+                update(component.id, value)
             }
         }
 
@@ -167,7 +167,7 @@ extension DSKFormView {
         func seed(with form: DSKCommon.Form) {
             let components = form.sections.flatMap { $0.children }
             for component in components {
-                let key = component.key
+                let key = component.id
                 if let value = component.value {
                     self.form[key] = value
                 }
@@ -184,9 +184,9 @@ extension DSKFormView {
         @EnvironmentObject private var model: ViewModel
         var body: some View {
             HStack {
-                if model.disabled.contains(component.key) {
+                if model.disabled.contains(component.id) {
                     AddButton
-                    Text(component.label)
+                    Text(component.title)
                 } else {
                     if component.isOptional {
                         RemoveButton
@@ -200,8 +200,8 @@ extension DSKFormView {
 
         var RemoveButton: some View {
             Button {
-                model.disabled.insert(component.key)
-                model.remove(component.key)
+                model.disabled.insert(component.id)
+                model.remove(component.id)
             } label: {
                 Image(systemName: "xmark.circle.fill")
                     .tint(.red)
@@ -210,7 +210,7 @@ extension DSKFormView {
 
         var AddButton: some View {
             Button {
-                model.disabled.remove(component.key)
+                model.disabled.remove(component.id)
             } label: {
                 Image(systemName: "xmark.circle.fill")
                     .tint(.green)
@@ -240,9 +240,9 @@ extension DSKFormView {
         var body: some View {
             Button {} label: {
                 if let image = component.systemImage {
-                    Label(component.label, systemImage: image)
+                    Label(component.title, systemImage: image)
                 } else {
-                    Text(component.label)
+                    Text(component.title)
                 }
             }
         }
@@ -269,7 +269,7 @@ extension DSKFormView {
         }
 
         var body: some View {
-            DatePicker(component.label, selection: $value, displayedComponents: .date)
+            DatePicker(component.title, selection: $value, displayedComponents: .date)
                 .onChange(of: value, perform: didChange(_:))
                 .animation(.default, value: value)
                 .animation(.default, value: triggered)
@@ -302,14 +302,14 @@ extension DSKFormView {
                 MultiSelectionView(options: component.options ?? [], selection: $selections) { value in
                     Text(value.title)
                 }
-                .navigationTitle(component.label)
+                .navigationTitle(component.title)
                 .onChange(of: selections) { newValue in
                     let out = newValue.map { $0.id }
                     model.didSet(out, for: component)
                 }
                 .animation(.default, value: selections)
             } label: {
-                FieldLabel(primary: component.label, secondary: "\(selections.count) Selection\(selections.count != 1 ? "s" : "")")
+                FieldLabel(primary: component.title, secondary: "\(selections.count) Selection\(selections.count != 1 ? "s" : "")")
             }
         }
     }
@@ -330,7 +330,7 @@ extension DSKFormView {
         }
 
         var body: some View {
-            Picker(component.label, selection: $selection) {
+            Picker(component.title, selection: $selection) {
                 ForEach(component.options ?? []) { option in
                     Text(option.title)
                         .tag(option.id)
@@ -370,7 +370,7 @@ extension DSKFormView {
 
         var body: some View {
             HStack {
-                Text(component.label)
+                Text(component.title)
                 Spacer()
                 HStack {
                     Button {
@@ -392,7 +392,7 @@ extension DSKFormView {
         }
 
         private func presentAlert(_ current: Double) {
-            let alertController = UIAlertController(title: "Update \(component.label)", message: nil, preferredStyle: .alert)
+            let alertController = UIAlertController(title: "Update \(component.title)", message: nil, preferredStyle: .alert)
 
             alertController.addTextField { textField in
                 textField.placeholder = current.clean
@@ -461,7 +461,7 @@ extension DSKFormView {
                     })
 
             } else {
-                TextField(component.label, text: $text)
+                TextField(component.title, text: $text)
                     .onSubmit {
                         model.didSet(text, for: component)
                     }
@@ -484,7 +484,7 @@ extension DSKFormView {
         }
 
         var body: some View {
-            Toggle(component.label, isOn: $value)
+            Toggle(component.title, isOn: $value)
                 .onChange(of: value) { _ in
                     model.didSet(value, for: component)
                 }

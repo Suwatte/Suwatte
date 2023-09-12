@@ -8,9 +8,9 @@
 import RealmSwift
 import SwiftUI
 
-struct DSKPageView<T: JSCObject, C: View>: View {
+struct DSKPageView<C: View>: View {
     @StateObject var model: ViewModel
-    typealias PageItemModifier = (T) -> C
+    typealias PageItemModifier = (DSKCommon.Highlight) -> C
     let modifier: PageItemModifier
 
     init(model: ViewModel, @ViewBuilder _ modifier: @escaping PageItemModifier) {
@@ -30,8 +30,8 @@ extension DSKPageView {
     final class ViewModel: ObservableObject {
         let runner: AnyRunner
         let link: DSKCommon.PageLink
-        @Published var loadable = Loadable<[DSKCommon.PageSection<T>]>.idle
-        @Published var loadables: [String: Loadable<DSKCommon.ResolvedPageSection<T>>] = [:]
+        @Published var loadable = Loadable<[DSKCommon.PageSection]>.idle
+        @Published var loadables: [String: Loadable<DSKCommon.ResolvedPageSection>] = [:]
         @Published var errors = Set<String>()
 
         init(runner: AnyRunner, link: DSKCommon.PageLink) {
@@ -43,7 +43,7 @@ extension DSKPageView {
             await MainActor.run {
                 loadable = .loading
             }
-            let data: [DSKCommon.PageSection<T>] = try await runner.getSectionsForPage(link: link) // Load Page
+            let data: [DSKCommon.PageSection] = try await runner.getSectionsForPage(link: link) // Load Page
             if !data.allSatisfy({ $0.items != nil }) {
                 try await runner.willResolveSectionsForPage(link: link) // Tell Runner that suwatte will begin resolution of page sections
             }
@@ -60,7 +60,7 @@ extension DSKPageView {
                 errors.remove(sectionID)
             }
             do {
-                let data: DSKCommon.ResolvedPageSection<T> = try await runner.resolvePageSection(link: link, section: sectionID)
+                let data: DSKCommon.ResolvedPageSection = try await runner.resolvePageSection(link: link, section: sectionID)
                 await MainActor.run{
                     if data.items.isEmpty {
                         loadables.removeValue(forKey: sectionID)

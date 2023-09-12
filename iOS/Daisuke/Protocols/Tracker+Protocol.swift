@@ -18,11 +18,11 @@ protocol ContentTracker: DSKRunner {
 
     func didSubmitEntryForm(id: String, form: DSKCommon.CodableDict) async throws
 
-    func getTrackItem(id: String) async throws -> DSKCommon.TrackItem
+    func getTrackItem(id: String) async throws -> DSKCommon.Highlight
 
     func didUpdateLastReadChapter(id: String, progress: DSKCommon.TrackProgressUpdate) async throws
 
-    func getResultsForTitles(titles: [String]) async throws -> [DSKCommon.TrackItem]
+    func getResultsForTitles(titles: [String]) async throws -> [DSKCommon.Highlight]
 
     func beginTracking(id: String, status: DSKCommon.TrackStatus) async throws
 

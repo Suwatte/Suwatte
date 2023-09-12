@@ -10,8 +10,8 @@ import SwiftUI
 
 extension DirectoryView {
     struct ResultsView: View {
-        var entries: [T]
-        var builder: (T) -> C
+        let entries: [DSKCommon.Highlight]
+        let builder: (DSKCommon.Highlight) -> C
 
         @State var presentDialog = false
         @EnvironmentObject var model: ViewModel
@@ -96,10 +96,10 @@ extension DirectoryView.ResultsView {
                 ForEach(model.configSort.options, id: \.id) { sorter in
                     Button(sorter.title) {
                         withAnimation {
-                            if let currentSelection = model.request.sort, currentSelection.key == sorter.id, model.configSort.canChangeOrder {
-                                model.request.sort = .init(key: sorter.id, ascending: !currentSelection.ascending)
+                            if let currentSelection = model.request.sort, currentSelection.id == sorter.id, model.configSort.canChangeOrder {
+                                model.request.sort = .init(id: sorter.id, ascending: !currentSelection.ascending)
                             } else {
-                                model.request.sort = .init(key: sorter.id, ascending: false)
+                                model.request.sort = .init(id: sorter.id, ascending: false)
                             }
                             model.request.page = 1
                             Task {
@@ -113,9 +113,9 @@ extension DirectoryView.ResultsView {
         }
 
         var title: String {
-            let current = model.request.sort?.key
+            let current = model.request.sort?.id
             let label = model.configSort.options.first(where: { $0.id == current })?.title
-            return label ?? model.configSort.options.first(where: { $0.id == model.configSort.default?.key })?.title ?? "Default"
+            return label ?? model.configSort.options.first(where: { $0.id == model.configSort.default?.id })?.title ?? "Default"
         }
     }
 }

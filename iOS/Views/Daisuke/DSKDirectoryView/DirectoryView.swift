@@ -7,16 +7,16 @@
 
 import SwiftUI
 
-struct DirectoryView<T: Codable & Hashable, C: View>: View {
+struct DirectoryView<C: View>: View {
     @StateObject var model: ViewModel
     @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
     @Environment(\.isSearching) private var isSearching: Bool
 
     var title: String?
-    var content: (T) -> C
+    var content: (DSKCommon.Highlight) -> C
     @State var firstCall = false
 
-    init(model: ViewModel, @ViewBuilder _ content: @escaping (T) -> C) {
+    init(model: ViewModel, @ViewBuilder _ content: @escaping (DSKCommon.Highlight) -> C) {
         _model = StateObject(wrappedValue: model)
         self.content = content
     }
