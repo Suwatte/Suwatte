@@ -99,7 +99,7 @@ extension StoredTag: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         try container.encode(id, forKey: .id)
-        try container.encode(label, forKey: .label)
+        try container.encode(label, forKey: .title)
         try container.encode(adultContent, forKey: .adultContent)
     }
 }
@@ -124,7 +124,7 @@ extension StoredProperty: Codable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: Keys.self)
 
-        try container.encode(label, forKey: .label)
+        try container.encode(label, forKey: .title)
         try container.encode(tags, forKey: .tags)
         try container.encode(id, forKey: .id)
     }

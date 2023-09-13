@@ -21,9 +21,16 @@ extension ViewModel {
         }
 
         let target = await actor
-            .getStoredContent(source.id, entry.id)
-        return try? target?
-            .toDSKContent()
+            .getStoredContent(identifier)
+        
+        do {
+            return try target?
+                .toDSKContent()
+        } catch {
+            Logger.shared.error(error, "CPVM")
+        }
+        
+        return nil
     }
 
     func getChaptersFromDatabase() async -> [StoredChapter]? {
