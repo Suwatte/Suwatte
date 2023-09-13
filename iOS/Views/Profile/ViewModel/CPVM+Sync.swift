@@ -35,12 +35,17 @@ extension ViewModel {
                 guard let tracker = await DSK.shared.getTracker(id: key) else {
                     continue
                 }
+                
 
                 group.addTask {
                     do {
-                        let item = try await tracker.getTrackItem(id: value)
-                        let originMaxReadChapter = item.entry?.progress.lastReadChapter ?? 0
-                        let originMaxVolume = item.entry?.progress.lastReadVolume
+                        guard let _ = try await tracker.getAuthenticatedUser(),
+                              let entry = try await tracker.getTrackItem(id: value).entry else {
+                            return (tracker.id, 0)
+                        }
+                        
+                        let originMaxReadChapter = entry.progress.lastReadChapter
+                        let originMaxVolume = entry.progress.lastReadVolume ?? 0
                         return (tracker.id, ThreadSafeChapter.orderKey(volume: originMaxVolume, number: originMaxReadChapter))
                     } catch {
                         Logger.shared.error(error, tracker.id)
@@ -81,23 +86,18 @@ extension ViewModel {
         let (maxReadVolume, maxReadChapter) = ThreadSafeChapter.vnPair(from: maxRead)
 
         // Update Origin Value if outdated
-        await withTaskGroup(of: String?.self, body: { group in
+        await withTaskGroup(of: Void.self, body: { group in
             for (key, value) in markers {
-                guard let tracker = await DSK.shared.getTracker(id: key), maxRead > value, let entryId = matches[key] else { return }
+                guard let tracker = await DSK.shared.getTracker(id: key), maxRead > value, let entryId = matches[key] else { continue }
                 group.addTask {
+                    guard let _ = try? await tracker.getAuthenticatedUser() else { return }
+
                     do {
                         try await tracker.didUpdateLastReadChapter(id: entryId, progress: .init(chapter: maxReadChapter, volume: maxReadVolume))
-                        return tracker.id
                     } catch {
                         Logger.shared.error(error, tracker.id)
                     }
-                    return nil
                 }
-            }
-
-            for await result in group {
-                guard let result else { continue }
-                Logger.shared.debug("Sync Complete", result)
             }
         })
 

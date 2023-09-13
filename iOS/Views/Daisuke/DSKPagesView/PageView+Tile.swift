@@ -74,10 +74,11 @@ extension PageViewTile {
         VStack(alignment: .leading) {
             ForEach(info ?? []) {
                 Text($0)
+                    .lineLimit(2)
             }
         }
-        .lineLimit(3)
         .multilineTextAlignment(.leading)
+        .clipped()
         .font(.subheadline.weight(.thin))
     }
 }
@@ -187,10 +188,10 @@ extension PageViewTile {
                     VStack(alignment: .center) {
                         ForEach(info ?? []) {
                             Text($0)
+                                .lineLimit(2)
                         }
                     }
-                    .lineLimit(3)
-                    .multilineTextAlignment(.leading)
+                    .multilineTextAlignment(.center)
                     .font(.footnote.weight(.thin))
 
                     if covers.count > 1 {

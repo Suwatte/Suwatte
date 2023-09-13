@@ -46,7 +46,7 @@ extension Skeleton.Header {
         var data = Array<ColoredLabel>()
         
         if let creators = entry.creators, !creators.isEmpty {
-            data.append(contentsOf: creators.map( { .init(text: $0, color: .accentColor) }))
+            data.append(contentsOf: creators.prefix(2).map( { .init(text: $0, color: .accentColor) }))
         }
         
         if let status = entry.status {
@@ -64,7 +64,7 @@ extension Skeleton.Header {
         }
         
         if let info = entry.info {
-            data.append(contentsOf: info.map( { .init(text: $0, color: .accentColor) }))
+            data.append(contentsOf: info.prefix(5).map( { .init(text: $0, color: .accentColor) }))
         }
         
         return data

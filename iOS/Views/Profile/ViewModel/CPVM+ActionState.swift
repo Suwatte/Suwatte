@@ -36,6 +36,13 @@ extension ViewModel {
                          chapter: chapter,
                          marker: nil)
         }
+        
+        // This Method gets called twice. First After Chapters are loaded & after syncing is complete
+        // It should return the current action state if the max read chapter was not changed after syncing
+        if let currentRead = actionState.chapter?.chapterOrderKey,
+           let maxRead =  marker.maxReadChapterKey, maxRead <= currentRead {
+            return actionState
+        }
 
         guard let chapterRef = marker.currentChapter else {
             // Marker Exists but there is not reference to the chapter
