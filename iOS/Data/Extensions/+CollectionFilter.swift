@@ -28,7 +28,7 @@ enum ContentSelectionType: Int, PersistableEnum, CaseIterable, Identifiable, Cod
 }
 
 enum ExternalContentType: Int, PersistableEnum, CaseIterable, Identifiable, Codable {
-    case unknown, manga, manhua, manhwa, comic, novel
+    case manga, manhua, manhwa, comic, novel
 
     var id: Int {
         hashValue
@@ -46,8 +46,6 @@ enum ExternalContentType: Int, PersistableEnum, CaseIterable, Identifiable, Coda
             return "Manhwa"
         case .comic:
             return "Comic"
-        case .unknown:
-            return "Unknown"
         }
     }
 }

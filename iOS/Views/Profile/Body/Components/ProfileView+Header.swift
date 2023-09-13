@@ -16,7 +16,7 @@ extension Skeleton {
         @EnvironmentObject var model: ProfileView.ViewModel
         @State var presentThumbnails = false
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
-
+        @State var labels: [ColoredLabel] = []
         var entry: DSKCommon.Content {
             model.content
         }
@@ -37,6 +37,10 @@ extension Skeleton {
             }
             .frame(height: ImageWidth * 1.5, alignment: .topLeading)
             .padding(.horizontal)
+            .task {
+                guard labels.isEmpty else { return }
+                labels = buildLabels()
+            }
         }
     }
 }
@@ -46,17 +50,18 @@ extension Skeleton.Header {
         var data = Array<ColoredLabel>()
         
         if let creators = entry.creators, !creators.isEmpty {
-            data.append(contentsOf: creators.prefix(2).map( { .init(text: $0, color: .accentColor) }))
+            data.append(contentsOf: creators.prefix(2).map( { .init(text: $0, color: .random) }))
         }
         
         if let status = entry.status {
             data.append(.init(text: status.description, color: status.color))
         }
         
-        data.append(.init(text: model.source.name, color: .accentColor))
         
-        if let contentType = entry.contentType, contentType == .novel {
-            data.append(.init(text: "Novel", color: .blue))
+        data.append(.init(text: model.source.name, color: .random))
+        
+        if let contentType = entry.contentType {
+            data.append(.init(text: contentType.description, color: contentType == .novel ? .blue : .random))
         }
         
         if entry.isNSFW ?? false {
@@ -64,14 +69,14 @@ extension Skeleton.Header {
         }
         
         if let info = entry.info {
-            data.append(contentsOf: info.prefix(5).map( { .init(text: $0, color: .accentColor) }))
+            data.append(contentsOf: info.prefix(5).map( { .init(text: $0, color: .random) }))
         }
         
         return data
     }
     
     var LabelsView: some View {
-        InteractiveTagView(buildLabels()) { label in
+        InteractiveTagView(labels) { label in
             Text(label.text)
                 .font(.caption)
                 .fontWeight(.semibold)

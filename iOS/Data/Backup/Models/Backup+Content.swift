@@ -41,7 +41,7 @@ extension StoredContent: Codable {
             properties.append(objectsIn: props)
         }
         recommendedPanelMode = try container.decodeIfPresent(ReadingMode.self, forKey: .recommendedPanelMode)
-        contentType = try container.decodeIfPresent(ExternalContentType.self, forKey: .contentType) ?? .unknown
+        contentType = try container.decodeIfPresent(ExternalContentType.self, forKey: .contentType)
         if let info = try container.decodeIfPresent(Map<String, String>.self, forKey: .trackerInfo) {
             trackerInfo = info
         }
