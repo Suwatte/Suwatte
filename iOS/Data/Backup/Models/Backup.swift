@@ -12,9 +12,10 @@ struct Backup: Codable {
     var lists: [StoredRunnerList]?
     var runners: [StoredRunnerObject]?
 
-    var library: [LibraryEntry]?
+    var library: [CodableLibraryEntry]?
     var collections: [LibraryCollection]?
-    var markers: [ProgressMarker]?
+    var markers: [OutdatedMarker]?
+    var progressMarkers: [ProgressMarker]?
 
     var date: Date = .init()
     var appVersion: String = Bundle.main.releaseVersionNumber ?? "UNKNOWN"

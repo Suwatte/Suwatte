@@ -27,6 +27,10 @@ extension STTChapter {
     var chapterName: String {
         "Chapter \(number.clean)"
     }
+    
+    var chapterOrderKey: Double {
+        ThreadSafeChapter.orderKey(volume: volume, number: number)
+    }
 }
 
 final class ChapterReference: Object, CKRecordConvertible, CKRecordRecoverable, STTChapter {
@@ -43,7 +47,4 @@ final class ChapterReference: Object, CKRecordConvertible, CKRecordRecoverable, 
         content != nil || opds != nil || archive != nil
     }
 
-    var chapterOrderKey: Double {
-        ThreadSafeChapter.orderKey(volume: volume, number: number)
-    }
 }

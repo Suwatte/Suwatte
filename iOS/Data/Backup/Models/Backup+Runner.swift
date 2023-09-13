@@ -42,7 +42,7 @@ extension StoredRunnerObject: Codable {
         listURL = try container.decodeIfPresent(String.self, forKey: .listURL) ?? ""
         thumbnail = try container.decodeIfPresent(String.self, forKey: .thumbnail) ?? ""
         parentRunnerID = try container.decodeIfPresent(String.self, forKey: .parentRunnerID)
-        version = try container.decode(Double.self, forKey: .version)
+        version = try container.decodeIfPresent(Double.self, forKey: .version) ?? 0.1
         environment = try container.decodeIfPresent(RunnerEnvironment.self, forKey: .environment) ?? .unknown
         enabled = try container.decodeIfPresent(Bool.self, forKey: .enabled) ?? true
         isLibraryPageLinkProvider = try container.decodeIfPresent(Bool.self, forKey: .isLibraryPageLinkProvider) ?? false

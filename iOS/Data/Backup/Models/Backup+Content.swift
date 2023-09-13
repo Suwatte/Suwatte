@@ -25,32 +25,32 @@ extension StoredContent: Codable {
         contentId = try container.decodeIfPresent(String.self, forKey: .contentId) ?? ""
         title = try container.decodeIfPresent(String.self, forKey: .title) ?? ""
         cover = try container.decodeIfPresent(String.self, forKey: .cover) ?? ""
-        if let covers = try container.decodeIfPresent(List<String>.self, forKey: .additionalCovers) {
+        if let covers = try? container.decodeIfPresent(List<String>.self, forKey: .additionalCovers) {
             additionalCovers.append(objectsIn: covers)
         }
-        if let titles = try container.decodeIfPresent(List<String>.self, forKey: .additionalTitles) {
+        if let titles = try? container.decodeIfPresent(List<String>.self, forKey: .additionalTitles) {
             additionalTitles.append(objectsIn: titles)
         }
-        if let creators = try container.decodeIfPresent(List<String>.self, forKey: .creators) {
+        if let creators = try? container.decodeIfPresent(List<String>.self, forKey: .creators) {
             self.creators.append(objectsIn: creators)
         }
-        status = try container.decodeIfPresent(ContentStatus.self, forKey: .status) ?? .UNKNOWN
-        summary = try container.decodeIfPresent(String.self, forKey: .summary)
-        webUrl = try container.decodeIfPresent(String.self, forKey: .webUrl)
-        if let props = try container.decodeIfPresent(List<StoredProperty>.self, forKey: .properties) {
+        status = try? container.decodeIfPresent(ContentStatus.self, forKey: .status)
+        summary = try? container.decodeIfPresent(String.self, forKey: .summary)
+        webUrl = try? container.decodeIfPresent(String.self, forKey: .webUrl)
+        if let props = try? container.decodeIfPresent(List<StoredProperty>.self, forKey: .properties) {
             properties.append(objectsIn: props)
         }
-        recommendedPanelMode = try container.decodeIfPresent(ReadingMode.self, forKey: .recommendedPanelMode)
-        contentType = try container.decodeIfPresent(ExternalContentType.self, forKey: .contentType)
-        if let info = try container.decodeIfPresent(Map<String, String>.self, forKey: .trackerInfo) {
+        recommendedPanelMode = try? container.decodeIfPresent(ReadingMode.self, forKey: .recommendedPanelMode)
+        contentType = try? container.decodeIfPresent(ExternalContentType.self, forKey: .contentType)
+        if let info = try? container.decodeIfPresent(Map<String, String>.self, forKey: .trackerInfo) {
             trackerInfo = info
         }
 
-        acquisitionLink = try container.decodeIfPresent(String.self, forKey: .acquisitionLink)
-        streamable = try container.decodeIfPresent(Bool.self, forKey: .streamable) ?? false
+        acquisitionLink = try? container.decodeIfPresent(String.self, forKey: .acquisitionLink)
+        streamable = (try? container.decodeIfPresent(Bool.self, forKey: .streamable)) ?? false
 
-        isNSFW = try container.decodeIfPresent(Bool.self, forKey: .isNSFW)
-        info = try container.decodeIfPresent(List<String>.self, forKey: .info) ?? .init()
+        isNSFW = try? container.decodeIfPresent(Bool.self, forKey: .isNSFW)
+        info = (try? container.decodeIfPresent(List<String>.self, forKey: .info)) ?? .init()
     }
 
     func encode(to encoder: Encoder) throws {

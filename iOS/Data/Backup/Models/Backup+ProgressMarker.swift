@@ -38,3 +38,16 @@ extension ProgressMarker: Codable {
         try container.encode(currentChapter, forKey: .currentChapter)
     }
 }
+
+struct OutdatedMarker: Codable, Hashable {
+    // Identifier
+    var id: String
+    var chapter: CodableChapter
+
+    var dateRead: Date?
+
+    // Progress
+    var lastPageRead: Int
+    var totalPageCount: Int
+    var completed: Bool
+}

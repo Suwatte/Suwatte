@@ -39,8 +39,8 @@ extension RealmActor {
 
         var backup = Backup()
 
-        backup.markers = progressMarkers.toArray()
-        backup.library = libraryEntries.toArray()
+        backup.progressMarkers = progressMarkers.toArray()
+        backup.library = libraryEntries.map(CodableLibraryEntry.from(entry:))
         backup.collections = collections.toArray()
         backup.lists = lists.toArray()
         backup.runners = runners.toArray()
@@ -55,11 +55,20 @@ extension RealmActor {
     func restoreBackup(backup: Backup) async throws {
         try await resetDB()
 
+        var library: [LibraryEntry] = []
+        if let entries = backup.library {
+            let data = try DaisukeEngine.encode(value: entries)
+            library = try DaisukeEngine.decode(data: data, to: [LibraryEntry].self)
+        }
         try await realm.asyncWrite {
-            if let libraryEntries = backup.library {
-                let contents = libraryEntries.compactMap { $0.content }
+            if let markers = backup.markers {
+                restoreOutdatedMarkers(markers, realm: realm)
+            }
+            
+            if !library.isEmpty {
+                let contents = library.compactMap { $0.content }
                 realm.add(contents, update: .all)
-                realm.add(libraryEntries, update: .all)
+                realm.add(library, update: .all)
             }
 
             if let collections = backup.collections {
@@ -70,10 +79,52 @@ extension RealmActor {
                 realm.add(runnerLists, update: .all)
             }
 
-            if let markers = backup.markers {
+            if let markers = backup.progressMarkers {
                 realm.add(markers, update: .all)
             }
+            
+           
         }
+    }
+    
+    func restoreOutdatedMarkers(_ data: [OutdatedMarker], realm: Realm) {
+        let data = Dictionary(grouping: data) { marker in
+            ContentIdentifier(contentId: marker.chapter.contentId, sourceId: marker.chapter.sourceId)
+        }
+        
+        func getReference(_ chapter: CodableChapter?, id: ContentIdentifier) -> ChapterReference? {
+            guard let chapter else { return nil }
+            let reference = ChapterReference()
+            let content = StoredContent()
+            content.id = id.id
+            content.sourceId = id.sourceId
+            content.contentId = id.contentId
+            content.title = "~"
+            reference.content = content
+            reference.id = chapter.id
+            reference.chapterId = chapter.chapterId
+            reference.number = chapter.number
+            reference.volume = chapter.volume
+            return reference
+        }
+        
+        for (id, markers) in data {
+            guard !id.id.isEmpty else { continue }
+            let readChapters = markers.map(\.chapter.chapterOrderKey)
+            let maxRead = markers.max(by: \.chapter.chapterOrderKey)
+            let reference = getReference(maxRead?.chapter, id: id)
+            guard let reference, let maxRead else { continue }
+            
+            let marker = ProgressMarker()
+            marker.id = id.id
+            marker.readChapters.insert(objectsIn: readChapters)
+            marker.currentChapter = reference
+            marker.dateRead = maxRead.dateRead
+            marker.lastPageRead = maxRead.lastPageRead
+            marker.totalPageCount = maxRead.totalPageCount
+            realm.add(marker, update: .modified)
+        }
+
     }
 }
 
