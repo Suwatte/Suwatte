@@ -146,6 +146,7 @@
 		DF489C3F2A84835F006A21B9 /* VerticalPaged+Representable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF489C3E2A84835F006A21B9 /* VerticalPaged+Representable.swift */; };
 		DF489C452A848453006A21B9 /* IV+VerticalLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF489C442A848453006A21B9 /* IV+VerticalLayout.swift */; };
 		DF49415929F4B20800DE9EDC /* ColoredBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF49415829F4B20800DE9EDC /* ColoredBadge.swift */; };
+		DF4EB4C82AB24635001A73CD /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EB4C72AB24635001A73CD /* OnboardingView.swift */; };
 		DF52FBAF28939745008FAD3A /* PagingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF52FBAE28939745008FAD3A /* PagingScrollView.swift */; };
 		DF52FBBE289487C6008FAD3A /* STTGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF52FBBD289487C6008FAD3A /* STTGridView.swift */; };
 		DF52FBC22896F762008FAD3A /* CollectionManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF52FBC12896F761008FAD3A /* CollectionManagementView.swift */; };
@@ -611,6 +612,7 @@
 		DF489C3E2A84835F006A21B9 /* VerticalPaged+Representable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VerticalPaged+Representable.swift"; sourceTree = "<group>"; };
 		DF489C442A848453006A21B9 /* IV+VerticalLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IV+VerticalLayout.swift"; sourceTree = "<group>"; };
 		DF49415829F4B20800DE9EDC /* ColoredBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoredBadge.swift; sourceTree = "<group>"; };
+		DF4EB4C72AB24635001A73CD /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		DF52FBAE28939745008FAD3A /* PagingScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingScrollView.swift; sourceTree = "<group>"; };
 		DF52FBBD289487C6008FAD3A /* STTGridView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = STTGridView.swift; sourceTree = "<group>"; };
 		DF52FBC12896F761008FAD3A /* CollectionManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionManagementView.swift; sourceTree = "<group>"; };
@@ -1386,6 +1388,14 @@
 			path = Representables;
 			sourceTree = "<group>";
 		};
+		DF4EB4C62AB24628001A73CD /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				DF4EB4C72AB24635001A73CD /* OnboardingView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
 		DF553CC729726F39004C3428 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -1680,6 +1690,7 @@
 		DF8D0A2D2800EE47003E4C3E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				DF4EB4C62AB24628001A73CD /* Onboarding */,
 				DF62B5B32A95EDB500F907CD /* ContentSettings */,
 				DF8D0A582800EE47003E4C3E /* ReadLater */,
 				DF1EA4452A70B78C003E27C7 /* SourceDownload */,
@@ -2766,6 +2777,7 @@
 				DFBE48402A25BCA7000ABA16 /* StoreObject.swift in Sources */,
 				DF1114822A92EA2100FA8A39 /* WebtoonController+Rotation.swift in Sources */,
 				DF326461280256760066EB08 /* ProfileView+RelatedContent.swift in Sources */,
+				DF4EB4C82AB24635001A73CD /* OnboardingView.swift in Sources */,
 				DF49415929F4B20800DE9EDC /* ColoredBadge.swift in Sources */,
 				DFDBF9892A7C6681006D49AD /* WKR+JS.swift in Sources */,
 				DF8BEAFF2A71E8FC005C396F /* ReadLater+CollectionView.swift in Sources */,

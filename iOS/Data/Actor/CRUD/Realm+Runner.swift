@@ -150,6 +150,15 @@ extension RealmActor {
             .where { $0.enabled == true && $0.isDeleted == false && $0.environment == environment }
             .sorted(by: [SortDescriptor(keyPath: "name", ascending: true)])
     }
+    
+    func getRunnerLists() -> [StoredRunnerList] {
+        realm
+            .objects(StoredRunnerList.self)
+            .where { !$0.isDeleted }
+            .sorted(by: \.listName, ascending: true)
+            .freeze()
+            .toArray()
+    }
 }
 
 extension RealmActor {

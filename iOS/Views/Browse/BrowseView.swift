@@ -10,10 +10,14 @@ import SwiftUI
 
 struct BrowseView: View {
     @StateObject private var model = ViewModel()
-    @State var triggeredLoad = false
+    @State var noListInstalled = false
+    @State var presentOnboarding = false
     var body: some View {
         SmartNavigationView {
             List {
+//                if noListInstalled {
+//                    NoListInstalledView
+//                }
                 InstalledSourcesSection
                 InstalledTrackersSection
                 PageLinks
@@ -40,6 +44,17 @@ struct BrowseView: View {
         }
         .task {
             await model.observe()
+            checkLists()
+        }
+        .fullScreenCover(isPresented: $presentOnboarding, onDismiss: checkLists) {
+            OnboardingView()
+        }
+    }
+    
+    func checkLists() {
+        Task {
+            let lists = await RealmActor.shared().getRunnerLists()
+            noListInstalled = lists.isEmpty
         }
     }
 }
@@ -153,6 +168,27 @@ extension BrowseView {
         } header: {
             Text(runner.name)
         }
+    }
+}
+
+extension BrowseView {
+    var NoListInstalledView: some View {
+        VStack(alignment: .center) {
+            Text("New to Suwatte?")
+                .font(.headline)
+                .fontWeight(.semibold)
+            Text("A quick guide on how to make the most of our app.")
+                .font(.subheadline)
+                .fontWeight(.light)
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
+
+            Button("Get Started") {
+                presentOnboarding.toggle()
+            }
+            .buttonStyle(.bordered)
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 
