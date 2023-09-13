@@ -33,9 +33,6 @@ let RunnerIntents = {
   advancedTracker: false,
 };
 
-const ObjectStore = new STTStore("os");
-const SecureStore = new STTStore("ss");
-
 // Reference:
 function isClass(v) {
   return typeof v === "function" && /^\s*class\s+/.test(v.toString());

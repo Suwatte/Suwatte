@@ -9,13 +9,14 @@ import Foundation
 import SwiftUI
 
 final class Logger {
-    var logs: [Entry] = []
+    @MainActor var logs: [Entry] = []
     static let shared = Logger()
 
     var file: URL {
         FileManager.default.documentDirectory.appendingPathComponent("application_logs.txt", isDirectory: false)
     }
 
+    @MainActor
     func clearSession() {
         logs.removeAll()
     }
@@ -47,13 +48,15 @@ extension Logger {
 }
 
 extension Logger {
-    @MainActor
     private func add(entry: Entry) {
-        // Add Entry
-        if logs.count >= 100 {
-            logs.removeAll()
+        Task { @MainActor in
+            // Add Entry
+            if logs.count >= 100 {
+                logs.removeAll()
+            }
+            logs.append(entry)
         }
-        logs.append(entry)
+
 
         // Print to console in debugging
         #if DEBUG
@@ -76,7 +79,9 @@ extension Logger {
         do {
             try log.appendLineToURL(url: file)
         } catch {
-            logs.append(.init(message: "Failed to write log to file, \(error.localizedDescription)", level: .error))
+            Task { @MainActor in
+                logs.append(.init(message: "Failed to write log to file, \(error.localizedDescription)", level: .error))
+            }
         }
     }
 }

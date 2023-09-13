@@ -21,6 +21,7 @@ struct BrowseView: View {
             .headerProminence(.increased)
             .listStyle(.insetGrouped)
             .navigationBarTitle("Browse")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem {
                     NavigationLink {
@@ -37,8 +38,6 @@ struct BrowseView: View {
             .animation(.default, value: model.runners)
             .animation(.default, value: model.links)
         }
-        .navigationViewStyle(.stack)
-
         .task {
             await model.observe()
         }

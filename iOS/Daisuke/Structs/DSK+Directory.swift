@@ -33,7 +33,7 @@ extension DSKCommon {
         struct Sort: JSCObject {
             let options: [Option]
             let `default`: DirectoryRequest.SortSelection?
-            let canChangeOrder: Bool
+            let canChangeOrder: Bool?
         }
     }
 
@@ -67,7 +67,7 @@ extension DSKCommon {
 
         struct SortSelection: JSCObject {
             let id: String
-            var ascending: Bool
+            var ascending: Bool?
         }
     }
 

@@ -55,7 +55,7 @@ extension ViewModel {
         Task { [weak self] in
             let chapters = await self?.getFilteredChapters(onlyDownloads: onlyDownloads, sortMethod: sortMethod, desc: desc)
             guard let chapters else { return }
-            await self?.animate { [weak self] in
+            await animate { [weak self] in
                 self?.chapterListChapters = chapters
             }
         }

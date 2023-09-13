@@ -63,7 +63,7 @@ struct DirectoryView<C: View>: View {
         .environmentObject(model)
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
-                if fullSearch || !model.filters.isEmpty {
+                if fullSearch {
                     Button { model.presentFilters.toggle() } label: {
                         Image(systemName: "line.3.horizontal.decrease")
                     }

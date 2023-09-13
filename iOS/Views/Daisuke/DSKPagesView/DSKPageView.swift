@@ -47,11 +47,10 @@ extension DSKPageView {
             if !data.allSatisfy({ $0.items != nil }) {
                 try await runner.willResolveSectionsForPage(link: link) // Tell Runner that suwatte will begin resolution of page sections
             }
-            await MainActor.run {
-                withAnimation {
-                    loadable = .loaded(data)
-                }
+            await animate(duration: 0.33) { [weak self] in
+                self?.loadable = .loaded(data)
             }
+
         }
 
         func load(_ sectionID: String) async {
@@ -61,19 +60,19 @@ extension DSKPageView {
             }
             do {
                 let data: DSKCommon.ResolvedPageSection = try await runner.resolvePageSection(link: link, section: sectionID)
-                await MainActor.run{
+                await animate(duration: 0.33) { [weak self] in
                     if data.items.isEmpty {
-                        loadables.removeValue(forKey: sectionID)
+                        self?.loadables.removeValue(forKey: sectionID)
                     } else {
-                        loadables[sectionID] = .loaded(data)
+                        self?.loadables[sectionID] = .loaded(data)
                     }
                 }
 
             } catch {
                 Logger.shared.error(error, runner.id)
-                await MainActor.run {
-                    loadables[sectionID] = .failed(error)
-                    errors.insert(sectionID)
+                await animate(duration: 0.33) { [weak self] in
+                    self?.loadables[sectionID] = .failed(error)
+                    self?.errors.insert(sectionID)
                 }
             }
         }

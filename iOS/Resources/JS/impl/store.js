@@ -84,3 +84,7 @@ class STTStore {
     return value;
   }
 }
+
+
+const ObjectStore = new STTStore("os");
+const SecureStore = new STTStore("ss");

@@ -58,7 +58,7 @@ extension ProfileView.Skeleton.ChapterView {
                     ChapterSectionsView()
                 }
                 HStack {
-                    Text("\(chapters.count) \(chapters.count > 1 ? "Chapters" : "Chapter")")
+                    Text("\(model.chapterListChapters.count) \(chapters.count > 1 ? "Chapters" : "Chapter")")
                         .font(.title3)
                         .fontWeight(.bold)
                     Spacer()

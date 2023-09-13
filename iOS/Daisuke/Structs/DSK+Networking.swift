@@ -52,7 +52,8 @@ extension DSKCommon {
         var params: CodableDict?
 
         func toURL() throws -> URL {
-            guard let url = URL(string: url) else {
+            guard let url = URL(string: url.trimmingCharacters(in: .whitespacesAndNewlines)) else {
+                Logger.shared.error("Invalid URL: \(url)")
                 throw DSK.Errors.NetworkErrorInvalidRequestURL
             }
 
@@ -65,6 +66,7 @@ extension DSKCommon {
             }
 
             guard let out = request.url else {
+                Logger.shared.error("Invalid URL: \(request), \(url)")
                 throw DSK.Errors.NetworkErrorInvalidRequestURL
             }
 
@@ -97,7 +99,8 @@ extension DSKCommon.Request {
 
 extension DSKCommon.Request {
     func toURLRequest() throws -> URLRequest {
-        guard let url = URL(string: url), let host = url.host else {
+        guard let url = URL(string: url.trimmingCharacters(in: .whitespacesAndNewlines)), let host = url.host else {
+            Logger.shared.error("Invalid URL: \(url)")
             throw DSK.Errors.NetworkErrorInvalidRequestURL
         }
 

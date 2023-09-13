@@ -33,7 +33,7 @@ extension ViewModel {
 
             for await result in group {
                 guard let result else { continue }
-                await self?.animate { [weak self] in
+                await animate { [weak self] in
                     self?.linked.append(result)
                 }
             }

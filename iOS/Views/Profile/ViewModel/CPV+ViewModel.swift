@@ -46,7 +46,7 @@ extension ProfileView {
         @Published var isWorking = false
         @Published var syncState = SyncState.idle
         @Published var actionState: ActionState = .init(state: .none)
-        @Published var linked: [ContentLinkSection] = []
+        var linked: [ContentLinkSection] = []
         @Published var previewChapters: [ThreadSafeChapter] = []
         @Published var chapterListChapters: [ThreadSafeChapter] = []
         // Tokens
@@ -224,20 +224,18 @@ extension ViewModel {
 }
 
 // Reference: https://medium.com/geekculture/swiftui-animation-completion-b6f0d167159e
-extension ViewModel {
-    func animate(_ execute: @escaping () -> Void) async {
-        let task = Task { @MainActor in
-            await withCheckedContinuation { continuation in
-                withAnimation(.easeInOut(duration: 0.25)) {
-                    execute()
-                }
+func animate(duration: Double = 0.25, _ execute: @escaping () -> Void) async {
+    let task = Task { @MainActor in
+        await withCheckedContinuation { continuation in
+            withAnimation(.easeInOut(duration: duration)) {
+                execute()
+            }
 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.275) {
-                    continuation.resume()
-                }
+            DispatchQueue.main.asyncAfter(deadline: .now() + duration + 0.050) {
+                continuation.resume()
             }
         }
-
-        await task.value
     }
+
+    await task.value
 }

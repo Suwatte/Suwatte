@@ -96,8 +96,8 @@ extension DirectoryView.ResultsView {
                 ForEach(model.configSort.options, id: \.id) { sorter in
                     Button(sorter.title) {
                         withAnimation {
-                            if let currentSelection = model.request.sort, currentSelection.id == sorter.id, model.configSort.canChangeOrder {
-                                model.request.sort = .init(id: sorter.id, ascending: !currentSelection.ascending)
+                            if let currentSelection = model.request.sort, currentSelection.id == sorter.id, model.configSort.canChangeOrder ?? false {
+                                model.request.sort = .init(id: sorter.id, ascending: !(currentSelection.ascending ?? false))
                             } else {
                                 model.request.sort = .init(id: sorter.id, ascending: false)
                             }
