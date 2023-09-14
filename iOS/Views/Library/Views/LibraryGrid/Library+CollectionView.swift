@@ -16,11 +16,15 @@ extension LibraryView {
         @AppStorage(STTKeys.LibraryGridSortOrder) var sortOrder: SortOrder = .asc
         @AppStorage(STTKeys.ShowOnlyDownloadedTitles) var showDownloadsOnly = false
         // State
-        @State var presentOrderOptions = false
+        @State var presentOptionsSheet = false
         @State var presentMigrateSheet = false
+        @State var presentStatsSheet = false
 
-        @ViewBuilder
-        func conditional() -> some View {
+        func observe(_: AnyHashable? = nil) {
+            model.observe(downloadsOnly: showDownloadsOnly, key: sortKey, order: sortOrder)
+        }
+
+        var body: some View {
             Group {
                 if let library = model.library {
                     if library.isEmpty {
@@ -35,14 +39,6 @@ extension LibraryView {
                     ProgressView()
                 }
             }
-        }
-
-        func observe(_: AnyHashable? = nil) {
-            model.observe(downloadsOnly: showDownloadsOnly, key: sortKey, order: sortOrder)
-        }
-
-        var body: some View {
-            conditional()
                 .task {
                     observe()
                 }
@@ -85,9 +81,15 @@ extension LibraryView {
                                 Divider()
 
                                 Button {
-                                    model.presentOptionsSheet.toggle()
+                                    presentOptionsSheet.toggle()
                                 } label: {
                                     Label("Settings", systemImage: "gearshape")
+                                }
+                                
+                                Button {
+                                    presentStatsSheet.toggle()
+                                } label: {
+                                    Label("Statistics", systemImage: "chart.bar")
                                 }
 
                                 Button {
@@ -110,12 +112,6 @@ extension LibraryView {
                         }
                     }
                 }
-                .sheet(isPresented: $model.presentOptionsSheet) {
-                    OptionsSheet(collection: model.collection)
-                }
-                .fullScreenCover(isPresented: $presentMigrateSheet, content: {
-                    PreMigrationView()
-                })
                 .navigationTitle(NAV_TITLE)
                 .navigationBarTitleDisplayMode(.inline)
                 .environmentObject(model)
@@ -123,6 +119,17 @@ extension LibraryView {
                 .onReceive(model.$query.debounce(for: .seconds(0.15), scheduler: DispatchQueue.main).dropFirst()) { _ in
                     observe()
                 }
+                .sheet(isPresented: $presentOptionsSheet) {
+                    OptionsSheet(collection: model.collection)
+                }
+                .sheet(isPresented: $presentStatsSheet, content: {
+                    SmartNavigationView {
+                        LoadableStatisticsView()
+                    }
+                })
+                .fullScreenCover(isPresented: $presentMigrateSheet, content: {
+                    PreMigrationView()
+                })
         }
 
         var NAV_TITLE: String {

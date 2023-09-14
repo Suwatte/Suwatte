@@ -16,7 +16,6 @@ extension LibraryView.LibraryGrid {
         var readingFlag: LibraryFlag?
         @Published var searchQuery = ""
         // Sheets
-        @Published var presentOptionsSheet = false
 
         // Selections
         @Published var isSelecting = false {

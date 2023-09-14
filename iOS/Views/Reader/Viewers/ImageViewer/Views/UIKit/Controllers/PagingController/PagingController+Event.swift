@@ -81,6 +81,7 @@ extension Controller {
             await actor.updateContentProgress(chapter: page.chapter,
                                               lastPageRead: page.number,
                                               totalPageCount: page.chapterPageCount)
+            await actor.addPageToStatistics()
         }
 
         // Update on Source

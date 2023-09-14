@@ -147,6 +147,9 @@
 		DF489C452A848453006A21B9 /* IV+VerticalLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF489C442A848453006A21B9 /* IV+VerticalLayout.swift */; };
 		DF49415929F4B20800DE9EDC /* ColoredBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF49415829F4B20800DE9EDC /* ColoredBadge.swift */; };
 		DF4EB4C82AB24635001A73CD /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EB4C72AB24635001A73CD /* OnboardingView.swift */; };
+		DF4EB4CB2AB288B5001A73CD /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EB4CA2AB288B5001A73CD /* StatisticsView.swift */; };
+		DF4EB4CD2AB28F82001A73CD /* Realm+Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EB4CC2AB28F82001A73CD /* Realm+Statistics.swift */; };
+		DF4EB4D02AB295C4001A73CD /* ReadingStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4EB4CF2AB295C4001A73CD /* ReadingStatistics.swift */; };
 		DF52FBAF28939745008FAD3A /* PagingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF52FBAE28939745008FAD3A /* PagingScrollView.swift */; };
 		DF52FBBE289487C6008FAD3A /* STTGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF52FBBD289487C6008FAD3A /* STTGridView.swift */; };
 		DF52FBC22896F762008FAD3A /* CollectionManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF52FBC12896F761008FAD3A /* CollectionManagementView.swift */; };
@@ -613,6 +616,9 @@
 		DF489C442A848453006A21B9 /* IV+VerticalLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IV+VerticalLayout.swift"; sourceTree = "<group>"; };
 		DF49415829F4B20800DE9EDC /* ColoredBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColoredBadge.swift; sourceTree = "<group>"; };
 		DF4EB4C72AB24635001A73CD /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		DF4EB4CA2AB288B5001A73CD /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
+		DF4EB4CC2AB28F82001A73CD /* Realm+Statistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+Statistics.swift"; sourceTree = "<group>"; };
+		DF4EB4CF2AB295C4001A73CD /* ReadingStatistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingStatistics.swift; sourceTree = "<group>"; };
 		DF52FBAE28939745008FAD3A /* PagingScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingScrollView.swift; sourceTree = "<group>"; };
 		DF52FBBD289487C6008FAD3A /* STTGridView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = STTGridView.swift; sourceTree = "<group>"; };
 		DF52FBC12896F761008FAD3A /* CollectionManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionManagementView.swift; sourceTree = "<group>"; };
@@ -1175,6 +1181,7 @@
 				DF2783582A79A5780098BBA9 /* Realm+CSSync.swift */,
 				DF27835A2A79A5B60098BBA9 /* Realm+Backup.swift */,
 				DF2783672A79F73B0098BBA9 /* Realm+CSChapterUpdates.swift */,
+				DF4EB4CC2AB28F82001A73CD /* Realm+Statistics.swift */,
 			);
 			path = CRUD;
 			sourceTree = "<group>";
@@ -1394,6 +1401,14 @@
 				DF4EB4C72AB24635001A73CD /* OnboardingView.swift */,
 			);
 			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		DF4EB4C92AB288AA001A73CD /* Statistics */ = {
+			isa = PBXGroup;
+			children = (
+				DF4EB4CA2AB288B5001A73CD /* StatisticsView.swift */,
+			);
+			path = Statistics;
 			sourceTree = "<group>";
 		};
 		DF553CC729726F39004C3428 /* Models */ = {
@@ -1690,6 +1705,7 @@
 		DF8D0A2D2800EE47003E4C3E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				DF4EB4C92AB288AA001A73CD /* Statistics */,
 				DF4EB4C62AB24628001A73CD /* Onboarding */,
 				DF62B5B32A95EDB500F907CD /* ContentSettings */,
 				DF8D0A582800EE47003E4C3E /* ReadLater */,
@@ -2177,6 +2193,7 @@
 				DF457DCF2A439F5C002B5350 /* ArchivedContent.swift */,
 				DF4817F02A6F88A800CB3A47 /* SourceDownload.swift */,
 				DFE1B1012A9C070400D300DB /* Highlight.swift */,
+				DF4EB4CF2AB295C4001A73CD /* ReadingStatistics.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2776,6 +2793,7 @@
 				DF8D0BAF2800EE48003E4C3E /* BadgeModifier.swift in Sources */,
 				DFBE48402A25BCA7000ABA16 /* StoreObject.swift in Sources */,
 				DF1114822A92EA2100FA8A39 /* WebtoonController+Rotation.swift in Sources */,
+				DF4EB4D02AB295C4001A73CD /* ReadingStatistics.swift in Sources */,
 				DF326461280256760066EB08 /* ProfileView+RelatedContent.swift in Sources */,
 				DF4EB4C82AB24635001A73CD /* OnboardingView.swift in Sources */,
 				DF49415929F4B20800DE9EDC /* ColoredBadge.swift in Sources */,
@@ -2884,6 +2902,7 @@
 				DF91D9742859ADD60099D864 /* CloudflareErrorView.swift in Sources */,
 				DF8D0BAD2800EE48003E4C3E /* BackupsView.swift in Sources */,
 				DF0B028B2AA06063004345BA /* DSKFormView.swift in Sources */,
+				DF4EB4CD2AB28F82001A73CD /* Realm+Statistics.swift in Sources */,
 				DFBE483C2A25BC2B000ABA16 /* ThreadSafeChapter.swift in Sources */,
 				DFB47EFD2880E9C90040A1BD /* OPDS+AddServer.swift in Sources */,
 				DF6883852A608FD7009B5642 /* AllTagsView.swift in Sources */,
@@ -3007,6 +3026,7 @@
 				DF62B5C92A9A4F1D00F907CD /* BackgroundActor.swift in Sources */,
 				DF2783552A79A46B0098BBA9 /* Realm+Download.swift in Sources */,
 				DF3318532A47934E000B092B /* DV+DownloadQueue.swift in Sources */,
+				DF4EB4CB2AB288B5001A73CD /* StatisticsView.swift in Sources */,
 				DF62B5B52A95EDD600F907CD /* ContentSettingsView.swift in Sources */,
 				DF8D0BAE2800EE48003E4C3E /* InteractableContent.swift in Sources */,
 				DF8D0B222800EE47003E4C3E /* STTScheduler.swift in Sources */,

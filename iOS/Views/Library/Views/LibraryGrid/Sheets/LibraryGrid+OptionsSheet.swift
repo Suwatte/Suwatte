@@ -45,10 +45,6 @@ extension LibraryView.LibraryGrid {
                                 CollectionManagementView(collection: collection, collectionName: collection.name)
                             }
                         }
-
-                        NavigationLink("View Statistics") {
-                            Text("Stats Breakdown Per Source")
-                        }
                     }
                 }
                 .navigationTitle("Settings")

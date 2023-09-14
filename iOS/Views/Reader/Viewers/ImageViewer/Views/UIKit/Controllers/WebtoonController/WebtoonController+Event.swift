@@ -74,15 +74,21 @@ extension Controller {
 
     func didReadPage(_ page: ReaderPage, path: IndexPath) {
         guard canMark(chapter: page.chapter) else { return }
-
-        let offset = calculateCurrentOffset(of: path)
+        let pixelsSinceLastStop = abs(offset -  lastStoppedScrollPosition)
+        let pageOffset = calculateCurrentOffset(of: path)
         // Update Local DB Marker
         Task {
             let actor = await RealmActor.shared()
             await actor.updateContentProgress(chapter: page.chapter,
                                               lastPageRead: page.number,
                                               totalPageCount: page.chapterPageCount,
-                                              lastPageOffsetPCT: offset)
+                                              lastPageOffsetPCT: pageOffset)
+            if pixelsSinceLastStop != 0 {
+                await actor.addOffsetToStatistics(pixelsSinceLastStop)
+                await MainActor.run { [weak self] in
+                    self?.lastStoppedScrollPosition = self?.offset ?? 0
+                }
+            }
         }
 
         // Update on Source

@@ -30,6 +30,7 @@ class WebtoonController: ASDKViewController<ASCollectionNode> {
     var currentChapterRange: (min: CGFloat, max: CGFloat) = (min: .zero, max: .zero)
     var didTriggerBackTick = false
     var lastKnownScrollPosition: CGFloat = 0.0
+    var lastStoppedScrollPosition: CGFloat = 0.0
     var scrollPositionUpdateThreshold: CGFloat = 30.0
     var currentZoomingIndexPath: IndexPath!
     private let zoomTransitionDelegate = ZoomTransitioningDelegate()

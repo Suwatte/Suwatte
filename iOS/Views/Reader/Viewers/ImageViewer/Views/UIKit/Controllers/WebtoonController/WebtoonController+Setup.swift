@@ -60,6 +60,8 @@ extension Controller {
             updateChapterScrollRange()
             setScrollPCT()
             presentNode()
+            lastKnownScrollPosition = offset
+            lastStoppedScrollPosition = offset
         }
     }
 }
