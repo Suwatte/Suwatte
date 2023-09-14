@@ -214,7 +214,7 @@ extension ViewModel {
         // Resolve Links, Sync & Update Action State
         await setActionState()
         await handleSync()
-        await setActionState()
+        await setActionState(false)
         //        await resolveLinks()
 
         let actor = await RealmActor.shared()

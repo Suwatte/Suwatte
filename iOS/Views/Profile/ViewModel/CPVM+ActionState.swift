@@ -10,14 +10,14 @@ import Foundation
 private typealias ViewModel = ProfileView.ViewModel
 
 extension ViewModel {
-    func setActionState() async {
-        let state = await calculateActionState()
+    func setActionState(_ safetyCheck: Bool = false) async {
+        let state = await calculateActionState(safetyCheck)
         await animate { [weak self] in
             self?.actionState = state
         }
     }
 
-    func calculateActionState() async -> ActionState {
+    func calculateActionState(_ safetyCheck: Bool) async -> ActionState {
         guard !chapters.isEmpty else {
             return .init(state: .none)
         }
@@ -39,7 +39,7 @@ extension ViewModel {
         
         // This Method gets called twice. First After Chapters are loaded & after syncing is complete
         // It should return the current action state if the max read chapter was not changed after syncing
-        if let currentRead = actionState.chapter?.chapterOrderKey,
+        if safetyCheck, let currentRead = actionState.chapter?.chapterOrderKey,
            let maxRead =  marker.maxReadChapterKey, maxRead <= currentRead {
             return actionState
         }

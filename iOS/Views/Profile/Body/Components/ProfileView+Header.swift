@@ -17,6 +17,7 @@ extension Skeleton {
         @State var presentThumbnails = false
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
         @State var labels: [ColoredLabel] = []
+        @Environment(\.colorScheme) var colorScheme
         var entry: DSKCommon.Content {
             model.content
         }
@@ -75,14 +76,17 @@ extension Skeleton.Header {
         return data
     }
     
+    @ViewBuilder
     var LabelsView: some View {
+        let schemeIsDark = colorScheme == .dark
         InteractiveTagView(labels) { label in
             Text(label.text)
                 .font(.caption)
-                .fontWeight(.semibold)
+                .fontWeight(schemeIsDark ? .semibold : .bold)
                 .padding(.vertical, 2)
                 .padding(.horizontal, 4)
-                .background(label.color.opacity(0.65))
+                .background(label.color.opacity( schemeIsDark ? 0.65 : 0.95))
+                .foregroundColor(.white)
                 .cornerRadius(3)
         }
     }
