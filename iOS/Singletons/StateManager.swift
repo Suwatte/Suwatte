@@ -18,6 +18,9 @@ final class StateManager: ObservableObject {
     var networkState = NetworkState.unknown
     let monitor = NWPathMonitor()
     let runnerListPublisher = PassthroughSubject<Void, Never>()
+    let libraryUpdateRunnerPageLinks = PassthroughSubject<Void, Never>()
+    let browseUpdateRunnerPageLinks = PassthroughSubject<Void, Never>()
+
     let readerOpenedPublisher = PassthroughSubject<Void, Never>()
     let readerClosedPublisher = PassthroughSubject<Void, Never>()
     @Published var readerState: ReaderState?

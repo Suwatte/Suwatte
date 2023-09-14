@@ -16,11 +16,17 @@ struct SuwatteApp: App {
         WindowGroup {
             ContentView()
                 .onOpenURL(perform: handleURL(_:))
-                .fullScreenCover(item: $navModel.identifier) { ids in
+                .fullScreenCover(item: $navModel.content) { taggedHighlight in
                     SmartNavigationView {
-                        ProfileView(entry: .init(id: ids.contentId, cover: "", title: "..."), sourceId: ids.sourceId)
+                        ProfileView(entry: taggedHighlight.highlight, sourceId: taggedHighlight.sourceID)
                             .closeButton()
                             .environmentObject(ToastManager.shared)
+                    }
+                }
+                .fullScreenCover(item: $navModel.link) { taggedLink in
+                    SmartNavigationView {
+                        PageLinkView(link: taggedLink.link.link, title: taggedLink.link.title, runnerID: taggedLink.sourceID)
+                            .closeButton()
                     }
                 }
                 .environmentObject(navModel)
@@ -117,7 +123,8 @@ extension SuwatteApp {
 
 final class NavigationModel: ObservableObject {
     static let shared = NavigationModel()
-    @Published var identifier: ContentIdentifier?
+    @Published var content: TaggedHighlight?
+    @Published var link: TaggedPageLinkLabel?
 }
 
 extension ContentIdentifier: Identifiable {}

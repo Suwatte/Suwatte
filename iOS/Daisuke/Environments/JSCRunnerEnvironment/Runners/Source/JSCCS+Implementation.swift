@@ -39,8 +39,8 @@ extension JSCContentSource {
         return try await callMethodReturningDecodable(method: "syncUserLibrary", arguments: [library], resolvesTo: [DSKCommon.DownSyncedContent].self)
     }
 
-    func getIdentifiers(for id: String) async throws -> DaisukeEngine.Structs.URLContentIdentifer? {
-        return try await callMethodReturningDecodable(method: "getIdentifierForURL", arguments: [id], resolvesTo: DSKCommon.URLContentIdentifer?.self)
+    func handleURL(url: String) async throws -> DSKCommon.DeepLinkContext? {
+        try await callMethodReturningDecodable(method: "handleURL", arguments: [url], resolvesTo: DSKCommon.DeepLinkContext?.self)
     }
 }
 

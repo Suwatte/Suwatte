@@ -25,7 +25,7 @@ extension WKRunner: DSKAuthDelegate {
         try await eval(script("let data = await RunnerObject.getWebAuthRequestURL()"))
     }
 
-    func didReceiveCookieFromWebAuthResponse(name: String) async throws -> Bool {
+    func didReceiveCookieFromWebAuthResponse(name: String) async throws -> DSKCommon.BooleanState {
         try await eval(script("let data = await RunnerObject.didReceiveSessionCookieFromWebAuthResponse(name)"),
                        ["name": name])
     }

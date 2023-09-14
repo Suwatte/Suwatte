@@ -21,6 +21,9 @@ struct SourceConfig: Parsable {
 
     var cloudflareResolutionURL: String?
     let allowsMultipleInstances: Bool?
+    
+    let owningLinks: [String]?
+    let requiresAuthenticationToAccessContent: Bool?
 }
 
 protocol ContentSource: DSKRunner {
@@ -37,8 +40,6 @@ protocol ContentSource: DSKRunner {
     func getReadChapterMarkers(contentId: String) async throws -> [String]
 
     func syncUserLibrary(library: [DSKCommon.UpSyncedContent]) async throws -> [DSKCommon.DownSyncedContent]
-
-    func getIdentifiers(for id: String) async throws -> DaisukeEngine.Structs.URLContentIdentifer?
 
     func onContentsAddedToLibrary(ids: [String]) async throws
 
@@ -61,6 +62,8 @@ protocol ContentSource: DSKRunner {
     func didTriggerContextActon(highlight: DSKCommon.Highlight, key: String) async throws
 
     func overrrideDownloadRequest(_ url: String) async throws -> DSKCommon.Request?
+    
+    func handleURL(url: String) async throws -> DSKCommon.DeepLinkContext?
 }
 
 extension ContentSource {

@@ -11,24 +11,25 @@ import SwiftUI
 struct LibraryView: View {
     @AppStorage(STTKeys.LibrarySections) var sections: [String] = DEFAULT_LIBRARY_SECTIONS
     @StateObject var AuthProvider = LocalAuthManager.shared
+    @StateObject var pageProviderModel = PageLinkProviderModel(isForBrowsePage: false)
     @State var presentCollectionSheet = false
     @State var presentOrderSheet = false
     @State var openFirstCollection = false
     @AppStorage(STTKeys.OpenAllTitlesOnAppear) var openAllOnAppear = false
     @AppStorage(STTKeys.LibraryAuth) var requireAuth = false
-    @State var runners: [StoredRunnerObject] = []
-    @State var pageLinks: [String: [DSKCommon.PageLinkLabel]] = [:]
-    @State var triggeredLoad = false
+    @State var hasLoadedPages = false
 
     var body: some View {
         SmartNavigationView {
             List {
+                BrowseView.PendingSetupView()
+                    .environmentObject(pageProviderModel)
                 ForEach(sections) { section in
-                    LibrarySectionBuilder(key: section, openFirstCollection: $openFirstCollection, links: $pageLinks, runners: $runners)
+                    LibrarySectionBuilder(key: section, openFirstCollection: $openFirstCollection)
                 }
             }
             .refreshable {
-                await loadPageLinks()
+                pageProviderModel.reload()
             }
             .listStyle(.insetGrouped)
             .navigationTitle("Library")
@@ -77,19 +78,48 @@ struct LibraryView: View {
             ManageCollectionsView()
         }
         .task {
-            guard !triggeredLoad else { return }
-            await loadPageLinks()
+            guard !hasLoadedPages else { return }
+            await pageProviderModel.observe()
+            hasLoadedPages = true
         }
         .onChange(of: sections) { _ in
-            Task {
-                await loadPageLinks()
-            }
+            pageProviderModel.reload()
         }
         .onReceive(StateManager.shared.runnerListPublisher) { _ in
+            pageProviderModel.reload()
+        }
+        .onReceive(StateManager.shared.libraryUpdateRunnerPageLinks) { _ in
+            hasLoadedPages = false
+        }
+        .onDisappear {
             Task {
-                await loadPageLinks()
+                await pageProviderModel.stopObserving()
             }
         }
+        .animation(.default, value: pageProviderModel.links)
+        .animation(.default, value: pageProviderModel.runners)
+        .animation(.default, value: pageProviderModel.pending)
+        .fullScreenCover(item: $pageProviderModel.selectedRunnerRequiringSetup, onDismiss: pageProviderModel.reload, content: { runnerOBJ in
+            SmartNavigationView {
+                LoadableRunnerView(runnerID: runnerOBJ.id) { runner in
+                    DSKLoadableForm(runner: runner, context: .setup(closeOnSuccess: true))
+                }
+                .navigationTitle("\(runnerOBJ.name) Setup")
+                .closeButton()
+            }
+        })
+        .fullScreenCover(item: $pageProviderModel.selectedRunnerRequiringAuth, onDismiss: pageProviderModel.reload, content: { runnerOBJ in
+            SmartNavigationView {
+                LoadableRunnerView(runnerID: runnerOBJ.id) { runner in
+                    List {
+                        DSKAuthView(model: .init(runner: runner))
+                    }
+                    .navigationTitle("Sign In to \(runnerOBJ.name)")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .closeButton(title: "Done")
+                }
+            }
+        })
     }
 }
 
@@ -99,8 +129,14 @@ extension LibraryView {
     struct LibrarySectionBuilder: View {
         let key: String
         @Binding var openFirstCollection: Bool
-        @Binding var links: [String: [DSKCommon.PageLinkLabel]]
-        @Binding var runners: [StoredRunnerObject]
+        @EnvironmentObject var model: PageLinkProviderModel
+        
+        private var providers: [StoredRunnerObject] {
+            model
+                .runners
+                .filter { $0.isLibraryPageLinkProvider }
+        }
+        
         var body: some View {
             Group {
                 switch key {
@@ -115,8 +151,10 @@ extension LibraryView {
                 case "library.downloads":
                     DownloadSection()
                 default:
-                    if let pageLinks = links[key], let runner = runners.first(where: { $0.id == key }) {
+                    if let pageLinks = model.links[key], let runner = providers.first(where: { $0.id == key }) {
                         PageLinkSectionView(runner: runner, pageLinks: pageLinks)
+                    } else {
+                        EmptyView()
                     }
                 }
             }
@@ -333,42 +371,6 @@ extension LibraryView {
             let all = DEFAULT_LIBRARY_SECTIONS + priviledgedRunners.map(\.id)
             return all
                 .filter { !sections.contains($0) }
-        }
-    }
-}
-
-// MARK: - Load Page Links
-
-extension LibraryView {
-    func loadPageLinks() async {
-        triggeredLoad = true
-        let actor = await RealmActor.shared()
-        runners = await actor.getLibraryPageProviders()
-        // Get Links
-        let runnerIDs = runners.map(\.id)
-        // Remove All
-        withAnimation {
-            pageLinks.removeAll()
-        }
-        // Load all links, log errors
-        await withTaskGroup(of: Void.self) { group in
-            for id in runnerIDs {
-                group.addTask {
-                    do {
-                        let runner = try await DSK.shared.getDSKRunner(id)
-                        guard runner.intents.libraryPageLinkProvider else { return }
-                        let links = try await runner.getLibraryPageLinks()
-                        guard !links.isEmpty else { return }
-                        Task { @MainActor in
-                            withAnimation {
-                                pageLinks.updateValue(links, forKey: runner.id)
-                            }
-                        }
-                    } catch {
-                        Logger.shared.error(error, id)
-                    }
-                }
-            }
         }
     }
 }

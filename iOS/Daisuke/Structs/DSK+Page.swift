@@ -98,3 +98,10 @@ extension DSKCommon {
         }
     }
 }
+
+
+extension DSKCommon {
+    struct BooleanState: JSCObject {
+        let state: Bool
+    }
+}

@@ -115,7 +115,7 @@ function setupSourceConfig() {
 
     // Requires Setup
     RunnerIntents.requiresSetup = !!ctx.getSetupMenu &&
-      !!ctx.validateSetupForm;
+      !!ctx.validateSetupForm && !!ctx.isRunnerSetup;
       
     //Image Handler
     RunnerIntents.imageRequestHandler = !!ctx.willRequestImage;
@@ -176,10 +176,9 @@ function setupSourceConfig() {
     // Content Tracker Intents
     if (RunnerEnvironment === "tracker") {
       RunnerIntents.advancedTracker =
-        !!ctx.getRecommendedTitles &&
         !!ctx.getDirectory &&
         !!ctx.getDirectoryConfig &&
-        !!ctx.getInfo;
+        !!ctx.getFullInformation;
     }
   } catch (err) {
     console.error("[Intents]", err.message);

@@ -29,8 +29,8 @@ extension JSCRunner: DSKAuthDelegate {
         return try await callMethodReturningObject(method: "getWebAuthRequestURL", arguments: [], resolvesTo: DSKCommon.BasicURL.self)
     }
 
-    func didReceiveCookieFromWebAuthResponse(name: String) async throws -> Bool {
-        return try await callMethodReturningDecodable(method: "didReceiveSessionCookieFromWebAuthResponse", arguments: [name], resolvesTo: Bool.self)
+    func didReceiveCookieFromWebAuthResponse(name: String) async throws -> DSKCommon.BooleanState {
+        return try await callMethodReturningDecodable(method: "didReceiveSessionCookieFromWebAuthResponse", arguments: [name], resolvesTo: DSKCommon.BooleanState.self)
     }
 
     // OAuth

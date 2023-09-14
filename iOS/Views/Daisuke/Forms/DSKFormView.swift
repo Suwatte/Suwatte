@@ -47,6 +47,7 @@ struct DSKLoadableForm: View {
 struct DSKFormView: View {
     @StateObject var model: ViewModel
     let form: DSKCommon.Form
+    @Environment(\.presentationMode) private var presentationMode
 
     var body: some View {
         List {
@@ -78,6 +79,10 @@ struct DSKFormView: View {
                 .disabled(!model.formHasChanged)
             }
         }
+        .onChange(of: model.triggerClose) { newValue in
+            guard newValue else { return }
+            presentationMode.wrappedValue.dismiss()
+        }
     }
 }
 
@@ -85,7 +90,7 @@ struct DSKFormView: View {
 
 extension DSKFormView {
     enum FormContext {
-        case tracker(id: String), preference, setup
+        case tracker(id: String), preference, setup(closeOnSuccess: Bool = false)
 
         var hasSubmitButton: Bool {
             switch self {
@@ -102,7 +107,8 @@ extension DSKFormView {
     final class ViewModel: ObservableObject {
         let context: FormContext
         let runner: AnyRunner
-
+        
+        @Published var triggerClose = false
         @Published var disabled: Set<String> = []
         @Published var form: [String: AnyCodable] = [:]
         @Published var formHasChanged = false
@@ -139,10 +145,18 @@ extension DSKFormView {
         }
 
         private func triggerSetupMenuSubmission() {
-            ToastManager.shared.block { [runner, form] in
+            ToastManager.shared.block { [runner, form, context] in
                 try await runner
                     .validateSetupForm(form: form)
+                let state = try await runner.isRunnerSetup()
+                guard state.state else { return }
+
                 ToastManager.shared.info("\(runner.name) Setup!")
+                if case let .setup(closeOnSuccess) = context, closeOnSuccess {
+                    Task { @MainActor [weak self] in
+                        self?.triggerClose = true
+                    }
+                }
             }
         }
 
