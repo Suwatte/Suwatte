@@ -94,6 +94,7 @@ struct BrowseView: View {
             guard !hasLoaded else { return }
             await model.observe()
             checkLists()
+            hasLoaded = true
         }
         .onDisappear {
             Task {
