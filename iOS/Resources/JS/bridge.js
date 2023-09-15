@@ -31,10 +31,8 @@ let RunnerIntents = {
   hasTagsView: false,
   // Content Tracker
   advancedTracker: false,
-    
     // hasURL Handler
-
-    canHandleURL: false
+  canHandleURL: false
 };
 
 // Reference:
@@ -185,7 +183,7 @@ function setupSourceConfig() {
         !!ctx.getFullInformation;
     }
       
-      RunnerIntents.canHandleURL == !!ctx.handleURL
+    RunnerIntents.canHandleURL = !!ctx.handleURL
   } catch (err) {
     console.error("[Intents]", err.message);
   }

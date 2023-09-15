@@ -16,19 +16,6 @@ struct SuwatteApp: App {
         WindowGroup {
             ContentView()
                 .onOpenURL(perform: handleURL(_:))
-                .fullScreenCover(item: $navModel.content) { taggedHighlight in
-                    SmartNavigationView {
-                        ProfileView(entry: taggedHighlight.highlight, sourceId: taggedHighlight.sourceID)
-                            .closeButton()
-                            .environmentObject(ToastManager.shared)
-                    }
-                }
-                .fullScreenCover(item: $navModel.link) { taggedLink in
-                    SmartNavigationView {
-                        PageLinkView(link: taggedLink.link.link, title: taggedLink.link.title, runnerID: taggedLink.sourceID)
-                            .closeButton()
-                    }
-                }
                 .environmentObject(navModel)
                 .accentColor(accentColor)
                 .tint(accentColor)
