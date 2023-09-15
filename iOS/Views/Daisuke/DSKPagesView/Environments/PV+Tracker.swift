@@ -112,7 +112,7 @@ struct TrackerContextModifier: ViewModifier {
                         }
                     }
                     Divider()
-                    if let url = item.webUrl.flatMap ({ URL(string: $0) }) {
+                    if let url = item.webUrl.flatMap({ URL(string: $0) }) {
                         Link(destination: url) {
                             Label("View on \(tracker.name)", systemImage: "square.and.arrow.up")
                         }
@@ -133,13 +133,13 @@ struct TrackerContextModifier: ViewModifier {
         .modifier(TrackStatusModifier(title: nil,
                                       tracker: tracker,
                                       contentID: item.id,
-                                      alreadyTracking: .constant( item.entry?.status != nil ),
+                                      alreadyTracking: .constant(item.entry?.status != nil),
                                       isPresenting: $presentStatusDialog,
                                       callback: { updatedStatus in
-            withAnimation {
-                status = updatedStatus
-            }
-        }))
+                                          withAnimation {
+                                              status = updatedStatus
+                                          }
+                                      }))
         .hiddenNav(presenting: $presentEntryFormView) {
             DSKLoadableForm(runner: tracker, context: .tracker(id: item.id))
                 .navigationTitle(item.title)

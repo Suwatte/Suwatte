@@ -18,14 +18,14 @@ extension RealmActor {
             realm.add(obj, update: .modified)
         }
     }
-    
+
     func removeRunnerList(with url: String) async {
         let target = realm
             .objects(StoredRunnerList.self)
             .where { $0.url == url && !$0.isDeleted }
             .first
         guard let target else { return }
-        
+
         await operation {
             target.isDeleted = true
         }
@@ -150,7 +150,7 @@ extension RealmActor {
             .where { $0.enabled == true && $0.isDeleted == false && $0.environment == environment }
             .sorted(by: [SortDescriptor(keyPath: "name", ascending: true)])
     }
-    
+
     func getRunnerLists() -> [StoredRunnerList] {
         realm
             .objects(StoredRunnerList.self)

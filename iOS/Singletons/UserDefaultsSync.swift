@@ -8,9 +8,7 @@
 import Foundation
 import Zephyr
 
-
 class UDSync {
-    
     static func sync() {
         var keys: [String] = [STTKeys.OpenAllTitlesOnAppear,
                               STTKeys.TileStyle,
@@ -57,7 +55,7 @@ class UDSync {
                               STTKeys.SourcesDisabledFromGlobalSearch,
                               STTKeys.GlobalContentLanguages,
                               STTKeys.GlobalHideNSFW]
-        
+
         let DynamicKeyPrefixes = ["RUNNER.IRH",
                                   "RUNNER.PLR",
                                   "RUNNER.BLP",
@@ -66,16 +64,14 @@ class UDSync {
             DynamicKeyPrefixes.contains(where: { v.starts(with: $0) })
         }
         let DynamicKeys = UserDefaults.standard.dictionaryRepresentation().keys.filter(startsWith(_:))
-        
+
         keys.append(contentsOf: DynamicKeys)
-        
-        
-#if DEBUG
-        Zephyr.debugEnabled = true
-#endif
+
+        #if DEBUG
+            Zephyr.debugEnabled = true
+        #endif
         Zephyr.syncUbiquitousKeyValueStoreOnChange = true
         Zephyr.addKeysToBeMonitored(keys: keys)
         Zephyr.sync(keys: keys)
-        
     }
 }

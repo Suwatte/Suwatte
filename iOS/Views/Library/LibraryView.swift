@@ -130,13 +130,13 @@ extension LibraryView {
         let key: String
         @Binding var openFirstCollection: Bool
         @EnvironmentObject var model: PageLinkProviderModel
-        
+
         private var providers: [StoredRunnerObject] {
             model
                 .runners
                 .filter { $0.isLibraryPageLinkProvider }
         }
-        
+
         var body: some View {
             Group {
                 switch key {

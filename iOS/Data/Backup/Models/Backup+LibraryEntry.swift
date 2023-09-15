@@ -47,24 +47,23 @@ extension LibraryEntry: Codable {
     }
 }
 
-
-struct CodableContent : Codable {
+struct CodableContent: Codable {
     var id: String
     var sourceId: String
     var contentId: String
     var title: String
     var cover: String
-    
+
     static func from(content: StoredContent) -> Self {
         .init(id: content.id, sourceId: content.sourceId, contentId: content.contentId, title: content.title, cover: content.cover)
     }
 }
 
-
 struct CodableLibraryEntry: Codable {
-    var id : String {
+    var id: String {
         content.id
     }
+
     var content: CodableContent
 
     // Update information
@@ -80,19 +79,19 @@ struct CodableLibraryEntry: Codable {
     var collections: [String]
     var flag: LibraryFlag
     var unreadCount: Int?
-    
+
     static func from(entry: LibraryEntry) -> Self {
         .init(
-              content: CodableContent.from(content: entry.content!),
-              updateCount: entry.updateCount,
-              lastUpdated: entry.lastRead,
-              dateAdded: entry.dateAdded,
-              collections: entry.collections.toArray(),
-              flag: entry.flag,
-              unreadCount: entry.unreadCount)
+            content: CodableContent.from(content: entry.content!),
+            updateCount: entry.updateCount,
+            lastUpdated: entry.lastRead,
+            dateAdded: entry.dateAdded,
+            collections: entry.collections.toArray(),
+            flag: entry.flag,
+            unreadCount: entry.unreadCount
+        )
     }
 }
-
 
 struct CodableChapter: Codable, Hashable, STTChapter {
     var id: String

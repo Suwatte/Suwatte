@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 struct PageLinkView: View {
     let link: DSKCommon.Linkable
     let title: String

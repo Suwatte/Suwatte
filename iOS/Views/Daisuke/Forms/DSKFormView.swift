@@ -107,7 +107,7 @@ extension DSKFormView {
     final class ViewModel: ObservableObject {
         let context: FormContext
         let runner: AnyRunner
-        
+
         @Published var triggerClose = false
         @Published var disabled: Set<String> = []
         @Published var form: [String: AnyCodable] = [:]

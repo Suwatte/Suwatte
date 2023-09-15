@@ -64,7 +64,7 @@ extension RealmActor {
             if let markers = backup.markers {
                 restoreOutdatedMarkers(markers, realm: realm)
             }
-            
+
             if !library.isEmpty {
                 let contents = library.compactMap { $0.content }
                 realm.add(contents, update: .all)
@@ -82,16 +82,14 @@ extension RealmActor {
             if let markers = backup.progressMarkers {
                 realm.add(markers, update: .all)
             }
-            
-           
         }
     }
-    
+
     func restoreOutdatedMarkers(_ data: [OutdatedMarker], realm: Realm) {
         let data = Dictionary(grouping: data) { marker in
             ContentIdentifier(contentId: marker.chapter.contentId, sourceId: marker.chapter.sourceId)
         }
-        
+
         func getReference(_ chapter: CodableChapter?, id: ContentIdentifier) -> ChapterReference? {
             guard let chapter else { return nil }
             let reference = ChapterReference()
@@ -107,14 +105,14 @@ extension RealmActor {
             reference.volume = chapter.volume
             return reference
         }
-        
+
         for (id, markers) in data {
             guard !id.id.isEmpty else { continue }
             let readChapters = markers.map(\.chapter.chapterOrderKey)
             let maxRead = markers.max(by: \.chapter.chapterOrderKey)
             let reference = getReference(maxRead?.chapter, id: id)
             guard let reference, let maxRead else { continue }
-            
+
             let marker = ProgressMarker()
             marker.id = id.id
             marker.readChapters.insert(objectsIn: readChapters)
@@ -124,7 +122,6 @@ extension RealmActor {
             marker.totalPageCount = maxRead.totalPageCount
             realm.add(marker, update: .modified)
         }
-
     }
 }
 

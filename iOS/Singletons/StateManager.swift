@@ -77,7 +77,7 @@ extension StateManager {
 // MARK: - Global Chapter Reading
 
 extension StateManager {
-    func openReader(context: DSKCommon.ReaderContext, caller: DSKCommon.Highlight, source: String) async {
+    func openReader(context: DSKCommon.ReaderContext, caller _: DSKCommon.Highlight, source: String) async {
         // Ensure the chapter to be opened is in the provided chapter list
         let targetInList = context.chapters.map(\.chapterId).contains(context.target)
         guard targetInList else {
@@ -101,7 +101,7 @@ extension StateManager {
             let content = highlight.toStored(sourceId: source)
             await actor.storeContent(content)
         }
-        
+
         // Add Chapters to DB
         let chapters = context
             .chapters
@@ -151,11 +151,8 @@ extension StateManager {
             }
             await MainActor.run {
                 ToastManager.shared.loading = false
-
             }
         }
-        
-
     }
 
     func didScenePhaseChange(_ phase: ScenePhase) {

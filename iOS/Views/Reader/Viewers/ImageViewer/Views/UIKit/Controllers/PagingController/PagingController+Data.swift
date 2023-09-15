@@ -139,7 +139,6 @@ extension Controller {
             setScrollPCT()
             collectionView.isHidden = false
             self.isLoaded = true
-            
         }
     }
 
@@ -257,10 +256,8 @@ extension Controller {
     }
 }
 
-
 extension Controller {
     func reload(removeSplits: Bool) async {
-        
         let chapter = model.viewerState.chapter
         var snapshot = dataSource.snapshot()
 
@@ -269,13 +266,12 @@ extension Controller {
                 guard case let .page(page) = item else { return false }
                 return page.isSplitPageChild
             }
-            
+
             snapshot.deleteItems(items)
         } else {
             snapshot.reloadSections([chapter.id])
         }
 
-        
         await MainActor.run { [weak self, snapshot] in
             self?.dataSource.apply(snapshot, animatingDifferences: false)
         }

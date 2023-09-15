@@ -38,7 +38,7 @@ struct RunnerListsView: View {
                         Task {
                             await RealmActor.shared().removeRunnerList(with: list.url)
                         }
-                    } label : {
+                    } label: {
                         Label("Delete", systemImage: "trash")
                     }
                 }
@@ -310,7 +310,6 @@ extension RunnerListsView.RunnerListInfo {
                 }
             }
         }
-        
 
         enum RunnerState {
             case installed, outdated, sourceOutdated, notInstalled, appOutDated
@@ -334,7 +333,7 @@ extension RunnerListsView.RunnerListInfo {
                 self == .appOutDated || self == .sourceOutdated
             }
         }
-        
+
         func updateRunnerState() {
             runnerState = getRunnerState(runner: runner)
         }

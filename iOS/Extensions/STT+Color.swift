@@ -151,7 +151,6 @@ extension Color {
     }
 }
 
-
 extension Color {
     static var random: Color {
         .init(uiColor: .randomColor())
@@ -161,6 +160,6 @@ extension Color {
 struct ColoredLabel: Identifiable {
     var text: String
     var color: Color
-    
+
     let id = UUID().uuidString
 }

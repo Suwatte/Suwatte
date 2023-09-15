@@ -293,7 +293,7 @@ extension DSKPageView.CollectionView {
                                  info: data.info,
                                  badge: data.badge)
                 }
-                    .buttonStyle(NeutralButtonStyle())
+                .buttonStyle(NeutralButtonStyle())
             } else {
                 tileModifier(data)
             }

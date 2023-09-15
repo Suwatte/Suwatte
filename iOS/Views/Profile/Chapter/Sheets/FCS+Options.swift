@@ -11,7 +11,7 @@ struct FCS_Options: View {
     @EnvironmentObject var model: ProfileView.ViewModel
     @State var providers: [DSKCommon.ChapterProvider] = []
     @State var blacklisted: Set<String> = []
-    
+
     var body: some View {
         SmartNavigationView {
             List {
@@ -27,7 +27,7 @@ struct FCS_Options: View {
             }
         }
     }
-    
+
     var ProvidersSection: some View {
         Section {
             ForEach(providers) { provider in
@@ -44,30 +44,29 @@ struct FCS_Options: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-
             }
         } header: {
             Text("Providers")
         }
         .headerProminence(.increased)
     }
-    
+
     func getProviders() {
-        providers = model.chapters.compactMap(\.providers).flatMap({ $0 })
+        providers = model.chapters.compactMap(\.providers).flatMap { $0 }
     }
-    
+
     func getBlacklisted() {
         let id = model.sourceID
         blacklisted = Set(STTHelpers.getBlacklistedProviders(for: id))
     }
-    
+
     func toggleBlacklist(_ id: String) {
         if blacklisted.contains(id) {
             blacklisted.remove(id)
         } else {
             blacklisted.insert(id)
         }
-        
+
         STTHelpers.setBlackListedProviders(for: model.sourceID, values: Array(blacklisted))
     }
 }

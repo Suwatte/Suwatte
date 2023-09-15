@@ -50,7 +50,6 @@ extension DSKPageView {
             await animate(duration: 0.33) { [weak self] in
                 self?.loadable = .loaded(data)
             }
-
         }
 
         func load(_ sectionID: String) async {

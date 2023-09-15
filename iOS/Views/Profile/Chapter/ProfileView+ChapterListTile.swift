@@ -20,13 +20,13 @@ struct ChapterListTile: View {
     let isBookmarked: Bool
 
     var body: some View {
-        HStack (spacing: 7) {
+        HStack(spacing: 7) {
             if let url = chapter.thumbnail.flatMap({ URL(string: $0) }) {
                 STTImageView(url: url, identifier: chapter.contentIdentifier)
                     .frame(width: 60, height: 75)
                     .cornerRadius(7)
             }
-            
+
             VStack(alignment: .leading, spacing: 5) {
                 HStack {
                     DisplayNameView
@@ -46,21 +46,21 @@ struct ChapterListTile: View {
                     if showLanguageFlag {
                         LanguageView(chapter.language)
                     }
-                    if  hasProviders {
+                    if hasProviders {
                         ScanlatorView()
                     }
-                    
+
                     if showLanguageFlag || hasProviders {
                         Spacer()
                     }
                     if showDate {
                         Text(chapter.date.timeAgoGrouped())
                     }
-                    
+
                     if !showLanguageFlag && !hasProviders && showDate {
                         Spacer()
                     }
-                    
+
                     if !showLanguageFlag && !hasProviders && !showDate {
                         Text(chapter.number.description)
                     }
@@ -71,11 +71,11 @@ struct ChapterListTile: View {
         }
         .contentShape(Rectangle())
     }
-    
-    var hasProviders : Bool {
+
+    var hasProviders: Bool {
         chapter.providers != nil && !chapter.providers!.isEmpty
     }
-    
+
     @ViewBuilder
     var DisplayNameView: some View {
         VStack(alignment: .leading, spacing: 5) {

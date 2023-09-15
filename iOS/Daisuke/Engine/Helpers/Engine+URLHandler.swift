@@ -13,7 +13,7 @@ extension DSK {
         var results = [(DSKCommon.DeepLinkContext, String)]()
         let sources = await getActiveSources()
         for source in sources {
-            guard let owningLinks = source.config?.owningLinks, owningLinks.contains(where: { url.starts(with: $0) } ) else { continue }
+            guard let owningLinks = source.config?.owningLinks, owningLinks.contains(where: { url.starts(with: $0) }) else { continue }
             do {
                 let link = try await source.handleURL(url: url)
                 guard let link else { continue }
@@ -39,7 +39,7 @@ extension DSK {
         }
         if results.count == 1 {
             let (link, sourceID) = results.first!
-            
+
             Task { @MainActor [weak self] in
                 await self?.didTriggerDeepLinkAction(link, for: sourceID)
             }
@@ -73,12 +73,12 @@ extension DSK {
 
         return true
     }
-    
+
     @MainActor
     func didTriggerDeepLinkAction(_ link: DSKCommon.DeepLinkContext, for sourceID: String) async {
-        if let highlight = link.content  {
+        if let highlight = link.content {
             NavigationModel.shared.content = .init(from: highlight, with: sourceID)
-        } else if let readerContext = link.read  {
+        } else if let readerContext = link.read {
             await StateManager.shared.openReader(context: readerContext, caller: readerContext.content, source: sourceID)
         } else if let link = link.link {
             NavigationModel.shared.link = .init(sourceID: sourceID, link: link)

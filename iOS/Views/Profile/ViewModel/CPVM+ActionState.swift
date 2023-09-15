@@ -26,7 +26,7 @@ extension ViewModel {
 
         let marker = await actor
             .getContentMarker(for: identifier)
-        
+
         _ = STTHelpers.getReadingMode(for: identifier) // To Update Reading Mode
 
         guard let marker else {
@@ -36,11 +36,12 @@ extension ViewModel {
                          chapter: chapter,
                          marker: nil)
         }
-        
+
         // This Method gets called twice. First After Chapters are loaded & after syncing is complete
         // It should return the current action state if the max read chapter was not changed after syncing
         if safetyCheck, let currentRead = actionState.chapter?.chapterOrderKey,
-           let maxRead =  marker.maxReadChapterKey, maxRead <= currentRead {
+           let maxRead = marker.maxReadChapterKey, maxRead <= currentRead
+        {
             return actionState
         }
 

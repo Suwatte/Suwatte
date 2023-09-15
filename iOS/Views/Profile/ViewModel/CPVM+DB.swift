@@ -22,14 +22,14 @@ extension ViewModel {
 
         let target = await actor
             .getStoredContent(identifier)
-        
+
         do {
             return try target?
                 .toDSKContent()
         } catch {
             Logger.shared.error(error, "CPVM")
         }
-        
+
         return nil
     }
 

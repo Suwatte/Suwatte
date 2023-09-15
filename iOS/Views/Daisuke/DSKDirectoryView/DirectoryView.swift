@@ -42,7 +42,6 @@ struct DirectoryView<C: View>: View {
             } else {
                 LoadableResultsView
             }
-            
         }
         .navigationBarTitleDisplayMode(.inline)
         .fullScreenCover(isPresented: $model.presentFilters) {

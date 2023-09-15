@@ -105,7 +105,7 @@ extension DaisukeEngine.Structs {
         var canStream: Bool {
             streamable ?? false
         }
-        
+
         var isNonInteractive: Bool {
             noninteractive ?? false
         }
@@ -185,7 +185,6 @@ extension DSKCommon {
         let readingMode: ReadingMode?
     }
 }
-
 
 extension DSKCommon {
     struct DeepLinkContext: JSCObject {

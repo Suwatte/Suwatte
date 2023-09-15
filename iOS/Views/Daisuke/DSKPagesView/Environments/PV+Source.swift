@@ -23,14 +23,13 @@ struct ContentSourcePageView: View {
         DSKPageView(model: .init(runner: source, link: link)) { item in
             let identifier = ContentIdentifier(contentId: item.id,
                                                sourceId: source.id).id
-            
-             DSKHighlightTile(data: item,
-                              source: source,
-                              inLibrary: model.library.contains(identifier),
-                              inReadLater: model.readLater.contains(identifier),
-                              selection: $selection,
-                              hideLibraryBadges: hideLibrayBadges)
-         
+
+            DSKHighlightTile(data: item,
+                             source: source,
+                             inLibrary: model.library.contains(identifier),
+                             inReadLater: model.readLater.contains(identifier),
+                             selection: $selection,
+                             hideLibraryBadges: hideLibrayBadges)
         }
         .task {
             await model.start(source.id)

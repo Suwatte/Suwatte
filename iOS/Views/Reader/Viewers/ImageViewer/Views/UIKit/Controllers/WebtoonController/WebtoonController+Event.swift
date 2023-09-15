@@ -74,7 +74,7 @@ extension Controller {
 
     func didReadPage(_ page: ReaderPage, path: IndexPath) {
         guard canMark(chapter: page.chapter) else { return }
-        let pixelsSinceLastStop = abs(offset -  lastStoppedScrollPosition)
+        let pixelsSinceLastStop = abs(offset - lastStoppedScrollPosition)
         let pageOffset = calculateCurrentOffset(of: path)
         // Update Local DB Marker
         Task {

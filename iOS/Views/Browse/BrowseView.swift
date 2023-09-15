@@ -26,7 +26,7 @@ struct BrowseView: View {
                 InstalledTrackersSection
                 PageLinks
             }
-            
+
             .headerProminence(.increased)
             .listStyle(.insetGrouped)
             .navigationBarTitle("Browse")
@@ -87,7 +87,7 @@ struct BrowseView: View {
             OnboardingView()
         }
     }
-    
+
     func checkLists() {
         Task {
             let lists = await RealmActor.shared().getRunnerLists()
@@ -229,9 +229,8 @@ extension BrowseView {
     }
 }
 
-
 extension BrowseView {
-    struct PendingSetupView : View {
+    struct PendingSetupView: View {
         @EnvironmentObject private var model: PageLinkProviderModel
         var body: some View {
             Section {
@@ -243,11 +242,11 @@ extension BrowseView {
                             .cornerRadius(5)
                         VStack(alignment: .leading) {
                             Text(runner.name)
-                            Text( state == .setup ? "\(runner.name) requires additional setup." : "Sign in to \(runner.name) to continue.")
+                            Text(state == .setup ? "\(runner.name) requires additional setup." : "Sign in to \(runner.name) to continue.")
                                 .font(.caption.weight(.light).italic())
                         }
                         Spacer()
-                        Button(state == .setup ?  "Setup" : "Sign In") {
+                        Button(state == .setup ? "Setup" : "Sign In") {
                             if state == .setup {
                                 model.selectedRunnerRequiringSetup = runner
                             } else {
@@ -263,8 +262,8 @@ extension BrowseView {
     }
 }
 
-
 // MARK: ViewModel
+
 final actor PageLinkProviderModel: ObservableObject {
     private let isBrowsePageProvider: Bool
     @MainActor
@@ -274,35 +273,36 @@ final actor PageLinkProviderModel: ObservableObject {
     @MainActor
     @Published
     var links: [String: [DSKCommon.PageLinkLabel]] = [:]
-    
+
     @MainActor
     @Published
     var pending: [String: LinkProviderPendingState] = [:]
 
     private var token: NotificationToken?
-    
+
     @MainActor
     var runnersPendingSetup: [StoredRunnerObject] {
-        runners.filter({ pending.keys.contains($0.id) })
+        runners.filter { pending.keys.contains($0.id) }
     }
+
     @MainActor
     @Published
-    
+
     var selectedRunnerRequiringSetup: StoredRunnerObject?
     @MainActor
     @Published
     var selectedRunnerRequiringAuth: StoredRunnerObject?
-    
+
     init(isForBrowsePage: Bool) {
-        self.isBrowsePageProvider = isForBrowsePage
+        isBrowsePageProvider = isForBrowsePage
     }
 
     func observe() async {
         guard token == nil else { return }
         let actor = await RealmActor.shared()
         token = await actor.observeInstalledRunners { value in
-            Task { @MainActor  [weak self] in
-                await animate {  [weak self] in
+            Task { @MainActor [weak self] in
+                await animate { [weak self] in
                     self?.runners = value
                 }
                 await self?.getPageLinks()
@@ -317,7 +317,7 @@ final actor PageLinkProviderModel: ObservableObject {
 
     func getLinkProviders() async -> [AnyRunner] {
         let ids = await runners
-            .filter ({ isBrowsePageProvider ? $0.isBrowsePageLinkProvider : $0.isLibraryPageLinkProvider })
+            .filter { isBrowsePageProvider ? $0.isBrowsePageLinkProvider : $0.isLibraryPageLinkProvider }
             .map(\.id)
 
         let results = await withTaskGroup(of: AnyRunner?.self) { group in
@@ -369,14 +369,14 @@ final actor PageLinkProviderModel: ObservableObject {
             if runner.intents.requiresSetup {
                 guard try await runner.isRunnerSetup().state else {
                     Task { @MainActor in
-                        await animate {  [weak self] in
+                        await animate { [weak self] in
                             self?.pending[runner.id] = .setup
                         }
                     }
                     return
                 }
             }
-            
+
             if let runner = runner as? AnyContentSource, runner.config?.requiresAuthenticationToAccessContent ?? false {
                 guard runner.intents.authenticatable && runner.intents.authenticationMethod != .unknown else {
                     Logger.shared.warn("Runner has requested authentication to display content but has not implemented the required authentication methods.", runner.id)
@@ -385,20 +385,19 @@ final actor PageLinkProviderModel: ObservableObject {
                 guard let _ = try await runner.getAuthenticatedUser() else {
                     await MainActor.run { [weak self] in
                         Task { @MainActor in
-                            await animate {  [weak self] in
+                            await animate { [weak self] in
                                 self?.pending[runner.id] = .authentication
                             }
                         }
-                        return
                     }
                     return
                 }
             }
-            let pageLinks = try await isBrowsePageProvider ?  runner.getBrowsePageLinks() : runner.getLibraryPageLinks()
+            let pageLinks = try await isBrowsePageProvider ? runner.getBrowsePageLinks() : runner.getLibraryPageLinks()
             guard !pageLinks.isEmpty else { return }
-            
+
             Task { @MainActor in
-                await animate {  [weak self] in
+                await animate { [weak self] in
                     self?.links.updateValue(pageLinks, forKey: runner.id)
                 }
             }
@@ -406,7 +405,7 @@ final actor PageLinkProviderModel: ObservableObject {
             Logger.shared.error(error, runner.id)
         }
     }
-    
+
     nonisolated
     func reload() {
         Task {

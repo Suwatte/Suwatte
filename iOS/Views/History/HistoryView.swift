@@ -31,7 +31,6 @@ struct HistoryView: View {
                 .opacity(model.dataFetchComplete ? 0 : 1)
                 .transition(.opacity)
 
-
             VStack {
                 Text("(￣ε￣＠)")
                     .font(.title2)
@@ -44,7 +43,6 @@ struct HistoryView: View {
             .foregroundColor(.gray)
             .opacity(model.markers.isEmpty && model.dataFetchComplete ? 1 : 0)
             .transition(.opacity)
-
         }
         .modifier(InteractableContainer(selection: $model.csSelection))
         .listStyle(.plain)

@@ -30,7 +30,6 @@ extension JSCRunner: DSKPreferenceDelegate {
 }
 
 extension JSCRunner: DSKSetupDelegate {
-    
     func getSetupMenu() async throws -> DSKCommon.Form {
         try await callMethodReturningDecodable(method: "getSetupMenu",
                                                arguments: [],
@@ -41,7 +40,7 @@ extension JSCRunner: DSKSetupDelegate {
         let object = try form.asDictionary()
         return try await callOptionalVoidMethod(method: "validateSetupForm", arguments: [object])
     }
-    
+
     func isRunnerSetup() async throws -> DSKCommon.BooleanState {
         try await callMethodReturningDecodable(method: "isRunnerSetup",
                                                arguments: [],

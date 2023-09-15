@@ -36,7 +36,7 @@ struct TaggedHighlight: Identifiable, Hashable {
 struct TaggedPageLinkLabel: Identifiable, Hashable {
     let sourceID: String
     let link: DSKCommon.PageLinkLabel
-    
+
     var id: Int {
         hashValue
     }
