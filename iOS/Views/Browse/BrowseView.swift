@@ -14,6 +14,9 @@ struct BrowseView: View {
     @State var presentOnboarding = false
     @State var isVisible = false
     @State var hasLoaded = false
+    @State var hasCheckedForRunnerUpdates = false
+    @State var runnersWithUpdates: [TaggedRunner] = []
+    @State var presentUpdatesView = false
     var body: some View {
         SmartNavigationView {
             List {
@@ -39,11 +42,23 @@ struct BrowseView: View {
                         Image(systemName: "magnifyingglass")
                     }
                 }
+
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        presentUpdatesView.toggle()
+                    } label: {
+                        Image(systemName: "info.circle")
+                    }
+                    .opacity(runnersWithUpdates.isEmpty ? 0 : 1)
+                }
             }
             .environmentObject(model)
             .refreshable {
                 await model.stopObserving()
                 await model.observe()
+            }
+            .task {
+                await checkForRunnerUpdates()
             }
             .fullScreenCover(item: $model.selectedRunnerRequiringSetup, onDismiss: model.reload, content: { runnerOBJ in
                 SmartNavigationView {
@@ -64,6 +79,11 @@ struct BrowseView: View {
                         .navigationBarTitleDisplayMode(.inline)
                         .closeButton(title: "Done")
                     }
+                }
+            })
+            .sheet(isPresented: $presentUpdatesView, content: {
+                SmartNavigationView {
+                    UpdateRunnersView(data: $runnersWithUpdates)
                 }
             })
             .animation(.default, value: model.links)
@@ -93,6 +113,15 @@ struct BrowseView: View {
             let lists = await RealmActor.shared().getRunnerLists()
             noListInstalled = lists.isEmpty
         }
+    }
+
+    func checkForRunnerUpdates() async {
+        guard !hasCheckedForRunnerUpdates else { return }
+        let data = await RealmActor.shared().getRunnerUpdates()
+        await animate {
+            runnersWithUpdates = data
+        }
+        hasCheckedForRunnerUpdates = true
     }
 }
 
@@ -421,4 +450,53 @@ final actor PageLinkProviderModel: ObservableObject {
 
 enum LinkProviderPendingState {
     case authentication, setup
+}
+
+struct UpdateRunnersView: View {
+    @Binding var data: [TaggedRunner]
+
+    var body: some View {
+        List {
+            ForEach(data) { runner in
+                HStack(spacing: 15) {
+                    STTThumbView(url: URL(string: runner.thumbnail))
+                        .frame(width: 40, height: 40)
+                        .cornerRadius(5)
+                    VStack(alignment: .leading) {
+                        Text(runner.name)
+                    }
+                    Spacer()
+                    Button("Update") {
+                        update(runner: runner)
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                }
+            }
+        }
+        .closeButton()
+        .navigationTitle("Runner Updates")
+        .navigationBarTitleDisplayMode(.inline)
+        .animation(.default, value: data)
+        .toast()
+    }
+
+    func update(runner: TaggedRunner) {
+        Task {
+            guard let url = URL(string: runner.listUrl) else {
+                Logger.shared.error("Could not parse the Runner List", runner.id)
+                ToastManager.shared.info("Could not parse the Runner List")
+                return
+            }
+            do {
+                try await DSK.shared.importRunner(from: url, with: runner.id)
+                await animate {
+                    data.removeAll(where: { $0.id == runner.id })
+                }
+            } catch {
+                ToastManager.shared.error(error)
+                Logger.shared.error(error, "Update~\(runner.id)")
+            }
+        }
+    }
 }
