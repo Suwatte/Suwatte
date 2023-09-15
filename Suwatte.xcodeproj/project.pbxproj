@@ -354,6 +354,7 @@
 		DFBE48562A25BEB2000ABA16 /* ContentLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE48552A25BEB2000ABA16 /* ContentLink.swift */; };
 		DFBE485A2A26CE84000ABA16 /* History+ContentSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE48592A26CE84000ABA16 /* History+ContentSource.swift */; };
 		DFBE485C2A2FA20E000ABA16 /* ReadLater+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE485B2A2FA20E000ABA16 /* ReadLater+ViewModel.swift */; };
+		DFC383992AB4195C003903FA /* Realm+RunnerUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC383982AB4195C003903FA /* Realm+RunnerUpdate.swift */; };
 		DFC39E9328A093C900450EC4 /* InstalledRunnersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC39E9228A093C900450EC4 /* InstalledRunnersView.swift */; };
 		DFC39E9528A093D700450EC4 /* RunnerListsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC39E9428A093D700450EC4 /* RunnerListsView.swift */; };
 		DFC39E9728A0B0BC00450EC4 /* Runner.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC39E9628A0B0BC00450EC4 /* Runner.swift */; };
@@ -811,6 +812,7 @@
 		DFBE48552A25BEB2000ABA16 /* ContentLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentLink.swift; sourceTree = "<group>"; };
 		DFBE48592A26CE84000ABA16 /* History+ContentSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "History+ContentSource.swift"; sourceTree = "<group>"; };
 		DFBE485B2A2FA20E000ABA16 /* ReadLater+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ReadLater+ViewModel.swift"; sourceTree = "<group>"; };
+		DFC383982AB4195C003903FA /* Realm+RunnerUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+RunnerUpdate.swift"; sourceTree = "<group>"; };
 		DFC39E9228A093C900450EC4 /* InstalledRunnersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstalledRunnersView.swift; sourceTree = "<group>"; };
 		DFC39E9428A093D700450EC4 /* RunnerListsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerListsView.swift; sourceTree = "<group>"; };
 		DFC39E9628A0B0BC00450EC4 /* Runner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Runner.swift; sourceTree = "<group>"; };
@@ -1182,6 +1184,7 @@
 				DF27835A2A79A5B60098BBA9 /* Realm+Backup.swift */,
 				DF2783672A79F73B0098BBA9 /* Realm+CSChapterUpdates.swift */,
 				DF4EB4CC2AB28F82001A73CD /* Realm+Statistics.swift */,
+				DFC383982AB4195C003903FA /* Realm+RunnerUpdate.swift */,
 			);
 			path = CRUD;
 			sourceTree = "<group>";
@@ -2969,6 +2972,7 @@
 				DF6C25CB282D97EB002BE1AA /* STT+Parsable.swift in Sources */,
 				DF3DA8F52A57320100E8E3BD /* JSCRunner.swift in Sources */,
 				DF9BFE1E2A428A73005D0B63 /* AH+Rar.swift in Sources */,
+				DFC383992AB4195C003903FA /* Realm+RunnerUpdate.swift in Sources */,
 				DF2783452A799F690098BBA9 /* Realm+ValueStore.swift in Sources */,
 				DFD4D8682A7AD20300C5AC13 /* Realm+Observer.swift in Sources */,
 				DF8D0BB82800EE48003E4C3E /* SelectionLabel.swift in Sources */,
@@ -3241,7 +3245,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Suwatte (iOS).entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = KL9W2NU9C5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -3288,7 +3292,7 @@
 				CODE_SIGN_ENTITLEMENTS = "Suwatte (iOS).entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = KL9W2NU9C5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;

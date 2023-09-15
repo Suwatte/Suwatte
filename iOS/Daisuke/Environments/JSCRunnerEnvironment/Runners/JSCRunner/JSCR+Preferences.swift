@@ -40,4 +40,10 @@ extension JSCRunner: DSKSetupDelegate {
         let object = try form.asDictionary()
         return try await callOptionalVoidMethod(method: "validateSetupForm", arguments: [object])
     }
+
+    func isRunnerSetup() async throws -> DSKCommon.BooleanState {
+        try await callMethodReturningDecodable(method: "isRunnerSetup",
+                                               arguments: [],
+                                               resolvesTo: DSKCommon.BooleanState.self)
+    }
 }

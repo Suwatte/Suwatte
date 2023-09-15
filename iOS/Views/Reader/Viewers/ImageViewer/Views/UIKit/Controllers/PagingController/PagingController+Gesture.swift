@@ -59,7 +59,6 @@ extension Controller {
         }
         var action = navigator.mode.action(for: point, ofSize: view.frame.size)
 
-        
         func invertAction(_ action: inout ReaderNavigation.NavigationType) {
             if action == .LEFT { action = .RIGHT }
             else if action == .RIGHT { action = .LEFT }

@@ -84,11 +84,6 @@ enum ReadingMode: Int, CaseIterable, Hashable, UserDefaultsSerializable {
 }
 
 extension DaisukeEngine.Structs {
-    struct URLContentIdentifer: Parsable {
-        var contentId: String
-        var chapterId: String?
-    }
-
     struct Highlight: Parsable, Identifiable, Hashable {
         var id: String
         var cover: String
@@ -110,7 +105,7 @@ extension DaisukeEngine.Structs {
         var canStream: Bool {
             streamable ?? false
         }
-        
+
         var isNonInteractive: Bool {
             noninteractive ?? false
         }
@@ -188,5 +183,13 @@ extension DSKCommon {
 
         let requestedPage: Int?
         let readingMode: ReadingMode?
+    }
+}
+
+extension DSKCommon {
+    struct DeepLinkContext: JSCObject {
+        let read: ReaderContext?
+        let content: Highlight?
+        let link: PageLinkLabel?
     }
 }

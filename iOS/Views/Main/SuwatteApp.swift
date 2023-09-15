@@ -16,13 +16,6 @@ struct SuwatteApp: App {
         WindowGroup {
             ContentView()
                 .onOpenURL(perform: handleURL(_:))
-                .fullScreenCover(item: $navModel.identifier) { ids in
-                    SmartNavigationView {
-                        ProfileView(entry: .init(id: ids.contentId, cover: "", title: "..."), sourceId: ids.sourceId)
-                            .closeButton()
-                            .environmentObject(ToastManager.shared)
-                    }
-                }
                 .environmentObject(navModel)
                 .accentColor(accentColor)
                 .tint(accentColor)
@@ -45,7 +38,7 @@ extension SuwatteApp {
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 
             switch host {
-            case "content": // Handle Open Content
+            case "deeplink": // Handle Open Content
                 guard let contentUrl = components?.queryItems?.first(where: { $0.name == "url" })?.value, let url = URL(string: contentUrl) else {
                     ToastManager.shared.display(.error(nil, "Unable to parse URL"))
                     break
@@ -117,7 +110,8 @@ extension SuwatteApp {
 
 final class NavigationModel: ObservableObject {
     static let shared = NavigationModel()
-    @Published var identifier: ContentIdentifier?
+    @Published var content: TaggedHighlight?
+    @Published var link: TaggedPageLinkLabel?
 }
 
 extension ContentIdentifier: Identifiable {}

@@ -15,17 +15,17 @@ struct ContentSourceDirectoryView: View {
     let request: DSKCommon.DirectoryRequest
     @State var selection: HighlightIdentifier?
     @StateObject var model = ViewModel()
-    
+
     @StateObject var manager = LocalAuthManager.shared
     @Preference(\.protectContent) var protectContent
-    
+
     var body: some View {
         DirectoryView(model: .init(runner: source, request: request)) { data in
             let identifier = ContentIdentifier(contentId: data.id,
                                                sourceId: source.id).id
             let inLibrary = model.library.contains(identifier)
             let inReadLater = model.readLater.contains(identifier)
-           
+
             DSKHighlightTile(data: data,
                              source: source,
                              inLibrary: inLibrary,
@@ -42,7 +42,7 @@ struct ContentSourceDirectoryView: View {
         .animation(.default, value: model.readLater)
         .animation(.default, value: model.library)
     }
-    
+
     private var hideLibrayBadges: Bool {
         protectContent && manager.isExpired
     }

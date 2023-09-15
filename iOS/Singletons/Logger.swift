@@ -57,7 +57,6 @@ extension Logger {
             logs.append(entry)
         }
 
-
         // Print to console in debugging
         #if DEBUG
             print(entry.OutputMessage)

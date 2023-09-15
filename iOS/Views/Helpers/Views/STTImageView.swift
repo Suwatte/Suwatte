@@ -85,7 +85,7 @@ struct STTImageView: View {
                 loader.load(url)
                 return
             }
-            
+
             let runner = await DSK.shared.getRunner(identifier.sourceId)
             guard let runner, runner.intents.imageRequestHandler else {
                 loader.load(url)

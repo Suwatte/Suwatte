@@ -84,11 +84,10 @@ extension DirectoryView.ViewModel {
                 }
             }
 
-            
             await MainActor.run {
                 request.context = context
             }
-            
+
             let data: DSKCommon.PagedResult = try await runner.getDirectory(request: request)
 
             await MainActor.run {

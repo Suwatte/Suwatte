@@ -13,6 +13,7 @@ struct ContentView: View {
     @State var selection = 0
     @StateObject var toaster = ToastManager.shared
     @StateObject var appState = StateManager.shared
+    @EnvironmentObject var navModel: NavigationModel
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
@@ -25,10 +26,21 @@ struct ContentView: View {
                 }
                 appState.didScenePhaseChange(phase)
             }
-            .environmentObject(toaster)
-            .environmentObject(appState)
             .onAppear {
                 selection = InitialSelection
+            }
+            .fullScreenCover(item: $navModel.content) { taggedHighlight in
+                SmartNavigationView {
+                    ProfileView(entry: taggedHighlight.highlight, sourceId: taggedHighlight.sourceID)
+                        .closeButton()
+                        .environmentObject(ToastManager.shared)
+                }
+            }
+            .fullScreenCover(item: $navModel.link) { taggedLink in
+                SmartNavigationView {
+                    PageLinkView(link: taggedLink.link.link, title: taggedLink.link.title, runnerID: taggedLink.sourceID)
+                        .closeButton()
+                }
             }
             .fullScreenCover(item: $appState.readerState) { ctx in
                 ReaderGateWay(title: ctx.title,
@@ -43,6 +55,8 @@ struct ContentView: View {
                 appState.initialize()
                 await appState.observe()
             }
+            .environmentObject(toaster)
+            .environmentObject(appState)
     }
 
     var MainContent: some View {

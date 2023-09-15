@@ -22,7 +22,6 @@ extension ViewModel {
         let downloads = self.downloads
 
         return await BGActor.run {
-
             func sort(_ chapters: [ThreadSafeChapter]) -> [ThreadSafeChapter] {
                 guard let sortMethod else { return chapters }
                 switch sortMethod {
@@ -41,7 +40,7 @@ extension ViewModel {
             if onlyDownloads {
                 let filtered = sort(chapters
                     .filter { downloads[$0.id] == .completed })
-                
+
                 return filtered
             }
 
@@ -50,7 +49,7 @@ extension ViewModel {
             return data
         }
     }
-    
+
     func prepareChapterList(onlyDownloads: Bool, sortMethod: ChapterSortOption, desc: Bool) {
         Task { [weak self] in
             let chapters = await self?.getFilteredChapters(onlyDownloads: onlyDownloads, sortMethod: sortMethod, desc: desc)
@@ -60,7 +59,7 @@ extension ViewModel {
             }
         }
     }
-    
+
     func preparePreview() async {
         let chapters = await getFilteredChapters(onlyDownloads: false, sortMethod: .source, desc: true)
         let targets = chapters.count >= 5 ? Array(chapters[0 ... 4]) : Array(chapters[0...])

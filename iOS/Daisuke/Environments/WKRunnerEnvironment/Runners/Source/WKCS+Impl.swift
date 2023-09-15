@@ -32,10 +32,6 @@ extension WKContentSource: ContentSource {
         try await eval(script("let data = await RunnerObject.syncUserLibrary(lib);"), ["lib": library.asDictionary()])
     }
 
-    func getIdentifiers(for id: String) async throws -> DaisukeEngine.Structs.URLContentIdentifer? {
-        try await eval(script("let data = await RunnerObject.getIdentifierForURL(id);"), ["id": id])
-    }
-
     func onContentsAddedToLibrary(ids: [String]) async throws {
         try await eval("await RunnerObject.onContentsAddedToLibrary(ids)", ["ids": ids])
     }

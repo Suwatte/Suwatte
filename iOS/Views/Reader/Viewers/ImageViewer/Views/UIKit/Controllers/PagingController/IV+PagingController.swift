@@ -118,7 +118,7 @@ extension Controller {
             self.loadingTask = nil
         }
     }
-    
+
     func hardReset() {
         lastIndexPath = .init(item: 0, section: 0)
         currentChapterRange = (min: .zero, max: .zero)

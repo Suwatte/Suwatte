@@ -32,3 +32,12 @@ struct TaggedHighlight: Identifiable, Hashable {
         .init(id: contentID, cover: coverURL, title: title)
     }
 }
+
+struct TaggedPageLinkLabel: Identifiable, Hashable {
+    let sourceID: String
+    let link: DSKCommon.PageLinkLabel
+
+    var id: Int {
+        hashValue
+    }
+}

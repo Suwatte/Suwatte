@@ -20,6 +20,8 @@ protocol DSKRunnerDelegate {
     var configCache: [String: DSKCommon.DirectoryConfig] { get set }
     var customID: String? { get }
     var customName: String? { get }
+
+    func handleURL(url: String) async throws -> DSKCommon.DeepLinkContext?
 }
 
 protocol DSKPreferenceDelegate {
@@ -32,7 +34,7 @@ protocol DSKAuthDelegate {
     func handleUserSignOut() async throws
     func handleBasicAuthentication(id: String, password: String) async throws
     func getWebAuthRequestURL() async throws -> DSKCommon.BasicURL
-    func didReceiveCookieFromWebAuthResponse(name: String) async throws -> Bool
+    func didReceiveCookieFromWebAuthResponse(name: String) async throws -> DSKCommon.BooleanState
     func getOAuthRequestURL() async throws -> DSKCommon.BasicURL
     func handleOAuthCallback(response: String) async throws
 }
@@ -54,6 +56,7 @@ protocol DSKPageDelegate {
 protocol DSKSetupDelegate {
     func getSetupMenu() async throws -> DSKCommon.Form
     func validateSetupForm(form: DSKCommon.CodableDict) async throws
+    func isRunnerSetup() async throws -> DSKCommon.BooleanState
 }
 
 extension DSKRunnerDelegate {

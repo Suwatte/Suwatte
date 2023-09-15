@@ -24,7 +24,7 @@ struct ContentSourceInfoView: View {
             Section {
                 if source.intents.requiresSetup {
                     NavigationLink("Setup") {
-                        DSKLoadableForm(runner: source, context: .setup)
+                        DSKLoadableForm(runner: source, context: .setup(closeOnSuccess: false))
                             .navigationTitle("Setup")
                     }
                 }

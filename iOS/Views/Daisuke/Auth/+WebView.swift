@@ -102,7 +102,7 @@ extension RepresentableView.Controller: WKNavigationDelegate {
                     guard !cookie.value.isEmpty else { continue }
                     AF.session.configuration.httpCookieStorage?.setCookie(cookie)
                     do {
-                        let authenticated = try await runner.didReceiveCookieFromWebAuthResponse(name: cookie.name)
+                        let authenticated = try await runner.didReceiveCookieFromWebAuthResponse(name: cookie.name).state
                         guard authenticated else { continue }
                         ToastManager.shared.info("[\(runner.name)] Logged In!")
                         self.dismiss(animated: true, completion: nil)

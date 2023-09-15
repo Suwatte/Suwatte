@@ -9,6 +9,7 @@ import Foundation
 
 struct TrackerConfig: Parsable {
     let linkKeys: [String]?
+    let owningLinks: [String]?
 }
 
 protocol ContentTracker: DSKRunner {

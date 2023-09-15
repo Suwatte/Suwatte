@@ -31,4 +31,8 @@ extension WKRunner: DSKSetupDelegate {
     func validateSetupForm(form: DSKCommon.CodableDict) async throws {
         try await eval("await RunnerObject.validateSetupForm(form);", ["form": form.asDictionary()])
     }
+
+    func isRunnerSetup() async throws -> DSKCommon.BooleanState {
+        try await eval(script("let data = await RunnerObject.isRunnerSetup();"))
+    }
 }

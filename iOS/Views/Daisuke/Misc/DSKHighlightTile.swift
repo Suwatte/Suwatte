@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 struct DSKHighlightTile: View {
     @State var data: DSKCommon.Highlight
     var source: AnyContentSource
@@ -20,7 +19,7 @@ struct DSKHighlightTile: View {
     private var sourceID: String {
         source.id
     }
-    
+
     var body: some View {
         PageViewTile(runnerID: source.id,
                      id: data.id,
@@ -72,7 +71,6 @@ struct DSKHighlightTile: View {
         return nil
     }
 }
-
 
 // MARK: - Default Actions
 
@@ -164,7 +162,7 @@ extension DSKHighlightTile {
 
         handleReadContent()
     }
-    
+
     func navigate() {
         if data.link != nil {
             presentLink.toggle()
@@ -191,7 +189,7 @@ extension DSKHighlightTile {
         Task {
             do {
                 let thumbnailURL = URL(string: data.cover)
-                var thumbnailRequest: URLRequest? = nil
+                var thumbnailRequest: URLRequest?
                 if let thumbnailURL {
                     if source.intents.imageRequestHandler {
                         thumbnailRequest = try (await source.willRequestImage(imageURL: thumbnailURL)).toURLRequest()

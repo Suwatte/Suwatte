@@ -39,97 +39,97 @@ extension LibraryView {
                     ProgressView()
                 }
             }
-                .task {
-                    observe()
-                }
-                .onDisappear {
-                    model.disconnect()
-                }
-                .toolbar {
-                    ToolbarItemGroup(placement: .navigationBarTrailing) {
-                        if model.isSelecting {
-                            Button("Done") {
-                                model.isSelecting = false
+            .task {
+                observe()
+            }
+            .onDisappear {
+                model.disconnect()
+            }
+            .toolbar {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    if model.isSelecting {
+                        Button("Done") {
+                            model.isSelecting = false
+                        }
+                    } else {
+                        Menu {
+                            // Select
+                            Button {
+                                model.isSelecting = true
+                            } label: {
+                                Label("Select", systemImage: "checkmark.circle")
                             }
-                        } else {
-                            Menu {
-                                // Select
-                                Button {
-                                    model.isSelecting = true
-                                } label: {
-                                    Label("Select", systemImage: "checkmark.circle")
-                                }
-                                Divider()
+                            Divider()
 
-                                Picker("Sort By", selection: $sortKey) {
-                                    ForEach(KeyPath.allCases) { path in
-                                        Button(path.description) {
-                                            self.sortKey = path
-                                        }
-                                        .tag(path)
+                            Picker("Sort By", selection: $sortKey) {
+                                ForEach(KeyPath.allCases) { path in
+                                    Button(path.description) {
+                                        self.sortKey = path
                                     }
+                                    .tag(path)
                                 }
-                                .pickerStyle(.menu)
+                            }
+                            .pickerStyle(.menu)
 
-                                Button {
-                                    sortOrder.toggle()
+                            Button {
+                                sortOrder.toggle()
 
-                                } label: {
-                                    Label("Order", systemImage: "chevron.\(sortOrder.ascending ? "up" : "down")")
-                                }
+                            } label: {
+                                Label("Order", systemImage: "chevron.\(sortOrder.ascending ? "up" : "down")")
+                            }
 
-                                Divider()
+                            Divider()
 
-                                Button {
-                                    presentOptionsSheet.toggle()
-                                } label: {
-                                    Label("Settings", systemImage: "gearshape")
-                                }
-                                
-                                Button {
-                                    presentStatsSheet.toggle()
-                                } label: {
-                                    Label("Statistics", systemImage: "chart.bar")
-                                }
+                            Button {
+                                presentOptionsSheet.toggle()
+                            } label: {
+                                Label("Settings", systemImage: "gearshape")
+                            }
 
-                                Button {
-                                    presentMigrateSheet.toggle()
-                                } label: {
-                                    Label("Migrate", systemImage: "shippingbox")
-                                }
+                            Button {
+                                presentStatsSheet.toggle()
+                            } label: {
+                                Label("Statistics", systemImage: "chart.bar")
+                            }
 
-                                Button {
-                                    Task {
-                                        model.refresh()
-                                    }
-                                } label: {
-                                    Label("Refresh Database", systemImage: "arrow.triangle.2.circlepath")
+                            Button {
+                                presentMigrateSheet.toggle()
+                            } label: {
+                                Label("Migrate", systemImage: "shippingbox")
+                            }
+
+                            Button {
+                                Task {
+                                    model.refresh()
                                 }
                             } label: {
-                                Image(systemName: "ellipsis.circle")
-                                    .imageScale(.large)
+                                Label("Refresh Database", systemImage: "arrow.triangle.2.circlepath")
                             }
+                        } label: {
+                            Image(systemName: "ellipsis.circle")
+                                .imageScale(.large)
                         }
                     }
                 }
-                .navigationTitle(NAV_TITLE)
-                .navigationBarTitleDisplayMode(.inline)
-                .environmentObject(model)
-                .searchable(text: $model.query, placement: .navigationBarDrawer(displayMode: .always), prompt: Text("Search \(NAV_TITLE)"))
-                .onReceive(model.$query.debounce(for: .seconds(0.15), scheduler: DispatchQueue.main).dropFirst()) { _ in
-                    observe()
+            }
+            .navigationTitle(NAV_TITLE)
+            .navigationBarTitleDisplayMode(.inline)
+            .environmentObject(model)
+            .searchable(text: $model.query, placement: .navigationBarDrawer(displayMode: .always), prompt: Text("Search \(NAV_TITLE)"))
+            .onReceive(model.$query.debounce(for: .seconds(0.15), scheduler: DispatchQueue.main).dropFirst()) { _ in
+                observe()
+            }
+            .sheet(isPresented: $presentOptionsSheet) {
+                OptionsSheet(collection: model.collection)
+            }
+            .sheet(isPresented: $presentStatsSheet, content: {
+                SmartNavigationView {
+                    LoadableStatisticsView()
                 }
-                .sheet(isPresented: $presentOptionsSheet) {
-                    OptionsSheet(collection: model.collection)
-                }
-                .sheet(isPresented: $presentStatsSheet, content: {
-                    SmartNavigationView {
-                        LoadableStatisticsView()
-                    }
-                })
-                .fullScreenCover(isPresented: $presentMigrateSheet, content: {
-                    PreMigrationView()
-                })
+            })
+            .fullScreenCover(isPresented: $presentMigrateSheet, content: {
+                PreMigrationView()
+            })
         }
 
         var NAV_TITLE: String {

@@ -24,16 +24,14 @@ extension DaisukeEngine.Structs {
         var nsfw: Bool?
         var image: String?
         var noninteractive: Bool?
-        
-        
+
         var isNonInteractive: Bool {
             noninteractive ?? false
         }
     }
-    
+
     struct Option: Parsable, Hashable, Identifiable {
         let id: String
         let title: String
-
     }
 }

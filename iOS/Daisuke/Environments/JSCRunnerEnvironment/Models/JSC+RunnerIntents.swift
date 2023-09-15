@@ -43,6 +43,8 @@ struct RunnerIntents: Parsable {
         case webview, basic, oauth, unknown
     }
 
+    let canHandleURL: Bool
+
     enum BasicAuthenticationUIIdentifier: Int, Codable {
         case EMAIL
         case USERNAME

@@ -75,7 +75,7 @@ final actor IVDataCache {
 
         // Add Transition to next
         let next = chapters.getOrNil(index + 1)
-        
+
         if Preferences.standard.currentReadingMode == .VERTICAL {
             let transition = ReaderTransition(from: chapter,
                                               to: next,
@@ -84,7 +84,6 @@ final actor IVDataCache {
             objects.append(.transition(transition))
         } else {
             let showTransitions = Preferences.standard.forceTransitions
-            
 
             guard showTransitions || next == nil else {
                 return objects
@@ -100,7 +99,6 @@ final actor IVDataCache {
                                               pageCount: readerPages.count)
             objects.append(.transition(transition))
         }
-
 
         // Return generated pages
         return objects

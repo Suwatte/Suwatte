@@ -9,13 +9,34 @@ import Foundation
 import UIKit
 
 extension DSK {
-    private func handleGetIdentifier(for url: String) async -> [ContentIdentifier] {
-        var results = [ContentIdentifier]()
+    private func handleDeepLink(for url: String) async -> [(DSKCommon.DeepLinkContext, String)] {
+        var results = [(DSKCommon.DeepLinkContext, String)]()
         let sources = await getActiveSources()
+        let trackers = await getActiveTrackers()
+
         for source in sources {
-            let result = try? await source.getIdentifiers(for: url)
-            guard let result else { continue }
-            results.append(.init(contentId: result.contentId, sourceId: source.id))
+            guard source.intents.canHandleURL else { continue }
+            guard let owningLinks = source.config?.owningLinks, owningLinks.contains(where: { url.starts(with: $0) }) else { continue }
+            do {
+                let link = try await source.handleURL(url: url)
+                guard let link else { continue }
+                results.append((link, source.id))
+            } catch {
+                Logger.shared.error(error, "\(source.id)| Handle Deep Link")
+            }
+        }
+
+        for tracker in trackers {
+            guard tracker.intents.canHandleURL else { continue }
+
+            guard let owningLinks = tracker.config?.owningLinks, owningLinks.contains(where: { url.starts(with: $0) }) else { continue }
+            do {
+                let link = try await tracker.handleURL(url: url)
+                guard let link else { continue }
+                results.append((link, tracker.id))
+            } catch {
+                Logger.shared.error(error, "\(tracker.id)| Handle Deep Link")
+            }
         }
         return results
     }
@@ -25,7 +46,7 @@ extension DSK {
         await MainActor.run {
             ToastManager.shared.loading = true
         }
-        let results = await handleGetIdentifier(for: url.relativeString)
+        let results = await handleDeepLink(for: url.relativeString)
         await MainActor.run {
             ToastManager.shared.loading = false
         }
@@ -33,24 +54,27 @@ extension DSK {
             return false
         }
         if results.count == 1 {
-            // Only One Result, navigate immediately
-            await MainActor.run(body: {
-                NavigationModel.shared.identifier = results.first
-            })
+            let (link, sourceID) = results.first!
+
+            Task { @MainActor [weak self] in
+                await self?.didTriggerDeepLinkAction(link, for: sourceID)
+            }
             return true
         }
 
         // Show Alert
-        let alert = await UIAlertController(title: "Handler", message: "Multiple Sources can handle this url", preferredStyle: .actionSheet)
+        let alert = await UIAlertController(title: "Handler", message: "Choose Handler", preferredStyle: .actionSheet)
 
         // Add Actions
-        for result in results {
-            guard let source = await getSource(id: result.sourceId) else {
+        for (link, sourceID) in results {
+            guard let source = await getSource(id: sourceID) else {
                 continue
             }
             // Add Action
             let action = await UIAlertAction(title: source.name, style: .default) { _ in
-                NavigationModel.shared.identifier = result
+                Task { @MainActor [weak self] in
+                    await self?.didTriggerDeepLinkAction(link, for: sourceID)
+                }
             }
             await alert.addAction(action)
         }
@@ -64,5 +88,16 @@ extension DSK {
         })
 
         return true
+    }
+
+    @MainActor
+    func didTriggerDeepLinkAction(_ link: DSKCommon.DeepLinkContext, for sourceID: String) async {
+        if let highlight = link.content {
+            NavigationModel.shared.content = .init(from: highlight, with: sourceID)
+        } else if let readerContext = link.read {
+            await StateManager.shared.openReader(context: readerContext, caller: readerContext.content, source: sourceID)
+        } else if let link = link.link {
+            NavigationModel.shared.link = .init(sourceID: sourceID, link: link)
+        }
     }
 }

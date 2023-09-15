@@ -38,7 +38,7 @@ struct RunnerListsView: View {
                         Task {
                             await RealmActor.shared().removeRunnerList(with: list.url)
                         }
-                    } label : {
+                    } label: {
                         Label("Delete", systemImage: "trash")
                     }
                 }

@@ -63,3 +63,30 @@ struct LoadableSourceView<V: View>: View {
         }
     }
 }
+
+struct LoadableRunnerView<V: View>: View {
+    let runnerID: String
+    let content: (AnyRunner) -> V
+    @State var loadable: Loadable<AnyRunner> = .idle
+
+    init(runnerID: String, @ViewBuilder _ content: @escaping (AnyRunner) -> V) {
+        self.runnerID = runnerID
+        self.content = content
+    }
+
+    var body: some View {
+        LoadableView(load, $loadable) { value in
+            content(value)
+        }
+    }
+
+    func load() async throws {
+        await MainActor.run {
+            loadable = .loading
+        }
+        let runner = try await DSK.shared.getDSKRunner(runnerID)
+        await MainActor.run {
+            loadable = .loaded(runner)
+        }
+    }
+}

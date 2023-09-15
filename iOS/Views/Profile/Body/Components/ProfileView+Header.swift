@@ -10,7 +10,6 @@ import SwiftUI
 
 private typealias Skeleton = ProfileView.Skeleton
 
-
 extension Skeleton {
     struct Header: View {
         @EnvironmentObject var model: ProfileView.ViewModel
@@ -48,34 +47,33 @@ extension Skeleton {
 
 extension Skeleton.Header {
     func buildLabels() -> [ColoredLabel] {
-        var data = Array<ColoredLabel>()
-        
+        var data = [ColoredLabel]()
+
         if let creators = entry.creators, !creators.isEmpty {
-            data.append(contentsOf: creators.prefix(2).map( { .init(text: $0, color: .random) }))
+            data.append(contentsOf: creators.prefix(2).map { .init(text: $0, color: .random) })
         }
-        
+
         if let status = entry.status {
             data.append(.init(text: status.description, color: status.color))
         }
-        
-        
+
         data.append(.init(text: model.source.name, color: .random))
-        
+
         if let contentType = entry.contentType {
             data.append(.init(text: contentType.description, color: contentType == .novel ? .blue : .random))
         }
-        
+
         if entry.isNSFW ?? false {
             data.append(.init(text: "NSFW", color: .red))
         }
-        
+
         if let info = entry.info {
-            data.append(contentsOf: info.prefix(5).map( { .init(text: $0, color: .random) }))
+            data.append(contentsOf: info.prefix(5).map { .init(text: $0, color: .random) })
         }
-        
+
         return data
     }
-    
+
     @ViewBuilder
     var LabelsView: some View {
         let schemeIsDark = colorScheme == .dark
@@ -85,7 +83,7 @@ extension Skeleton.Header {
                 .fontWeight(schemeIsDark ? .semibold : .bold)
                 .padding(.vertical, 2)
                 .padding(.horizontal, 4)
-                .background(label.color.opacity( schemeIsDark ? 0.65 : 0.95))
+                .background(label.color.opacity(schemeIsDark ? 0.65 : 0.95))
                 .foregroundColor(.white)
                 .cornerRadius(3)
         }

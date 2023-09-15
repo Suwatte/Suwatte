@@ -35,15 +35,15 @@ extension ViewModel {
                 guard let tracker = await DSK.shared.getTracker(id: key) else {
                     continue
                 }
-                
 
                 group.addTask {
                     do {
                         guard let _ = try await tracker.getAuthenticatedUser(),
-                              let entry = try await tracker.getTrackItem(id: value).entry else {
+                              let entry = try await tracker.getTrackItem(id: value).entry
+                        else {
                             return (tracker.id, 0)
                         }
-                        
+
                         let originMaxReadChapter = entry.progress.lastReadChapter
                         let originMaxVolume = entry.progress.lastReadVolume ?? 0
                         return (tracker.id, ThreadSafeChapter.orderKey(volume: originMaxVolume, number: originMaxReadChapter))

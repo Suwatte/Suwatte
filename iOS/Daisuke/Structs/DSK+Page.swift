@@ -23,7 +23,7 @@ extension DSKCommon {
 
 typealias JSCObject = Hashable & Parsable
 extension DSKCommon {
-    struct PageSection : JSCObject {
+    struct PageSection: JSCObject {
         let id: String
         var title: String
         let style: SectionStyle?
@@ -96,5 +96,11 @@ extension DSKCommon {
         var isDestructive: Bool {
             destructive ?? false
         }
+    }
+}
+
+extension DSKCommon {
+    struct BooleanState: JSCObject {
+        let state: Bool
     }
 }

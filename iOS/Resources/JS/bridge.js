@@ -31,6 +31,8 @@ let RunnerIntents = {
   hasTagsView: false,
   // Content Tracker
   advancedTracker: false,
+    // hasURL Handler
+  canHandleURL: false
 };
 
 // Reference:
@@ -115,7 +117,7 @@ function setupSourceConfig() {
 
     // Requires Setup
     RunnerIntents.requiresSetup = !!ctx.getSetupMenu &&
-      !!ctx.validateSetupForm;
+      !!ctx.validateSetupForm && !!ctx.isRunnerSetup;
       
     //Image Handler
     RunnerIntents.imageRequestHandler = !!ctx.willRequestImage;
@@ -176,11 +178,12 @@ function setupSourceConfig() {
     // Content Tracker Intents
     if (RunnerEnvironment === "tracker") {
       RunnerIntents.advancedTracker =
-        !!ctx.getRecommendedTitles &&
         !!ctx.getDirectory &&
         !!ctx.getDirectoryConfig &&
-        !!ctx.getInfo;
+        !!ctx.getFullInformation;
     }
+      
+    RunnerIntents.canHandleURL = !!ctx.handleURL
   } catch (err) {
     console.error("[Intents]", err.message);
   }

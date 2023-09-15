@@ -78,7 +78,7 @@ extension DaisukeEngine {
         // Evalutate Runner Script
         content = try String(contentsOf: scriptURL, encoding: .utf8)
         _ = context.evaluateScript(content)
-        
+
         let error = context.exception
         if let error {
             Logger.shared.error("Error Occured While Evaluating Runner Script", "Engine BootStrap JSCRunner")
