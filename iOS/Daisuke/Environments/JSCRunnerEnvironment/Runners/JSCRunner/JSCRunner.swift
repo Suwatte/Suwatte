@@ -50,4 +50,11 @@ public class JSCRunner: DSKRunner, JSCContextWrapper {
         self.intents = intents
         saveState()
     }
+
+    func handleURL(url: String) async throws -> DSKCommon.DeepLinkContext? {
+        guard methodExists(method: "handleURL") else {
+            return nil
+        }
+        return try await callMethodReturningDecodable(method: "handleURL", arguments: [url], resolvesTo: DSKCommon.DeepLinkContext?.self)
+    }
 }

@@ -62,8 +62,6 @@ protocol ContentSource: DSKRunner {
     func didTriggerContextActon(highlight: DSKCommon.Highlight, key: String) async throws
 
     func overrrideDownloadRequest(_ url: String) async throws -> DSKCommon.Request?
-
-    func handleURL(url: String) async throws -> DSKCommon.DeepLinkContext?
 }
 
 extension ContentSource {

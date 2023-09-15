@@ -20,6 +20,8 @@ protocol DSKRunnerDelegate {
     var configCache: [String: DSKCommon.DirectoryConfig] { get set }
     var customID: String? { get }
     var customName: String? { get }
+
+    func handleURL(url: String) async throws -> DSKCommon.DeepLinkContext?
 }
 
 protocol DSKPreferenceDelegate {

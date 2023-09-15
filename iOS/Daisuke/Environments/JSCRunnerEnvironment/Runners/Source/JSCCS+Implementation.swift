@@ -38,10 +38,6 @@ extension JSCContentSource {
         let library = try JSONSerialization.jsonObject(with: data)
         return try await callMethodReturningDecodable(method: "syncUserLibrary", arguments: [library], resolvesTo: [DSKCommon.DownSyncedContent].self)
     }
-
-    func handleURL(url: String) async throws -> DSKCommon.DeepLinkContext? {
-        try await callMethodReturningDecodable(method: "handleURL", arguments: [url], resolvesTo: DSKCommon.DeepLinkContext?.self)
-    }
 }
 
 // MARK: -  Library Event handler

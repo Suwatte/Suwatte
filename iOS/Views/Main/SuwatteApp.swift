@@ -51,7 +51,7 @@ extension SuwatteApp {
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 
             switch host {
-            case "content": // Handle Open Content
+            case "deeplink": // Handle Open Content
                 guard let contentUrl = components?.queryItems?.first(where: { $0.name == "url" })?.value, let url = URL(string: contentUrl) else {
                     ToastManager.shared.display(.error(nil, "Unable to parse URL"))
                     break

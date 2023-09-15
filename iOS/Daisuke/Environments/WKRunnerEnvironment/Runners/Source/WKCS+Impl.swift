@@ -32,11 +32,6 @@ extension WKContentSource: ContentSource {
         try await eval(script("let data = await RunnerObject.syncUserLibrary(lib);"), ["lib": library.asDictionary()])
     }
 
-    func handleURL(url: String) async throws -> DSKCommon.DeepLinkContext? {
-        try await eval(script("let data = await RunnerObject.handleURL(url)"),
-                       ["url": url])
-    }
-
     func onContentsAddedToLibrary(ids: [String]) async throws {
         try await eval("await RunnerObject.onContentsAddedToLibrary(ids)", ["ids": ids])
     }

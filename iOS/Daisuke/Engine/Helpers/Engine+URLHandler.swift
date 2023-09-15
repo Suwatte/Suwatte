@@ -12,7 +12,10 @@ extension DSK {
     private func handleDeepLink(for url: String) async -> [(DSKCommon.DeepLinkContext, String)] {
         var results = [(DSKCommon.DeepLinkContext, String)]()
         let sources = await getActiveSources()
+        let trackers = await getActiveTrackers()
+
         for source in sources {
+            guard source.intents.canHandleURL else { continue }
             guard let owningLinks = source.config?.owningLinks, owningLinks.contains(where: { url.starts(with: $0) }) else { continue }
             do {
                 let link = try await source.handleURL(url: url)
@@ -20,6 +23,19 @@ extension DSK {
                 results.append((link, source.id))
             } catch {
                 Logger.shared.error(error, "\(source.id)| Handle Deep Link")
+            }
+        }
+
+        for tracker in trackers {
+            guard tracker.intents.canHandleURL else { continue }
+
+            guard let owningLinks = tracker.config?.owningLinks, owningLinks.contains(where: { url.starts(with: $0) }) else { continue }
+            do {
+                let link = try await tracker.handleURL(url: url)
+                guard let link else { continue }
+                results.append((link, tracker.id))
+            } catch {
+                Logger.shared.error(error, "\(tracker.id)| Handle Deep Link")
             }
         }
         return results

@@ -31,6 +31,10 @@ let RunnerIntents = {
   hasTagsView: false,
   // Content Tracker
   advancedTracker: false,
+    
+    // hasURL Handler
+
+    canHandleURL: false
 };
 
 // Reference:
@@ -180,6 +184,8 @@ function setupSourceConfig() {
         !!ctx.getDirectoryConfig &&
         !!ctx.getFullInformation;
     }
+      
+      RunnerIntents.canHandleURL == !!ctx.handleURL
   } catch (err) {
     console.error("[Intents]", err.message);
   }
