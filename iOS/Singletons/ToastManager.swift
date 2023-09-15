@@ -19,12 +19,16 @@ final class ToastManager: ObservableObject {
         guard let message else { return }
 
         task?.cancel()
-        task = Task { @MainActor in
+        task = Task {
             try? await Task.sleep(seconds: 0.3)
-            toast = message
+            await MainActor.run { [weak self] in
+                self?.toast = message
+            }
             try? await Task.sleep(seconds: 2.5)
-            toast = nil
-            queue.dequeue()
+            await MainActor.run { [weak self] in
+                self?.toast = nil
+                self?.queue.dequeue()
+            }
             run()
         }
     }

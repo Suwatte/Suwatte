@@ -19,6 +19,7 @@ struct BrowseView: View {
             List {
                 if noListInstalled {
                     NoListInstalledView
+                        .transition(.opacity)
                 }
                 PendingSetupView()
                 InstalledSourcesSection

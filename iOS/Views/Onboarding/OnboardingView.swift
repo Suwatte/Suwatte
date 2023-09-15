@@ -25,7 +25,10 @@ struct OnboardingView: View {
                     .tag(3)
                 
                 if savedCommunityList {
-                    
+                    OnboardingAddRunnersView(tab: $tab)
+                        .tag(4)
+                    OnboardingCompleteView(tab: $tab)
+                        .tag(5)
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .always))
@@ -80,6 +83,8 @@ struct OnboardingWelcomeTabView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
+                .padding(.top, 5)
+
             }
             .padding(.horizontal)
             
@@ -95,7 +100,7 @@ struct OnboardingSourceTabView: View {
     
     var body: some View {
         VStack (alignment: .leading, spacing: 7) {
-            Text("A variety of options")
+            Text("A plethora of options.")
                 .font(.title3)
                 .fontWeight(.semibold)
             Group {
@@ -110,6 +115,7 @@ struct OnboardingSourceTabView: View {
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
+            .padding(.top, 5)
         }
         .padding(.horizontal)
     }
@@ -125,7 +131,7 @@ struct OnboardingSourceInformationTabView: View {
                 .font(.title3)
                 .fontWeight(.semibold)
             Group {
-                Text("**Runners**\nThese refer to the external scripts that extend the reading and tracking options available in the app. Thes can often be downloaded from **Runner Lists** and have their source code uploaded to *Github*\n\n**Sources**\nSources are *Runners* that provide content to read from websites or provide the functionality to fetch & read content from Media Servers such as *[Komga](https://komga.org)*.\n\n**Trackers**\nTrackers are *Runners* that provide a way to keep track of your reading progress on Tracking Sites like *[Anilist](https://anilist.co)*.")
+                Text("**Runners**\nThese refer to the external scripts that extend the reading and tracking options available in the app. These can often be downloaded from **Runner Lists** and have their source code available on *Github*\n\n**Sources**\nSources are *Runners* that provide content to read from websites or provide the functionality to fetch & read content from Media Servers such as *[Komga](https://komga.org)*.\n\n**Trackers**\nTrackers are *Runners* that provide a way to keep track of your reading progress on Tracking Sites like *[Anilist](https://anilist.co)*.")
             }
             .font(.subheadline.weight(.light))
             
@@ -136,6 +142,8 @@ struct OnboardingSourceInformationTabView: View {
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
+            .padding(.top, 5)
+
         }
         .padding(.horizontal)
     }
@@ -160,6 +168,8 @@ struct OnboardingAddListsTabView: View {
             }
             .buttonStyle(.bordered)
             .controlSize(.large)
+            .padding(.top, 5)
+
         }
         .padding(.horizontal)
     }
@@ -184,11 +194,86 @@ struct OnboardingAddListsTabView: View {
 }
 
 
-struct Onboarding_Previews: PreviewProvider {
+struct OnboardingAddRunnersView: View {
+    @Binding var tab: Int
+    @State private var loadable: Loadable<RunnerList> = .idle
+    @StateObject var model: RunnerListsView.ViewModel = .init()
     
-    static var previews: some View {
-        OnboardingView()
-            .previewLayout(PreviewLayout.sizeThatFits)
-            .previewDisplayName("Onboarding")
+    private let COMMUNITY_LIST_URL = "http://localhost:8080"
+    var body: some View {
+        VStack (alignment: .leading, spacing: 10) {
+            Text("Adding Runners")
+                .font(.title3)
+                .fontWeight(.semibold)
+            Text("Great Job! Now lets add some Sources & Trackers.")
+                .font(.subheadline.weight(.light))
+            
+            
+            LoadableView(load, $loadable) { runnerList in
+                ForEach(runnerList.runners) { runner in
+                    RunnerListsView.RunnerListInfo.RunnerListCell(listURL: COMMUNITY_LIST_URL, list: runnerList, runner: runner)
+                        .frame(height: 60)
+                }
+            }
+            
+            Button("Continue") {
+                withAnimation {
+                    tab += 1
+                }
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .padding(.top, 5)
+        }
+
+            
+        .padding(.horizontal)
+        .environmentObject(model)
+        .animation(.default, value: model.savedRunners)
+        .animation(.default, value: loadable)
+        .task {
+            await model.observe()
+        }
+        .onDisappear(perform: model.stopObserving)
+        
+    }
+    
+    func load() async throws {
+        await MainActor.run {
+            loadable = .loading
+        }
+        guard let url = URL(string: COMMUNITY_LIST_URL) else {
+            throw DaisukeEngine.Errors.NamedError(name: "Parse Error", message: "Invalid URL")
+        }
+        let data = try await DSK.shared.getRunnerList(at: url)
+        
+        await MainActor.run {
+            loadable = .loaded(data)
+        }
+    }
+}
+
+struct OnboardingCompleteView: View {
+    @Binding var tab: Int
+    @Environment(\.presentationMode) var presentationMode
+    var body: some View {
+        VStack (alignment: .leading, spacing: 10) {
+            Text("All Done!")
+                .font(.title3)
+                .fontWeight(.semibold)
+            Group {
+                Text("Great! Now you're ready to begin reading from external sources. To view your saved lists or installed runners navigate to the \(Image(systemName: "ellipsis.circle")) tab.\n\nFor further questions regarding *runners*, visit our [website](https://suwatte.app) and feel free to drop your questions over on our [**Discord Server**](https://discord.gg/8wmkXsT6h5), where users can also share their created lists.\n\nWe hope this was a tad bit helpful and Happy Reading!")
+            }
+            .font(.subheadline.weight(.light))
+            
+            Button("Finish") {
+                presentationMode.wrappedValue.dismiss()
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .padding(.top, 5)
+
+        }
+        .padding(.horizontal)
     }
 }

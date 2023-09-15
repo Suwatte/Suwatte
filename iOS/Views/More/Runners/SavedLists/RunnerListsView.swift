@@ -280,10 +280,9 @@ extension RunnerListsView.RunnerListInfo {
         var listURL: String
         var list: RunnerList
         var runner: Runner
+        @State var runnerState: RunnerState = .notInstalled
         @EnvironmentObject var model: RunnerListsView.ViewModel
         var body: some View {
-            let runnerState = getRunnerState(runner: runner)
-
             HStack {
                 RunnerHeader(runner: runner)
                 Spacer()
@@ -306,8 +305,12 @@ extension RunnerListsView.RunnerListInfo {
                 .buttonStyle(.bordered)
                 .controlSize(.small)
                 .disabled(runnerState.noInstall)
+                .task {
+                    updateRunnerState()
+                }
             }
         }
+        
 
         enum RunnerState {
             case installed, outdated, sourceOutdated, notInstalled, appOutDated
@@ -331,12 +334,17 @@ extension RunnerListsView.RunnerListInfo {
                 self == .appOutDated || self == .sourceOutdated
             }
         }
+        
+        func updateRunnerState() {
+            runnerState = getRunnerState(runner: runner)
+        }
 
         func saveExternalRunnerList() async {
             let base = URL(string: listURL)!
 
             do {
                 try await DSK.shared.importRunner(from: base, with: runner.id)
+                updateRunnerState()
                 ToastManager.shared.info("\(runner.name) Saved!")
             } catch {
                 ToastManager.shared.display(.error(error))
