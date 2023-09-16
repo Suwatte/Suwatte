@@ -163,7 +163,7 @@ extension StateManager {
             break
         case .active:
             if thumbnailToken == nil, collectionToken == nil {
-                Task {
+                Task { @MainActor in
                     await observe()
                 }
             }

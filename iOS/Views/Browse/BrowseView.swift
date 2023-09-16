@@ -89,6 +89,7 @@ struct BrowseView: View {
             .animation(.default, value: model.links)
             .animation(.default, value: model.runners)
             .animation(.default, value: model.pending)
+            .animation(.default, value: noListInstalled)
         }
         .task {
             guard !hasLoaded else { return }
