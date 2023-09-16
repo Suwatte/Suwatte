@@ -15,7 +15,7 @@ extension DSK {
         let trackers = await getActiveTrackers()
 
         for source in sources {
-            guard source.intents.canHandleURL else { continue }
+            guard source.intents.canHandleURL ?? false else { continue }
             guard let owningLinks = source.config?.owningLinks, owningLinks.contains(where: { url.starts(with: $0) }) else { continue }
             do {
                 let link = try await source.handleURL(url: url)
@@ -27,7 +27,7 @@ extension DSK {
         }
 
         for tracker in trackers {
-            guard tracker.intents.canHandleURL else { continue }
+            guard tracker.intents.canHandleURL ?? false else { continue }
 
             guard let owningLinks = tracker.config?.owningLinks, owningLinks.contains(where: { url.starts(with: $0) }) else { continue }
             do {

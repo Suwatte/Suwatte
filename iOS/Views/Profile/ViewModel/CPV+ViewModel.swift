@@ -245,7 +245,7 @@ func animate(duration: Double = 0.25, _ execute: @escaping () -> Void) async {
 
 extension ViewModel {
     func updateSourceProgressState() async {
-        guard source.intents.progressSyncHandler else { return }
+        guard source.intents.progressSyncHandler ?? false else { return }
         do {
             let data = try await source.getProgressState(for: entry.id)
             sourceProgressState = data

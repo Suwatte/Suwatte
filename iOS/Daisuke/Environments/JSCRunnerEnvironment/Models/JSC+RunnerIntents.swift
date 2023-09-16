@@ -42,9 +42,9 @@ struct RunnerIntents: Parsable {
         case webview, basic, oauth, unknown
     }
 
-    let canHandleURL: Bool
-    let progressSyncHandler: Bool
-    let groupedUpdateFetcher: Bool
+    let canHandleURL: Bool?
+    let progressSyncHandler: Bool?
+    let groupedUpdateFetcher: Bool?
 
     enum BasicAuthenticationUIIdentifier: Int, Codable {
         case EMAIL

@@ -80,7 +80,7 @@ extension DSK {
 
         var marked: [String] = []
 
-        if source.intents.progressSyncHandler {
+        if source.intents.progressSyncHandler ?? false {
             do {
                 let data = try await source.getProgressState(for: contentId)
                 if let ids = data.readChapterIds {
@@ -189,7 +189,7 @@ extension DSK {
         var marked: [String] = []
 
         if Task.isCancelled { return false }
-        if source.intents.progressSyncHandler {
+        if source.intents.progressSyncHandler ?? false {
             do {
                 let data = try await source.getProgressState(for: title.contentId)
                 if let ids = data.readChapterIds {
