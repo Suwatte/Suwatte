@@ -64,16 +64,20 @@ extension ViewModel {
 
         // Source Chapter Sync Handler
         var sourceOriginHighestRead: Double = 0
-        if source.intents.chapterSyncHandler {
-            do {
-                let chapterIds = try await source.getReadChapterMarkers(contentId: entry.id)
-                sourceOriginHighestRead = chapters
-                    .filter { chapterIds.contains($0.chapterId) }
+        if source.intents.progressSyncHandler, let state = sourceProgressState {
+            var chapterListMax: Double = 0
+            var markStateMax: Double = 0
+            if let readIds = state.readChapterIds {
+                chapterListMax = chapters
+                    .filter { readIds.contains($0.chapterId) }
                     .map { ThreadSafeChapter.orderKey(volume: $0.volume, number: $0.number) }
                     .max() ?? 0
-            } catch {
-                Logger.shared.error(error, source.id)
             }
+
+            if let markState = state.markAllBelowAsRead {
+                markStateMax = ThreadSafeChapter.orderKey(volume: markState.chapterVolume, number: markState.chapterNumber)
+            }
+            sourceOriginHighestRead = max(chapterListMax, markStateMax)
         }
 
         // Prepare the Highest Read Chapter Number

@@ -37,8 +37,6 @@ protocol ContentSource: DSKRunner {
 
     func getAllTags() async throws -> [DaisukeEngine.Structs.Property]
 
-    func getReadChapterMarkers(contentId: String) async throws -> [String]
-
     func syncUserLibrary(library: [DSKCommon.UpSyncedContent]) async throws -> [DSKCommon.DownSyncedContent]
 
     func onContentsAddedToLibrary(ids: [String]) async throws
@@ -62,6 +60,10 @@ protocol ContentSource: DSKRunner {
     func didTriggerContextActon(highlight: DSKCommon.Highlight, key: String) async throws
 
     func overrrideDownloadRequest(_ url: String) async throws -> DSKCommon.Request?
+
+    func getGroupedUpdates(for ids: [String], from date: Date) async throws -> DSKCommon.GroupedUpdateResponse
+
+    func getProgressState(for contentId: String) async throws -> DSKCommon.ContentProgressState
 }
 
 extension ContentSource {

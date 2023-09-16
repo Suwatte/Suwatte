@@ -419,7 +419,6 @@ final actor PageLinkProviderModel: ObservableObject {
                                 self?.pending[runner.id] = .authentication
                             }
                         }
-                        return
                     }
                     return
                 }

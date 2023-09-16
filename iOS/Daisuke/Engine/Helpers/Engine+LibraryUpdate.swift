@@ -80,8 +80,15 @@ extension DSK {
 
         var marked: [String] = []
 
-        if source.intents.chapterSyncHandler {
-            marked = (try? await source.getReadChapterMarkers(contentId: contentId)) ?? []
+        if source.intents.progressSyncHandler {
+            do {
+                let data = try await source.getProgressState(for: contentId)
+                if let ids = data.readChapterIds {
+                    marked.append(contentsOf: ids)
+                }
+            } catch {
+                Logger.shared.error(error, "(getProgressState)-\(source.id)")
+            }
         }
 
         let lastFetched = await actor.getLatestStoredChapter(source.id, contentId)
@@ -182,8 +189,15 @@ extension DSK {
         var marked: [String] = []
 
         if Task.isCancelled { return false }
-        if source.intents.chapterSyncHandler {
-            marked = (try? await source.getReadChapterMarkers(contentId: title.contentId)) ?? []
+        if source.intents.progressSyncHandler {
+            do {
+                let data = try await source.getProgressState(for: title.contentId)
+                if let ids = data.readChapterIds {
+                    marked.append(contentsOf: ids)
+                }
+            } catch {
+                Logger.shared.error(error, "(getProgressState)-\(source.id)")
+            }
         }
 
         let lastFetched = await actor.getLatestStoredChapter(source.id, title.contentId)

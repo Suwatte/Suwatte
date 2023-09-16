@@ -1,4 +1,3 @@
-// Initialize Global Handlers
 let RunnerObject;
 let RunnerEnvironment = "unknown";
 let RunnerIntents = {
@@ -15,7 +14,6 @@ let RunnerIntents = {
   // Content Source
   chapterEventHandler: false,
   contentEventHandler: false,
-  chapterSyncHandler: false,
   librarySyncHandler: false,
 
   // MSB
@@ -31,8 +29,14 @@ let RunnerIntents = {
   hasTagsView: false,
   // Content Tracker
   advancedTracker: false,
-    // hasURL Handler
-  canHandleURL: false
+
+  // hasURL Handler
+  canHandleURL: false,
+
+  // Progress Sync Handler
+  progressSyncHandler: false,
+
+  groupedUpdateFetcher: false,
 };
 
 // Reference:
@@ -116,9 +120,9 @@ function setupSourceConfig() {
     RunnerIntents.preferenceMenuBuilder = !!ctx.getPreferenceMenu;
 
     // Requires Setup
-    RunnerIntents.requiresSetup = !!ctx.getSetupMenu &&
-      !!ctx.validateSetupForm && !!ctx.isRunnerSetup;
-      
+    RunnerIntents.requiresSetup =
+      !!ctx.getSetupMenu && !!ctx.validateSetupForm && !!ctx.isRunnerSetup;
+
     //Image Handler
     RunnerIntents.imageRequestHandler = !!ctx.willRequestImage;
 
@@ -159,7 +163,6 @@ function setupSourceConfig() {
         !!ctx.onContentsAddedToLibrary &&
         !!ctx.onContentsRemovedFromLibrary &&
         !!ctx.onContentsReadingFlagChanged;
-      RunnerIntents.chapterSyncHandler = !!ctx.getReadChapterMarkers;
       RunnerIntents.librarySyncHandler = !!ctx.syncUserLibrary;
       RunnerIntents.explorePageHandler =
         !!ctx.createExploreCollections && !!ctx.resolveExploreCollection;
@@ -173,6 +176,8 @@ function setupSourceConfig() {
       RunnerIntents.isContextMenuProvider =
         !!ctx.getContextActions && !!ctx.didTriggerContextAction;
       RunnerIntents.canRefreshHighlight = !!ctx.getHighlight;
+      RunnerIntents.progressSyncHandler = !!ctx.getProgressState;
+      RunnerIntents.groupedUpdateFetcher = !!ctx.getGroupedUpdates;
     }
 
     // Content Tracker Intents
@@ -182,8 +187,8 @@ function setupSourceConfig() {
         !!ctx.getDirectoryConfig &&
         !!ctx.getFullInformation;
     }
-      
-    RunnerIntents.canHandleURL = !!ctx.handleURL
+
+    RunnerIntents.canHandleURL = !!ctx.handleURL;
   } catch (err) {
     console.error("[Intents]", err.message);
   }

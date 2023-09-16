@@ -49,7 +49,7 @@ extension ProfileView {
 
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    if viewModel.source.intents.chapterSyncHandler {
+                    if viewModel.source.intents.chapterEventHandler {
                         SyncView()
                             .frame(width: 7, height: 7, alignment: .center)
                             .transition(.opacity)

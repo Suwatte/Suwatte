@@ -192,4 +192,31 @@ extension DSKCommon {
         let content: Highlight?
         let link: PageLinkLabel?
     }
+
+    struct GroupedUpdateResponse: JSCObject {
+        let updates: [GroupedUpdateItem]
+    }
+
+    struct GroupedUpdateItem: JSCObject {
+        let contentId: String
+        let updateCount: Int
+    }
+
+    struct ContentProgressState: JSCObject {
+        let readChapterIds: [String]?
+        let currentReadingState: CurrentReadingState?
+        let markAllBelowAsRead: MarkState?
+
+        struct CurrentReadingState: JSCObject {
+            let page: Int
+            let progress: Double
+            let readDate: Date
+            let chapterId: String
+        }
+
+        struct MarkState: JSCObject {
+            let chapterNumber: Double
+            let chapterVolume: Double?
+        }
+    }
 }

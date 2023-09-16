@@ -48,7 +48,7 @@ extension Controller {
         // Update in Source
         Task {
             guard let source = await DSK.shared.getSource(id: chapter.sourceId),
-                  source.intents.chapterSyncHandler else { return }
+                  source.intents.chapterEventHandler else { return }
             do {
                 try await source.onChapterRead(contentId: chapter.contentId,
                                                chapterId: chapter.chapterId)

@@ -56,6 +56,7 @@ extension ProfileView {
         internal var libraryTrackingToken: NotificationToken?
         internal var readLaterToken: NotificationToken?
         internal var chapterBookmarkToken: NotificationToken?
+        internal var sourceProgressState: DSKCommon.ContentProgressState?
 
         internal var linkedContentIDs = [String]()
         @Published var downloads: [String: DownloadStatus] = [:]
@@ -212,6 +213,7 @@ extension ViewModel {
 extension ViewModel {
     func didLoadChapters() async {
         // Resolve Links, Sync & Update Action State
+        await updateSourceProgressState()
         await setActionState()
         await handleSync()
         await setActionState(false)
@@ -239,4 +241,16 @@ func animate(duration: Double = 0.25, _ execute: @escaping () -> Void) async {
     }
 
     await task.value
+}
+
+extension ViewModel {
+    func updateSourceProgressState() async {
+        guard source.intents.progressSyncHandler else { return }
+        do {
+            let data = try await source.getProgressState(for: entry.id)
+            sourceProgressState = data
+        } catch {
+            Logger.shared.error(error, "(getProgressState)-\(source.id)")
+        }
+    }
 }

@@ -30,6 +30,9 @@ extension ViewModel {
         _ = STTHelpers.getReadingMode(for: identifier) // To Update Reading Mode
 
         guard let marker else {
+            if let state = resolveSourceProgressStateAsActionState() {
+                return state
+            }
             // No Progress marker present, return first chapter
             let chapter = chapters.last!
             return .init(state: .start,
@@ -43,6 +46,13 @@ extension ViewModel {
            let maxRead = marker.maxReadChapterKey, maxRead <= currentRead
         {
             return actionState
+        }
+
+        if let sourceStateLastRead = sourceProgressState?.currentReadingState?.readDate,
+           let markerDate = marker.dateRead, sourceStateLastRead > markerDate,
+           let state = resolveSourceProgressStateAsActionState()
+        {
+            return state
         }
 
         guard let chapterRef = marker.currentChapter else {
@@ -124,5 +134,27 @@ extension ViewModel {
         return .init(state: .upNext,
                      chapter: next,
                      marker: nil)
+    }
+
+    private func resolveSourceProgressStateAsActionState() -> ActionState? {
+        guard let state = sourceProgressState?.currentReadingState, let currentIndex = chapters.firstIndex(where: { $0.chapterId == state.chapterId }) else {
+            return nil
+        }
+
+        if state.progress == 1, let target = chapters.getOrNil(currentIndex + 1) { // Completed, Point to Next
+            return .init(state: .start, chapter: target)
+
+        } else if let target = chapters.getOrNil(currentIndex) {
+            // Update Progress in db
+            Task.detached {
+                let actor = await RealmActor.shared()
+                await actor.updateContentProgress(chapter: target,
+                                                  lastPageRead: state.page,
+                                                  totalPageCount: Int(Double(state.page) / state.progress))
+            }
+            return .init(state: .resume, chapter: target, marker: .init(progress: state.progress, date: state.readDate))
+        }
+
+        return nil
     }
 }

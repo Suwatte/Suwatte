@@ -21,7 +21,6 @@ struct RunnerIntents: Parsable {
     // CS
     let chapterEventHandler: Bool
     let contentEventHandler: Bool
-    let chapterSyncHandler: Bool
     let librarySyncHandler: Bool
     let hasTagsView: Bool
 
@@ -44,6 +43,8 @@ struct RunnerIntents: Parsable {
     }
 
     let canHandleURL: Bool
+    let progressSyncHandler: Bool
+    let groupedUpdateFetcher: Bool
 
     enum BasicAuthenticationUIIdentifier: Int, Codable {
         case EMAIL
