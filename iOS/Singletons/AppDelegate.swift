@@ -20,7 +20,7 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
         STTScheduler.shared.registerTasks()
 
         // Set Default UD Values
-        UserDefaults.standard.register(defaults: STTUserDefaults)
+        UserDefaults.standard.register(defaults: STTUserDefaults())
         UDSync.sync()
 
         // Nuke Requests
@@ -45,11 +45,7 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
         // Notification Center
         let center = UNUserNotificationCenter.current()
 
-        center.requestAuthorization(options: [.alert, .badge, .sound]) { granted, _ in
-            guard granted else {
-                ToastManager.shared.display(.error(nil, "Notifications Disabled"))
-                return
-            }
+        center.requestAuthorization(options: [.alert, .badge, .sound]) { _, _ in
         }
 
         // Realm

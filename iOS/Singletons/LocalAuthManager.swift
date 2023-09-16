@@ -10,7 +10,7 @@ import Foundation
 import LocalAuthentication
 
 final class LocalAuthManager: ObservableObject {
-    static var shared = LocalAuthManager()
+    static let shared = LocalAuthManager()
 
     var subscriptions = Set<AnyCancellable>()
     @Published var isAuthenticating = false

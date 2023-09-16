@@ -58,6 +58,7 @@ struct OPDSView: View {
         .onDisappear(perform: cancel)
     }
 
+    @MainActor
     func renamePrompt(server: StoredOPDSServer) {
         let ac = UIAlertController(title: "Rename \(server.alias)", message: nil, preferredStyle: .alert)
         ac.addTextField()
@@ -74,7 +75,7 @@ struct OPDSView: View {
         }
         ac.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         ac.addAction(submitAction)
-        KEY_WINDOW?.rootViewController?.present(ac, animated: true)
+        getKeyWindow()?.rootViewController?.present(ac, animated: true)
     }
 }
 

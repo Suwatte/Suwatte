@@ -12,7 +12,7 @@ import UserNotifications
 // Reference: https://developer.apple.com/videos/play/wwdc2019/707/?time=1131
 
 class STTScheduler {
-    static var shared = STTScheduler()
+    static let shared = STTScheduler()
 
     let update_task = "com.ceres.suwatte.fetch_updates"
     let backup_task = "com.ceres.suwatte.auto_backup"
@@ -109,9 +109,10 @@ class STTScheduler {
             let updates = await DSK.shared.fetchLibraryUpdates()
 
             if updates > 0 {
-                STTNotifier.shared.scheduleUpdateNotification(count: updates)
+                await MainActor.run {
+                    STTNotifier.shared.scheduleUpdateNotification(count: updates)
+                }
             }
-            Logger.shared.log("[STTScheduler] [\(self?.update_task ?? #function)] Update Interval not met, Exiting...")
             task.setTaskCompleted(success: true)
         }
 

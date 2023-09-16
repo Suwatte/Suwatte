@@ -166,7 +166,7 @@ extension DSKTrackerView {
                             }
                             .foregroundColor(.white)
                         }
-                        .frame(height: KEY_WINDOW?.safeAreaInsets.top ?? 0)
+                        .frame(height: getKeyWindow()?.safeAreaInsets.top ?? 0)
 
                         Spacer()
                         HStack(alignment: .bottom) {
@@ -186,7 +186,7 @@ extension DSKTrackerView {
                         }
                     }
                     .padding(.horizontal)
-                    .padding(.top, KEY_WINDOW?.safeAreaInsets.top ?? 0)
+                    .padding(.top, getKeyWindow()?.safeAreaInsets.top ?? 0)
                     .padding(.bottom, 25)
                 }
             }

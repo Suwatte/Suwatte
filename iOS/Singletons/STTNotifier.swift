@@ -10,8 +10,9 @@ import UIKit
 import UserNotifications
 
 class STTNotifier {
-    static var shared = STTNotifier()
+    static let shared = STTNotifier()
 
+    @MainActor
     func scheduleUpdateNotification(count: Int) {
         // Content
         let content = UNMutableNotificationContent()
@@ -30,6 +31,7 @@ class STTNotifier {
         center.add(request)
     }
 
+    @MainActor
     func clearBadge() {
         UIApplication.shared.applicationIconBadgeNumber = 0
     }

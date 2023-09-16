@@ -70,7 +70,7 @@ enum ReaderNavigation {
         .init(rect: .init(l: 0.66, t: 0.33, r: 1.0, b: 0.66), type: .RIGHT),
         .init(rect: .init(l: 0.0, t: 0.66, r: 1.0, b: 1.0), type: .RIGHT),
     ]
-    static var LNavigation: ViewerNavigation = .init(regions: LNavigationRegions.reversed(), title: "L")
+    static let LNavigation: ViewerNavigation = .init(regions: LNavigationRegions.reversed(), title: "L")
 
     // Edge
     static let EdgeNavigationRegions: [NavigationRegion] = [
@@ -79,7 +79,7 @@ enum ReaderNavigation {
         .init(rect: .init(l: 0.66, t: 0.0, r: 1.0, b: 1.0), type: .RIGHT),
     ]
 
-    static var EdgeNavigation: ViewerNavigation = .init(regions: EdgeNavigationRegions.reversed(), title: "Edge")
+    static let EdgeNavigation: ViewerNavigation = .init(regions: EdgeNavigationRegions.reversed(), title: "Edge")
 
     // Kindlish
     static let KindlishNavigationRegion: [NavigationRegion] = [

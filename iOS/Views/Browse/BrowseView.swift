@@ -54,7 +54,7 @@ struct BrowseView: View {
             }
             .environmentObject(model)
             .refreshable {
-                await model.stopObserving()
+                model.stopObserving()
                 await model.observe()
             }
             .task {
@@ -99,7 +99,7 @@ struct BrowseView: View {
         }
         .onDisappear {
             Task {
-                await model.stopObserving()
+                model.stopObserving()
             }
         }
         .onReceive(StateManager.shared.browseUpdateRunnerPageLinks) { _ in
@@ -295,7 +295,7 @@ extension BrowseView {
 
 // MARK: ViewModel
 
-final actor PageLinkProviderModel: ObservableObject {
+final class PageLinkProviderModel: ObservableObject {
     private let isBrowsePageProvider: Bool
     @MainActor
     @Published
@@ -414,11 +414,9 @@ final actor PageLinkProviderModel: ObservableObject {
                     return
                 }
                 guard let _ = try await runner.getAuthenticatedUser() else {
-                    await MainActor.run { [weak self] in
-                        Task { @MainActor in
-                            await animate { [weak self] in
-                                self?.pending[runner.id] = .authentication
-                            }
+                    Task { @MainActor in
+                        await animate { [weak self] in
+                            self?.pending[runner.id] = .authentication
                         }
                     }
                     return
@@ -440,7 +438,7 @@ final actor PageLinkProviderModel: ObservableObject {
     nonisolated
     func reload() {
         Task {
-            await stopObserving()
+            stopObserving()
             await observe()
             await MainActor.run { [isBrowsePageProvider] in
                 let manager = StateManager.shared

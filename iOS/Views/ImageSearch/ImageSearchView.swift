@@ -133,9 +133,9 @@ extension ImageSearchView {
                     Button(url.host ?? "Unknown Host") {
                         Task { @MainActor in
                             let result = await DSK.shared.handleURL(for: url)
-                            if !result {
-                                KEY_WINDOW?.rootViewController?.present(SFSafariViewController(url: url), animated: true)
-                            }
+                            guard !result else { return }
+                            let window = getKeyWindow()
+                            window?.rootViewController?.present(SFSafariViewController(url: url), animated: true)
                         }
                     }
                 }

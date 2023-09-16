@@ -429,7 +429,8 @@ extension DSKFormView {
             alertController.addAction(confirmAction)
             alertController.addAction(cancelAction)
 
-            KEY_WINDOW?.rootViewController?.present(alertController, animated: true, completion: nil)
+            let window = getKeyWindow()
+            window?.rootViewController?.present(alertController, animated: true, completion: nil)
         }
 
         private var UpperBoundString: String {

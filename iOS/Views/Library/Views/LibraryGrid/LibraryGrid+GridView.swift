@@ -80,7 +80,8 @@ extension LibraryView.LibraryGrid {
                         let shareAction = UIAction(title: "Share", image: .init(systemName: "square.and.arrow.up"))
                             { _ in
                                 let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-                                KEY_WINDOW?.rootViewController?.present(av, animated: true)
+                                let window = getKeyWindow()
+                                window?.rootViewController?.present(av, animated: true)
                             }
 
                         nonDestructiveActions.append(shareAction)
@@ -158,6 +159,7 @@ struct NeutralButtonStyle: ButtonStyle {
     }
 }
 
+@MainActor
 func DynamicGridLayout(header: NSCollectionLayoutDimension? = nil, footer: NSCollectionLayoutDimension? = nil, _ titleSize: CGFloat? = nil) -> UICollectionViewCompositionalLayout {
     UICollectionViewCompositionalLayout { _, environment in
 

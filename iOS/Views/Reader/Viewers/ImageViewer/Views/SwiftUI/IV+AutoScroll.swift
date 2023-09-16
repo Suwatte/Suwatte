@@ -6,12 +6,18 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct AutoScrollOverlay: View {
-    var edges = KEY_WINDOW?.safeAreaInsets
     @State var isScrolling = false
     private let publisher = PanelPublisher.shared
 
+    @MainActor
+    private var edges : UIEdgeInsets? {
+        let window = getKeyWindow()
+        return window?.safeAreaInsets
+    }
+    
     var body: some View {
         ZStack {
             Button {

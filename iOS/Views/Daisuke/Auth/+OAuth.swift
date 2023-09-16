@@ -80,7 +80,7 @@ extension DSKAuthView {
 }
 
 final class WebAuthAnchor: NSObject, ASWebAuthenticationPresentationContextProviding {
-    func presentationAnchor(for _: ASWebAuthenticationSession) -> ASPresentationAnchor {
-        KEY_WINDOW!
+    @MainActor func presentationAnchor(for _: ASWebAuthenticationSession) -> ASPresentationAnchor {
+        getKeyWindow()!
     }
 }

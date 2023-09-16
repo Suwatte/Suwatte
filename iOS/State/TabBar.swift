@@ -15,6 +15,7 @@ enum AppTabs: Int, CaseIterable {
         hashValue
     }
 
+    @MainActor
     @ViewBuilder
     func view() -> some View {
         switch self {
@@ -59,6 +60,7 @@ enum AppTabs: Int, CaseIterable {
         }
     }
 
+    @MainActor
     func systemImage() -> String {
         switch self {
         case .downloads:

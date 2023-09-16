@@ -66,6 +66,7 @@ extension DirectoryViewer {
             }
         }
 
+        @MainActor
         func createDirectory() {
             let ac = UIAlertController(title: "Create New Folder", message: nil, preferredStyle: .alert)
             ac.addTextField()
@@ -86,7 +87,7 @@ extension DirectoryViewer {
             }
             ac.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             ac.addAction(submitAction)
-            KEY_WINDOW?.rootViewController?.present(ac, animated: true)
+            getKeyWindow()?.rootViewController?.present(ac, animated: true)
         }
     }
 }

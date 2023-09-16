@@ -108,7 +108,8 @@ extension BackupsView {
 
     func handleShareURL(url: URL) {
         let activityController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-        KEY_WINDOW?.rootViewController!.present(activityController, animated: true, completion: nil)
+        let window = getKeyWindow()
+        window?.rootViewController!.present(activityController, animated: true, completion: nil)
     }
 
     func handleRestore(url: URL) {

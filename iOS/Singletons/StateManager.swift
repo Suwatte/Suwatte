@@ -63,7 +63,8 @@ final class StateManager: ObservableObject {
             let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
             let action = UIAlertAction(title: "OK", style: .default)
             controller.addAction(action)
-            KEY_WINDOW?.rootViewController?.present(controller, animated: true)
+            let window = getKeyWindow()
+            window?.rootViewController?.present(controller, animated: true)
         }
     }
 }

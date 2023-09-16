@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 final class SauceNao {
-    static var shared = SauceNao()
+    static let shared = SauceNao()
 
     private var key = "b1e601ed339f1c909df951a2ebfe597671592d90"
 

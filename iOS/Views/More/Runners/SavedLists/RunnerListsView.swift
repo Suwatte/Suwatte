@@ -103,7 +103,7 @@ extension RunnerListsView {
         }))
         ac.addAction(submitAction)
 
-        KEY_WINDOW?.rootViewController?.present(ac, animated: true)
+        getKeyWindow()?.rootViewController?.present(ac, animated: true)
     }
 }
 
