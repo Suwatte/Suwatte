@@ -9,11 +9,7 @@ import RealmSwift
 
 extension RealmActor {
     func getLibraryEntry(for id: String) -> LibraryEntry? {
-        realm
-            .objects(LibraryEntry.self)
-            .where { $0.id == id }
-            .where { !$0.isDeleted }
-            .first
+        getObject(of: LibraryEntry.self, with: id)
     }
 
     func getLibraryEntries(for source: String) -> [LibraryEntry] {
@@ -258,11 +254,7 @@ extension RealmActor {
     }
 
     func updateUnreadCount(for id: ContentIdentifier) async {
-        let target = realm
-            .objects(LibraryEntry.self)
-            .where { $0.content.contentId == id.contentId }
-            .where { $0.content.sourceId == id.sourceId }
-            .first
+        let target = getLibraryEntry(for: id.id)
 
         guard let target else { return }
 
@@ -273,10 +265,8 @@ extension RealmActor {
     }
 
     func decrementUnreadCount(for id: String) async {
-        let target = realm
-            .objects(LibraryEntry.self)
-            .where { $0.content.id == id }
-            .first
+        let target = getLibraryEntry(for: id)
+
 
         guard let target else { return }
         await operation {
@@ -317,16 +307,10 @@ extension RealmActor {
 
 extension RealmActor {
     func contentInLibrary(s: String, c: String) -> Bool {
-        return !realm
-            .objects(LibraryEntry.self)
-            .where { $0.content.contentId == c && $0.content.sourceId == s }
-            .isEmpty
+        getLibraryEntry(for: ContentIdentifier(contentId: c, sourceId: s).id) != nil
     }
 
     func contentSavedForLater(s: String, c: String) -> Bool {
-        return !realm
-            .objects(ReadLater.self)
-            .where { $0.content.contentId == c && $0.content.sourceId == s }
-            .isEmpty
+        getReadLater(for: ContentIdentifier(contentId: c, sourceId: s).id) != nil
     }
 }

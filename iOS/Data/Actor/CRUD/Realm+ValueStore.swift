@@ -22,20 +22,12 @@ extension RealmActor {
     }
 
     func getStoreValue(for id: String, key: String) -> String? {
-        return realm
-            .objects(InteractorStoreObject.self)
-            .where { $0.isDeleted == false }
-            .where { $0.id == "\(id)|\(key)" }
-            .first?
+        getObject(of: InteractorStoreObject.self, with: "\(id)|\(key)")?
             .value
     }
 
     func removeStoreValue(for id: String, key: String) async {
-        let target = realm
-            .objects(InteractorStoreObject.self)
-            .where { $0.key == key }
-            .where { $0.interactorId == id }
-            .first
+        let target = getObject(of: InteractorStoreObject.self, with: "\(id)|\(key)")
         if let target {
             await operation {
                 target.isDeleted = true

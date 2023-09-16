@@ -27,9 +27,6 @@ extension RealmActor {
     }
 
     func getArchivedcontentInfo(_ id: String) -> ArchivedContent? {
-        return realm
-            .objects(ArchivedContent.self)
-            .where { $0.id == id && !$0.isDeleted }
-            .first
+        return getObject(of: ArchivedContent.self, with: id)
     }
 }

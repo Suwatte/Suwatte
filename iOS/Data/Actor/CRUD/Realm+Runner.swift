@@ -32,26 +32,19 @@ extension RealmActor {
     }
 
     func deleteRunner(_ id: String) async {
-        let results = realm.objects(StoredRunnerObject.self).where { $0.id == id }
+        let runner = getRunner(id)
+        guard let runner else { return }
         await operation {
-            results.forEach { runner in
-                runner.isDeleted = true
-            }
+            runner.isDeleted = true
         }
     }
 
     func getRunner(_ id: String) -> StoredRunnerObject? {
-        realm
-            .objects(StoredRunnerObject.self)
-            .where { $0.id == id }
-            .first
+        getObject(of: StoredRunnerObject.self, with: id)
     }
 
     func saveRunner(_ runner: AnyRunner, listURL: URL? = nil, url: URL) async {
-        let obj = realm
-            .objects(StoredRunnerObject.self)
-            .where { $0.id == runner.id && !$0.isDeleted }
-            .first ?? StoredRunnerObject()
+        let obj = getRunner(runner.id) ?? StoredRunnerObject()
 
         let info = runner.info
         await operation {
@@ -97,10 +90,7 @@ extension RealmActor {
     }
 
     func getRunnerExecutable(id: String) -> URL? {
-        realm
-            .objects(StoredRunnerObject.self)
-            .where { $0.id == id && !$0.isDeleted }
-            .first?
+        getRunner(id)?
             .executable?
             .filePath
     }

@@ -10,10 +10,7 @@ import RealmSwift
 
 extension RealmActor {
     func getLibraryCollection(for id: String) -> LibraryCollection? {
-        realm
-            .objects(LibraryCollection.self)
-            .where { $0.id == id && !$0.isDeleted }
-            .first
+        getObject(of: LibraryCollection.self, with: id)
     }
 
     func addCollection(withName name: String) async {

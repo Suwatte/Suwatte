@@ -10,14 +10,7 @@ import RealmSwift
 
 extension RealmActor {
     func getContentMarker(for id: String) -> ProgressMarker? {
-        // Get Object
-        let target = realm
-            .objects(ProgressMarker.self)
-            .where { $0.id == id }
-            .where { $0.isDeleted == false }
-            .first
-
-        return target
+        return getObject(of: ProgressMarker.self, with: id)
     }
 
     func getLatestLinkedMarker(for id: String) -> ProgressMarker? {
@@ -36,11 +29,7 @@ extension RealmActor {
     func didCompleteChapter(chapter: ThreadSafeChapter) async {
         let id = chapter.STTContentIdentifier
         // Get Object
-        let target = realm
-            .objects(ProgressMarker.self)
-            .where { $0.id == id }
-            .where { $0.isDeleted == false }
-            .first
+        let target = getContentMarker(for: id)
 
         var reference: ChapterReference?
 
@@ -108,11 +97,7 @@ extension RealmActor {
     func updateContentProgress(chapter: ThreadSafeChapter, lastPageRead: Int, totalPageCount: Int, lastPageOffsetPCT: Double? = nil) async {
         let id = chapter.STTContentIdentifier
         // Get Object
-        let target = realm
-            .objects(ProgressMarker.self)
-            .where { $0.id == id }
-            .where { $0.isDeleted == false }
-            .first
+        let target = getContentMarker(for: id)
 
         var reference: ChapterReference?
 
@@ -178,11 +163,7 @@ extension RealmActor {
 
     func removeFromHistory(id: String) async {
         // Get Object
-        let target = realm
-            .objects(ProgressMarker.self)
-            .where { $0.id == id }
-            .where { $0.isDeleted == false }
-            .first
+        let target = getContentMarker(for: id)
 
         guard let target else {
             return
@@ -202,11 +183,7 @@ extension RealmActor {
             }
         }
         // Get Object
-        let target = realm
-            .objects(ProgressMarker.self)
-            .where { $0.id == id.id }
-            .where { $0.isDeleted == false }
-            .first
+        let target = getContentMarker(for: id.id)
 
         // Has Marker, Update
         if let target {
@@ -253,11 +230,7 @@ extension RealmActor {
             }
         }
 
-        let target = realm
-            .objects(ProgressMarker.self)
-            .where { $0.id == id.id }
-            .where { $0.isDeleted == false }
-            .first
+        let target = getContentMarker(for: id.id)
 
         // Has Marker, Update
         if let target {
