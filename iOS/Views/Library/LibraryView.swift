@@ -23,11 +23,11 @@ struct LibraryView: View {
         SmartNavigationView {
             List {
                 BrowseView.PendingSetupView()
-                    .environmentObject(pageProviderModel)
                 ForEach(sections) { section in
                     LibrarySectionBuilder(key: section, openFirstCollection: $openFirstCollection)
                 }
             }
+            .environmentObject(pageProviderModel)
             .refreshable {
                 pageProviderModel.reload()
             }

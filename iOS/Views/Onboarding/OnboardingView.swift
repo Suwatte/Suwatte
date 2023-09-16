@@ -186,7 +186,7 @@ struct OnboardingAddRunnersView: View {
     @State private var loadable: Loadable<RunnerList> = .idle
     @StateObject var model: RunnerListsView.ViewModel = .init()
 
-    private let COMMUNITY_LIST_URL = "http://localhost:8080"
+    private let COMMUNITY_LIST_URL = "https://community.suwatte.app"
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Adding Runners")

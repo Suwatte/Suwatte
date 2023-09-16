@@ -94,6 +94,7 @@ struct BrowseView: View {
             guard !hasLoaded else { return }
             await model.observe()
             checkLists()
+            hasLoaded = true
         }
         .onDisappear {
             Task {
@@ -418,7 +419,6 @@ final actor PageLinkProviderModel: ObservableObject {
                                 self?.pending[runner.id] = .authentication
                             }
                         }
-                        return
                     }
                     return
                 }

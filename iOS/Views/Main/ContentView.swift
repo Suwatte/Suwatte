@@ -47,7 +47,7 @@ struct ContentView: View {
                               readingMode: ctx.readingMode ?? .defaultPanelMode,
                               chapterList: ctx.chapters,
                               openTo: ctx.chapter,
-                              pageIndex: ctx.requestedPage,
+                              pageIndex: ctx.requestedPage.flatMap { $0 - 1 },
                               pageOffset: ctx.requestedOffset)
                     .onDisappear(perform: ctx.dismissAction)
             }

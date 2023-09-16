@@ -79,4 +79,12 @@ extension WKContentSource: ContentSource {
     func overrrideDownloadRequest(_ url: String) async throws -> DSKCommon.Request? {
         try await eval(script("let data = await RunnerObject.overrideDownloadRequest(url);"), ["url": url])
     }
+
+    func getGroupedUpdates(for ids: [String], from date: Date) async throws -> DSKCommon.GroupedUpdateResponse {
+        try await eval(script("let data = await RunnerObject.getGroupedUpdates(ids, date);"), ["ids": ids, "date": date])
+    }
+
+    func getProgressState(for contentId: String) async throws -> DSKCommon.ContentProgressState {
+        try await eval(script("let data = await RunnerObject.getProgressState(contentId);"), ["contentId": contentId])
+    }
 }

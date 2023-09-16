@@ -113,3 +113,13 @@ extension JSCContentSource {
         return try await callMethodReturningDecodable(method: "overrideDownloadRequest", arguments: [url], resolvesTo: DSKCommon.Request.self)
     }
 }
+
+extension JSCContentSource {
+    func getGroupedUpdates(for ids: [String], from date: Date) async throws -> DSKCommon.GroupedUpdateResponse {
+        return try await callMethodReturningDecodable(method: "getGroupedUpdates", arguments: [ids, date], resolvesTo: DSKCommon.GroupedUpdateResponse.self)
+    }
+
+    func getProgressState(for contentId: String) async throws -> DSKCommon.ContentProgressState {
+        return try await callMethodReturningDecodable(method: "getProgressState", arguments: [contentId], resolvesTo: DSKCommon.ContentProgressState.self)
+    }
+}
