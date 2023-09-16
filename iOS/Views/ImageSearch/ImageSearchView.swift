@@ -15,10 +15,10 @@ struct ImageSearchView: View {
     @State var response = Loadable<SauceNao.Response>.idle
     var body: some View {
         ZStack {
-            if let image = image {
-                IMAGE_SELECTED(image)
+            if let image {
+                ImageSelectedView(image)
             } else {
-                IMAGE_NOT_SELECTED
+                NoImageSelectedView
             }
         }
         .animation(.default, value: image)
@@ -41,7 +41,7 @@ struct ImageSearchView: View {
         }
     }
 
-    var IMAGE_NOT_SELECTED: some View {
+    var NoImageSelectedView: some View {
         Button("Select Image") {
             presentImagePicker.toggle()
         }
@@ -50,32 +50,20 @@ struct ImageSearchView: View {
         }
     }
 
-    func IMAGE_SELECTED(_ image: UIImage) -> some View {
-        LoadableView({
-            await loadResults(image)
-        }, $response) { response in
-            RESPONSE_LOADED_VIEW(response: response)
+    func ImageSelectedView(_ image: UIImage) -> some View {
+        LoadableView({ try await load(image) }, $response) { response in
+            ResponseView(response: response)
         }
     }
 
-    func loadResults(_ image: UIImage) async {
+    func load(_ image: UIImage) async throws -> SauceNao.Response {
         response = .loading
         let manager = SauceNao.shared
-        do {
-            let data = try await manager.search(with: image)
-            withAnimation {
-                response = .loaded(data)
-            }
-
-        } catch {
-            withAnimation {
-                response = .failed(error)
-            }
-        }
+        return try await manager.search(with: image)
     }
 
     @ViewBuilder
-    func RESPONSE_LOADED_VIEW(response: SauceNao.Response) -> some View {
+    func ResponseView(response: SauceNao.Response) -> some View {
         if response.results.isEmpty {
             Text("No Results Found.")
         } else {

@@ -25,7 +25,7 @@ extension LibraryView {
         }
 
         var body: some View {
-            Group {
+            ZStack {
                 if let library = model.library {
                     if library.isEmpty {
                         No_ENTRIES

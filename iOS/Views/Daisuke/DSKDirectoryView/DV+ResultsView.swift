@@ -31,7 +31,7 @@ extension DirectoryView {
                         }
                 }
                 .sectionHeader {
-                    Group {
+                    ZStack {
                         if hasHeader {
                             GridHeader()
                         } else {
@@ -102,9 +102,7 @@ extension DirectoryView.ResultsView {
                                 model.request.sort = .init(id: sorter.id, ascending: false)
                             }
                             model.request.page = 1
-                            Task {
-                                await model.makeRequest()
-                            }
+                            model.reloadRequest()
                         }
                     }
                     .buttonStyle(.plain)
@@ -127,7 +125,7 @@ extension DirectoryView.ResultsView {
         @EnvironmentObject var model: DirectoryView.ViewModel
 
         var body: some View {
-            Group {
+            ZStack {
                 switch model.pagination {
                 case .IDLE: EmptyView()
                 case .LOADING: ProgressView()

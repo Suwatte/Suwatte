@@ -16,16 +16,12 @@ extension DSKAuthView {
             self.runner = runner
         }
 
-        func load() {
-            Task { @MainActor in
-                loadable = .loading
-                do {
-                    let data = try await runner.getAuthenticatedUser()
-                    loadable = .loaded(data)
-                } catch {
-                    loadable = .failed(error)
-                }
-            }
+        func load() async throws -> DSKCommon.User? {
+            try await runner.getAuthenticatedUser()
+        }
+        
+        func reload() {
+            loadable = .idle
         }
     }
 }

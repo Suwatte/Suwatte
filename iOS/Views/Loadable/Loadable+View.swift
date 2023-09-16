@@ -7,7 +7,130 @@
 
 import SwiftUI
 
-struct LoadableView<Value, Idle, Loading, Failure, Content>: View where Idle: View,
+struct LoadableView<Value, Idle, Loading, Content>: View where Idle: View,
+    Loading: View,
+    Content: View
+{
+    @Binding var loadable: Loadable<Value>
+    let content: (_ value: Value) -> Content
+    let idle: () -> Idle
+    let loading: () -> Loading
+    let action: () async throws -> Value
+    @State private var loaded = false
+
+    init(
+        loadable: Binding<Loadable<Value>>,
+        _ action: @escaping () async throws -> Value,
+        @ViewBuilder _ idle: @escaping () -> Idle,
+        @ViewBuilder _ loading: @escaping () -> Loading,
+        @ViewBuilder _ content: @escaping (_ value: Value) -> Content
+    ) {
+        _loadable = loadable
+        self.content = content
+        self.loading = loading
+        self.idle = idle
+        self.action = action
+    }
+
+    var body: some View {
+        ZStack {
+            switch loadable {
+            case .idle:
+                idle()
+                    .task {
+                        if loaded {
+                            loaded = false
+                            await load()
+                        }
+                    }
+            case .loading:
+                loading()
+
+            case let .loaded(value):
+                content(value)
+
+            case let .failed(error):
+                ErrorView(error: error) {
+                    await animate {
+                        loadable = .idle
+                    }
+                }
+            }
+        }
+        .transition(.opacity)
+        .task {
+            await load()
+        }
+    }
+}
+
+
+extension LoadableView {
+    private func load() async {
+        guard !loaded else { return }
+        do {
+            await animate {
+                loadable = .loading
+            }
+            
+            let data = try await action()
+            
+            await animate {
+                loadable = .loaded(data)
+            }
+            
+            loaded = true
+        } catch {
+            Logger.shared.error(error)
+            await animate {
+                loadable = .failed(error)
+            }
+        }
+    }
+}
+
+extension LoadableView where Idle == DefaultLoadingView, Loading == DefaultLoadingView {
+    init(
+        _ action: @escaping () async throws -> Value,
+        _ loadable: Binding<Loadable<Value>>,
+        @ViewBuilder _ content: @escaping (_ value: Value) -> Content
+    ) {
+        self.init(loadable: loadable,
+                  action,
+                  { DefaultLoadingView() },
+                  { DefaultLoadingView() },
+                  content)
+    }
+}
+
+extension LoadableView where Idle == Loading {
+    init(
+        _ action: @escaping () async throws -> Value,
+        _ loadable: Binding<Loadable<Value>>,
+        @ViewBuilder placeholder: @escaping () -> Idle,
+        @ViewBuilder content: @escaping (_ value: Value) -> Content
+    ) {
+        self.init(loadable: loadable,
+                  action,
+                  { placeholder() },
+                  { placeholder() },
+                  content)
+    }
+}
+
+struct DefaultLoadingView: View {
+    var body: some View {
+        HStack {
+            Spacer()
+            ProgressView()
+                .padding()
+            Spacer()
+        }
+    }
+}
+
+
+struct OldLoadableView<Value, Idle, Loading, Failure, Content>: View where Idle: View,
     Loading: View,
     Failure: View,
     Content: View
@@ -83,7 +206,7 @@ struct LoadableView<Value, Idle, Loading, Failure, Content>: View where Idle: Vi
     }
 }
 
-extension LoadableView where Idle == DefaultNotRequestedView, Loading == DefaultLoadingView, Failure == ErrorView {
+extension OldLoadableView where Idle == DefaultLoadingView, Loading == DefaultLoadingView, Failure == ErrorView {
     init(
         _ action: @escaping () async throws -> Void,
         _ loadable: Binding<Loadable<Value>>,
@@ -91,7 +214,7 @@ extension LoadableView where Idle == DefaultNotRequestedView, Loading == Default
     ) {
         self.init(loadable: loadable,
                   action,
-                  { DefaultNotRequestedView() },
+                  { DefaultLoadingView() },
                   { DefaultLoadingView() },
                   { ErrorView(error: $0, action: {
                       do {
@@ -105,7 +228,7 @@ extension LoadableView where Idle == DefaultNotRequestedView, Loading == Default
     }
 }
 
-extension LoadableView where Failure == ErrorView, Idle == Loading {
+extension OldLoadableView where Failure == ErrorView, Idle == Loading {
     init(
         _ action: @escaping () async throws -> Void,
         _ loadable: Binding<Loadable<Value>>,
@@ -123,22 +246,5 @@ extension LoadableView where Failure == ErrorView, Idle == Loading {
                           loadable.wrappedValue = .failed(error)
                       }
                   }) }, content)
-    }
-}
-
-struct DefaultNotRequestedView: View {
-    var body: some View {
-        DefaultLoadingView()
-    }
-}
-
-struct DefaultLoadingView: View {
-    var body: some View {
-        HStack {
-            Spacer()
-            ProgressView()
-                .padding()
-            Spacer()
-        }
     }
 }

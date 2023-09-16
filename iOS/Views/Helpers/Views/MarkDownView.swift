@@ -13,7 +13,7 @@ struct MarkDownView: View {
     @State private var formattedText: AttributedString?
 
     var body: some View {
-        Group {
+        ZStack {
             if let formattedText = formattedText {
                 Text(formattedText)
                     .fontWeight(font)

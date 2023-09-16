@@ -14,7 +14,8 @@ extension ProfileView {
         @StateObject var viewModel: ProfileView.ViewModel
         @Environment(\.presentationMode) var presentationMode
         var body: some View {
-            LoadableView(loadable: $viewModel.contentState) {
+            
+            OldLoadableView(loadable: $viewModel.contentState) {
                 await viewModel.setupObservers()
                 await viewModel.load()
             } _: {
@@ -41,7 +42,6 @@ extension ProfileView {
                             .onDisappear {
                                 Task {
                                     await handleReconnection()
-                                    ImagePipeline.shared.configuration.imageCache?.removeAll()
                                 }
                             }
                     }

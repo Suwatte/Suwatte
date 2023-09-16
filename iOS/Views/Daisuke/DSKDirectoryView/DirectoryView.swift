@@ -14,7 +14,6 @@ struct DirectoryView<C: View>: View {
 
     var title: String?
     var content: (DSKCommon.Highlight) -> C
-    @State var firstCall = false
 
     init(model: ViewModel, @ViewBuilder _ content: @escaping (DSKCommon.Highlight) -> C) {
         _model = StateObject(wrappedValue: model)
@@ -26,7 +25,7 @@ struct DirectoryView<C: View>: View {
     }
 
     var body: some View {
-        Group {
+        ZStack {
             if fullSearch {
                 LoadableResultsView
                     .searchable(text: $model.query, placement: .navigationBarDrawer(displayMode: .automatic))
@@ -36,7 +35,7 @@ struct DirectoryView<C: View>: View {
                     .onChange(of: model.query) { value in
                         if value.isEmpty && !isSearching {
                             model.reset()
-                            request()
+                            reload()
                         }
                     }
             } else {
@@ -76,9 +75,12 @@ struct DirectoryView<C: View>: View {
         }
     }
 
-    func load() async {
-        await model.makeRequest()
-        firstCall = true
+    func reload() {
+        model.result = .idle
+    }
+    
+    func load() async throws -> [DSKCommon.Highlight] {
+        try await model.sendRequest()
     }
 
     func didRecieveQuery(_ val: String, save: Bool = false) {
@@ -90,24 +92,18 @@ struct DirectoryView<C: View>: View {
         model.reset()
 
         if val.isEmpty {
-            request()
+            reload()
             return
         }
         model.request.query = val
             .trimmingCharacters(in: .whitespacesAndNewlines)
 
-        request()
+        reload()
 
         if save {
             Task {
                 await RealmActor.shared().saveSearch(model.request, sourceId: model.runner.id, display: model.request.query ?? "")
             }
-        }
-    }
-
-    func request() {
-        Task {
-            await model.makeRequest()
         }
     }
 }
@@ -128,7 +124,7 @@ extension DirectoryView {
 
     var LoadableResultsView: some View {
         LoadableView(load, $model.result) { value in
-            Group {
+            ZStack {
                 if value.isEmpty {
                     NoResultsView()
                 } else {

@@ -28,7 +28,7 @@ extension LibraryView.LibraryGrid {
                                 HStack {
                                     Text(flag.description)
                                     Spacer()
-                                    Group {
+                                    ZStack {
                                         switch state {
                                         case .none:
                                             EmptyView()

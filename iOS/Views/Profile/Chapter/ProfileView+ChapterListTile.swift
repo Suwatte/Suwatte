@@ -189,7 +189,7 @@ struct DownloadIndicator: View {
 
     @ViewBuilder
     var ACTIVE_VIEW: some View {
-        Group {
+        ZStack {
             if let state = state {
                 switch state {
                 case .fetchingImages:
@@ -219,7 +219,7 @@ struct DownloadIndicator: View {
     }
 
     var body: some View {
-        Group {
+        ZStack {
             switch status {
             case .active:
                 ACTIVE_VIEW

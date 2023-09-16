@@ -81,18 +81,17 @@ struct STTContentBlur: ViewModifier {
     @Environment(\.scenePhase) private var scenePhase
 
     func body(content: Content) -> some View {
-        Group {
+        ZStack {
             if ShouldBlur {
                 Image("stt_icon")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .padding(.all)
-                    .transition(.opacity)
             } else {
                 content
-                    .transition(.opacity)
             }
         }
+        .transition(.opacity)
         .animation(.default, value: scenePhase)
         .animation(.default, value: ShouldBlur)
     }

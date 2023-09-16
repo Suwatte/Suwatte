@@ -14,7 +14,7 @@ struct MigrationManualDestinationView: View {
     @EnvironmentObject private var migrationModel: MigrationController
     @State var searchTask: Task<Void, Never>? = nil
     var body: some View {
-        Group {
+        ZStack {
             if !searchModel.results.isEmpty {
                 List {
                     ForEach(searchModel.results, id: \.sourceID) { group in

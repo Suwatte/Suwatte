@@ -33,7 +33,7 @@ struct STTThumbView: View {
     @AppStorage(STTKeys.AppAccentColor) var color: Color = .sttDefault
     var body: some View {
         GeometryReader { proxy in
-            Group {
+            ZStack {
                 if let systemName = systemName {
                     Image(systemName: systemName)
                         .resizable()
@@ -58,6 +58,7 @@ struct STTThumbView: View {
                 }
             }
             .task {
+                guard imageFetcher.image == nil else { return }
                 guard let url = url else {
                     return
                 }

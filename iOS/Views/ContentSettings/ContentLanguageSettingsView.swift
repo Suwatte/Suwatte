@@ -41,17 +41,19 @@ struct ContentLanguageSettingsView: View {
     var body: some View {
         List {
             Section {
-                if selections.isEmpty {
-                    Text("All Languages")
-                } else {
-                    ForEach(preparedSelections, id: \.1) { name, id in
-                        HStack {
-                            Text(name)
-                            Spacer()
-                        }
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            selections.remove(id)
+                ZStack {
+                    if selections.isEmpty {
+                        Text("All Languages")
+                    } else {
+                        ForEach(preparedSelections, id: \.1) { name, id in
+                            HStack {
+                                Text(name)
+                                Spacer()
+                            }
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                selections.remove(id)
+                            }
                         }
                     }
                 }
@@ -71,7 +73,6 @@ struct ContentLanguageSettingsView: View {
                         Text(name)
                         Spacer()
                         Image(systemName: "checkmark")
-                            .transition(.opacity)
                             .opacity(selections.contains(id) ? 1 : 0)
                     }
                     .contentShape(Rectangle())
@@ -92,6 +93,7 @@ struct ContentLanguageSettingsView: View {
                     prompt: "Search")
         .navigationTitle("Content Languages")
         .navigationBarTitleDisplayMode(.inline)
+        .transition(.opacity)
         .animation(.default, value: text)
         .animation(.default, value: selections)
     }

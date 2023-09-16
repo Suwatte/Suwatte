@@ -19,7 +19,7 @@ struct STTImageView: View {
     var body: some View {
         GeometryReader { proxy in
             let size: CGSize = .init(width: proxy.size.width, height: proxy.size.width * 1.6)
-            Group {
+            ZStack {
                 if let view = loader.image {
                     view
                         .resizable()
@@ -113,7 +113,7 @@ struct BaseImageView: View {
     var body: some View {
         GeometryReader { proxy in
             let size: CGSize = .init(width: proxy.size.width, height: proxy.size.width * 1.6)
-            Group {
+            ZStack {
                 if let view = loader.image {
                     view
                         .resizable()

@@ -222,18 +222,12 @@ struct OnboardingAddRunnersView: View {
         .onDisappear(perform: model.stopObserving)
     }
 
-    func load() async throws {
-        await MainActor.run {
-            loadable = .loading
-        }
+    func load() async throws -> RunnerList {
         guard let url = URL(string: COMMUNITY_LIST_URL) else {
             throw DaisukeEngine.Errors.NamedError(name: "Parse Error", message: "Invalid URL")
         }
         let data = try await DSK.shared.getRunnerList(at: url)
-
-        await MainActor.run {
-            loadable = .loaded(data)
-        }
+        return data
     }
 }
 

@@ -24,20 +24,16 @@ struct DSKLoadableTrackerView: View {
         LoadableView(load, $loadable) {
             DSKTrackerView(tracker: tracker, content: .placeholder)
                 .redacted(reason: .placeholder)
-                .transition(.opacity)
         } content: { value in
             DSKTrackerView(tracker: tracker, content: value)
-                .transition(.opacity)
         }
+        .transition(.opacity)
         .navigationBarHidden(true)
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    func load() async throws {
-        let data = try await tracker.getFullInformation(id: item.id)
-        withAnimation(.easeInOut(duration: 0.33)) {
-            loadable = .loaded(data)
-        }
+    func load() async throws -> DSKCommon.FullTrackItem {
+        try await tracker.getFullInformation(id: item.id)
     }
 }
 
@@ -296,7 +292,7 @@ extension DSKTrackerView {
 extension DSKTrackerView {
     @ViewBuilder
     private var PropertiesView: some View {
-        Group {
+        ZStack {
             if let properties = content.properties {
                 ForEach(properties) { property in
                     VStack(alignment: .leading, spacing: 5) {
@@ -325,7 +321,7 @@ extension DSKTrackerView {
 
 extension DSKTrackerView {
     private var LinksView: some View {
-        Group {
+        ZStack {
             if let links = content.links {
                 InteractiveTagView(links) { tag in
                     Link("\(Image(systemName: "link")) \(tag.title)",

@@ -11,7 +11,7 @@ import SwiftUI
 struct ReaderTransitionView: View {
     let transition: ReaderTransition
     var body: some View {
-        Group {
+        ZStack {
             switch transition.type {
             case .NEXT: NEXT
             case .PREV: PREV

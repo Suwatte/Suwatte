@@ -12,7 +12,7 @@ struct MigrationView: View {
     @StateObject var model: MigrationController
     @Environment(\.presentationMode) var presentationMode
     var body: some View {
-        Group {
+        ZStack {
             if model.hasLoadedSources && model.hasSortedContent {
                 List {
                     Section {

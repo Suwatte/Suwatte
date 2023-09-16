@@ -13,20 +13,10 @@ struct ProfileView: View {
     @State var source: Loadable<AnyContentSource> = .idle
 
     var body: some View {
-        LoadableView(loadSource, $source) { value in
-            StateGate(viewModel: .init(entry, value))
+        LoadableSourceView(sourceID: sourceId) { source in
+            StateGate(viewModel: .init(entry, source))
         }
         .navigationTitle(entry.title)
         .navigationBarTitleDisplayMode(.inline)
-    }
-
-    func loadSource() async {
-        source = .loading
-        do {
-            let runner = try await DSK.shared.getContentSource(id: sourceId)
-            source = .loaded(runner)
-        } catch {
-            source = .failed(error)
-        }
     }
 }

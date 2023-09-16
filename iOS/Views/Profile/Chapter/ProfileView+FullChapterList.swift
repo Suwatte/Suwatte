@@ -21,7 +21,7 @@ struct ChapterList: View {
 
     @Environment(\.editMode) var editMode
     var body: some View {
-        Group {
+        ZStack {
             if groupByVolume {
                 GroupChapterList()
             } else {
@@ -194,7 +194,7 @@ extension ChapterList {
 extension ChapterList {
     @ViewBuilder
     func DownloadView(_ status: DownloadStatus?, _ id: String) -> some View {
-        Group {
+        ZStack {
             if let status {
                 DownloadContextView(id: id, status: status)
             } else {

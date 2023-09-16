@@ -18,12 +18,12 @@ extension DirectoryViewer {
                         Toggle("Show Only Thumbnails", isOn: $showOnlyThumbs)
                         if !showOnlyThumbs {
                             Toggle("Hide Content Insight", isOn: $showTitleOnly)
-                                .transition(.opacity)
                         }
                     } header: {
                         Text("Layout")
                     }
                 }
+                .transition(.opacity)
                 .closeButton()
                 .navigationTitle("Settings")
                 .animation(.default, value: showOnlyThumbs)

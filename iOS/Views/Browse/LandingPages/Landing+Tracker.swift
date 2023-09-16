@@ -17,23 +17,22 @@ struct TrackerLandingPage: View {
         }
     }
 
-    func load() async throws {
-        loadable = .loading
-        let runner = try await DSK.shared.getContentTracker(id: trackerID)
-        loadable = .loaded(runner)
+    func load() async throws -> AnyContentTracker {
+        try await DSK.shared.getContentTracker(id: trackerID)
+
     }
 
     struct LoadedTrackerView: View {
         let tracker: AnyContentTracker
         var body: some View {
-            Group {
+            ZStack {
                 if tracker.intents.pageLinkResolver {
-//                    ContentSourcePageView(source: source)
+                    ContentTrackerPageView(tracker: tracker, link: .init(id: "home", context: nil))
                 } else {
-//                    ContentSourceDirectoryView(source: source, request: .init(page: 1))
-//                        .navigationBarTitleDisplayMode(.inline)
+                    ContentTrackerDirectoryView(tracker: tracker, request: .init(page: 1))
                 }
             }
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }

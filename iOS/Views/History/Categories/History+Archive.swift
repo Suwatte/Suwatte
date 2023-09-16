@@ -33,7 +33,7 @@ extension HistoryView {
                             Text("Issue #\(issue.issue)")
                         }
 
-                        Group {
+                        ZStack {
                             if let current = model.currentDownloadFileId, current == file.id {
                                 HStack(spacing: 5) {
                                     Text("Downloading")

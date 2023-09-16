@@ -70,7 +70,7 @@ extension DSKAuthView {
         func callback(_ url: URL) async {
             do {
                 try await model.runner.handleOAuthCallback(response: url.absoluteString)
-                model.load()
+                model.reload()
             } catch {
                 Logger.shared.error(error)
                 alert()

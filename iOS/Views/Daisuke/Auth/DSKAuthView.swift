@@ -31,7 +31,7 @@ extension DSKAuthView {
         }
 
         var body: some View {
-            Group {
+            ZStack {
                 switch method {
                 case .webview:
                     WebViewAuthView()

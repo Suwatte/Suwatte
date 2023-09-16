@@ -53,28 +53,30 @@ struct ImageViewer: View {
 }
 
 extension ImageViewer {
-    @ViewBuilder
     var MainView: some View {
-        switch model.readingMode {
-        case .PAGED_COMIC, .PAGED_MANGA:
-            if doublePaged {
-                DoublePagedImageViewer()
-            } else {
-                PagedImageViewer()
+        ZStack {
+            switch model.readingMode {
+            case .PAGED_COMIC, .PAGED_MANGA:
+                if doublePaged {
+                    DoublePagedImageViewer()
+                } else {
+                    PagedImageViewer()
+                }
+            case .PAGED_VERTICAL:
+                VerticalPagedViewer()
+            case .VERTICAL:
+                WebtoonViewer()
+            default:
+                ProgressView()
             }
-        case .PAGED_VERTICAL:
-            VerticalPagedViewer()
-        case .VERTICAL:
-            WebtoonViewer()
-        default:
-            ProgressView()
         }
     }
 }
 
 extension ImageViewer {
-    private func startup() async {
-        await model.consume(initial)
+    private func startup() async throws -> Bool {
+        try await model.consume(initial)
+        return true
     }
 
     private var StandardAnimation: Animation {

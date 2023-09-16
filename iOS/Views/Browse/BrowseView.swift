@@ -29,7 +29,6 @@ struct BrowseView: View {
                 InstalledTrackersSection
                 PageLinks
             }
-
             .headerProminence(.increased)
             .listStyle(.insetGrouped)
             .navigationBarTitle("Browse")

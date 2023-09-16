@@ -22,7 +22,7 @@ struct PageViewTile: View {
     @Environment(\.pageSectionStyle) var style
 
     var body: some View {
-        Group {
+        ZStack {
             switch style {
             case .DEFAULT: NORMAL
             case .INFO: INFO
@@ -155,7 +155,7 @@ extension PageViewTile {
 
         var body: some View {
             ZStack(alignment: .bottom) {
-                Group {
+                ZStack {
                     if let view = loader.image {
                         GeometryReader { proxy in
                             view
@@ -359,7 +359,7 @@ extension PageViewTile {
 
         var body: some View {
             ZStack(alignment: .bottom) {
-                Group {
+                ZStack {
                     if let view = loader.image {
                         view
                             .resizable()

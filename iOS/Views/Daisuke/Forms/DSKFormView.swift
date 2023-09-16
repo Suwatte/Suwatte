@@ -21,23 +21,17 @@ struct DSKLoadableForm: View {
         }
     }
 
-    func load() async throws {
-        await MainActor.run {
-            loadable = .loading
-        }
+    func load() async throws -> DSKCommon.Form {
         switch context {
         case let .tracker(id):
             guard let tracker = runner as? AnyContentTracker else {
                 throw DSK.Errors.NamedError(name: "Invalid Runner", message: "A Tracker Must Request This")
             }
-            let form = try await tracker.getEntryForm(id: id)
-            loadable = .loaded(form)
+            return try await tracker.getEntryForm(id: id)
         case .preference:
-            let form = try await runner.getPreferenceMenu()
-            loadable = .loaded(form)
+            return try await runner.getPreferenceMenu()
         case .setup:
-            let form = try await runner.getSetupMenu()
-            loadable = .loaded(form)
+            return try await runner.getSetupMenu()
         }
     }
 }

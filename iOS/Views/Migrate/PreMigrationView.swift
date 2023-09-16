@@ -13,7 +13,7 @@ struct PreMigrationView: View {
     private let manager = DSK.shared
     var body: some View {
         SmartNavigationView {
-            Group {
+            ZStack {
                 if model.loaded {
                     List {
                         ForEach(model.sources, id: \.id) { source in

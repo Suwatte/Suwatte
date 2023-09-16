@@ -48,7 +48,7 @@ struct DSKHighlightTile: View {
                 }
 
                 if source.intents.isContextMenuProvider {
-                    buildActions()
+                    EmptyView()
                 }
             }
             .onTapGesture {
@@ -92,7 +92,7 @@ extension DSKHighlightTile {
 // MARK: - Context Actions
 
 extension DSKHighlightTile {
-    func loadActions() async {
+    func loadActions() async throws {
         actions = .loading
         do {
             let data = try await source.getContextActions(highlight: data)
@@ -116,29 +116,6 @@ extension DSKHighlightTile {
                 }
             } catch {
                 Logger.shared.error(error, source.id)
-            }
-        }
-    }
-
-    @ViewBuilder
-    func buildActions() -> some View {
-        LoadableView(loadActions, $actions) { groups in
-            ForEach(groups, id: \.id) { group in
-                ForEach(group.actions, id: \.id) { action in
-                    if action.displayAsLabel {
-                        Text(action.title)
-                    } else {
-                        Button(role: action.isDestructive ? .destructive : .none) {
-                            didTriggerActions(key: action.id)
-                        } label: {
-                            if let systemImage = action.systemImage {
-                                Label(action.title, systemImage: systemImage)
-                            } else {
-                                Text(action.title)
-                            }
-                        }
-                    }
-                }
             }
         }
     }

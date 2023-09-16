@@ -40,9 +40,7 @@ extension DirectoryView {
                     ToolbarItemGroup(placement: .bottomBar) {
                         Button("Reset") {
                             model.reset()
-                            Task {
-                                await model.makeRequest()
-                            }
+                            model.reloadRequest()
                             model.presentFilters.toggle()
                         }
 
@@ -50,9 +48,7 @@ extension DirectoryView {
                         Button("Apply") {
                             model.reset()
                             model.request.filters = data
-                            Task {
-                                await model.makeRequest()
-                            }
+                            model.reloadRequest()
                             model.presentFilters.toggle()
 
                             Task {
@@ -154,7 +150,7 @@ extension DirectoryView.FilterView {
                         .fontWeight(.light)
                 }
 
-                Group {
+                ZStack {
                     switch filter.type {
                     case .info: EmptyView()
                     case .toggle: ToggleView(filter: filter, data: $data)

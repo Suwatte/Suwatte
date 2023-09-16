@@ -25,39 +25,30 @@ struct DirectoryViewer: View {
 
     var title: String?
     var body: some View {
-        Group {
+        ZStack {
             if let directory = model.directory {
                 if directory.files.isEmpty && directory.folders.isEmpty {
                     EmptyDirectoryView
-                        .transition(.opacity)
                 } else {
                     if model.query.isEmpty { // Not Searching
                         CoreCollectionView(directory: directory, isEditing: $isEditing)
-                            .transition(.opacity)
                             .environmentObject(model)
                     } else if let results = model.searchResultsDirectory {
                         if results.files.isEmpty && results.folders.isEmpty {
                             NoResultsView // Searching but there are not files or folders matching query
-                                .transition(.opacity)
-
                         } else {
                             CoreCollectionView(directory: results, isEditing: Binding.constant(false))
-                                .transition(.opacity)
                                 .environmentObject(model)
                         }
                     } else {
                         ProgressView() // Searching but results have not been populated
-                            .transition(.opacity)
                     }
                 }
             } else {
                 ProgressView()
-                    .transition(.opacity)
             }
         }
-        .animation(.easeInOut(duration: 0.35), value: model.directory)
-        .animation(.easeInOut(duration: 0.35), value: model.searchResultsDirectory)
-        .animation(.easeInOut(duration: 0.35), value: model.query)
+
         .task {
             isActive = true
             model.observe()
@@ -97,12 +88,11 @@ struct DirectoryViewer: View {
                 ProgressView()
                     .opacity(model.working ? 1 : 0)
 
-                Group {
+                ZStack {
                     if isEditing {
                         Button("Done") {
                             isEditing = false
                         }
-                        .transition(.opacity)
                     } else {
                         Menu {
                             Button {
@@ -153,12 +143,17 @@ struct DirectoryViewer: View {
                             }
                         } label: {
                             Image(systemName: "ellipsis.circle")
-                                .transition(.opacity)
                         }
                     }
                 }
+                    .transition(.opacity)
             }
         }
+        .transition(.opacity)
+        .animation(.default, value: isEditing)
+        .animation(.easeInOut(duration: 0.35), value: model.directory)
+        .animation(.easeInOut(duration: 0.35), value: model.searchResultsDirectory)
+        .animation(.easeInOut(duration: 0.35), value: model.query)
         .searchable(text: $model.query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search Library")
         .modifier(OpenLocalModifier(isPresenting: $presentImportSheet))
         .sheet(isPresented: $presentSettingsSheet) {
@@ -170,7 +165,6 @@ struct DirectoryViewer: View {
                     .closeButton()
             }
         }
-        .animation(.default, value: isEditing)
     }
 
     var EmptyDirectoryView: some View {
