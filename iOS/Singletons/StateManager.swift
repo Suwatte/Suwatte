@@ -161,8 +161,19 @@ extension StateManager {
         case .background:
             stopObservingRealm()
         case .inactive:
-            break
+            if blurDuringSwitch() {
+                Task { @MainActor in
+                    showSplashScreen()
+                }
+            }
+            
         case .active:
+            if blurDuringSwitch() {
+                Task { @MainActor in
+                    removeSplashScreen()
+                }
+            }
+            
             if thumbnailToken == nil, collectionToken == nil {
                 Task { @MainActor in
                     await observe()
@@ -287,5 +298,47 @@ extension StateManager {
                 }
             }
         }
+    }
+}
+
+
+extension StateManager {
+    @MainActor
+    func showSplashScreen() {
+        let launchScreen = UIStoryboard(name: "STTLaunchScreen", bundle: nil).instantiateInitialViewController()
+        guard let launchScreen = launchScreen,
+              let launchView = launchScreen.view else {
+            return
+        }
+        
+        let window = getKeyWindow()
+        guard let window else { return }
+        
+        launchView.tag = 8888
+        launchView.frame = window.bounds
+        window.addSubview(launchView)
+        window.makeKeyAndVisible()
+    }
+    
+    @MainActor
+    func removeSplashScreen() {
+        guard let window = getKeyWindow(),
+              let view = window.viewWithTag(8888) else {
+            return
+        }
+        UIView.animate(withDuration: 0.33,
+                       delay: 0.0,
+                       options: [.curveEaseInOut, .transitionCrossDissolve, .allowUserInteraction])
+        {
+            view.alpha = 0
+        } completion: { completed in
+            if completed {
+                view.removeFromSuperview()
+            }
+        }
+    }
+    
+    func blurDuringSwitch() -> Bool {
+        UserDefaults.standard.bool(forKey: STTKeys.BlurWhenAppSwiching)
     }
 }
