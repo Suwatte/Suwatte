@@ -132,12 +132,12 @@ extension RunnerListsView {
             }
             return try await DSK.shared.getRunnerList(at: url)
         }
-        
+
         func didLoad() {
             guard let list = loadable.value else { return }
             Task {
                 let actor = await RealmActor.shared()
-                await actor.saveRunnerList(list, at:  URL(string: listURL)!)
+                await actor.saveRunnerList(list, at: URL(string: listURL)!)
             }
         }
     }

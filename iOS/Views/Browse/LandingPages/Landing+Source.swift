@@ -45,8 +45,6 @@ struct SourceLandingPage: View {
     }
 }
 
-
-
 struct LoadableRunnerView<V: View>: View {
     let runnerID: String
     let content: (AnyRunner) -> V

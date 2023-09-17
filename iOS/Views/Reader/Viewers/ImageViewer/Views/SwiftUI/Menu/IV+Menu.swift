@@ -275,7 +275,7 @@ extension IVMenuView {
         var PageNumberString: String {
             "\(model.viewerState.page) of \(model.viewerState.pageCount)"
         }
-        
+
         @MainActor
         private var edges: UIEdgeInsets? {
             let window = getKeyWindow()

@@ -17,7 +17,7 @@ struct TrackerManagementView: View {
         SmartNavigationView {
             ScrollView {
                 ForEach(model.linkedTrackers, id: \.id) { tracker in
-                    
+
                     VStack {
                         HStack {
 //                            STTThumbView(url: tracker.thumbnailURL)
@@ -72,13 +72,13 @@ extension TrackerManagementView {
         let tracker: AnyContentTracker
         let contentID: String
         @State private var loadable: Loadable<DSKCommon.Highlight> = .idle
-        
+
         var body: some View {
             LoadableView(load, $loadable) { item in
                 TrackerItemCell(item: item, tracker: tracker, status: item.entry?.status ?? .CURRENT)
             }
         }
-        
+
         func load() async throws -> DSKCommon.Highlight {
             try await tracker.getTrackItem(id: contentID)
         }
@@ -118,11 +118,10 @@ extension TrackerManagementView {
             await loadTrackers(Array(matches.keys))
         }
 
-
         func unlink(tracker: AnyContentTracker) async {
             let keys = tracker.links
             await RealmActor.shared().removeLinkKeys(for: tracker.id, keys: keys)
-            
+
             await MainActor.run {
                 linkedTrackers.removeAll(where: { $0.id == tracker.id })
                 unlinkedTrackers.append(tracker)
@@ -374,7 +373,7 @@ extension TrackerManagementView {
             tracker.config?.linkKeys?.first ?? tracker.id
         }
 
-        func load() async throws -> [DSKCommon.Highlight]{
+        func load() async throws -> [DSKCommon.Highlight] {
             try await tracker.getResultsForTitles(titles: titles)
         }
 

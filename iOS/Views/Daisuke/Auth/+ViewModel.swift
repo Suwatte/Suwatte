@@ -19,7 +19,7 @@ extension DSKAuthView {
         func load() async throws -> DSKCommon.User? {
             try await runner.getAuthenticatedUser()
         }
-        
+
         func reload() {
             loadable = .idle
         }

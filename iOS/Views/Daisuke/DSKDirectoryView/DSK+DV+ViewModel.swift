@@ -64,7 +64,6 @@ extension DirectoryView.ViewModel {
 
 extension DirectoryView.ViewModel {
     func sendRequest() async throws -> [DSKCommon.Highlight] {
-
         if config == nil {
             do {
                 try await getConfig()
@@ -85,7 +84,7 @@ extension DirectoryView.ViewModel {
         }
 
         let data: DSKCommon.PagedResult = try await runner.getDirectory(request: request)
-        
+
         await MainActor.run {
             resultCount = data.totalResultCount
             if data.isLastPage {
@@ -93,15 +92,12 @@ extension DirectoryView.ViewModel {
             }
         }
 
-        
         return data.results
     }
-    
+
     func reloadRequest() {
         result = .idle
     }
-    
-    
 
     func paginate() async {
         switch pagination {

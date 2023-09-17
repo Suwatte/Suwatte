@@ -46,9 +46,9 @@ extension DSKAuthView.BasicAuthView {
                 .aspectRatio(contentMode: .fit)
                 .foregroundColor(color)
                 .padding(.all, 3)
-            .frame(height: 75, alignment: .center)
-            .clipShape(Circle())
-            .padding()
+                .frame(height: 75, alignment: .center)
+                .clipShape(Circle())
+                .padding()
         }
 
         var body: some View {

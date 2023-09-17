@@ -78,7 +78,7 @@ struct DirectoryView<C: View>: View {
     func reload() {
         model.result = .idle
     }
-    
+
     func load() async throws -> [DSKCommon.Highlight] {
         try await model.sendRequest()
     }

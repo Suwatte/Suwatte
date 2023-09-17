@@ -267,7 +267,6 @@ extension RealmActor {
     func decrementUnreadCount(for id: String) async {
         let target = getLibraryEntry(for: id)
 
-
         guard let target else { return }
         await operation {
             target.unreadCount -= 1

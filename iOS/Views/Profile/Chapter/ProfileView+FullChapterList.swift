@@ -94,7 +94,7 @@ struct ChapterList: View {
             await model.setupObservers()
         }
     }
-    
+
     func reloadChapters() {
         Task {
             model.updateCurrentStatement()

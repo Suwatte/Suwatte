@@ -20,7 +20,7 @@ extension StoredChapter {
                      language: language ?? "unknown",
                      date: date,
                      webUrl: webUrl,
-                     thumbnail: thumbnail, providers: providers.map({ .init(id: $0.id, name: $0.name) }))
+                     thumbnail: thumbnail, providers: providers.map { .init(id: $0.id, name: $0.name) })
     }
 }
 

@@ -19,7 +19,6 @@ struct TrackerLandingPage: View {
 
     func load() async throws -> AnyContentTracker {
         try await DSK.shared.getContentTracker(id: trackerID)
-
     }
 
     struct LoadedTrackerView: View {

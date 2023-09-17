@@ -41,7 +41,6 @@ extension ProfileView.Skeleton.ChapterView {
                 }
             }
             .animation(.easeOut(duration: 0.25), value: model.currentChapterSection)
-
         }
 
         @ViewBuilder
@@ -64,7 +63,7 @@ extension ProfileView.Skeleton.ChapterView {
                         Text("^[\(statement.distinctCount) Chapter](inflect: true)")
                             .font(.title3)
                             .fontWeight(.bold)
-                        
+
                         // Viewing Linked entry
                         if model.currentChapterSection != model.identifier {
                             let statement = model.getCurrentStatement()
@@ -75,14 +74,14 @@ extension ProfileView.Skeleton.ChapterView {
                                 .multilineTextAlignment(.leading)
                                 .lineLimit(3)
                         }
-                        
+
                         if filteredOut != 0 {
                             Text("^[\(filteredOut) chapter](inflect: true) hidden.")
                                 .font(.caption)
                                 .fontWeight(.light)
                                 .foregroundColor(.gray)
                         }
-                        
+
                         LinkChaptersSection(model: model)
                     }
                     Spacer()
@@ -169,8 +168,8 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
 }
 
 extension ProfileView.Skeleton.ChapterView.PreviewView {
-    struct LinkChaptersSection : View {
-        @ObservedObject var model : ProfileView.ViewModel
+    struct LinkChaptersSection: View {
+        @ObservedObject var model: ProfileView.ViewModel
 
         private var count: Int {
             model.chapterMap.count
@@ -179,6 +178,7 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
         private var entryStatement: ChapterStatement? {
             model.chapterMap[model.identifier]
         }
+
         var body: some View {
             if count > 1 {
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -187,7 +187,7 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
                             Cell(statement: entryStatement)
                         }
 
-                        ForEach(model.chapterMap.sorted(by: \.value.maxOrderKey), id: \.key) { (key, value) in
+                        ForEach(model.chapterMap.sorted(by: \.value.maxOrderKey), id: \.key) { key, value in
                             if key == model.identifier {
                                 EmptyView()
                             } else {
@@ -201,23 +201,22 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
         }
 
         @ViewBuilder
-        func Cell(statement: ChapterStatement ) -> some View {
+        func Cell(statement: ChapterStatement) -> some View {
             if model.currentChapterSection == statement.content.id {
-               Button(statement.content.runnerName) {
-               }
-               .buttonStyle(.borderedProminent)
-               .tint(.accentColor)
-           } else {
-               Button(statement.content.runnerName) {
-                   model.currentChapterSection = statement.content.id
-                   Task {
-                       await model.setActionState()
-                   }
-               }
-               .buttonStyle(.bordered)
-               .tint(.accentColor)
-               .coloredBadge(statement.maxOrderKey > (entryStatement?.maxOrderKey ?? 0) ? .blue : nil)
-           }
+                Button(statement.content.runnerName) {}
+                    .buttonStyle(.borderedProminent)
+                    .tint(.accentColor)
+            } else {
+                Button(statement.content.runnerName) {
+                    model.currentChapterSection = statement.content.id
+                    Task {
+                        await model.setActionState()
+                    }
+                }
+                .buttonStyle(.bordered)
+                .tint(.accentColor)
+                .coloredBadge(statement.maxOrderKey > (entryStatement?.maxOrderKey ?? 0) ? .blue : nil)
+            }
         }
     }
 }

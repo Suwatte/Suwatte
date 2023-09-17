@@ -10,8 +10,6 @@ import SwiftUI
 
 private typealias ViewModel = ProfileView.ViewModel
 
-
-
 extension ViewModel {
     func getPreviewChapters(for statement: ChapterStatement) -> [ThreadSafeChapter] {
         let chapters = statement.filtered
@@ -20,25 +18,22 @@ extension ViewModel {
     }
 }
 
-
-
 extension ViewModel {
-    
     // O(n)
     func prepareChapterStatement(_ chapters: [ThreadSafeChapter], content: SimpleContentInfo) -> ChapterStatement {
         var maxOrderKey: Double = 0
         var distinctKeys = Set<Double>()
-        
+
         let filtered = STTHelpers.filterChapters(chapters, with: sourceID) { chapter in
             let orderKey = chapter.chapterOrderKey
             maxOrderKey = max(orderKey, maxOrderKey)
             distinctKeys.insert(orderKey)
         }
-        
+
         let distinctCount = distinctKeys.count
         return .init(content: content, filtered: filtered, originalList: chapters, distinctCount: distinctCount, maxOrderKey: maxOrderKey)
     }
-    
+
     func getSortedChapters(_ chapters: [ThreadSafeChapter], onlyDownloaded: Bool, method: ChapterSortOption, descending: Bool) async -> [ThreadSafeChapter] {
         return await BGActor.run {
             func sort(_ chapters: [ThreadSafeChapter]) -> [ThreadSafeChapter] {
@@ -67,12 +62,12 @@ extension ViewModel {
             return data
         }
     }
-    
+
     func getCurrentStatement() -> ChapterStatement {
         chapterMap[currentChapterSection] ?? .init(content: contentInfo, filtered: [], originalList: [], distinctCount: 0, maxOrderKey: 0)
     }
-    
-    func updateCurrentStatement(){
+
+    func updateCurrentStatement() {
         let current = getCurrentStatement()
         let statement = prepareChapterStatement(current.originalList, content: current.content)
         withAnimation {
@@ -82,5 +77,4 @@ extension ViewModel {
             await setActionState()
         }
     }
-    
 }

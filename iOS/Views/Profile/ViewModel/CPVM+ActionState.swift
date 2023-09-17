@@ -141,7 +141,8 @@ extension ViewModel {
         guard currentChapterSection == sourceID else { return nil }
         let chapters = getCurrentStatement().filtered
         guard let state = sourceProgressState?.currentReadingState,
-              let currentIndex = chapters.firstIndex(where: { $0.chapterId == state.chapterId }) else {
+              let currentIndex = chapters.firstIndex(where: { $0.chapterId == state.chapterId })
+        else {
             return nil
         }
 

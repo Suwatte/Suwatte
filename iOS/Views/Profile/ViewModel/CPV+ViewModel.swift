@@ -38,7 +38,7 @@ extension ProfileView {
         @Published var isWorking = false
         @Published var syncState = SyncState.idle
         @Published var actionState: ActionState = .init(state: .none)
-        @Published var chapterMap : [String: ChapterStatement] = [:]
+        @Published var chapterMap: [String: ChapterStatement] = [:]
         // Tokens
         internal var currentMarkerToken: NotificationToken?
         internal var downloadTrackingToken: NotificationToken?
@@ -61,7 +61,7 @@ extension ProfileView {
             currentChapterSection = ""
             currentChapterSection = identifier
         }
-        
+
         var contentInfo: SimpleContentInfo {
             .init(runnerID: sourceID, runnerName: source.name, contentName: entry.title, id: identifier)
         }
@@ -182,7 +182,7 @@ extension ViewModel {
                 } catch {
                     Logger.shared.error(error, "Content Chapters")
                     let chapters = chapterMap[contentInfo.id]?.filtered
-                    
+
                     guard chapters == nil || (chapters?.isEmpty ?? true) else { return }
                     await animate { [weak self] in
                         if Task.isCancelled { return }
@@ -194,7 +194,6 @@ extension ViewModel {
     }
 
     func reload() async {
-        
         removeNotifier()
         await animate { [weak self] in
             self?.chapterState = .loading
@@ -218,7 +217,7 @@ extension ViewModel {
         Task { [weak self] in
             await self?.resolveLinks()
         }
-        
+
         Task { [STTIDPair] in
             let actor = await RealmActor.shared()
             let id = STTIDPair
@@ -230,8 +229,6 @@ extension ViewModel {
         await setActionState()
         await handleSync()
         await setActionState(false)
-
-        
     }
 }
 

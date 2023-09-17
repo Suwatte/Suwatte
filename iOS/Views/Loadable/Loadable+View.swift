@@ -64,7 +64,6 @@ struct LoadableView<Value, Idle, Loading, Content>: View where Idle: View,
     }
 }
 
-
 extension LoadableView {
     private func load() async {
         guard !loaded else { return }
@@ -72,13 +71,13 @@ extension LoadableView {
             await animate {
                 loadable = .loading
             }
-            
+
             let data = try await action()
-            
+
             await animate {
                 loadable = .loaded(data)
             }
-            
+
             loaded = true
         } catch {
             Logger.shared.error(error)
@@ -128,7 +127,6 @@ struct DefaultLoadingView: View {
         }
     }
 }
-
 
 struct OldLoadableView<Value, Idle, Loading, Failure, Content>: View where Idle: View,
     Loading: View,

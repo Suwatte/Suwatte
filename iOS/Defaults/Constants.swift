@@ -50,8 +50,8 @@ func getKeyWindow() -> UIWindow? {
         .compactMap { $0 as? UIWindowScene }
         .flatMap { $0.windows }
         .first { $0.isKeyWindow }
-
 }
+
 let SCHEMA_VERSION = 14
 let STT_BRIDGE_VERSION = "3.0.4"
 

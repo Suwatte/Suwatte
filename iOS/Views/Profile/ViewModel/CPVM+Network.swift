@@ -21,7 +21,4 @@ extension ViewModel {
     }
 }
 
-
-extension ViewModel {
-    
-}
+extension ViewModel {}

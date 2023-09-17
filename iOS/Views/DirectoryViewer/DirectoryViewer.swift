@@ -146,7 +146,7 @@ struct DirectoryViewer: View {
                         }
                     }
                 }
-                    .transition(.opacity)
+                .transition(.opacity)
             }
         }
         .transition(.opacity)

@@ -26,21 +26,21 @@ extension ProfileView {
                 })
                 .fullScreenCover(item: $viewModel.presentManageContentLinks,
                                  onDismiss: {
-                    Task { [weak viewModel] in
-                        await viewModel?.updateContentLinks()
-                    }
-                },
+                                     Task { [weak viewModel] in
+                                         await viewModel?.updateContentLinks()
+                                     }
+                                 },
                                  content: { id in
-                    SmartNavigationView {
-                        ManageContentLinks(id: id,
-                                           highlight: .init(id: viewModel.contentID,
-                                                            cover: viewModel.content.cover,
-                                                            title: viewModel.content.title))
-                            .closeButton()
-                    }
-                    .tint(accentColor)
-                    .accentColor(accentColor)
-                })
+                                     SmartNavigationView {
+                                         ManageContentLinks(id: id,
+                                                            highlight: .init(id: viewModel.contentID,
+                                                                             cover: viewModel.content.cover,
+                                                                             title: viewModel.content.title))
+                                             .closeButton()
+                                     }
+                                     .tint(accentColor)
+                                     .accentColor(accentColor)
+                                 })
                 .fullScreenCover(isPresented: $viewModel.presentMigrationView, content: {
                     let tagged = TaggedHighlight(from: viewModel.entry, with: viewModel.sourceID)
                     SmartNavigationView {

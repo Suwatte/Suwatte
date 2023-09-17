@@ -44,9 +44,9 @@ struct LocalAuthGateway: ViewModifier {
                 manager.verify()
             }
     }
-    
+
     @MainActor
-    private var edges : UIEdgeInsets? {
+    private var edges: UIEdgeInsets? {
         let window = getKeyWindow()
         return window?.safeAreaInsets
     }

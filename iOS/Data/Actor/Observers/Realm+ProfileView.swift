@@ -48,7 +48,7 @@ extension RealmActor {
             .where { $0.id.in(ids) && !$0.isDeleted }
 
         func didUpdate(_ results: Results<ProgressMarker>) {
-            let readChapters = Set(results.toArray().map(\.readChapters).flatMap({ $0 }))
+            let readChapters = Set(results.toArray().map(\.readChapters).flatMap { $0 })
 
             Task { @MainActor in
                 callback(readChapters)

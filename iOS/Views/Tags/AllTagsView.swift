@@ -58,6 +58,6 @@ extension AllTagsView {
 
 extension AllTagsView {
     func load() async throws -> [DSKCommon.Property] {
-         try await source.getAllTags()
+        try await source.getAllTags()
     }
 }

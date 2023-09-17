@@ -122,50 +122,46 @@ extension STTHelpers {
         let languages = Preferences.standard.globalContentLanguages
         let blacklisted = STTHelpers.getBlacklistedProviders(for: id)
         var prepared: [T] = []
-        
-        
+
         func isLanguageCleared(_ chapter: T) -> Bool {
             guard !languages.isEmpty, chapter.language.uppercased() != "UNIVERSAL" else { return true }
             let value = languages.contains { base in
-                let chapterLanguage = chapter.language.lowercased().replacingOccurrences(of: "_", with: "-").trimmingCharacters(in:.whitespacesAndNewlines).components(separatedBy: "-")
+                let chapterLanguage = chapter.language.lowercased().replacingOccurrences(of: "_", with: "-").trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: "-")
                 let appLanguage = base.lowercased().replacingOccurrences(of: "_", with: "-").components(separatedBy: "-")
-                
-                
+
                 let chapterLanguageCode = chapterLanguage.first
                 let appLanguageCode = appLanguage.first
-                                    
+
                 guard let chapterLanguageCode, let appLanguageCode, appLanguageCode == chapterLanguageCode else {
                     return false
                 }
-                
+
                 let appRegionCode = appLanguage.getOrNil(1)
                 let chapterRegionCode = chapterLanguage.getOrNil(1)
-                
+
                 guard let appRegionCode, let chapterRegionCode else {
                     return true
                 }
-                
+
                 return appRegionCode == chapterRegionCode
-                
             }
-            
+
             return value
         }
-        
+
         func isBlackListCleared(_ chapter: T) -> Bool {
             guard !blacklisted.isEmpty,
                   let providers = chapter.providers?.map(\.id),
                   !providers.isEmpty else { return true }
             return providers.allSatisfy { !blacklisted.contains($0) }
         }
-        
-        
+
         for chapter in data {
             guard isBlackListCleared(chapter), isLanguageCleared(chapter) else { continue }
             prepared.append(chapter)
             callback?(chapter)
         }
-        
+
         return prepared
     }
 }

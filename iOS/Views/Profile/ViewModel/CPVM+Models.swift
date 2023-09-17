@@ -8,12 +8,13 @@
 import Foundation
 private typealias ViewModel = ProfileView.ViewModel
 
-struct SimpleContentInfo : Hashable {
+struct SimpleContentInfo: Hashable {
     let runnerID: String
     let runnerName: String
     let contentName: String
     let id: String
 }
+
 struct ChapterStatement {
     let content: SimpleContentInfo
     let filtered: [ThreadSafeChapter]
@@ -21,7 +22,6 @@ struct ChapterStatement {
     let distinctCount: Int
     let maxOrderKey: Double
 }
-
 
 extension ViewModel {
     enum SyncState: Hashable {

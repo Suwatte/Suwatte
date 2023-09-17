@@ -12,7 +12,7 @@ struct FCS_Options: View {
     let didChange: () -> Void
     @State private var providers: [DSKCommon.ChapterProvider] = []
     @State private var blacklisted: Set<String> = []
-    
+
     var body: some View {
         SmartNavigationView {
             List {

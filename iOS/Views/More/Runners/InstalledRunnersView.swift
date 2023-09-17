@@ -163,6 +163,5 @@ extension InstalledRunnersView {
                 }
             }
         }
-
     }
 }

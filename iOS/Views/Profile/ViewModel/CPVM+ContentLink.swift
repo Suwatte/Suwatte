@@ -48,10 +48,10 @@ extension ViewModel {
                     .map { $0.toStored() }
                 await actor.storeChapters(stored)
             }
-            
+
             let statement = prepareChapterStatement(prepared,
                                                     content: .init(runnerID: source.id, runnerName: source.name, contentName: content.title, id: content.id))
-            
+
             await animate { [weak self] in
                 self?.chapterMap[content.id] = statement
             }
@@ -66,20 +66,19 @@ extension ViewModel {
         let newLinked = Set(titles.map(\.id))
         let currentLinked = Set(linkedContentIDs)
         linkedContentIDs = Array(newLinked)
-        
+
         let removed = currentLinked.subtracting(newLinked) // Present in Current Linked but not in newLinked
         let added = newLinked.subtracting(currentLinked) // Present in New linked but not in current linked
-        
-        
+
         // Remove Unlinked Titles
         for content in removed {
             await animate { [weak self] in
                 self?.chapterMap.removeValue(forKey: content)
             }
         }
-        
+
         guard !added.isEmpty else { return }
-        
+
         // Add Newly Linked Titles
         await withTaskGroup(of: Void.self, body: { group in
             for content in added {
@@ -89,10 +88,9 @@ extension ViewModel {
                 }
             }
         })
-        
+
         // Re Sync With All Parties
         await handleSync()
-
     }
 }
 

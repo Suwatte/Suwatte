@@ -13,11 +13,11 @@ struct AutoScrollOverlay: View {
     private let publisher = PanelPublisher.shared
 
     @MainActor
-    private var edges : UIEdgeInsets? {
+    private var edges: UIEdgeInsets? {
         let window = getKeyWindow()
         return window?.safeAreaInsets
     }
-    
+
     var body: some View {
         ZStack {
             Button {
