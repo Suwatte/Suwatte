@@ -42,10 +42,8 @@ extension ViewModel {
 
         // Observe Chapter Bookmarks
         chapterBookmarkToken = await actor
-            .observeChapterBookmarks { value in
-                Task { @MainActor [weak self] in
-                    self?.bookmarkedChapters = value
-                }
+            .observeChapterBookmarks { [weak self] value in
+                self?.bookmarkedChapters = value
             }
     }
 

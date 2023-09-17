@@ -49,10 +49,11 @@ extension ViewModel {
                 await actor.storeChapters(stored)
             }
             
-            let statement = prepareChapterStatement(prepared, source: .init(runnerID: source.id, runnerName: source.name))
+            let statement = prepareChapterStatement(prepared,
+                                                    content: .init(runnerID: source.id, runnerName: source.name, contentName: content.title, id: content.id))
             
             await animate { [weak self] in
-                self?.chapterMap[source.id] = statement
+                self?.chapterMap[content.id] = statement
             }
         } catch {
             Logger.shared.error(error, source.id)
@@ -61,12 +62,37 @@ extension ViewModel {
 
     func updateContentLinks() async {
         let actor = await RealmActor.shared()
-        let newLinked = await actor.getLinkedContent(for: identifier).map(\.id)
-        guard newLinked != linkedContentIDs else { return }
-        await MainActor.run { [weak self] in
-            self?.contentState = .idle
-            self?.chapterState = .idle
+        let titles = await actor.getLinkedContent(for: identifier)
+        let newLinked = Set(titles.map(\.id))
+        let currentLinked = Set(linkedContentIDs)
+        linkedContentIDs = Array(newLinked)
+        
+        let removed = currentLinked.subtracting(newLinked) // Present in Current Linked but not in newLinked
+        let added = newLinked.subtracting(currentLinked) // Present in New linked but not in current linked
+        
+        
+        // Remove Unlinked Titles
+        for content in removed {
+            await animate { [weak self] in
+                self?.chapterMap.removeValue(forKey: content)
+            }
         }
+        
+        guard !added.isEmpty else { return }
+        
+        // Add Newly Linked Titles
+        await withTaskGroup(of: Void.self, body: { group in
+            for content in added {
+                guard let title = titles.first(where: { $0.id == content }) else { continue }
+                group.addTask { [weak self] in
+                    await self?.getChapterSection(for: title)
+                }
+            }
+        })
+        
+        // Re Sync With All Parties
+        await handleSync()
+
     }
 }
 

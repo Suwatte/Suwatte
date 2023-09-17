@@ -17,8 +17,8 @@ extension ChapterList {
                 await actor.bulkMarkChapters(for: id,
                                              chapters: [chapter],
                                              markAsRead: !completed)
+                didMark()
             }
-            didMark()
         } label: {
             Label(completed ? "Mark as Unread" : "Mark as Read", systemImage: completed ? "eye.slash.circle" : "eye.circle")
         }

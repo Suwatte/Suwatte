@@ -15,9 +15,9 @@ extension ProfileView {
         @Environment(\.presentationMode) var presentationMode
         var body: some View {
             
-            OldLoadableView(loadable: $viewModel.contentState) {
-                await viewModel.setupObservers()
-                await viewModel.load()
+            OldLoadableView(loadable: $viewModel.contentState) { [weak viewModel] in
+                await viewModel?.setupObservers()
+                await viewModel?.load()
             } _: {
                 PLACEHOLDER
             } _: {

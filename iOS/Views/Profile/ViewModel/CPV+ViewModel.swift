@@ -10,10 +10,6 @@ import RealmSwift
 import SwiftUI
 import UIKit
 
-struct SimpleRunnerInfo : Hashable {
-    let runnerID: String
-    let runnerName: String
-}
 extension ProfileView {
     final class ViewModel: ObservableObject {
         var entry: DaisukeEngine.Structs.Highlight
@@ -37,14 +33,7 @@ extension ProfileView {
         @Published var presentTrackersSheet = false
         @Published var presentSafariView = false
         @Published var presentMigrationView = false
-        @Published var presentManageContentLinks: String? = nil {
-            didSet {
-                guard presentManageContentLinks == nil else { return }
-                Task { [weak self] in
-                    await self?.updateContentLinks()
-                }
-            }
-        }
+        @Published var presentManageContentLinks: String? = nil
 
         @Published var isWorking = false
         @Published var syncState = SyncState.idle
@@ -69,11 +58,12 @@ extension ProfileView {
         init(_ entry: DaisukeEngine.Structs.Highlight, _ source: AnyContentSource) {
             self.entry = entry
             self.source = source
-            currentChapterSection = source.id
+            currentChapterSection = ""
+            currentChapterSection = identifier
         }
         
-        var sourceInfo: SimpleRunnerInfo {
-            .init(runnerID: source.id, runnerName: source.name)
+        var contentInfo: SimpleContentInfo {
+            .init(runnerID: sourceID, runnerName: source.name, contentName: entry.title, id: identifier)
         }
 
         @Published var selection: ThreadSafeChapter?
@@ -103,7 +93,7 @@ private typealias ViewModel = ProfileView.ViewModel
 
 extension ViewModel {
     func load() async {
-        await RunnerActor.run { [sourceInfo, sourceID] in
+        await RunnerActor.run { [contentInfo] in
             await animate { [weak self] in
                 self?.isWorking = true
                 self?.contentState = .loading
@@ -122,9 +112,9 @@ extension ViewModel {
                 let chapters = await getChaptersFromDatabase()
                 if let chapters {
                     let prepared = chapters.map { $0.toThreadSafe() }
-                    let statement = prepareChapterStatement(prepared, source: sourceInfo)
-                    await animate { [weak self] in
-                        self?.chapterMap[sourceID] = statement
+                    let statement = prepareChapterStatement(prepared, content: contentInfo)
+                    await animate { [weak self, identifier] in
+                        self?.chapterMap[identifier] = statement
                         self?.chapterState = .loaded(true)
                     }
 
@@ -166,13 +156,13 @@ extension ViewModel {
     }
 
     func loadChapters(_ pre: [DSKCommon.Chapter]? = nil) async {
-        await RunnerActor.run { [sourceID, sourceInfo] in
+        await RunnerActor.run { [sourceID, contentInfo, chapterMap] in
             func prepare(chapters: [DSKCommon.Chapter]) async {
                 let prepared = chapters
                     .sorted(by: \.index, descending: false)
                     .map { $0.toThreadSafe(sourceID: sourceID, contentID: contentID) }
                 await animate { [weak self] in
-                    self?.chapterMap[sourceID] = self?.prepareChapterStatement(prepared, source: sourceInfo)
+                    self?.chapterMap[contentInfo.id] = self?.prepareChapterStatement(prepared, content: contentInfo)
                     self?.chapterState = .loaded(true)
                 }
                 Task.detached { [weak self] in
@@ -191,7 +181,7 @@ extension ViewModel {
                     await prepare(chapters: chapters)
                 } catch {
                     Logger.shared.error(error, "Content Chapters")
-                    let chapters = chapterMap[sourceID]?.filtered
+                    let chapters = chapterMap[contentInfo.id]?.filtered
                     
                     guard chapters == nil || (chapters?.isEmpty ?? true) else { return }
                     await animate { [weak self] in
@@ -204,28 +194,44 @@ extension ViewModel {
     }
 
     func reload() async {
+        
+        removeNotifier()
         await animate { [weak self] in
             self?.chapterState = .loading
             self?.contentState = .loading
+            self?.chapterMap = [:]
+            self?.linkedContentIDs = []
+            self?.actionState = .init(state: .none)
+            self?.downloads = [:]
+            self?.readChapters = .init()
+            self?.savedForLater = false
+            self?.inLibrary = false
+            self?.bookmarkedChapters = .init()
         }
-
         await load()
+        await setupObservers()
     }
 }
 
 extension ViewModel {
     func didLoadChapters() async {
+        Task { [weak self] in
+            await self?.resolveLinks()
+        }
+        
+        Task { [STTIDPair] in
+            let actor = await RealmActor.shared()
+            let id = STTIDPair
+            await actor.updateUnreadCount(for: id)
+            await actor.clearUpdates(id: id.id)
+        }
         // Resolve Links, Sync & Update Action State
         await updateSourceProgressState()
         await setActionState()
         await handleSync()
         await setActionState(false)
-        //        await resolveLinks()
 
-        let actor = await RealmActor.shared()
-        let id = STTIDPair
-        await actor.updateUnreadCount(for: id)
-        await actor.clearUpdates(id: id.id)
+        
     }
 }
 

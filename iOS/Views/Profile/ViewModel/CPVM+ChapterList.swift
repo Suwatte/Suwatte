@@ -25,7 +25,7 @@ extension ViewModel {
 extension ViewModel {
     
     // O(n)
-    func prepareChapterStatement(_ chapters: [ThreadSafeChapter], source: SimpleRunnerInfo) -> ChapterStatement {
+    func prepareChapterStatement(_ chapters: [ThreadSafeChapter], content: SimpleContentInfo) -> ChapterStatement {
         var maxOrderKey: Double = 0
         var distinctKeys = Set<Double>()
         
@@ -36,7 +36,7 @@ extension ViewModel {
         }
         
         let distinctCount = distinctKeys.count
-        return .init(source: source, filtered: filtered, originalList: chapters, distinctCount: distinctCount, maxOrderKey: maxOrderKey)
+        return .init(content: content, filtered: filtered, originalList: chapters, distinctCount: distinctCount, maxOrderKey: maxOrderKey)
     }
     
     func getSortedChapters(_ chapters: [ThreadSafeChapter], onlyDownloaded: Bool, method: ChapterSortOption, descending: Bool) async -> [ThreadSafeChapter] {
@@ -69,14 +69,14 @@ extension ViewModel {
     }
     
     func getCurrentStatement() -> ChapterStatement {
-        chapterMap[currentChapterSection] ?? .init(source: sourceInfo, filtered: [], originalList: [], distinctCount: 0, maxOrderKey: 0)
+        chapterMap[currentChapterSection] ?? .init(content: contentInfo, filtered: [], originalList: [], distinctCount: 0, maxOrderKey: 0)
     }
     
     func updateCurrentStatement(){
         let current = getCurrentStatement()
-        let statement = prepareChapterStatement(current.originalList, source: current.source)
+        let statement = prepareChapterStatement(current.originalList, content: current.content)
         withAnimation {
-            chapterMap[current.source.runnerID] = statement
+            chapterMap[current.content.id] = statement
         }
         Task {
             await setActionState()

@@ -42,19 +42,14 @@ extension RealmActor {
     }
 
     func observeReadChapters(for id: String, _ callback: @escaping Callback<Set<Double>>) async -> NotificationToken {
+        let ids = getLinkedContent(for: id).map(\.id).appending(id)
         let collection = realm
             .objects(ProgressMarker.self)
-            .where { $0.id == id && !$0.isDeleted }
+            .where { $0.id.in(ids) && !$0.isDeleted }
 
         func didUpdate(_ results: Results<ProgressMarker>) {
-            guard let target = results.first else {
-                Task { @MainActor in
-                    callback([])
-                }
-                return
-            }
+            let readChapters = Set(results.toArray().map(\.readChapters).flatMap({ $0 }))
 
-            let readChapters = Set(target.readChapters)
             Task { @MainActor in
                 callback(readChapters)
             }

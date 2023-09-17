@@ -124,9 +124,9 @@ extension ChapterList {
         Task {
             let actor = await RealmActor.shared()
             await actor.bulkMarkChapters(for: id, chapters: chapters)
+            didMark()
         }
         deselectAll()
-        didMark()
     }
 
     func markAsUnread() {
@@ -172,7 +172,9 @@ extension ChapterList {
                 .getContentMarker(for: identifier)?
                 .readChapters
                 .max()
-            let progress = DSKCommon.TrackProgressUpdate(chapter: maxRead, volume: nil) // TODO: Probably Want to get the volume here
+            guard let maxRead else { return }
+            let (volume, number) = ThreadSafeChapter.vnPair(from: maxRead)
+            let progress = DSKCommon.TrackProgressUpdate(chapter: number, volume: volume)
             await actor.updateTrackProgress(for: identifier, progress: progress)
         }
     }

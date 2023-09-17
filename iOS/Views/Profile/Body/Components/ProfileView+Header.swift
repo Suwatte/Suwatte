@@ -79,7 +79,7 @@ extension Skeleton.Header {
         let schemeIsDark = colorScheme == .dark
         InteractiveTagView(labels) { label in
             Text(label.text)
-                .font(.caption)
+                .font(.caption2)
                 .fontWeight(schemeIsDark ? .semibold : .bold)
                 .padding(.vertical, 2)
                 .padding(.horizontal, 4)

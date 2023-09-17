@@ -8,9 +8,14 @@
 import Foundation
 private typealias ViewModel = ProfileView.ViewModel
 
-
+struct SimpleContentInfo : Hashable {
+    let runnerID: String
+    let runnerName: String
+    let contentName: String
+    let id: String
+}
 struct ChapterStatement {
-    let source: SimpleRunnerInfo
+    let content: SimpleContentInfo
     let filtered: [ThreadSafeChapter]
     let originalList: [ThreadSafeChapter]
     let distinctCount: Int

@@ -40,6 +40,8 @@ extension ProfileView.Skeleton.ChapterView {
                         .transition(.opacity)
                 }
             }
+            .animation(.easeOut(duration: 0.25), value: model.currentChapterSection)
+
         }
 
         @ViewBuilder
@@ -54,11 +56,35 @@ extension ProfileView.Skeleton.ChapterView {
 
         @ViewBuilder
         func LoadedView(_ chapters: [ThreadSafeChapter], redacted: Bool = false) -> some View {
+            let statement = model.getCurrentStatement()
+            let filteredOut = statement.originalList.count - statement.filtered.count
             VStack(alignment: .center, spacing: 10) {
                 HStack {
-                    Text("^[\(model.getCurrentStatement().distinctCount) Chapter](inflect: true)")
-                        .font(.title3)
-                        .fontWeight(.bold)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("^[\(statement.distinctCount) Chapter](inflect: true)")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                        
+                        // Viewing Linked entry
+                        if model.currentChapterSection != model.identifier {
+                            let statement = model.getCurrentStatement()
+                            Text("\(Image(systemName: "link")) \(statement.content.contentName)")
+                                .font(.footnote)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.gray)
+                                .multilineTextAlignment(.leading)
+                                .lineLimit(3)
+                        }
+                        
+                        if filteredOut != 0 {
+                            Text("^[\(filteredOut) chapter](inflect: true) hidden.")
+                                .font(.caption)
+                                .fontWeight(.light)
+                                .foregroundColor(.gray)
+                        }
+                        
+                        LinkChaptersSection(model: model)
+                    }
                     Spacer()
                 }
 
@@ -139,5 +165,59 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
 
     func getDownload(_ chapter: ThreadSafeChapter) -> DownloadStatus? {
         model.downloads[chapter.id]
+    }
+}
+
+extension ProfileView.Skeleton.ChapterView.PreviewView {
+    struct LinkChaptersSection : View {
+        @ObservedObject var model : ProfileView.ViewModel
+
+        private var count: Int {
+            model.chapterMap.count
+        }
+
+        private var entryStatement: ChapterStatement? {
+            model.chapterMap[model.identifier]
+        }
+        var body: some View {
+            if count > 1 {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        if let entryStatement {
+                            Cell(statement: entryStatement)
+                        }
+
+                        ForEach(model.chapterMap.sorted(by: \.value.maxOrderKey), id: \.key) { (key, value) in
+                            if key == model.identifier {
+                                EmptyView()
+                            } else {
+                                Cell(statement: value)
+                            }
+                        }
+                    }
+                    .padding(.top, 4)
+                }
+            }
+        }
+
+        @ViewBuilder
+        func Cell(statement: ChapterStatement ) -> some View {
+            if model.currentChapterSection == statement.content.id {
+               Button(statement.content.runnerName) {
+               }
+               .buttonStyle(.borderedProminent)
+               .tint(.accentColor)
+           } else {
+               Button(statement.content.runnerName) {
+                   model.currentChapterSection = statement.content.id
+                   Task {
+                       await model.setActionState()
+                   }
+               }
+               .buttonStyle(.bordered)
+               .tint(.accentColor)
+               .coloredBadge(statement.maxOrderKey > (entryStatement?.maxOrderKey ?? 0) ? .blue : nil)
+           }
+        }
     }
 }

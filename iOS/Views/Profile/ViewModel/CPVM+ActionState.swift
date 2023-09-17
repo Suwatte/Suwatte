@@ -138,6 +138,7 @@ extension ViewModel {
     }
 
     private func resolveSourceProgressStateAsActionState() -> ActionState? {
+        guard currentChapterSection == sourceID else { return nil }
         let chapters = getCurrentStatement().filtered
         guard let state = sourceProgressState?.currentReadingState,
               let currentIndex = chapters.firstIndex(where: { $0.chapterId == state.chapterId }) else {
