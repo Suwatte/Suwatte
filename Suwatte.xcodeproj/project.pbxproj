@@ -196,6 +196,7 @@
 		DF68838C2A60B618009B5642 /* DV+Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68838B2A60B618009B5642 /* DV+Tracker.swift */; };
 		DF68838E2A60B6FA009B5642 /* PV+Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF68838D2A60B6FA009B5642 /* PV+Tracker.swift */; };
 		DF6A00D42AB66A5F008DDEC8 /* Realm+IceCream.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6A00D32AB66A5F008DDEC8 /* Realm+IceCream.swift */; };
+		DF6A00D62AB78252008DDEC8 /* DSKNetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6A00D52AB78252008DDEC8 /* DSKNetworkClient.swift */; };
 		DF6A896828834AC40045529D /* Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6A896728834AC40045529D /* Orientation.swift */; };
 		DF6A896D28835E150045529D /* Tiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6A896C28835E150045529D /* Tiles.swift */; };
 		DF6B5754288F42D6007C6B78 /* Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF6B5753288F42D6007C6B78 /* Engine.swift */; };
@@ -665,6 +666,7 @@
 		DF68838B2A60B618009B5642 /* DV+Tracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DV+Tracker.swift"; sourceTree = "<group>"; };
 		DF68838D2A60B6FA009B5642 /* PV+Tracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PV+Tracker.swift"; sourceTree = "<group>"; };
 		DF6A00D32AB66A5F008DDEC8 /* Realm+IceCream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+IceCream.swift"; sourceTree = "<group>"; };
+		DF6A00D52AB78252008DDEC8 /* DSKNetworkClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DSKNetworkClient.swift; sourceTree = "<group>"; };
 		DF6A896728834AC40045529D /* Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Orientation.swift; sourceTree = "<group>"; };
 		DF6A896C28835E150045529D /* Tiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tiles.swift; sourceTree = "<group>"; };
 		DF6B5753288F42D6007C6B78 /* Engine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Engine.swift; sourceTree = "<group>"; };
@@ -1590,6 +1592,7 @@
 				DF426C342A463F4D00B79920 /* DirectorySearcher.swift */,
 				DF62B5C82A9A4F1D00F907CD /* BackgroundActor.swift */,
 				DFF4351F2AA6D0B500FAAD8B /* UserDefaultsSync.swift */,
+				DF6A00D52AB78252008DDEC8 /* DSKNetworkClient.swift */,
 			);
 			path = Singletons;
 			sourceTree = "<group>";
@@ -2901,6 +2904,7 @@
 				DF4817E42A6DF1BB00CB3A47 /* ComicInfo.swift in Sources */,
 				DFDBF99F2A7C971B006D49AD /* WKR+Page.swift in Sources */,
 				DF62B5C72A99898100F907CD /* Reader+State.swift in Sources */,
+				DF6A00D62AB78252008DDEC8 /* DSKNetworkClient.swift in Sources */,
 				DF2783432A799F290098BBA9 /* Realm+Search.swift in Sources */,
 				DF248F2B2813B24F00818300 /* BarChartView.swift in Sources */,
 				DF457DCB2A438DE0002B5350 /* DV+Base.swift in Sources */,
