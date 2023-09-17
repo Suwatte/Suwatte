@@ -29,6 +29,7 @@ extension ViewModel {
             maxOrderKey = max(orderKey, maxOrderKey)
             distinctKeys.insert(orderKey)
         }
+        .sorted(by: \.index, descending: false)
 
         let distinctCount = distinctKeys.count
         return .init(content: content, filtered: filtered, originalList: chapters, distinctCount: distinctCount, maxOrderKey: maxOrderKey)

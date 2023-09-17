@@ -94,7 +94,7 @@ extension ViewModel {
         // Fix Situation where the chapter being referenced is not in the joined chapter list by picking the last where the numbers match
         var correctedChapterId = chapterRef.id
         if !chapters.contains(where: { $0.id == chapterRef.id }),
-           let chapter = chapters.last(where: { $0.number >= chapterRef.number })
+           let chapter = chapters.last(where: { $0.chapterOrderKey >= chapterRef.chapterOrderKey })
         {
             correctedChapterId = chapter.id
         }
