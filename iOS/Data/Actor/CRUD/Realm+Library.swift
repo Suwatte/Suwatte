@@ -234,20 +234,16 @@ extension RealmActor {
 
     func getUnreadCount(for id: ContentIdentifier) -> Int {
         // Get Max Read Chapter Order key
-        let maxReadChapterKey = realm
-            .objects(ProgressMarker.self)
-            .where { $0.id == id.id }
-            .first?
-            .maxReadChapterKey ?? -1
+        let readChapters = Set(getContentMarker(for: id.id)?.readChapters ?? .init())
 
         // Get Total Chapter Count
         let unread = realm
             .objects(StoredChapter.self)
             .where { $0.contentId == id.contentId }
             .where { $0.sourceId == id.sourceId }
-            .map(\.chapterOrderKey)
-            .distinct()
-            .filter { $0 > maxReadChapterKey }
+            .freeze()
+            .toArray()
+            .filter({ !readChapters.contains($0.chapterOrderKey) })
             .count
 
         return unread
