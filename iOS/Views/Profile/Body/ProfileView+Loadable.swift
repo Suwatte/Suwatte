@@ -34,7 +34,7 @@ extension ProfileView {
                         let readingMode = viewModel.readingMode
                         ReaderGateWay(title: viewModel.content.title,
                                       readingMode: readingMode,
-                                      chapterList: viewModel.chapterListChapters,
+                                      chapterList: viewModel.getCurrentStatement().filtered,
                                       openTo: chapter)
                             .task {
                                 viewModel.removeNotifier()

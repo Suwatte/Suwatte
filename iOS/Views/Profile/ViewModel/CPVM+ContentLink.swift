@@ -24,26 +24,18 @@ extension ViewModel {
         // Ensure there are linked titles
         guard !entries.isEmpty, !Task.isCancelled else { return }
 
-        await withTaskGroup(of: ContentLinkSection?.self, body: { [weak self] group in
+        await withTaskGroup(of: Void.self, body: { [weak self] group in
             for entry in entries {
                 group.addTask { [weak self] in
                     await self?.getChapterSection(for: entry)
                 }
             }
-
-            for await result in group {
-                guard let result else { continue }
-                await animate { [weak self] in
-                    self?.linked.append(result)
-                }
-            }
-
         })
     }
 
-    func getChapterSection(for content: StoredContent) async -> ContentLinkSection? {
+    func getChapterSection(for content: StoredContent) async {
         let source = await DSK.shared.getSource(id: content.sourceId)
-        guard let source else { return nil }
+        guard let source else { return }
         do {
             let chapters = try await source.getContentChapters(contentId: content.contentId)
             let prepared = chapters
@@ -56,20 +48,15 @@ extension ViewModel {
                     .map { $0.toStored() }
                 await actor.storeChapters(stored)
             }
-
-            let maxOrderKey = prepared
-                .max(by: \.chapterOrderKey)?
-                .chapterOrderKey ?? 0
-
-            return .init(source: source,
-                         chapters: prepared,
-                         maxOrderKey: maxOrderKey)
-
+            
+            let statement = prepareChapterStatement(prepared, source: .init(runnerID: source.id, runnerName: source.name))
+            
+            await animate { [weak self] in
+                self?.chapterMap[source.id] = statement
+            }
         } catch {
             Logger.shared.error(error, source.id)
         }
-
-        return nil
     }
 
     func updateContentLinks() async {

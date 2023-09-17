@@ -10,6 +10,10 @@ import RealmSwift
 import SwiftUI
 import UIKit
 
+struct SimpleRunnerInfo : Hashable {
+    let runnerID: String
+    let runnerName: String
+}
 extension ProfileView {
     final class ViewModel: ObservableObject {
         var entry: DaisukeEngine.Structs.Highlight
@@ -24,7 +28,6 @@ extension ProfileView {
         }
 
         @Published var content: DSKCommon.Content = .placeholder
-        var chapters: [ThreadSafeChapter] = []
 
         @Published var contentState: Loadable<Bool> = .idle
         @Published var chapterState: Loadable<Bool> = .idle
@@ -46,9 +49,7 @@ extension ProfileView {
         @Published var isWorking = false
         @Published var syncState = SyncState.idle
         @Published var actionState: ActionState = .init(state: .none)
-        var linked: [ContentLinkSection] = []
-        @Published var previewChapters: [ThreadSafeChapter] = []
-        @Published var chapterListChapters: [ThreadSafeChapter] = []
+        @Published var chapterMap : [String: ChapterStatement] = [:]
         // Tokens
         internal var currentMarkerToken: NotificationToken?
         internal var downloadTrackingToken: NotificationToken?
@@ -69,6 +70,10 @@ extension ProfileView {
             self.entry = entry
             self.source = source
             currentChapterSection = source.id
+        }
+        
+        var sourceInfo: SimpleRunnerInfo {
+            .init(runnerID: source.id, runnerName: source.name)
         }
 
         @Published var selection: ThreadSafeChapter?
@@ -98,7 +103,7 @@ private typealias ViewModel = ProfileView.ViewModel
 
 extension ViewModel {
     func load() async {
-        await RunnerActor.run {
+        await RunnerActor.run { [sourceInfo, sourceID] in
             await animate { [weak self] in
                 self?.isWorking = true
                 self?.contentState = .loading
@@ -117,9 +122,9 @@ extension ViewModel {
                 let chapters = await getChaptersFromDatabase()
                 if let chapters {
                     let prepared = chapters.map { $0.toThreadSafe() }
-                    self.chapters = prepared
-                    await preparePreview()
+                    let statement = prepareChapterStatement(prepared, source: sourceInfo)
                     await animate { [weak self] in
+                        self?.chapterMap[sourceID] = statement
                         self?.chapterState = .loaded(true)
                     }
 
@@ -161,14 +166,13 @@ extension ViewModel {
     }
 
     func loadChapters(_ pre: [DSKCommon.Chapter]? = nil) async {
-        await RunnerActor.run {
+        await RunnerActor.run { [sourceID, sourceInfo] in
             func prepare(chapters: [DSKCommon.Chapter]) async {
                 let prepared = chapters
                     .sorted(by: \.index, descending: false)
                     .map { $0.toThreadSafe(sourceID: sourceID, contentID: contentID) }
-                self.chapters = prepared
-                await preparePreview()
                 await animate { [weak self] in
+                    self?.chapterMap[sourceID] = self?.prepareChapterStatement(prepared, source: sourceInfo)
                     self?.chapterState = .loaded(true)
                 }
                 Task.detached { [weak self] in
@@ -187,13 +191,12 @@ extension ViewModel {
                     await prepare(chapters: chapters)
                 } catch {
                     Logger.shared.error(error, "Content Chapters")
-                    if chapters.isEmpty {
-                        await animate { [weak self] in
-                            if Task.isCancelled { return }
-                            if self?.chapters.isEmpty ?? true {
-                                self?.chapterState = .failed(error)
-                            }
-                        }
+                    let chapters = chapterMap[sourceID]?.filtered
+                    
+                    guard chapters == nil || (chapters?.isEmpty ?? true) else { return }
+                    await animate { [weak self] in
+                        if Task.isCancelled { return }
+                        self?.chapterState = .failed(error)
                     }
                 }
             }

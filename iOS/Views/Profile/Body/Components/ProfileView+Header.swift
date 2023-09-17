@@ -50,14 +50,14 @@ extension Skeleton.Header {
         var data = [ColoredLabel]()
 
         if let creators = entry.creators, !creators.isEmpty {
-            data.append(contentsOf: creators.prefix(2).map { .init(text: $0, color: .random) })
+            data.append(contentsOf: creators.prefix(2).map { .init(text: $0, color: .accentColor) })
         }
 
         if let status = entry.status {
             data.append(.init(text: status.description, color: status.color))
         }
 
-        data.append(.init(text: model.source.name, color: .random))
+        data.append(.init(text: model.source.name, color: .accentColor))
 
         if let contentType = entry.contentType {
             data.append(.init(text: contentType.description, color: contentType == .novel ? .blue : .random))
@@ -68,7 +68,7 @@ extension Skeleton.Header {
         }
 
         if let info = entry.info {
-            data.append(contentsOf: info.prefix(5).map { .init(text: $0, color: .random) })
+            data.append(contentsOf: info.prefix(5).map { .init(text: $0, color: .accentColor) })
         }
 
         return data

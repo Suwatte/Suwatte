@@ -61,7 +61,8 @@ extension ViewModel {
             }
             return markers
         })
-
+        
+        let chapters = getCurrentStatement().filtered
         // Source Chapter Sync Handler
         var sourceOriginHighestRead: Double = 0
         if source.intents.progressSyncHandler ?? false , let state = sourceProgressState {

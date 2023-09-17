@@ -92,9 +92,7 @@ struct LibraryView: View {
             hasLoadedPages = false
         }
         .onDisappear {
-            Task {
-                await pageProviderModel.stopObserving()
-            }
+            pageProviderModel.stopObserving()
         }
         .animation(.default, value: pageProviderModel.links)
         .animation(.default, value: pageProviderModel.runners)

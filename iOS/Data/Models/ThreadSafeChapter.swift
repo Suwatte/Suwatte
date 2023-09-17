@@ -14,7 +14,7 @@ protocol STTChapterObject {
     var providers: [DSKCommon.ChapterProvider]? { get }
 }
 
-struct ThreadSafeChapter: Hashable, Identifiable, STTChapterObject {
+struct ThreadSafeChapter: Hashable, Identifiable, STTChapterObject, Sendable {
     let id: String
     let sourceId: String
     let chapterId: String
@@ -118,35 +118,55 @@ extension DSKCommon.Chapter {
 }
 
 extension STTHelpers {
-    static func filterChapters<T: STTChapterObject>(_ data: [T], with id: String) -> [T] {
+    static func filterChapters<T: STTChapterObject>(_ data: [T], with id: String, callback: ((T) -> Void)? = nil) -> [T] {
         let languages = Preferences.standard.globalContentLanguages
         let blacklisted = STTHelpers.getBlacklistedProviders(for: id)
-
-        var base = data
-        // By Language
-        if !languages.isEmpty {
-            func lang(_ chapter: T) -> Bool {
-                languages.contains(where: { $0
-                        .lowercased()
-                        .starts(with: chapter.language.lowercased())
-                }) || chapter.language == "UNIVERSAL"
+        var prepared: [T] = []
+        
+        
+        func isLanguageCleared(_ chapter: T) -> Bool {
+            guard !languages.isEmpty, chapter.language.uppercased() != "UNIVERSAL" else { return true }
+            let value = languages.contains { base in
+                let chapterLanguage = chapter.language.lowercased().replacingOccurrences(of: "_", with: "-").trimmingCharacters(in:.whitespacesAndNewlines).components(separatedBy: "-")
+                let appLanguage = base.lowercased().replacingOccurrences(of: "_", with: "-").components(separatedBy: "-")
+                
+                
+                let chapterLanguageCode = chapterLanguage.first
+                let appLanguageCode = appLanguage.first
+                                    
+                guard let chapterLanguageCode, let appLanguageCode, appLanguageCode == chapterLanguageCode else {
+                    return false
+                }
+                
+                let appRegionCode = appLanguage.getOrNil(1)
+                let chapterRegionCode = chapterLanguage.getOrNil(1)
+                
+                guard let appRegionCode, let chapterRegionCode else {
+                    return true
+                }
+                
+                return appRegionCode == chapterRegionCode
+                
             }
-            base = base
-                .filter(lang(_:))
+            
+            return value
         }
-
-        // By Provider
-        if !blacklisted.isEmpty {
-            func provider(_ chapter: T) -> Bool {
-                let providers = chapter.providers?.map(\.id) ?? []
-                if providers.isEmpty { return true }
-                return providers.allSatisfy { !blacklisted.contains($0) }
-            }
-            base = base
-                .filter(provider(_:))
+        
+        func isBlackListCleared(_ chapter: T) -> Bool {
+            guard !blacklisted.isEmpty,
+                  let providers = chapter.providers?.map(\.id),
+                  !providers.isEmpty else { return true }
+            return providers.allSatisfy { !blacklisted.contains($0) }
         }
-
-        return base
+        
+        
+        for chapter in data {
+            guard isBlackListCleared(chapter), isLanguageCleared(chapter) else { continue }
+            prepared.append(chapter)
+            callback?(chapter)
+        }
+        
+        return prepared
     }
 }
 

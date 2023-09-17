@@ -6,66 +6,81 @@
 //
 
 import Foundation
+import SwiftUI
 
 private typealias ViewModel = ProfileView.ViewModel
 
+
+
 extension ViewModel {
-    func getFilteredChapters(onlyDownloads: Bool, sortMethod: ChapterSortOption?, desc: Bool) async -> [ThreadSafeChapter] {
-        let linked = linked
-        let id = currentChapterSection
+    func getPreviewChapters(for statement: ChapterStatement) -> [ThreadSafeChapter] {
+        let chapters = statement.filtered
+        let targets = chapters.count >= 5 ? Array(chapters[0 ... 4]) : Array(chapters[0...])
+        return targets
+    }
+}
 
-        let chapters = id == sourceID ? self.chapters : linked
-            .first(where: { $0.source.id == id })?
-            .chapters ?? []
 
-        guard !chapters.isEmpty else { return [] }
-        let downloads = self.downloads
 
+extension ViewModel {
+    
+    // O(n)
+    func prepareChapterStatement(_ chapters: [ThreadSafeChapter], source: SimpleRunnerInfo) -> ChapterStatement {
+        var maxOrderKey: Double = 0
+        var distinctKeys = Set<Double>()
+        
+        let filtered = STTHelpers.filterChapters(chapters, with: sourceID) { chapter in
+            let orderKey = chapter.chapterOrderKey
+            maxOrderKey = max(orderKey, maxOrderKey)
+            distinctKeys.insert(orderKey)
+        }
+        
+        let distinctCount = distinctKeys.count
+        return .init(source: source, filtered: filtered, originalList: chapters, distinctCount: distinctCount, maxOrderKey: maxOrderKey)
+    }
+    
+    func getSortedChapters(_ chapters: [ThreadSafeChapter], onlyDownloaded: Bool, method: ChapterSortOption, descending: Bool) async -> [ThreadSafeChapter] {
         return await BGActor.run {
             func sort(_ chapters: [ThreadSafeChapter]) -> [ThreadSafeChapter] {
-                guard let sortMethod else { return chapters }
-                switch sortMethod {
+                switch method {
                 case .date:
                     return chapters
-                        .sorted(by: \.date, descending: desc)
+                        .sorted(by: \.date, descending: descending)
                 case .source:
                     return chapters
-                        .sorted(by: \.index, descending: !desc) // Reverese Source Index
+                        .sorted(by: \.index, descending: !descending) // Reverese Source Index
                 case .number:
                     return chapters
-                        .sorted(by: \.chapterOrderKey, descending: desc) // Reverese Source Index
+                        .sorted(by: \.chapterOrderKey, descending: descending) // Reverese Source Index
                 }
             }
 
-            if onlyDownloads {
+            if onlyDownloaded {
                 let filtered = sort(chapters
                     .filter { downloads[$0.id] == .completed })
 
                 return filtered
             }
 
-            let data = sort(STTHelpers.filterChapters(chapters, with: id))
+            let data = sort(chapters)
 
             return data
         }
     }
-
-    func prepareChapterList(onlyDownloads: Bool, sortMethod: ChapterSortOption, desc: Bool) {
-        Task { [weak self] in
-            let chapters = await self?.getFilteredChapters(onlyDownloads: onlyDownloads, sortMethod: sortMethod, desc: desc)
-            guard let chapters else { return }
-            await animate { [weak self] in
-                self?.chapterListChapters = chapters
-            }
+    
+    func getCurrentStatement() -> ChapterStatement {
+        chapterMap[currentChapterSection] ?? .init(source: sourceInfo, filtered: [], originalList: [], distinctCount: 0, maxOrderKey: 0)
+    }
+    
+    func updateCurrentStatement(){
+        let current = getCurrentStatement()
+        let statement = prepareChapterStatement(current.originalList, source: current.source)
+        withAnimation {
+            chapterMap[current.source.runnerID] = statement
+        }
+        Task {
+            await setActionState()
         }
     }
-
-    func preparePreview() async {
-        let chapters = await getFilteredChapters(onlyDownloads: false, sortMethod: .source, desc: true)
-        let targets = chapters.count >= 5 ? Array(chapters[0 ... 4]) : Array(chapters[0...])
-        await animate { [weak self] in
-            self?.previewChapters = targets
-            self?.chapterListChapters = chapters
-        }
-    }
+    
 }

@@ -9,9 +9,10 @@ import SwiftUI
 
 struct FCS_Options: View {
     @EnvironmentObject var model: ProfileView.ViewModel
-    @State var providers: [DSKCommon.ChapterProvider] = []
-    @State var blacklisted: Set<String> = []
-
+    let didChange: () -> Void
+    @State private var providers: [DSKCommon.ChapterProvider] = []
+    @State private var blacklisted: Set<String> = []
+    
     var body: some View {
         SmartNavigationView {
             List {
@@ -38,7 +39,6 @@ struct FCS_Options: View {
                         Text(provider.name)
                         Spacer()
                         Image(systemName: "checkmark")
-                            .resizable()
                             .opacity(blacklisted.contains(provider.id) ? 0 : 1)
                     }
                     .contentShape(Rectangle())
@@ -52,7 +52,8 @@ struct FCS_Options: View {
     }
 
     func getProviders() {
-        providers = model.chapters.compactMap(\.providers).flatMap { $0 }
+        let chapters = model.getCurrentStatement().originalList
+        providers = chapters.compactMap(\.providers).flatMap { $0 }.distinct().sorted(by: \.name)
     }
 
     func getBlacklisted() {
@@ -61,12 +62,15 @@ struct FCS_Options: View {
     }
 
     func toggleBlacklist(_ id: String) {
-        if blacklisted.contains(id) {
-            blacklisted.remove(id)
-        } else {
-            blacklisted.insert(id)
+        withAnimation {
+            if blacklisted.contains(id) {
+                blacklisted.remove(id)
+            } else {
+                blacklisted.insert(id)
+            }
         }
 
-        STTHelpers.setBlackListedProviders(for: model.sourceID, values: Array(blacklisted))
+        STTHelpers.setBlackListedProviders(for: model.currentChapterSection, values: Array(blacklisted))
+        didChange()
     }
 }

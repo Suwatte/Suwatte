@@ -18,6 +18,7 @@ extension ViewModel {
     }
 
     func calculateActionState(_ safetyCheck: Bool) async -> ActionState {
+        let chapters = getCurrentStatement().filtered
         guard !chapters.isEmpty else {
             return .init(state: .none)
         }
@@ -137,7 +138,9 @@ extension ViewModel {
     }
 
     private func resolveSourceProgressStateAsActionState() -> ActionState? {
-        guard let state = sourceProgressState?.currentReadingState, let currentIndex = chapters.firstIndex(where: { $0.chapterId == state.chapterId }) else {
+        let chapters = getCurrentStatement().filtered
+        guard let state = sourceProgressState?.currentReadingState,
+              let currentIndex = chapters.firstIndex(where: { $0.chapterId == state.chapterId }) else {
             return nil
         }
 

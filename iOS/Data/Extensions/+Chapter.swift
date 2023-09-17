@@ -20,7 +20,7 @@ extension StoredChapter {
                      language: language ?? "unknown",
                      date: date,
                      webUrl: webUrl,
-                     thumbnail: thumbnail)
+                     thumbnail: thumbnail, providers: providers.map({ .init(id: $0.id, name: $0.name) }))
     }
 }
 
@@ -56,18 +56,7 @@ extension DaisukeEngine.Structs.Chapter {
         chapter.thumbnail = thumbnail
 
         let providers = providers?.map { provider -> ChapterProvider in
-            let links = provider.links?.map { link -> ChapterProviderLink in
-                let l = ChapterProviderLink()
-                l.url = link.url
-                l.type = link.type
-                return l
-            }
-
             let p = ChapterProvider()
-
-            if let links {
-                p.links.append(objectsIn: links)
-            }
             p.name = provider.name
             p.id = provider.id
             return p

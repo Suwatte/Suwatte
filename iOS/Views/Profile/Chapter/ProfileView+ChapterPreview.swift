@@ -18,10 +18,11 @@ extension ProfileView.Skeleton.ChapterView {
         @EnvironmentObject var model: ProfileView.ViewModel
         var body: some View {
             HStack {
+                let chapters = model.getPreviewChapters(for: model.getCurrentStatement())
                 switch model.chapterState {
                 case .loaded:
-                    if !model.chapters.isEmpty {
-                        LoadedView(model.previewChapters)
+                    if !chapters.isEmpty {
+                        LoadedView(chapters)
                             .transition(.opacity)
                     } else {
                         LoadedEmptyView()
@@ -54,11 +55,8 @@ extension ProfileView.Skeleton.ChapterView {
         @ViewBuilder
         func LoadedView(_ chapters: [ThreadSafeChapter], redacted: Bool = false) -> some View {
             VStack(alignment: .center, spacing: 10) {
-                if !model.linked.isEmpty {
-                    ChapterSectionsView()
-                }
                 HStack {
-                    Text("\(model.chapterListChapters.count) \(chapters.count > 1 ? "Chapters" : "Chapter")")
+                    Text("^[\(model.getCurrentStatement().distinctCount) Chapter](inflect: true)")
                         .font(.title3)
                         .fontWeight(.bold)
                     Spacer()
@@ -141,54 +139,5 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
 
     func getDownload(_ chapter: ThreadSafeChapter) -> DownloadStatus? {
         model.downloads[chapter.id]
-    }
-}
-
-extension ProfileView.Skeleton.ChapterView.PreviewView {
-    struct ChapterSectionsView: View {
-        @EnvironmentObject private var model: ProfileView.ViewModel
-
-        private func isSelected(id: String) -> Bool {
-            model.currentChapterSection == id
-        }
-
-        var body: some View {
-            ScrollView(.horizontal) {
-                HStack {
-                    if isSelected(id: model.sourceID) {
-                        Button(model.source.name) {
-                            model.currentChapterSection = model.sourceID
-                        }
-                        .buttonStyle(.borderedProminent)
-                    } else {
-                        Button(model.source.name) {
-                            model.currentChapterSection = model.sourceID
-                        }
-                        .buttonStyle(.bordered)
-                        .tint(.accentColor)
-                    }
-
-                    ForEach(model.linked, id: \.source.id) { linked in
-                        if isSelected(id: linked.source.id) {
-                            Button(linked.source.name) {
-                                model.currentChapterSection = linked.source.id
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .tint(.accentColor)
-                            .coloredBadge(.blue)
-                        } else {
-                            Button(linked.source.name) {
-                                model.currentChapterSection = linked.source.id
-                            }
-                            .buttonStyle(.bordered)
-                            .tint(.accentColor)
-                            .coloredBadge(.blue)
-                        }
-                    }
-                }
-                .padding(.top, 4)
-                .animation(.easeOut(duration: 0.25), value: model.currentChapterSection)
-            }
-        }
     }
 }
