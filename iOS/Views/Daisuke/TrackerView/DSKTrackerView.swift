@@ -176,7 +176,7 @@ extension DSKTrackerView {
                                     .fontWeight(.semibold)
                                     .padding(.vertical, 2)
                                     .padding(.horizontal, 4)
-                                    .background((tag == "NSFW" ? Color.red : Color.random).opacity(0.65))
+                                    .background((tag == "NSFW" ? Color.red : .accentColor).opacity(0.65))
                                     .cornerRadius(3)
                             }
                         }
@@ -292,7 +292,7 @@ extension DSKTrackerView {
 extension DSKTrackerView {
     @ViewBuilder
     private var PropertiesView: some View {
-        ZStack {
+        Group {
             if let properties = content.properties {
                 ForEach(properties) { property in
                     VStack(alignment: .leading, spacing: 5) {
@@ -359,7 +359,7 @@ extension DSKTrackerView {
         let collection: [DSKCommon.Highlight]
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading, spacing: 0) {
                 Text(title)
                     .font(.headline.weight(.semibold))
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -368,8 +368,8 @@ extension DSKTrackerView {
                             Cell(tracker: tracker, data: $0)
                         }
                     }
+                    .padding(.top, 5)
                 }
-                .padding(.top, 5)
             }
             .padding(.horizontal)
         }

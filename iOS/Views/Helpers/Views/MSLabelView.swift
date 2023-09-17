@@ -9,8 +9,8 @@ import NukeUI
 import SwiftUI
 
 struct MSLabelView: View {
-    @State var title: String = ""
-    @State var imageName: String = ""
+    let title: String = ""
+    let imageName: String = ""
 
     var body: some View {
         HStack(spacing: 15) {
@@ -26,9 +26,9 @@ struct MSLabelView: View {
 }
 
 struct STTThumbView: View {
-    @State var assetName: String? = nil
-    @State var systemName: String? = nil
-    @State var url: URL? = nil
+    var assetName: String? = nil
+    var systemName: String? = nil
+    var url: URL? = nil
     @StateObject var imageFetcher = FetchImage()
     @AppStorage(STTKeys.AppAccentColor) var color: Color = .sttDefault
     var body: some View {
@@ -59,13 +59,8 @@ struct STTThumbView: View {
             }
             .task {
                 guard imageFetcher.image == nil else { return }
-                guard let url = url else {
-                    return
-                }
-                imageFetcher.priority = .normal
-                imageFetcher.transaction = .init(animation: .easeInOut(duration: 0.33))
-                imageFetcher.load(url)
                 imageFetcher.processors = [NukeDownsampleProcessor(size: proxy.size)]
+                load()
             }
             .onDisappear {
                 imageFetcher.priority = .low
@@ -73,11 +68,20 @@ struct STTThumbView: View {
             }
         }
     }
+    
+    private func load() {
+        guard let url = url else {
+            return
+        }
+        imageFetcher.priority = .normal
+        imageFetcher.transaction = .init(animation: .easeInOut(duration: 0.33))
+        imageFetcher.load(url)
+    }
 }
 
 struct STTLabelView: View {
-    var title: String
-    var label: String
+    let title: String
+    let label: String
 
     var body: some View {
         HStack {
@@ -90,8 +94,8 @@ struct STTLabelView: View {
 }
 
 struct FieldLabel: View {
-    var primary: String
-    var secondary: String
+    let primary: String
+    let secondary: String
     var body: some View {
         HStack {
             Text(primary)

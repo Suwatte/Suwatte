@@ -18,7 +18,7 @@ extension DSKAuthView {
         @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
         @State var presentWebView = false
         var body: some View {
-            Group {
+            VStack(alignment: .leading) {
                 // Header
                 HStack(alignment: .center) {
                     BaseImageView(url: URL(string: user.avatar ?? ""))
@@ -44,8 +44,11 @@ extension DSKAuthView {
                 Group {
                     if method != .webview {
                         Button("Sign Out", role: .destructive) { handleSignOut() }
+                            .buttonStyle(.bordered)
+                            .tint(.red)
                     } else {
                         Button("Open WebView") { presentWebView.toggle() }
+                            .buttonStyle(.bordered)
                     }
                 }
                 .fullScreenCover(isPresented: $presentWebView, onDismiss: model.reload) {

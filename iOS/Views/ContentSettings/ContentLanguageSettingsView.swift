@@ -41,19 +41,17 @@ struct ContentLanguageSettingsView: View {
     var body: some View {
         List {
             Section {
-                ZStack {
-                    if selections.isEmpty {
-                        Text("All Languages")
-                    } else {
-                        ForEach(preparedSelections, id: \.1) { name, id in
-                            HStack {
-                                Text(name)
-                                Spacer()
-                            }
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                selections.remove(id)
-                            }
+                if selections.isEmpty {
+                    Text("All Languages")
+                } else {
+                    ForEach(preparedSelections, id: \.1) { name, id in
+                        HStack {
+                            Text(name)
+                            Spacer()
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            selections.remove(id)
                         }
                     }
                 }

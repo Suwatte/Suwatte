@@ -17,26 +17,8 @@ struct TrackerManagementView: View {
         SmartNavigationView {
             ScrollView {
                 ForEach(model.linkedTrackers, id: \.id) { tracker in
-
-                    VStack {
-                        HStack {
-//                            STTThumbView(url: tracker.thumbnailURL)
-//                                .frame(width: 25, height: 25, alignment: .center)
-                            Text(tracker.name)
-                                .font(.headline)
-                            Spacer()
-                        }
-                        ZStack {
-                            if let contentID = model.matches[tracker.id] {
-                                ItemCell(tracker: tracker, contentID: contentID)
-
-                            } else {
-                                ProgressView()
-                            }
-                        }
-                        .modifier(HistoryView.StyleModifier())
-                    }
-                    .padding(.all)
+                    IndividualTrackerView(tracker: tracker)
+                        .padding(.all)
                 }
             }
             .task {
@@ -64,6 +46,58 @@ struct TrackerManagementView: View {
             .environmentObject(model)
         }
         .toast()
+    }
+}
+
+extension TrackerManagementView {
+    struct IndividualTrackerView: View {
+        let tracker: AnyContentTracker
+        @State private var thumbnailURL: String?
+        @EnvironmentObject private var model: ViewModel
+        var body: some View {
+            VStack {
+                HStack {
+                    ZStack {
+                        if let url = thumbnailURL.flatMap({ URL(string: $0) }) {
+                            STTThumbView(url: url)
+                        } else {
+                            STTThumbView()
+                        }
+                    }
+                    .frame(width: 25, height: 25, alignment: .center)
+                    .cornerRadius(7)
+
+
+                    Text(tracker.name)
+                        .font(.headline)
+                    Spacer()
+                }
+                ZStack {
+                    if let contentID = model.matches[tracker.id] {
+                        ItemCell(tracker: tracker, contentID: contentID)
+
+                    } else {
+                        ProgressView()
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .modifier(HistoryView.StyleModifier())
+            }
+            .task {
+                await load()
+            }
+            .animation(.default, value: thumbnailURL)
+        }
+        
+        func load() async {
+            let object = await RealmActor.shared().getRunner(tracker.id)?.freeze()
+            await MainActor.run {
+                withAnimation {
+                    thumbnailURL = object?.thumbnail ?? ""
+                }
+            }
+
+        }
     }
 }
 
