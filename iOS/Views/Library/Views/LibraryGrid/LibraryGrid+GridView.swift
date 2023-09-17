@@ -47,14 +47,21 @@ extension LibraryView.LibraryGrid {
                     .animation(.default, value: model.selectedIndexes)
                 }
                 .sectionHeader(content: {
-                    EmptyView()
+                    HStack {
+                        Text("^[\(entries.count) Title](inflect: true)")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.gray)
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 })
                 .sectionFooter(content: {
                     EmptyView()
                 })
             }
             .layout {
-                DynamicGridLayout()
+                DynamicGridLayout(header: .absolute(22))
             }
             .alwaysBounceVertical()
             .animateOnDataRefresh(true)

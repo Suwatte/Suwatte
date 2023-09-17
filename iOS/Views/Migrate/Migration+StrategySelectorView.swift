@@ -39,7 +39,7 @@ struct MigrationStrategySelectorView: View {
         .disabled(model.contents.isEmpty)
 
         Section {
-            Text("\(foundMatches) Match\(foundMatches.plural ? "es" : "") of \(titleCount) Title\(titleCount.plural ? "s" : "") (\(foundMatches)/\(titleCount))")
+            Text("^[\(foundMatches) Match](inflect: true) of ^[\(titleCount) Title](inflect: true) (\(foundMatches)/\(titleCount))")
                 .foregroundColor(.gray)
 
             Button { model.filterNonMatches() } label: {
@@ -73,11 +73,5 @@ struct MigrationStrategySelectorView: View {
         model
             .contents
             .count
-    }
-}
-
-extension Int {
-    var plural: Bool {
-        self != 1
     }
 }

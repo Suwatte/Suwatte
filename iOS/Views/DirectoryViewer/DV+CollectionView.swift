@@ -175,9 +175,8 @@ extension DirectoryViewer {
                     Image(systemName: "icloud.and.arrow.down")
 
                 } else if let pageCount = file.pageCount {
-                    let plural = pageCount == 1 ? "" : "s"
                     Text("•")
-                    Text("\(pageCount) Page\(plural)")
+                    Text("^[\(pageCount) Page](inflect: true)")
                 } else if isDownloading {
                     Text("•")
                     Text("Downloading")

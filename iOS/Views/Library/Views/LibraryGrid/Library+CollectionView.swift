@@ -168,21 +168,10 @@ extension LibraryView {
             .navigationBarTitleDisplayMode(.inline)
         }
 
-        func SortOrderView(count: Int) -> some View {
-            Button {
-                sortOrder.toggle()
-            } label: {
-                HStack {
-                    Text(ViewTitle(count: count))
-                    Image(systemName: sortOrder.ascending ? "chevron.up" : "chevron.down")
-                }
-            }
-
-            .buttonStyle(.plain)
-        }
-
         func ViewTitle(count: Int) -> String {
-            "\(model.isSelecting ? model.selectedIndexes.count : count) \(model.isSelecting ? "Selection" : "Title")\((model.isSelecting ? model.selectedIndexes.count : count) > 1 ? "s" : "")"
+            let selectionCount = model.isSelecting ? model.selectedIndexes.count : count
+            let selectionString = model.isSelecting ? "Selection" : "Title"
+            return "^[\(selectionCount) \(selectionString)](inflect: true)"
         }
     }
 }

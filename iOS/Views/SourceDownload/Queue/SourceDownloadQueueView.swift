@@ -115,7 +115,7 @@ extension SDQV {
 
         var subheadline: String {
             let count = downloads.count
-            return "\(count) Chapter\(count == 1 ? "" : "s") Queued"
+            return "^[\(count) Chapter](inflect: true) Queued"
         }
 
         var ids: [String] {
