@@ -70,7 +70,7 @@ extension DSKAuthView {
         func callback(_ url: URL) async {
             do {
                 try await model.runner.handleOAuthCallback(response: url.absoluteString)
-                model.load()
+                model.reload()
             } catch {
                 Logger.shared.error(error)
                 alert()
@@ -80,7 +80,7 @@ extension DSKAuthView {
 }
 
 final class WebAuthAnchor: NSObject, ASWebAuthenticationPresentationContextProviding {
-    func presentationAnchor(for _: ASWebAuthenticationSession) -> ASPresentationAnchor {
-        KEY_WINDOW!
+    @MainActor func presentationAnchor(for _: ASWebAuthenticationSession) -> ASPresentationAnchor {
+        getKeyWindow()!
     }
 }

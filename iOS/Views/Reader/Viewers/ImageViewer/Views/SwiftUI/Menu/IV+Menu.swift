@@ -129,7 +129,8 @@ extension IVMenuView {
         var CloseButton: some View {
             Button {
                 STTHelpers.triggerHaptic()
-                if var topController = KEY_WINDOW?.rootViewController {
+                let window = getKeyWindow()
+                if var topController = window?.rootViewController {
                     while let presentedViewController = topController.presentedViewController {
                         topController = presentedViewController
                     }
@@ -275,8 +276,14 @@ extension IVMenuView {
             "\(model.viewerState.page) of \(model.viewerState.pageCount)"
         }
 
+        @MainActor
+        private var edges: UIEdgeInsets? {
+            let window = getKeyWindow()
+            return window?.safeAreaInsets
+        }
+
         var bottomInset: CGFloat {
-            KEY_WINDOW?.safeAreaInsets.bottom ?? 11
+            edges?.bottom ?? 11
         }
 
         var PageNumber: some View {

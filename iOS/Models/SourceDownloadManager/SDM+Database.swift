@@ -97,9 +97,7 @@ extension SDM {
         let realm = await getRealmActor()
 
         let target = realm
-            .objects(SourceDownload.self)
-            .where { $0.id == id }
-            .first
+            .object(ofType: SourceDownload.self, forPrimaryKey: id)
 
         return target?.freeze()
     }
@@ -129,12 +127,7 @@ extension SDM {
     }
 
     func finished(_ id: String, url: URL) async {
-        let realm = await getRealmActor()
-
-        let target = realm
-            .objects(SourceDownload.self)
-            .where { $0.id == id }
-            .first
+        let target = await get(id)
         guard let target else {
             Logger.shared.warn("Trying to update a download that does not exist (\(id))", CONTEXT)
             return
@@ -142,6 +135,7 @@ extension SDM {
 
         // Point Archive
         if url.isFileURL, !url.hasDirectoryPath {
+            let realm = await getRealmActor()
             try! realm.safeWrite {
                 target.archive = url.lastPathComponent
             }
@@ -206,17 +200,14 @@ extension SDM {
 
 extension SDM {
     func setText(_ id: String, _ text: String) async {
-        let realm = await getRealmActor()
-        let download = realm
-            .objects(SourceDownload.self)
-            .where { $0.id == id }
-            .first
+        let download = await get(id)
 
         guard let download else {
             Logger.shared.warn("Trying to update a download that does not exist (\(id))", CONTEXT)
             return
         }
 
+        let realm = await getRealmActor()
         try! realm.safeWrite {
             download.text = text
         }

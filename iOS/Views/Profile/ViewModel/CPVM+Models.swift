@@ -8,12 +8,19 @@
 import Foundation
 private typealias ViewModel = ProfileView.ViewModel
 
-extension ViewModel {
-    struct ContentLinkSection {
-        let source: AnyContentSource
-        let chapters: [ThreadSafeChapter]
-        let maxOrderKey: Double
-    }
+struct SimpleContentInfo: Hashable {
+    let runnerID: String
+    let runnerName: String
+    let contentName: String
+    let id: String
+}
+
+struct ChapterStatement {
+    let content: SimpleContentInfo
+    let filtered: [ThreadSafeChapter]
+    let originalList: [ThreadSafeChapter]
+    let distinctCount: Int
+    let maxOrderKey: Double
 }
 
 extension ViewModel {

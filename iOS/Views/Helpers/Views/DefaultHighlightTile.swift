@@ -13,7 +13,7 @@ struct DefaultTile: View {
     @Environment(\.libraryIsSelecting) var libraryIsSelecting
     var body: some View {
         GeometryReader { reader in
-            Group {
+            ZStack {
                 switch tileStyle {
                 case .COMPACT:
                     CompactStyle(reader: reader)

@@ -52,6 +52,12 @@ extension RealmActor {
         }
     }
 
+    func removeLinkKeys(for id: String, keys: [String]) async {
+        for key in keys {
+            await removeLinkKey(for: id, key: key)
+        }
+    }
+
     func getLinkKeys(for id: String) -> [String: String] {
         let content = getStoredContent(id)
         guard let content else { return [:] }

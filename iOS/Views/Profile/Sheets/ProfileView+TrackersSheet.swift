@@ -17,26 +17,15 @@ struct TrackerManagementView: View {
         SmartNavigationView {
             ScrollView {
                 ForEach(model.linkedTrackers, id: \.id) { tracker in
-                    let loadable = model.dict[tracker.id] ?? .idle
-                    VStack {
-                        HStack {
-//                            STTThumbView(url: tracker.thumbnailURL)
-//                                .frame(width: 25, height: 25, alignment: .center)
-                            Text(tracker.name)
-                                .font(.headline)
-                            Spacer()
-                        }
-                        LoadableView({}, Binding.constant(loadable)) { value in
-                            TrackerItemCell(item: value, tracker: tracker, status: value.entry?.status ?? .CURRENT)
-                        }
-                        .modifier(HistoryView.StyleModifier())
-                    }
-                    .padding(.all)
+                    IndividualTrackerView(tracker: tracker)
+                        .padding(.all)
                 }
             }
             .task {
                 await model.prepare()
             }
+            .transition(.opacity)
+            .animation(.default, value: model.linkedTrackers.count)
             .navigationTitle("Trackers")
             .navigationBarTitleDisplayMode(.inline)
             .closeButton()
@@ -61,15 +50,84 @@ struct TrackerManagementView: View {
 }
 
 extension TrackerManagementView {
+    struct IndividualTrackerView: View {
+        let tracker: AnyContentTracker
+        @State private var thumbnailURL: String?
+        @EnvironmentObject private var model: ViewModel
+        var body: some View {
+            VStack {
+                HStack {
+                    ZStack {
+                        if let url = thumbnailURL.flatMap({ URL(string: $0) }) {
+                            STTThumbView(url: url)
+                        } else {
+                            STTThumbView()
+                        }
+                    }
+                    .frame(width: 25, height: 25, alignment: .center)
+                    .cornerRadius(7)
+
+
+                    Text(tracker.name)
+                        .font(.headline)
+                    Spacer()
+                }
+                ZStack {
+                    if let contentID = model.matches[tracker.id] {
+                        ItemCell(tracker: tracker, contentID: contentID)
+
+                    } else {
+                        ProgressView()
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .modifier(HistoryView.StyleModifier())
+            }
+            .task {
+                await load()
+            }
+            .animation(.default, value: thumbnailURL)
+        }
+        
+        func load() async {
+            let object = await RealmActor.shared().getRunner(tracker.id)?.freeze()
+            await MainActor.run {
+                withAnimation {
+                    thumbnailURL = object?.thumbnail ?? ""
+                }
+            }
+
+        }
+    }
+}
+
+extension TrackerManagementView {
+    struct ItemCell: View {
+        let tracker: AnyContentTracker
+        let contentID: String
+        @State private var loadable: Loadable<DSKCommon.Highlight> = .idle
+
+        var body: some View {
+            LoadableView(load, $loadable) { item in
+                TrackerItemCell(item: item, tracker: tracker, status: item.entry?.status ?? .CURRENT)
+            }
+        }
+
+        func load() async throws -> DSKCommon.Highlight {
+            try await tracker.getTrackItem(id: contentID)
+        }
+    }
+}
+
+extension TrackerManagementView {
     final class ViewModel: ObservableObject {
         typealias TrackItem = DSKCommon.Highlight
 
         var contentID: String
         var titles: [String]
-        @MainActor @Published var dict: [String: Loadable<TrackItem>] = [:]
         @MainActor @Published var linkedTrackers: [AnyContentTracker] = []
         @MainActor @Published var unlinkedTrackers: [AnyContentTracker] = []
-        private var matches: [String: String] = [:]
+        var matches: [String: String] = [:]
 
         init(id: String, _ titles: [String]) {
             contentID = id
@@ -92,61 +150,16 @@ extension TrackerManagementView {
             matches = await actor.getTrackerLinks(for: contentID)
 
             await loadTrackers(Array(matches.keys))
-
-            Task { @MainActor in
-                for tracker in linkedTrackers {
-                    Task { @MainActor in
-                        dict[tracker.id] = .idle
-                    }
-                }
-            }
-            await load()
-        }
-
-        func load() async {
-            let engine = DSK.shared
-            await withTaskGroup(of: Void.self) { group in
-                for (key, value) in matches {
-                    guard let tracker = await engine.getTracker(id: key) else { continue }
-
-                    group.addTask {
-                        await self.load(for: tracker, id: value)
-                    }
-                }
-            }
-        }
-
-        func load(for tracker: AnyContentTracker, id: String) async {
-            do {
-                let trackItem = try await tracker.getTrackItem(id: id)
-                Task { @MainActor in
-                    withAnimation {
-                        dict[tracker.id] = .loaded(trackItem)
-                    }
-                }
-            } catch {
-                Logger.shared.error(error, tracker.id)
-                Task { @MainActor in
-                    withAnimation {
-                        self.dict[tracker.id] = .failed(error)
-                    }
-                }
-            }
         }
 
         func unlink(tracker: AnyContentTracker) async {
             let keys = tracker.links
-            let actor = await RealmActor.shared()
-            await withTaskGroup(of: Void.self, body: { _ in
-                for key in keys {
-                    await actor.removeLinkKey(for: contentID, key: key)
-                }
-            })
-            matches.removeAll()
+            await RealmActor.shared().removeLinkKeys(for: tracker.id, keys: keys)
+
             await MainActor.run {
-                dict.removeAll()
+                linkedTrackers.removeAll(where: { $0.id == tracker.id })
+                unlinkedTrackers.append(tracker)
             }
-            await prepare()
         }
     }
 }
@@ -349,7 +362,7 @@ extension TrackerManagementView {
 
             // Resullts
             LoadableView(load, $loadable) { results in
-                Group {
+                ZStack {
                     if results.isEmpty {
                         Text("No Matches")
                             .font(.headline)
@@ -394,17 +407,8 @@ extension TrackerManagementView {
             tracker.config?.linkKeys?.first ?? tracker.id
         }
 
-        func load() {
-            loadable = .loading
-            Task {
-                do {
-                    let data = try await tracker.getResultsForTitles(titles: titles)
-                    loadable = .loaded(data)
-                } catch {
-                    Logger.shared.error(error, tracker.id)
-                    loadable = .failed(error)
-                }
-            }
+        func load() async throws -> [DSKCommon.Highlight] {
+            try await tracker.getResultsForTitles(titles: titles)
         }
 
         func handleSelection(_ item: String) {

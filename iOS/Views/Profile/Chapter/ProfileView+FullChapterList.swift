@@ -20,20 +20,20 @@ struct ChapterList: View {
     @AppStorage(STTKeys.GroupByVolume) var groupByVolume = false
 
     @Environment(\.editMode) var editMode
+    @State var chapters: [ThreadSafeChapter] = []
     var body: some View {
-        Group {
+        ZStack {
             if groupByVolume {
                 GroupChapterList()
             } else {
-                ChaptersView(model.chapterListChapters)
+                ChaptersView(chapters)
             }
         }
         .animation(.default, value: model.bookmarkedChapters)
         .sheet(isPresented: $presentOptions, content: {
-            FCS_Options()
-                .onDisappear {
-                    doFilter()
-                }
+            FCS_Options {
+                reloadChapters()
+            }
         })
         .onChange(of: editMode?.wrappedValue, perform: { _ in
             selections.removeAll()
@@ -71,7 +71,7 @@ struct ChapterList: View {
             let readingMode = model.readingMode
             ReaderGateWay(title: model.content.title,
                           readingMode: readingMode,
-                          chapterList: model.chapterListChapters,
+                          chapterList: chapters,
                           openTo: chapter)
                 .task {
                     model.removeNotifier()
@@ -92,6 +92,13 @@ struct ChapterList: View {
     func handleReconnection() {
         Task {
             await model.setupObservers()
+        }
+    }
+
+    func reloadChapters() {
+        Task {
+            model.updateCurrentStatement()
+            doFilter()
         }
     }
 }
@@ -187,14 +194,14 @@ extension ChapterList {
     }
 
     func GroupedByVolume() -> [Double: [ThreadSafeChapter]] {
-        Dictionary(grouping: model.chapterListChapters, by: \.inferredVolume)
+        Dictionary(grouping: chapters, by: \.inferredVolume)
     }
 }
 
 extension ChapterList {
     @ViewBuilder
     func DownloadView(_ status: DownloadStatus?, _ id: String) -> some View {
-        Group {
+        ZStack {
             if let status {
                 DownloadContextView(id: id, status: status)
             } else {

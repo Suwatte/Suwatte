@@ -73,6 +73,7 @@ extension LibraryView.LibraryGrid {
                             .padding()
                             Spacer()
                             if !model.selectedIndexes.isEmpty {
+                                Text("^[\(model.selectedIndexes.count) Selection](inflect: true)")
                                 Menu("Options") {
                                     Button(role: .destructive) { confirmRemoval.toggle() } label: {
                                         Label("Remove From Library", systemImage: "trash")

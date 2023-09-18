@@ -39,17 +39,12 @@ extension DSKPageView {
             self.link = link
         }
 
-        func load() async throws {
-            await MainActor.run {
-                loadable = .loading
-            }
+        func load() async throws -> [DSKCommon.PageSection] {
             let data: [DSKCommon.PageSection] = try await runner.getSectionsForPage(link: link) // Load Page
             if !data.allSatisfy({ $0.items != nil }) {
                 try await runner.willResolveSectionsForPage(link: link) // Tell Runner that suwatte will begin resolution of page sections
             }
-            await animate(duration: 0.33) { [weak self] in
-                self?.loadable = .loaded(data)
-            }
+            return data
         }
 
         func load(_ sectionID: String) async {

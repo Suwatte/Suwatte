@@ -21,23 +21,17 @@ struct DSKLoadableForm: View {
         }
     }
 
-    func load() async throws {
-        await MainActor.run {
-            loadable = .loading
-        }
+    func load() async throws -> DSKCommon.Form {
         switch context {
         case let .tracker(id):
             guard let tracker = runner as? AnyContentTracker else {
                 throw DSK.Errors.NamedError(name: "Invalid Runner", message: "A Tracker Must Request This")
             }
-            let form = try await tracker.getEntryForm(id: id)
-            loadable = .loaded(form)
+            return try await tracker.getEntryForm(id: id)
         case .preference:
-            let form = try await runner.getPreferenceMenu()
-            loadable = .loaded(form)
+            return try await runner.getPreferenceMenu()
         case .setup:
-            let form = try await runner.getSetupMenu()
-            loadable = .loaded(form)
+            return try await runner.getSetupMenu()
         }
     }
 }
@@ -323,7 +317,7 @@ extension DSKFormView {
                 }
                 .animation(.default, value: selections)
             } label: {
-                FieldLabel(primary: component.title, secondary: "\(selections.count) Selection\(selections.count != 1 ? "s" : "")")
+                FieldLabel(primary: component.title, secondary: "^[\(selections.count) Selection](inflect: true)")
             }
         }
     }
@@ -429,7 +423,8 @@ extension DSKFormView {
             alertController.addAction(confirmAction)
             alertController.addAction(cancelAction)
 
-            KEY_WINDOW?.rootViewController?.present(alertController, animated: true, completion: nil)
+            let window = getKeyWindow()
+            window?.rootViewController?.present(alertController, animated: true, completion: nil)
         }
 
         private var UpperBoundString: String {

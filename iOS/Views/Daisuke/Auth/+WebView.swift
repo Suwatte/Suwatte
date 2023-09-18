@@ -22,7 +22,7 @@ extension DSKAuthView {
                 Label("Sign In", systemImage: "person.fill.viewfinder")
             }
             .buttonStyle(.plain)
-            .fullScreenCover(isPresented: $presentSheet, onDismiss: model.load) {
+            .fullScreenCover(isPresented: $presentSheet, onDismiss: model.reload) {
                 SmartNavigationView {
                     WebViewRepresentable()
                         .navigationBarTitle("Login", displayMode: .inline)

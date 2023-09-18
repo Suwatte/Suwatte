@@ -10,10 +10,14 @@ import SwiftUI
 
 extension ChapterList {
     func doFilter() {
-        model
-            .prepareChapterList(onlyDownloads: showOnlyDownloads,
-                                sortMethod: sortKey,
-                                desc: !sortDesc)
+        let prepped = model.getCurrentStatement().filtered
+        guard !prepped.isEmpty else { return }
+        Task {
+            let sortedAndPruned = await model.getSortedChapters(prepped, onlyDownloaded: showOnlyDownloads, method: sortKey, descending: !sortDesc)
+            await animate {
+                chapters = sortedAndPruned
+            }
+        }
     }
 }
 
@@ -61,7 +65,6 @@ extension ChapterList {
     func selectAbove() {
         if selections.isEmpty { return }
 
-        let chapters = model.chapterListChapters
         let target = selections.first
 
         guard let target, let idx = chapters.firstIndex(of: target) else { return }
@@ -73,7 +76,6 @@ extension ChapterList {
     func selectBelow() {
         if selections.isEmpty { return }
 
-        let chapters = model.chapterListChapters
         let target = selections.first
 
         guard let target, let idx = chapters.firstIndex(of: target) else { return }
@@ -83,7 +85,7 @@ extension ChapterList {
     }
 
     func selectAll() {
-        let cs = model.chapterListChapters
+        let cs = chapters
         selections = Set(cs)
     }
 
@@ -94,7 +96,7 @@ extension ChapterList {
     func fillRange() {
         if selections.isEmpty { return }
 
-        let cs = model.chapterListChapters
+        let cs = chapters
 
         var indexes = [Int]()
 
@@ -112,7 +114,7 @@ extension ChapterList {
     }
 
     func invertSelection() {
-        let cs = model.chapterListChapters
+        let cs = chapters
         selections = Set(cs.filter { !selections.contains($0) })
     }
 
@@ -122,9 +124,9 @@ extension ChapterList {
         Task {
             let actor = await RealmActor.shared()
             await actor.bulkMarkChapters(for: id, chapters: chapters)
+            didMark()
         }
         deselectAll()
-        didMark()
     }
 
     func markAsUnread() {
@@ -170,7 +172,9 @@ extension ChapterList {
                 .getContentMarker(for: identifier)?
                 .readChapters
                 .max()
-            let progress = DSKCommon.TrackProgressUpdate(chapter: maxRead, volume: nil) // TODO: Probably Want to get the volume here
+            guard let maxRead else { return }
+            let (volume, number) = ThreadSafeChapter.vnPair(from: maxRead)
+            let progress = DSKCommon.TrackProgressUpdate(chapter: number, volume: volume)
             await actor.updateTrackProgress(for: identifier, progress: progress)
         }
     }

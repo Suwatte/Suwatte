@@ -27,25 +27,14 @@ extension OPDSView {
             LoadableView(load, $loadable) { feed in
                 FeedView(feed: feed)
                     .refreshable {
-                        do {
-                            try await load()
-                        } catch {
-                            ToastManager.shared.error(error)
-                        }
+                        loadable = .idle
                     }
             }
             .environmentObject(client)
         }
 
-        func load() async throws {
-            loadable = .loading
-            let feed = try await client.getFeed(url: url)
-
-            await MainActor.run {
-                withAnimation {
-                    loadable = .loaded(feed)
-                }
-            }
+        func load() async throws -> R2Shared.Feed {
+            try await client.getFeed(url: url)
         }
     }
 }
@@ -162,17 +151,15 @@ extension Target {
             @ObservedObject var download: DirectoryViewer.DownloadManager.DownloadObject
             var body: some View {
                 ZStack(alignment: .topTrailing) {
-                    Group {
-                        switch download.status {
-                        case .failing:
-                            ColoredBadge(color: .red)
-                        case .active:
-                            ColoredBadge(color: .green)
-                        case .queued:
-                            ColoredBadge(color: .gray)
-                        default:
-                            EmptyView()
-                        }
+                    switch download.status {
+                    case .failing:
+                        ColoredBadge(color: .red)
+                    case .active:
+                        ColoredBadge(color: .green)
+                    case .queued:
+                        ColoredBadge(color: .gray)
+                    default:
+                        EmptyView()
                     }
                 }
             }
@@ -214,7 +201,7 @@ extension Target {
                 let imageWidth = proxy.size.width
                 let imageHeight = imageWidth * 1.5
                 VStack(alignment: .leading, spacing: 5) {
-                    Group {
+                    ZStack {
                         if let image = image.image {
                             image
                                 .resizable()

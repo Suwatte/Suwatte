@@ -71,7 +71,6 @@ struct ContentLanguageSettingsView: View {
                         Text(name)
                         Spacer()
                         Image(systemName: "checkmark")
-                            .transition(.opacity)
                             .opacity(selections.contains(id) ? 1 : 0)
                     }
                     .contentShape(Rectangle())
@@ -92,6 +91,7 @@ struct ContentLanguageSettingsView: View {
                     prompt: "Search")
         .navigationTitle("Content Languages")
         .navigationBarTitleDisplayMode(.inline)
+        .transition(.opacity)
         .animation(.default, value: text)
         .animation(.default, value: selections)
     }

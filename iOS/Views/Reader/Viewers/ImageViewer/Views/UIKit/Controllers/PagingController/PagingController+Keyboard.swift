@@ -48,7 +48,7 @@ extension Controller {
     }
 
     @objc func handleCloseKey() {
-        if var topController = KEY_WINDOW?.rootViewController {
+        if var topController = getKeyWindow()?.rootViewController {
             while let presentedViewController = topController.presentedViewController {
                 topController = presentedViewController
             }

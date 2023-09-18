@@ -18,6 +18,7 @@ extension ViewModel {
     }
 
     func calculateActionState(_ safetyCheck: Bool) async -> ActionState {
+        let chapters = getCurrentStatement().filtered
         guard !chapters.isEmpty else {
             return .init(state: .none)
         }
@@ -93,7 +94,7 @@ extension ViewModel {
         // Fix Situation where the chapter being referenced is not in the joined chapter list by picking the last where the numbers match
         var correctedChapterId = chapterRef.id
         if !chapters.contains(where: { $0.id == chapterRef.id }),
-           let chapter = chapters.last(where: { $0.number >= chapterRef.number })
+           let chapter = chapters.last(where: { $0.chapterOrderKey >= chapterRef.chapterOrderKey })
         {
             correctedChapterId = chapter.id
         }
@@ -137,7 +138,11 @@ extension ViewModel {
     }
 
     private func resolveSourceProgressStateAsActionState() -> ActionState? {
-        guard let state = sourceProgressState?.currentReadingState, let currentIndex = chapters.firstIndex(where: { $0.chapterId == state.chapterId }) else {
+        guard currentChapterSection == sourceID else { return nil }
+        let chapters = getCurrentStatement().filtered
+        guard let state = sourceProgressState?.currentReadingState,
+              let currentIndex = chapters.firstIndex(where: { $0.chapterId == state.chapterId })
+        else {
             return nil
         }
 

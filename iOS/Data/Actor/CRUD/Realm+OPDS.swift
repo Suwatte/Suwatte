@@ -38,19 +38,13 @@ extension RealmActor {
     }
 
     func getPublication(id: String) -> StreamableOPDSContent? {
-        let target = realm
-            .objects(StreamableOPDSContent.self)
-            .where { $0.id == id && !$0.isDeleted }
-            .first
+        let target = getObject(of: StreamableOPDSContent.self, with: id)
 
         return target
     }
 
     func getPublicationPageCount(id: String) -> Int? {
-        let target = realm
-            .objects(StreamableOPDSContent.self)
-            .where { $0.id == id && !$0.isDeleted }
-            .first
+        let target = getPublication(id: id)
 
         return target?.pageCount
     }
@@ -74,7 +68,7 @@ extension RealmActor {
     }
 
     func removeOPDServer(id: String) async {
-        guard let target = realm.objects(StoredOPDSServer.self).where({ $0.id == id && $0.isDeleted == false }).first else {
+        guard let target = getObject(of: StoredOPDSServer.self, with: id) else {
             return
         }
         let keychain = KeychainSwift()
@@ -87,7 +81,7 @@ extension RealmActor {
     }
 
     func renameOPDSServer(id: String, name: String) async {
-        guard let target = realm.objects(StoredOPDSServer.self).where({ $0.id == id && $0.isDeleted == false }).first else {
+        guard let target = getObject(of: StoredOPDSServer.self, with: id) else {
             return
         }
 

@@ -13,7 +13,7 @@ struct BookmarksView: View {
 
     @StateObject private var model: ViewModel = .init()
     var body: some View {
-        Group {
+        ZStack {
             if let results = model.results {
                 if results.isEmpty {
                     EmptyResultsView()

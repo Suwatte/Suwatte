@@ -18,7 +18,7 @@ extension UpdateFeedView {
                     Text(readable.title)
                         .font(.headline)
                         .fontWeight(.semibold)
-                    Text("\(entry.updateCount) \(CHAPTER_LABEL)")
+                    Text("^[\(entry.updateCount) Update](inflect: true)")
                         .font(.callout)
                         .foregroundColor(.gray)
                     if entry.linkedHasUpdates {
@@ -35,10 +35,6 @@ extension UpdateFeedView {
             }
             .frame(height: 75 * 1.5)
             .contentShape(Rectangle())
-        }
-
-        var CHAPTER_LABEL: String {
-            "new chapter" + (entry.updateCount > 1 ? "s" : "")
         }
 
         var ImageView: some View {

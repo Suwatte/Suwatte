@@ -14,9 +14,9 @@ extension ProfileView {
         @StateObject var viewModel: ProfileView.ViewModel
         @Environment(\.presentationMode) var presentationMode
         var body: some View {
-            LoadableView(loadable: $viewModel.contentState) {
-                await viewModel.setupObservers()
-                await viewModel.load()
+            OldLoadableView(loadable: $viewModel.contentState) { [weak viewModel] in
+                await viewModel?.setupObservers()
+                await viewModel?.load()
             } _: {
                 PLACEHOLDER
             } _: {
@@ -33,7 +33,7 @@ extension ProfileView {
                         let readingMode = viewModel.readingMode
                         ReaderGateWay(title: viewModel.content.title,
                                       readingMode: readingMode,
-                                      chapterList: viewModel.chapterListChapters,
+                                      chapterList: viewModel.getCurrentStatement().filtered,
                                       openTo: chapter)
                             .task {
                                 viewModel.removeNotifier()
@@ -41,7 +41,6 @@ extension ProfileView {
                             .onDisappear {
                                 Task {
                                     await handleReconnection()
-                                    ImagePipeline.shared.configuration.imageCache?.removeAll()
                                 }
                             }
                     }

@@ -47,8 +47,7 @@ extension DSK {
         try await scripts.append(generate(for: bootstrapFile))
 
         // Add Handlers
-        let s = scripts
-        let task = Task { @MainActor in
+        let task = Task { @MainActor [scripts] in
             // Define Handlers
             let logger = WKHandler.LogHandler()
             let network = WKHandler.NetworkHandler()
@@ -61,11 +60,12 @@ extension DSK {
             userContentController.addScriptMessageHandler(store, contentWorld: .defaultClient, name: "store")
 
             // Scripts
-            s.forEach(userContentController.addUserScript)
+            scripts.forEach(userContentController.addUserScript)
             let config = WKWebViewConfiguration()
             config.userContentController = userContentController
             let wv = WKWebView(frame: .zero, configuration: config)
-            KEY_WINDOW?.addSubview(wv)
+            let window = getKeyWindow()
+            window?.addSubview(wv)
             let bootstrapper = WKBootstrapper(wv: wv)
             await bootstrapper.prepare()
             return wv

@@ -62,7 +62,7 @@ extension SDM {
         }
     }
 
-    enum DownloadState {
+    enum DownloadState: Hashable, Equatable {
         case fetchingImages, downloading(progress: Double), finalizing
     }
 }

@@ -62,9 +62,11 @@ extension ViewModel {
             return markers
         })
 
+        let chapters = chapterMap[identifier.id]?.filtered
+        guard let chapters else { return }
         // Source Chapter Sync Handler
         var sourceOriginHighestRead: Double = 0
-        if source.intents.progressSyncHandler ?? false , let state = sourceProgressState {
+        if source.intents.progressSyncHandler ?? false, let state = sourceProgressState {
             var chapterListMax: Double = 0
             var markStateMax: Double = 0
             if let readIds = state.readChapterIds {

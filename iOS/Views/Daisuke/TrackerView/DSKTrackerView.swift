@@ -24,20 +24,16 @@ struct DSKLoadableTrackerView: View {
         LoadableView(load, $loadable) {
             DSKTrackerView(tracker: tracker, content: .placeholder)
                 .redacted(reason: .placeholder)
-                .transition(.opacity)
         } content: { value in
             DSKTrackerView(tracker: tracker, content: value)
-                .transition(.opacity)
         }
+        .transition(.opacity)
         .navigationBarHidden(true)
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    func load() async throws {
-        let data = try await tracker.getFullInformation(id: item.id)
-        withAnimation(.easeInOut(duration: 0.33)) {
-            loadable = .loaded(data)
-        }
+    func load() async throws -> DSKCommon.FullTrackItem {
+        try await tracker.getFullInformation(id: item.id)
     }
 }
 
@@ -166,7 +162,7 @@ extension DSKTrackerView {
                             }
                             .foregroundColor(.white)
                         }
-                        .frame(height: KEY_WINDOW?.safeAreaInsets.top ?? 0)
+                        .frame(height: getKeyWindow()?.safeAreaInsets.top ?? 0)
 
                         Spacer()
                         HStack(alignment: .bottom) {
@@ -180,13 +176,13 @@ extension DSKTrackerView {
                                     .fontWeight(.semibold)
                                     .padding(.vertical, 2)
                                     .padding(.horizontal, 4)
-                                    .background((tag == "NSFW" ? Color.red : Color.random).opacity(0.65))
+                                    .background((tag == "NSFW" ? Color.red : .accentColor).opacity(0.65))
                                     .cornerRadius(3)
                             }
                         }
                     }
                     .padding(.horizontal)
-                    .padding(.top, KEY_WINDOW?.safeAreaInsets.top ?? 0)
+                    .padding(.top, getKeyWindow()?.safeAreaInsets.top ?? 0)
                     .padding(.bottom, 25)
                 }
             }
@@ -325,7 +321,7 @@ extension DSKTrackerView {
 
 extension DSKTrackerView {
     private var LinksView: some View {
-        Group {
+        ZStack {
             if let links = content.links {
                 InteractiveTagView(links) { tag in
                     Link("\(Image(systemName: "link")) \(tag.title)",
@@ -363,7 +359,7 @@ extension DSKTrackerView {
         let collection: [DSKCommon.Highlight]
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading, spacing: 0) {
                 Text(title)
                     .font(.headline.weight(.semibold))
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -372,8 +368,8 @@ extension DSKTrackerView {
                             Cell(tracker: tracker, data: $0)
                         }
                     }
+                    .padding(.top, 5)
                 }
-                .padding(.top, 5)
             }
             .padding(.horizontal)
         }

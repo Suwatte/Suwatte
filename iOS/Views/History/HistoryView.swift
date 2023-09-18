@@ -25,11 +25,11 @@ struct HistoryView: View {
             }
             .animation(.default, value: model.markers)
             .opacity(model.markers.isEmpty ? 0 : 1)
-            .transition(.opacity)
+            .zIndex(0)
 
             ProgressView()
                 .opacity(model.dataFetchComplete ? 0 : 1)
-                .transition(.opacity)
+                .zIndex(1)
 
             VStack {
                 Text("(￣ε￣＠)")
@@ -42,8 +42,9 @@ struct HistoryView: View {
             }
             .foregroundColor(.gray)
             .opacity(model.markers.isEmpty && model.dataFetchComplete ? 1 : 0)
-            .transition(.opacity)
+            .zIndex(2)
         }
+        .transition(.opacity)
         .modifier(InteractableContainer(selection: $model.csSelection))
         .listStyle(.plain)
         .navigationTitle("History")
@@ -161,7 +162,7 @@ extension HistoryView {
     struct Cell: View {
         var marker: ProgressMarker
         var body: some View {
-            Group {
+            ZStack {
                 if let reference = marker.currentChapter {
                     if let content = reference.content {
                         ContentSourceCell(marker: marker, content: content, chapter: reference)

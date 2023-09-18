@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 final actor STTImageProvider {
-    static var shared = STTImageProvider()
+    static let shared = STTImageProvider()
 
     static let directory = FileManager.default.documentDirectory.appendingPathComponent("Thumbnails", isDirectory: true)
 

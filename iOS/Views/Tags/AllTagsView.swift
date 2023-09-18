@@ -13,7 +13,7 @@ struct AllTagsView: View {
     @State var selectedTag: String?
     @State var text: String = ""
     var body: some View {
-        LoadableView(loadData, $properties) {
+        LoadableView(load, $properties) {
             DataLoadedView($0)
         }
         .searchable(text: $text, placement: .navigationBarDrawer(displayMode: .always))
@@ -57,15 +57,7 @@ extension AllTagsView {
 }
 
 extension AllTagsView {
-    func loadData() {
-        properties = .loading
-        Task {
-            do {
-                let data = try await source.getAllTags()
-                properties = .loaded(data)
-            } catch {
-                properties = .failed(error)
-            }
-        }
+    func load() async throws -> [DSKCommon.Property] {
+        try await source.getAllTags()
     }
 }

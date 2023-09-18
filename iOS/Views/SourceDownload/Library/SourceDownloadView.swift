@@ -16,16 +16,14 @@ struct SourceDownloadView: View {
         ZStack {
             CollectionView()
                 .opacity(!model.entries.isEmpty && model.initialFetchComplete ? 1 : 0) // Work is complete and there are results
-                .transition(.opacity)
 
             ProgressView()
                 .opacity(model.working && model.entries.isEmpty && !model.initialFetchComplete ? 1 : 0) // Work is not complete and there are no results
-                .transition(.opacity)
 
             NoResultsView()
                 .opacity(!model.working && model.entries.isEmpty && model.initialFetchComplete ? 1 : 0) // work is complete and there are no results
-                .transition(.opacity)
         }
+        .transition(.opacity)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {

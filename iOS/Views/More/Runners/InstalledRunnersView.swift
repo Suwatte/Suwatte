@@ -154,21 +154,14 @@ extension InstalledRunnersView {
 extension InstalledRunnersView {
     struct Gateway: View {
         let runnerID: String
-        @State var loadable: Loadable<AnyRunner> = .idle
         var body: some View {
-            LoadableView(load, $loadable) { runner in
+            LoadableRunnerView(runnerID: runnerID) { runner in
                 if let source = runner as? AnyContentSource {
                     ContentSourceInfoView(source: source)
                 } else if let tracker = runner as? JSCContentTracker {
                     ContentTrackerInfoView(tracker: tracker)
                 }
             }
-        }
-
-        func load() async throws {
-            loadable = .loading
-            let runner = try await DSK.shared.getDSKRunner(runnerID)
-            loadable = .loaded(runner)
         }
     }
 }

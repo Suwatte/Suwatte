@@ -24,26 +24,18 @@ extension ViewModel {
         // Ensure there are linked titles
         guard !entries.isEmpty, !Task.isCancelled else { return }
 
-        await withTaskGroup(of: ContentLinkSection?.self, body: { [weak self] group in
+        await withTaskGroup(of: Void.self, body: { [weak self] group in
             for entry in entries {
                 group.addTask { [weak self] in
                     await self?.getChapterSection(for: entry)
                 }
             }
-
-            for await result in group {
-                guard let result else { continue }
-                await animate { [weak self] in
-                    self?.linked.append(result)
-                }
-            }
-
         })
     }
 
-    func getChapterSection(for content: StoredContent) async -> ContentLinkSection? {
+    func getChapterSection(for content: StoredContent) async {
         let source = await DSK.shared.getSource(id: content.sourceId)
-        guard let source else { return nil }
+        guard let source else { return }
         do {
             let chapters = try await source.getContentChapters(contentId: content.contentId)
             let prepared = chapters
@@ -57,29 +49,48 @@ extension ViewModel {
                 await actor.storeChapters(stored)
             }
 
-            let maxOrderKey = prepared
-                .max(by: \.chapterOrderKey)?
-                .chapterOrderKey ?? 0
+            let statement = prepareChapterStatement(prepared,
+                                                    content: .init(runnerID: source.id, runnerName: source.name, contentName: content.title, id: content.id))
 
-            return .init(source: source,
-                         chapters: prepared,
-                         maxOrderKey: maxOrderKey)
-
+            await animate { [weak self] in
+                self?.chapterMap[content.id] = statement
+            }
         } catch {
             Logger.shared.error(error, source.id)
         }
-
-        return nil
     }
 
     func updateContentLinks() async {
         let actor = await RealmActor.shared()
-        let newLinked = await actor.getLinkedContent(for: identifier).map(\.id)
-        guard newLinked != linkedContentIDs else { return }
-        await MainActor.run { [weak self] in
-            self?.contentState = .idle
-            self?.chapterState = .idle
+        let titles = await actor.getLinkedContent(for: identifier)
+        let newLinked = Set(titles.map(\.id))
+        let currentLinked = Set(linkedContentIDs)
+        linkedContentIDs = Array(newLinked)
+
+        let removed = currentLinked.subtracting(newLinked) // Present in Current Linked but not in newLinked
+        let added = newLinked.subtracting(currentLinked) // Present in New linked but not in current linked
+
+        // Remove Unlinked Titles
+        for content in removed {
+            await animate { [weak self] in
+                self?.chapterMap.removeValue(forKey: content)
+            }
         }
+
+        guard !added.isEmpty else { return }
+
+        // Add Newly Linked Titles
+        await withTaskGroup(of: Void.self, body: { group in
+            for content in added {
+                guard let title = titles.first(where: { $0.id == content }) else { continue }
+                group.addTask { [weak self] in
+                    await self?.getChapterSection(for: title)
+                }
+            }
+        })
+
+        // Re Sync With All Parties
+        await handleSync()
     }
 }
 

@@ -30,6 +30,11 @@ struct SourceDownloadQueueView: View {
                 await didRecievePub(value)
             }
         }
+        .animation(.default, value: model.data)
+        .animation(.default, value: model.isWorking)
+        .animation(.default, value: model.initialDataFetchComplete)
+        .animation(.default, value: activeDownload)
+        .animation(.default, value: activeDownloadState)
     }
 
     var ListView: some View {
@@ -110,7 +115,7 @@ extension SDQV {
 
         var subheadline: String {
             let count = downloads.count
-            return "\(count) Chapter\(count == 1 ? "" : "s") Queued"
+            return "^[\(count) Chapter](inflect: true) Queued"
         }
 
         var ids: [String] {
@@ -303,15 +308,14 @@ extension SDQV {
         var download: SourceDownload?
         var downloadState: SDM.DownloadState?
         var body: some View {
-            Group {
+            ZStack {
                 if let download, let downloadState {
                     Cell(download, state: downloadState)
-                        .transition(.slide)
                 } else {
                     NoActiveDownloadView
-                        .transition(.opacity)
                 }
             }
+            .transition(.slide)
             .frame(maxWidth: .infinity)
             .frame(alignment: .center)
         }
@@ -346,7 +350,7 @@ extension SDQV {
         }
 
         func StateView(_ state: SDM.DownloadState) -> some View {
-            Group {
+            ZStack {
                 switch state {
                 case .fetchingImages:
                     Image(systemName: "icloud.and.arrow.down")
@@ -354,7 +358,6 @@ extension SDQV {
                         .scaledToFit()
                         .foregroundColor(.gray)
                         .shimmering()
-                        .transition(.opacity)
 
                 case .finalizing:
                     Image(systemName: "folder")
@@ -362,12 +365,11 @@ extension SDQV {
                         .scaledToFit()
                         .foregroundColor(.green.opacity(0.5))
                         .shimmering()
-                        .transition(.opacity)
                 case let .downloading(progress: progress):
                     ProgressCircle(progress: progress)
-                        .transition(.opacity)
                 }
             }
+            .transition(.opacity)
             .frame(width: 30, height: 30, alignment: .center)
         }
 

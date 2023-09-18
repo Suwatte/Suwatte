@@ -18,10 +18,11 @@ extension ProfileView.Skeleton.ChapterView {
         @EnvironmentObject var model: ProfileView.ViewModel
         var body: some View {
             HStack {
+                let chapters = model.getPreviewChapters(for: model.getCurrentStatement())
                 switch model.chapterState {
                 case .loaded:
-                    if !model.chapters.isEmpty {
-                        LoadedView(model.previewChapters)
+                    if !chapters.isEmpty {
+                        LoadedView(chapters)
                             .transition(.opacity)
                     } else {
                         LoadedEmptyView()
@@ -39,6 +40,7 @@ extension ProfileView.Skeleton.ChapterView {
                         .transition(.opacity)
                 }
             }
+            .animation(.easeOut(duration: 0.25), value: model.currentChapterSection)
         }
 
         @ViewBuilder
@@ -53,14 +55,35 @@ extension ProfileView.Skeleton.ChapterView {
 
         @ViewBuilder
         func LoadedView(_ chapters: [ThreadSafeChapter], redacted: Bool = false) -> some View {
+            let statement = model.getCurrentStatement()
+            let filteredOut = statement.originalList.count - statement.filtered.count
             VStack(alignment: .center, spacing: 10) {
-                if !model.linked.isEmpty {
-                    ChapterSectionsView()
-                }
                 HStack {
-                    Text("\(model.chapterListChapters.count) \(chapters.count > 1 ? "Chapters" : "Chapter")")
-                        .font(.title3)
-                        .fontWeight(.bold)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("^[\(statement.distinctCount) Chapter](inflect: true)")
+                            .font(.title3)
+                            .fontWeight(.bold)
+
+                        // Viewing Linked entry
+                        if model.currentChapterSection != model.identifier {
+                            let statement = model.getCurrentStatement()
+                            Text("\(Image(systemName: "link")) \(statement.content.contentName)")
+                                .font(.footnote)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.gray)
+                                .multilineTextAlignment(.leading)
+                                .lineLimit(3)
+                        }
+
+                        if filteredOut != 0 {
+                            Text("^[\(filteredOut) chapter](inflect: true) hidden.")
+                                .font(.caption)
+                                .fontWeight(.light)
+                                .foregroundColor(.gray)
+                        }
+
+                        LinkChaptersSection(model: model)
+                    }
                     Spacer()
                 }
 
@@ -145,49 +168,54 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
 }
 
 extension ProfileView.Skeleton.ChapterView.PreviewView {
-    struct ChapterSectionsView: View {
-        @EnvironmentObject private var model: ProfileView.ViewModel
+    struct LinkChaptersSection: View {
+        @ObservedObject var model: ProfileView.ViewModel
 
-        private func isSelected(id: String) -> Bool {
-            model.currentChapterSection == id
+        private var count: Int {
+            model.chapterMap.count
+        }
+
+        private var entryStatement: ChapterStatement? {
+            model.chapterMap[model.identifier]
         }
 
         var body: some View {
-            ScrollView(.horizontal) {
-                HStack {
-                    if isSelected(id: model.sourceID) {
-                        Button(model.source.name) {
-                            model.currentChapterSection = model.sourceID
+            if count > 1 {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        if let entryStatement {
+                            Cell(statement: entryStatement)
                         }
-                        .buttonStyle(.borderedProminent)
-                    } else {
-                        Button(model.source.name) {
-                            model.currentChapterSection = model.sourceID
-                        }
-                        .buttonStyle(.bordered)
-                        .tint(.accentColor)
-                    }
 
-                    ForEach(model.linked, id: \.source.id) { linked in
-                        if isSelected(id: linked.source.id) {
-                            Button(linked.source.name) {
-                                model.currentChapterSection = linked.source.id
+                        ForEach(model.chapterMap.sorted(by: \.value.maxOrderKey), id: \.key) { key, value in
+                            if key == model.identifier {
+                                EmptyView()
+                            } else {
+                                Cell(statement: value)
                             }
-                            .buttonStyle(.borderedProminent)
-                            .tint(.accentColor)
-                            .coloredBadge(.blue)
-                        } else {
-                            Button(linked.source.name) {
-                                model.currentChapterSection = linked.source.id
-                            }
-                            .buttonStyle(.bordered)
-                            .tint(.accentColor)
-                            .coloredBadge(.blue)
                         }
+                    }
+                    .padding(.top, 4)
+                }
+            }
+        }
+
+        @ViewBuilder
+        func Cell(statement: ChapterStatement) -> some View {
+            if model.currentChapterSection == statement.content.id {
+                Button(statement.content.runnerName) {}
+                    .buttonStyle(.borderedProminent)
+                    .tint(.accentColor)
+            } else {
+                Button(statement.content.runnerName) {
+                    model.currentChapterSection = statement.content.id
+                    Task {
+                        await model.setActionState()
                     }
                 }
-                .padding(.top, 4)
-                .animation(.easeOut(duration: 0.25), value: model.currentChapterSection)
+                .buttonStyle(.bordered)
+                .tint(.accentColor)
+                .coloredBadge(statement.maxOrderKey > (entryStatement?.maxOrderKey ?? 0) ? .blue : nil)
             }
         }
     }

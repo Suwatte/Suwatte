@@ -18,7 +18,7 @@ struct SearchView: View {
     @State private var presentImageSearch = false
     @State var searchTask: Task<Void, Never>?
     var body: some View {
-        Group {
+        ZStack {
             if model.query.isEmpty {
                 HistoryView()
                     .transition(.opacity)
@@ -112,7 +112,7 @@ struct SearchView: View {
     }
 
     var StatusView: some View {
-        Group {
+        ZStack {
             switch model.state {
             case .loading:
                 ProgressView()

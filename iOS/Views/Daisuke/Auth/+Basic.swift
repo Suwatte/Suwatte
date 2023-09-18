@@ -19,7 +19,7 @@ extension DSKAuthView {
                 Label("Sign In", systemImage: "person.fill.viewfinder")
             }
             .buttonStyle(.plain)
-            .fullScreenCover(isPresented: $presentSheet, onDismiss: model.load) {
+            .fullScreenCover(isPresented: $presentSheet, onDismiss: model.reload) {
                 SignInSheet()
             }
         }
@@ -41,16 +41,14 @@ extension DSKAuthView.BasicAuthView {
         }
 
         var ThumbnailView: some View {
-            Group {
-                Image("stt")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(color)
-                    .padding(.all, 3)
-            }
-            .frame(height: 75, alignment: .center)
-            .clipShape(Circle())
-            .padding()
+            Image("stt")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .foregroundColor(color)
+                .padding(.all, 3)
+                .frame(height: 75, alignment: .center)
+                .clipShape(Circle())
+                .padding()
         }
 
         var body: some View {

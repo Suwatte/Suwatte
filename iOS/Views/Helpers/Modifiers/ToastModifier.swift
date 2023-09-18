@@ -51,7 +51,7 @@ struct ToastModifier: ViewModifier {
 struct ToastView: View {
     var toast: ToastManager.ToastType
     var body: some View {
-        Group {
+        ZStack {
             switch toast {
             case let .info(msg):
                 HStack {
@@ -73,7 +73,7 @@ struct ToastView: View {
                         .scaledToFit()
                         .frame(width: 15, height: 15)
                         .foregroundColor(.red)
-                    Group {
+                    ZStack {
                         if let error {
                             Text("Error: \(error.localizedDescription)")
                         } else {

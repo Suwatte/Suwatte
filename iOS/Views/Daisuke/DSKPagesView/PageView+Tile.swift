@@ -22,7 +22,7 @@ struct PageViewTile: View {
     @Environment(\.pageSectionStyle) var style
 
     var body: some View {
-        Group {
+        ZStack {
             switch style {
             case .DEFAULT: NORMAL
             case .INFO: INFO
@@ -138,9 +138,6 @@ extension PageViewTile {
         @State private var timer: Timer?
         @State private var currentImageIndex = 0
         private let prefetcher = ImagePrefetcher()
-        private var foreGroundColor: Color {
-            endColor.isDark ? .white : .black
-        }
 
         private var covers: [String] {
             Array(
@@ -155,15 +152,15 @@ extension PageViewTile {
 
         var body: some View {
             ZStack(alignment: .bottom) {
-                Group {
+                ZStack {
                     if let view = loader.image {
                         GeometryReader { proxy in
                             view
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .frame(height: proxy.size.width * 1.5, alignment: .center)
-                                .transition(.opacity)
                         }
+                        .transition(.opacity)
 
                     } else {
                         Color.gray.opacity(0.25)
@@ -175,7 +172,7 @@ extension PageViewTile {
                     // Image Carasouel
                     Text(title)
                         .multilineTextAlignment(.center)
-                        .font(.headline.weight(.semibold))
+                        .font(.headline.weight(.bold))
                         .lineLimit(2)
 
                     if let subtitle = subtitle {
@@ -192,24 +189,25 @@ extension PageViewTile {
                         }
                     }
                     .multilineTextAlignment(.center)
-                    .font(.footnote.weight(.thin))
+                    .font(.footnote.weight(.light))
 
                     if covers.count > 1 {
                         HStack {
                             ForEach(covers, id: \.self) { cover in
                                 Rectangle()
                                     .frame(height: 3.5, alignment: .center)
-                                    .foregroundColor(foreGroundColor.opacity((currentImageIndex == covers.firstIndex(of: cover)!) ? 1.0 : 0.25))
+                                    .foregroundColor(.white.opacity((currentImageIndex == covers.firstIndex(of: cover)!) ? 1.0 : 0.25))
                                     .cornerRadius(2)
                             }
                         }
                         .padding(.horizontal)
                     }
                 }
-                .foregroundColor(foreGroundColor)
+                .foregroundColor(.white)
 
                 .padding()
             }
+            .animation(.default, value: loader.image)
             .animation(.default, value: currentImageIndex)
             .animation(.default, value: endColor)
             .onChange(of: currentImageIndex, perform: { _ in
@@ -219,7 +217,9 @@ extension PageViewTile {
                 }
             })
             .cornerRadius(5)
-            .onAppear(perform: didAppear)
+            .task {
+                await setup()
+            }
             .onDisappear(perform: timer?.invalidate)
             .onAppear {
                 prefetcher.startPrefetching(with: urls)
@@ -233,48 +233,48 @@ extension PageViewTile {
 
         func load(url: URL?) async {
             guard let url else { return }
+            // Source Has Image Request Handler, prevents sources from being initialized unecessarily
+            guard UserDefaults.standard.bool(forKey: STTKeys.RunnerOverridesImageRequest(runnerID)) else {
+                loader.load(url)
+                return
+            }
+
             let runner = await DSK.shared.getRunner(runnerID)
-
-            guard let runner, runner.intents.imageRequestHandler, UserDefaults.standard.bool(forKey: STTKeys.RunnerOverridesImageRequest(runnerID)) else {
+            guard let runner, runner.intents.imageRequestHandler else {
                 loader.load(url)
                 return
             }
 
-            guard let response = try? await runner.willRequestImage(imageURL: url), let request = try? ImageRequest(urlRequest: response.toURLRequest()) else {
+            do {
+                let response = try await runner.willRequestImage(imageURL: url)
+                let request = try ImageRequest(urlRequest: response.toURLRequest())
+                loader.load(request)
+            } catch {
+                Logger.shared.error(error.localizedDescription, "ImageView")
                 loader.load(url)
-                return
             }
-
-            loader.load(request)
         }
-
-        func didAppear() {
+        
+        func setup() async {
             // Update Loader
             loader.transaction = .init(animation: .easeInOut(duration: 0.25))
             loader.onCompletion = { response in
                 guard let response = try? response.get() else {
                     return
                 }
-                if let color = response.image.averageColor {
-                    endColor = Color(color)
-                }
             }
-
-            // Load First Image
-            Task {
-                await load(url: urls.first)
-            }
-
-            if urls.count == 1 {
-                return
-            }
-            // Set Timer
+            await load(url: urls.first)
+            
+            guard urls.count > 1 else { return }
+            
             timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
-                withAnimation {
-                    if covers.indices.contains(currentImageIndex + 1) {
-                        currentImageIndex += 1
-                    } else {
-                        currentImageIndex = 0
+                Task { @MainActor in
+                    withAnimation {
+                        if covers.indices.contains(currentImageIndex + 1) {
+                            currentImageIndex += 1
+                        } else {
+                            currentImageIndex = 0
+                        }
                     }
                 }
             }
@@ -359,7 +359,7 @@ extension PageViewTile {
 
         var body: some View {
             ZStack(alignment: .bottom) {
-                Group {
+                ZStack {
                     if let view = loader.image {
                         view
                             .resizable()

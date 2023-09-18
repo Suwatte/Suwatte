@@ -103,7 +103,7 @@ extension RunnerListsView {
         }))
         ac.addAction(submitAction)
 
-        KEY_WINDOW?.rootViewController?.present(ac, animated: true)
+        getKeyWindow()?.rootViewController?.present(ac, animated: true)
     }
 }
 
@@ -115,27 +115,29 @@ extension RunnerListsView {
         var body: some View {
             LoadableView(load, $loadable) { value in
                 InternalListInfoView(list: value, listURL: listURL, text: $text)
+                    .task {
+                        didLoad()
+                    }
             }
             .animation(.default, value: loadable)
             .refreshable {
-                await load()
+                loadable = .idle
             }
             .searchable(text: $text, placement: .navigationBarDrawer(displayMode: .always), prompt: "Search...")
         }
 
-        func load() async {
-            loadable = .loading
-            do {
-                guard let url = URL(string: listURL) else {
-                    throw DaisukeEngine.Errors.NamedError(name: "Parse Error", message: "Invalid URL")
-                }
-                let data = try await DSK.shared.getRunnerList(at: url)
+        func load() async throws -> RunnerList {
+            guard let url = URL(string: listURL) else {
+                throw DaisukeEngine.Errors.NamedError(name: "Parse Error", message: "Invalid URL")
+            }
+            return try await DSK.shared.getRunnerList(at: url)
+        }
 
-                loadable = .loaded(data)
+        func didLoad() {
+            guard let list = loadable.value else { return }
+            Task {
                 let actor = await RealmActor.shared()
-                await actor.saveRunnerList(data, at: url)
-            } catch {
-                loadable = .failed(error)
+                await actor.saveRunnerList(list, at: URL(string: listURL)!)
             }
         }
     }
@@ -294,7 +296,7 @@ extension RunnerListsView.RunnerListInfo {
                         isLoading = false
                     }
                 } label: {
-                    Group {
+                    ZStack {
                         if !isLoading {
                             Text(runnerState.description)
                         } else {

@@ -20,3 +20,5 @@ extension ViewModel {
             .getContentChapters(contentId: entry.id)
     }
 }
+
+extension ViewModel {}

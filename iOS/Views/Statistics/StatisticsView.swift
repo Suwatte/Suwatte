@@ -12,24 +12,16 @@ struct LoadableStatisticsView: View {
     var body: some View {
         LoadableView(load, $loadable) { value in
             LibraryStatisticsView(statistics: value)
-                .transition(.opacity)
         }
+        .transition(.opacity)
         .navigationTitle("Library Statistics")
         .navigationBarTitleDisplayMode(.inline)
         .closeButton()
         .animation(.default, value: loadable)
     }
 
-    func load() async {
-        await animate {
-            loadable = .loading
-        }
-
-        let data = await RealmActor.shared().getLibraryStatistics()
-
-        await animate {
-            loadable = .loaded(data)
-        }
+    func load() async -> LibraryStatistics {
+        await RealmActor.shared().getLibraryStatistics()
     }
 }
 

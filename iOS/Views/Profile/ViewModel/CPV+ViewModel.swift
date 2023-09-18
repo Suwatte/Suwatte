@@ -24,7 +24,6 @@ extension ProfileView {
         }
 
         @Published var content: DSKCommon.Content = .placeholder
-        var chapters: [ThreadSafeChapter] = []
 
         @Published var contentState: Loadable<Bool> = .idle
         @Published var chapterState: Loadable<Bool> = .idle
@@ -34,21 +33,12 @@ extension ProfileView {
         @Published var presentTrackersSheet = false
         @Published var presentSafariView = false
         @Published var presentMigrationView = false
-        @Published var presentManageContentLinks: String? = nil {
-            didSet {
-                guard presentManageContentLinks == nil else { return }
-                Task { [weak self] in
-                    await self?.updateContentLinks()
-                }
-            }
-        }
+        @Published var presentManageContentLinks: String? = nil
 
         @Published var isWorking = false
         @Published var syncState = SyncState.idle
         @Published var actionState: ActionState = .init(state: .none)
-        var linked: [ContentLinkSection] = []
-        @Published var previewChapters: [ThreadSafeChapter] = []
-        @Published var chapterListChapters: [ThreadSafeChapter] = []
+        @Published var chapterMap: [String: ChapterStatement] = [:]
         // Tokens
         internal var currentMarkerToken: NotificationToken?
         internal var downloadTrackingToken: NotificationToken?
@@ -68,7 +58,12 @@ extension ProfileView {
         init(_ entry: DaisukeEngine.Structs.Highlight, _ source: AnyContentSource) {
             self.entry = entry
             self.source = source
-            currentChapterSection = source.id
+            currentChapterSection = ""
+            currentChapterSection = identifier
+        }
+
+        var contentInfo: SimpleContentInfo {
+            .init(runnerID: sourceID, runnerName: source.name, contentName: entry.title, id: identifier)
         }
 
         @Published var selection: ThreadSafeChapter?
@@ -98,7 +93,7 @@ private typealias ViewModel = ProfileView.ViewModel
 
 extension ViewModel {
     func load() async {
-        await RunnerActor.run {
+        await RunnerActor.run { [contentInfo] in
             await animate { [weak self] in
                 self?.isWorking = true
                 self?.contentState = .loading
@@ -117,9 +112,9 @@ extension ViewModel {
                 let chapters = await getChaptersFromDatabase()
                 if let chapters {
                     let prepared = chapters.map { $0.toThreadSafe() }
-                    self.chapters = prepared
-                    await preparePreview()
-                    await animate { [weak self] in
+                    let statement = prepareChapterStatement(prepared, content: contentInfo)
+                    await animate { [weak self, identifier] in
+                        self?.chapterMap[identifier] = statement
                         self?.chapterState = .loaded(true)
                     }
 
@@ -161,14 +156,13 @@ extension ViewModel {
     }
 
     func loadChapters(_ pre: [DSKCommon.Chapter]? = nil) async {
-        await RunnerActor.run {
+        await RunnerActor.run { [sourceID, contentInfo, chapterMap] in
             func prepare(chapters: [DSKCommon.Chapter]) async {
                 let prepared = chapters
                     .sorted(by: \.index, descending: false)
                     .map { $0.toThreadSafe(sourceID: sourceID, contentID: contentID) }
-                self.chapters = prepared
-                await preparePreview()
                 await animate { [weak self] in
+                    self?.chapterMap[contentInfo.id] = self?.prepareChapterStatement(prepared, content: contentInfo)
                     self?.chapterState = .loaded(true)
                 }
                 Task.detached { [weak self] in
@@ -187,13 +181,12 @@ extension ViewModel {
                     await prepare(chapters: chapters)
                 } catch {
                     Logger.shared.error(error, "Content Chapters")
-                    if chapters.isEmpty {
-                        await animate { [weak self] in
-                            if Task.isCancelled { return }
-                            if self?.chapters.isEmpty ?? true {
-                                self?.chapterState = .failed(error)
-                            }
-                        }
+                    let chapters = chapterMap[contentInfo.id]?.filtered
+
+                    guard chapters == nil || (chapters?.isEmpty ?? true) else { return }
+                    await animate { [weak self] in
+                        if Task.isCancelled { return }
+                        self?.chapterState = .failed(error)
                     }
                 }
             }
@@ -201,28 +194,41 @@ extension ViewModel {
     }
 
     func reload() async {
+        removeNotifier()
         await animate { [weak self] in
             self?.chapterState = .loading
             self?.contentState = .loading
+            self?.chapterMap = [:]
+            self?.linkedContentIDs = []
+            self?.actionState = .init(state: .none)
+            self?.downloads = [:]
+            self?.readChapters = .init()
+            self?.savedForLater = false
+            self?.inLibrary = false
+            self?.bookmarkedChapters = .init()
         }
-
         await load()
+        await setupObservers()
     }
 }
 
 extension ViewModel {
     func didLoadChapters() async {
+        Task { [weak self] in
+            await self?.resolveLinks()
+        }
+
+        Task { [STTIDPair] in
+            let actor = await RealmActor.shared()
+            let id = STTIDPair
+            await actor.updateUnreadCount(for: id)
+            await actor.clearUpdates(id: id.id)
+        }
         // Resolve Links, Sync & Update Action State
         await updateSourceProgressState()
         await setActionState()
         await handleSync()
         await setActionState(false)
-        //        await resolveLinks()
-
-        let actor = await RealmActor.shared()
-        let id = STTIDPair
-        await actor.updateUnreadCount(for: id)
-        await actor.clearUpdates(id: id.id)
     }
 }
 

@@ -13,7 +13,7 @@ import UIKit
 
 // Global actor that handles image loading
 @globalActor actor PanelActor: GlobalActor {
-    static var shared = PanelActor()
+    static let shared = PanelActor()
     public static func run<T>(resultType _: T.Type = T.self, body: @Sendable () async throws -> T) async rethrows -> T where T: Sendable {
         try await body()
     }

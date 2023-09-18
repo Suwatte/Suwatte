@@ -17,7 +17,7 @@ struct ReaderGateWay: View {
     @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
     var body: some View {
-        Group {
+        ZStack {
             if readingMode.isPanelMode {
                 ImageViewer(initial: .init(chapters: chapterList,
                                            openTo: openTo,

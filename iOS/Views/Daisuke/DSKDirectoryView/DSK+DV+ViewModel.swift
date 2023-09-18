@@ -63,51 +63,40 @@ extension DirectoryView.ViewModel {
 }
 
 extension DirectoryView.ViewModel {
-    func makeRequest() async {
-        // Update State
+    func sendRequest() async throws -> [DSKCommon.Highlight] {
+        if config == nil {
+            do {
+                try await getConfig()
+            } catch {
+                Logger.shared.error(error)
+            }
+        }
+        if config != nil && request.sort == nil {
+            if request.sort == nil {
+                await MainActor.run {
+                    request.sort = configSort.default
+                }
+            }
+        }
+
         await MainActor.run {
-            result = .loading
+            request.context = context
         }
-        do {
-            if config == nil {
-                do {
-                    try await getConfig()
-                } catch {
-                    Logger.shared.error(error)
-                }
-            }
-            if config != nil && request.sort == nil {
-                if request.sort == nil {
-                    await MainActor.run {
-                        request.sort = configSort.default
-                    }
-                }
-            }
 
-            await MainActor.run {
-                request.context = context
-            }
+        let data: DSKCommon.PagedResult = try await runner.getDirectory(request: request)
 
-            let data: DSKCommon.PagedResult = try await runner.getDirectory(request: request)
-
-            await MainActor.run {
-                withAnimation {
-                    self.result = .loaded(data.results)
-                    self.resultCount = data.totalResultCount
-                    if data.isLastPage {
-                        self.pagination = .END
-                    }
-                }
+        await MainActor.run {
+            resultCount = data.totalResultCount
+            if data.isLastPage {
+                pagination = .END
             }
-
-        } catch {
-            await MainActor.run {
-                withAnimation {
-                    self.result = .failed(error)
-                }
-            }
-            Logger.shared.error(error, runner.id)
         }
+
+        return data.results
+    }
+
+    func reloadRequest() {
+        result = .idle
     }
 
     func paginate() async {

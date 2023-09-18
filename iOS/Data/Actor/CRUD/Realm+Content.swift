@@ -19,16 +19,12 @@ extension RealmActor {
     }
 
     func getStoredContent(_ sourceId: String, _ contentId: String) -> StoredContent? {
-        realm
-            .objects(StoredContent.self)
-            .where { $0.contentId == contentId && $0.sourceId == sourceId }
-            .first
+        let identifier = ContentIdentifier(contentId: contentId, sourceId: sourceId).id
+        return getObject(of: StoredContent.self, with: identifier)
     }
 
     func getStoredContent(_ id: String) -> StoredContent? {
-        return realm
-            .object(ofType: StoredContent.self,
-                    forPrimaryKey: id)
+        getObject(of: StoredContent.self, with: id)
     }
 
     func getStoredContents(ids: [String]) -> Results<StoredContent> {

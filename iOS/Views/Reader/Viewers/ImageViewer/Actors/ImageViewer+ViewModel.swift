@@ -38,7 +38,7 @@ final class IVViewModel: ObservableObject {
 // MARK: State & Initial Load
 
 extension IVViewModel {
-    func consume(_ value: InitialIVState) async {
+    func consume(_ value: InitialIVState) async throws {
         title = value.title
         presentationState = .loading
         chapterCount = value.chapters.count
@@ -66,34 +66,19 @@ extension IVViewModel {
                              pageOffset: value.pageOffset)
 
         // Load Initial Chapter
-        do {
-            try await dataCache.load(for: requested)
-            let pageCount = await dataCache.getCount(requested.id)
-            // Check DB For Last Known State
-            if pendingState?.pageIndex == nil {
-                let values = await STTHelpers
-                    .getInitialPanelPosition(for: requested.STTContentIdentifier,
-                                             chapterId: requested.chapterId,
-                                             limit: pageCount)
-                pendingState?.pageIndex = values.0
-                pendingState?.pageOffset = values.1
-            }
-
-            updateChapterState(for: requested, state: .loaded(true))
-            await MainActor.run {
-                withAnimation {
-                    presentationState = .loaded(true)
-                }
-            }
-        } catch {
-            updateChapterState(for: requested, state: .failed(error))
-            Logger.shared.error(error, "Reader")
-            await MainActor.run {
-                withAnimation {
-                    presentationState = .failed(error)
-                }
-            }
+        try await dataCache.load(for: requested)
+        let pageCount = await dataCache.getCount(requested.id)
+        // Check DB For Last Known State
+        if pendingState?.pageIndex == nil {
+            let values = await STTHelpers
+                .getInitialPanelPosition(for: requested.STTContentIdentifier,
+                                         chapterId: requested.chapterId,
+                                         limit: pageCount)
+            pendingState?.pageIndex = values.0
+            pendingState?.pageOffset = values.1
         }
+
+        updateChapterState(for: requested, state: .loaded(true))
     }
 
     @MainActor

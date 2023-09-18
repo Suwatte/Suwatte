@@ -83,9 +83,10 @@ extension DSK {
         await alert.addAction(cancel)
 
         // Present
-        await MainActor.run(body: {
-            KEY_WINDOW?.rootViewController?.present(alert, animated: true)
-        })
+        await MainActor.run {
+            let window = getKeyWindow()
+            window?.rootViewController?.present(alert, animated: true)
+        }
 
         return true
     }

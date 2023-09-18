@@ -11,7 +11,7 @@ struct MigrationDestinationsLoadingView: View {
     @EnvironmentObject private var model: MigrationController
 
     var body: some View {
-        Group {
+        ZStack {
             if model.hasLoadedSources {
                 PreferredMigrationDestinationsView()
             } else {

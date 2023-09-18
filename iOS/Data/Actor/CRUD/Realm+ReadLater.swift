@@ -10,19 +10,11 @@ import RealmSwift
 
 extension RealmActor {
     func getReadLater(for id: String) -> ReadLater? {
-        realm
-            .objects(ReadLater.self)
-            .where { $0.id == id }
-            .where { $0.isDeleted == false }
-            .first
+        getObject(of: ReadLater.self, with: id)
     }
 
     func isSavedForLater(_ id: String) -> Bool {
-        return !realm
-            .objects(ReadLater.self)
-            .where { $0.id == id }
-            .where { $0.isDeleted == false }
-            .isEmpty
+        getReadLater(for: id) != nil
     }
 
     func toggleReadLater(_ source: String, _ content: String) async {

@@ -10,13 +10,14 @@ import UIKit
 import UserNotifications
 
 class STTNotifier {
-    static var shared = STTNotifier()
+    static let shared = STTNotifier()
 
+    @MainActor
     func scheduleUpdateNotification(count: Int) {
         // Content
         let content = UNMutableNotificationContent()
         content.title = "New Chapters Available"
-        content.body = "\(count) New Update\(count == 1 ? "" : "s") in your library"
+        content.body = "^[\(count) Update](inflect: true) in your library"
         let currentBadgeCount = UIApplication.shared.applicationIconBadgeNumber
         content.badge = (count + currentBadgeCount) as NSNumber
         content.sound = UNNotificationSound.default
@@ -30,6 +31,7 @@ class STTNotifier {
         center.add(request)
     }
 
+    @MainActor
     func clearBadge() {
         UIApplication.shared.applicationIconBadgeNumber = 0
     }

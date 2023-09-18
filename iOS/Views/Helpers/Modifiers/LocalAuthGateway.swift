@@ -10,7 +10,6 @@ import SwiftUI
 struct LocalAuthGateway: ViewModifier {
     @StateObject var manager = LocalAuthManager.shared
     @AppStorage(STTKeys.LibraryAuth) var protectContent = false
-    var edges = KEY_WINDOW?.safeAreaInsets
 
     func body(content: Content) -> some View {
         content
@@ -45,9 +44,16 @@ struct LocalAuthGateway: ViewModifier {
                 manager.verify()
             }
     }
+
+    @MainActor
+    private var edges: UIEdgeInsets? {
+        let window = getKeyWindow()
+        return window?.safeAreaInsets
+    }
 }
 
 extension View {
+    @MainActor
     func protectContent() -> some View {
         modifier(LocalAuthGateway())
     }

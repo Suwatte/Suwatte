@@ -35,7 +35,8 @@ struct LogsView: View {
                     Button {
                         let activityController = UIActivityViewController(activityItems: [logger.file],
                                                                           applicationActivities: nil)
-                        KEY_WINDOW?
+                        let window = getKeyWindow()
+                        window?
                             .rootViewController!
                             .present(activityController, animated: true, completion: nil)
                     } label: {
