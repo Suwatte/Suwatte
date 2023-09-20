@@ -8,32 +8,31 @@
 import RealmSwift
 
 extension RealmActor {
-    func storeContent(_ content: StoredContent) async {
-        do {
-            try await realm.asyncWrite {
-                realm.add(content, update: .modified)
-            }
-        } catch {
-            Logger.shared.error(error, "RealmActor")
-        }
-    }
 
-    func getStoredContent(_ sourceId: String, _ contentId: String) -> StoredContent? {
+    private func getStoredContent(_ sourceId: String, _ contentId: String) -> StoredContent? {
         let identifier = ContentIdentifier(contentId: contentId, sourceId: sourceId).id
         return getObject(of: StoredContent.self, with: identifier)
     }
 
-    func getStoredContent(_ id: String) -> StoredContent? {
+    internal func getStoredContent(_ id: String) -> StoredContent? {
         getObject(of: StoredContent.self, with: id)
     }
+}
 
-    func getStoredContents(ids: [String]) -> Results<StoredContent> {
-        return realm
-            .objects(StoredContent.self)
-            .filter("id IN %@", ids)
-            .sorted(by: \.title, ascending: true)
+extension RealmActor {
+    func getDSKContent(_ id: String) -> DSKCommon.Content? {
+        try? getObject(of: StoredContent.self, with: id)?
+            .toDSKContent()
     }
-
+    
+    func getFrozenContent(_ id: String) -> StoredContent? {
+        getStoredContent(id)?.freeze()
+    }
+    
+    func isContentSaved(_ id: String) -> Bool {
+        return getStoredContent(id) != nil
+    }
+    
     func refreshStored(contentId: String, sourceId: String) async {
         guard let source = await DSK.shared.getSource(id: sourceId) else {
             return
@@ -51,6 +50,16 @@ extension RealmActor {
         guard let target else { return }
         await operation {
             target.streamable = value
+        }
+    }
+    
+    func storeContent(_ content: StoredContent) async {
+        do {
+            try await realm.asyncWrite {
+                realm.add(content, update: .modified)
+            }
+        } catch {
+            Logger.shared.error(error, "RealmActor")
         }
     }
 }

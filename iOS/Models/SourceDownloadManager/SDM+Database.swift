@@ -36,8 +36,7 @@ extension SDM {
         let collection = realm
             .objects(SourceDownload.self)
             .where { $0.id.in(ids) }
-
-        try! realm.safeWrite {
+        try! await realm.asyncWrite {
             for download in collection {
                 download.status = status
             }
@@ -85,7 +84,7 @@ extension SDM {
             }
 
         // Update in DB
-        try! realm.safeWrite {
+        try! await realm.asyncWrite {
             realm.add(downloads, update: .modified)
         }
         if queue.isEmpty {
@@ -127,7 +126,9 @@ extension SDM {
     }
 
     func finished(_ id: String, url: URL) async {
-        let target = await get(id)
+        let realm = await getRealmActor()
+        let target = realm
+            .object(ofType: SourceDownload.self, forPrimaryKey: id)
         guard let target else {
             Logger.shared.warn("Trying to update a download that does not exist (\(id))", CONTEXT)
             return
@@ -135,8 +136,7 @@ extension SDM {
 
         // Point Archive
         if url.isFileURL, !url.hasDirectoryPath {
-            let realm = await getRealmActor()
-            try! realm.safeWrite {
+            try! await realm.asyncWrite {
                 target.archive = url.lastPathComponent
             }
         }
@@ -181,7 +181,7 @@ extension SDM {
             .objects(SourceDownload.self)
             .where { $0.id.in(ids) }
 
-        try! realm.safeWrite {
+        try! await realm.asyncWrite {
             realm.delete(targets)
         }
     }
@@ -202,13 +202,13 @@ extension SDM {
     func setText(_ id: String, _ text: String) async {
         let download = await get(id)
 
-        guard let download else {
+        guard let download = download?.thaw() else {
             Logger.shared.warn("Trying to update a download that does not exist (\(id))", CONTEXT)
             return
         }
 
         let realm = await getRealmActor()
-        try! realm.safeWrite {
+        try! await realm.asyncWrite {
             download.text = text
         }
     }

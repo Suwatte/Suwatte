@@ -43,7 +43,7 @@ extension PanelActor {
 }
 
 extension PanelActor {
-    private func prepareProcessors(for data: PageData) -> [ImageProcessing] {
+    private func prepareProcessors(for data: PageData) async -> [ImageProcessing] {
         let page = data.page
         let size = data.size
         var processors = [ImageProcessing]()
@@ -63,9 +63,9 @@ extension PanelActor {
 
         if downSampleImage || page.isLocal { // Always Downsample Local Images
             if data.fitToWidth {
-                processors.append(NukeDownsampleProcessor(width: size.width))
+                processors.append(NukeDownsampleProcessor(width: size.width, scale: await UIScreen.main.scale))
             } else {
-                processors.append(NukeDownsampleProcessor(size: size))
+                processors.append(NukeDownsampleProcessor(size: size, scale: await UIScreen.main.scale))
             }
         } else {
             if data.fitToWidth {
@@ -146,11 +146,11 @@ extension PanelActor {
     private func loadImageFromNetwork(_ url: URL, _ data: PageData) async throws -> ImageRequest {
         let request = try await prepareImageURL(url, data)
         try Task.checkCancellation()
-        return ImageRequest(urlRequest: request, processors: prepareProcessors(for: data))
+        return ImageRequest(urlRequest: request, processors: await prepareProcessors(for: data))
     }
 
     private func loadImageFromDownloadFolder(_ url: URL, _ data: PageData) async throws -> ImageRequest {
-        let request = ImageRequest(url: url, processors: prepareProcessors(for: data), options: .disableDiskCache)
+        let request = ImageRequest(url: url, processors: await prepareProcessors(for: data), options: .disableDiskCache)
         return request
     }
 
@@ -165,7 +165,7 @@ extension PanelActor {
             return data
         }
         request.options = .disableDiskCache
-        request.processors = prepareProcessors(for: data)
+        request.processors = await prepareProcessors(for: data)
 
         return request
     }
@@ -176,7 +176,7 @@ extension PanelActor {
         }
 
         request.options = .disableDiskCache
-        request.processors = prepareProcessors(for: data)
+        request.processors = await prepareProcessors(for: data)
         return request
     }
 }

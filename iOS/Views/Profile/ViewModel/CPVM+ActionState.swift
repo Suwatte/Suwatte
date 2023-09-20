@@ -26,7 +26,7 @@ extension ViewModel {
         let actor = await RealmActor.shared()
 
         let marker = await actor
-            .getContentMarker(for: identifier)
+            .getFrozenContentMarker(for: identifier)
 
         _ = STTHelpers.getReadingMode(for: identifier) // To Update Reading Mode
 

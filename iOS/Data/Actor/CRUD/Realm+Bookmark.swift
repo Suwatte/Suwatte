@@ -11,7 +11,7 @@ import UIKit
 
 extension RealmActor {
     func addBookmark(for chapter: ThreadSafeChapter, at page: Int, with image: UIImage, on offset: Double? = nil) async -> Bool {
-        let processor = await NukeDownsampleProcessor(width: UIScreen.main.bounds.width / 2)
+        let processor = await NukeDownsampleProcessor(width: UIScreen.main.bounds.width / 2, scale: await UIScreen.main.scale)
         let processedImage = processor.process(image)
 
         guard let data = processedImage?.pngData() ?? image.pngData() ?? image.jpegData(compressionQuality: 1) else {
@@ -38,7 +38,7 @@ extension RealmActor {
             reference?.opds = content
         default:
             reference = chapter.toStored().generateReference()
-            reference?.content = getStoredContent(chapter.STTContentIdentifier)
+            reference?.content = getObject(of: StoredContent.self, with: chapter.STTContentIdentifier)
         }
 
         guard let reference, reference.isValid else {

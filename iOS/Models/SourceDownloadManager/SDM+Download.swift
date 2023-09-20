@@ -273,8 +273,8 @@ extension SDM {
     private func prepareComicInfo(for id: String) async -> String? {
         let actor = await RealmActor.shared()
         let identifier = parseID(id)
-        let content = await actor.getStoredContent(identifier.source, identifier.content)
-        let chapter = await actor.getStoredChapter(id)
+        let content = await actor.getFrozenContent(id)
+        let chapter = await actor.getFrozenChapter(id)
         guard let content, let chapter else { return nil }
         let appVersion = Bundle.main.releaseVersionNumber ?? "0.0.0"
         let components = Calendar.current.dateComponents([.year, .month, .day], from: chapter.date)

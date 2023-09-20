@@ -88,7 +88,7 @@ extension BookmarksView {
                 if loader.image != nil { return }
                 loader.priority = .normal
                 loader.transaction = .init(animation: .easeInOut(duration: 0.25))
-                loader.processors = [NukeDownsampleProcessor(size: size)]
+                loader.processors = [NukeDownsampleProcessor(size: size, scale: UIScreen.main.scale)]
 
                 guard let imageData = page.asset?.storedData() else { return }
                 let request = ImageRequest(id: "bookmark::\(page.id)") {

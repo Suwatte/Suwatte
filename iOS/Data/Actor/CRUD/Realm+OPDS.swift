@@ -40,7 +40,7 @@ extension RealmActor {
     func getPublication(id: String) -> StreamableOPDSContent? {
         let target = getObject(of: StreamableOPDSContent.self, with: id)
 
-        return target
+        return target?.freeze()
     }
 
     func getPublicationPageCount(id: String) -> Int? {

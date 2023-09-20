@@ -89,14 +89,17 @@ extension StateManager {
         // Save Content, if not saved
         let highlight = context.content
         let streamable = highlight.canStream
+        
+        
 
         let actor = await RealmActor.shared()
-
-        let target = await actor.getStoredContent(ContentIdentifier(contentId: highlight.id, sourceId: source).id)?.freeze()
+        let id = ContentIdentifier(contentId: highlight.id, sourceId: source).id
+        let isSaved = await actor.isContentSaved(id)
+        
 
         // Target Title is already in the db, Just update the streamble flag
-        if let target, target.streamable != streamable {
-            await actor.updateStreamable(id: target.id, streamable)
+        if isSaved {
+            await actor.updateStreamable(id: id, streamable)
         } else {
             // target title not saved to db, save
             let content = highlight.toStored(sourceId: source)

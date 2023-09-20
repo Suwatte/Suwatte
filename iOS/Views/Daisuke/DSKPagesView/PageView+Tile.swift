@@ -208,25 +208,10 @@ extension PageViewTile {
                 .padding()
             }
             .animation(.default, value: loader.image)
-            .animation(.default, value: currentImageIndex)
-            .animation(.default, value: endColor)
-            .onChange(of: currentImageIndex, perform: { _ in
-                Task {
-                    guard let url = urls.get(index: currentImageIndex) else { return }
-                    await load(url: url)
-                }
-            })
             .cornerRadius(5)
             .task {
                 await setup()
             }
-            .onDisappear(perform: timer?.invalidate)
-            .onAppear {
-                prefetcher.startPrefetching(with: urls)
-            }
-            .onDisappear(perform: {
-                prefetcher.stopPrefetching(with: urls)
-            })
             .animation(.easeOut(duration: 0.25), value: loader.image)
             .animation(.easeOut(duration: 0.25), value: loader.isLoading)
         }
@@ -258,26 +243,9 @@ extension PageViewTile {
         func setup() async {
             // Update Loader
             loader.transaction = .init(animation: .easeInOut(duration: 0.25))
-            loader.onCompletion = { response in
-                guard let response = try? response.get() else {
-                    return
-                }
-            }
             await load(url: urls.first)
             
             guard urls.count > 1 else { return }
-            
-            timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
-                Task { @MainActor in
-                    withAnimation {
-                        if covers.indices.contains(currentImageIndex + 1) {
-                            currentImageIndex += 1
-                        } else {
-                            currentImageIndex = 0
-                        }
-                    }
-                }
-            }
         }
     }
 }

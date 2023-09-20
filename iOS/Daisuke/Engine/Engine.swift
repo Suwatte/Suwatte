@@ -377,8 +377,9 @@ extension DaisukeEngine {
     func getActiveTrackers() async -> [AnyContentTracker] {
         let actor = await RealmActor.shared()
         let runners = await actor.getEnabledRunners(for: .tracker).map(\.id)
+        
 
-        let trackers = await withTaskGroup(of: AnyContentTracker?.self, body: { group in
+        let trackers = await withTaskGroup(of: AnyContentTracker?.self, body: { [runners] group in
             for runner in runners {
                 group.addTask {
                     await self.getTracker(id: runner)

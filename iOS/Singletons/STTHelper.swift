@@ -39,7 +39,7 @@ class STTHelpers {
 
     static func getInitialPanelPosition(for id: String, chapterId: String, limit: Int) async -> (Int, CGFloat?) {
         let actor = await RealmActor.shared()
-        let marker = await actor.getContentMarker(for: id)
+        let marker = await actor.getFrozenContentMarker(for: id)
         guard let marker, let chapter = marker.currentChapter else {
             return (0, nil) // No Marker, Start from beginning
         }

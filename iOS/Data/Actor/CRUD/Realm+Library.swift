@@ -8,7 +8,7 @@ import Foundation
 import RealmSwift
 
 extension RealmActor {
-    func getLibraryEntry(for id: String) -> LibraryEntry? {
+    private func getLibraryEntry(for id: String) -> LibraryEntry? {
         getObject(of: LibraryEntry.self, with: id)
     }
 
@@ -96,7 +96,7 @@ extension RealmActor {
                 }
             }
             // In Library, delete object
-            try! realm.safeWrite {
+            await operation {
                 target.isDeleted = true
             }
             return false
@@ -104,7 +104,7 @@ extension RealmActor {
 
         // Add To library
         let unread = getUnreadCount(for: .init(contentId: ids.contentId, sourceId: ids.sourceId))
-        try! realm.safeWrite {
+        await operation {
             let obj = LibraryEntry()
             obj.content = getStoredContent(ids.id)
             // Update Dates

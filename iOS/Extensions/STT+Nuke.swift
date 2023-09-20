@@ -115,14 +115,17 @@ struct NukeWhitespaceProcessor: ImageProcessing, Hashable {
 struct NukeDownsampleProcessor: ImageProcessing, Hashable {
     private let width: CGFloat
     private let height: CGFloat
-    init(width: CGFloat) {
+    private let scale: CGFloat
+    init(width: CGFloat, scale: CGFloat) {
         self.width = width
         height = .infinity
+        self.scale = scale
     }
 
-    init(size: CGSize) {
+    init(size: CGSize, scale: CGFloat) {
         width = size.width
         height = size.height
+        self.scale = scale
     }
 
     func process(_ image: Nuke.PlatformImage) -> Nuke.PlatformImage? {
@@ -157,7 +160,7 @@ struct NukeDownsampleProcessor: ImageProcessing, Hashable {
             return nil
         }
 
-        let maxDimensionInPixels = max(size.width, size.height) * UIScreen.main.scale
+        let maxDimensionInPixels = max(size.width, size.height) * scale
         let downsampleOptions: [CFString: Any] = [
             kCGImageSourceCreateThumbnailFromImageAlways: true,
             kCGImageSourceShouldCacheImmediately: true,

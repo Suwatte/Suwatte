@@ -124,12 +124,10 @@ extension DirectoryView {
 
     var LoadableResultsView: some View {
         LoadableView(load, $model.result) { value in
-            ZStack {
-                if value.isEmpty {
-                    NoResultsView()
-                } else {
-                    ResultsView(entries: value, builder: content)
-                }
+            if value.isEmpty {
+                NoResultsView()
+            } else {
+                ResultsView(entries: value, builder: content)
             }
         }
     }

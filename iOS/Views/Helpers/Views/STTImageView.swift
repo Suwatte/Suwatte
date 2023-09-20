@@ -50,7 +50,7 @@ struct STTImageView: View {
         if loader.image != nil { return }
         loader.priority = .normal
         loader.transaction = .init(animation: .easeInOut(duration: 0.25))
-        loader.processors = [NukeDownsampleProcessor(size: size)]
+        loader.processors = [NukeDownsampleProcessor(size: size, scale: UIScreen.main.scale)]
 
         guard let url, url.isHTTP || url.isFileURL else { return }
 
@@ -142,7 +142,7 @@ struct BaseImageView: View {
 
     func load(_ size: CGSize, _ url: URL?) async {
         if loader.image != nil { return }
-        loader.processors = [NukeDownsampleProcessor(size: size)]
+        loader.processors = [NukeDownsampleProcessor(size: size, scale: UIScreen.main.scale)]
         loader.transaction = .init(animation: .easeInOut(duration: 0.25))
         loader.priority = .normal
         loader.onCompletion = onImageEvent

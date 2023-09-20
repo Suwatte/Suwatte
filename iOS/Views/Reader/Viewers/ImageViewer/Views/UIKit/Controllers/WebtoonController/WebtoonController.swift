@@ -199,10 +199,10 @@ extension Controller: ASCollectionDelegate {
 
         switch item {
         case let .page(page):
-            return { [weak self] in
+            return { [resumptionPosition, weak self] in
                 let node = ImageNode(page: page)
                 node.delegate = self
-                guard let pending = self?.resumptionPosition,
+                guard let pending = resumptionPosition,
                       pending.0 == indexPath.item
                 else {
                     return node

@@ -42,6 +42,10 @@ extension RealmActor {
     func getRunner(_ id: String) -> StoredRunnerObject? {
         getObject(of: StoredRunnerObject.self, with: id)
     }
+    
+    func getRunnerName(for id : String) -> String? {
+        getRunner(id)?.name
+    }
 
     func saveRunner(_ runner: AnyRunner, listURL: URL? = nil, url: URL) async {
         let obj = getRunner(runner.id) ?? StoredRunnerObject()
@@ -103,7 +107,7 @@ extension RealmActor {
         return Dictionary(uniqueKeysWithValues: kvSq)
     }
 
-    func getSavedAndEnabledSources() -> Results<StoredRunnerObject> {
+    private func getSavedAndEnabledSources() -> Results<StoredRunnerObject> {
         realm
             .objects(StoredRunnerObject.self)
             .where { $0.enabled == true && $0.isDeleted == false && $0.environment == .source }
@@ -134,11 +138,13 @@ extension RealmActor {
             .map { $0.freeze() }
     }
 
-    func getEnabledRunners(for environment: RunnerEnvironment) -> Results<StoredRunnerObject> {
+    func getEnabledRunners(for environment: RunnerEnvironment) -> [StoredRunnerObject] {
         realm
             .objects(StoredRunnerObject.self)
             .where { $0.enabled == true && $0.isDeleted == false && $0.environment == environment }
             .sorted(by: [SortDescriptor(keyPath: "name", ascending: true)])
+            .freeze()
+            .toArray()
     }
 
     func getRunnerLists() -> [StoredRunnerList] {

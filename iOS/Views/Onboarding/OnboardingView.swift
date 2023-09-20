@@ -196,9 +196,11 @@ struct OnboardingAddRunnersView: View {
                 .font(.subheadline.weight(.light))
 
             LoadableView(load, $loadable) { runnerList in
-                ForEach(runnerList.runners) { runner in
-                    RunnerListsView.RunnerListInfo.RunnerListCell(listURL: COMMUNITY_LIST_URL, list: runnerList, runner: runner)
-                        .frame(height: 60)
+                VStack {
+                    ForEach(runnerList.runners) { runner in
+                        RunnerListsView.RunnerListInfo.RunnerListCell(listURL: COMMUNITY_LIST_URL, list: runnerList, runner: runner)
+                            .frame(height: 60)
+                    }
                 }
             }
 
