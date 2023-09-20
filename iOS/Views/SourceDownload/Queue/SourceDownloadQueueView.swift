@@ -104,18 +104,13 @@ extension SDQV {
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .lineLimit(2)
-                    Text(subheadline)
+                    Text("^[\(downloads.count) Chapter](inflect: true) Queued")
                         .font(.footnote)
                         .fontWeight(.light)
                 }
                 Spacer()
                 HeaderActionButton(ids: ids, statuses: statuses)
             }
-        }
-
-        var subheadline: String {
-            let count = downloads.count
-            return "^[\(count) Chapter](inflect: true) Queued"
         }
 
         var ids: [String] {
@@ -334,15 +329,14 @@ extension SDQV {
 
         func CellHeader(_ content: StoredContent, _: StoredChapter) -> some View {
             HStack(alignment: .center, spacing: 5) {
-                STTImageView(url: URL(string: content.cover), identifier: content.ContentIdentifier)
-                    .frame(width: 60, height: 1.5 * 60)
-                    .cornerRadius(7)
-                VStack(alignment: .leading) {
+                HStack(alignment: .top) {
+                    STTImageView(url: URL(string: content.cover), identifier: content.ContentIdentifier)
+                        .frame(width: 60, height: 1.5 * 60)
+                        .cornerRadius(7)
                     Text(content.title)
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .lineLimit(2)
-                    Spacer()
                 }
                 Spacer()
                 StateView(downloadState!)
@@ -377,17 +371,20 @@ extension SDQV {
         func Cell(_ download: SourceDownload, state _: SDM.DownloadState) -> some View {
             let content = download.content!
             let chapter = download.chapter!
-
-            CellHeader(content, chapter)
-            ChapterListTile(chapter: chapter.toThreadSafe(),
-                            isCompleted: false,
-                            isNewChapter: false,
-                            progress: nil,
-                            download: nil,
-                            isLinked: false,
-                            showLanguageFlag: false,
-                            showDate: false,
-                            isBookmarked: false)
+            
+            VStack {
+                CellHeader(content, chapter)
+                ChapterListTile(chapter: chapter.toThreadSafe(),
+                                isCompleted: false,
+                                isNewChapter: false,
+                                progress: nil,
+                                download: nil,
+                                isLinked: false,
+                                showLanguageFlag: false,
+                                showDate: false,
+                                isBookmarked: false)
+            }
+            
         }
     }
 }

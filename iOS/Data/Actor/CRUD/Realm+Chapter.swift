@@ -17,7 +17,7 @@ extension RealmActor {
 }
 
 extension RealmActor {
-    func validateChapterReference(id: String) async {
+    internal func validateChapterReference(id: String) async {
         let target = realm
             .objects(ChapterReference.self)
             .where { $0.id == id && $0.isDeleted == false }
@@ -51,9 +51,31 @@ extension RealmActor {
             target.isDeleted = true
         }
     }
+    
+    private func getStoredChapter(_ id: String) -> StoredChapter? {
+        return realm.object(ofType: StoredChapter.self, forPrimaryKey: id)
+    }
+
+
 }
 
 extension RealmActor {
+    func getLatestStoredChapter(_ sourceId: String, _ contentId: String) -> StoredChapter? {
+        let chapter = realm
+            .objects(StoredChapter.self)
+            .where { $0.contentId == contentId }
+            .where { $0.sourceId == sourceId }
+            .sorted(by: \.index, ascending: true)
+            .first?
+            .freeze()
+
+        return chapter
+    }
+    
+    func getFrozenChapter(_ id: String) -> StoredChapter? {
+        getStoredChapter(id)?.freeze()
+    }
+    
     func getChapters(_ source: String, content: String) -> [StoredChapter] {
         realm.objects(StoredChapter.self)
             .where { $0.contentId == content }
@@ -61,21 +83,6 @@ extension RealmActor {
             .sorted(by: \.index, ascending: true)
             .freeze()
             .toArray()
-    }
-
-    func getStoredChapter(_ id: String) -> StoredChapter? {
-        return realm.object(ofType: StoredChapter.self, forPrimaryKey: id)
-    }
-
-    func getLatestStoredChapter(_ sourceId: String, _ contentId: String) -> StoredChapter? {
-        let chapter = realm
-            .objects(StoredChapter.self)
-            .where { $0.contentId == contentId }
-            .where { $0.sourceId == sourceId }
-            .sorted(by: \.index, ascending: true)
-            .first
-
-        return chapter
     }
 
     func storeChapters(_ chapters: [StoredChapter]) async {

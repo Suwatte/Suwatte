@@ -27,7 +27,7 @@ public class JSCRunner: DSKRunner, JSCContextWrapper {
 
         if let customID {
             let actor = await RealmActor.shared()
-            customName = await actor.getRunner(customID)?.name
+            customName = await actor.getRunnerName(for: customID)
             object.context.evaluateScript("RunnerObject.info.id = '\(customID)';IDENTIFIER = '\(customID)'")
         }
 

@@ -42,8 +42,9 @@ extension RealmActor {
 
     func addToReadLater(_ sourceID: String, _ contentID: String) async {
         // Get Stored Content
+        let id = ContentIdentifier(contentId: contentID, sourceId: sourceID).id
 
-        let content = getStoredContent(sourceID, contentID)
+        let content = getObject(of: StoredContent.self, with: id)
 
         guard let content else {
             await queryAndSaveForLater(sourceID, contentID)

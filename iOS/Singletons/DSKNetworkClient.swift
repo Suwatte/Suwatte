@@ -12,13 +12,14 @@ import Alamofire
 
 final class DSKNetworkClient {
     static let shared = DSKNetworkClient()
+    private let session: Session
     
-    lazy var session: Alamofire.Session = {
+    init() {
         let configuration = URLSessionConfiguration.af.default
         configuration.httpCookieStorage = HTTPCookieStorage.shared
         configuration.headers.add(.userAgent(Preferences.standard.userAgent))
-        return .init(configuration: configuration)
-    }()
+        self.session = .init(configuration: configuration)
+    }
     
     func makeRequest(with request: DSKCommon.Request) async throws -> DSKCommon.Response {
         let urlRequest = try request.toURLRequest()

@@ -74,7 +74,7 @@ extension RealmActor {
 
         var runnerMap: [StoredRunnerObject: Int] = [:]
 
-        let runners = getSavedAndEnabledSources().freeze().toArray()
+        let runners = getSavedAndEnabledSources()
 
         for source in runners {
             let sourceID = source.id
@@ -174,7 +174,7 @@ extension RealmActor {
 }
 
 extension RealmActor {
-    func getStatsObject() async -> UserReadingStatistic {
+    private func getStatsObject() async -> UserReadingStatistic {
         let target = realm
             .object(ofType: UserReadingStatistic.self, forPrimaryKey: "default")
 

@@ -26,8 +26,8 @@ extension DSKPageView {
         }
 
         var body: some View {
-            ASCollectionView(sections: self.sections)
-                .layout(self.layout)
+            ASCollectionView(sections: sections)
+                .layout(layout)
                 .onPullToRefresh { endRefreshing in
                     model.loadable = .idle
                     endRefreshing()
@@ -40,8 +40,6 @@ extension DSKPageView {
                 .onChange(of: tileStyle) { _ in } // Triggers view Update when key is updated
                 .onChange(of: PortraitPerRow, perform: { _ in })
                 .onChange(of: LSPerRow, perform: { _ in })
-                .onChange(of: model.errors, perform: { _ in })
-                .onChange(of: model.loadables, perform: { _ in })
         }
     }
 }
@@ -229,17 +227,9 @@ extension DSKPageView.CollectionView {
 
     func LoadingSection(_ section: DSKCommon.PageSection) -> ASCollectionViewSection<String> {
         ASCollectionViewSection(id: section.id, data: DSKCommon.Highlight.placeholders()) { data, _ in
-            PageViewTile(runnerID: runner.id,
-                         id: data.id,
-                         title: data.title,
-                         subtitle: data.subtitle,
-                         cover: data.cover,
-                         additionalCovers: [],
-                         info: data.info,
-                         badge: data.badge)
+            Color.gray.opacity(0.25)
                 .environment(\.pageSectionStyle, section.sectionStyle)
                 .redacted(reason: .placeholder)
-                .shimmering()
         }
         .sectionHeader {
             buildHeader(section.title,

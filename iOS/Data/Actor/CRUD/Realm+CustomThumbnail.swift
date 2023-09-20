@@ -30,7 +30,7 @@ extension RealmActor {
     }
 
     func removeCustomThumbnail(id: String) async {
-        guard let target = getCustomThumb(id: id) else {
+        guard let target = getObject(of: CustomThumbnail.self, with: id) else {
             return
         }
         await operation {
@@ -39,6 +39,6 @@ extension RealmActor {
     }
 
     func getCustomThumb(id: String) -> CustomThumbnail? {
-        getObject(of: CustomThumbnail.self, with: id)
+        getObject(of: CustomThumbnail.self, with: id)?.freeze()
     }
 }

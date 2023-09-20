@@ -9,11 +9,16 @@ import Foundation
 import RealmSwift
 
 extension RealmActor {
-    func getContentMarker(for id: String) -> ProgressMarker? {
+    internal func getContentMarker(for id: String) -> ProgressMarker? {
         return getObject(of: ProgressMarker.self, with: id)
     }
+    
+    func getFrozenContentMarker(for id: String) -> ProgressMarker? {
+        return getContentMarker(for: id)?.freeze()
+    }
+    
 
-    func getLatestLinkedMarker(for id: String) -> ProgressMarker? {
+    private func getLatestLinkedMarker(for id: String) -> ProgressMarker? {
         let maxedMarker = getLinkedContent(for: id)
             .map { getContentMarker(for: $0.id) }
             .appending(getContentMarker(for: id))

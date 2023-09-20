@@ -112,7 +112,7 @@ extension IVDataCache {
         switch chapter.chapterType {
         case .LOCAL:
             let id = chapter.contentId
-            let archivedContent = await actor.getArchivedcontentInfo(id)
+            let archivedContent = await actor.getArchivedContentInfo(id)
 
             guard let archivedContent else {
                 throw DSK.Errors.NamedError(name: "DataLoader", message: "Failed to locate archive information")

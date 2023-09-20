@@ -169,7 +169,7 @@ extension ChapterList {
         Task {
             let actor = await RealmActor.shared()
             let maxRead = await actor
-                .getContentMarker(for: identifier)?
+                .getFrozenContentMarker(for: identifier)?
                 .readChapters
                 .max()
             guard let maxRead else { return }

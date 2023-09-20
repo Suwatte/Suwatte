@@ -59,7 +59,7 @@ struct STTThumbView: View {
             }
             .task {
                 guard imageFetcher.image == nil else { return }
-                imageFetcher.processors = [NukeDownsampleProcessor(size: proxy.size)]
+                imageFetcher.processors = [NukeDownsampleProcessor(size: proxy.size, scale: UIScreen.main.scale)]
                 load()
             }
             .onDisappear {

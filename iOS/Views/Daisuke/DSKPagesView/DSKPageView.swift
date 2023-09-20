@@ -41,6 +41,7 @@ extension DSKPageView {
 
         func load() async throws -> [DSKCommon.PageSection] {
             let data: [DSKCommon.PageSection] = try await runner.getSectionsForPage(link: link) // Load Page
+                        
             if !data.allSatisfy({ $0.items != nil }) {
                 try await runner.willResolveSectionsForPage(link: link) // Tell Runner that suwatte will begin resolution of page sections
             }

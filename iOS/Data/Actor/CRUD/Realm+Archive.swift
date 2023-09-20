@@ -26,7 +26,7 @@ extension RealmActor {
         }
     }
 
-    func getArchivedcontentInfo(_ id: String) -> ArchivedContent? {
-        return getObject(of: ArchivedContent.self, with: id)
+    func getArchivedContentInfo(_ id: String) -> ArchivedContent? {
+        return getObject(of: ArchivedContent.self, with: id)?.freeze()
     }
 }

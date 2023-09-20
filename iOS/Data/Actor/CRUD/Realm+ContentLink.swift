@@ -76,7 +76,10 @@ extension RealmActor {
         if removeQuery {
             arr.removeAll(where: { $0 == id })
         }
-        let contents = getStoredContents(ids: arr)
+        let contents = realm
+            .objects(StoredContent.self)
+            .filter("id IN %@", ids)
+            .sorted(by: \.title, ascending: true)
             .freeze()
             .toArray()
 

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C3423ED4E5A2EFB664586F1B /* Pods_Suwatte__iOS_.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C120369C705B6397F32D3640 /* Pods_Suwatte__iOS_.framework */; };
 		DF01DEEA2A587A5D0025700B /* Engine+LibraryUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF01DEE92A587A5D0025700B /* Engine+LibraryUpdate.swift */; };
 		DF01DEEC2A587A680025700B /* Engine+URLHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF01DEEB2A587A680025700B /* Engine+URLHandler.swift */; };
 		DF020A442A89A07C00BC5562 /* ArchiveHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A432A89A07C00BC5562 /* ArchiveHelper.swift */; };
@@ -418,6 +417,7 @@
 		DFDBF9F42A7DD588006D49AD /* ImageViewer+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFDBF9F32A7DD588006D49AD /* ImageViewer+ViewModel.swift */; };
 		DFDBF9F62A7DF79A006D49AD /* IV+Modifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFDBF9F52A7DF79A006D49AD /* IV+Modifiers.swift */; };
 		DFDBF9F82A7E2088006D49AD /* IV+ZoomingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFDBF9F72A7E2088006D49AD /* IV+ZoomingScrollView.swift */; };
+		DFDD612F2ABBB43E0038E0FF /* AsyncDisplayKit in Frameworks */ = {isa = PBXBuildFile; productRef = DFDD612E2ABBB43E0038E0FF /* AsyncDisplayKit */; };
 		DFE1B0F42A9A58DD00D300DB /* ChapterList+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B0F32A9A58DD00D300DB /* ChapterList+Helpers.swift */; };
 		DFE1B0F62A9A590100D300DB /* ChapterList+Methods.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B0F52A9A590100D300DB /* ChapterList+Methods.swift */; };
 		DFE1B0F82A9A598300D300DB /* ChapterList+MenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B0F72A9A598300D300DB /* ChapterList+MenuButton.swift */; };
@@ -482,9 +482,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		4B9078FD307212D843E59BA5 /* Pods-Suwatte (iOS).debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Suwatte (iOS).debug.xcconfig"; path = "Target Support Files/Pods-Suwatte (iOS)/Pods-Suwatte (iOS).debug.xcconfig"; sourceTree = "<group>"; };
-		C120369C705B6397F32D3640 /* Pods_Suwatte__iOS_.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Suwatte__iOS_.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D2C64E4EA8CA62D2029277CC /* Pods-Suwatte (iOS).release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Suwatte (iOS).release.xcconfig"; path = "Target Support Files/Pods-Suwatte (iOS)/Pods-Suwatte (iOS).release.xcconfig"; sourceTree = "<group>"; };
 		DF01DEE92A587A5D0025700B /* Engine+LibraryUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Engine+LibraryUpdate.swift"; sourceTree = "<group>"; };
 		DF01DEEB2A587A680025700B /* Engine+URLHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Engine+URLHandler.swift"; sourceTree = "<group>"; };
 		DF020A432A89A07C00BC5562 /* ArchiveHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ArchiveHelper.swift; path = Shared/ArchiveHelper/ArchiveHelper.swift; sourceTree = SOURCE_ROOT; };
@@ -934,10 +931,10 @@
 				DF482F012955A56F002D3308 /* RealmSwift in Frameworks */,
 				DF0D96062824892C00E592D9 /* Realm in Frameworks */,
 				DFF1043E28A9963D00E2C3A4 /* AnyCodable in Frameworks */,
+				DFDD612F2ABBB43E0038E0FF /* AsyncDisplayKit in Frameworks */,
 				DF70235129DA852A0076AAD0 /* NukeUI in Frameworks */,
 				DF59C97D285004860027F19D /* ZIPFoundation in Frameworks */,
 				DF256AA42AA9028E00F4180B /* IceCream in Frameworks */,
-				C3423ED4E5A2EFB664586F1B /* Pods_Suwatte__iOS_.framework in Frameworks */,
 				DF9041A42AA3E7E600B72ACC /* ReadiumOPDS in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -955,19 +952,9 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		507945510A6FB586593003D5 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				4B9078FD307212D843E59BA5 /* Pods-Suwatte (iOS).debug.xcconfig */,
-				D2C64E4EA8CA62D2029277CC /* Pods-Suwatte (iOS).release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		7660DF769E63B9C1CCADAEB4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C120369C705B6397F32D3640 /* Pods_Suwatte__iOS_.framework */,
 				DF9BFDFD2A4285BC005D0B63 /* QuickLookThumbnailing.framework */,
 			);
 			name = Frameworks;
@@ -1221,7 +1208,6 @@
 				DF83DD3F282321690021575B /* Packages */,
 				DF8D09DF2800EE47003E4C3E /* iOS */,
 				DFCE6EAF280108EA002E220C /* Suwatte.app */,
-				507945510A6FB586593003D5 /* Pods */,
 				DF9BFDFF2A4285BC005D0B63 /* ThumbnailProvider */,
 				7660DF769E63B9C1CCADAEB4 /* Frameworks */,
 				DF9BFDFC2A4285BC005D0B63 /* ThumbnailProvider.appex */,
@@ -2504,11 +2490,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DF2DA71D27CD82450046FE20 /* Build configuration list for PBXNativeTarget "Suwatte (iOS)" */;
 			buildPhases = (
-				A8FB08FBBCE6A29258707CA7 /* [CP] Check Pods Manifest.lock */,
 				DF2DA70827CD82450046FE20 /* Sources */,
 				DF2DA70927CD82450046FE20 /* Frameworks */,
 				DF2DA70A27CD82450046FE20 /* Resources */,
-				A57CBAA4DB04228A2BAA6D10 /* [CP] Embed Pods Frameworks */,
 				DF9BFE092A4285BC005D0B63 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
@@ -2535,6 +2519,7 @@
 				DF9041A32AA3E7E600B72ACC /* ReadiumOPDS */,
 				DFF4351D2AA6D09800FAAD8B /* Zephyr */,
 				DF256AA32AA9028E00F4180B /* IceCream */,
+				DFDD612E2ABBB43E0038E0FF /* AsyncDisplayKit */,
 			);
 			productName = "Suwatte (iOS)";
 			productReference = DFCE6EAF280108EA002E220C /* Suwatte.app */;
@@ -2569,7 +2554,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					DF2DA70B27CD82450046FE20 = {
 						CreatedOnToolsVersion = 13.2.1;
@@ -2589,20 +2574,21 @@
 			);
 			mainGroup = DF2DA6FF27CD82430046FE20;
 			packageReferences = (
-				DF2DA77127CF11C50046FE20 /* XCRemoteSwiftPackageReference "Alamofire" */,
-				DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift" */,
-				DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */,
+				DF2DA77127CF11C50046FE20 /* XCRemoteSwiftPackageReference "Alamofire.git" */,
+				DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift.git" */,
+				DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift.git" */,
 				DF59C97B285004850027F19D /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
-				DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar" */,
+				DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar.swift" */,
 				DFF1043C28A9963C00E2C3A4 /* XCRemoteSwiftPackageReference "AnyCodable" */,
-				DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit" */,
-				DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-				DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections" */,
+				DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit.git" */,
+				DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk.git" */,
+				DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections.git" */,
 				DF70234D29DA852A0076AAD0 /* XCRemoteSwiftPackageReference "Nuke" */,
 				DFA17F642A4916C300179850 /* XCRemoteSwiftPackageReference "ASCollectionView" */,
-				DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit" */,
-				DFF4351C2AA6D09800FAAD8B /* XCRemoteSwiftPackageReference "Zephyr" */,
+				DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit.git" */,
+				DFF4351C2AA6D09800FAAD8B /* XCRemoteSwiftPackageReference "Zephyr.git" */,
 				DF256AA22AA9028E00F4180B /* XCRemoteSwiftPackageReference "IceCream" */,
+				DFDD612D2ABBB43E0038E0FF /* XCRemoteSwiftPackageReference "Texture" */,
 			);
 			productRefGroup = DF2DA6FF27CD82430046FE20;
 			projectDirPath = "";
@@ -2638,48 +2624,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		A57CBAA4DB04228A2BAA6D10 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Suwatte (iOS)/Pods-Suwatte (iOS)-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Suwatte (iOS)/Pods-Suwatte (iOS)-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Suwatte (iOS)/Pods-Suwatte (iOS)-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A8FB08FBBCE6A29258707CA7 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Suwatte (iOS)-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		DF2DA70827CD82450046FE20 /* Sources */ = {
@@ -3164,6 +3108,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -3228,6 +3173,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -3247,7 +3193,6 @@
 		};
 		DF2DA71E27CD82450046FE20 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4B9078FD307212D843E59BA5 /* Pods-Suwatte (iOS).debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -3256,13 +3201,14 @@
 				CODE_SIGN_ENTITLEMENTS = "Suwatte (iOS).entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = KL9W2NU9C5;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ./iOS/Resources/SuwatteInfo.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Suwatte;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.books";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Verify Biometrics to Protect Library";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This is required to save images to your device.";
@@ -3295,7 +3241,6 @@
 		};
 		DF2DA71F27CD82450046FE20 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D2C64E4EA8CA62D2029277CC /* Pods-Suwatte (iOS).release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -3303,14 +3248,17 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = "Suwatte (iOS).entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
-				DEVELOPMENT_TEAM = KL9W2NU9C5;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 8;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = KL9W2NU9C5;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ./iOS/Resources/SuwatteInfo.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Suwatte;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.books";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Verify Biometrics to Protect Library";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This is required to save images to your device.";
@@ -3333,6 +3281,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ceres.suwatte;
 				PRODUCT_NAME = Suwatte;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = Dist;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = minimal;
@@ -3355,7 +3304,7 @@
 				INFOPLIST_FILE = ThumbnailProvider/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ThumbnailProvider;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3384,7 +3333,7 @@
 				INFOPLIST_FILE = ThumbnailProvider/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ThumbnailProvider;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3393,6 +3342,7 @@
 				MARKETING_VERSION = 6.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ceres.suwatte.ThumbnailProvider;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -3435,15 +3385,15 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+		DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift.git" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-swift.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 10.42.1;
+				kind = exactVersion;
+				version = 10.42.3;
 			};
 		};
-		DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
+		DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift.git" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
 			requirement = {
@@ -3459,7 +3409,7 @@
 				kind = branch;
 			};
 		};
-		DF2DA77127CF11C50046FE20 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+		DF2DA77127CF11C50046FE20 /* XCRemoteSwiftPackageReference "Alamofire.git" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
 			requirement = {
@@ -3475,7 +3425,7 @@
 				kind = branch;
 			};
 		};
-		DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar" */ = {
+		DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/mtgto/Unrar.swift";
 			requirement = {
@@ -3491,7 +3441,7 @@
 				kind = branch;
 			};
 		};
-		DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit" */ = {
+		DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit.git" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/madebybowtie/FlagKit.git";
 			requirement = {
@@ -3499,7 +3449,7 @@
 				kind = branch;
 			};
 		};
-		DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit" */ = {
+		DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit.git" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/readium/swift-toolkit.git";
 			requirement = {
@@ -3507,7 +3457,7 @@
 				minimumVersion = 2.5.0;
 			};
 		};
-		DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+		DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk.git" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
 			requirement = {
@@ -3523,12 +3473,20 @@
 				kind = branch;
 			};
 		};
-		DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+		DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections.git" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-collections.git";
 			requirement = {
 				branch = main;
 				kind = branch;
+			};
+		};
+		DFDD612D2ABBB43E0038E0FF /* XCRemoteSwiftPackageReference "Texture" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Suwatte/Texture";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.1;
 			};
 		};
 		DFF1043C28A9963C00E2C3A4 /* XCRemoteSwiftPackageReference "AnyCodable" */ = {
@@ -3539,7 +3497,7 @@
 				minimumVersion = 0.6.5;
 			};
 		};
-		DFF4351C2AA6D09800FAAD8B /* XCRemoteSwiftPackageReference "Zephyr" */ = {
+		DFF4351C2AA6D09800FAAD8B /* XCRemoteSwiftPackageReference "Zephyr.git" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ArtSabintsev/Zephyr.git";
 			requirement = {
@@ -3552,12 +3510,12 @@
 /* Begin XCSwiftPackageProductDependency section */
 		DF0D96052824892C00E592D9 /* Realm */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			package = DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift.git" */;
 			productName = Realm;
 		};
 		DF248F0B2813844C00818300 /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift" */;
+			package = DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift.git" */;
 			productName = KeychainSwift;
 		};
 		DF256AA32AA9028E00F4180B /* IceCream */ = {
@@ -3567,12 +3525,12 @@
 		};
 		DF2DA77227CF11C50046FE20 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF2DA77127CF11C50046FE20 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			package = DF2DA77127CF11C50046FE20 /* XCRemoteSwiftPackageReference "Alamofire.git" */;
 			productName = Alamofire;
 		};
 		DF482F002955A56F002D3308 /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			package = DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift.git" */;
 			productName = RealmSwift;
 		};
 		DF59C97C285004860027F19D /* ZIPFoundation */ = {
@@ -3582,7 +3540,7 @@
 		};
 		DF59C987285054670027F19D /* Unrar */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar" */;
+			package = DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar.swift" */;
 			productName = Unrar;
 		};
 		DF70234E29DA852A0076AAD0 /* Nuke */ = {
@@ -3597,22 +3555,22 @@
 		};
 		DF730CD229411F1B00C62C71 /* FlagKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit" */;
+			package = DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit.git" */;
 			productName = FlagKit;
 		};
 		DF9041A12AA3E7E600B72ACC /* R2Shared */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit" */;
+			package = DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit.git" */;
 			productName = R2Shared;
 		};
 		DF9041A32AA3E7E600B72ACC /* ReadiumOPDS */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit" */;
+			package = DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit.git" */;
 			productName = ReadiumOPDS;
 		};
 		DF9BFE242A4295F5005D0B63 /* Unrar */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar" */;
+			package = DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar.swift" */;
 			productName = Unrar;
 		};
 		DF9BFE262A4295FD005D0B63 /* ZIPFoundation */ = {
@@ -3622,7 +3580,7 @@
 		};
 		DF9C9EEF297AE3A9004A3BC5 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk.git" */;
 			productName = FirebaseAnalytics;
 		};
 		DFA17F652A4916C300179850 /* ASCollectionView */ = {
@@ -3632,8 +3590,13 @@
 		};
 		DFB7FB02297B965D00599097 /* OrderedCollections */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections" */;
+			package = DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections.git" */;
 			productName = OrderedCollections;
+		};
+		DFDD612E2ABBB43E0038E0FF /* AsyncDisplayKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DFDD612D2ABBB43E0038E0FF /* XCRemoteSwiftPackageReference "Texture" */;
+			productName = AsyncDisplayKit;
 		};
 		DFF1043D28A9963D00E2C3A4 /* AnyCodable */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -3642,7 +3605,7 @@
 		};
 		DFF4351D2AA6D09800FAAD8B /* Zephyr */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DFF4351C2AA6D09800FAAD8B /* XCRemoteSwiftPackageReference "Zephyr" */;
+			package = DFF4351C2AA6D09800FAAD8B /* XCRemoteSwiftPackageReference "Zephyr.git" */;
 			productName = Zephyr;
 		};
 /* End XCSwiftPackageProductDependency section */
