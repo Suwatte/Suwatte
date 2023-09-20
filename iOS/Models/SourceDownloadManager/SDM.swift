@@ -176,6 +176,7 @@ extension SDM {
         let download = await get(id)?.freeze()
 
         guard let download, download.status == .completed else { return nil }
+        
 
         let data = StoredChapterData()
         data.chapter = download.chapter

@@ -135,7 +135,7 @@ extension SDM {
         }
 
         // Point Archive
-        if url.isFileURL, !url.hasDirectoryPath {
+        if url.isFileURL, !url.isDirectory {
             try! await realm.asyncWrite {
                 target.archive = url.lastPathComponent
             }
@@ -260,5 +260,11 @@ extension SDM {
             .where { $0.id == id && $0.status == .active }
             .first?
             .freeze()
+    }
+}
+
+extension URL {
+    var isDirectory: Bool {
+       (try? resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory == true
     }
 }
