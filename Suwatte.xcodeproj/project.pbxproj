@@ -95,6 +95,7 @@
 		DF2783622A79B1610098BBA9 /* +Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783612A79B1610098BBA9 /* +Content.swift */; };
 		DF2783642A79BFD00098BBA9 /* +CollectionFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783632A79BFD00098BBA9 /* +CollectionFilter.swift */; };
 		DF2783682A79F73B0098BBA9 /* Realm+CSChapterUpdates.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783672A79F73B0098BBA9 /* Realm+CSChapterUpdates.swift */; };
+		DF29A6822ABBC313005E11E3 /* AsyncDisplayKit in Frameworks */ = {isa = PBXBuildFile; productRef = DF29A6812ABBC313005E11E3 /* AsyncDisplayKit */; };
 		DF29D8A72A770E41006C67B6 /* LibraryGrid+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF29D8A62A770E41006C67B6 /* LibraryGrid+ViewModel.swift */; };
 		DF2D842A2A1EFB4D006B17F0 /* STT+Nuke.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2D84292A1EFB4D006B17F0 /* STT+Nuke.swift */; };
 		DF2DA77327CF11C50046FE20 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = DF2DA77227CF11C50046FE20 /* Alamofire */; };
@@ -417,7 +418,6 @@
 		DFDBF9F42A7DD588006D49AD /* ImageViewer+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFDBF9F32A7DD588006D49AD /* ImageViewer+ViewModel.swift */; };
 		DFDBF9F62A7DF79A006D49AD /* IV+Modifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFDBF9F52A7DF79A006D49AD /* IV+Modifiers.swift */; };
 		DFDBF9F82A7E2088006D49AD /* IV+ZoomingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFDBF9F72A7E2088006D49AD /* IV+ZoomingScrollView.swift */; };
-		DFDD612F2ABBB43E0038E0FF /* AsyncDisplayKit in Frameworks */ = {isa = PBXBuildFile; productRef = DFDD612E2ABBB43E0038E0FF /* AsyncDisplayKit */; };
 		DFE1B0F42A9A58DD00D300DB /* ChapterList+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B0F32A9A58DD00D300DB /* ChapterList+Helpers.swift */; };
 		DFE1B0F62A9A590100D300DB /* ChapterList+Methods.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B0F52A9A590100D300DB /* ChapterList+Methods.swift */; };
 		DFE1B0F82A9A598300D300DB /* ChapterList+MenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE1B0F72A9A598300D300DB /* ChapterList+MenuButton.swift */; };
@@ -931,9 +931,9 @@
 				DF482F012955A56F002D3308 /* RealmSwift in Frameworks */,
 				DF0D96062824892C00E592D9 /* Realm in Frameworks */,
 				DFF1043E28A9963D00E2C3A4 /* AnyCodable in Frameworks */,
-				DFDD612F2ABBB43E0038E0FF /* AsyncDisplayKit in Frameworks */,
 				DF70235129DA852A0076AAD0 /* NukeUI in Frameworks */,
 				DF59C97D285004860027F19D /* ZIPFoundation in Frameworks */,
+				DF29A6822ABBC313005E11E3 /* AsyncDisplayKit in Frameworks */,
 				DF256AA42AA9028E00F4180B /* IceCream in Frameworks */,
 				DF9041A42AA3E7E600B72ACC /* ReadiumOPDS in Frameworks */,
 			);
@@ -2519,7 +2519,7 @@
 				DF9041A32AA3E7E600B72ACC /* ReadiumOPDS */,
 				DFF4351D2AA6D09800FAAD8B /* Zephyr */,
 				DF256AA32AA9028E00F4180B /* IceCream */,
-				DFDD612E2ABBB43E0038E0FF /* AsyncDisplayKit */,
+				DF29A6812ABBC313005E11E3 /* AsyncDisplayKit */,
 			);
 			productName = "Suwatte (iOS)";
 			productReference = DFCE6EAF280108EA002E220C /* Suwatte.app */;
@@ -2574,21 +2574,21 @@
 			);
 			mainGroup = DF2DA6FF27CD82430046FE20;
 			packageReferences = (
-				DF2DA77127CF11C50046FE20 /* XCRemoteSwiftPackageReference "Alamofire.git" */,
-				DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift.git" */,
-				DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift.git" */,
+				DF2DA77127CF11C50046FE20 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift" */,
+				DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				DF59C97B285004850027F19D /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
-				DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar.swift" */,
+				DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar" */,
 				DFF1043C28A9963C00E2C3A4 /* XCRemoteSwiftPackageReference "AnyCodable" */,
-				DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit.git" */,
-				DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk.git" */,
-				DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections.git" */,
+				DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit" */,
+				DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections" */,
 				DF70234D29DA852A0076AAD0 /* XCRemoteSwiftPackageReference "Nuke" */,
 				DFA17F642A4916C300179850 /* XCRemoteSwiftPackageReference "ASCollectionView" */,
-				DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit.git" */,
-				DFF4351C2AA6D09800FAAD8B /* XCRemoteSwiftPackageReference "Zephyr.git" */,
+				DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit" */,
+				DFF4351C2AA6D09800FAAD8B /* XCRemoteSwiftPackageReference "Zephyr" */,
 				DF256AA22AA9028E00F4180B /* XCRemoteSwiftPackageReference "IceCream" */,
-				DFDD612D2ABBB43E0038E0FF /* XCRemoteSwiftPackageReference "Texture" */,
+				DF29A6802ABBC313005E11E3 /* XCRemoteSwiftPackageReference "Texture" */,
 			);
 			productRefGroup = DF2DA6FF27CD82430046FE20;
 			projectDirPath = "";
@@ -3326,9 +3326,11 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 6;
-				DEVELOPMENT_TEAM = KL9W2NU9C5;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = KL9W2NU9C5;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ThumbnailProvider/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ThumbnailProvider;
@@ -3343,6 +3345,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ceres.suwatte.ThumbnailProvider;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Dist - Thumbnail Provider";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -3385,7 +3388,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift.git" */ = {
+		DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-swift.git";
 			requirement = {
@@ -3393,7 +3396,7 @@
 				version = 10.42.3;
 			};
 		};
-		DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift.git" */ = {
+		DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
 			requirement = {
@@ -3409,7 +3412,15 @@
 				kind = branch;
 			};
 		};
-		DF2DA77127CF11C50046FE20 /* XCRemoteSwiftPackageReference "Alamofire.git" */ = {
+		DF29A6802ABBC313005E11E3 /* XCRemoteSwiftPackageReference "Texture" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Suwatte/Texture";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.1;
+			};
+		};
+		DF2DA77127CF11C50046FE20 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
 			requirement = {
@@ -3425,7 +3436,7 @@
 				kind = branch;
 			};
 		};
-		DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar.swift" */ = {
+		DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/mtgto/Unrar.swift";
 			requirement = {
@@ -3441,7 +3452,7 @@
 				kind = branch;
 			};
 		};
-		DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit.git" */ = {
+		DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/madebybowtie/FlagKit.git";
 			requirement = {
@@ -3449,7 +3460,7 @@
 				kind = branch;
 			};
 		};
-		DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit.git" */ = {
+		DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/readium/swift-toolkit.git";
 			requirement = {
@@ -3457,7 +3468,7 @@
 				minimumVersion = 2.5.0;
 			};
 		};
-		DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk.git" */ = {
+		DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
 			requirement = {
@@ -3473,20 +3484,12 @@
 				kind = branch;
 			};
 		};
-		DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections.git" */ = {
+		DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-collections.git";
 			requirement = {
 				branch = main;
 				kind = branch;
-			};
-		};
-		DFDD612D2ABBB43E0038E0FF /* XCRemoteSwiftPackageReference "Texture" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Suwatte/Texture";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.1.1;
 			};
 		};
 		DFF1043C28A9963C00E2C3A4 /* XCRemoteSwiftPackageReference "AnyCodable" */ = {
@@ -3497,7 +3500,7 @@
 				minimumVersion = 0.6.5;
 			};
 		};
-		DFF4351C2AA6D09800FAAD8B /* XCRemoteSwiftPackageReference "Zephyr.git" */ = {
+		DFF4351C2AA6D09800FAAD8B /* XCRemoteSwiftPackageReference "Zephyr" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ArtSabintsev/Zephyr.git";
 			requirement = {
@@ -3510,12 +3513,12 @@
 /* Begin XCSwiftPackageProductDependency section */
 		DF0D96052824892C00E592D9 /* Realm */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift.git" */;
+			package = DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = Realm;
 		};
 		DF248F0B2813844C00818300 /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift.git" */;
+			package = DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift" */;
 			productName = KeychainSwift;
 		};
 		DF256AA32AA9028E00F4180B /* IceCream */ = {
@@ -3523,14 +3526,19 @@
 			package = DF256AA22AA9028E00F4180B /* XCRemoteSwiftPackageReference "IceCream" */;
 			productName = IceCream;
 		};
+		DF29A6812ABBC313005E11E3 /* AsyncDisplayKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF29A6802ABBC313005E11E3 /* XCRemoteSwiftPackageReference "Texture" */;
+			productName = AsyncDisplayKit;
+		};
 		DF2DA77227CF11C50046FE20 /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF2DA77127CF11C50046FE20 /* XCRemoteSwiftPackageReference "Alamofire.git" */;
+			package = DF2DA77127CF11C50046FE20 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
 		};
 		DF482F002955A56F002D3308 /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift.git" */;
+			package = DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;
 		};
 		DF59C97C285004860027F19D /* ZIPFoundation */ = {
@@ -3540,7 +3548,7 @@
 		};
 		DF59C987285054670027F19D /* Unrar */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar.swift" */;
+			package = DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar" */;
 			productName = Unrar;
 		};
 		DF70234E29DA852A0076AAD0 /* Nuke */ = {
@@ -3555,22 +3563,22 @@
 		};
 		DF730CD229411F1B00C62C71 /* FlagKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit.git" */;
+			package = DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit" */;
 			productName = FlagKit;
 		};
 		DF9041A12AA3E7E600B72ACC /* R2Shared */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit.git" */;
+			package = DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit" */;
 			productName = R2Shared;
 		};
 		DF9041A32AA3E7E600B72ACC /* ReadiumOPDS */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit.git" */;
+			package = DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit" */;
 			productName = ReadiumOPDS;
 		};
 		DF9BFE242A4295F5005D0B63 /* Unrar */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar.swift" */;
+			package = DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar" */;
 			productName = Unrar;
 		};
 		DF9BFE262A4295FD005D0B63 /* ZIPFoundation */ = {
@@ -3580,7 +3588,7 @@
 		};
 		DF9C9EEF297AE3A9004A3BC5 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk.git" */;
+			package = DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAnalytics;
 		};
 		DFA17F652A4916C300179850 /* ASCollectionView */ = {
@@ -3590,13 +3598,8 @@
 		};
 		DFB7FB02297B965D00599097 /* OrderedCollections */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections.git" */;
+			package = DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections" */;
 			productName = OrderedCollections;
-		};
-		DFDD612E2ABBB43E0038E0FF /* AsyncDisplayKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DFDD612D2ABBB43E0038E0FF /* XCRemoteSwiftPackageReference "Texture" */;
-			productName = AsyncDisplayKit;
 		};
 		DFF1043D28A9963D00E2C3A4 /* AnyCodable */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -3605,7 +3608,7 @@
 		};
 		DFF4351D2AA6D09800FAAD8B /* Zephyr */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DFF4351C2AA6D09800FAAD8B /* XCRemoteSwiftPackageReference "Zephyr.git" */;
+			package = DFF4351C2AA6D09800FAAD8B /* XCRemoteSwiftPackageReference "Zephyr" */;
 			productName = Zephyr;
 		};
 /* End XCSwiftPackageProductDependency section */
