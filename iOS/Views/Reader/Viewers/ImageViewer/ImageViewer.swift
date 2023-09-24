@@ -18,7 +18,7 @@ struct ImageViewer: View {
     private var model = IVViewModel()
 
     var body: some View {
-        LoadableView(startup, $model.presentationState) { _ in
+        OldLoadableView(startup, $model.presentationState) { _ in
             MainView
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
@@ -74,9 +74,8 @@ extension ImageViewer {
 }
 
 extension ImageViewer {
-    private func startup() async throws -> Bool {
+    private func startup() async throws {
         try await model.consume(initial)
-        return true
     }
 
     private var StandardAnimation: Animation {

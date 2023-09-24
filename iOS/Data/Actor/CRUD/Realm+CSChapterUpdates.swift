@@ -10,13 +10,12 @@ import RealmSwift
 
 extension RealmActor {
     func getTitlesPendingUpdate(_ sourceId: String) -> [LibraryEntry] {
-        let date = UserDefaults.standard.object(forKey: STTKeys.LastFetchedUpdates) as! Date
+        let date = UserDefaults.standard.object(forKey: STTKeys.LastFetchedUpdates) as? Date ?? .distantPast
         let skipConditions = Preferences.standard.skipConditions
         let approvedCollections = Array(Preferences.standard.updatesUseCollections ? Preferences.standard.approvedUpdateCollections : [])
         let validStatuses = [ContentStatus.ONGOING, .HIATUS, .UNKNOWN]
         var results = realm.objects(LibraryEntry.self)
             .where { $0.content != nil && $0.isDeleted == false }
-            .where { $0.dateAdded < date }
             .where { $0.content.sourceId == sourceId }
             .where { $0.content.status.in(validStatuses) }
 

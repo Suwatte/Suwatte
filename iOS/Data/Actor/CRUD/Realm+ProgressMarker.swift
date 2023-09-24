@@ -142,6 +142,10 @@ extension RealmActor {
                 target.totalPageCount = totalPageCount
                 target.lastPageOffsetPCT = lastPageOffsetPCT
                 target.currentChapter = reference
+                
+                if lastPageRead == totalPageCount {
+                    target.readChapters.insert(chapter.chapterOrderKey)
+                }
             }
 
             if let prevMarkerID, prevMarkerID != chapter.id {
@@ -159,6 +163,9 @@ extension RealmActor {
         marker.lastPageRead = lastPageRead
         marker.totalPageCount = totalPageCount
         marker.lastPageOffsetPCT = lastPageOffsetPCT
+        if lastPageRead == totalPageCount {
+            marker.readChapters.insert(chapter.chapterOrderKey)
+        }
 
         await operation {
             realm.add(marker, update: .modified)

@@ -61,8 +61,6 @@ class ImageNode: ASCellNode {
         imageNode.isUserInteractionEnabled = false
         imageNode.shouldAnimateSizeChanges = false
         imageNode.alpha = 0
-
-        imageNode.isLayerBacked = true
         imageNode.backgroundColor = .clear
         // ;-;
         imageNode.shadowRadius = .zero
@@ -143,13 +141,17 @@ extension ImageNode {
 
 extension ImageNode {
     override func animateLayoutTransition(_ context: ASContextTransitioning) {
-        UIView.animate(withDuration: 0.33, delay: 0, options: [.transitionCrossDissolve, .allowUserInteraction, .curveEaseInOut]) { [unowned self] in
-            if ratio != nil {
-                imageNode.alpha = 1
-                progressNode.alpha = 0
-            } else {
-                imageNode.alpha = 0
-                progressNode.alpha = 1
+        defer {
+            UIView.animate(withDuration: 0.33,
+                           delay: 0,
+                           options: [.transitionCrossDissolve, .allowUserInteraction, .curveEaseInOut]) { [unowned self] in
+                if ratio != nil {
+                    imageNode.alpha = 1
+                    progressNode.alpha = 0
+                } else {
+                    imageNode.alpha = 0
+                    progressNode.alpha = 1
+                }
             }
         }
         imageNode.frame = context.finalFrame(for: imageNode)

@@ -22,6 +22,9 @@ extension Controller {
         case let .transition(transition):
             model.updateViewerState(with: transition)
             didCompleteChapter(chapter)
+            if transition.to == nil {
+                model.showMenu()
+            }
         }
     }
 

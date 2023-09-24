@@ -43,6 +43,10 @@ extension RealmActor {
         getObject(of: StoredRunnerObject.self, with: id)
     }
     
+    func getFrozenRunner(_ id: String) -> StoredRunnerObject? {
+        getRunner(id)?.freeze()
+    }
+    
     func getRunnerName(for id : String) -> String? {
         getRunner(id)?.name
     }
