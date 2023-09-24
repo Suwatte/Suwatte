@@ -23,7 +23,7 @@ extension Parsable {
     }
 
     init(dict: [String: Any]) throws {
-        let data = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
+        let data = try JSONSerialization.data(withJSONObject: dict)
         let decoder = JSONDecoder()
         self = try decoder.decode(Self.self, from: data)
     }
