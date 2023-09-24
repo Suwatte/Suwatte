@@ -5,7 +5,7 @@
 //  Created by Mantton on 2023-08-15.
 //
 
-import AsyncDisplayKit
+@preconcurrency import AsyncDisplayKit
 import Combine
 import OrderedCollections
 import SwiftUI
@@ -33,6 +33,8 @@ class WebtoonController: ASDKViewController<ASCollectionNode> {
     var lastStoppedScrollPosition: CGFloat = 0.0
     var scrollPositionUpdateThreshold: CGFloat = 30.0
     var currentZoomingIndexPath: IndexPath!
+    
+    var isReadyToAddOffset = false
     private let zoomTransitionDelegate = ZoomTransitioningDelegate()
     var onPageReadTask: Task<Void, Never>?
 
@@ -196,14 +198,16 @@ extension Controller: ASCollectionDelegate {
                 EmptyNode()
             }
         }
-
+        
+        let position = resumptionPosition
+        let height = view.frame.height * 0.66
         switch item {
         case let .page(page):
-            return { [resumptionPosition, weak self] in
+            return { [weak self] in
                 let node = ImageNode(page: page)
                 node.delegate = self
-                guard let pending = resumptionPosition,
-                      pending.0 == indexPath.item
+                guard let pending = position,
+                      pending.0 == page.page.index
                 else {
                     return node
                 }
@@ -211,7 +215,6 @@ extension Controller: ASCollectionDelegate {
                 return node
             }
         case let .transition(transition):
-            let height = view.frame.height * 0.66
             return {
                 let node = ASCellNode(viewControllerBlock: {
                     let view = ReaderTransitionView(transition: transition)

@@ -92,21 +92,20 @@ struct ThreadSafeChapter: Hashable, Identifiable, STTChapterObject, Sendable {
     }
 
     var chapterOrderKey: Double {
-        let d = inferredVolume * 10000
-        return d + number
+        Self.orderKey(volume: volume, number: number)
     }
 
     static func vnPair(from key: Double) -> (Double?, Double) {
         let inferredVolume = floor(key / 10000)
         let number = key.truncatingRemainder(dividingBy: 10000)
 
-        let volume: Double? = inferredVolume == 999 ? nil : inferredVolume
+        let volume: Double? = inferredVolume == 999 || inferredVolume == 99 ? nil : inferredVolume
 
         return (volume, number)
     }
 
     static func orderKey(volume: Double?, number: Double) -> Double {
-        let d = (volume ?? 99) * 10000
+        let d = (volume ?? 999) * 10000
         return d + number
     }
 }

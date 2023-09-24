@@ -79,6 +79,7 @@ extension IVViewModel {
         }
 
         updateChapterState(for: requested, state: .loaded(true))
+        presentationState = .loaded(true)
     }
 
     @MainActor
@@ -174,6 +175,12 @@ extension IVViewModel {
     nonisolated func hideMenu() {
         Task { @MainActor in
             control.menu = false
+        }
+    }
+    
+    nonisolated func showMenu() {
+        Task { @MainActor in
+            control.menu = true
         }
     }
 

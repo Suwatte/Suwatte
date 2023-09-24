@@ -14,7 +14,7 @@ import RealmSwift
 import UIKit
 
 class STTAppDelegate: NSObject, UIApplicationDelegate {
-    var syncEngine: SyncEngine?
+    private var syncEngine: SyncEngine?
     func application(_ application: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         // Register BG Tasks
         STTScheduler.shared.registerTasks()
@@ -84,6 +84,12 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
         ])
 
         application.registerForRemoteNotifications()
+        
+        syncEngine?.pull(completionHandler: {  _ in
+            Task { @MainActor [weak self] in
+                self?.syncEngine?.pushAll()
+            }
+        })
 
         // Analytics
         FirebaseApp.configure()

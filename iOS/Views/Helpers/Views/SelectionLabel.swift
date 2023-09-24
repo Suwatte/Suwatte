@@ -121,8 +121,8 @@ struct MultiSelectionView<A: RandomAccessCollection, Content: View>: View where 
 
     private func toggleSelection(selectable: A.Element) {
         withAnimation {
-            if let existingIndex = selected.firstIndex(where: { $0.id == selectable.id }) {
-                selected.remove(at: existingIndex)
+            if selected.contains(selectable) {
+                selected.remove(selectable)
             } else {
                 selected.insert(selectable)
             }

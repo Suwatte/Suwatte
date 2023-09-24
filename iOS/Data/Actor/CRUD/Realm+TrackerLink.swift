@@ -112,6 +112,12 @@ extension RealmActor {
 
         for (trackerId, mediaId) in links {
             guard let tracker = await DSK.shared.getTracker(id: trackerId) else { continue }
+            do {
+                let user = try await tracker.getAuthenticatedUser()
+                guard user != nil else { continue }
+            } catch {
+                Logger.shared.error(error, trackerId)
+            }
             Task.detached {
                 do {
                     try await tracker.didUpdateLastReadChapter(id: mediaId, progress: progress)
