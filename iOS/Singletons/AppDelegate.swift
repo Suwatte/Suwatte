@@ -85,11 +85,6 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
 
         application.registerForRemoteNotifications()
         
-        syncEngine?.pull(completionHandler: {  _ in
-            Task { @MainActor [weak self] in
-                self?.syncEngine?.pushAll()
-            }
-        })
 
         // Analytics
         FirebaseApp.configure()
