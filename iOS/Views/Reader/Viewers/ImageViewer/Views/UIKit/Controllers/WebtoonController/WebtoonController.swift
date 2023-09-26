@@ -93,7 +93,6 @@ class WebtoonController: ASDKViewController<ASCollectionNode> {
         NotificationCenter
             .default
             .removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
-        Logger.shared.debug("controller deallocated", "WebtoonController")
     }
 
     // Core

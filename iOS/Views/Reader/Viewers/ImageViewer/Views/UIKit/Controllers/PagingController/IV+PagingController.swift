@@ -47,10 +47,6 @@ class IVPagingController: UICollectionViewController {
     var offset: CGFloat {
         isVertical ? collectionView.contentOffset.y : collectionView.contentOffset.x
     }
-
-    deinit {
-        Logger.shared.debug("controller deallocated", "PagingController")
-    }
 }
 
 typealias IVCC = IVPagingController

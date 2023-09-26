@@ -153,4 +153,7 @@ enum STTKeys {
 
     static let OnlyCheckForUpdateInSpecificCollections = "APP.updates.use_collections"
     static let UpdateApprovedCollections = "APP.updates.collections"
+    
+    static let RunnerDevMode = "DEBUG.RUNNER_DEV_MODE"
+    static let LogAddress = "DEBUG.LOG_ADDRESS"
 }

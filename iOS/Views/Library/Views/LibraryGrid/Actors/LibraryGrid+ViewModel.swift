@@ -37,10 +37,6 @@ extension LibraryView.LibraryGrid {
             self.readingFlag = readingFlag
         }
 
-        deinit {
-            Logger.shared.debug("deallocated", "LibraryGridModel")
-        }
-
         func disconnect() {
             token?.invalidate()
             token = nil

@@ -21,6 +21,7 @@ struct SettingsView: View {
             DownloadsSection()
             CacheSection()
             NetworkSection()
+            LogSection()
         }
         .navigationBarTitle("App Settings")
     }
@@ -316,6 +317,31 @@ extension SettingsView {
             } footer: {
                 Text("If enabled, suwatte will compress downloaded chapters and store them as CBZ files.")
             }
+        }
+    }
+}
+
+
+extension SettingsView {
+    struct LogSection: View {
+        @AppStorage(STTKeys.RunnerDevMode) private var runnerDevMode = false
+        @AppStorage(STTKeys.LogAddress) private var logAddress = ""
+        var body: some View {
+            Section {
+                Toggle(isOn: $runnerDevMode) {
+                    Text("Enabled")
+                }
+                if runnerDevMode {
+                    HStack {
+                        Text("Log Address:")
+                        TextFieldView(text: $logAddress, placeholder: "", keyboardType: .URL)
+                    }
+
+                }
+            } header: {
+                Text("Runner Developer Mode")
+            }
+            .animation(.default, value: runnerDevMode)
         }
     }
 }
