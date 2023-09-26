@@ -218,8 +218,11 @@ extension DaisukeEngine {
 
     // Get Source List Info
     func saveRunnerList(at url: String) async throws {
+        
+        let hasHttpPrefix = url.hasPrefix("http") || url.hasPrefix("https")
+        let builtUrl = hasHttpPrefix ? url : "https://\(url)"
         // Get runner list
-        let base = URL(string: url)
+        let base = URL(string: builtUrl)
         guard let base else {
             throw DSK.Errors.NamedError(name: "Validation", message: "Invalid URL")
         }

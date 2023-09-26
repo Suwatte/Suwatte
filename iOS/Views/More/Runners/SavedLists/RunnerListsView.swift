@@ -43,7 +43,6 @@ struct RunnerListsView: View {
                     }
                 }
             }
-//            .onDelete(perform: $runnerLists.remove(atOffsets:))
         }
         .navigationTitle("Saved Lists")
         .navigationBarTitleDisplayMode(.inline)
