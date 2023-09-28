@@ -317,7 +317,7 @@ extension DSKFormView {
                 }
                 .animation(.default, value: selections)
             } label: {
-                FieldLabel(primary: component.title, secondary: "^[\(selections.count) Selection](inflect: true)")
+                FieldLabel(primary: component.title, secondary: "\(selections.count) Selection\(selections.count != 1 ? "s" : "")")
             }
         }
     }

@@ -59,17 +59,24 @@ extension ImageViewer {
             case .PAGED_COMIC, .PAGED_MANGA:
                 if doublePaged {
                     DoublePagedImageViewer()
+                        .transition(.opacity)
                 } else {
                     PagedImageViewer()
+                        .transition(.opacity)
                 }
             case .PAGED_VERTICAL:
                 VerticalPagedViewer()
+                    .transition(.opacity)
             case .VERTICAL:
                 WebtoonViewer()
+                    .transition(.opacity)
             default:
                 ProgressView()
+                    .transition(.opacity)
             }
         }
+        .animation(StandardAnimation ,value: model.readingMode)
+        .animation(StandardAnimation, value: doublePaged)
     }
 }
 
