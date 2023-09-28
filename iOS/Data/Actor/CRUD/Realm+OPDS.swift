@@ -18,17 +18,13 @@ extension RealmActor {
         let count = (streamLink.properties["count"] as? String).flatMap(Int.init)
         let lastRead = (streamLink.properties["lastRead"] as? String).flatMap(Int.init)
 
-        guard let count, let lastRead else {
-            throw DSK.Errors.NamedError(name: "OPDS", message: "failed to parse page count & read marker")
-        }
-
         let obj = StreamableOPDSContent()
         obj.id = "\(clientID)||\(id)"
         obj.contentTitle = publication.metadata.title
         obj.contentThumbnail = thumbnailURL
         obj.streamLink = streamLink.href
-        obj.lastRead = lastRead
-        obj.pageCount = count
+        obj.lastRead = lastRead ?? 0
+        obj.pageCount = count ?? 0
 
         obj.client = realm.objects(StoredOPDSServer.self).where { $0.id == clientID && $0.isDeleted == false }.first
 
