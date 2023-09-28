@@ -34,6 +34,8 @@ enum PanelViewerItem: Hashable {
 final actor IVDataCache {
     var cache: [String: [ReaderPage]] = [:]
     var chapters: OrderedSet<ThreadSafeChapter> = []
+    var nextCache: [String: ThreadSafeChapter] = [:] // stores the next chapter for the provided ID. Avoids doing multiple filtering calls
+    var prevCache: [String: ThreadSafeChapter] = [:] // stores the prev chapter for the provided ID. Avoids doing multiple filtering calls
 
     func setChapters(_ data: [ThreadSafeChapter]) {
         chapters = OrderedSet(data)
@@ -74,7 +76,7 @@ final actor IVDataCache {
         objects.append(contentsOf: readerPages)
 
         // Add Transition to next
-        let next = chapters.getOrNil(index + 1)
+        let next = getChapter(after: chapter)
 
         if Preferences.standard.currentReadingMode == .VERTICAL {
             let transition = ReaderTransition(from: chapter,
@@ -175,6 +177,11 @@ extension IVDataCache {
 
 extension IVDataCache {
     func getChapter(after chapter: ThreadSafeChapter) -> ThreadSafeChapter? {
+        
+        if let next = nextCache[chapter.id] {
+            return next
+        }
+        
         let index = chapters.firstIndex(of: chapter)
         guard let index else {
             return nil
@@ -189,13 +196,48 @@ extension IVDataCache {
         guard next.number != chapter.number else {
             return getChapter(after: next)
         }
-
-        return next
+        
+        let allChaptersMatchingNextChapter = chapters.filter({ $0.index <= next.index && $0.number == next.number  })
+        
+        // Sort By Title Prio, Source Prio
+        let titleOrder = STTHelpers.getChapterHighPriorityOrder(for: next.STTContentIdentifier)
+        let sourceOrder = STTHelpers.getChapterPriorityMap(for: next.sourceId)
+        
+        func getTitleOrder(_ chapter: ThreadSafeChapter) -> Int {
+            (chapter.providers ?? [])
+                .map( { titleOrder.reversed().firstIndex(of: $0.id) ?? -1 })
+                .max() ?? -1
+        }
+        
+        func getSourceOrder(_ chapter: ThreadSafeChapter) -> Int {
+            (chapter.providers ?? [])
+                .map({ sourceOrder[$0.id]?.rawValue ?? ChapterProviderPriority.default.rawValue })
+                .max() ?? -1
+        }
+        let possibleNexts = allChaptersMatchingNextChapter
+            .sorted { lhs, rhs in
+                let lhsTO = getTitleOrder(lhs)
+                let lhsSO = getSourceOrder(lhs)
+                
+                let rhsTO = getTitleOrder(rhs)
+                let rhsSO = getSourceOrder(rhs)
+                return (lhsTO, lhsSO ) > (rhsTO, rhsSO)
+            }
+        
+        let target = possibleNexts.first ?? next
+            
+        nextCache[chapter.id] = target
+        return target
     }
 
     func getChapter(before chapter: ThreadSafeChapter) -> ThreadSafeChapter? {
+        
+        if let prev = prevCache[chapter.id] {
+            return prev
+        }
+        
         let index = chapters.firstIndex(of: chapter)
-        guard let index, index > 0 else {
+        guard let index else {
             return nil
         }
 
@@ -206,9 +248,39 @@ extension IVDataCache {
         }
 
         guard prev.number != chapter.number else {
-            return getChapter(before: prev)
+            return getChapter(after: prev)
         }
-
-        return prev
+        
+        let allChaptersMatchingNextChapter = chapters.filter({ $0.index >= prev.index && $0.number == prev.number  })
+        
+        // Sort By Title Prio, Source Prio
+        let titleOrder = STTHelpers.getChapterHighPriorityOrder(for: prev.STTContentIdentifier)
+        let sourceOrder = STTHelpers.getChapterPriorityMap(for: prev.sourceId)
+        
+        func getTitleOrder(_ chapter: ThreadSafeChapter) -> Int {
+            (chapter.providers ?? [])
+                .map( { titleOrder.reversed().firstIndex(of: $0.id) ?? -1 })
+                .max() ?? -1
+        }
+        
+        func getSourceOrder(_ chapter: ThreadSafeChapter) -> Int {
+            (chapter.providers ?? [])
+                .map({ sourceOrder[$0.id]?.rawValue ?? ChapterProviderPriority.default.rawValue })
+                .max() ?? -1
+        }
+        let possibleNexts = allChaptersMatchingNextChapter
+            .sorted { lhs, rhs in
+                let lhsTO = getTitleOrder(lhs)
+                let lhsSO = getSourceOrder(lhs)
+                
+                let rhsTO = getTitleOrder(rhs)
+                let rhsSO = getSourceOrder(rhs)
+                return (lhsTO, lhsSO ) > (rhsTO, rhsSO)
+            }
+        
+        let target = possibleNexts.first ?? prev
+            
+        prevCache[chapter.id] = target
+        return target
     }
 }

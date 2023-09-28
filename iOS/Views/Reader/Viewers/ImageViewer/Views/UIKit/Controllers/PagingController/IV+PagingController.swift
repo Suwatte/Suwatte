@@ -240,11 +240,8 @@ extension Controller {
     }
 
     func preload(after chapter: ThreadSafeChapter) async {
-        let index = await dataCache.chapters.firstIndex(of: chapter)
 
-        guard let index else { return } // should always pass
-
-        let next = await dataCache.chapters.getOrNil(index + 1)
+        let next = await dataCache.getChapter(after: chapter)
 
         guard let next else { return }
 

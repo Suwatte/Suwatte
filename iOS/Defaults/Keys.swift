@@ -87,7 +87,7 @@ enum STTKeys {
     static let SourcesDisabledFromHistory = "APP.progress_mark_disabled_sources"
     static let SourcesDisabledFromGlobalSearch = "APP.global_search_disabled_sources"
 
-    static let GridItemsPerRow_P = "APP.grid_items_per_row_potrait"
+    static let GridItemsPerRow_P = "APP.grid_items_per_row_portrait"
     static let GridItemsPerRow_LS = "APP.grid_items_per_row_landscape"
 
     static let LibrarySections = "LIBRARY.sections_1"
@@ -156,4 +156,14 @@ enum STTKeys {
     
     static let RunnerDevMode = "DEBUG.RUNNER_DEV_MODE"
     static let LogAddress = "DEBUG.LOG_ADDRESS"
+    
+    static func SourceChapterProviderPriority(_ id: String) -> String {
+        return "RUNNER.SCPP:\(id)"
+
+    }
+    
+    static func TitleHighPriorityOrder(_ id: String) -> String {
+        return "RUNNER.THPO:\(id)"
+
+    }
 }

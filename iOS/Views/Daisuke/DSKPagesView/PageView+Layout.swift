@@ -183,8 +183,8 @@ extension DSKPageView.CollectionView {
     }
 
     func GridLayout(_ environment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
-        let viewingPotrait = environment.container.contentSize.width < environment.container.contentSize.height
-        let itemsPerRow = UserDefaults.standard.integer(forKey: viewingPotrait ? STTKeys.GridItemsPerRow_P : STTKeys.GridItemsPerRow_LS)
+        let viewingPortrait = environment.container.contentSize.width < environment.container.contentSize.height
+        let itemsPerRow = UserDefaults.standard.integer(forKey: viewingPortrait ? STTKeys.GridItemsPerRow_P : STTKeys.GridItemsPerRow_LS)
         let style = TileStyle(rawValue: UserDefaults.standard.integer(forKey: STTKeys.TileStyle)) ?? .COMPACT
 
         let SPACING: CGFloat = 10

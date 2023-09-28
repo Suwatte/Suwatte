@@ -60,7 +60,10 @@ class UDSync {
         let DynamicKeyPrefixes = ["RUNNER.IRH",
                                   "RUNNER.PLR",
                                   "RUNNER.BLP",
-                                  "READER.type"]
+                                  "READER.type"
+//                                  "RUNNER.SCPP",
+//                                  "RUNNER.THPO"
+        ]
         func startsWith(_ v: String) -> Bool {
             DynamicKeyPrefixes.contains(where: { v.starts(with: $0) })
         }
@@ -70,9 +73,12 @@ class UDSync {
         #if DEBUG
             Zephyr.debugEnabled = true
         #endif
-        Zephyr.syncUbiquitousKeyValueStoreOnChange = false // Turns off instantaneous synchronization
-        Zephyr.sync(keys: keys)
-        Zephyr.addKeysToBeMonitored(keys: keys)
+        Task { @MainActor [keys] in
+            Zephyr.syncUbiquitousKeyValueStoreOnChange = false // Turns off instantaneous synchronization
+            Zephyr.sync(keys: keys)
+            Zephyr.addKeysToBeMonitored(keys: keys)
+        }
+
     }
     
     private static func isUserLoggedInToiCloud() -> Bool {

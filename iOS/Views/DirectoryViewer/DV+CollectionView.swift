@@ -209,8 +209,8 @@ extension DirectoryViewer.CoreCollectionView {
                                    sectionInsets: .init(top: 5, leading: 16, bottom: 5, trailing: 16))
         default:
             return ASCollectionLayoutSection { environment in
-                let viewingPotrait = environment.container.contentSize.width < environment.container.contentSize.height
-                let itemsPerRow = UserDefaults.standard.integer(forKey: viewingPotrait ? STTKeys.GridItemsPerRow_P : STTKeys.GridItemsPerRow_LS)
+                let viewingPortrait = environment.container.contentSize.width < environment.container.contentSize.height
+                let itemsPerRow = UserDefaults.standard.integer(forKey: viewingPortrait ? STTKeys.GridItemsPerRow_P : STTKeys.GridItemsPerRow_LS)
                 let SPACING: CGFloat = 10
                 let INSET: CGFloat = 16
                 let totalSpacing = SPACING * CGFloat(itemsPerRow - 1)
