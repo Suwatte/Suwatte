@@ -279,6 +279,7 @@ extension LibraryView {
                 Text("Collections")
             }
             .headerProminence(.increased)
+            .animation(.default, value: stateManager.collections)
         }
     }
 }

@@ -55,6 +55,7 @@ extension RealmActor {
             .objects(UpdatedSearchHistory.self)
             .where { $0.sourceId == nil }
             .where { !$0.isDeleted }
+            .sorted(by: \.date, ascending: false)
             .freeze()
             .toArray()
     }

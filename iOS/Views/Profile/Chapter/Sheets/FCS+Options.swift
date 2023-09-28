@@ -57,8 +57,9 @@ struct FCS_Options: View {
     }
 
     func getBlacklisted() {
-        let id = model.sourceID
-        blacklisted = Set(STTHelpers.getBlacklistedProviders(for: id))
+        let runnerID = model.getCurrentStatement().content.runnerID
+
+        blacklisted = Set(STTHelpers.getBlacklistedProviders(for: runnerID))
     }
 
     func toggleBlacklist(_ id: String) {
@@ -70,7 +71,8 @@ struct FCS_Options: View {
             }
         }
 
-        STTHelpers.setBlackListedProviders(for: model.currentChapterSection, values: Array(blacklisted))
+        let runnerID = model.getCurrentStatement().content.runnerID
+        STTHelpers.setBlackListedProviders(for: runnerID, values: Array(blacklisted))
         didChange()
     }
 }

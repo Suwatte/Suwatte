@@ -39,6 +39,9 @@ extension SearchView.HistoryView {
         var body: some View {
             Button {
                 model.query = entry.displayText
+                Task {
+                    await model.makeRequests()
+                }
             }
             label: {
                 HStack {

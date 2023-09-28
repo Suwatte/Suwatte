@@ -19,8 +19,6 @@ extension RealmActor {
             .where { $0.content.sourceId == sourceId }
             .where {  $0.content.status == nil || $0.content.status.in(validStatuses) }
         
-        print(results.count)
-
         if !approvedCollections.isEmpty {
             results = results
                 .where { $0.collections.containsAny(in: approvedCollections) }

@@ -70,7 +70,6 @@ struct ContentView: View {
                             .environment(\.symbolVariants, .none)
                     }
                     .toast()
-//                    .sttContentBlur() // TODO: Fix
             }
         }
     }

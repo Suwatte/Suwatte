@@ -203,8 +203,10 @@ extension StateManager {
         }
 
         collectionToken = await actor.observeLibraryCollection { value in
-            Task { @MainActor [weak self] in
-                self?.collections = value
+            Task { @MainActor in
+                withAnimation { [weak self] in
+                    self?.collections = value
+                }
             }
         }
     }
