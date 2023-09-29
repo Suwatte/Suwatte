@@ -14,10 +14,10 @@ Fix for OPDS reading.
 Readers now skip duplicate chapters
 Several Typos have been corrected.
 Better Chapter Provider Handling (Priority Setting)
+Reader Button Sizes Increased
+"Read Now Button" now uses new priority setting when displaying state
 
-
-## Noted Bugs
+## TODO
 - Blur During Switch does not work on 16 Below
 - Images are flipped in Paged Readers
-- Increase Reader Buttons
-- Action State Outdated using (chapters.getOrNil())
+- Check how network changes affect local Komga servers
