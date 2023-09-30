@@ -127,11 +127,11 @@ enum STTKeys {
     static let LocalStorageUsesICloud = "APP.local_use_icloud"
 
     static func RunnerOverridesImageRequest(_ id: String) -> String {
-        return "RUNNER.IRH:\(id)"
+        "RUNNER.IRH:\(id)"
     }
 
     static func PageLinkResolver(_ id: String) -> String {
-        return "RUNNER.PLR:\(id)"
+        "RUNNER.PLR:\(id)"
     }
 
     static let DefaultPanelReadingMode = "READER.panel_default_mode"
@@ -145,7 +145,7 @@ enum STTKeys {
     static let GlobalHideNSFW = "APP.global.hide_nsfw"
 
     static func BlackListedProviders(_ id: String) -> String {
-        return "RUNNER.BLP:\(id)"
+        "RUNNER.BLP:\(id)"
     }
 
     static let GroupByVolume = "APP.chapter_list.group_by_volume"
@@ -158,12 +158,13 @@ enum STTKeys {
     static let LogAddress = "DEBUG.LOG_ADDRESS"
     
     static func SourceChapterProviderPriority(_ id: String) -> String {
-        return "RUNNER.SCPP:\(id)"
+        "RUNNER.SCPP:\(id)"
 
     }
     
     static func TitleHighPriorityOrder(_ id: String) -> String {
-        return "RUNNER.THPO:\(id)"
-
+        "RUNNER.THPO:\(id)"
     }
+    
+    static let OverrideSourceRecommendedReadingMode = "READER.override_provided_mode"
 }

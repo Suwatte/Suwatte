@@ -169,6 +169,8 @@ extension SettingsView {
         @Preference(\.forceTransitions) var forceTransitions
         @Preference(\.enableReaderHaptics) var readerHaptics
         @Preference(\.defaultPanelReadingMode) var readerMode
+        @Preference(\.overrideProvidedReaderMode) var overrideReaderMode
+        
         var body: some View {
             Section {
                 Picker("Default Panel Mode", selection: $readerMode) {
@@ -177,6 +179,14 @@ extension SettingsView {
                             .tag(mode)
                     }
                 }
+                Toggle("Always Use Default Panel Mode", isOn: $overrideReaderMode)
+                
+            } header: {
+                Text("Reader Panel Mode")
+            }
+            
+            Section {
+                
                 Toggle("Transition Pages", isOn: $forceTransitions)
                 Toggle("Haptic Feedback", isOn: $readerHaptics)
             } header: {

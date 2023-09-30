@@ -55,15 +55,17 @@ class UDSync {
                               STTKeys.SourcesDisabledFromHistory,
                               STTKeys.SourcesDisabledFromGlobalSearch,
                               STTKeys.GlobalContentLanguages,
-                              STTKeys.GlobalHideNSFW]
+                              STTKeys.GlobalHideNSFW,
+                              STTKeys.OverrideSourceRecommendedReadingMode]
 
         let DynamicKeyPrefixes = ["RUNNER.IRH",
                                   "RUNNER.PLR",
                                   "RUNNER.BLP",
+                                  "RUNNER.SCPP",
+                                  "RUNNER.THPO",
                                   "READER.type"
-//                                  "RUNNER.SCPP",
-//                                  "RUNNER.THPO"
         ]
+        
         func startsWith(_ v: String) -> Bool {
             DynamicKeyPrefixes.contains(where: { v.starts(with: $0) })
         }

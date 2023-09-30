@@ -17,8 +17,8 @@ Better Chapter Provider Handling (Priority Setting)
 Reader Button Sizes Increased
 "Read Now Button" now uses new priority setting when displaying state
 Blur During Switch now properly dismisses when the app reenters the foreground from the background state
+Setting to always use the set default reading mode
 
 ## TODO
 - Images are flipped in Paged Readers
 - Auth View does not dismiss when completed
-- Add Reader mode override
