@@ -12,10 +12,10 @@ struct BackupsView: View {
     @StateObject var manager = BackupManager.shared
     @State var selection: URL? {
         didSet {
-            presentActions.toggle()
+            presentAlert.toggle()
         }
     }
-
+    
     @State var presentActions = false
     @State var presentAlert = false
     @State var presentImporter = false
@@ -24,18 +24,17 @@ struct BackupsView: View {
     var body: some View {
         List {
             ForEach(manager.urls, id: \.path) { url in
-                
-                Text(url.deletingPathExtension().lastPathComponent.trimmingCharacters(in: .punctuationCharacters))
-                    .contextMenu {
-                        Button { handleShareURL(url: url) } label : {
-                            Label("Share", systemImage: "square.and.arrow.up")
-                        }
-                        
-                        Divider()
-                        Button(role: .destructive) { selection = url } label : {
-                            Label("Restore", systemImage: "tray.and.arrow.down")
-                        }
+                let title = url.deletingPathExtension().lastPathComponent.trimmingCharacters(in: .punctuationCharacters)
+                Button(title) {
+                    selection = url
+                }
+                .buttonStyle(.plain)
+                .contextMenu {
+                    Button { handleShareURL(url: url) } label : {
+                        Label("Share", systemImage: "square.and.arrow.up")
                     }
+                    
+                }
                 .swipeActions {
                     Button("Delete", role: .destructive) {
                         manager.remove(url: url)
@@ -64,11 +63,11 @@ struct BackupsView: View {
                     } label: {
                         Label("Create Backup", systemImage: "plus")
                     }
-
+                    
                     Button { presentImporter.toggle() } label: {
                         Label("Import Backup", systemImage: "tray.and.arrow.down.fill")
                     }
-
+                    
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }
@@ -88,7 +87,7 @@ struct BackupsView: View {
                     }
                     url.stopAccessingSecurityScopedResource()
                 }
-
+                
             case let .failure(error):
                 ToastManager.shared.error(error)
             }
@@ -103,13 +102,13 @@ extension BackupsView {
             try await BackupManager.shared.save()
         }
     }
-
+    
     func handleShareURL(url: URL) {
         let activityController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-
+        
         let window = getKeyWindow()
         guard let controller = window?.rootViewController else { return }
-
+        
         // Handle popover for iPad
         if UIDevice.current.userInterfaceIdiom == .pad {
             activityController.popoverPresentationController?.sourceView = controller.view
@@ -119,11 +118,11 @@ extension BackupsView {
         
         controller.present(activityController, animated: true, completion: nil)
     }
-
-
+    
+    
     func handleRestore(url: URL) {
         ToastManager.shared.loading = true
-
+        
         restoreTask = Task {
             do {
                 try await manager.restore(from: url)
