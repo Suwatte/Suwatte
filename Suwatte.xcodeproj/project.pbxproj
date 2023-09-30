@@ -21,7 +21,6 @@
 		DF020A662A8C5F7900BC5562 /* PagingController+DoublePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A652A8C5F7900BC5562 /* PagingController+DoublePage.swift */; };
 		DF020A692A8C5F9000BC5562 /* PagingController+Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A682A8C5F9000BC5562 /* PagingController+Event.swift */; };
 		DF020A6D2A8C7C1700BC5562 /* WebtoonController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A6C2A8C7C1700BC5562 /* WebtoonController.swift */; };
-		DF020A702A90249A00BC5562 /* WebtoonController+Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A6F2A90249A00BC5562 /* WebtoonController+Delegate.swift */; };
 		DF020A722A9024D100BC5562 /* Webtoon+Representable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A712A9024D100BC5562 /* Webtoon+Representable.swift */; };
 		DF03F73A2846FAB800602E59 /* ReaderButtonModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF03F7392846FAB800602E59 /* ReaderButtonModifier.swift */; };
 		DF0B02882AA05B76004345BA /* DSK+Form.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0B02872AA05B76004345BA /* DSK+Form.swift */; };
@@ -495,7 +494,6 @@
 		DF020A652A8C5F7900BC5562 /* PagingController+DoublePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagingController+DoublePage.swift"; sourceTree = "<group>"; };
 		DF020A682A8C5F9000BC5562 /* PagingController+Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagingController+Event.swift"; sourceTree = "<group>"; };
 		DF020A6C2A8C7C1700BC5562 /* WebtoonController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebtoonController.swift; sourceTree = "<group>"; };
-		DF020A6F2A90249A00BC5562 /* WebtoonController+Delegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebtoonController+Delegate.swift"; sourceTree = "<group>"; };
 		DF020A712A9024D100BC5562 /* Webtoon+Representable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Webtoon+Representable.swift"; sourceTree = "<group>"; };
 		DF03F7392846FAB800602E59 /* ReaderButtonModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReaderButtonModifier.swift; sourceTree = "<group>"; };
 		DF0B02872AA05B76004345BA /* DSK+Form.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+Form.swift"; sourceTree = "<group>"; };
@@ -787,6 +785,9 @@
 		DFAC77972815D48D00AF6394 /* STTHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STTHelper.swift; sourceTree = "<group>"; };
 		DFADB58A29D7D04E00CBE22F /* JSCC+Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCC+Network.swift"; sourceTree = "<group>"; };
 		DFADB58C29D7F19900CBE22F /* STT+URLRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+URLRequest.swift"; sourceTree = "<group>"; };
+		DFAE97702AC61AD8001E62D8 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		DFAE97712AC61AD8001E62D8 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		DFAE97722AC61AF6001E62D8 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		DFB47EED2880928C0040A1BD /* RefreshableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshableScrollView.swift; sourceTree = "<group>"; };
 		DFB47EF62880C1FB0040A1BD /* STT+OPDS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+OPDS.swift"; sourceTree = "<group>"; };
 		DFB47EF92880C3D90040A1BD /* OPDS+HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OPDS+HomeView.swift"; sourceTree = "<group>"; };
@@ -1023,7 +1024,6 @@
 				DF11147D2A92E9A500FA8A39 /* WebtoonController+Prefetch.swift */,
 				DF11147B2A92E96300FA8A39 /* WebtoonController+Gesture.swift */,
 				DF1114792A92E90A00FA8A39 /* WebtoonController+Scroll.swift */,
-				DF020A6F2A90249A00BC5562 /* WebtoonController+Delegate.swift */,
 				DF11146E2A917B5E00FA8A39 /* WebtoonController+Setup.swift */,
 				DF1114752A92E86600FA8A39 /* WebtoonController+Navigation.swift */,
 				DF1114772A92E87500FA8A39 /* WebtoonController+ContextMenu.swift */,
@@ -1203,6 +1203,9 @@
 		DF2DA6FF27CD82430046FE20 = {
 			isa = PBXGroup;
 			children = (
+				DFAE97722AC61AF6001E62D8 /* CHANGELOG.md */,
+				DFAE97702AC61AD8001E62D8 /* LICENSE */,
+				DFAE97712AC61AD8001E62D8 /* README.md */,
 				DF9BFE142A428A1A005D0B63 /* Shared */,
 				DF2D842E2A212EDB006B17F0 /* Suwatte (iOS).entitlements */,
 				DF83DD3F282321690021575B /* Packages */,
@@ -2842,7 +2845,6 @@
 				DF72E492281322A000E40E52 /* ImageSearchView.swift in Sources */,
 				DFDBF9D62A7DB8C7006D49AD /* +VerticalSlider.swift in Sources */,
 				DFDBF9D42A7DB8BF006D49AD /* +HorizontalSlider.swift in Sources */,
-				DF020A702A90249A00BC5562 /* WebtoonController+Delegate.swift in Sources */,
 				DF2783412A799ECE0098BBA9 /* Realm+Archive.swift in Sources */,
 				DF2783572A79A4950098BBA9 /* Realm+Runner.swift in Sources */,
 				DF4817E42A6DF1BB00CB3A47 /* ComicInfo.swift in Sources */,

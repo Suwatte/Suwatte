@@ -163,6 +163,12 @@ extension StateManager {
         switch phase {
         case .background:
             stopObservingRealm()
+//            if blurDuringSwitch() {
+//                Task { @MainActor in
+//                    removeSplashScreen()
+//                }
+//            }
+            
         case .inactive:
             if blurDuringSwitch() {
                 Task { @MainActor in
@@ -203,8 +209,10 @@ extension StateManager {
         }
 
         collectionToken = await actor.observeLibraryCollection { value in
-            Task { @MainActor [weak self] in
-                self?.collections = value
+            Task { @MainActor in
+                withAnimation { [weak self] in
+                    self?.collections = value
+                }
             }
         }
     }
@@ -317,6 +325,8 @@ extension StateManager {
         let window = getKeyWindow()
         guard let window else { return }
         
+        if window.viewWithTag(8888) != nil { return }
+        
         launchView.tag = 8888
         launchView.frame = window.bounds
         window.addSubview(launchView)
@@ -335,9 +345,7 @@ extension StateManager {
         {
             view.alpha = 0
         } completion: { completed in
-            if completed {
-                view.removeFromSuperview()
-            }
+            view.removeFromSuperview()
         }
     }
     

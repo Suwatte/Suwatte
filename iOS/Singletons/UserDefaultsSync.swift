@@ -10,6 +10,7 @@ import Zephyr
 
 class UDSync {
     static func sync() {
+        guard isUserLoggedInToiCloud() else { return }
         var keys: [String] = [STTKeys.OpenAllTitlesOnAppear,
                               STTKeys.TileStyle,
                               STTKeys.LibraryGridSortKey,
@@ -54,24 +55,35 @@ class UDSync {
                               STTKeys.SourcesDisabledFromHistory,
                               STTKeys.SourcesDisabledFromGlobalSearch,
                               STTKeys.GlobalContentLanguages,
-                              STTKeys.GlobalHideNSFW]
+                              STTKeys.GlobalHideNSFW,
+                              STTKeys.OverrideSourceRecommendedReadingMode]
 
         let DynamicKeyPrefixes = ["RUNNER.IRH",
                                   "RUNNER.PLR",
                                   "RUNNER.BLP",
-                                  "READER.type"]
+                                  "RUNNER.SCPP",
+                                  "RUNNER.THPO",
+                                  "READER.type"
+        ]
+        
         func startsWith(_ v: String) -> Bool {
             DynamicKeyPrefixes.contains(where: { v.starts(with: $0) })
         }
         let DynamicKeys = UserDefaults.standard.dictionaryRepresentation().keys.filter(startsWith(_:))
-
         keys.append(contentsOf: DynamicKeys)
 
         #if DEBUG
             Zephyr.debugEnabled = true
         #endif
-        Zephyr.syncUbiquitousKeyValueStoreOnChange = true
-        Zephyr.addKeysToBeMonitored(keys: keys)
-        Zephyr.sync(keys: keys)
+        Task { @MainActor [keys] in
+            Zephyr.syncUbiquitousKeyValueStoreOnChange = false // Turns off instantaneous synchronization
+            Zephyr.sync(keys: keys)
+            Zephyr.addKeysToBeMonitored(keys: keys)
+        }
+
+    }
+    
+    private static func isUserLoggedInToiCloud() -> Bool {
+       FileManager.default.url(forUbiquityContainerIdentifier: nil) != nil
     }
 }

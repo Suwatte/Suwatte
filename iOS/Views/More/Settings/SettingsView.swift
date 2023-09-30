@@ -21,6 +21,7 @@ struct SettingsView: View {
             DownloadsSection()
             CacheSection()
             NetworkSection()
+            LogSection()
         }
         .navigationBarTitle("App Settings")
     }
@@ -168,6 +169,8 @@ extension SettingsView {
         @Preference(\.forceTransitions) var forceTransitions
         @Preference(\.enableReaderHaptics) var readerHaptics
         @Preference(\.defaultPanelReadingMode) var readerMode
+        @Preference(\.overrideProvidedReaderMode) var overrideReaderMode
+        
         var body: some View {
             Section {
                 Picker("Default Panel Mode", selection: $readerMode) {
@@ -176,6 +179,14 @@ extension SettingsView {
                             .tag(mode)
                     }
                 }
+                Toggle("Always Use Default Panel Mode", isOn: $overrideReaderMode)
+                
+            } header: {
+                Text("Reader Panel Mode")
+            }
+            
+            Section {
+                
                 Toggle("Transition Pages", isOn: $forceTransitions)
                 Toggle("Haptic Feedback", isOn: $readerHaptics)
             } header: {
@@ -316,6 +327,31 @@ extension SettingsView {
             } footer: {
                 Text("If enabled, suwatte will compress downloaded chapters and store them as CBZ files.")
             }
+        }
+    }
+}
+
+
+extension SettingsView {
+    struct LogSection: View {
+        @AppStorage(STTKeys.RunnerDevMode) private var runnerDevMode = false
+        @AppStorage(STTKeys.LogAddress) private var logAddress = ""
+        var body: some View {
+            Section {
+                Toggle(isOn: $runnerDevMode) {
+                    Text("Enabled")
+                }
+                if runnerDevMode {
+                    HStack {
+                        Text("Log Address:")
+                        TextFieldView(text: $logAddress, placeholder: "", keyboardType: .URL)
+                    }
+
+                }
+            } header: {
+                Text("Runner Developer Mode")
+            }
+            .animation(.default, value: runnerDevMode)
         }
     }
 }

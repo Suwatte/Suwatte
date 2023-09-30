@@ -34,6 +34,8 @@ enum PanelViewerItem: Hashable {
 final actor IVDataCache {
     var cache: [String: [ReaderPage]] = [:]
     var chapters: OrderedSet<ThreadSafeChapter> = []
+    var nextCache: [String: ThreadSafeChapter] = [:] // stores the next chapter for the provided ID. Avoids doing multiple filtering calls
+    var prevCache: [String: ThreadSafeChapter] = [:] // stores the prev chapter for the provided ID. Avoids doing multiple filtering calls
 
     func setChapters(_ data: [ThreadSafeChapter]) {
         chapters = OrderedSet(data)
@@ -74,7 +76,7 @@ final actor IVDataCache {
         objects.append(contentsOf: readerPages)
 
         // Add Transition to next
-        let next = chapters.getOrNil(index + 1)
+        let next = getChapter(after: chapter)
 
         if Preferences.standard.currentReadingMode == .VERTICAL {
             let transition = ReaderTransition(from: chapter,
@@ -175,40 +177,37 @@ extension IVDataCache {
 
 extension IVDataCache {
     func getChapter(after chapter: ThreadSafeChapter) -> ThreadSafeChapter? {
+        
+        if let next = nextCache[chapter.id] {
+            return next
+        }
+        
+        let index = chapters.firstIndex(of: chapter)
+        guard let index else {
+            return nil
+        }
+        
+        let next = ChapterManager.getChapter(after: true, index: index, chapters: chapters)
+
+            
+        nextCache[chapter.id] = next
+        return next
+    }
+
+    func getChapter(before chapter: ThreadSafeChapter) -> ThreadSafeChapter? {
+        
+        if let prev = prevCache[chapter.id] {
+            return prev
+        }
+        
         let index = chapters.firstIndex(of: chapter)
         guard let index else {
             return nil
         }
 
-        let next = chapters.getOrNil(index + 1)
+        let prev = ChapterManager.getChapter(after: false, index: index, chapters: chapters)
 
-        guard let next else {
-            return nil
-        }
-
-        guard next.number != chapter.number else {
-            return getChapter(after: next)
-        }
-
-        return next
-    }
-
-    func getChapter(before chapter: ThreadSafeChapter) -> ThreadSafeChapter? {
-        let index = chapters.firstIndex(of: chapter)
-        guard let index, index > 0 else {
-            return nil
-        }
-
-        let prev = chapters.getOrNil(index - 1)
-
-        guard let prev else {
-            return nil
-        }
-
-        guard prev.number != chapter.number else {
-            return getChapter(before: prev)
-        }
-
+        prevCache[chapter.id] = prev
         return prev
     }
 }

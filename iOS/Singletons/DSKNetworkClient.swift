@@ -22,11 +22,12 @@ final class DSKNetworkClient {
     }
     
     func makeRequest(with request: DSKCommon.Request) async throws -> DSKCommon.Response {
+        session.session.configuration.timeoutIntervalForResource = request.timeout ?? 30
+
         let urlRequest = try request.toURLRequest()
         let afResponse = await session.request(urlRequest)
             .serializingString(encoding: .utf8)
             .response
-        session.session.configuration.timeoutIntervalForResource = request.timeout ?? 30
 
         // Serialized Response
         let data = try afResponse.result.get()

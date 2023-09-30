@@ -46,7 +46,7 @@ extension ChapterList {
             }
             Divider()
             Button { presentOptions.toggle() } label: {
-                Label("Filters", systemImage: "line.3.horizontal.decrease.circle")
+                Label("Manage Providers", systemImage: "line.3.horizontal.decrease.circle")
             }
         } label: {
             Image(systemName: "ellipsis.circle")

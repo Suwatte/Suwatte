@@ -170,8 +170,8 @@ struct NeutralButtonStyle: ButtonStyle {
 func DynamicGridLayout(header: NSCollectionLayoutDimension? = nil, footer: NSCollectionLayoutDimension? = nil, _ titleSize: CGFloat? = nil) -> UICollectionViewCompositionalLayout {
     UICollectionViewCompositionalLayout { _, environment in
 
-        let viewingPotrait = environment.container.contentSize.width < environment.container.contentSize.height
-        let itemsPerRow = UserDefaults.standard.integer(forKey: viewingPotrait ? STTKeys.GridItemsPerRow_P : STTKeys.GridItemsPerRow_LS)
+        let viewingPortrait = environment.container.contentSize.width < environment.container.contentSize.height
+        let itemsPerRow = UserDefaults.standard.integer(forKey: viewingPortrait ? STTKeys.GridItemsPerRow_P : STTKeys.GridItemsPerRow_LS)
         let style = TileStyle(rawValue: UserDefaults.standard.integer(forKey: STTKeys.TileStyle)) ?? .COMPACT
 
         let SPACING: CGFloat = 8.5

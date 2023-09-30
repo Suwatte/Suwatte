@@ -149,7 +149,7 @@ struct OnboardingAddListsTabView: View {
                 .font(.title3)
                 .fontWeight(.semibold)
             Group {
-                Text("You can add lists to Suwatte by simply visiting the website of the List and tapping the *Add To Suwatte* button. Your saved lists will then be available under **Saved Lists** in \(Image(systemName: "ellipsis.circle")).\n\nTo gelp you get started tap the button below to add the Community List containing popular Sources & Trackers directly supported by us.")
+                Text("You can add lists to Suwatte by simply visiting the website of the List and tapping the *Add To Suwatte* button. Your saved lists will then be available under **Saved Lists** in \(Image(systemName: "ellipsis.circle")).\n\nTo help you get started tap the button below to add the Community List containing popular Sources & Trackers directly supported by us.")
             }
             .font(.subheadline.weight(.light))
 

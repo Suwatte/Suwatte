@@ -46,16 +46,6 @@ struct SearchView: View {
         .navigationTitle("Search All")
         .navigationBarTitleDisplayMode(.large)
         .searchable(text: $model.query, placement: .navigationBarDrawer(displayMode: .always))
-        .onReceive(model.$query.debounce(for: .seconds(0.45), scheduler: DispatchQueue.main).dropFirst()) { val in
-            if val.isEmpty {
-                model.results.removeAll()
-                return
-            }
-            searchTask?.cancel()
-            searchTask = Task {
-                await model.makeRequests()
-            }
-        }
         .onSubmit(of: .search) {
             let request: DSKCommon.DirectoryRequest = .init(query: model.query, page: 1)
             let display = model.query

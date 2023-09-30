@@ -84,12 +84,10 @@ extension Controller {
     func loadPrevChapter() async {
         guard let current = pathAtCenterOfScreen, // Current Index
               let chapter = dataSource.itemIdentifier(for: current)?.chapter, // Current Chapter
-              let currentReadingIndex = await dataCache.chapters.firstIndex(of: chapter), // Index Relative to ChapterList
-              currentReadingIndex != 0, // Is not the first chapter
-              let next = await dataCache.chapters.getOrNil(currentReadingIndex - 1), // Next Chapter in List
-              model.loadState[next] == nil else { return } // is not already loading/loaded
+              let prev = await dataCache.getChapter(before: chapter), // Prev Chapter in List
+              model.loadState[prev] == nil else { return } // is not already loading/loaded
 
-        await loadAtHead(next)
+        await loadAtHead(prev)
     }
 
     func loadAtHead(_ chapter: ThreadSafeChapter) async {

@@ -47,10 +47,6 @@ class IVPagingController: UICollectionViewController {
     var offset: CGFloat {
         isVertical ? collectionView.contentOffset.y : collectionView.contentOffset.x
     }
-
-    deinit {
-        Logger.shared.debug("controller deallocated", "PagingController")
-    }
 }
 
 typealias IVCC = IVPagingController
@@ -72,6 +68,11 @@ extension Controller {
 
         // Layout Specific
         let layout = isVertical ? VImageViewerLayout() : HImageViewerLayout()
+        
+        if let layout = layout as? HImageViewerLayout {
+            layout.readingMode = readingMode
+        }
+        
         collectionView.setCollectionViewLayout(layout, animated: false)
 
         // Final setup calls
@@ -244,11 +245,8 @@ extension Controller {
     }
 
     func preload(after chapter: ThreadSafeChapter) async {
-        let index = await dataCache.chapters.firstIndex(of: chapter)
 
-        guard let index else { return } // should always pass
-
-        let next = await dataCache.chapters.getOrNil(index + 1)
+        let next = await dataCache.getChapter(after: chapter)
 
         guard let next else { return }
 

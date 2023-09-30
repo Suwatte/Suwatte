@@ -87,7 +87,7 @@ enum STTKeys {
     static let SourcesDisabledFromHistory = "APP.progress_mark_disabled_sources"
     static let SourcesDisabledFromGlobalSearch = "APP.global_search_disabled_sources"
 
-    static let GridItemsPerRow_P = "APP.grid_items_per_row_potrait"
+    static let GridItemsPerRow_P = "APP.grid_items_per_row_portrait"
     static let GridItemsPerRow_LS = "APP.grid_items_per_row_landscape"
 
     static let LibrarySections = "LIBRARY.sections_1"
@@ -127,11 +127,11 @@ enum STTKeys {
     static let LocalStorageUsesICloud = "APP.local_use_icloud"
 
     static func RunnerOverridesImageRequest(_ id: String) -> String {
-        return "RUNNER.IRH:\(id)"
+        "RUNNER.IRH:\(id)"
     }
 
     static func PageLinkResolver(_ id: String) -> String {
-        return "RUNNER.PLR:\(id)"
+        "RUNNER.PLR:\(id)"
     }
 
     static let DefaultPanelReadingMode = "READER.panel_default_mode"
@@ -145,7 +145,7 @@ enum STTKeys {
     static let GlobalHideNSFW = "APP.global.hide_nsfw"
 
     static func BlackListedProviders(_ id: String) -> String {
-        return "RUNNER.BLP:\(id)"
+        "RUNNER.BLP:\(id)"
     }
 
     static let GroupByVolume = "APP.chapter_list.group_by_volume"
@@ -153,4 +153,18 @@ enum STTKeys {
 
     static let OnlyCheckForUpdateInSpecificCollections = "APP.updates.use_collections"
     static let UpdateApprovedCollections = "APP.updates.collections"
+    
+    static let RunnerDevMode = "DEBUG.RUNNER_DEV_MODE"
+    static let LogAddress = "DEBUG.LOG_ADDRESS"
+    
+    static func SourceChapterProviderPriority(_ id: String) -> String {
+        "RUNNER.SCPP:\(id)"
+
+    }
+    
+    static func TitleHighPriorityOrder(_ id: String) -> String {
+        "RUNNER.THPO:\(id)"
+    }
+    
+    static let OverrideSourceRecommendedReadingMode = "READER.override_provided_mode"
 }

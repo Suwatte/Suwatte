@@ -28,7 +28,7 @@ struct AppearanceView: View {
             }
             Section {
                 Stepper(value: $IPRP, in: 2 ... 10) {
-                    FieldLabel(primary: "Potrait", secondary: IPRP.description)
+                    FieldLabel(primary: "Portrait", secondary: IPRP.description)
                 }
                 Stepper(value: $IPRLS, in: 4 ... 15) {
                     FieldLabel(primary: "Landscape", secondary: IPRLS.description)

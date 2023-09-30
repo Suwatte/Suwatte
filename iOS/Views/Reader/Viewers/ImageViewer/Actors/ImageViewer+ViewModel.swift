@@ -93,7 +93,12 @@ extension IVViewModel {
     }
 
     func setReadingMode(for id: String, requested: ReadingMode?) {
-        readingMode = STTHelpers.getReadingMode(for: id) ?? requested ?? .defaultPanelMode
+        if Preferences.standard.overrideProvidedReaderMode {
+            readingMode = Preferences.standard.defaultPanelReadingMode
+        } else {
+            readingMode = STTHelpers.getReadingMode(for: id) ?? requested ?? .defaultPanelMode
+        }
+    
         Preferences.standard.currentReadingMode = readingMode
     }
 

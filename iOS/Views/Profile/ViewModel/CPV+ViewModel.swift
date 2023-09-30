@@ -70,7 +70,6 @@ extension ProfileView {
 
         deinit {
             removeNotifier()
-            Logger.shared.debug("deallocated", "ProfileViewModel")
         }
 
         var identifier: String {

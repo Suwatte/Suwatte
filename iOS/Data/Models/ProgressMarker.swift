@@ -29,7 +29,7 @@ final class ProgressMarker: Object, Identifiable, CKRecordConvertible, CKRecordR
             return false
         }
 
-        return totalPageCount == lastPageRead
+        return totalPageCount == lastPageRead && lastPageOffsetPCT == nil
     }
 }
 

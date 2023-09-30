@@ -93,7 +93,6 @@ class WebtoonController: ASDKViewController<ASCollectionNode> {
         NotificationCenter
             .default
             .removeObserver(self, name: UIApplication.willResignActiveNotification, object: nil)
-        Logger.shared.debug("controller deallocated", "WebtoonController")
     }
 
     // Core
@@ -200,7 +199,7 @@ extension Controller: ASCollectionDelegate {
         }
         
         let position = resumptionPosition
-        let height = view.frame.height * 0.66
+        let height = view.frame.height * 0.75
         switch item {
         case let .page(page):
             return { [weak self] in
