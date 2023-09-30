@@ -50,7 +50,7 @@ extension ViewModel {
             }
 
             let statement = prepareChapterStatement(prepared,
-                                                    content: .init(runnerID: source.id, runnerName: source.name, contentName: content.title, id: content.id))
+                                                    content: .init(runnerID: source.id, runnerName: source.name, contentName: content.title, id: content.id, highlight: content.toHighlight()))
 
             await animate { [weak self] in
                 self?.chapterMap[content.id] = statement

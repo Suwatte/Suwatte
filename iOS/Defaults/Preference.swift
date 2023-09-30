@@ -179,6 +179,9 @@ final class Preferences {
     
     @UserDefault(STTKeys.OverrideSourceRecommendedReadingMode)
     var overrideProvidedReaderMode = false
+    
+    @UserDefault(STTKeys.BlackListOnSourceLevel)
+    var blackListProviderOnSourceLevel = true
 }
 
 @propertyWrapper

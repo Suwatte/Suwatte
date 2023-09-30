@@ -247,7 +247,7 @@ extension RealmActor {
             .map( { $0.toThreadSafe() })
         
         
-        let filtered = STTHelpers.filterChapters(unreadChapters, with: id.id)
+        let filtered = STTHelpers.filterChapters(unreadChapters, with: id)
         return filtered.count
     }
 

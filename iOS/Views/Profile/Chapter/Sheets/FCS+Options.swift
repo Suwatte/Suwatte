@@ -48,7 +48,8 @@ struct FCS_Options: View {
             }
             .onChange(of: blacklisted) { value in
                 guard triggeredInitial else { return }
-                STTHelpers.setBlackListedProviders(for: runnerID, values: Array(value))
+                let content = model.getCurrentStatement().content
+                STTHelpers.setBlackListedProviders(for: .init(contentId: content.highlight.id, sourceId: content.runnerID), values: Array(value))
                 didChange()
             }
             .onChange(of: priorityCache) { value in
@@ -118,9 +119,8 @@ struct FCS_Options: View {
     }
 
     func getBlacklisted() {
-        let runnerID = model.getCurrentStatement().content.runnerID
-
-        blacklisted = Set(STTHelpers.getBlacklistedProviders(for: runnerID))
+        let content = model.getCurrentStatement().content
+        blacklisted = Set(STTHelpers.getBlacklistedProviders(for: .init(contentId: content.highlight.id, sourceId: content.runnerID)))
     }
     
     func getPriorityDict() {

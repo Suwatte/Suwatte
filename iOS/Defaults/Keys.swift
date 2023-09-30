@@ -167,4 +167,10 @@ enum STTKeys {
     }
     
     static let OverrideSourceRecommendedReadingMode = "READER.override_provided_mode"
+    
+    static func TitleBlackListedProviders(_ id: String) -> String {
+        "RUNNER.TBLP:\(id)"
+    }
+    
+    static let BlackListOnSourceLevel = "APP.blacklist_on_source_level"
 }

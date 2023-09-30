@@ -13,6 +13,7 @@ struct SimpleContentInfo: Hashable {
     let runnerName: String
     let contentName: String
     let id: String
+    let highlight: DSKCommon.Highlight
 }
 
 struct ChapterStatement {

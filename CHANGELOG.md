@@ -5,6 +5,7 @@ Fix Target Not Found Error In Reader.
 Fix for crash on launch caused by icloud sync.
 Fix Unread Badge including filtered out chapters.
 Fix Crash Exporting backup from iPad
+Add Option to apply hidden providers on a per-title basis
 
 #  v6.0.1 Build 16
 

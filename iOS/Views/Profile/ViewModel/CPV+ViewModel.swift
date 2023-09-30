@@ -63,7 +63,7 @@ extension ProfileView {
         }
 
         var contentInfo: SimpleContentInfo {
-            .init(runnerID: sourceID, runnerName: source.name, contentName: entry.title, id: identifier)
+            .init(runnerID: sourceID, runnerName: source.name, contentName: entry.title, id: identifier, highlight: entry)
         }
 
         @Published var selection: ThreadSafeChapter?
