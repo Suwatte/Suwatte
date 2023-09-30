@@ -145,7 +145,7 @@ extension DaisukeEngine {
         runners.removeValue(forKey: id)
         Task {
             let actor = await RealmActor.shared()
-            let path = await actor.getRunner(id)?.executable?.filePath ?? executeableURL(for: id)
+            let path = await actor.getFrozenRunner(id)?.executable?.filePath ?? executeableURL(for: id)
             try? FileManager.default.removeItem(at: path)
             await actor.deleteRunner(id)
         }

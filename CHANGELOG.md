@@ -1,3 +1,7 @@
+#  v6.0.1 Build 17
+Fix Crashing on Runner Deletion
+
+
 #  v6.0.1 Build 16
 
 Disallow Unsecured HTTP requests
@@ -18,5 +22,5 @@ Reader Button Sizes Increased
 "Read Now Button" now uses new priority setting when displaying state
 Blur During Switch now properly dismisses when the app reenters the foreground from the background state
 Setting to always use the set default reading mode
-"Sign In to Continue" Now properly dismisses when the "Done" butotn is pressed.
+"Sign In to Continue" Now properly dismisses when the "Done" button is pressed.
 Test fix for inverted images in paged readers.

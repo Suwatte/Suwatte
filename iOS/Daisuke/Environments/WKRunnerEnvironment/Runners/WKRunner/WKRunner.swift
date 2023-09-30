@@ -26,7 +26,7 @@ public class WKRunner: DSKRunner {
 
         if let customID {
             let actor = await RealmActor.shared()
-            customName = await actor.getRunner(customID)?.name
+            customName = await actor.getFrozenRunner(customID)?.name
             let idScript = "RunnerObject.info.id = '\(customID)';IDENTIFIER = '\(customID)'"
             try await eval(idScript)
         }
