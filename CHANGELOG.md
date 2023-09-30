@@ -20,7 +20,3 @@ Blur During Switch now properly dismisses when the app reenters the foreground f
 Setting to always use the set default reading mode
 "Sign In to Continue" Now properly dismisses when the "Done" butotn is pressed.
 Test fix for inverted images in paged readers.
-
-## TODO
-- Sometimes the next chapter is not loaded in
-- Vertical Incorrectly marks as completed
