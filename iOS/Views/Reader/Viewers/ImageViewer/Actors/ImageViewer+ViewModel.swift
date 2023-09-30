@@ -42,13 +42,18 @@ extension IVViewModel {
         title = value.title
         presentationState = .loading
         chapterCount = value.chapters.count
-        let requested = value.openTo
+        var requested = value.openTo
         let chapters = value.chapters
 
-        guard chapters.contains(requested) else {
-            presentationState = .failed(DSK.Errors.NamedError(name: "MismatchError", message: "target chapter was not found in chapter list"))
-            return
+        if !chapters.contains(requested) {
+            let newTarget = chapters.first(where: { $0.id == requested.id })
+            guard let newTarget else {
+                presentationState = .failed(DSK.Errors.NamedError(name: "MismatchError", message: "target chapter was not found in chapter list"))
+                return
+            }
+            requested = newTarget
         }
+        
 
         setReadingMode(for: requested.STTContentIdentifier, requested: value.mode)
 

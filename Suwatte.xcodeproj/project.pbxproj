@@ -68,7 +68,6 @@
 		DF248F0C2813844C00818300 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DF248F0B2813844C00818300 /* KeychainSwift */; };
 		DF248F2B2813B24F00818300 /* BarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF248F2A2813B24F00818300 /* BarChartView.swift */; };
 		DF248F36281474A100818300 /* STT+Encodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF248F35281474A100818300 /* STT+Encodable.swift */; };
-		DF256AA42AA9028E00F4180B /* IceCream in Frameworks */ = {isa = PBXBuildFile; productRef = DF256AA32AA9028E00F4180B /* IceCream */; };
 		DF2783342A799BEF0098BBA9 /* RealmActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783332A799BEF0098BBA9 /* RealmActor.swift */; };
 		DF2783372A799C7E0098BBA9 /* Realm+ProgressMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783362A799C7E0098BBA9 /* Realm+ProgressMarker.swift */; };
 		DF2783392A799D480098BBA9 /* Realm+Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783382A799D480098BBA9 /* Realm+Content.swift */; };
@@ -328,6 +327,7 @@
 		DFAC77982815D48D00AF6394 /* STTHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAC77972815D48D00AF6394 /* STTHelper.swift */; };
 		DFADB58B29D7D04E00CBE22F /* JSCC+Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFADB58A29D7D04E00CBE22F /* JSCC+Network.swift */; };
 		DFADB58D29D7F19900CBE22F /* STT+URLRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFADB58C29D7F19900CBE22F /* STT+URLRequest.swift */; };
+		DFAE977D2AC866D9001E62D8 /* IceCream in Frameworks */ = {isa = PBXBuildFile; productRef = DFAE977C2AC866D9001E62D8 /* IceCream */; };
 		DFB47EEE2880928C0040A1BD /* RefreshableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB47EED2880928C0040A1BD /* RefreshableScrollView.swift */; };
 		DFB47EF72880C1FB0040A1BD /* STT+OPDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB47EF62880C1FB0040A1BD /* STT+OPDS.swift */; };
 		DFB47EFA2880C3DA0040A1BD /* OPDS+HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB47EF92880C3D90040A1BD /* OPDS+HomeView.swift */; };
@@ -934,8 +934,8 @@
 				DFF1043E28A9963D00E2C3A4 /* AnyCodable in Frameworks */,
 				DF70235129DA852A0076AAD0 /* NukeUI in Frameworks */,
 				DF59C97D285004860027F19D /* ZIPFoundation in Frameworks */,
+				DFAE977D2AC866D9001E62D8 /* IceCream in Frameworks */,
 				DF29A6822ABBC313005E11E3 /* AsyncDisplayKit in Frameworks */,
-				DF256AA42AA9028E00F4180B /* IceCream in Frameworks */,
 				DF9041A42AA3E7E600B72ACC /* ReadiumOPDS in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2521,8 +2521,8 @@
 				DF9041A12AA3E7E600B72ACC /* R2Shared */,
 				DF9041A32AA3E7E600B72ACC /* ReadiumOPDS */,
 				DFF4351D2AA6D09800FAAD8B /* Zephyr */,
-				DF256AA32AA9028E00F4180B /* IceCream */,
 				DF29A6812ABBC313005E11E3 /* AsyncDisplayKit */,
+				DFAE977C2AC866D9001E62D8 /* IceCream */,
 			);
 			productName = "Suwatte (iOS)";
 			productReference = DFCE6EAF280108EA002E220C /* Suwatte.app */;
@@ -2590,8 +2590,8 @@
 				DFA17F642A4916C300179850 /* XCRemoteSwiftPackageReference "ASCollectionView" */,
 				DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit" */,
 				DFF4351C2AA6D09800FAAD8B /* XCRemoteSwiftPackageReference "Zephyr" */,
-				DF256AA22AA9028E00F4180B /* XCRemoteSwiftPackageReference "IceCream" */,
 				DF29A6802ABBC313005E11E3 /* XCRemoteSwiftPackageReference "Texture" */,
+				DFAE977B2AC866D9001E62D8 /* XCRemoteSwiftPackageReference "IceCream" */,
 			);
 			productRefGroup = DF2DA6FF27CD82430046FE20;
 			projectDirPath = "";
@@ -3389,20 +3389,12 @@
 			repositoryURL = "https://github.com/realm/realm-swift.git";
 			requirement = {
 				kind = exactVersion;
-				version = 10.42.3;
+				version = 10.43.0;
 			};
 		};
 		DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
-		DF256AA22AA9028E00F4180B /* XCRemoteSwiftPackageReference "IceCream" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Suwatte/IceCream";
 			requirement = {
 				branch = master;
 				kind = branch;
@@ -3480,6 +3472,14 @@
 				kind = branch;
 			};
 		};
+		DFAE977B2AC866D9001E62D8 /* XCRemoteSwiftPackageReference "IceCream" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Suwatte/IceCream";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-collections.git";
@@ -3516,11 +3516,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift" */;
 			productName = KeychainSwift;
-		};
-		DF256AA32AA9028E00F4180B /* IceCream */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DF256AA22AA9028E00F4180B /* XCRemoteSwiftPackageReference "IceCream" */;
-			productName = IceCream;
 		};
 		DF29A6812ABBC313005E11E3 /* AsyncDisplayKit */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -3591,6 +3586,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DFA17F642A4916C300179850 /* XCRemoteSwiftPackageReference "ASCollectionView" */;
 			productName = ASCollectionView;
+		};
+		DFAE977C2AC866D9001E62D8 /* IceCream */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DFAE977B2AC866D9001E62D8 /* XCRemoteSwiftPackageReference "IceCream" */;
+			productName = IceCream;
 		};
 		DFB7FB02297B965D00599097 /* OrderedCollections */ = {
 			isa = XCSwiftPackageProductDependency;
