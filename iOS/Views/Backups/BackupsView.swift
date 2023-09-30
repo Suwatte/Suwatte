@@ -24,12 +24,18 @@ struct BackupsView: View {
     var body: some View {
         List {
             ForEach(manager.urls, id: \.path) { url in
-                Button {
-                    selection = url
-                } label: {
-                    Text(url.deletingPathExtension().lastPathComponent.trimmingCharacters(in: .punctuationCharacters))
-                }
-                .buttonStyle(.plain)
+                
+                Text(url.deletingPathExtension().lastPathComponent.trimmingCharacters(in: .punctuationCharacters))
+                    .contextMenu {
+                        Button { handleShareURL(url: url) } label : {
+                            Label("Share", systemImage: "square.and.arrow.up")
+                        }
+                        
+                        Divider()
+                        Button(role: .destructive) { selection = url } label : {
+                            Label("Restore", systemImage: "tray.and.arrow.down")
+                        }
+                    }
                 .swipeActions {
                     Button("Delete", role: .destructive) {
                         manager.remove(url: url)
@@ -37,15 +43,7 @@ struct BackupsView: View {
                 }
             }
         }
-        .confirmationDialog("Actions", isPresented: $presentActions) {
-            Button("Export") {
-                // Share Sheet
-                handleShareURL(url: selection!)
-            }
-            Button("Restore", role: .destructive) {
-                presentAlert.toggle()
-            }
-        }
+        
         .alert("Restoring \(selection?.deletingPathExtension().lastPathComponent ?? "")\nThis action cannot be undone and all current data will be lost. If this is not a fresh install, please backup your data.", isPresented: $presentAlert) {
             Button("Cancel", role: .cancel) {}
             if let selection = selection {
@@ -108,9 +106,20 @@ extension BackupsView {
 
     func handleShareURL(url: URL) {
         let activityController = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+
         let window = getKeyWindow()
-        window?.rootViewController!.present(activityController, animated: true, completion: nil)
+        guard let controller = window?.rootViewController else { return }
+
+        // Handle popover for iPad
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            activityController.popoverPresentationController?.sourceView = controller.view
+            // You might want to adjust this to be more specific, like the center of the screen, or near a specific button.
+            activityController.popoverPresentationController?.sourceRect = CGRect(x: controller.view.bounds.midX, y: controller.view.bounds.midY, width: 0, height: 0)
+        }
+        
+        controller.present(activityController, animated: true, completion: nil)
     }
+
 
     func handleRestore(url: URL) {
         ToastManager.shared.loading = true
