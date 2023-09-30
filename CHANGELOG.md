@@ -3,6 +3,7 @@ Fix Crashing on Runner Deletion.
 Fix Crashing due to null environment in runner object.
 Fix Target Not Found Error In Reader.
 Fix for crash on launch caused by icloud sync.
+Fix Unread Badge including filtered out chapters.
 
 #  v6.0.1 Build 16
 
