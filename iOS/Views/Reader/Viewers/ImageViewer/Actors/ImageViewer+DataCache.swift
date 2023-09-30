@@ -177,29 +177,26 @@ extension IVDataCache {
 
 extension IVDataCache {
     func getChapter(after chapter: ThreadSafeChapter) -> ThreadSafeChapter? {
-        
         if let next = nextCache[chapter.id] {
             return next
         }
-        
+
         let index = chapters.firstIndex(of: chapter)
         guard let index else {
             return nil
         }
-        
+
         let next = ChapterManager.getChapter(after: true, index: index, chapters: chapters)
 
-            
         nextCache[chapter.id] = next
         return next
     }
 
     func getChapter(before chapter: ThreadSafeChapter) -> ThreadSafeChapter? {
-        
         if let prev = prevCache[chapter.id] {
             return prev
         }
-        
+
         let index = chapters.firstIndex(of: chapter)
         guard let index else {
             return nil

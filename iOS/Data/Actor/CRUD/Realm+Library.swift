@@ -243,10 +243,9 @@ extension RealmActor {
             .where { $0.sourceId == id.sourceId }
             .freeze()
             .toArray()
-            .filter({ !readChapters.contains($0.chapterOrderKey) })
-            .map( { $0.toThreadSafe() })
-        
-        
+            .filter { !readChapters.contains($0.chapterOrderKey) }
+            .map { $0.toThreadSafe() }
+
         let filtered = STTHelpers.filterChapters(unreadChapters, with: id)
         return filtered.count
     }

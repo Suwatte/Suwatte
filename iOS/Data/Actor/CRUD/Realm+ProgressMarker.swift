@@ -9,14 +9,13 @@ import Foundation
 import RealmSwift
 
 extension RealmActor {
-    internal func getContentMarker(for id: String) -> ProgressMarker? {
+    func getContentMarker(for id: String) -> ProgressMarker? {
         return getObject(of: ProgressMarker.self, with: id)
     }
-    
+
     func getFrozenContentMarker(for id: String) -> ProgressMarker? {
         return getContentMarker(for: id)?.freeze()
     }
-    
 
     private func getLatestLinkedMarker(for id: String) -> ProgressMarker? {
         let maxedMarker = getLinkedContent(for: id)
@@ -142,7 +141,7 @@ extension RealmActor {
                 target.totalPageCount = totalPageCount
                 target.lastPageOffsetPCT = lastPageOffsetPCT
                 target.currentChapter = reference
-                
+
                 if lastPageRead == totalPageCount {
                     target.readChapters.insert(chapter.chapterOrderKey)
                 }

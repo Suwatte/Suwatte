@@ -12,9 +12,8 @@ protocol OffsetPreservingLayout: NSObject {
 }
 
 class HImageViewerLayout: UICollectionViewFlowLayout, OffsetPreservingLayout {
-    
     var readingMode: ReadingMode!
-    
+
     override init() {
         super.init()
         scrollDirection = .horizontal

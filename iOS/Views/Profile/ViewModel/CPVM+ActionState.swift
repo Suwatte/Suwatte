@@ -18,9 +18,8 @@ extension ViewModel {
     }
 
     func calculateActionState(_ safetyCheck: Bool) async -> ActionState {
-
         let chapters = Array(getCurrentStatement().filtered.reversed())
-        
+
         guard !chapters.isEmpty else {
             return .init(state: .none)
         }
@@ -31,7 +30,7 @@ extension ViewModel {
             .getFrozenContentMarker(for: identifier)
 
         _ = STTHelpers.getReadingMode(for: identifier) // To Update Reading Mode
-        
+
         func getStateAtIndex(state: ProgressState, marker: ActionState.Marker? = nil, index: Int) -> ActionState {
             let chapter = ChapterManager.getPreferredChapter(matching: index, for: chapters)
             if let chapter {
@@ -43,15 +42,13 @@ extension ViewModel {
             }
         }
 
-        
         func getEarliestChapterState(state: ProgressState = .start) -> ActionState {
             getStateAtIndex(state: state, index: 0)
         }
-        
+
         func getLatestChapterState() -> ActionState {
-            getStateAtIndex(state: .reRead, index:  chapters.endIndex - 1)
+            getStateAtIndex(state: .reRead, index: chapters.endIndex - 1)
         }
-        
 
         guard let marker else {
             if let state = resolveSourceProgressStateAsActionState(chapters: chapters) {
@@ -92,12 +89,12 @@ extension ViewModel {
                 // if targetIndex is nil, there is no chapter greater than our current maximum read. So reread the max available
 
                 if content.status == .COMPLETED {
-                   return  getEarliestChapterState(state: .restart) // Restart First
+                    return getEarliestChapterState(state: .restart) // Restart First
                 } else {
                     return getLatestChapterState() // Reread Last
                 }
             }
-            
+
             let state = getStateAtIndex(state: .upNext, index: targetIndex)
             return state
         }
@@ -112,7 +109,7 @@ extension ViewModel {
 
         let targetIndex = chapters
             .firstIndex(where: { $0.id == correctedChapterId })
-        
+
         guard let targetIndex else {
             return getEarliestChapterState()
         }
@@ -121,27 +118,25 @@ extension ViewModel {
         if !marker.isCompleted {
             let marker = ActionState
                 .Marker
-                .init(progress: marker.progress ?? 0.0,
-                                                  date: marker.dateRead)
+            (progress: marker.progress ?? 0.0,
+             date: marker.dateRead)
             return getStateAtIndex(state: .resume, marker: marker, index: targetIndex)
         }
-        
+
         // Chapter is Completed, Handle Next Chapter
         let next = ChapterManager.getChapter(after: true, index: targetIndex, chapters: chapters)
-        
-        
+
         // Next Chapter is Available
         if let next {
             return .init(state: .upNext, chapter: next)
         }
-        
+
         // Title is marked as completed, give option to restart
         if content.status == .COMPLETED {
             return getEarliestChapterState(state: .restart)
         }
-        
-        return getLatestChapterState()
 
+        return getLatestChapterState()
     }
 
     private func resolveSourceProgressStateAsActionState(chapters: [ThreadSafeChapter]) -> ActionState? {
@@ -151,7 +146,6 @@ extension ViewModel {
         else {
             return nil
         }
-        
 
         if state.progress == 1 {
             if let target = ChapterManager.getChapter(after: true, index: currentIndex, chapters: chapters) { // Completed, Point to Next
@@ -159,7 +153,7 @@ extension ViewModel {
             } else { // There is no next, reread
                 return nil
             }
-            
+
         } else if let target = ChapterManager.getPreferredChapter(matching: currentIndex, for: chapters) {
             // Update Progress in db
             Task.detached {
@@ -175,87 +169,78 @@ extension ViewModel {
     }
 }
 
-
-
-struct ChapterManager {
-    
+enum ChapterManager {
     static func getChapter<T: Collection<ThreadSafeChapter>>(after: Bool, index: Int, chapters: T) -> ThreadSafeChapter? {
         let current = chapters.getOrNil(index as! T.Index)
         guard let current else { return nil }
-        
+
         let inc_dec = after ? 1 : -1
         let nextIndex = index + inc_dec
-        
+
         let target = chapters.getOrNil(nextIndex as! T.Index)
         guard let target else { return nil }
-        
-        
+
         guard target.number != current.number else {
-            return getChapter(after: after, index : nextIndex, chapters: chapters)
+            return getChapter(after: after, index: nextIndex, chapters: chapters)
         }
-        
-        
+
         return Self.getPreferredChapter(matching: nextIndex, for: chapters)
     }
-    
-    
+
     /// Get Chapters
     static func getPreferredChapter<T: Collection<ThreadSafeChapter>>(matching index: Int, for chapters: T) -> ThreadSafeChapter? {
-                
         var options: [ThreadSafeChapter] = []
-        
+
         var counter = index
         let chapter = chapters.getOrNil(index as! T.Index)
         guard let chapter else { return nil }
-        
+
         // check below
-        
+
         while counter >= 0 {
             guard let target = chapters.getOrNil(counter as! T.Index), chapter.number == target.number else { break }
             options.append(target)
             counter -= 1
         }
-        
+
         // Reset count
         counter = index
-        
+
         // check above
-        
+
         while counter >= 0 {
             guard let target = chapters.getOrNil(counter as! T.Index), chapter.number == target.number else { break }
             options.append(target)
             counter -= 1
         }
-        
+
         let runnerID = chapter.sourceId
         let titleOrder = STTHelpers.getChapterHighPriorityOrder(for: chapter.STTContentIdentifier)
         let sourceOrder = STTHelpers.getChapterPriorityMap(for: chapter.sourceId)
-        
+
         func getTitleOrder(_ chapter: ThreadSafeChapter) -> Int {
             (chapter.providers ?? [])
-                .map( { titleOrder.reversed().firstIndex(of: $0.id) ?? -1 })
+                .map { titleOrder.reversed().firstIndex(of: $0.id) ?? -1 }
                 .max() ?? -1
         }
-        
+
         func getSourceOrder(_ chapter: ThreadSafeChapter) -> Int {
             (chapter.providers ?? [])
-                .map({ sourceOrder[$0.id]?.rawValue ?? ChapterProviderPriority.default.rawValue })
+                .map { sourceOrder[$0.id]?.rawValue ?? ChapterProviderPriority.default.rawValue }
                 .max() ?? -1
         }
-        
+
         let preferredOption = options
             .sorted { lhs, rhs in
                 let lhsTO = getTitleOrder(lhs)
                 let lhsSO = getSourceOrder(lhs)
-                
+
                 let rhsTO = getTitleOrder(rhs)
                 let rhsSO = getSourceOrder(rhs)
-                return (lhsTO, lhsSO ) > (rhsTO, rhsSO)
+                return (lhsTO, lhsSO) > (rhsTO, rhsSO)
             }
             .first
-                
+
         return preferredOption ?? chapter
     }
-    
-    
 }

@@ -169,7 +169,7 @@ extension STTHelpers {
     static func getBlacklistedProviders(for id: ContentIdentifier) -> [String] {
         let defaults = UserDefaults.standard
         let key = Preferences.standard.blackListProviderOnSourceLevel ? STTKeys.BlackListedProviders(id.sourceId) : STTKeys.TitleBlackListedProviders(id.id)
-        return defaults.stringArray(forKey: key ) ?? []
+        return defaults.stringArray(forKey: key) ?? []
     }
 
     static func setBlackListedProviders(for id: ContentIdentifier, values: [String]) {

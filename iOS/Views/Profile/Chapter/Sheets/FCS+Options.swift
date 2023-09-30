@@ -14,20 +14,20 @@ struct FCS_Options: View {
     @State private var blacklisted: Set<String> = []
     @State private var triggeredInitial = false
 
-    @State private var priorityCache: [String:ChapterProviderPriority] = [:]
+    @State private var priorityCache: [String: ChapterProviderPriority] = [:]
     @State private var highPrioOrder: [String] = []
     private var HighPriority: [DSKCommon.ChapterProvider] {
         providers.filter { priorityCache[$0.id] == .always }
     }
-    
+
     private var StandardProviders: [DSKCommon.ChapterProvider] {
         providers.filter { !blacklisted.contains($0.id) && priorityCache[$0.id] != .always }
     }
-    
+
     private var HiddenProviders: [DSKCommon.ChapterProvider] {
         providers.filter { blacklisted.contains($0.id) }
     }
-    
+
     var body: some View {
         SmartNavigationView {
             List {
@@ -64,7 +64,7 @@ struct FCS_Options: View {
 
     @ViewBuilder
     var HighPrioritySection: some View {
-        let ps = HighPriority.sorted(by: { highPrioOrder.firstIndex(of: $0.id ) ?? 99 < highPrioOrder.firstIndex(of: $1.id)  ?? 99 })
+        let ps = HighPriority.sorted(by: { highPrioOrder.firstIndex(of: $0.id) ?? 99 < highPrioOrder.firstIndex(of: $1.id) ?? 99 })
         if !ps.isEmpty {
             Section {
                 ForEach(ps) { provider in
@@ -84,7 +84,7 @@ struct FCS_Options: View {
             }
         }
     }
-    
+
     var ProvidersSection: some View {
         Section {
             ForEach(StandardProviders.sorted(by: \.name.localizedLowercase, descending: false)) { provider in
@@ -95,23 +95,21 @@ struct FCS_Options: View {
             Text("Standard")
         }
     }
-    
+
     var HiddenSection: some View {
         Section {
             ForEach(HiddenProviders.sorted(by: \.name.localizedLowercase, descending: false)) { provider in
                 ChapterProviderCell(provider: provider, sourceID: runnerID, blacklist: $blacklisted, priorityMap: $priorityCache)
                     .id(provider.id + "\(blacklisted.contains(provider.id))" + (priorityCache[provider.id] ?? .default).description)
-
             }
         } header: {
             Text("Hidden")
         }
     }
-    
+
     var runnerID: String {
         model.getCurrentStatement().content.runnerID
     }
-
 
     func getProviders() {
         let chapters = model.getCurrentStatement().originalList
@@ -122,12 +120,12 @@ struct FCS_Options: View {
         let content = model.getCurrentStatement().content
         blacklisted = Set(STTHelpers.getBlacklistedProviders(for: .init(contentId: content.highlight.id, sourceId: content.runnerID)))
     }
-    
+
     func getPriorityDict() {
         priorityCache = STTHelpers.getChapterPriorityMap(for: runnerID)
         highPrioOrder = STTHelpers.getChapterHighPriorityOrder(for: model.currentChapterSection)
     }
-    
+
     func load() {
         getProviders()
         getBlacklisted()
@@ -135,7 +133,6 @@ struct FCS_Options: View {
         triggeredInitial = true
     }
 }
-
 
 struct ChapterProviderCell: View {
     let provider: DSKCommon.ChapterProvider
@@ -146,7 +143,7 @@ struct ChapterProviderCell: View {
     private var priority: ChapterProviderPriority {
         priorityMap[provider.id] ?? .default
     }
-    
+
     private var binding: Binding<ChapterProviderPriority> {
         .init(get: { priority }) { value in
             if value == .default {
@@ -156,9 +153,10 @@ struct ChapterProviderCell: View {
             }
         }
     }
+
     var body: some View {
         HStack {
-            VStack (alignment: .leading){
+            VStack(alignment: .leading) {
                 Text(provider.name)
                 if blacklist.contains(provider.id) {
                     Text("Hidden")
@@ -172,7 +170,6 @@ struct ChapterProviderCell: View {
                         .foregroundColor(priority == .always ? .accentColor : .primary)
                         .italic()
                 }
-                
             }
             Spacer()
         }
@@ -185,7 +182,7 @@ struct ChapterProviderCell: View {
                 }
             }
             .pickerStyle(.menu)
-            
+
             Divider()
             if blacklist.contains(provider.id) {
                 Button("UnHide Chapers") {
@@ -202,10 +199,9 @@ struct ChapterProviderCell: View {
     }
 }
 
-
 enum ChapterProviderPriority: Int, CaseIterable, Codable {
     case avoid, low, `default`, high, always
-    
+
     var description: String {
         switch self {
         case .avoid:
@@ -224,39 +220,35 @@ enum ChapterProviderPriority: Int, CaseIterable, Codable {
 
 extension UserDefaults {
     func object<T: Codable>(_ type: T.Type, with key: String, usingDecoder decoder: JSONDecoder = JSONDecoder()) -> T? {
-        guard let data = self.value(forKey: key) as? Data else { return nil }
+        guard let data = value(forKey: key) as? Data else { return nil }
         return try? decoder.decode(type.self, from: data)
     }
 
     func set<T: Codable>(object: T, forKey key: String, usingEncoder encoder: JSONEncoder = JSONEncoder()) {
         do {
             let data = try encoder.encode(object)
-            self.set(data, forKey: key)
-            self.synchronize()
+            set(data, forKey: key)
+            synchronize()
         } catch {
             Logger.shared.error(error)
         }
-
     }
 }
-
-
 
 extension STTHelpers {
     static func getChapterPriorityMap(for id: String) -> [String: ChapterProviderPriority] {
         UserDefaults.standard.object([String: ChapterProviderPriority].self, with: STTKeys.SourceChapterProviderPriority(id)) ?? [:]
     }
-    
+
     static func setChapterPriorityMap(for id: String, _ map: [String: ChapterProviderPriority]) {
         UserDefaults.standard.set(object: map, forKey: STTKeys.SourceChapterProviderPriority(id))
     }
-    
+
     static func setChapterHighPriorityOrder(for id: String, list: [String]) {
         UserDefaults.standard.set(object: list, forKey: STTKeys.TitleHighPriorityOrder(id))
     }
-    
-    static func getChapterHighPriorityOrder(for id: String) -> Array<String> {
-        UserDefaults.standard.object(Array<String>.self, with: STTKeys.TitleHighPriorityOrder(id)) ?? []
 
+    static func getChapterHighPriorityOrder(for id: String) -> [String] {
+        UserDefaults.standard.object([String].self, with: STTKeys.TitleHighPriorityOrder(id)) ?? []
     }
 }

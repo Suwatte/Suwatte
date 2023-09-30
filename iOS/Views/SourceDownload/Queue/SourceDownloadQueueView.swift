@@ -371,7 +371,7 @@ extension SDQV {
         func Cell(_ download: SourceDownload, state _: SDM.DownloadState) -> some View {
             let content = download.content!
             let chapter = download.chapter!
-            
+
             VStack {
                 CellHeader(content, chapter)
                 ChapterListTile(chapter: chapter.toThreadSafe(),
@@ -384,7 +384,6 @@ extension SDQV {
                                 showDate: false,
                                 isBookmarked: false)
             }
-            
         }
     }
 }

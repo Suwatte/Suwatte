@@ -67,7 +67,6 @@ extension TrackerManagementView {
                     .frame(width: 25, height: 25, alignment: .center)
                     .cornerRadius(7)
 
-
                     Text(tracker.name)
                         .font(.headline)
                     Spacer()
@@ -88,7 +87,7 @@ extension TrackerManagementView {
             }
             .animation(.default, value: thumbnailURL)
         }
-        
+
         func load() async {
             let object = await RealmActor.shared().getFrozenRunner(tracker.id)
             await MainActor.run {
@@ -96,7 +95,6 @@ extension TrackerManagementView {
                     thumbnailURL = object?.thumbnail ?? ""
                 }
             }
-
         }
     }
 }

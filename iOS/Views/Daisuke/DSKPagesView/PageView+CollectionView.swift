@@ -226,7 +226,7 @@ extension DSKPageView.CollectionView {
     }
 
     func LoadingSection(_ section: DSKCommon.PageSection) -> ASCollectionViewSection<String> {
-        ASCollectionViewSection(id: section.id, data: DSKCommon.Highlight.placeholders()) { data, _ in
+        ASCollectionViewSection(id: section.id, data: DSKCommon.Highlight.placeholders()) { _, _ in
             Color.gray.opacity(0.25)
                 .environment(\.pageSectionStyle, section.sectionStyle)
                 .redacted(reason: .placeholder)

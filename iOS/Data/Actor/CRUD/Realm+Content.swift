@@ -8,13 +8,12 @@
 import RealmSwift
 
 extension RealmActor {
-
     private func getStoredContent(_ sourceId: String, _ contentId: String) -> StoredContent? {
         let identifier = ContentIdentifier(contentId: contentId, sourceId: sourceId).id
         return getObject(of: StoredContent.self, with: identifier)
     }
 
-    internal func getStoredContent(_ id: String) -> StoredContent? {
+    func getStoredContent(_ id: String) -> StoredContent? {
         getObject(of: StoredContent.self, with: id)
     }
 }
@@ -24,15 +23,15 @@ extension RealmActor {
         try? getObject(of: StoredContent.self, with: id)?
             .toDSKContent()
     }
-    
+
     func getFrozenContent(_ id: String) -> StoredContent? {
         getStoredContent(id)?.freeze()
     }
-    
+
     func isContentSaved(_ id: String) -> Bool {
         return getStoredContent(id) != nil
     }
-    
+
     func refreshStored(contentId: String, sourceId: String) async {
         guard let source = await DSK.shared.getSource(id: sourceId) else {
             return
@@ -52,7 +51,7 @@ extension RealmActor {
             target.streamable = value
         }
     }
-    
+
     func storeContent(_ content: StoredContent) async {
         do {
             try await realm.asyncWrite {

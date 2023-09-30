@@ -63,9 +63,8 @@ class UDSync {
                                   "RUNNER.BLP",
                                   "RUNNER.SCPP",
                                   "RUNNER.THPO",
-                                  "READER.type"
-        ]
-        
+                                  "READER.type"]
+
         func startsWith(_ v: String) -> Bool {
             DynamicKeyPrefixes.contains(where: { v.starts(with: $0) })
         }
@@ -80,10 +79,9 @@ class UDSync {
             Zephyr.sync(keys: keys)
             Zephyr.addKeysToBeMonitored(keys: keys)
         }
-
     }
-    
+
     private static func isUserLoggedInToiCloud() -> Bool {
-       FileManager.default.url(forUbiquityContainerIdentifier: nil) != nil
+        FileManager.default.url(forUbiquityContainerIdentifier: nil) != nil
     }
 }

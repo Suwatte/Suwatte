@@ -239,12 +239,12 @@ extension PageViewTile {
                 loader.load(url)
             }
         }
-        
+
         func setup() async {
             // Update Loader
             loader.transaction = .init(animation: .easeInOut(duration: 0.25))
             await load(url: urls.first)
-            
+
             guard urls.count > 1 else { return }
         }
     }

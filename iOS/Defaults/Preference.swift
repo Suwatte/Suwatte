@@ -176,10 +176,10 @@ final class Preferences {
 
     @UserDefault(STTKeys.UpdateApprovedCollections)
     var approvedUpdateCollections = Set<String>()
-    
+
     @UserDefault(STTKeys.OverrideSourceRecommendedReadingMode)
     var overrideProvidedReaderMode = false
-    
+
     @UserDefault(STTKeys.BlackListOnSourceLevel)
     var blackListProviderOnSourceLevel = true
 }

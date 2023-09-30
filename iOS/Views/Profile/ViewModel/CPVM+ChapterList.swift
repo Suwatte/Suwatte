@@ -24,7 +24,7 @@ extension ViewModel {
         var maxOrderKey: Double = 0
         var distinctKeys = Set<Double>()
 
-        let filtered = STTHelpers.filterChapters(chapters, with: .init(contentId:  content.highlight.id, sourceId: content.runnerID)) { chapter in
+        let filtered = STTHelpers.filterChapters(chapters, with: .init(contentId: content.highlight.id, sourceId: content.runnerID)) { chapter in
             let orderKey = chapter.chapterOrderKey
             maxOrderKey = max(orderKey, maxOrderKey)
             distinctKeys.insert(orderKey)

@@ -68,7 +68,7 @@ struct STTThumbView: View {
             }
         }
     }
-    
+
     private func load() {
         guard let url = url else {
             return

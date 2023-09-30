@@ -11,7 +11,7 @@ struct ContentSettingsView: View {
     @Preference(\.incognitoMode) var incognitoMode
     @AppStorage(STTKeys.GlobalHideNSFW) var hideNSFW = false
     @Preference(\.blackListProviderOnSourceLevel) var blacklistOnSourceLevel
-    
+
     var body: some View {
         List {
             Section {
@@ -33,7 +33,7 @@ struct ContentSettingsView: View {
             } header: {
                 Text("Content Languages")
             }
-            
+
             Section {
                 Toggle("Hide Providers on a Source Basis", isOn: $blacklistOnSourceLevel)
             } header: {

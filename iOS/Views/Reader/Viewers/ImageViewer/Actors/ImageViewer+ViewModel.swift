@@ -53,7 +53,6 @@ extension IVViewModel {
             }
             requested = newTarget
         }
-        
 
         setReadingMode(for: requested.STTContentIdentifier, requested: value.mode)
 
@@ -103,7 +102,7 @@ extension IVViewModel {
         } else {
             readingMode = STTHelpers.getReadingMode(for: id) ?? requested ?? .defaultPanelMode
         }
-    
+
         Preferences.standard.currentReadingMode = readingMode
     }
 
@@ -187,7 +186,7 @@ extension IVViewModel {
             control.menu = false
         }
     }
-    
+
     nonisolated func showMenu() {
         Task { @MainActor in
             control.menu = true
