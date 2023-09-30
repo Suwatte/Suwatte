@@ -12,6 +12,9 @@ protocol OffsetPreservingLayout: NSObject {
 }
 
 class HImageViewerLayout: UICollectionViewFlowLayout, OffsetPreservingLayout {
+    
+    var readingMode: ReadingMode!
+    
     override init() {
         super.init()
         scrollDirection = .horizontal
@@ -53,7 +56,7 @@ class HImageViewerLayout: UICollectionViewFlowLayout, OffsetPreservingLayout {
     }
 
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        let isInverted = Preferences.standard.currentReadingMode.isInverted
+        let isInverted = readingMode.isInverted
 
         let layoutAttributes = super.layoutAttributesForElements(in: rect) ?? []
         for attribute in layoutAttributes {

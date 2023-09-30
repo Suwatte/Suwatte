@@ -19,6 +19,8 @@ Reader Button Sizes Increased
 Blur During Switch now properly dismisses when the app reenters the foreground from the background state
 Setting to always use the set default reading mode
 "Sign In to Continue" Now properly dismisses when the "Done" butotn is pressed.
+Test fix for inverted images in paged readers.
 
 ## TODO
-- Images are flipped in Paged Readers
+- Sometimes the next chapter is not loaded in
+- Vertical Incorrectly marks as completed

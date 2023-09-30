@@ -68,6 +68,11 @@ extension Controller {
 
         // Layout Specific
         let layout = isVertical ? VImageViewerLayout() : HImageViewerLayout()
+        
+        if let layout = layout as? HImageViewerLayout {
+            layout.readingMode = readingMode
+        }
+        
         collectionView.setCollectionViewLayout(layout, animated: false)
 
         // Final setup calls
