@@ -16,8 +16,9 @@ Several Typos have been corrected.
 Better Chapter Provider Handling (Priority Setting)
 Reader Button Sizes Increased
 "Read Now Button" now uses new priority setting when displaying state
+Blur During Switch now properly dismisses when the app reenters the foreground from the background state
 
 ## TODO
-- Blur During Switch does not work on 16 Below
 - Images are flipped in Paged Readers
-- Check how network changes affect local Komga servers
+- Auth View does not dismiss when completed
+- Add Reader mode override
