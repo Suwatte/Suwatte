@@ -53,7 +53,7 @@ final class StoredRunnerObject: Object, Identifiable, CKRecordConvertible, CKRec
     @Persisted var parentRunnerID: String?
     @Persisted var name: String
     @Persisted var version: Double
-    @Persisted var environment: RunnerEnvironment = .unknown
+    @Persisted var environment: RunnerEnvironment? = .unknown
 
     @Persisted var dateAdded: Date = .init()
     @Persisted var enabled: Bool = true
@@ -68,4 +68,8 @@ final class StoredRunnerObject: Object, Identifiable, CKRecordConvertible, CKRec
 
     static let RUNNER_KEY = "bundle"
     @Persisted var executable: CreamAsset?
+    
+    var safeEnvironment: RunnerEnvironment {
+        environment ?? .unknown
+    }
 }

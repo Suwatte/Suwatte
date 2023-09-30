@@ -1,6 +1,6 @@
 #  v6.0.1 Build 17
 Fix Crashing on Runner Deletion
-
+Fix Crashing due to null environment in runner object.
 
 #  v6.0.1 Build 16
 
