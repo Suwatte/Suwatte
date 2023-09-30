@@ -83,7 +83,7 @@ enum AppTabs: Int, CaseIterable {
 }
 
 struct SmartNavigationView<Content>: View where Content: View {
-    @ViewBuilder var content: () -> Content
+    let content: () -> Content
 
     var body: some View {
         NavigationView(content: content)

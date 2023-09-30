@@ -18,7 +18,7 @@ Reader Button Sizes Increased
 "Read Now Button" now uses new priority setting when displaying state
 Blur During Switch now properly dismisses when the app reenters the foreground from the background state
 Setting to always use the set default reading mode
+"Sign In to Continue" Now properly dismisses when the "Done" butotn is pressed.
 
 ## TODO
 - Images are flipped in Paged Readers
-- Auth View does not dismiss when completed

@@ -112,11 +112,12 @@ struct LibraryView: View {
                     List {
                         DSKAuthView(model: .init(runner: runner))
                     }
-                    .navigationTitle("Sign In to \(runnerOBJ.name)")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .closeButton(title: "Done")
                 }
+                .navigationTitle("Sign In to \(runnerOBJ.name)")
+                .navigationBarTitleDisplayMode(.inline)
+                .closeButton(title: "Done")
             }
+
         })
     }
 }
