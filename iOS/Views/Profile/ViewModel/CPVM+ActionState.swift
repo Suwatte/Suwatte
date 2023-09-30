@@ -116,11 +116,8 @@ extension ViewModel {
 
         // Marker Exists, Chapter has not been completed, resume
         if !marker.isCompleted {
-            let marker = ActionState
-                .Marker
-            (progress: marker.progress ?? 0.0,
-             date: marker.dateRead)
-            return getStateAtIndex(state: .resume, marker: marker, index: targetIndex)
+            let asMarker = ActionState.Marker(progress: marker.progress ?? 0.0, date: marker.dateRead)
+            return getStateAtIndex(state: .resume, marker: asMarker, index: targetIndex)
         }
 
         // Chapter is Completed, Handle Next Chapter
@@ -214,7 +211,6 @@ enum ChapterManager {
             counter -= 1
         }
 
-        let runnerID = chapter.sourceId
         let titleOrder = STTHelpers.getChapterHighPriorityOrder(for: chapter.STTContentIdentifier)
         let sourceOrder = STTHelpers.getChapterPriorityMap(for: chapter.sourceId)
 

@@ -56,7 +56,7 @@ extension ViewModel {
 
             var markers: [String: Double] = [:]
 
-            for await(key, chapterKey) in group {
+            for await (key, chapterKey) in group {
                 markers[key] = chapterKey
             }
             return markers
