@@ -32,7 +32,8 @@ extension LibraryView.LibraryGrid {
         @Published var query = ""
         @Published var library: [LibraryEntry]?
         private var token: NotificationToken?
-        init(collection: LibraryCollection? = nil, readingFlag: LibraryFlag? = nil) {
+
+        func setFilterGroups(collection: LibraryCollection? = nil, readingFlag: LibraryFlag? = nil) {
             self.collection = collection
             self.readingFlag = readingFlag
         }
