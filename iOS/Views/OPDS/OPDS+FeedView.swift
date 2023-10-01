@@ -24,7 +24,7 @@ extension OPDSView {
         @State var loadable: Loadable<Feed> = .idle
 
         var body: some View {
-            LoadableView(load, $loadable) { feed in
+            LoadableView(nil, load, $loadable) { feed in
                 FeedView(feed: feed)
                     .refreshable {
                         loadable = .idle

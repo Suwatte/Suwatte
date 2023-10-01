@@ -19,7 +19,7 @@ struct DSKPageView<C: View>: View {
     }
 
     var body: some View {
-        LoadableView(model.load, $model.loadable) { sections in
+        LoadableView(model.runner.id, model.load, $model.loadable) { sections in
             CollectionView(sections: sections, runner: model.runner, modifier)
         }
         .environmentObject(model)

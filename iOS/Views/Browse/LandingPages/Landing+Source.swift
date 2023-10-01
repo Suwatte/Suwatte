@@ -18,7 +18,7 @@ struct LoadableSourceView<V: View>: View {
     }
 
     var body: some View {
-        LoadableView(load, $loadable) { value in
+        LoadableView(sourceID, load, $loadable) { value in
             content(value)
         }
     }
@@ -56,7 +56,7 @@ struct LoadableRunnerView<V: View>: View {
     }
 
     var body: some View {
-        LoadableView(load, $loadable) { value in
+        LoadableView(runnerID, load, $loadable) { value in
             content(value)
         }
     }

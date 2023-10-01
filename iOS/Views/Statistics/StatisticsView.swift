@@ -10,7 +10,7 @@ import SwiftUI
 struct LoadableStatisticsView: View {
     @State private var loadable: Loadable<LibraryStatistics> = .idle
     var body: some View {
-        LoadableView(load, $loadable) { value in
+        LoadableView(nil, load, $loadable) { value in
             LibraryStatisticsView(statistics: value)
         }
         .transition(.opacity)

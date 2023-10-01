@@ -195,7 +195,7 @@ struct OnboardingAddRunnersView: View {
             Text("Great Job! Now lets add some Sources & Trackers.")
                 .font(.subheadline.weight(.light))
 
-            LoadableView(load, $loadable) { runnerList in
+            LoadableView(nil, load, $loadable) { runnerList in
                 VStack {
                     ForEach(runnerList.runners) { runner in
                         RunnerListsView.RunnerListInfo.RunnerListCell(listURL: COMMUNITY_LIST_URL, list: runnerList, runner: runner)

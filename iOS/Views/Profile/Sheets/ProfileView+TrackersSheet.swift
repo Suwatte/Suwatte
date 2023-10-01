@@ -106,7 +106,7 @@ extension TrackerManagementView {
         @State private var loadable: Loadable<DSKCommon.Highlight> = .idle
 
         var body: some View {
-            LoadableView(load, $loadable) { item in
+            LoadableView(tracker.id, load, $loadable) { item in
                 TrackerItemCell(item: item, tracker: tracker, status: item.entry?.status ?? .CURRENT)
             }
         }
@@ -359,7 +359,7 @@ extension TrackerManagementView {
             }
 
             // Resullts
-            LoadableView(load, $loadable) { results in
+            LoadableView(tracker.id, load, $loadable) { results in
                 ZStack {
                     if results.isEmpty {
                         Text("No Matches")

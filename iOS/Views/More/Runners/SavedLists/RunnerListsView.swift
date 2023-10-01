@@ -112,7 +112,7 @@ extension RunnerListsView {
         @State var loadable: Loadable<RunnerList> = .idle
         @State var text: String = ""
         var body: some View {
-            LoadableView(load, $loadable) { value in
+            LoadableView(nil, load, $loadable) { value in
                 InternalListInfoView(list: value, listURL: listURL, text: $text)
                     .task {
                         didLoad()
