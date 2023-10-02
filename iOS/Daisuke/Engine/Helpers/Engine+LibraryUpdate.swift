@@ -76,7 +76,7 @@ extension DSK {
         let chapters = try? await getChapters(for: contentId, with: source)
 
         guard var chapters else { return 0 }
-        chapters = STTHelpers.filterChapters(chapters, with: source.id)
+        chapters = STTHelpers.filterChapters(chapters, with: .init(contentId: contentId, sourceId: source.id))
 
         var marked: [String] = []
 
@@ -202,7 +202,7 @@ extension DSK {
 
         let lastFetched = await actor.getLatestStoredChapter(source.id, title.contentId)
         if Task.isCancelled { return false }
-        var filtered = STTHelpers.filterChapters(chapters, with: source.id)
+        var filtered = STTHelpers.filterChapters(chapters, with: .init(contentId: title.contentId, sourceId: title.sourceId))
 
         if let min {
             filtered = filtered

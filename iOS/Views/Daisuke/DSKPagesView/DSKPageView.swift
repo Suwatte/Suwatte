@@ -19,7 +19,7 @@ struct DSKPageView<C: View>: View {
     }
 
     var body: some View {
-        LoadableView(model.load, $model.loadable) { sections in
+        LoadableView(model.runner.id, model.load, $model.loadable) { sections in
             CollectionView(sections: sections, runner: model.runner, modifier)
         }
         .environmentObject(model)
@@ -41,7 +41,7 @@ extension DSKPageView {
 
         func load() async throws -> [DSKCommon.PageSection] {
             let data: [DSKCommon.PageSection] = try await runner.getSectionsForPage(link: link) // Load Page
-                        
+
             if !data.allSatisfy({ $0.items != nil }) {
                 try await runner.willResolveSectionsForPage(link: link) // Tell Runner that suwatte will begin resolution of page sections
             }

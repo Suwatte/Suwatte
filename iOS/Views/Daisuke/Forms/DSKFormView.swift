@@ -16,7 +16,7 @@ struct DSKLoadableForm: View {
     @State private var loadable: Loadable<DSKCommon.Form> = .idle
 
     var body: some View {
-        LoadableView(load, $loadable) { value in
+        LoadableView(runner.id, load, $loadable) { value in
             DSKFormView(model: .init(context: context, runner: runner), form: value)
         }
     }

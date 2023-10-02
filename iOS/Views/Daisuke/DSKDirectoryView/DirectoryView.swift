@@ -123,7 +123,7 @@ extension DirectoryView {
     }
 
     var LoadableResultsView: some View {
-        LoadableView(load, $model.result) { value in
+        LoadableView(model.runner.id, load, $model.result) { value in
             if value.isEmpty {
                 NoResultsView()
             } else {

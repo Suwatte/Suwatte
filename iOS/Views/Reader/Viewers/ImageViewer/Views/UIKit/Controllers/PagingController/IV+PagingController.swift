@@ -68,11 +68,11 @@ extension Controller {
 
         // Layout Specific
         let layout = isVertical ? VImageViewerLayout() : HImageViewerLayout()
-        
+
         if let layout = layout as? HImageViewerLayout {
             layout.readingMode = readingMode
         }
-        
+
         collectionView.setCollectionViewLayout(layout, animated: false)
 
         // Final setup calls
@@ -245,7 +245,6 @@ extension Controller {
     }
 
     func preload(after chapter: ThreadSafeChapter) async {
-
         let next = await dataCache.getChapter(after: chapter)
 
         guard let next else { return }

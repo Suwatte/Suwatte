@@ -12,7 +12,7 @@ struct TrackerLandingPage: View {
     @State var loadable = Loadable<AnyContentTracker>.idle
 
     var body: some View {
-        LoadableView(load, $loadable) {
+        LoadableView(trackerID, load, $loadable) {
             LoadedTrackerView(tracker: $0)
         }
     }

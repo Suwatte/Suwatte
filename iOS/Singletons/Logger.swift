@@ -5,9 +5,9 @@
 //  Created by Mantton on 2022-09-27.
 //
 
+import Alamofire
 import Foundation
 import SwiftUI
-import Alamofire
 
 final class Logger {
     @MainActor var logs: [Entry] = []
@@ -71,13 +71,13 @@ extension Logger {
         if entry.level == .info {
             ToastManager.shared.info(entry.message)
         }
-        
+
         Task {
             let devMode = UserDefaults.standard.bool(forKey: STTKeys.RunnerDevMode)
             let logAddress = UserDefaults.standard.string(forKey: STTKeys.LogAddress)
-            
-            guard devMode, let logAddress , let address = URL(string: logAddress) else { return }
-            
+
+            guard devMode, let logAddress, let address = URL(string: logAddress) else { return }
+
             do {
                 var request = URLRequest(url: address)
                 request.method = .post
@@ -85,13 +85,8 @@ extension Logger {
                 AF.request(request).response { _ in
                     //
                 }
-            } catch {
-                
-            }
-
-            
+            } catch {}
         }
-        
     }
 
     private func write(entry: Entry) {

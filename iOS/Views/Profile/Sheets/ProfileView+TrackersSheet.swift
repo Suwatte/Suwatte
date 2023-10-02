@@ -67,7 +67,6 @@ extension TrackerManagementView {
                     .frame(width: 25, height: 25, alignment: .center)
                     .cornerRadius(7)
 
-
                     Text(tracker.name)
                         .font(.headline)
                     Spacer()
@@ -88,7 +87,7 @@ extension TrackerManagementView {
             }
             .animation(.default, value: thumbnailURL)
         }
-        
+
         func load() async {
             let object = await RealmActor.shared().getFrozenRunner(tracker.id)
             await MainActor.run {
@@ -96,7 +95,6 @@ extension TrackerManagementView {
                     thumbnailURL = object?.thumbnail ?? ""
                 }
             }
-
         }
     }
 }
@@ -108,7 +106,7 @@ extension TrackerManagementView {
         @State private var loadable: Loadable<DSKCommon.Highlight> = .idle
 
         var body: some View {
-            LoadableView(load, $loadable) { item in
+            LoadableView(tracker.id, load, $loadable) { item in
                 TrackerItemCell(item: item, tracker: tracker, status: item.entry?.status ?? .CURRENT)
             }
         }
@@ -361,7 +359,7 @@ extension TrackerManagementView {
             }
 
             // Resullts
-            LoadableView(load, $loadable) { results in
+            LoadableView(tracker.id, load, $loadable) { results in
                 ZStack {
                     if results.isEmpty {
                         Text("No Matches")

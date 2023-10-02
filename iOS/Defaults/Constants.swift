@@ -53,7 +53,7 @@ func getKeyWindow() -> UIWindow? {
         .first { $0.isKeyWindow }
 }
 
-let SCHEMA_VERSION = 14
+let SCHEMA_VERSION = 15
 let STT_BRIDGE_VERSION = "3.0.5"
 
 let STT_USER_AGENT = "Suwatte iOS Client V\(Bundle.main.releaseVersionNumberPretty)"

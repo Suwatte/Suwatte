@@ -89,13 +89,10 @@ extension StateManager {
         // Save Content, if not saved
         let highlight = context.content
         let streamable = highlight.canStream
-        
-        
 
         let actor = await RealmActor.shared()
         let id = ContentIdentifier(contentId: highlight.id, sourceId: source).id
         let isSaved = await actor.isContentSaved(id)
-        
 
         // Target Title is already in the db, Just update the streamble flag
         if isSaved {
@@ -168,21 +165,21 @@ extension StateManager {
 //                    removeSplashScreen()
 //                }
 //            }
-            
+
         case .inactive:
             if blurDuringSwitch() {
                 Task { @MainActor in
                     showSplashScreen()
                 }
             }
-            
+
         case .active:
             if blurDuringSwitch() {
                 Task { @MainActor in
                     removeSplashScreen()
                 }
             }
-            
+
             if thumbnailToken == nil, collectionToken == nil {
                 Task { @MainActor in
                     await observe()
@@ -312,31 +309,32 @@ extension StateManager {
     }
 }
 
-
 extension StateManager {
     @MainActor
     func showSplashScreen() {
         let launchScreen = UIStoryboard(name: "STTLaunchScreen", bundle: nil).instantiateInitialViewController()
         guard let launchScreen = launchScreen,
-              let launchView = launchScreen.view else {
+              let launchView = launchScreen.view
+        else {
             return
         }
-        
+
         let window = getKeyWindow()
         guard let window else { return }
-        
+
         if window.viewWithTag(8888) != nil { return }
-        
+
         launchView.tag = 8888
         launchView.frame = window.bounds
         window.addSubview(launchView)
         window.makeKeyAndVisible()
     }
-    
+
     @MainActor
     func removeSplashScreen() {
         guard let window = getKeyWindow(),
-              let view = window.viewWithTag(8888) else {
+              let view = window.viewWithTag(8888)
+        else {
             return
         }
         UIView.animate(withDuration: 0.33,
@@ -344,11 +342,11 @@ extension StateManager {
                        options: [.curveEaseInOut, .transitionCrossDissolve, .allowUserInteraction])
         {
             view.alpha = 0
-        } completion: { completed in
+        } completion: { _ in
             view.removeFromSuperview()
         }
     }
-    
+
     func blurDuringSwitch() -> Bool {
         UserDefaults.standard.bool(forKey: STTKeys.BlurWhenAppSwiching)
     }

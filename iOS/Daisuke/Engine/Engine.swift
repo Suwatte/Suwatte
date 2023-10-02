@@ -145,7 +145,7 @@ extension DaisukeEngine {
         runners.removeValue(forKey: id)
         Task {
             let actor = await RealmActor.shared()
-            let path = await actor.getRunner(id)?.executable?.filePath ?? executeableURL(for: id)
+            let path = await actor.getFrozenRunner(id)?.executable?.filePath ?? executeableURL(for: id)
             try? FileManager.default.removeItem(at: path)
             await actor.deleteRunner(id)
         }
@@ -218,7 +218,6 @@ extension DaisukeEngine {
 
     // Get Source List Info
     func saveRunnerList(at url: String) async throws {
-        
         let hasHttpPrefix = url.hasPrefix("http") || url.hasPrefix("https")
         let builtUrl = hasHttpPrefix ? url : "https://\(url)"
         // Get runner list
@@ -380,7 +379,6 @@ extension DaisukeEngine {
     func getActiveTrackers() async -> [AnyContentTracker] {
         let actor = await RealmActor.shared()
         let runners = await actor.getEnabledRunners(for: .tracker).map(\.id)
-        
 
         let trackers = await withTaskGroup(of: AnyContentTracker?.self, body: { [runners] group in
             for runner in runners {

@@ -51,7 +51,7 @@ struct ImageSearchView: View {
     }
 
     func ImageSelectedView(_ image: UIImage) -> some View {
-        LoadableView({ try await load(image) }, $response) { response in
+        LoadableView(nil, { try await load(image) }, $response) { response in
             ResponseView(response: response)
         }
     }

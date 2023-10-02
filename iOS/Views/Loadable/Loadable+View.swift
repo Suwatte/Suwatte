@@ -18,7 +18,9 @@ struct LoadableView<Value, Idle, Loading, Content>: View where Idle: View,
     let action: () async throws -> Value
     @State private var loaded = false
 
+    let runnerID: String?
     init(
+        runnerID: String? = nil,
         loadable: Binding<Loadable<Value>>,
         _ action: @escaping () async throws -> Value,
         @ViewBuilder _ idle: @escaping () -> Idle,
@@ -30,6 +32,7 @@ struct LoadableView<Value, Idle, Loading, Content>: View where Idle: View,
         self.loading = loading
         self.idle = idle
         self.action = action
+        self.runnerID = runnerID
     }
 
     var body: some View {
@@ -37,27 +40,34 @@ struct LoadableView<Value, Idle, Loading, Content>: View where Idle: View,
             switch loadable {
             case .idle:
                 idle()
-                    .task {
-                        if loaded {
-                            loaded = false
-                            await load()
+                    .onAppear {
+                        Task {
+                            if loaded {
+                                loaded = false
+                                await load()
+                            }
                         }
                     }
+                    .transition(.opacity)
+
             case .loading:
                 loading()
+                    .transition(.opacity)
 
             case let .loaded(value):
                 content(value)
+                    .transition(.opacity)
+
 
             case let .failed(error):
-                ErrorView(error: error) {
+                ErrorView(error: error, runnerID: runnerID) {
                     await animate {
                         loadable = .idle
                     }
                 }
+                .transition(.opacity)
             }
         }
-        .transition(.opacity)
         .task {
             await load()
         }
@@ -78,23 +88,25 @@ extension LoadableView {
                 loadable = .loaded(data)
             }
 
-            loaded = true
         } catch {
             Logger.shared.error(error)
             await animate {
                 loadable = .failed(error)
             }
         }
+        loaded = true
     }
 }
 
 extension LoadableView where Idle == DefaultLoadingView, Loading == DefaultLoadingView {
     init(
+        _ runnerID: String? = nil,
         _ action: @escaping () async throws -> Value,
         _ loadable: Binding<Loadable<Value>>,
         @ViewBuilder _ content: @escaping (_ value: Value) -> Content
     ) {
-        self.init(loadable: loadable,
+        self.init(runnerID: runnerID,
+                  loadable: loadable,
                   action,
                   { DefaultLoadingView() },
                   { DefaultLoadingView() },
@@ -104,12 +116,14 @@ extension LoadableView where Idle == DefaultLoadingView, Loading == DefaultLoadi
 
 extension LoadableView where Idle == Loading {
     init(
+        _ runnerID: String? = nil,
         _ action: @escaping () async throws -> Value,
         _ loadable: Binding<Loadable<Value>>,
         @ViewBuilder placeholder: @escaping () -> Idle,
         @ViewBuilder content: @escaping (_ value: Value) -> Content
     ) {
-        self.init(loadable: loadable,
+        self.init(runnerID: runnerID,
+                  loadable: loadable,
                   action,
                   { placeholder() },
                   { placeholder() },

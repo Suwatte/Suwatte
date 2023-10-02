@@ -105,7 +105,7 @@ class STTScheduler {
             return
         }
 
-        let updateTask = Task { [weak self] in
+        let updateTask = Task {
             let updates = await DSK.shared.fetchLibraryUpdates()
 
             if updates > 0 {

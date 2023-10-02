@@ -237,16 +237,17 @@ extension RealmActor {
         let readChapters = Set(getContentMarker(for: id.id)?.readChapters ?? .init())
 
         // Get Total Chapter Count
-        let unread = realm
+        let unreadChapters = realm
             .objects(StoredChapter.self)
             .where { $0.contentId == id.contentId }
             .where { $0.sourceId == id.sourceId }
             .freeze()
             .toArray()
-            .filter({ !readChapters.contains($0.chapterOrderKey) })
-            .count
+            .filter { !readChapters.contains($0.chapterOrderKey) }
+            .map { $0.toThreadSafe() }
 
-        return unread
+        let filtered = STTHelpers.filterChapters(unreadChapters, with: id)
+        return filtered.count
     }
 
     func updateUnreadCount(for id: ContentIdentifier) async {
@@ -265,7 +266,7 @@ extension RealmActor {
 
         guard let target else { return }
         await operation {
-            target.unreadCount -= 1
+            target.unreadCount = min(target.unreadCount - 1, 0)
             target.lastRead = .now
         }
     }

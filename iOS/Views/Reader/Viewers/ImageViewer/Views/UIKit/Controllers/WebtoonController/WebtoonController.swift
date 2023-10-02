@@ -33,7 +33,7 @@ class WebtoonController: ASDKViewController<ASCollectionNode> {
     var lastStoppedScrollPosition: CGFloat = 0.0
     var scrollPositionUpdateThreshold: CGFloat = 30.0
     var currentZoomingIndexPath: IndexPath!
-    
+
     var isReadyToAddOffset = false
     private let zoomTransitionDelegate = ZoomTransitioningDelegate()
     var onPageReadTask: Task<Void, Never>?
@@ -197,7 +197,7 @@ extension Controller: ASCollectionDelegate {
                 EmptyNode()
             }
         }
-        
+
         let position = resumptionPosition
         let height = view.frame.height * 0.75
         switch item {

@@ -17,8 +17,8 @@ extension RealmActor {
         var results = realm.objects(LibraryEntry.self)
             .where { $0.content != nil && $0.isDeleted == false }
             .where { $0.content.sourceId == sourceId }
-            .where {  $0.content.status == nil || $0.content.status.in(validStatuses) }
-        
+            .where { $0.content.status == nil || $0.content.status.in(validStatuses) }
+
         if !approvedCollections.isEmpty {
             results = results
                 .where { $0.collections.containsAny(in: approvedCollections) }

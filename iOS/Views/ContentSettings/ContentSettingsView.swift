@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentSettingsView: View {
     @Preference(\.incognitoMode) var incognitoMode
     @AppStorage(STTKeys.GlobalHideNSFW) var hideNSFW = false
+    @Preference(\.blackListProviderOnSourceLevel) var blacklistOnSourceLevel
 
     var body: some View {
         List {
@@ -31,6 +32,14 @@ struct ContentSettingsView: View {
                 }
             } header: {
                 Text("Content Languages")
+            }
+
+            Section {
+                Toggle("Hide Providers on a Source Basis", isOn: $blacklistOnSourceLevel)
+            } header: {
+                Text("Chapter Providers")
+            } footer: {
+                Text("If disabled, hidden providers will only apply to the title being set.")
             }
         }
         .navigationTitle("Content Settings")

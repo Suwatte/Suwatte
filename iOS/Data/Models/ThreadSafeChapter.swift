@@ -117,9 +117,9 @@ extension DSKCommon.Chapter {
 }
 
 extension STTHelpers {
-    static func filterChapters<T: STTChapterObject>(_ data: [T], with id: String, callback: ((T) -> Void)? = nil) -> [T] {
+    static func filterChapters<T: STTChapterObject>(_ data: [T], with identifier: ContentIdentifier, callback: ((T) -> Void)? = nil) -> [T] {
         let languages = Preferences.standard.globalContentLanguages
-        let blacklisted = STTHelpers.getBlacklistedProviders(for: id)
+        let blacklisted = STTHelpers.getBlacklistedProviders(for: identifier)
         var prepared: [T] = []
 
         func isLanguageCleared(_ chapter: T) -> Bool {
@@ -166,13 +166,15 @@ extension STTHelpers {
 }
 
 extension STTHelpers {
-    static func getBlacklistedProviders(for id: String) -> [String] {
+    static func getBlacklistedProviders(for id: ContentIdentifier) -> [String] {
         let defaults = UserDefaults.standard
-        return defaults.stringArray(forKey: STTKeys.BlackListedProviders(id)) ?? []
+        let key = Preferences.standard.blackListProviderOnSourceLevel ? STTKeys.BlackListedProviders(id.sourceId) : STTKeys.TitleBlackListedProviders(id.id)
+        return defaults.stringArray(forKey: key) ?? []
     }
 
-    static func setBlackListedProviders(for id: String, values: [String]) {
+    static func setBlackListedProviders(for id: ContentIdentifier, values: [String]) {
         let values = Array(Set(values))
-        UserDefaults.standard.setValue(values, forKey: STTKeys.BlackListedProviders(id))
+        let key = Preferences.standard.blackListProviderOnSourceLevel ? STTKeys.BlackListedProviders(id.sourceId) : STTKeys.TitleBlackListedProviders(id.id)
+        UserDefaults.standard.setValue(values, forKey: key)
     }
 }

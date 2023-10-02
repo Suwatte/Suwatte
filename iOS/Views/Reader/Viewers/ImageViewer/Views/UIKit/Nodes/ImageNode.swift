@@ -144,7 +144,8 @@ extension ImageNode {
         defer {
             UIView.animate(withDuration: 0.33,
                            delay: 0,
-                           options: [.transitionCrossDissolve, .allowUserInteraction, .curveEaseInOut]) { [unowned self] in
+                           options: [.transitionCrossDissolve, .allowUserInteraction, .curveEaseInOut])
+            { [unowned self] in
                 if ratio != nil {
                     imageNode.alpha = 1
                     progressNode.alpha = 0

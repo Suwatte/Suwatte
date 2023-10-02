@@ -15,6 +15,7 @@ struct LibraryView: View {
     @State var presentCollectionSheet = false
     @State var presentOrderSheet = false
     @State var openFirstCollection = false
+    @State var hasOpenedFirst = false
     @AppStorage(STTKeys.OpenAllTitlesOnAppear) var openAllOnAppear = false
     @AppStorage(STTKeys.LibraryAuth) var requireAuth = false
     @State var hasLoadedPages = false
@@ -24,7 +25,7 @@ struct LibraryView: View {
             List {
                 BrowseView.PendingSetupView()
                 ForEach(sections) { section in
-                    LibrarySectionBuilder(key: section, openFirstCollection: $openFirstCollection)
+                    LibrarySectionBuilder(key: section)
                 }
             }
             .environmentObject(pageProviderModel)
@@ -63,14 +64,20 @@ struct LibraryView: View {
                 }
 
             })
+            .hiddenNav(presenting: $openFirstCollection) {
+                LibraryGrid(collection: nil, readingFlag: nil)
+            }
         }
         .task {
             if requireAuth && !LocalAuthManager.shared.isExpired {
                 return
             }
 
-            if openAllOnAppear {
-                openFirstCollection.toggle()
+            if openAllOnAppear  && !hasOpenedFirst {
+                withAnimation {
+                    openFirstCollection = true
+                    hasOpenedFirst = true
+                }
             }
         }
         .protectContent()
@@ -127,7 +134,6 @@ struct LibraryView: View {
 extension LibraryView {
     struct LibrarySectionBuilder: View {
         let key: String
-        @Binding var openFirstCollection: Bool
         @EnvironmentObject var model: PageLinkProviderModel
 
         private var providers: [StoredRunnerObject] {
@@ -144,7 +150,7 @@ extension LibraryView {
                 case "library.lists":
                     ListsSectionView()
                 case "library.collections":
-                    CollectionsSectionView(isActive: $openFirstCollection)
+                    CollectionsSectionView()
                 case "library.flags":
                     FlagsSectionView()
                 case "library.downloads":
@@ -199,7 +205,7 @@ extension LibraryView {
             Section {
                 ForEach(LibraryFlag.allCases) { flag in
                     NavigationLink {
-                        LibraryGrid(model: .init(readingFlag: flag))
+                        LibraryGrid(collection: nil, readingFlag: flag)
                     } label: {
                         Label(flag.description, systemImage: "flag")
                     }
@@ -259,7 +265,6 @@ extension LibraryView {
 
 extension LibraryView {
     struct CollectionsSectionView: View {
-        @Binding var isActive: Bool
         @EnvironmentObject private var stateManager: StateManager
 
         private var collections: [LibraryCollection] {
@@ -268,11 +273,16 @@ extension LibraryView {
 
         var body: some View {
             Section {
-                NavigationLink(destination: LibraryGrid(model: .init()), isActive: $isActive) {
+                NavigationLink {
+                    LibraryGrid(collection: nil, readingFlag: nil)
+                } label: {
                     Label("All Titles", systemImage: "folder")
                 }
+                
                 ForEach(collections) { collection in
-                    NavigationLink(destination: LibraryGrid(model: .init(collection: collection))) {
+                    NavigationLink {
+                        LibraryGrid(collection: collection, readingFlag: nil)
+                    } label: {
                         Label(collection.name, systemImage: "archivebox")
                     }
                 }

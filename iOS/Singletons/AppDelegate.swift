@@ -84,7 +84,6 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
         ])
 
         application.registerForRemoteNotifications()
-        
 
         // Analytics
         FirebaseApp.configure()

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ErrorView: View {
-    @State var error: Error
+    let error: Error
     var runnerID: String?
     var action: () async -> Void
     var body: some View {

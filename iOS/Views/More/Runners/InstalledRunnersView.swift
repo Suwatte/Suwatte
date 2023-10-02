@@ -14,7 +14,7 @@ struct InstalledRunnersView: View {
     @State var showAddSheet = false
 
     var groups: [RunnerEnvironment: [StoredRunnerObject]] {
-        Dictionary(grouping: model.runners, by: \.environment)
+        Dictionary(grouping: model.runners, by: \.safeEnvironment)
     }
 
     private var items: [RunnerEnvironment] {

@@ -5,22 +5,20 @@
 //  Created by Mantton on 2023-09-17.
 //
 
-import Foundation
 import Alamofire
-
-
+import Foundation
 
 final class DSKNetworkClient {
     static let shared = DSKNetworkClient()
     private let session: Session
-    
+
     init() {
         let configuration = URLSessionConfiguration.af.default
         configuration.httpCookieStorage = HTTPCookieStorage.shared
         configuration.headers.add(.userAgent(Preferences.standard.userAgent))
-        self.session = .init(configuration: configuration)
+        session = .init(configuration: configuration)
     }
-    
+
     func makeRequest(with request: DSKCommon.Request) async throws -> DSKCommon.Response {
         session.session.configuration.timeoutIntervalForResource = request.timeout ?? 30
 
@@ -43,5 +41,4 @@ final class DSKNetworkClient {
                                           headers: headers)
         return response
     }
-    
 }

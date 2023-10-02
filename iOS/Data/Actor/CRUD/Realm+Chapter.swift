@@ -17,7 +17,7 @@ extension RealmActor {
 }
 
 extension RealmActor {
-    internal func validateChapterReference(id: String) async {
+    func validateChapterReference(id: String) async {
         let target = realm
             .objects(ChapterReference.self)
             .where { $0.id == id && $0.isDeleted == false }
@@ -51,12 +51,10 @@ extension RealmActor {
             target.isDeleted = true
         }
     }
-    
+
     private func getStoredChapter(_ id: String) -> StoredChapter? {
         return realm.object(ofType: StoredChapter.self, forPrimaryKey: id)
     }
-
-
 }
 
 extension RealmActor {
@@ -71,11 +69,11 @@ extension RealmActor {
 
         return chapter
     }
-    
+
     func getFrozenChapter(_ id: String) -> StoredChapter? {
         getStoredChapter(id)?.freeze()
     }
-    
+
     func getChapters(_ source: String, content: String) -> [StoredChapter] {
         realm.objects(StoredChapter.self)
             .where { $0.contentId == content }

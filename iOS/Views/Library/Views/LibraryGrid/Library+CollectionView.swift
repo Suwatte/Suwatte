@@ -10,17 +10,20 @@ import SwiftUI
 
 extension LibraryView {
     struct LibraryGrid: View {
-        @StateObject var model: ViewModel
+        let collection: LibraryCollection?
+        let readingFlag: LibraryFlag?
+        
+        @StateObject private var model =  ViewModel()
         // Defaults
-        @AppStorage(STTKeys.LibraryGridSortKey) var sortKey: KeyPath = .name
-        @AppStorage(STTKeys.LibraryGridSortOrder) var sortOrder: SortOrder = .asc
-        @AppStorage(STTKeys.ShowOnlyDownloadedTitles) var showDownloadsOnly = false
+        @AppStorage(STTKeys.LibraryGridSortKey) private var sortKey: KeyPath = .name
+        @AppStorage(STTKeys.LibraryGridSortOrder) private var sortOrder: SortOrder = .asc
+        @AppStorage(STTKeys.ShowOnlyDownloadedTitles) private var showDownloadsOnly = false
         // State
-        @State var presentOptionsSheet = false
-        @State var presentMigrateSheet = false
-        @State var presentStatsSheet = false
+        @State private var presentOptionsSheet = false
+        @State private var presentMigrateSheet = false
+        @State private var presentStatsSheet = false
 
-        func observe(_: AnyHashable? = nil) {
+        private func observe(_: AnyHashable? = nil) {
             model.observe(downloadsOnly: showDownloadsOnly, key: sortKey, order: sortOrder)
         }
 
@@ -39,7 +42,9 @@ extension LibraryView {
                     ProgressView()
                 }
             }
+            
             .task {
+                model.setFilterGroups(collection: collection, readingFlag: readingFlag)
                 observe()
             }
             .onDisappear {
@@ -132,11 +137,11 @@ extension LibraryView {
             })
         }
 
-        var NAV_TITLE: String {
+        private var NAV_TITLE: String {
             model.collection?.name ?? model.readingFlag?.description ?? "All Titles"
         }
 
-        func MainView(_ entries: [LibraryEntry]) -> some View {
+        private func MainView(_ entries: [LibraryEntry]) -> some View {
             LibraryGrid.Grid(entries: entries, collection: model.collection)
                 .modifier(CollectionModifier(selection: $model.navSelection))
                 .modifier(SelectionModifier(entries: entries))
@@ -144,7 +149,7 @@ extension LibraryView {
                 .animation(.default, value: entries)
         }
 
-        var No_ENTRIES: some View {
+        private var No_ENTRIES: some View {
             VStack {
                 Text("It's empty here...")
                     .fontWeight(.light)
@@ -168,7 +173,7 @@ extension LibraryView {
             .navigationBarTitleDisplayMode(.inline)
         }
 
-        func ViewTitle(count: Int) -> String {
+        private func ViewTitle(count: Int) -> String {
             let selectionCount = model.isSelecting ? model.selectedIndexes.count : count
             let selectionString = model.isSelecting ? "Selection" : "Title"
             return "^[\(selectionCount) \(selectionString)](inflect: true)"

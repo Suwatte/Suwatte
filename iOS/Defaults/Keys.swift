@@ -153,18 +153,23 @@ enum STTKeys {
 
     static let OnlyCheckForUpdateInSpecificCollections = "APP.updates.use_collections"
     static let UpdateApprovedCollections = "APP.updates.collections"
-    
+
     static let RunnerDevMode = "DEBUG.RUNNER_DEV_MODE"
     static let LogAddress = "DEBUG.LOG_ADDRESS"
-    
+
     static func SourceChapterProviderPriority(_ id: String) -> String {
         "RUNNER.SCPP:\(id)"
-
     }
-    
+
     static func TitleHighPriorityOrder(_ id: String) -> String {
         "RUNNER.THPO:\(id)"
     }
-    
+
     static let OverrideSourceRecommendedReadingMode = "READER.override_provided_mode"
+
+    static func TitleBlackListedProviders(_ id: String) -> String {
+        "RUNNER.TBLP:\(id)"
+    }
+
+    static let BlackListOnSourceLevel = "APP.blacklist_on_source_level"
 }

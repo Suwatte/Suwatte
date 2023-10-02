@@ -21,7 +21,7 @@ struct DSKLoadableTrackerView: View {
     @State var loadable: Loadable<DSKCommon.FullTrackItem> = .idle
 
     var body: some View {
-        LoadableView(load, $loadable) {
+        LoadableView(tracker.id, load, $loadable) {
             DSKTrackerView(tracker: tracker, content: .placeholder)
                 .redacted(reason: .placeholder)
         } content: { value in

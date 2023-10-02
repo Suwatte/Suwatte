@@ -75,7 +75,7 @@ extension ImageViewer {
                     .transition(.opacity)
             }
         }
-        .animation(StandardAnimation ,value: model.readingMode)
+        .animation(StandardAnimation, value: model.readingMode)
         .animation(StandardAnimation, value: doublePaged)
     }
 }

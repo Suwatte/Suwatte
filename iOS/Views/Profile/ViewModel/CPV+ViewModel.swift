@@ -40,15 +40,15 @@ extension ProfileView {
         @Published var actionState: ActionState = .init(state: .none)
         @Published var chapterMap: [String: ChapterStatement] = [:]
         // Tokens
-        internal var currentMarkerToken: NotificationToken?
-        internal var downloadTrackingToken: NotificationToken?
-        internal var progressToken: NotificationToken?
-        internal var libraryTrackingToken: NotificationToken?
-        internal var readLaterToken: NotificationToken?
-        internal var chapterBookmarkToken: NotificationToken?
-        internal var sourceProgressState: DSKCommon.ContentProgressState?
+        var currentMarkerToken: NotificationToken?
+        var downloadTrackingToken: NotificationToken?
+        var progressToken: NotificationToken?
+        var libraryTrackingToken: NotificationToken?
+        var readLaterToken: NotificationToken?
+        var chapterBookmarkToken: NotificationToken?
+        var sourceProgressState: DSKCommon.ContentProgressState?
 
-        internal var linkedContentIDs = [String]()
+        var linkedContentIDs = [String]()
         @Published var downloads: [String: DownloadStatus] = [:]
         @Published var readChapters = Set<Double>()
         @Published var savedForLater: Bool = false
@@ -63,7 +63,7 @@ extension ProfileView {
         }
 
         var contentInfo: SimpleContentInfo {
-            .init(runnerID: sourceID, runnerName: source.name, contentName: entry.title, id: identifier)
+            .init(runnerID: sourceID, runnerName: source.name, contentName: entry.title, id: identifier, highlight: entry)
         }
 
         @Published var selection: ThreadSafeChapter?
