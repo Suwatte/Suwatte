@@ -45,8 +45,8 @@ extension ViewModel {
                         }
 
                         let originMaxReadChapter = entry.progress.lastReadChapter
-                        let originMaxVolume = entry.progress.lastReadVolume ?? 0
-                        return (tracker.id, ThreadSafeChapter.orderKey(volume: originMaxVolume, number: originMaxReadChapter))
+                        let originMaxVolume =  entry.progress.lastReadVolume
+                        return (tracker.id, ThreadSafeChapter.orderKey(volume: originMaxVolume , number: originMaxReadChapter))
                     } catch {
                         Logger.shared.error(error, tracker.id)
                         return (tracker.id, 0)
