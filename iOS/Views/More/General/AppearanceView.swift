@@ -37,21 +37,12 @@ struct AppearanceView: View {
                 Text("Items Per Row")
             }
             Section {
-                NavigationLink {
-                    List {
-                        ForEach(TileStyle.allCases, id: \.hashValue) { entry in
-                            SelectionLabel(label: entry.description, isSelected: entry == tileStyle, action: { tileStyle = entry })
-                        }
+                Picker("Tile Style", selection: $tileStyle) {
+                    ForEach(TileStyle.allCases, id: \.hashValue) {
+                        Text($0.description)
+                            .tag($0)
                     }
-                    .buttonStyle(.plain)
-                    .navigationTitle("Tile Style")
-                    .onChange(of: tileStyle) { _ in
-                        NotificationCenter.default.post(name: .init(STTKeys.TileStyle), object: nil)
-                    }
-                } label: {
-                    STTLabelView(title: "Tile Style", label: tileStyle.description)
                 }
-
             } header: {
                 Text("Tiles")
             }
