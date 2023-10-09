@@ -36,7 +36,6 @@ extension DSK {
             return total
         }
 
-        UserDefaults.standard.set(Date(), forKey: STTKeys.LastFetchedUpdates)
         return result
     }
 }
@@ -94,8 +93,6 @@ extension DSK {
         let lastFetched = await actor.getLatestStoredChapter(source.id, contentId)
         // Calculate Update Count
         var filtered = chapters
-//            .filter { $0.date > entry.lastUpdated } // TODO: dates should matter
-//            .filter { $0.date > entry.lastOpened }
 
         // Marked As Read on Source
         if !marked.isEmpty {
