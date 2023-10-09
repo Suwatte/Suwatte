@@ -67,7 +67,7 @@ extension Controller {
         Task {
             let actor = await RealmActor.shared()
             
-            let maxReadKey = await actor.getContentMarker(for: chapter.STTContentIdentifier)?.maxReadChapterKey ?? 0.0
+            let maxReadKey = await actor.getMaxReadKey(for: chapter.STTContentIdentifier)
             guard maxReadKey < chapter.chapterOrderKey else { return }
             let progress = DSKCommon
                 .TrackProgressUpdate(chapter: chapter.number,

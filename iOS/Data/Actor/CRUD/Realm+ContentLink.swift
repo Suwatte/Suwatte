@@ -96,7 +96,7 @@ extension RealmActor {
 
         let obj = h.toStored(sourceId: sId)
         await operation {
-            realm.add(obj)
+            realm.add(obj, update: .modified)
         }
     }
 }

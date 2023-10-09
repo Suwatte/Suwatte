@@ -18,7 +18,7 @@ extension RealmActor {
             let collection = LibraryCollection()
             collection.name = name
             collection.order = realm.objects(LibraryCollection.self).count
-            realm.add(collection)
+            realm.add(collection, update: .modified)
         }
     }
 
