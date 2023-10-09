@@ -58,7 +58,7 @@ extension RealmActor {
                 if let flag = entry.readingFlag {
                     libraryObject.flag = flag
                 }
-                realm.add(libraryObject)
+                realm.add(libraryObject, update: .modified)
             }
         }
     }

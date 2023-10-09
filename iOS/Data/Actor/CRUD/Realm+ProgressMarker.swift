@@ -225,7 +225,7 @@ extension RealmActor {
         marker.dateRead = nil
 
         await operation {
-            realm.add(marker)
+            realm.add(marker, update: .modified)
         }
     }
 

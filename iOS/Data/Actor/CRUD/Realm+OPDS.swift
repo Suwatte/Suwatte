@@ -54,7 +54,7 @@ extension RealmActor {
         obj.userName = entry.userName
 
         await operation {
-            realm.add(obj)
+            realm.add(obj, update: .modified)
         }
 
         // Save PW to KC

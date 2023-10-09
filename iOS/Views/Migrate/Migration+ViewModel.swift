@@ -293,7 +293,7 @@ extension MigrationController {
             object.title = entry.title
             object.sourceId = entry.sourceID
 
-            realm.add(object)
+            realm.add(object, update: .modified)
             return object
         }
 
