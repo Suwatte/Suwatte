@@ -89,7 +89,7 @@ extension DSK {
                 Logger.shared.error(error, "(getProgressState)-\(source.id)")
             }
         }
-
+ 
         let lastFetched = await actor.getLatestStoredChapter(source.id, contentId)
         // Calculate Update Count
         var filtered = chapters

@@ -344,7 +344,7 @@ extension TrackerManagementView {
         var titles: [String]
         @State private var loadable: Loadable<[DSKCommon.Highlight]> = .idle
         @Binding var selections: [String: String]
-
+        @State var key = ""
         var body: some View {
             // Header
             VStack {
@@ -371,6 +371,9 @@ extension TrackerManagementView {
                 }
             }
             .frame(alignment: .center)
+            .task {
+                key = tracker.config?.linkKeys?.first ?? tracker.id
+            }
         }
 
         // MARK: Views
@@ -378,32 +381,28 @@ extension TrackerManagementView {
         func ScrollableResultView(_ results: [DSKCommon.Highlight]) -> some View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
-                    ForEach(results) { item in
+                    ForEach(results, id: \.hashValue) { item in
                         Cell(item)
+                            .frame(width: 120, height: 230)
                     }
                 }
                 .padding(.horizontal)
                 .padding(.top, 5)
             }
+            .frame(maxWidth: .infinity)
         }
 
         func Cell(_ item: DSKCommon.Highlight) -> some View {
-            ZStack(alignment: .topTrailing) {
-                DefaultTile(entry: .init(id: item.id, cover: item.cover, title: item.title))
-                    .frame(width: 120, height: 230)
-                ColoredBadge(color: .accentColor)
-                    .opacity(selections[linkKey] == item.id ? 1 : 0)
-            }
-            .onTapGesture {
+            Button {
                 handleSelection(item.id)
+            } label: {
+                DefaultTile(entry: .init(id: item.id, cover: item.cover, title: item.title))
+                    .coloredBadge(selections[key] == item.id ? .accentColor : nil)
             }
+            .buttonStyle(NeutralButtonStyle())
+            .contentShape(Rectangle())
         }
 
-        // MARK: Methods
-
-        var linkKey: String {
-            tracker.config?.linkKeys?.first ?? tracker.id
-        }
 
         func load() async throws -> [DSKCommon.Highlight] {
             try await tracker.getResultsForTitles(titles: titles)
@@ -411,9 +410,11 @@ extension TrackerManagementView {
 
         func handleSelection(_ item: String) {
             withAnimation {
-                let current = selections[linkKey]
-                if current == item { selections.removeValue(forKey: linkKey) }
-                else { selections.updateValue(item, forKey: linkKey) }
+                if selections[key] != nil && item == selections[key] {
+                    selections[key] = nil
+                } else {
+                    selections[key] = item
+                }
             }
         }
     }

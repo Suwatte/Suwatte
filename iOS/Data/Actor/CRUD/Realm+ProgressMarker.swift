@@ -16,6 +16,10 @@ extension RealmActor {
     func getFrozenContentMarker(for id: String) -> ProgressMarker? {
         return getContentMarker(for: id)?.freeze()
     }
+    
+    func getMaxReadKey(for id: String) -> Double {
+        getContentMarker(for: id)?.maxReadChapterKey ?? 0
+    }
 
     private func getLatestLinkedMarker(for id: String) -> ProgressMarker? {
         let maxedMarker = getLinkedContent(for: id)
@@ -273,7 +277,7 @@ extension RealmActor {
         marker.dateRead = nil
 
         await operation {
-            realm.add(marker)
+            realm.add(marker, update: .modified)
         }
     }
 
