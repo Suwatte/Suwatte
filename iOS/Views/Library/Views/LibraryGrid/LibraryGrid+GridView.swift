@@ -15,7 +15,6 @@ extension LibraryView.LibraryGrid {
         var collection: LibraryCollection?
         @AppStorage(STTKeys.TileStyle) var style = TileStyle.COMPACT
         @EnvironmentObject var model: LibraryView.LibraryGrid.ViewModel
-        @EnvironmentObject var appState: StateManager
         @State var manageSelection: String?
         var body: some View {
             ASCollectionView(editMode: model.isSelecting) {
@@ -66,7 +65,6 @@ extension LibraryView.LibraryGrid {
             .alwaysBounceVertical()
             .animateOnDataRefresh(true)
             .shouldInvalidateLayoutOnStateChange(true)
-            .onChange(of: appState.gridLayoutDidChange, perform: { _ in })
             .ignoresSafeArea(.keyboard, edges: .all)
             .animation(.default, value: model.isSelecting)
             .animation(.default, value: model.selectedIndexes)

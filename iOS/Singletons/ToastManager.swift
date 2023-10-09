@@ -36,6 +36,7 @@ final class ToastManager: ObservableObject {
     func cancel() {
         task?.cancel()
         toast = nil
+        queue = .init()
     }
 }
 

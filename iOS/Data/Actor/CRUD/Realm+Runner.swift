@@ -139,7 +139,8 @@ extension RealmActor {
         realm
             .objects(StoredRunnerObject.self)
             .where { $0.isLibraryPageLinkProvider && $0.enabled && !$0.isDeleted }
-            .map { $0.freeze() }
+            .freeze()
+            .toArray()
     }
 
     func getEnabledRunners(for environment: RunnerEnvironment) -> [StoredRunnerObject] {

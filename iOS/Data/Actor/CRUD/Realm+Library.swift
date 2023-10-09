@@ -266,7 +266,7 @@ extension RealmActor {
 
         guard let target else { return }
         await operation {
-            target.unreadCount = min(target.unreadCount - 1, 0)
+            target.unreadCount = max(target.unreadCount - 1, 0)
             target.lastRead = .now
         }
     }

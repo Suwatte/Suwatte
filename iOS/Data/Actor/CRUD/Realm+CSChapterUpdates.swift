@@ -10,7 +10,6 @@ import RealmSwift
 
 extension RealmActor {
     func getTitlesPendingUpdate(_ sourceId: String) -> [LibraryEntry] {
-//        let date = UserDefaults.standard.object(forKey: STTKeys.LastFetchedUpdates) as? Date ?? .distantPast // TODO: Fix This
         let skipConditions = Preferences.standard.skipConditions
         let approvedCollections = Array(Preferences.standard.updatesUseCollections ? Preferences.standard.approvedUpdateCollections : [])
         let validStatuses = [ContentStatus.ONGOING, .HIATUS, .UNKNOWN]
@@ -59,9 +58,7 @@ extension RealmActor {
         await operation {
             target.lastUpdated = date
             target.updateCount += count
-            if !target.linkedHasUpdates, onLinked {
-                target.linkedHasUpdates = true
-            }
+            target.linkedHasUpdates = onLinked
         }
     }
 }

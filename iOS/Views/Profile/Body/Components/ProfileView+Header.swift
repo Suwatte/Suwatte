@@ -28,6 +28,8 @@ extension Skeleton {
 
                 VStack(alignment: .leading, spacing: 10) {
                     LabelsView
+                        .frame(height: ImageWidth, alignment: .topLeading)
+                        .clipped()
 
                     Spacer()
                     ActionButtons()

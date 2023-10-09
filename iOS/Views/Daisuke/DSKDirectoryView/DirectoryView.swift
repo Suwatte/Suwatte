@@ -48,7 +48,7 @@ struct DirectoryView<C: View>: View {
                 .tint(accentColor)
                 .accentColor(accentColor)
         }
-        .sheet(isPresented: $model.presentHistory) {
+        .sheet(isPresented: $model.presentHistory, onDismiss: reload) {
             HistoryView()
                 .tint(accentColor)
                 .accentColor(accentColor)

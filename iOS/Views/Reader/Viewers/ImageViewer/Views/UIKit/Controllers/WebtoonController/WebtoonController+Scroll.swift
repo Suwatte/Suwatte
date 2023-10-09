@@ -52,9 +52,9 @@ extension Controller {
         didChangePage(page, indexPath: currentPath)
         lastIndexPath = currentPath
 
+        guard !model.control.menu else { return }
         Task { @MainActor [weak self] in
-            guard let self, !self.model.control.menu else { return }
-            self.setScrollPCT()
+            self?.setScrollPCT()
         }
     }
 
@@ -76,11 +76,11 @@ extension Controller {
         let difference = abs(position - lastKnownScrollPosition)
         guard difference >= scrollPositionUpdateThreshold else { return }
         lastKnownScrollPosition = position
+        
+        // Only real-time update when the user is not scrubbing & the menu is being shown
+        guard !model.slider.isScrubbing, model.control.menu else { return }
         Task { @MainActor [weak self] in
-            guard let self else { return }
-            // Only real-time update when the user is not scrubbing & the menu is being shown
-            guard !model.slider.isScrubbing, model.control.menu else { return }
-            self.setScrollPCT()
+            self?.setScrollPCT()
         }
     }
 }
