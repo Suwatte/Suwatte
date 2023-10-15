@@ -52,6 +52,9 @@ extension Controller {
             .didChangeHorizontalDirection
             .sink { _ in
                 Task { @MainActor [weak self] in
+                    if let layout = self?.collectionView.collectionViewLayout as? HImageViewerLayout, let mode = self?.model.readingMode {
+                        layout.readingMode = mode
+                    }
                     self?.setReadingOrder()
                     self?.collectionView.collectionViewLayout.invalidateLayout()
                 }
