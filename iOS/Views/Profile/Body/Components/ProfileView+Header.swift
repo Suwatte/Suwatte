@@ -83,6 +83,7 @@ extension Skeleton.Header {
             Text(label.text)
                 .font(.caption2)
                 .fontWeight(schemeIsDark ? .semibold : .bold)
+                .lineLimit(1)
                 .padding(.vertical, 2)
                 .padding(.horizontal, 4)
                 .background(label.color.opacity(schemeIsDark ? 0.65 : 0.95))

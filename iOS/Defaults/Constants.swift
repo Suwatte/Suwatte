@@ -36,7 +36,6 @@ func STTUserDefaults() -> [String: Any] {
         STTKeys.LibrarySections: DEFAULT_LIBRARY_SECTIONS,
         STTKeys.UpdateInterval: STTUpdateInterval.oneHour.rawValue, // 1 Hour,
         STTKeys.HideNSFWRunners: true,
-        STTKeys.DefaultUserAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0",
         STTKeys.DownsampleImages: true,
         STTKeys.LocalStorageUsesICloud: FileManager.default.ubiquityIdentityToken != nil,
         STTKeys.OverrideSourceRecommendedReadingMode: false,

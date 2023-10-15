@@ -59,7 +59,7 @@ struct ContentTrackerInfoView: View {
 
     @ViewBuilder
     var InfoSection: some View {
-        if let url = URL(string: tracker.info.website) {
+        if let url = URL(string: tracker.info.website ?? "") {
             Section {
                 Link(destination: url) {
                     HStack {

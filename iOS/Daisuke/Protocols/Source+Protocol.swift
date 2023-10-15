@@ -68,7 +68,7 @@ protocol ContentSource: DSKRunner {
 
 extension ContentSource {
     var cloudflareResolutionURL: URL? {
-        config?.cloudflareResolutionURL.flatMap(URL.init(string:)) ?? URL(string: info.website)
+        config?.cloudflareResolutionURL.flatMap(URL.init(string:)) ?? URL(string: info.website ?? "")
     }
 
     func ablityNotDisabled(_ path: KeyPath<SourceConfig, Bool?>) -> Bool {

@@ -104,7 +104,7 @@ enum STTKeys {
 
     static let CheckLinkedOnUpdateCheck = "APP.check_linked_on_update_check"
     static let BlurWhenAppSwiching = "APP.blur_while_switching"
-    static let DefaultUserAgent = "UserAgent"
+    static let DefaultUserAgent = "APP.default_UserAgent"
     static let UpdateContentData = "APP.update_content_data"
     static let UpdateSkipConditions = "APP.update_skip_conditions"
     static let FilteredProviders = "CONTENT.filtered_providers"
