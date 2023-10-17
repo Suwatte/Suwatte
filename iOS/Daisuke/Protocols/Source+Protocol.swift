@@ -64,6 +64,10 @@ protocol ContentSource: DSKRunner {
     func getGroupedUpdates(for ids: [String], from date: Date) async throws -> DSKCommon.GroupedUpdateResponse
 
     func getProgressState(for contentId: String) async throws -> DSKCommon.ContentProgressState
+    
+    func shouldRedrawImage(url: String) async throws -> DSKCommon.BooleanState
+    
+    func redrawImageWithSize(size: CGSize) async throws -> DSKCommon.RedrawCommand
 }
 
 extension ContentSource {

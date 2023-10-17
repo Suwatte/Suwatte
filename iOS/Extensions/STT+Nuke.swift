@@ -8,6 +8,7 @@
 import Nuke
 import UIKit
 
+// MARK: - White Space Cropper
 struct NukeWhitespaceProcessor: ImageProcessing, Hashable {
     func process(_ image: Nuke.PlatformImage) -> Nuke.PlatformImage? {
         guard let cgImage = image.cgImage else {
@@ -112,6 +113,7 @@ struct NukeWhitespaceProcessor: ImageProcessing, Hashable {
     }
 }
 
+// MARK: - Downsampler
 struct NukeDownsampleProcessor: ImageProcessing, Hashable {
     private let width: CGFloat
     private let height: CGFloat
@@ -174,6 +176,7 @@ struct NukeDownsampleProcessor: ImageProcessing, Hashable {
     }
 }
 
+// MARK: - Wide Page Splitter
 struct NukeSplitWidePageProcessor: ImageProcessing, Hashable {
     private let half: UIImage.ImageHalf
     private let page: PanelPage
@@ -221,5 +224,64 @@ struct NukeSplitWidePageProcessor: ImageProcessing, Hashable {
         }
 
         return out
+    }
+}
+
+
+// MARK: - DSK Redrawer
+
+struct NukeDaisukeRedrawWithSizeProcessor : ImageProcessing, Hashable {
+    private let sourceID: String
+    init(sourceID: String) {
+        self.sourceID = sourceID
+    }
+    
+    var identifier: String {
+        Bundle.main.bundleIdentifier! + ".image_processor.dsk_redraw_with_size?s=\(sourceID)"
+    }
+    
+    func process(_ image: PlatformImage) -> PlatformImage? {
+        let semaphore = DispatchSemaphore(value: 0)
+        let helper = Helper()
+        Task {
+            do {
+                let source = try await DSK.shared.getContentSource(id: sourceID)
+                let result = try await source.redrawImageWithSize(size: image.size)
+                helper.commands = result
+            } catch {
+                Logger.shared.error(error, sourceID)
+            }
+            semaphore.signal()
+        }
+        
+        semaphore.wait()
+        let command = helper.commands
+        guard let command, !command.commands.isEmpty else {
+            Logger.shared.warn("Requested redraw with size but provided no commands.")
+            return image
+        }
+        
+        let size = command.size.local
+        let rect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+        let prepped = UIGraphicsImageRenderer(bounds: rect,
+                                              format: image.imageRendererFormat)
+            .image { context in
+                for command in command.commands {
+                    let sourceCgImage = image.cgImage?.cropping(to: command.source.local)
+                    guard let sourceCgImage else {
+                        Logger.shared.error("Skipping Portion of Redraw, unable to crop.")
+                        continue
+                    }
+                    let sourceImage = UIImage(cgImage: sourceCgImage)
+                    sourceImage.draw(in: command.destination.local)
+                    
+                }
+            }
+        
+        return prepped
+    }
+    
+    class Helper {
+        var commands: DSKCommon.RedrawCommand?
     }
 }

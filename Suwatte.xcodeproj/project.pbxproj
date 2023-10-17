@@ -68,6 +68,7 @@
 		DF248F0C2813844C00818300 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DF248F0B2813844C00818300 /* KeychainSwift */; };
 		DF248F2B2813B24F00818300 /* BarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF248F2A2813B24F00818300 /* BarChartView.swift */; };
 		DF248F36281474A100818300 /* STT+Encodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF248F35281474A100818300 /* STT+Encodable.swift */; };
+		DF270AFE2ADE46F000E64E19 /* DSK+RedrawImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF270AFD2ADE46F000E64E19 /* DSK+RedrawImage.swift */; };
 		DF2783342A799BEF0098BBA9 /* RealmActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783332A799BEF0098BBA9 /* RealmActor.swift */; };
 		DF2783372A799C7E0098BBA9 /* Realm+ProgressMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783362A799C7E0098BBA9 /* Realm+ProgressMarker.swift */; };
 		DF2783392A799D480098BBA9 /* Realm+Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783382A799D480098BBA9 /* Realm+Content.swift */; };
@@ -539,6 +540,7 @@
 		DF1EA4532A70E7B8003E27C7 /* SDQV+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SDQV+ViewModel.swift"; sourceTree = "<group>"; };
 		DF248F2A2813B24F00818300 /* BarChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChartView.swift; sourceTree = "<group>"; };
 		DF248F35281474A100818300 /* STT+Encodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+Encodable.swift"; sourceTree = "<group>"; };
+		DF270AFD2ADE46F000E64E19 /* DSK+RedrawImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+RedrawImage.swift"; sourceTree = "<group>"; };
 		DF2783332A799BEF0098BBA9 /* RealmActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmActor.swift; sourceTree = "<group>"; };
 		DF2783362A799C7E0098BBA9 /* Realm+ProgressMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+ProgressMarker.swift"; sourceTree = "<group>"; };
 		DF2783382A799D480098BBA9 /* Realm+Content.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+Content.swift"; sourceTree = "<group>"; };
@@ -2054,6 +2056,7 @@
 				DF16F2B02A5F31E000D7AFBB /* DSK+Page.swift */,
 				DF16F2B22A5F31F000D7AFBB /* DSK+Directory.swift */,
 				DF0B02872AA05B76004345BA /* DSK+Form.swift */,
+				DF270AFD2ADE46F000E64E19 /* DSK+RedrawImage.swift */,
 			);
 			path = Structs;
 			sourceTree = "<group>";
@@ -2780,6 +2783,7 @@
 				DFE1B0F62A9A590100D300DB /* ChapterList+Methods.swift in Sources */,
 				DF020A5A2A8C5E8A00BC5562 /* PagingController+ContextMenu.swift in Sources */,
 				DFBE48382A25BB53000ABA16 /* Chapter.swift in Sources */,
+				DF270AFE2ADE46F000E64E19 /* DSK+RedrawImage.swift in Sources */,
 				DFD4D86C2A7B1C2500C5AC13 /* Realm+BrowseView.swift in Sources */,
 				DF29D8A72A770E41006C67B6 /* LibraryGrid+ViewModel.swift in Sources */,
 				DFDBF9702A7C4CB7006D49AD /* JSC+RunnerInfo.swift in Sources */,

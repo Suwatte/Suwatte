@@ -178,6 +178,8 @@ function setupSourceConfig() {
       RunnerIntents.canRefreshHighlight = !!ctx.getHighlight;
       RunnerIntents.progressSyncHandler = !!ctx.getProgressState;
       RunnerIntents.groupedUpdateFetcher = !!ctx.getGroupedUpdates;
+        
+      RunnerIntents.isRedrawingHandler = !!ctx.shouldRedrawImage && !!ctx.redrawImageWithSize;
     }
 
     // Content Tracker Intents

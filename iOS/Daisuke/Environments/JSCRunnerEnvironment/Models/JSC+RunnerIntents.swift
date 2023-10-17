@@ -45,6 +45,9 @@ struct RunnerIntents: Parsable {
     let canHandleURL: Bool?
     let progressSyncHandler: Bool?
     let groupedUpdateFetcher: Bool?
+    
+    // Redraw
+    let isRedrawingHandler: Bool?
 
     enum BasicAuthenticationUIIdentifier: Int, Codable {
         case EMAIL
