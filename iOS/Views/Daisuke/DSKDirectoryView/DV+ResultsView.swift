@@ -92,7 +92,7 @@ extension DirectoryView.ResultsView {
                         }
                         if !model.configSort.options.isEmpty {
                             Section {
-                                ForEach(model.configSort.options, id: \.id) { option in
+                                ForEach(model.configSort.options) { option in
                                     Button(option.title) {
                                         withAnimation {
                                             model.selectSortOption(option)
@@ -110,7 +110,11 @@ extension DirectoryView.ResultsView {
                     } label: {
                         HStack {
                             Text(title)
-                            Image(systemName: model.request.sort?.ascending ?? false ? "chevron.up" : "chevron.down")
+                            if model.request.listId != nil {
+                                Image(systemName: "list.clipboard")
+                            } else {
+                                Image(systemName: model.request.sort?.ascending ?? false ? "chevron.up" : "chevron.down")
+                            }
                         }
                     }
                     .buttonStyle(.bordered)
@@ -126,6 +130,9 @@ extension DirectoryView.ResultsView {
         }
 
         var title: String {
+            if let listID = model.request.listId {
+                return model.lists.first(where: { $0.id == listID })?.title ?? "Unknown List"
+            }
             let current = model.request.sort?.id
             let label = model.configSort.options.first(where: { $0.id == current })?.title
             return label ?? model.configSort.options.first(where: { $0.id == model.configSort.default?.id })?.title ?? model.configSort.options.first?.title ?? "Default"
