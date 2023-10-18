@@ -15,6 +15,7 @@ extension DSKCommon {
 
     struct DirectoryConfig: Parsable, Hashable {
         let sort: Sort?
+        let lists: [DSKCommon.Option]?
         let filters: [DirectoryFilter]?
         var searchable: Bool?
 
@@ -56,6 +57,7 @@ extension DSKCommon {
         var page: Int
         var filters: [String: AnyCodable]?
         var tag: RequestTag?
+        var listId: String?
         var context: [String: AnyCodable]?
         var configKey: String?
         var sort: SortSelection?

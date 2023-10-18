@@ -88,3 +88,14 @@ extension WKContentSource: ContentSource {
         try await eval(script("let data = await RunnerObject.getProgressState(contentId);"), ["contentId": contentId])
     }
 }
+
+
+extension WKContentSource {
+    func shouldRedrawImage(url: String) async throws -> DSKCommon.BooleanState {
+        throw DSK.Errors.MethodNotImplemented
+    }
+    
+    func redrawImageWithSize(size: CGSize) async throws -> DSKCommon.RedrawCommand {
+        throw DSK.Errors.MethodNotImplemented
+    }
+}

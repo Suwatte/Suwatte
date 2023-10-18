@@ -68,6 +68,7 @@
 		DF248F0C2813844C00818300 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DF248F0B2813844C00818300 /* KeychainSwift */; };
 		DF248F2B2813B24F00818300 /* BarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF248F2A2813B24F00818300 /* BarChartView.swift */; };
 		DF248F36281474A100818300 /* STT+Encodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF248F35281474A100818300 /* STT+Encodable.swift */; };
+		DF270AFE2ADE46F000E64E19 /* DSK+RedrawImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF270AFD2ADE46F000E64E19 /* DSK+RedrawImage.swift */; };
 		DF2783342A799BEF0098BBA9 /* RealmActor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783332A799BEF0098BBA9 /* RealmActor.swift */; };
 		DF2783372A799C7E0098BBA9 /* Realm+ProgressMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783362A799C7E0098BBA9 /* Realm+ProgressMarker.swift */; };
 		DF2783392A799D480098BBA9 /* Realm+Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783382A799D480098BBA9 /* Realm+Content.swift */; };
@@ -539,6 +540,7 @@
 		DF1EA4532A70E7B8003E27C7 /* SDQV+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SDQV+ViewModel.swift"; sourceTree = "<group>"; };
 		DF248F2A2813B24F00818300 /* BarChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChartView.swift; sourceTree = "<group>"; };
 		DF248F35281474A100818300 /* STT+Encodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+Encodable.swift"; sourceTree = "<group>"; };
+		DF270AFD2ADE46F000E64E19 /* DSK+RedrawImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DSK+RedrawImage.swift"; sourceTree = "<group>"; };
 		DF2783332A799BEF0098BBA9 /* RealmActor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmActor.swift; sourceTree = "<group>"; };
 		DF2783362A799C7E0098BBA9 /* Realm+ProgressMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+ProgressMarker.swift"; sourceTree = "<group>"; };
 		DF2783382A799D480098BBA9 /* Realm+Content.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+Content.swift"; sourceTree = "<group>"; };
@@ -1203,17 +1205,17 @@
 		DF2DA6FF27CD82430046FE20 = {
 			isa = PBXGroup;
 			children = (
-				DFAE97722AC61AF6001E62D8 /* CHANGELOG.md */,
 				DFAE97702AC61AD8001E62D8 /* LICENSE */,
-				DFAE97712AC61AD8001E62D8 /* README.md */,
-				DF9BFE142A428A1A005D0B63 /* Shared */,
-				DF2D842E2A212EDB006B17F0 /* Suwatte (iOS).entitlements */,
-				DF83DD3F282321690021575B /* Packages */,
-				DF8D09DF2800EE47003E4C3E /* iOS */,
 				DFCE6EAF280108EA002E220C /* Suwatte.app */,
-				DF9BFDFF2A4285BC005D0B63 /* ThumbnailProvider */,
-				7660DF769E63B9C1CCADAEB4 /* Frameworks */,
 				DF9BFDFC2A4285BC005D0B63 /* ThumbnailProvider.appex */,
+				DF2D842E2A212EDB006B17F0 /* Suwatte (iOS).entitlements */,
+				DFAE97722AC61AF6001E62D8 /* CHANGELOG.md */,
+				DFAE97712AC61AD8001E62D8 /* README.md */,
+				7660DF769E63B9C1CCADAEB4 /* Frameworks */,
+				DF8D09DF2800EE47003E4C3E /* iOS */,
+				DF83DD3F282321690021575B /* Packages */,
+				DF9BFE142A428A1A005D0B63 /* Shared */,
+				DF9BFDFF2A4285BC005D0B63 /* ThumbnailProvider */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1547,15 +1549,15 @@
 		DF8D09DF2800EE47003E4C3E /* iOS */ = {
 			isa = PBXGroup;
 			children = (
-				DF8D09E72800EE47003E4C3E /* Resources */,
 				DF6B5751288F41E9007C6B78 /* Daisuke */,
-				DFB47EF52880C1E70040A1BD /* OPDS */,
-				DF8D09E42800EE47003E4C3E /* Singletons */,
-				DF8D09EA2800EE47003E4C3E /* Models */,
-				DF8D09EC2800EE47003E4C3E /* State */,
-				DF8D09F32800EE47003E4C3E /* Extensions */,
-				DF8D0A022800EE47003E4C3E /* Defaults */,
 				DF8D0A092800EE47003E4C3E /* Data */,
+				DF8D0A022800EE47003E4C3E /* Defaults */,
+				DF8D09F32800EE47003E4C3E /* Extensions */,
+				DF8D09EA2800EE47003E4C3E /* Models */,
+				DFB47EF52880C1E70040A1BD /* OPDS */,
+				DF8D09E72800EE47003E4C3E /* Resources */,
+				DF8D09E42800EE47003E4C3E /* Singletons */,
+				DF8D09EC2800EE47003E4C3E /* State */,
 				DF8D0A2D2800EE47003E4C3E /* Views */,
 			);
 			path = iOS;
@@ -1703,34 +1705,34 @@
 		DF8D0A2D2800EE47003E4C3E /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				DF4EB4C92AB288AA001A73CD /* Statistics */,
-				DF4EB4C62AB24628001A73CD /* Onboarding */,
-				DF62B5B32A95EDB500F907CD /* ContentSettings */,
-				DF8D0A582800EE47003E4C3E /* ReadLater */,
-				DF1EA4452A70B78C003E27C7 /* SourceDownload */,
-				DF8D0AAB2800EE47003E4C3E /* Main */,
-				DF6883832A608FC1009B5642 /* Tags */,
-				DFF09B622A5A844C00C5CA5E /* Representables */,
-				DF9BFDF12A427525005D0B63 /* DirectoryViewer */,
-				DF8D0A502800EE47003E4C3E /* Loadable */,
+				DF8D0AB42800EE47003E4C3E /* Backups */,
+				DF8D0A8C2800EE47003E4C3E /* Bookmarks */,
+				DF8D0AA92800EE47003E4C3E /* Browse */,
 				DF67EB9728E7B05C00076FF5 /* ContentLink */,
-				DF67EB8D28E4053C00076FF5 /* Log */,
+				DF62B5B32A95EDB500F907CD /* ContentSettings */,
 				DF68249D28A5D2BB00AB30A1 /* Daisuke */,
-				DFB47EF82880C3BC0040A1BD /* OPDS */,
-				DFF363242863E496006D02C5 /* Migrate */,
-				DF7B18862830B467006A54C9 /* Reader */,
+				DF9BFDF12A427525005D0B63 /* DirectoryViewer */,
+				DF8D0AB22800EE47003E4C3E /* Error */,
+				DF8D0AA32800EE47003E4C3E /* Feed */,
+				DF8D0AB62800EE47003E4C3E /* Helpers */,
+				DF8D0AA62800EE47003E4C3E /* History */,
 				DF72E4902813226E00E40E52 /* ImageSearch */,
 				DF8D0A552800EE47003E4C3E /* Library */,
+				DF8D0A502800EE47003E4C3E /* Loadable */,
+				DF67EB8D28E4053C00076FF5 /* Log */,
+				DF8D0AAB2800EE47003E4C3E /* Main */,
+				DFF363242863E496006D02C5 /* Migrate */,
 				DF8D0A662800EE47003E4C3E /* More */,
-				DF8D0A882800EE47003E4C3E /* Search */,
-				DF8D0A8C2800EE47003E4C3E /* Bookmarks */,
+				DF4EB4C62AB24628001A73CD /* Onboarding */,
+				DFB47EF82880C3BC0040A1BD /* OPDS */,
 				DF8D0A8E2800EE47003E4C3E /* Profile */,
-				DF8D0AA32800EE47003E4C3E /* Feed */,
-				DF8D0AA62800EE47003E4C3E /* History */,
-				DF8D0AA92800EE47003E4C3E /* Browse */,
-				DF8D0AB22800EE47003E4C3E /* Error */,
-				DF8D0AB42800EE47003E4C3E /* Backups */,
-				DF8D0AB62800EE47003E4C3E /* Helpers */,
+				DF7B18862830B467006A54C9 /* Reader */,
+				DF8D0A582800EE47003E4C3E /* ReadLater */,
+				DFF09B622A5A844C00C5CA5E /* Representables */,
+				DF8D0A882800EE47003E4C3E /* Search */,
+				DF1EA4452A70B78C003E27C7 /* SourceDownload */,
+				DF4EB4C92AB288AA001A73CD /* Statistics */,
+				DF6883832A608FC1009B5642 /* Tags */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2054,6 +2056,7 @@
 				DF16F2B02A5F31E000D7AFBB /* DSK+Page.swift */,
 				DF16F2B22A5F31F000D7AFBB /* DSK+Directory.swift */,
 				DF0B02872AA05B76004345BA /* DSK+Form.swift */,
+				DF270AFD2ADE46F000E64E19 /* DSK+RedrawImage.swift */,
 			);
 			path = Structs;
 			sourceTree = "<group>";
@@ -2780,6 +2783,7 @@
 				DFE1B0F62A9A590100D300DB /* ChapterList+Methods.swift in Sources */,
 				DF020A5A2A8C5E8A00BC5562 /* PagingController+ContextMenu.swift in Sources */,
 				DFBE48382A25BB53000ABA16 /* Chapter.swift in Sources */,
+				DF270AFE2ADE46F000E64E19 /* DSK+RedrawImage.swift in Sources */,
 				DFD4D86C2A7B1C2500C5AC13 /* Realm+BrowseView.swift in Sources */,
 				DF29D8A72A770E41006C67B6 /* LibraryGrid+ViewModel.swift in Sources */,
 				DFDBF9702A7C4CB7006D49AD /* JSC+RunnerInfo.swift in Sources */,

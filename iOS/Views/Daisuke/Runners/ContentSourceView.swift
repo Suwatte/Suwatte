@@ -113,7 +113,7 @@ struct ContentSourceInfoView: View {
                 }
             }
 
-            Link(destination: URL(string: source.info.website) ?? STTHost.notFound) {
+            Link(destination: URL(string: source.info.website ?? "") ?? STTHost.notFound) {
                 HStack {
                     Text("Visit Website")
                     Spacer()

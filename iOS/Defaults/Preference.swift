@@ -100,7 +100,7 @@ final class Preferences {
     var verticalAutoScrollSpeed: Double = 16
 
     @UserDefault(STTKeys.DefaultUserAgent)
-    var userAgent = "Suwatte iOS Client V\(Bundle.main.releaseVersionNumberPretty)"
+    var userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/118.0"
 
     @UserDefault(STTKeys.ImageScaleType)
     var imageScaleType = ImageScaleOption.screen

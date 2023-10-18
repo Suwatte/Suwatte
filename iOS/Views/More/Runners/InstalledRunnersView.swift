@@ -104,6 +104,8 @@ struct InstalledRunnersView: View {
             Button {
                 Task {
                     await engine.removeRunner(runner.id)
+                    StateManager.shared.browseUpdateRunnerPageLinks.send()
+                    StateManager.shared.libraryUpdateRunnerPageLinks.send()
                 }
             } label: {
                 Label("Delete", systemImage: "trash")

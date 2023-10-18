@@ -97,9 +97,7 @@ struct BrowseView: View {
             hasLoaded = true
         }
         .onDisappear {
-            Task {
-                model.stopObserving()
-            }
+            model.stopObserving()
         }
         .onReceive(StateManager.shared.browseUpdateRunnerPageLinks) { _ in
             hasLoaded = false
@@ -317,8 +315,8 @@ final class PageLinkProviderModel: ObservableObject {
 
     @MainActor
     @Published
-
     var selectedRunnerRequiringSetup: StoredRunnerObject?
+    
     @MainActor
     @Published
     var selectedRunnerRequiringAuth: StoredRunnerObject?

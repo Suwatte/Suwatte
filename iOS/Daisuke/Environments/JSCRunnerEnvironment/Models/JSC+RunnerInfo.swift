@@ -16,7 +16,7 @@ struct RunnerInfo: Parsable {
     let id: String
     let name: String
     let version: Double
-    let website: String
+    let website: String?
     let rating: CatalogRating?
     let minSupportedAppVersion: String?
     let thumbnail: String?

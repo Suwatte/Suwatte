@@ -52,6 +52,17 @@ extension PanelActor {
 
         let readingMode = Preferences.standard.currentReadingMode
         let shouldSplit = [ReadingMode.PAGED_COMIC, .PAGED_MANGA].contains(readingMode) && Preferences.standard.splitWidePages && Preferences.standard.imageScaleType != .height && Preferences.standard.imageScaleType != .stretch
+        
+        // Should Redraw Image
+        let sourceID = data.data.page.chapter.sourceId
+        if let hostedURL = page.hostedURL,
+           !STTHelpers.isInternalSource(sourceID),
+           let source = await DSK.shared.getSource(id: sourceID),
+           source.intents.isRedrawingHandler ?? false,
+           (try? await source.shouldRedrawImage(url: hostedURL).state) ?? false {
+            processors.append(NukeDaisukeRedrawWithSizeProcessor(sourceID: sourceID))
+        }
+
 
         if shouldSplit && !data.isPad { // Don't split on ipads
             let isSecondaryPage = data.data.isSplitPageChild

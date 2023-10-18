@@ -142,8 +142,8 @@ extension IVMenuView {
                 Image(systemName: "xmark.circle.fill")
                     .resizable()
                     .scaledToFit()
-                    .modifier(ReaderButtonModifier())
             }
+            .modifier(ReaderButtonModifier())
         }
 
         var SettingsButton: some View {
@@ -154,8 +154,8 @@ extension IVMenuView {
                 Image(systemName: "ellipsis.circle.fill")
                     .resizable()
                     .scaledToFit()
-                    .modifier(ReaderButtonModifier())
             }
+            .modifier(ReaderButtonModifier())
         }
     }
 }
