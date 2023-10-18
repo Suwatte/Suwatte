@@ -252,10 +252,16 @@ extension ViewModel {
     func updateSourceProgressState() async {
         guard source.intents.progressSyncHandler ?? false else { return }
         do {
+            guard let user = try await source.getAuthenticatedUser() else { return }
+        } catch {
+            Logger.shared.error(error, "{getAuthenticatedUser}-\(source.id)")
+        }
+        do {
+
             let data = try await source.getProgressState(for: entry.id)
             sourceProgressState = data
         } catch {
-            Logger.shared.error(error, "(getProgressState)-\(source.id)")
+            Logger.shared.error(error, "{getProgressState}-\(source.id)")
         }
     }
 }

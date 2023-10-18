@@ -17,5 +17,6 @@ final class JSCContentSource: JSCRunner, ContentSource {
         if let dictionary = runnerClass.forProperty("config"), dictionary.isObject {
             config = try SourceConfig(value: dictionary)
         }
+        saveState()
     }
 }
