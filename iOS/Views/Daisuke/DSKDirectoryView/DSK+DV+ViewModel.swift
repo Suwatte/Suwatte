@@ -80,17 +80,24 @@ extension DirectoryView.ViewModel {
             }
         }
         if config != nil && request.sort == nil {
-            if request.sort == nil {
-                await MainActor.run {
-                    request.sort = configSort.default
+            await MainActor.run {
+                request.sort = configSort.default
+                if request.sort == nil, let firstSortOption = configSort.options.first {
+                    request.sort = .init(id: firstSortOption.id, ascending: nil)
                 }
+            }
+        }
+        
+        if config != nil && request.sort == nil && request.listId == nil, let listID = config?.lists?.first?.id {
+            await MainActor.run {
+                request.listId = listID
             }
         }
 
         await MainActor.run {
             request.context = context
         }
-
+        
         let data: DSKCommon.PagedResult = try await runner.getDirectory(request: request)
 
         await MainActor.run {
@@ -169,6 +176,7 @@ enum PaginationStatus: Equatable {
 
 extension DirectoryView.ViewModel {
     func selectSortOption(_ option: DSKCommon.Option) {
+        let q = request.query
         reset()
         if let currentSelection = request.sort, currentSelection.id == option.id, configSort.canChangeOrder ?? false {
             request.sort = .init(id: option.id, ascending: !(currentSelection.ascending ?? false))
@@ -176,6 +184,7 @@ extension DirectoryView.ViewModel {
             request.sort = .init(id: option.id, ascending: false)
         }
         request.page = 1
+        request.query = q
         reloadRequest()
     }
     
