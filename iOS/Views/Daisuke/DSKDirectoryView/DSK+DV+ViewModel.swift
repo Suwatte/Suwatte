@@ -38,6 +38,14 @@ extension DirectoryView {
             self.request = request
             context = request.context
         }
+        
+        var lists: [DSKCommon.Option] {
+            config?.lists ?? []
+        }
+        
+        var showButton: Bool {
+            !configSort.options.isEmpty || !lists.isEmpty
+        }
     }
 }
 
@@ -155,5 +163,26 @@ enum PaginationStatus: Equatable {
             return lhsE.localizedDescription == rhsE.localizedDescription
         default: return false
         }
+    }
+}
+
+
+extension DirectoryView.ViewModel {
+    func selectSortOption(_ option: DSKCommon.Option) {
+        reset()
+        if let currentSelection = request.sort, currentSelection.id == option.id, configSort.canChangeOrder ?? false {
+            request.sort = .init(id: option.id, ascending: !(currentSelection.ascending ?? false))
+        } else {
+            request.sort = .init(id: option.id, ascending: false)
+        }
+        request.page = 1
+        reloadRequest()
+    }
+    
+    func selectList(_ option: DSKCommon.Option) {
+        reset()
+        request.page = 1
+        request.listId = option.id
+        reloadRequest()
     }
 }

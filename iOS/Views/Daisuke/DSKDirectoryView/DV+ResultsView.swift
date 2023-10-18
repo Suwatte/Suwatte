@@ -58,7 +58,7 @@ extension DirectoryView {
         }
 
         var hasHeader: Bool {
-            model.resultCount != nil || !model.configSort.options.isEmpty
+            model.resultCount != nil || model.showButton
         }
     }
 }
@@ -72,13 +72,41 @@ extension DirectoryView.ResultsView {
         var body: some View {
             HStack {
                 if let resultCount = model.resultCount {
-                    Text("\(resultCount) Results")
+                    Text("\(resultCount) Titles")
                         .foregroundColor(Color.primary.opacity(0.7))
                 }
                 Spacer()
-                if !model.configSort.options.isEmpty {
-                    Button {
-                        dialog.toggle()
+                if model.showButton {
+                    Menu {
+                        Section {
+                            ForEach(model.lists) { list in
+                                Button(list.title) {
+                                    model.selectList(list)
+                                }
+                            }
+                        } header: {
+                            Text("Lists")
+                        }
+                        if !model.configSort.options.isEmpty && !model.lists.isEmpty {
+                            Divider()
+                        }
+                        if !model.configSort.options.isEmpty {
+                            Section {
+                                ForEach(model.configSort.options, id: \.id) { option in
+                                    Button(option.title) {
+                                        withAnimation {
+                                            model.selectSortOption(option)
+                                        }
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            } header: {
+                                Text("Sort")
+                            }
+                        }
+                        
+
+                       
                     } label: {
                         HStack {
                             Text(title)
@@ -93,27 +121,14 @@ extension DirectoryView.ResultsView {
             }
             .font(.footnote.weight(.light))
             .confirmationDialog("Sort Options", isPresented: $dialog, titleVisibility: .visible) {
-                ForEach(model.configSort.options, id: \.id) { sorter in
-                    Button(sorter.title) {
-                        withAnimation {
-                            if let currentSelection = model.request.sort, currentSelection.id == sorter.id, model.configSort.canChangeOrder ?? false {
-                                model.request.sort = .init(id: sorter.id, ascending: !(currentSelection.ascending ?? false))
-                            } else {
-                                model.request.sort = .init(id: sorter.id, ascending: false)
-                            }
-                            model.request.page = 1
-                            model.reloadRequest()
-                        }
-                    }
-                    .buttonStyle(.plain)
-                }
+
             }
         }
 
         var title: String {
             let current = model.request.sort?.id
             let label = model.configSort.options.first(where: { $0.id == current })?.title
-            return label ?? model.configSort.options.first(where: { $0.id == model.configSort.default?.id })?.title ?? "Default"
+            return label ?? model.configSort.options.first(where: { $0.id == model.configSort.default?.id })?.title ?? model.configSort.options.first?.title ?? "Default"
         }
     }
 }
