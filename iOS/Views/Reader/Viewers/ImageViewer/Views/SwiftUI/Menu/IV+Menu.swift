@@ -101,9 +101,12 @@ extension IVMenuView {
                     .multilineTextAlignment(.leading)
                     .lineLimit(3)
                     .frame(alignment: .leadingLastTextBaseline)
+                    .padding(.horizontal)
+
                 ActiveChapterView()
+                    .padding(.horizontal)
+
             }
-            .padding(.horizontal)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .modifier(GradientModifier())
         }
@@ -143,6 +146,8 @@ extension IVMenuView {
                     .resizable()
                     .scaledToFit()
                     .modifier(ReaderButtonModifier())
+                    .contentShape(Circle())
+                    .padding(.horizontal)
             }
         }
 
@@ -155,6 +160,8 @@ extension IVMenuView {
                     .resizable()
                     .scaledToFit()
                     .modifier(ReaderButtonModifier())
+                    .contentShape(Circle())
+                    .padding(.horizontal)
             }
         }
     }

@@ -58,8 +58,9 @@ private extension ProfileView.Skeleton {
         ScrollView {
             VStack(alignment: .leading, spacing: 15) {
                 Header()
+                    .padding(.horizontal)
 
-                VStack(spacing: 5.5) {
+                VStack(alignment: .leading, spacing: 5.5) {
                     Summary()
                     Divider()
                     CorePropertiesView()
@@ -67,13 +68,14 @@ private extension ProfileView.Skeleton {
                 }
                 .padding(.horizontal)
 
-                ChapterView.PreviewView()
-                    .padding(.horizontal)
-
-                AdditionalInfoView()
-                AdditionalCoversView()
-                    .padding(.horizontal)
-
+                
+                VStack(alignment: .leading, spacing: 0) {
+                    ChapterView.PreviewView()
+                    AdditionalInfoView()
+                    AdditionalCoversView()
+                }
+                .padding(.horizontal)
+                
                 VStack(alignment: .leading, spacing: 20) {
                     if let collections = viewModel.content.collections, !collections.isEmpty {
                         RelatedContentView(collections: collections)
@@ -81,6 +83,7 @@ private extension ProfileView.Skeleton {
                 }
                 .padding(.top, 5)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
             .padding(.vertical)
             .padding(.bottom, 70)
         }

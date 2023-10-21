@@ -17,9 +17,7 @@ extension ProfileView.Skeleton {
         var body: some View {
             VStack(alignment: .leading) {
                 AdditionalProperties
-                    .padding(.horizontal)
                 AdditionalTitles
-                    .padding(.horizontal)
             }
         }
 
