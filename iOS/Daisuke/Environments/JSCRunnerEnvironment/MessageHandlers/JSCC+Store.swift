@@ -19,6 +19,7 @@ extension JSCHandler {
         func _post(_ message: JSValue) -> JSValue {
             .init(newPromiseIn: message.context) { resolve, reject in
                 let context = message.context
+                
                 Task {
                     do {
                         let message = try Message(value: message)
@@ -46,6 +47,7 @@ extension H {
         var action: Action
         var key: String
         var value: String?
+        var id: String
 
         enum Action: String, Codable {
             case get, set, remove
@@ -58,8 +60,9 @@ extension H {
 }
 
 extension H {
+
     func handle(message: Message) async throws -> String? {
-        let id = try getRunnerID()
+        let id = message.id
         let actor = await RealmActor.shared()
         switch message.store {
         case .os: // ObjectStore

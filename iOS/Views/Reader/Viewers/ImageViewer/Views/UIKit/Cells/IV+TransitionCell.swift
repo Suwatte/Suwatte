@@ -34,7 +34,9 @@ class TransitionCell: UICollectionViewCell {
 
         } else {
             // Fallback on earlier versions
-            let controller = UIHostingController(rootView: ReaderTransitionView(transition: data))
+            let controller = UIHostingController(rootView: ReaderTransitionView(transition: data)
+                .frame(width: frame.width,
+                       height: frame.height))
 
             let view = controller.view
 
@@ -46,6 +48,7 @@ class TransitionCell: UICollectionViewCell {
             view.backgroundColor = .clear
 
             view.translatesAutoresizingMaskIntoConstraints = false
+            view.layoutSubviews()
             NSLayoutConstraint.activate([
                 view.topAnchor.constraint(equalTo: contentView.topAnchor),
                 view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
