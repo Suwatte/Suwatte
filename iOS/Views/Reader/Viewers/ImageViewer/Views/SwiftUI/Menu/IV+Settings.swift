@@ -245,6 +245,9 @@ struct IVSettingsView: View {
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             .closeButton()
+            .task {
+                model.hideMenu()
+            }
         }
     }
 }

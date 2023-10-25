@@ -112,7 +112,7 @@ final class Preferences {
     var readerType = ReadingMode.PAGED_COMIC
 
     @UserDefault(STTKeys.UpdateSkipConditions)
-    var skipConditions: [SkipCondition] = [SkipCondition.HAS_UNREAD, SkipCondition.NO_MARKERS]
+    var skipConditions: [SkipCondition] = []
 
     @UserDefault(STTKeys.VerticalPillarBoxEnabled)
     var usePillarBox = false
@@ -182,6 +182,9 @@ final class Preferences {
 
     @UserDefault(STTKeys.BlackListOnSourceLevel)
     var blackListProviderOnSourceLevel = true
+    
+    @UserDefault(STTKeys.SyncDatabase)
+    var syncDatabase = false
 }
 
 @propertyWrapper

@@ -105,6 +105,9 @@ struct ThreadSafeChapter: Hashable, Identifiable, STTChapterObject, Sendable {
     }
 
     static func orderKey(volume: Double?, number: Double) -> Double {
+        if number == 0 {
+            return 0
+        }
         let d = (volume ?? 999) * 10000
         return d + number
     }

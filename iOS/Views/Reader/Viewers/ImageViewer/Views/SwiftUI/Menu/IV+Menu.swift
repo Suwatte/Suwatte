@@ -101,9 +101,12 @@ extension IVMenuView {
                     .multilineTextAlignment(.leading)
                     .lineLimit(3)
                     .frame(alignment: .leadingLastTextBaseline)
+                    .padding(.horizontal)
+
                 ActiveChapterView()
+                    .padding(.horizontal)
+
             }
-            .padding(.horizontal)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .modifier(GradientModifier())
         }
@@ -142,8 +145,10 @@ extension IVMenuView {
                 Image(systemName: "xmark.circle.fill")
                     .resizable()
                     .scaledToFit()
+                    .modifier(ReaderButtonModifier())
+                    .contentShape(Circle())
+                    .padding(.horizontal)
             }
-            .modifier(ReaderButtonModifier())
         }
 
         var SettingsButton: some View {
@@ -154,8 +159,10 @@ extension IVMenuView {
                 Image(systemName: "ellipsis.circle.fill")
                     .resizable()
                     .scaledToFit()
+                    .modifier(ReaderButtonModifier())
+                    .contentShape(Circle())
+                    .padding(.horizontal)
             }
-            .modifier(ReaderButtonModifier())
         }
     }
 }

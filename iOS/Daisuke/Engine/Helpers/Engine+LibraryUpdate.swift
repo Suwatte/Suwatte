@@ -101,9 +101,10 @@ extension DSK {
         }
 
         // Already Fetched on Source
-        if let lastFetched {
+        if let lastFetched, let target = filtered.first(where: { $0.chapterId == lastFetched.chapterId }) {
+            
             filtered = filtered
-                .filter { $0.orderKey > lastFetched.chapterOrderKey }
+                .filter { $0.index < target.index }
         }
         
         var updates = filtered.count

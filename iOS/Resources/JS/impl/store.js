@@ -14,6 +14,7 @@ class STTStore {
       store: this.store,
       action: "get",
       key,
+        id: IDENTIFIER
     });
     if (!str) return null;
     return JSON.parse(str);
@@ -24,6 +25,8 @@ class STTStore {
       action: "set",
       key,
       value: JSON.stringify(value),
+    id: IDENTIFIER
+
     });
     return;
   }
@@ -32,6 +35,8 @@ class STTStore {
       store: this.store,
       action: "remove",
       key,
+    id: IDENTIFIER
+
     });
     return;
   }

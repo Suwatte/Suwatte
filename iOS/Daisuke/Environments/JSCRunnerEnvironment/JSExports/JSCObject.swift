@@ -24,16 +24,4 @@ class JSObject: NSObject, JSObjectProtocol {
             self.this = JSManagedValue(value: value)
         }
     }
-
-    func getRunnerID() throws -> String {
-        guard let runner = this?.value.context.daisukeRunner() else {
-            throw DaisukeEngine.Errors.RunnerNotFoundOnContainedObject
-        }
-
-        guard let id = runner.forProperty("info")?.forProperty("id")?.toString() else {
-            throw DaisukeEngine.Errors.UnableToFetchRunnerIDInContainedObject
-        }
-
-        return id
-    }
 }

@@ -25,24 +25,23 @@ extension Skeleton {
         var body: some View {
             HStack(spacing: 10) {
                 CoverImage
-
                 VStack(alignment: .leading, spacing: 10) {
                     LabelsView
                         .frame(height: ImageWidth, alignment: .topLeading)
                         .clipped()
-
                     Spacer()
                     ActionButtons()
                 }
-                .padding(.vertical, 5)
-                Spacer()
+                .padding(.vertical, 1.5)
             }
             .frame(height: ImageWidth * 1.5, alignment: .topLeading)
-            .padding(.horizontal)
             .task {
                 guard labels.isEmpty else { return }
                 labels = buildLabels()
             }
+            .onChange(of: model.content, perform: { value in
+                labels = buildLabels()
+            })
         }
     }
 }
@@ -62,7 +61,7 @@ extension Skeleton.Header {
         data.append(.init(text: model.source.name, color: .accentColor))
 
         if let contentType = entry.contentType {
-            data.append(.init(text: contentType.description, color: contentType == .novel ? .blue : .random))
+            data.append(.init(text: contentType.description, color: contentType == .novel ? .blue : .accentColor))
         }
 
         if entry.isNSFW ?? false {
@@ -144,39 +143,45 @@ private extension Skeleton {
         @AppStorage(STTKeys.DefaultCollection) var defaultCollection: String = ""
         @AppStorage(STTKeys.DefaultReadingFlag) var defaultFlag = LibraryFlag.unknown
         var body: some View {
-            HStack(alignment: .center, spacing: 30) {
+            HStack(alignment: .center) {
                 // Library Button
-                Button {
-                    Task {
-                        await handleLibraryAction()
+                
+                if model.source.ablityNotDisabled(\.disableLibraryActions) {
+                    
+                    Button {
+                        Task {
+                            await handleLibraryAction()
+                        }
+                    } label: {
+                        Image(systemName: EntryInLibrary ? "folder.fill" : "folder.badge.plus")
                     }
-                } label: {
-                    Image(systemName: EntryInLibrary ? "folder.fill" : "folder.badge.plus")
-                }
-                .disabled(!model.source.ablityNotDisabled(\.disableLibraryActions))
+                    Spacer()
 
-                Button {
-                    model.presentTrackersSheet.toggle()
-                } label: {
-                    Image(systemName: "checklist")
                 }
-                .disabled(!model.source.ablityNotDisabled(\.disableTrackerLinking))
 
+                
+                if model.source.ablityNotDisabled(\.disableTrackerLinking) {
+                    Button {
+                        model.presentTrackersSheet.toggle()
+                    } label: {
+                        Image(systemName: "checklist")
+                    }
+                    Spacer()
+
+                }
+                
                 NavigationLink {
                     BookmarksView(contentID: model.identifier)
                 } label: {
                     Image(systemName: "bookmark")
                 }
 
+
                 if let url = model.content.webUrl.flatMap({ URL(string: $0) }) {
+                    Spacer()
                     Link(destination: url, label: {
                         Image(systemName: "globe")
                     })
-                } else {
-                    Button {} label: {
-                        Image(systemName: "globe")
-                    }
-                    .disabled(true)
                 }
             }
 

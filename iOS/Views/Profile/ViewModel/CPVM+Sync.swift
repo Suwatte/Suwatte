@@ -45,7 +45,7 @@ extension ViewModel {
                         }
 
                         let originMaxReadChapter = entry.progress.lastReadChapter
-                        return (tracker.id, ThreadSafeChapter.orderKey(volume: nil , number: originMaxReadChapter))
+                        return (tracker.id, originMaxReadChapter)
                     } catch {
                         Logger.shared.error(error, tracker.id)
                         return (tracker.id, 0)
@@ -55,8 +55,8 @@ extension ViewModel {
 
             var markers: [String: Double] = [:]
 
-            for await (key, chapterKey) in group {
-                markers[key] = chapterKey
+            for await (key, originMaxReadChapter) in group {
+                markers[key] = originMaxReadChapter
             }
             return markers
         })
@@ -71,34 +71,34 @@ extension ViewModel {
             if let readIds = state.readChapterIds {
                 chapterListMax = chapters
                     .filter { readIds.contains($0.chapterId) }
-                    .map { ThreadSafeChapter.orderKey(volume: $0.volume, number: $0.number) }
+                    .map(\.number)
                     .max() ?? 0
             }
 
             if let markState = state.markAllBelowAsRead {
-                markStateMax = ThreadSafeChapter.orderKey(volume: markState.chapterVolume, number: markState.chapterNumber)
+                markStateMax = markState.chapterNumber
             }
             sourceOriginHighestRead = max(chapterListMax, markStateMax)
         }
 
+        // Switch to chapters for this portion.
         // Prepare the Highest Read Chapter Number
-        let localHighestRead = await actor.getMaxReadChapterOrderKey(id: identifier.id)
+        let localHighestRead = ThreadSafeChapter.vnPair(from: await actor.getMaxReadChapterOrderKey(id: identifier.id)).1
         let originHighestRead = Array(markers.values).max() ?? 0
-        let maxRead = max(localHighestRead, originHighestRead, sourceOriginHighestRead)
+        let maxReadChapter = max(localHighestRead, originHighestRead, sourceOriginHighestRead)
 
         // Max Read is 0, do not sync
-        guard maxRead != 0 else { return }
-        let (maxReadVolume, maxReadChapter) = ThreadSafeChapter.vnPair(from: maxRead)
+        guard maxReadChapter != 0 else { return }
 
         // Update Origin Value if outdated
         await withTaskGroup(of: Void.self, body: { group in
             for (key, value) in markers {
-                guard let tracker = await DSK.shared.getTracker(id: key), maxRead > value, let entryId = matches[key] else { continue }
+                guard let tracker = await DSK.shared.getTracker(id: key), maxReadChapter > value, let entryId = matches[key] else { continue }
                 group.addTask {
                     guard let _ = try? await tracker.getAuthenticatedUser() else { return }
 
                     do {
-                        try await tracker.didUpdateLastReadChapter(id: entryId, progress: .init(chapter: maxReadChapter, volume: maxReadVolume))
+                        try await tracker.didUpdateLastReadChapter(id: entryId, progress: .init(chapter: maxReadChapter, volume: nil))
                     } catch {
                         Logger.shared.error(error, tracker.id)
                     }
@@ -107,15 +107,15 @@ extension ViewModel {
         })
 
         // Update Local Value if outdated, sources are notified if they have the Chapter Event Handler
-        guard maxRead != localHighestRead else { return }
-        let chaptersToMark = Set(chapters.map(\.chapterOrderKey)).filter { $0 <= maxRead }
+        guard maxReadChapter != localHighestRead else { return }
+        let chaptersToMark = chapters.filter({ $0.number <= maxReadChapter }).map(\.chapterOrderKey)
         let linked = await actor.getLinkedContent(for: identifier.id)
-        await actor.markChaptersByNumber(for: identifier, chapters: chaptersToMark)
+        await actor.markChaptersByNumber(for: identifier, chapters: Set(chaptersToMark))
         await withTaskGroup(of: Void.self, body: { group in
             for link in linked {
                 group.addTask {
                     await actor
-                        .markChaptersByNumber(for: link.ContentIdentifier, chapters: chaptersToMark)
+                        .markChaptersByNumber(for: link.ContentIdentifier, chapters: Set(chaptersToMark))
                 }
             }
         })

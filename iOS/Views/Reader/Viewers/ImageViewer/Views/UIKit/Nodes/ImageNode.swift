@@ -135,6 +135,13 @@ extension ImageNode {
         guard newState == .preload, oldState == .display else { return }
         hardReset()
     }
+    
+    override func didExitPreloadState() {
+        super.didExitPreloadState()
+        imageNode.image = nil
+        imageNode.alpha = 0
+        image = nil
+    }
 }
 
 // MARK: - Layout
@@ -319,6 +326,15 @@ extension ImageNode {
 
     func postImageSetSetup() {
         listen()
+        guard imageNode.alpha == 0 else { return }
+        
+        UIView.animate(withDuration: 0.33,
+                       delay: 0,
+                       options: [.transitionCrossDissolve, .allowUserInteraction, .curveEaseInOut])
+        { [unowned self] in
+            imageNode.alpha = 1
+            progressNode.alpha = 0
+        }
     }
 
     func hardReset() {
