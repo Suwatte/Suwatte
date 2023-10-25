@@ -135,6 +135,13 @@ extension ImageNode {
         guard newState == .preload, oldState == .display else { return }
         hardReset()
     }
+    
+    override func didExitPreloadState() {
+        super.didExitPreloadState()
+        imageNode.image = nil
+        imageNode.alpha = 0
+        image = nil
+    }
 }
 
 // MARK: - Layout

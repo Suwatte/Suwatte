@@ -132,11 +132,6 @@ struct DirectoryViewer: View {
                             .pickerStyle(.menu)
                             Divider()
                             Button {
-                                presentDownloadQueueSheet.toggle()
-                            } label: {
-                                Label("Download Queue", systemImage: "square.and.arrow.down")
-                            }
-                            Button {
                                 presentSettingsSheet.toggle()
                             } label: {
                                 Label("Settings", systemImage: "gearshape")
@@ -158,12 +153,6 @@ struct DirectoryViewer: View {
         .modifier(OpenLocalModifier(isPresenting: $presentImportSheet))
         .sheet(isPresented: $presentSettingsSheet) {
             SettingsSheet()
-        }
-        .sheet(isPresented: $presentDownloadQueueSheet) {
-            SmartNavigationView {
-                DownloadQueueSheet()
-                    .closeButton()
-            }
         }
     }
 
