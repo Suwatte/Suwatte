@@ -182,6 +182,9 @@ final class Preferences {
 
     @UserDefault(STTKeys.BlackListOnSourceLevel)
     var blackListProviderOnSourceLevel = true
+    
+    @UserDefault(STTKeys.SyncDatabase)
+    var syncDatabase = false
 }
 
 @propertyWrapper

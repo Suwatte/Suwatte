@@ -296,13 +296,22 @@ extension SettingsView {
 extension SettingsView {
     struct OnMyDeviceSection: View {
         @Preference(\.useCloudForLocal) var useCloud
+        @Preference(\.syncDatabase) private var syncDatabase
         var body: some View {
             Section {
                 Toggle("Store on iCloud Drive", isOn: $useCloud)
             } header: {
                 Text("On My \(UIDevice.current.model)")
             } footer: {
-                Text("When enabled, your library will be available across all your devices using iCloud Drive.")
+                Text("When enabled, your comic files will be available across all your devices using iCloud Drive.")
+            }
+            
+            Section {
+                Toggle("Sync Library to iCloud", isOn: $syncDatabase)
+            } header: {
+                Text("Database")
+            } footer: {
+                Text("When enabled, your library will be syned across all your devices using iCloud.")
             }
         }
     }
