@@ -22,6 +22,7 @@ struct ImageViewer: View {
             MainView
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        .modifier(ReaderNavigationRegionModifier())
         .modifier(CustomOverlayModifier())
         .modifier(GrayScaleModifier())
         .modifier(ColorInvertModifier())

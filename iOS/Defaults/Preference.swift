@@ -185,6 +185,9 @@ final class Preferences {
     
     @UserDefault(STTKeys.SyncDatabase)
     var syncDatabase = false
+    
+    @UserDefault(STTKeys.AlwaysMarkFirstPageAsSinglePanel)
+    var markFirstAsSingle = true
 }
 
 @propertyWrapper

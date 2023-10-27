@@ -208,8 +208,9 @@ extension Controller {
                 prepared.append(item)
                 continue
             }
-
-            if item == items.first(where: \.isPage) {
+            
+            // is first page & user has always isolate singles enabled
+            if item == items.first(where: \.isPage) && Preferences.standard.markFirstAsSingle {
                 prepared.append(item)
                 continue
             }
@@ -217,10 +218,10 @@ extension Controller {
             // marked as wide, add next if exists & reset
             if widePages.contains(data.page.CELL_KEY) {
                 if let next {
-                    prepared.append(.page(next))
+                    prepared.append(.page(next)) // pending next, insert
                 }
-                prepared.append(item)
-                next = nil
+                prepared.append(item) // insert wide page
+                next = nil // next consumed, reset to nil
                 continue
             }
 

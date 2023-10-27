@@ -10,8 +10,8 @@ import SwiftUI
 // MARK: Color Invert
 
 struct ColorInvertModifier: ViewModifier {
-    @AppStorage(STTKeys.ReaderColorInvert) var useColorInvert = false
-
+    @AppStorage(STTKeys.ReaderColorInvert) private var useColorInvert = false
+    
     func body(content: Content) -> some View {
         if useColorInvert {
             content
@@ -25,8 +25,8 @@ struct ColorInvertModifier: ViewModifier {
 // MARK: GrayScale
 
 struct GrayScaleModifier: ViewModifier {
-    @AppStorage(STTKeys.ReaderGrayScale) var useGrayscale = false
-
+    @AppStorage(STTKeys.ReaderGrayScale) private var useGrayscale = false
+    
     func body(content: Content) -> some View {
         content
             .grayscale(useGrayscale ? 1 : 0)
@@ -36,10 +36,10 @@ struct GrayScaleModifier: ViewModifier {
 // MARK: Colored Overlay
 
 struct CustomOverlayModifier: ViewModifier {
-    @AppStorage(STTKeys.EnableOverlay) var overlayEnabled = false
-    @AppStorage(STTKeys.OverlayColor) var overlayColor: Color = .clear
-    @AppStorage(STTKeys.ReaderFilterBlendMode) var readerBlendMode = STTBlendMode.normal
-
+    @AppStorage(STTKeys.EnableOverlay) private var overlayEnabled = false
+    @AppStorage(STTKeys.OverlayColor) private var overlayColor: Color = .clear
+    @AppStorage(STTKeys.ReaderFilterBlendMode) private var readerBlendMode = STTBlendMode.normal
+    
     func body(content: Content) -> some View {
         content
             .overlay {
@@ -55,9 +55,9 @@ struct CustomOverlayModifier: ViewModifier {
 // MARK: Background
 
 struct CustomBackgroundModifier: ViewModifier {
-    @AppStorage(STTKeys.BackgroundColor, store: .standard) var backgroundColor = Color.primary
-    @AppStorage(STTKeys.UseSystemBG, store: .standard) var useSystemBG = true
-
+    @AppStorage(STTKeys.BackgroundColor, store: .standard) private var backgroundColor = Color.primary
+    @AppStorage(STTKeys.UseSystemBG, store: .standard) private var useSystemBG = true
+    
     func body(content: Content) -> some View {
         content
             .background(useSystemBG ? nil : backgroundColor.ignoresSafeArea())
@@ -68,13 +68,13 @@ struct CustomBackgroundModifier: ViewModifier {
 // MARK: BackGround Tap
 
 struct BackgroundTapModifier: ViewModifier {
-    @EnvironmentObject var model: IVViewModel
+    @EnvironmentObject private var model: IVViewModel
     func body(content: Content) -> some View {
         content
             .background(Color.primary.opacity(0.01).gesture(tap))
     }
-
-    var tap: some Gesture {
+    
+    private var tap: some Gesture {
         TapGesture(count: 1)
             .onEnded { _ in
                 Task { @MainActor in
@@ -87,13 +87,13 @@ struct BackgroundTapModifier: ViewModifier {
 // MARK: AutoScroll
 
 struct AutoScrollModifier: ViewModifier {
-    @EnvironmentObject var model: IVViewModel
-    @AppStorage(STTKeys.VerticalAutoScroll) var autoScrollEnabled = false
-
+    @EnvironmentObject private var model: IVViewModel
+    @AppStorage(STTKeys.VerticalAutoScroll) private var autoScrollEnabled = false
+    
     var shouldShowOverlay: Bool {
         model.readingMode == .VERTICAL && autoScrollEnabled
     }
-
+    
     func body(content: Content) -> some View {
         content
             .overlay(shouldShowOverlay ? AutoScrollOverlay() : nil)
@@ -103,18 +103,18 @@ struct AutoScrollModifier: ViewModifier {
 // MARK: Sheets
 
 struct ReaderSheetsModifier: ViewModifier {
-    @EnvironmentObject var model: IVViewModel
-
+    @EnvironmentObject private var model: IVViewModel
+    
     func body(content: Content) -> some View {
         content
-            .sheet(isPresented: $model.control.settings) {
+            .sheet(isPresented: $model.control.settings, onDismiss: { model.control.navigationRegions.toggle() }) {
                 IVSettingsView()
             }
             .sheet(isPresented: $model.control.chapterList, onDismiss: reset) {
                 IVChapterListView()
             }
     }
-
+    
     private func reset() {
         guard let chapter = model.pendingState?.chapter else {
             return
@@ -128,8 +128,8 @@ struct ReaderSheetsModifier: ViewModifier {
 // MARK: Menu
 
 struct ReaderMenuModifier: ViewModifier {
-    @EnvironmentObject var model: IVViewModel
-
+    @EnvironmentObject private var model: IVViewModel
+    
     func body(content: Content) -> some View {
         content
             .overlay {
@@ -137,5 +137,61 @@ struct ReaderMenuModifier: ViewModifier {
                     IVMenuView()
                 }
             }
+    }
+}
+
+
+// MARK: Navigation Overlay
+struct ReaderNavigationRegionModifier: ViewModifier {
+    @EnvironmentObject private var model: IVViewModel
+    @Preference(\.displayNavOverlay) private var displayNavOverlay
+    @Preference(\.tapSidesToNavigate) var tapSidesToNavigate
+    
+    func body(content: Content) -> some View {
+        content
+            .overlay {
+                if isOverlayEnabled {
+                    NavigationRegionOverlay()
+                        .transition(.opacity)
+                }
+            }
+            .onAppear {
+                model.control.navigationRegions.toggle()
+            }
+            .onChange(of: model.control.navigationRegions) { val in
+                if !val { return }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    model.control.navigationRegions = false
+                }
+            }
+            .animation(.default,value: model.control.navigationRegions)
+    }
+    
+    var isOverlayEnabled: Bool {
+        displayNavOverlay && tapSidesToNavigate && model.control.navigationRegions
+    }
+}
+
+
+struct NavigationRegionOverlay: View {
+    var body: some View {
+        ZStack {
+            ForEach(STTHelpers.getNavigationMode().mode.regions) { region in
+                Canvas { context, _ in
+                    context.fill(
+                        Path(region.rect.rect(for: size)),
+                        with: .color(region.type.color)
+                    )
+                }
+                .frame(width: size.width, height: size.height, alignment: .center)
+            }
+        }
+        .allowsHitTesting(false)
+        .opacity(0.3)
+    }
+    
+    private var size: CGSize {
+        UIScreen.main.bounds.size
     }
 }

@@ -24,7 +24,8 @@ class STTHelpers {
     }
 
     static func getNavigationMode() -> ReaderNavigation.Modes {
-        let isVertical = UserDefaults.standard.bool(forKey: STTKeys.IsReadingVertically)
+        let currentMode = Preferences.standard.currentReadingMode
+        let isVertical = currentMode.isVertical
         typealias Mode = ReaderNavigation.Modes
         if isVertical {
             let raw = UserDefaults.standard.integer(forKey: STTKeys.VerticalNavigator)

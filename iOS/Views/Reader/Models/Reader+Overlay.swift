@@ -18,4 +18,5 @@ struct MenuControl: Hashable {
     var comments = false
     var settings = false
     var transitionOption = false
+    var navigationRegions = false
 }

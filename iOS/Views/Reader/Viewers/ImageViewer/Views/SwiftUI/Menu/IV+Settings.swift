@@ -37,6 +37,7 @@ struct IVSettingsView: View {
     @Preference(\.forceTransitions) var forceTransitions
     @Preference(\.splitWidePages) var splitWidePages
     @Preference(\.verticalPagePaddingAmount) var pagePaddingAmount
+    @Preference(\.markFirstAsSingle) var markFirstAsSingle
     private let autoScrollRange: ClosedRange<Double> = 2.5 ... 30
     private let pillarBoxRange: ClosedRange<Double> = 0.15 ... 1.0
     @State var holdingAutoScrollBinding: Double = 0.0
@@ -62,6 +63,10 @@ struct IVSettingsView: View {
                             .onChange(of: isDoublePaged) { _ in
                                 model.producePendingState()
                             }
+                        
+                        if isDoublePaged {
+                            Toggle("Always Isolate First Panel", isOn: $markFirstAsSingle)
+                        }
                     } header: {
                         Text("Paging Options")
                     }
