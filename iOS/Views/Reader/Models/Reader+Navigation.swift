@@ -14,9 +14,9 @@ enum ReaderNavigation {
 
         var color: Color {
             switch self {
-            case .MENU: return .accentColor
-            case .LEFT: return .init(hex: "cdb4db")
-            case .RIGHT: return .init(hex: "a2d2ff")
+            case .MENU: return .clear
+            case .LEFT: return .init(hex: "9e0059")
+            case .RIGHT: return .accentColor
             }
         }
     }
