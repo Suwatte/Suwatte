@@ -31,7 +31,7 @@ class ImageNode: ASCellNode {
     }
 
     private var hasTriggeredChapterDelegateCall = false
-
+    private var isWorking = false
     var image: UIImage?
 
     var isLeading: Bool {
@@ -44,10 +44,6 @@ class ImageNode: ASCellNode {
 
     private var downsample: Bool {
         Preferences.standard.downsampleImages
-    }
-
-    private var isWorking: Bool {
-        imageTask != nil && nukeTask != nil
     }
 
     init(page: PanelPage) {
@@ -132,8 +128,15 @@ extension ImageNode {
 
     override func interfaceStateDidChange(_ newState: ASInterfaceState, from oldState: ASInterfaceState) {
         super.interfaceStateDidChange(newState, from: oldState)
-        guard newState == .preload, oldState == .display else { return }
-        hardReset()
+        if newState.rawValue == 1 && oldState.rawValue == 7 { // Leaving Preload to unknown
+            if let indexPath,
+               let manager = owningNode as? ASCollectionNode,
+               let Y = manager.collectionViewLayout.layoutAttributesForItem(at: indexPath)?.frame.origin.y,
+               Y < manager.contentOffset.y {
+                // Is Leaving At Top
+                hardReset()
+            }
+        }
     }
 }
 
@@ -153,6 +156,7 @@ extension ImageNode {
                     imageNode.alpha = 0
                     progressNode.alpha = 1
                 }
+                imageNode.backgroundColor = .randomColor()
             }
         }
         imageNode.frame = context.finalFrame(for: imageNode)
@@ -228,8 +232,8 @@ extension ImageNode {
     }
 
     func handleImageFailure(_: Error) {
-        progressNode.isHidden = false
-        imageNode.isHidden = true
+        imageNode.alpha = 0
+        progressNode.alpha = 1
     }
 
     private func resetTasks() {
@@ -251,10 +255,12 @@ extension ImageNode {
             displayImage(image)
             return
         }
-
+        
         guard !isWorking else {
             return
         }
+        isWorking = true
+        
         let page = page
         let isPad = UIDevice.current.userInterfaceIdiom == .pad
         let data: PanelActor.PageData = .init(data: page,
@@ -296,6 +302,7 @@ extension ImageNode {
 
                 await MainActor.run { [weak self] in
                     self?.nukeTask = nil
+                    self?.isWorking = false
                 }
             }
         }
@@ -319,14 +326,16 @@ extension ImageNode {
 
     func postImageSetSetup() {
         listen()
+        imageTask = nil
+        nukeTask = nil
         guard imageNode.alpha == 0 else { return }
-        
         UIView.animate(withDuration: 0.33,
                        delay: 0,
                        options: [.transitionCrossDissolve, .allowUserInteraction, .curveEaseInOut])
         { [unowned self] in
             imageNode.alpha = 1
             progressNode.alpha = 0
+            imageNode.backgroundColor = .randomColor()
         }
     }
 
@@ -342,7 +351,7 @@ extension ImageNode {
 
         imageNode.image = nil
         image = nil
-        ratio = 0
+        ratio = nil
 
         imageNode.alpha = 0
         progressNode.alpha = 1

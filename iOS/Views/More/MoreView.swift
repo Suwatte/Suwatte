@@ -39,7 +39,7 @@ struct MoreView: View {
     var AppInformationSection: some View {
         Section {
             Text("App Version")
-                .badge(Bundle.main.releaseVersionNumber)
+                .badge("\(Bundle.main.releaseVersionNumber ?? "")b\(Bundle.main.buildVersionNumber ?? "")")
             Text("Daisuke Version")
                 .badge(STT_BRIDGE_VERSION)
         } header: {
