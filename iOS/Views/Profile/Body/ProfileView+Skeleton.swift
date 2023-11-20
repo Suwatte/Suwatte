@@ -17,6 +17,7 @@ extension ProfileView {
                     ProfileView.Sheets.LibrarySheet(id: viewModel.identifier)
                         .tint(accentColor)
                         .accentColor(accentColor)
+                        .environmentObject(StateManager.shared)
                 })
                 .fullScreenCover(isPresented: $viewModel.presentTrackersSheet, content: {
                     let titles = (viewModel.content.additionalTitles ?? []).appending(viewModel.content.title).distinct()

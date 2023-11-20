@@ -307,7 +307,8 @@ extension SettingsView {
             }
             
             Section {
-                Toggle("Sync Library to iCloud", isOn: $syncDatabase)
+                Toggle("Sync Library to iCloud", isOn: .constant(false))
+                    .disabled(true)
             } header: {
                 Text("Database")
             } footer: {
