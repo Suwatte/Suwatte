@@ -70,6 +70,7 @@ extension LibraryView.LibraryGrid {
             .animation(.default, value: model.selectedIndexes)
             .sheet(item: $manageSelection) { selection in
                 ProfileView.Sheets.LibrarySheet(id: selection)
+                    .environmentObject(StateManager.shared)
             }
         }
 

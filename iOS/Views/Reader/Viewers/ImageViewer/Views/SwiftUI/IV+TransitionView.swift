@@ -102,6 +102,7 @@ struct ReaderTransitionView: View {
             }
             .sheet(isPresented: $openCollectionSheet) {
                 ProfileView.Sheets.LibrarySheet(id: entry.id)
+                    .environmentObject(StateManager.shared)
             }
             .padding()
             .background(Color.primary.opacity(0.05))
