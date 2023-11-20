@@ -50,13 +50,14 @@ extension LibraryView.LibraryGrid {
         }
 
         func observe(downloadsOnly: Bool, key: KeyPath, order: SortOrder) {
+            disconnect()
             let state: LibraryGridState = .init(collection: collection?.freeze(),
                                                 readingFlag: readingFlag,
                                                 query: query,
                                                 sort: key,
                                                 order: order,
                                                 showOnlyDownloadedTitles: downloadsOnly)
-            Task {
+            Task { @MainActor in
                 token = await RealmActor
                     .shared()
                     .observeLibrary(state: state) { [weak self] result in
