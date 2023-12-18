@@ -32,7 +32,7 @@ enum AppTabs: Int, CaseIterable {
         case .more:
             MoreView()
         case .library:
-            LibraryView()
+            LibraryGatewayView()
         case .browse:
             BrowseView()
         case .history:

@@ -157,6 +157,9 @@
 		DF59C97D285004860027F19D /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = DF59C97C285004860027F19D /* ZIPFoundation */; };
 		DF59C98028500E200027F19D /* LocalFileModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF59C97F28500E200027F19D /* LocalFileModifier.swift */; };
 		DF59C988285054670027F19D /* Unrar in Frameworks */ = {isa = PBXBuildFile; productRef = DF59C987285054670027F19D /* Unrar */; };
+		DF60FF212B2D5C0900E1683A /* LibraryGateway.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF60FF202B2D5C0900E1683A /* LibraryGateway.swift */; };
+		DF60FF242B2D5E0200E1683A /* CompactLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF60FF232B2D5E0200E1683A /* CompactLibraryView.swift */; };
+		DF60FF262B2D664B00E1683A /* CollectionPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF60FF252B2D664B00E1683A /* CollectionPickerView.swift */; };
 		DF62B5A12A946B5600F907CD /* BookmarksView+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5A02A946B5600F907CD /* BookmarksView+CollectionView.swift */; };
 		DF62B5A32A946B6800F907CD /* BookmarksView+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5A22A946B6800F907CD /* BookmarksView+ViewModel.swift */; };
 		DF62B5A52A946F4C00F907CD /* Realm+BookmarksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF62B5A42A946F4C00F907CD /* Realm+BookmarksView.swift */; };
@@ -625,6 +628,9 @@
 		DF541ED22A57448C0022C7EE /* JSCCS+Implementation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCCS+Implementation.swift"; sourceTree = "<group>"; };
 		DF553CC3297119AD004C3428 /* UserDefaultSerializable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultSerializable.swift; sourceTree = "<group>"; };
 		DF59C97F28500E200027F19D /* LocalFileModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalFileModifier.swift; sourceTree = "<group>"; };
+		DF60FF202B2D5C0900E1683A /* LibraryGateway.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryGateway.swift; sourceTree = "<group>"; };
+		DF60FF232B2D5E0200E1683A /* CompactLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactLibraryView.swift; sourceTree = "<group>"; };
+		DF60FF252B2D664B00E1683A /* CollectionPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionPickerView.swift; sourceTree = "<group>"; };
 		DF62B5A02A946B5600F907CD /* BookmarksView+CollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BookmarksView+CollectionView.swift"; sourceTree = "<group>"; };
 		DF62B5A22A946B6800F907CD /* BookmarksView+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BookmarksView+ViewModel.swift"; sourceTree = "<group>"; };
 		DF62B5A42A946F4C00F907CD /* Realm+BookmarksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+BookmarksView.swift"; sourceTree = "<group>"; };
@@ -1424,6 +1430,15 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		DF60FF222B2D5DF100E1683A /* CompactView */ = {
+			isa = PBXGroup;
+			children = (
+				DF60FF232B2D5E0200E1683A /* CompactLibraryView.swift */,
+				DF60FF252B2D664B00E1683A /* CollectionPickerView.swift */,
+			);
+			path = CompactView;
+			sourceTree = "<group>";
+		};
 		DF62B5B32A95EDB500F907CD /* ContentSettings */ = {
 			isa = PBXGroup;
 			children = (
@@ -1748,10 +1763,12 @@
 		DF8D0A552800EE47003E4C3E /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				DF60FF222B2D5DF100E1683A /* CompactView */,
 				DFBD202A28554EBA0042B4A6 /* Filter */,
 				DF8D0A562800EE47003E4C3E /* Sheets */,
 				DF8D0A5A2800EE47003E4C3E /* LibraryView.swift */,
 				DF8D0A5B2800EE47003E4C3E /* Views */,
+				DF60FF202B2D5C0900E1683A /* LibraryGateway.swift */,
 			);
 			path = Library;
 			sourceTree = "<group>";
@@ -2673,6 +2690,7 @@
 				DF248F36281474A100818300 /* STT+Encodable.swift in Sources */,
 				DF8D0B7D2800EE48003E4C3E /* AppearanceView.swift in Sources */,
 				DF8D0BB72800EE48003E4C3E /* STTWebView.swift in Sources */,
+				DF60FF212B2D5C0900E1683A /* LibraryGateway.swift in Sources */,
 				DF62B5AB2A95BB7D00F907CD /* Realm+HistoryView.swift in Sources */,
 				DF541ED32A57448C0022C7EE /* JSCCS+Implementation.swift in Sources */,
 				DF62B5A92A95B89C00F907CD /* Realm+StateManager.swift in Sources */,
@@ -2773,6 +2791,7 @@
 				DF6B5759288F453D007C6B78 /* DSK+Error.swift in Sources */,
 				DF68838E2A60B6FA009B5642 /* PV+Tracker.swift in Sources */,
 				DF8D0B752800EE48003E4C3E /* LibraryGrid+OptionsSheet.swift in Sources */,
+				DF60FF242B2D5E0200E1683A /* CompactLibraryView.swift in Sources */,
 				DFDBF9DC2A7DBAE9006D49AD /* IV+ProgressView.swift in Sources */,
 				DFDBF9F82A7E2088006D49AD /* IV+ZoomingScrollView.swift in Sources */,
 				DFDBF9872A7C60B4006D49AD /* Engine+WK.swift in Sources */,
@@ -2972,6 +2991,7 @@
 				DF6A896D28835E150045529D /* Tiles.swift in Sources */,
 				DF8D0B9F2800EE48003E4C3E /* ProfileView+FullChapterList.swift in Sources */,
 				DFC39E9328A093C900450EC4 /* InstalledRunnersView.swift in Sources */,
+				DF60FF262B2D664B00E1683A /* CollectionPickerView.swift in Sources */,
 				DF489C2E2A83580E006A21B9 /* DoublePaged+Holder.swift in Sources */,
 				DFDBF9722A7C4CBF006D49AD /* JSC+RunnerIntents.swift in Sources */,
 				DF4817E62A6DF22700CB3A47 /* ComicInfo+Methods.swift in Sources */,

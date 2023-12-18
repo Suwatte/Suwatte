@@ -19,9 +19,9 @@ struct LibraryView: View {
     @AppStorage(STTKeys.OpenAllTitlesOnAppear) var openAllOnAppear = false
     @AppStorage(STTKeys.LibraryAuth) var requireAuth = false
     @State var hasLoadedPages = false
+    @AppStorage(STTKeys.UseCompactLibraryView) var useCompactView = false
 
     var body: some View {
-        SmartNavigationView {
             List {
                 BrowseView.PendingSetupView()
                 ForEach(sections) { section in
@@ -37,6 +37,14 @@ struct LibraryView: View {
             .toolbar(content: {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
+                        Button {
+                            useCompactView.toggle()
+                        } label: {
+                                Label("Compact Mode", systemImage: "list.bullet.circle")
+                        }
+                        
+                        Divider()
+                        
                         Button {
                             presentOrderSheet.toggle()
                         } label: {
@@ -67,7 +75,7 @@ struct LibraryView: View {
             .hiddenNav(presenting: $openFirstCollection) {
                 LibraryGrid(collection: nil, readingFlag: nil)
             }
-        }
+        
         .task {
             if requireAuth && !LocalAuthManager.shared.isExpired {
                 return
@@ -80,7 +88,6 @@ struct LibraryView: View {
                 }
             }
         }
-        .protectContent()
         .sheet(isPresented: $presentCollectionSheet) {
             ManageCollectionsView()
         }
