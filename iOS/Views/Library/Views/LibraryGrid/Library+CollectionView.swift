@@ -12,7 +12,9 @@ extension LibraryView {
     struct LibraryGrid: View {
         let collection: LibraryCollection?
         let readingFlag: LibraryFlag?
-        
+        var useLibrary = false
+        @State var presentCollectionSheet = false
+
         @StateObject private var model =  ViewModel()
         // Defaults
         @AppStorage(STTKeys.LibraryGridSortKey) private var sortKey: KeyPath = .name
@@ -22,6 +24,7 @@ extension LibraryView {
         @State private var presentOptionsSheet = false
         @State private var presentMigrateSheet = false
         @State private var presentStatsSheet = false
+        @AppStorage(STTKeys.UseCompactLibraryView) private var useCompactView = false
 
         private func observe(_: AnyHashable? = nil) {
             model.observe(downloadsOnly: showDownloadsOnly, key: sortKey, order: sortOrder)
@@ -84,23 +87,27 @@ extension LibraryView {
                             }
 
                             Divider()
+                            
+                        
 
-                            Button {
-                                presentOptionsSheet.toggle()
-                            } label: {
-                                Label("Settings", systemImage: "gearshape")
-                            }
+                            Menu ("More") {
+                                Button {
+                                    presentOptionsSheet.toggle()
+                                } label: {
+                                    Label("Settings", systemImage: "gearshape")
+                                }
 
-                            Button {
-                                presentStatsSheet.toggle()
-                            } label: {
-                                Label("Statistics", systemImage: "chart.bar")
-                            }
+                                Button {
+                                    presentStatsSheet.toggle()
+                                } label: {
+                                    Label("Statistics", systemImage: "chart.bar")
+                                }
 
-                            Button {
-                                presentMigrateSheet.toggle()
-                            } label: {
-                                Label("Migrate", systemImage: "shippingbox")
+                                Button {
+                                    presentMigrateSheet.toggle()
+                                } label: {
+                                    Label("Migrate", systemImage: "shippingbox")
+                                }
                             }
 
                             Button {
@@ -110,6 +117,20 @@ extension LibraryView {
                             } label: {
                                 Label("Refresh Database", systemImage: "arrow.triangle.2.circlepath")
                             }
+                            
+                            // Compact Library Helpers
+                            Divider()
+                            
+                            if useCompactView {
+                                Button { useCompactView.toggle() } label: {
+                                    Label("Standard Library", systemImage : "list.bullet.clipboard")
+                                }
+                                
+                                Button { presentCollectionSheet.toggle() } label: {
+                                    Label("Manage Collections", systemImage: "tray.full")
+                                }
+                            }
+                            
                         } label: {
                             Image(systemName: "ellipsis.circle")
                                 .imageScale(.large)
@@ -135,10 +156,13 @@ extension LibraryView {
             .fullScreenCover(isPresented: $presentMigrateSheet, content: {
                 PreMigrationView()
             })
+            .sheet(isPresented: $presentCollectionSheet) {
+                ManageCollectionsView()
+            }
         }
 
         private var NAV_TITLE: String {
-            model.collection?.name ?? model.readingFlag?.description ?? "All Titles"
+            useLibrary ? "Library" : model.collection?.name ?? model.readingFlag?.description ?? "All Titles"
         }
 
         private func MainView(_ entries: [LibraryEntry]) -> some View {

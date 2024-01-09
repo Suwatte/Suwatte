@@ -176,4 +176,6 @@ enum STTKeys {
     static let SyncDatabase = "APP.sync_db"
     
     static let AlwaysMarkFirstPageAsSinglePanel = "READER.mark_first_as_single"
+    
+    static let UseCompactLibraryView = "APP.compact_library"
 }

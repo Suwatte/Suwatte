@@ -10,6 +10,7 @@ import Zephyr
 
 class UDSync {
     static func sync() {
+        return
         guard isUserLoggedInToiCloud() else { return }
         var keys: [String] = [STTKeys.OpenAllTitlesOnAppear,
                               STTKeys.TileStyle,

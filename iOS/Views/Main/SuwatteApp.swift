@@ -121,6 +121,7 @@ extension STTHelpers {
         let canHandle = validExtensions.contains(url.pathExtension)
         guard canHandle else { return }
         let directory = CloudDataManager.shared.getDocumentDiretoryURL().appendingPathComponent("Library")
+        directory.createDirectory()
         let inDirectory = url.path.hasPrefix(directory.path)
 
         var final: URL?
