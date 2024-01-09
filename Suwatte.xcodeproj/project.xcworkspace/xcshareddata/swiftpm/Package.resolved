@@ -168,7 +168,7 @@
       "location" : "https://github.com/evgenyneu/keychain-swift.git",
       "state" : {
         "branch" : "master",
-        "revision" : "f38cb0ada97847ac5068b915b8d2793b35435668"
+        "revision" : "6b6fc468877a5f01fe211fcf0af840b9ecce9d98"
       }
     },
     {
@@ -195,7 +195,7 @@
       "location" : "https://github.com/kean/Nuke",
       "state" : {
         "branch" : "main",
-        "revision" : "1694798e876113d44f6ec6ead965d7286695981d"
+        "revision" : "20f3f0cd6f4273674c85210ae01aba0aa414c385"
       }
     },
     {
@@ -212,8 +212,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "e836317e8238bd32f06086dd7ce6768ef574beb6",
-        "version" : "13.22.0"
+        "revision" : "7227d6a447821c28895daa099b6c7cd4c99d461b",
+        "version" : "13.25.1"
       }
     },
     {
@@ -221,8 +221,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift.git",
       "state" : {
-        "revision" : "8249489f28d36f9f37ed076c95029059c60b556d",
-        "version" : "10.43.0"
+        "revision" : "569c656a8494ad03d790fd1075338c1da92d495a",
+        "version" : "10.45.2"
       }
     },
     {
@@ -240,7 +240,7 @@
       "location" : "https://github.com/apple/swift-collections.git",
       "state" : {
         "branch" : "main",
-        "revision" : "27432ccb77082cf4bf1f79fd900f0338642fab8a"
+        "revision" : "cc1c037a734c5f3b0ca7d47505389ccd31381052"
       }
     },
     {

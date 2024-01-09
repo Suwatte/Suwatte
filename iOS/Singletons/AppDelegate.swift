@@ -57,49 +57,9 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
         config.fileURL = directory.appendingPathComponent("suwatte_db.realm")
         Realm.Configuration.defaultConfiguration = config
 
-        
-//        if Preferences.standard.syncDatabase {
-//            // Sync Engine
-//            syncEngine = SyncEngine(objects: [
-//                SyncObject(type: StoredTag.self),
-//                SyncObject(type: StoredProperty.self, uListElementType: StoredTag.self),
-//                SyncObject(type: StoredContent.self, uListElementType: StoredProperty.self),
-//                SyncObject(type: LibraryEntry.self),
-//                SyncObject(type: StoredRunnerList.self),
-//                SyncObject(type: StoredRunnerObject.self),
-//                SyncObject(type: InteractorStoreObject.self),
-//                SyncObject(type: CustomThumbnail.self),
-//                SyncObject(type: ContentLink.self),
-//                SyncObject(type: UpdatedSearchHistory.self),
-//                SyncObject(type: TrackerLink.self),
-//                SyncObject(type: StoredOPDSServer.self),
-//                SyncObject(type: LibraryCollectionFilter.self),
-//                SyncObject(type: LibraryCollection.self),
-//                SyncObject(type: ChapterReference.self),
-//                SyncObject(type: ProgressMarker.self),
-//                SyncObject(type: UpdatedBookmark.self),
-//                SyncObject(type: ReadLater.self),
-//                SyncObject(type: StreamableOPDSContent.self),
-//                SyncObject(type: ArchivedContent.self),
-//                SyncObject(type: ChapterBookmark.self),
-//                SyncObject(type: UserReadingStatistic.self),
-//            ])
-//
-//            application.registerForRemoteNotifications()
-//        }
-
-
         // Analytics
         FirebaseApp.configure()
 
         return true
     }
-
-//    // Reference: https://github.com/leoz/IceCream/blob/master/Example/IceCream_Example/AppDelegate.swift
-//    func application(_: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-//        if let dict = userInfo as? [String: NSObject], let notification = CKNotification(fromRemoteNotificationDictionary: dict), let subscriptionID = notification.subscriptionID, IceCreamSubscription.allIDs.contains(subscriptionID) {
-//            NotificationCenter.default.post(name: Notifications.cloudKitDataDidChangeRemotely.name, object: nil, userInfo: userInfo)
-//            completionHandler(.newData)
-//        }
-//    }
 }
