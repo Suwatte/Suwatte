@@ -33,6 +33,7 @@ class WebtoonController: ASDKViewController<ASCollectionNode> {
     var lastStoppedScrollPosition: CGFloat = 0.0
     var scrollPositionUpdateThreshold: CGFloat = 30.0
     var currentZoomingIndexPath: IndexPath!
+    var hasCompletedInitialLoad = false
 
     var isReadyToAddOffset = false
     private let zoomTransitionDelegate = ZoomTransitioningDelegate()
@@ -99,14 +100,20 @@ class WebtoonController: ASDKViewController<ASCollectionNode> {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
-        startup()
-        subscribeAll()
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         becomeFirstResponder()
         setNeedsUpdateOfHomeIndicatorAutoHidden()
+        
+        if !hasCompletedInitialLoad {
+            startup()
+            subscribeAll()
+            return
+        }
+        
+        
         if isZooming {
             isZooming = false
             return
