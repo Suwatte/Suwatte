@@ -142,6 +142,7 @@ private extension Skeleton {
         @AppStorage(STTKeys.AlwaysAskForLibraryConfig) var promptForConfig = true
         @AppStorage(STTKeys.DefaultCollection) var defaultCollection: String = ""
         @AppStorage(STTKeys.DefaultReadingFlag) var defaultFlag = LibraryFlag.unknown
+        @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
         var body: some View {
             HStack(alignment: .center) {
                 // Library Button
@@ -161,10 +162,14 @@ private extension Skeleton {
 
                 
                 if model.source.ablityNotDisabled(\.disableTrackerLinking) {
-                    Button {
-                        model.presentTrackersSheet.toggle()
+                    NavigationLink {
+                        let titles = (model.content.additionalTitles ?? []).appending(model.content.title).distinct()
+                        TrackerManagementView(model: .init(id: model.identifier, titles))
+                            .tint(accentColor)
+                            .accentColor(accentColor)
                     } label: {
                         Image(systemName: "checklist")
+
                     }
                     Spacer()
 

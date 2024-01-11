@@ -19,12 +19,6 @@ extension ProfileView {
                         .accentColor(accentColor)
                         .environmentObject(StateManager.shared)
                 })
-                .fullScreenCover(isPresented: $viewModel.presentTrackersSheet, content: {
-                    let titles = (viewModel.content.additionalTitles ?? []).appending(viewModel.content.title).distinct()
-                    TrackerManagementView(model: .init(id: viewModel.identifier, titles))
-                        .tint(accentColor)
-                        .accentColor(accentColor)
-                })
                 .fullScreenCover(item: $viewModel.presentManageContentLinks,
                                  onDismiss: {
                                      Task { [weak viewModel] in

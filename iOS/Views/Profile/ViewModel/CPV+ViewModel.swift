@@ -30,7 +30,6 @@ extension ProfileView {
 
         @Published var currentChapterSection: String
         @Published var presentCollectionsSheet = false
-        @Published var presentTrackersSheet = false
         @Published var presentSafariView = false
         @Published var presentMigrationView = false
         @Published var presentManageContentLinks: String? = nil
