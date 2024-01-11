@@ -18,6 +18,7 @@ struct OpenLocalModifier: ViewModifier {
         content
             .fileImporter(isPresented: $isPresenting, allowedContentTypes: types, allowsMultipleSelection: true) { result in
                 let directory = CloudDataManager.shared.getDocumentDiretoryURL().appendingPathComponent("Library")
+                directory.createDirectory()
                 ToastManager.shared.loading = true
 
                 switch result {
@@ -26,7 +27,6 @@ struct OpenLocalModifier: ViewModifier {
                 case let .success(urls):
                     for url in urls {
                         let inDirectory = url.path.hasPrefix(directory.path)
-
                         // Only import files not already in user library
                         guard !inDirectory else {
                             continue
@@ -35,6 +35,10 @@ struct OpenLocalModifier: ViewModifier {
                         // Access Security Scoped Resource
                         guard url.startAccessingSecurityScopedResource() else {
                             continue
+                        }
+                        
+                        defer {
+                            url.stopAccessingSecurityScopedResource()
                         }
 
                         // Define new file location
@@ -51,11 +55,8 @@ struct OpenLocalModifier: ViewModifier {
                             Logger.shared.error(error)
                             ToastManager.shared.error(error)
                         }
-
-                        url.stopAccessingSecurityScopedResource()
                     }
                 }
-
                 ToastManager.shared.loading = false
             }
     }

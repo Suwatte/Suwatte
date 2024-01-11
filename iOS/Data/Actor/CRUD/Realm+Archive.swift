@@ -15,7 +15,12 @@ extension RealmActor {
             .getDocumentDiretoryURL()
             .appendingPathComponent("Library", isDirectory: true)
 
-        let relativePath = file.url.path.replacingOccurrences(of: directory.path, with: "")
+        let relativePath = file.url.path.components(separatedBy: directory.path).last
+        
+        guard let relativePath else {
+            Logger.shared.error("unable to retrieve relative path of file")
+            return
+        }
 
         let obj = ArchivedContent()
         obj.id = file.id
