@@ -55,7 +55,7 @@ extension ViewModel {
 
             var markers: [String: Double] = [:]
 
-            for await (key, originMaxReadChapter) in group {
+            for await(key, originMaxReadChapter) in group {
                 markers[key] = originMaxReadChapter
             }
             return markers
@@ -108,7 +108,7 @@ extension ViewModel {
 
         // Update Local Value if outdated, sources are notified if they have the Chapter Event Handler
         guard maxReadChapter != localHighestRead else { return }
-        let chaptersToMark = chapters.filter({ $0.number <= maxReadChapter }).map(\.chapterOrderKey)
+        let chaptersToMark = chapters.filter { $0.number <= maxReadChapter }.map(\.chapterOrderKey)
         let linked = await actor.getLinkedContent(for: identifier.id)
         await actor.markChaptersByNumber(for: identifier, chapters: Set(chaptersToMark))
         await withTaskGroup(of: Void.self, body: { group in

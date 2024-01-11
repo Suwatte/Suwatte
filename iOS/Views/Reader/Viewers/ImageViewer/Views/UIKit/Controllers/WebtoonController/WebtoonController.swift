@@ -106,14 +106,13 @@ class WebtoonController: ASDKViewController<ASCollectionNode> {
         super.viewDidAppear(animated)
         becomeFirstResponder()
         setNeedsUpdateOfHomeIndicatorAutoHidden()
-        
+
         if !hasCompletedInitialLoad {
             startup()
             subscribeAll()
             return
         }
-        
-        
+
         if isZooming {
             isZooming = false
             return

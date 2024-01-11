@@ -89,7 +89,7 @@ extension DSK {
                 Logger.shared.error(error, "(getProgressState)-\(source.id)")
             }
         }
- 
+
         let lastFetched = await actor.getLatestStoredChapter(source.id, contentId)
         // Calculate Update Count
         var filtered = chapters
@@ -102,11 +102,10 @@ extension DSK {
 
         // Already Fetched on Source
         if let lastFetched, let target = filtered.first(where: { $0.chapterId == lastFetched.chapterId }) {
-            
             filtered = filtered
                 .filter { $0.index < target.index }
         }
-        
+
         var updates = filtered.count
 
         let checkLinked = UserDefaults.standard.bool(forKey: STTKeys.CheckLinkedOnUpdateCheck)

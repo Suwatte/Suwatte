@@ -16,7 +16,7 @@ extension RealmActor {
     func getFrozenContentMarker(for id: String) -> ProgressMarker? {
         return getContentMarker(for: id)?.freeze()
     }
-    
+
     func getMaxReadKey(for id: String) -> Double {
         getContentMarker(for: id)?.maxReadChapterKey ?? 0
     }

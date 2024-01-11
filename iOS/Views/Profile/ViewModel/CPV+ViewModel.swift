@@ -256,7 +256,6 @@ extension ViewModel {
             Logger.shared.error(error, "{getAuthenticatedUser}-\(source.id)")
         }
         do {
-
             let data = try await source.getProgressState(for: entry.id)
             sourceProgressState = data
         } catch {

@@ -7,9 +7,7 @@
 
 import SwiftUI
 
-
-
-struct LibraryGatewayView : View {
+struct LibraryGatewayView: View {
     @AppStorage(STTKeys.UseCompactLibraryView) var useCompactView = false
     var body: some View {
         SmartNavigationView {
@@ -22,6 +20,5 @@ struct LibraryGatewayView : View {
             }
         }
         .protectContent()
-
     }
 }

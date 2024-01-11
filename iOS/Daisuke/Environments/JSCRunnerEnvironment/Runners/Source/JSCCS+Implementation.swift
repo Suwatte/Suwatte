@@ -124,19 +124,18 @@ extension JSCContentSource {
     }
 }
 
-
 extension JSCContentSource {
     func shouldRedrawImage(url: String) async throws -> DSKCommon.BooleanState {
         guard methodExists(method: "shouldRedrawImage") else {
             return .init(state: false)
         }
-        
+
         return try await callMethodReturningDecodable(method: "shouldRedrawImage", arguments: [url], resolvesTo: DSKCommon.BooleanState.self)
     }
-    
+
     func redrawImageWithSize(size: CGSize) async throws -> DSKCommon.RedrawCommand {
         let dskObject = try DSKCommon.Size(width: Float(size.width), height: Float(size.height)).asDictionary()
-        
+
         return try await callMethodReturningDecodable(method: "redrawImageWithSize", arguments: [dskObject], resolvesTo: DSKCommon.RedrawCommand.self)
     }
 }

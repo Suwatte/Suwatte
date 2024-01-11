@@ -22,66 +22,66 @@ struct LibraryView: View {
     @AppStorage(STTKeys.UseCompactLibraryView) var useCompactView = false
 
     var body: some View {
-            List {
-                BrowseView.PendingSetupView()
-                ForEach(sections) { section in
-                    LibrarySectionBuilder(key: section)
-                }
+        List {
+            BrowseView.PendingSetupView()
+            ForEach(sections) { section in
+                LibrarySectionBuilder(key: section)
             }
-            .environmentObject(pageProviderModel)
-            .refreshable {
-                pageProviderModel.reload()
-            }
-            .listStyle(.insetGrouped)
-            .navigationTitle("Library")
-            .toolbar(content: {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        Button {
-                            useCompactView.toggle()
-                        } label: {
-                                Label("Compact Mode", systemImage: "list.bullet.circle")
-                        }
-                        
-                        Divider()
-                        
-                        Button {
-                            presentOrderSheet.toggle()
-                        } label: {
-                            Label("Manage Sections", systemImage: "tray.2")
-                        }
-                        Button {
-                            presentCollectionSheet.toggle()
-                        } label: {
-                            Label("Manage Collections", systemImage: "tray.full")
-                        }
+        }
+        .environmentObject(pageProviderModel)
+        .refreshable {
+            pageProviderModel.reload()
+        }
+        .listStyle(.insetGrouped)
+        .navigationTitle("Library")
+        .toolbar(content: {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    Button {
+                        useCompactView.toggle()
                     } label: {
-                        Image(systemName: "ellipsis.circle")
+                        Label("Compact Mode", systemImage: "list.bullet.circle")
                     }
-                    .disabled(requireAuth && AuthProvider.isExpired)
-                }
 
-            })
-            .sheet(isPresented: $presentOrderSheet, content: {
-                SmartNavigationView {
-                    LibrarySectionOrderSheet()
-                        .environment(\.editMode, .constant(.active))
-                        .navigationTitle("Library Sections")
-                        .navigationBarTitleDisplayMode(.inline)
-                        .closeButton()
-                }
+                    Divider()
 
-            })
-            .hiddenNav(presenting: $openFirstCollection) {
-                LibraryGrid(collection: nil, readingFlag: nil)
+                    Button {
+                        presentOrderSheet.toggle()
+                    } label: {
+                        Label("Manage Sections", systemImage: "tray.2")
+                    }
+                    Button {
+                        presentCollectionSheet.toggle()
+                    } label: {
+                        Label("Manage Collections", systemImage: "tray.full")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+                .disabled(requireAuth && AuthProvider.isExpired)
             }
-        
+
+        })
+        .sheet(isPresented: $presentOrderSheet, content: {
+            SmartNavigationView {
+                LibrarySectionOrderSheet()
+                    .environment(\.editMode, .constant(.active))
+                    .navigationTitle("Library Sections")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .closeButton()
+            }
+
+        })
+        .hiddenNav(presenting: $openFirstCollection) {
+            LibraryGrid(collection: nil, readingFlag: nil)
+        }
+
         .task {
             if requireAuth && !LocalAuthManager.shared.isExpired {
                 return
             }
 
-            if openAllOnAppear  && !hasOpenedFirst {
+            if openAllOnAppear && !hasOpenedFirst {
                 withAnimation {
                     openFirstCollection = true
                     hasOpenedFirst = true
@@ -285,7 +285,7 @@ extension LibraryView {
                 } label: {
                     Label("All Titles", systemImage: "folder")
                 }
-                
+
                 ForEach(collections) { collection in
                     NavigationLink {
                         LibraryGrid(collection: collection, readingFlag: nil)

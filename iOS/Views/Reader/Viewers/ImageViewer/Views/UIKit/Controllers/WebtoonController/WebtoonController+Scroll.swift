@@ -76,7 +76,7 @@ extension Controller {
         let difference = abs(position - lastKnownScrollPosition)
         guard difference >= scrollPositionUpdateThreshold else { return }
         lastKnownScrollPosition = position
-        
+
         // Only real-time update when the user is not scrubbing & the menu is being shown
         guard !model.slider.isScrubbing, model.control.menu else { return }
         Task { @MainActor [weak self] in

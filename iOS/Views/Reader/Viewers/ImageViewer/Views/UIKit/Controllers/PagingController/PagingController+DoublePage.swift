@@ -27,8 +27,7 @@ extension Controller: DoublePageResolverDelegate {
         widePages.insert(key)
         rebuild(chapter: page.chapter, to: navigate ? page : nil)
     }
-    
-    
+
     func pageUnmarkedAsWide(_ page: ReaderPage, navigate: Bool = false) {
         let key = page.CELL_KEY
         guard widePages.contains(key) else { return }
@@ -53,7 +52,7 @@ extension Controller: DoublePageResolverDelegate {
             }
         }
     }
-    
+
     func navigate(to page: ReaderPage) {
         let snapshot = dataSource.snapshot().itemIdentifiers(inSection: page.chapter.id)
         let sectionIndex = dataSource.snapshot().sectionIdentifiers.firstIndex(of: page.chapter.id)
@@ -64,7 +63,7 @@ extension Controller: DoublePageResolverDelegate {
             let index = v.secondaryPage?.index ?? v.page.index
             return index == page.index
         }
-        
+
         guard let index, let sectionIndex else { return }
         collectionView.scrollToItem(at: .init(item: index, section: sectionIndex),
                                     at: isVertical ? .centeredVertically : .centeredHorizontally,

@@ -89,13 +89,12 @@ extension WKContentSource: ContentSource {
     }
 }
 
-
 extension WKContentSource {
-    func shouldRedrawImage(url: String) async throws -> DSKCommon.BooleanState {
+    func shouldRedrawImage(url _: String) async throws -> DSKCommon.BooleanState {
         throw DSK.Errors.MethodNotImplemented
     }
-    
-    func redrawImageWithSize(size: CGSize) async throws -> DSKCommon.RedrawCommand {
+
+    func redrawImageWithSize(size _: CGSize) async throws -> DSKCommon.RedrawCommand {
         throw DSK.Errors.MethodNotImplemented
     }
 }

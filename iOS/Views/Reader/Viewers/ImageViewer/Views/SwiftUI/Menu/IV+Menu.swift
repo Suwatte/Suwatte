@@ -105,7 +105,6 @@ extension IVMenuView {
 
                 ActiveChapterView()
                     .padding(.horizontal)
-
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .modifier(GradientModifier())

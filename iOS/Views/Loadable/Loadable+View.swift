@@ -58,7 +58,6 @@ struct LoadableView<Value, Idle, Loading, Content>: View where Idle: View,
                 content(value)
                     .transition(.opacity)
 
-
             case let .failed(error):
                 ErrorView(error: error, runnerID: runnerID) {
                     await animate {

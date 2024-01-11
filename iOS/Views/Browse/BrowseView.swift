@@ -316,7 +316,7 @@ final class PageLinkProviderModel: ObservableObject {
     @MainActor
     @Published
     var selectedRunnerRequiringSetup: StoredRunnerObject?
-    
+
     @MainActor
     @Published
     var selectedRunnerRequiringAuth: StoredRunnerObject?

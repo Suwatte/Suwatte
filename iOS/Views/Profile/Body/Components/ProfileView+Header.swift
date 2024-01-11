@@ -39,7 +39,7 @@ extension Skeleton {
                 guard labels.isEmpty else { return }
                 labels = buildLabels()
             }
-            .onChange(of: model.content, perform: { value in
+            .onChange(of: model.content, perform: { _ in
                 labels = buildLabels()
             })
         }
@@ -146,9 +146,8 @@ private extension Skeleton {
         var body: some View {
             HStack(alignment: .center) {
                 // Library Button
-                
+
                 if model.source.ablityNotDisabled(\.disableLibraryActions) {
-                    
                     Button {
                         Task {
                             await handleLibraryAction()
@@ -157,10 +156,8 @@ private extension Skeleton {
                         Image(systemName: EntryInLibrary ? "folder.fill" : "folder.badge.plus")
                     }
                     Spacer()
-
                 }
 
-                
                 if model.source.ablityNotDisabled(\.disableTrackerLinking) {
                     NavigationLink {
                         let titles = (model.content.additionalTitles ?? []).appending(model.content.title).distinct()
@@ -169,18 +166,15 @@ private extension Skeleton {
                             .accentColor(accentColor)
                     } label: {
                         Image(systemName: "checklist")
-
                     }
                     Spacer()
-
                 }
-                
+
                 NavigationLink {
                     BookmarksView(contentID: model.identifier)
                 } label: {
                     Image(systemName: "bookmark")
                 }
-
 
                 if let url = model.content.webUrl.flatMap({ URL(string: $0) }) {
                     Spacer()

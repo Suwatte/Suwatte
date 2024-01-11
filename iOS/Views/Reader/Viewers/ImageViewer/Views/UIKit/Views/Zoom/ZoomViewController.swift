@@ -38,8 +38,7 @@ class ZoomTransitioningDelegate: NSObject {
     var operation: UINavigationController.Operation = .none
     typealias ZoomingViews = (otherView: UIView, imageView: UIView)
 
-    func configureViews(for state: TransitionState, containerView: UIView, backgroundViewController: UIViewController, viewsInBackground: ZoomingViews, viewsInForeground: ZoomingViews, snapshotViews: ZoomingViews)
-    {
+    func configureViews(for state: TransitionState, containerView: UIView, backgroundViewController: UIViewController, viewsInBackground: ZoomingViews, viewsInForeground: ZoomingViews, snapshotViews: ZoomingViews) {
         switch state {
         case .initial:
             backgroundViewController.view.alpha = 1

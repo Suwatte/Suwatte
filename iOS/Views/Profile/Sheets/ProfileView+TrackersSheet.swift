@@ -13,7 +13,7 @@ struct TrackerManagementView: View {
     @State var presentSheet = false
     @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
-var body: some View {
+    var body: some View {
         ScrollView {
             ForEach(model.linkedTrackers, id: \.id) { tracker in
                 IndividualTrackerView(tracker: tracker)
@@ -398,7 +398,6 @@ extension TrackerManagementView {
             .buttonStyle(NeutralButtonStyle())
             .contentShape(Rectangle())
         }
-
 
         func load() async throws -> [DSKCommon.Highlight] {
             try await tracker.getResultsForTitles(titles: titles)

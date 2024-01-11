@@ -104,9 +104,7 @@ extension DirectoryView.ResultsView {
                                 Text("Sort")
                             }
                         }
-                        
 
-                       
                     } label: {
                         HStack {
                             Text(title)
@@ -124,9 +122,7 @@ extension DirectoryView.ResultsView {
                 }
             }
             .font(.footnote.weight(.light))
-            .confirmationDialog("Sort Options", isPresented: $dialog, titleVisibility: .visible) {
-
-            }
+            .confirmationDialog("Sort Options", isPresented: $dialog, titleVisibility: .visible) {}
         }
 
         var title: String {

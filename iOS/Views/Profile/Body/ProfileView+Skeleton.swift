@@ -63,14 +63,13 @@ private extension ProfileView.Skeleton {
                 }
                 .padding(.horizontal)
 
-                
                 VStack(alignment: .leading, spacing: 0) {
                     ChapterView.PreviewView()
                     AdditionalInfoView()
                     AdditionalCoversView()
                 }
                 .padding(.horizontal)
-                
+
                 VStack(alignment: .leading, spacing: 20) {
                     if let collections = viewModel.content.collections, !collections.isEmpty {
                         RelatedContentView(collections: collections)
