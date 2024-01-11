@@ -62,6 +62,7 @@ extension Controller {
             presentNode()
             lastKnownScrollPosition = offset
             lastStoppedScrollPosition = offset
+            hasCompletedInitialLoad = true
         }
     }
 }

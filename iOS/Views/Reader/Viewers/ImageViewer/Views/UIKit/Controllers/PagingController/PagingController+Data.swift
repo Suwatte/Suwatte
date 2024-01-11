@@ -29,8 +29,13 @@ extension Controller {
         var snapshot = dataSource.snapshot()
         snapshot.appendSections([id])
         snapshot.appendItems(pages, toSection: id)
-        await MainActor.run { [weak self, snapshot] in
-            self?.dataSource.apply(snapshot, animatingDifferences: false)
+        
+        await withCheckedContinuation { handler in
+            DispatchQueue.main.async { [weak self, snapshot] in
+                self?.dataSource.apply(snapshot, animatingDifferences: false, completion: {
+                    handler.resume()
+                })
+            }
         }
     }
 

@@ -100,7 +100,7 @@ final class Preferences {
     var verticalAutoScrollSpeed: Double = 16
 
     @UserDefault(STTKeys.DefaultUserAgent)
-    var userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/118.0"
+    var userAgent = "Chrome Safari"
 
     @UserDefault(STTKeys.ImageScaleType)
     var imageScaleType = ImageScaleOption.screen

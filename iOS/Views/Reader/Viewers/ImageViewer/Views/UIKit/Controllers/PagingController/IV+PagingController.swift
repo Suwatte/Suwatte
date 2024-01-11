@@ -80,9 +80,6 @@ extension Controller {
         addTapGestures()
         subscribeAll()
         configureDataSource()
-
-        // start
-        startup()
     }
 
     override var prefersHomeIndicatorAutoHidden: Bool {
@@ -149,6 +146,8 @@ extension Controller {
         super.viewDidAppear(animated)
         becomeFirstResponder()
         setNeedsUpdateOfHomeIndicatorAutoHidden()
+        // start
+        startup()
     }
 }
 

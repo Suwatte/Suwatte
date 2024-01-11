@@ -82,6 +82,14 @@ extension Controller {
         guard canMark(chapter: page.chapter) else { return }
         let pixelsSinceLastStop = abs(offset - lastStoppedScrollPosition)
         let pageOffset = calculateCurrentOffset(of: path)
+        
+        
+        // is last page, has completed 95% of the chapter, mark as completed
+        if page.isLastPage, let pageOffset, pageOffset >= 0.95 {
+            didCompleteChapter(page.chapter)
+            return
+        }
+        
         // Update Local DB Marker
         Task {
             let actor = await RealmActor.shared()

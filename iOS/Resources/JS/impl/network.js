@@ -123,7 +123,7 @@ class NetworkClient {
 
     if (!validateStatus(response.status)) {
       if (
-        [503].includes(response.status) &&
+        [503, 403].includes(response.status) &&
         response.headers["Server"] === "cloudflare"
       )
         throw new CloudflareError();
