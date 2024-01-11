@@ -48,7 +48,6 @@ struct DSKTrackerView: View {
 
     @State private var presentStatusDialog = false
     @State private var presentSearchView = false
-    @State private var presentEntryForm = false
     @State private var initialLoad = false
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -81,14 +80,6 @@ struct DSKTrackerView: View {
                                           }
 
                                       }))
-        .fullScreenCover(isPresented: $presentEntryForm) {
-            SmartNavigationView {
-                DSKLoadableForm(runner: tracker, context: .tracker(id: content.id))
-                    .navigationBarTitleDisplayMode(.inline)
-                    .navigationTitle(content.title)
-                    .closeButton()
-            }
-        }
         .task {
             load()
         }
@@ -244,7 +235,11 @@ extension DSKTrackerView {
             }
 
             if status != nil {
-                Button { presentEntryForm.toggle() } label: {
+                NavigationLink {
+                    DSKLoadableForm(runner: tracker, context: .tracker(id: content.id))
+                        .navigationBarTitleDisplayMode(.inline)
+                        .navigationTitle(content.title)
+                } label: {
                     Image(systemName: "pencil")
                         .resizable()
                         .scaledToFit()
