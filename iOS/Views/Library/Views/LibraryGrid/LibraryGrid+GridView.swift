@@ -75,84 +75,79 @@ extension LibraryView.LibraryGrid {
         }
 
         func contextMenuProvider(int _: Int, content: LibraryEntry) -> UIContextMenuConfiguration? {
-            let configuration = UIContextMenuConfiguration(identifier: nil, previewProvider: nil)
-                { _ -> UIMenu? in
+            let configuration = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ -> UIMenu? in
 
-                    var nonDestructiveActions = [UIAction]()
-                    var destructiveActions: [UIAction] = []
+                var nonDestructiveActions = [UIAction]()
+                var destructiveActions: [UIAction] = []
 
-                    if let url = URL(string: content.content?.webUrl ?? "") {
-                        // Share
-                        let shareAction = UIAction(title: "Share", image: .init(systemName: "square.and.arrow.up"))
-                            { _ in
-                                let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-                                let window = getKeyWindow()
-                                window?.rootViewController?.present(av, animated: true)
-                            }
-
-                        nonDestructiveActions.append(shareAction)
+                if let url = URL(string: content.content?.webUrl ?? "") {
+                    // Share
+                    let shareAction = UIAction(title: "Share", image: .init(systemName: "square.and.arrow.up")) { _ in
+                        let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+                        let window = getKeyWindow()
+                        window?.rootViewController?.present(av, animated: true)
                     }
 
-                    // Edit Categories
-                    if let id = content.content?.id {
-                        let editCollectionsAction = UIAction(title: "Manage", image: .init(systemName: "gearshape"))
-                            { _ in
-                                //
-                                manageSelection = id
-                            }
-
-                        nonDestructiveActions.append(editCollectionsAction)
-                    }
-
-                    // Clear Upates
-                    if content.updateCount >= 1 {
-                        let clearUpdatesActions = UIAction(title: "Clear Updates", image: UIImage(systemName: "bell.slash"), attributes: .destructive) {
-                            _ in
-                            let id = content.id
-                            Task {
-                                let actor = await Suwatte.RealmActor.shared()
-                                await actor.clearUpdates(id: id)
-                            }
-                        }
-
-                        destructiveActions.append(clearUpdatesActions)
-                    }
-
-                    // Remove from Collection
-                    if let collection = collection {
-                        let removeFromCollection = UIAction(title: "Remove from Collection", image: .init(systemName: "xmark"), attributes: .destructive)
-                            { _ in
-                                //
-                                let contentId = content.id
-                                let collectionID = collection.id
-                                Task {
-                                    let actor = await Suwatte.RealmActor.shared()
-                                    await actor.toggleCollection(for: contentId, withId: collectionID)
-                                }
-                            }
-
-                        destructiveActions.append(removeFromCollection)
-                    }
-
-                    // Remove from Library
-                    if let content = content.content {
-                        let removeFromLibAction = UIAction(title: "Remove from library", image: .init(systemName: "trash"), attributes: .destructive)
-                            { _ in
-                                let cID = content.ContentIdentifier
-                                Task {
-                                    let actor = await Suwatte.RealmActor.shared()
-                                    await actor.toggleLibraryState(for: cID)
-                                }
-                            }
-                        destructiveActions.append(removeFromLibAction)
-                    }
-
-                    let nonDestructiveMenu = UIMenu(title: "", options: .displayInline, children: nonDestructiveActions)
-
-                    let destructiveMenu = UIMenu(title: "", options: .displayInline, children: destructiveActions)
-
-                    return UIMenu(title: content.content?.title ?? "Options", image: nil, identifier: nil, options: [], children: [nonDestructiveMenu, destructiveMenu])
+                    nonDestructiveActions.append(shareAction)
                 }
+
+                // Edit Categories
+                if let id = content.content?.id {
+                    let editCollectionsAction = UIAction(title: "Manage", image: .init(systemName: "gearshape")) { _ in
+                        //
+                        manageSelection = id
+                    }
+
+                    nonDestructiveActions.append(editCollectionsAction)
+                }
+
+                // Clear Upates
+                if content.updateCount >= 1 {
+                    let clearUpdatesActions = UIAction(title: "Clear Updates", image: UIImage(systemName: "bell.slash"), attributes: .destructive) {
+                        _ in
+                        let id = content.id
+                        Task {
+                            let actor = await Suwatte.RealmActor.shared()
+                            await actor.clearUpdates(id: id)
+                        }
+                    }
+
+                    destructiveActions.append(clearUpdatesActions)
+                }
+
+                // Remove from Collection
+                if let collection = collection {
+                    let removeFromCollection = UIAction(title: "Remove from Collection", image: .init(systemName: "xmark"), attributes: .destructive) { _ in
+                        //
+                        let contentId = content.id
+                        let collectionID = collection.id
+                        Task {
+                            let actor = await Suwatte.RealmActor.shared()
+                            await actor.toggleCollection(for: contentId, withId: collectionID)
+                        }
+                    }
+
+                    destructiveActions.append(removeFromCollection)
+                }
+
+                // Remove from Library
+                if let content = content.content {
+                    let removeFromLibAction = UIAction(title: "Remove from library", image: .init(systemName: "trash"), attributes: .destructive) { _ in
+                        let cID = content.ContentIdentifier
+                        Task {
+                            let actor = await Suwatte.RealmActor.shared()
+                            await actor.toggleLibraryState(for: cID)
+                        }
+                    }
+                    destructiveActions.append(removeFromLibAction)
+                }
+
+                let nonDestructiveMenu = UIMenu(title: "", options: .displayInline, children: nonDestructiveActions)
+
+                let destructiveMenu = UIMenu(title: "", options: .displayInline, children: destructiveActions)
+
+                return UIMenu(title: content.content?.title ?? "Options", image: nil, identifier: nil, options: [], children: [nonDestructiveMenu, destructiveMenu])
+            }
             return configuration
         }
     }

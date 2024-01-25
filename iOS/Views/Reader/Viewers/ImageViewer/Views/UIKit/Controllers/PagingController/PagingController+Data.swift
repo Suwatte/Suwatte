@@ -29,7 +29,7 @@ extension Controller {
         var snapshot = dataSource.snapshot()
         snapshot.appendSections([id])
         snapshot.appendItems(pages, toSection: id)
-        
+
         await withCheckedContinuation { handler in
             DispatchQueue.main.async { [weak self, snapshot] in
                 self?.dataSource.apply(snapshot, animatingDifferences: false, completion: {
@@ -213,9 +213,9 @@ extension Controller {
                 prepared.append(item)
                 continue
             }
-            
+
             // is first page & user has always isolate singles enabled
-            if item == items.first(where: \.isPage) && Preferences.standard.markFirstAsSingle {
+            if item == items.first(where: \.isPage), Preferences.standard.markFirstAsSingle {
                 prepared.append(item)
                 continue
             }

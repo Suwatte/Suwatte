@@ -36,7 +36,7 @@ struct OpenLocalModifier: ViewModifier {
                         guard url.startAccessingSecurityScopedResource() else {
                             continue
                         }
-                        
+
                         defer {
                             url.stopAccessingSecurityScopedResource()
                         }

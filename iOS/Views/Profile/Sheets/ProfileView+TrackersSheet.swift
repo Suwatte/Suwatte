@@ -14,38 +14,34 @@ struct TrackerManagementView: View {
     @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
     var body: some View {
-        SmartNavigationView {
-            ScrollView {
-                ForEach(model.linkedTrackers, id: \.id) { tracker in
-                    IndividualTrackerView(tracker: tracker)
-                        .padding(.all)
-                }
+        ScrollView {
+            ForEach(model.linkedTrackers, id: \.id) { tracker in
+                IndividualTrackerView(tracker: tracker)
+                    .padding(.all)
             }
-            .task {
-                await model.prepare()
-            }
-            .transition(.opacity)
-            .animation(.default, value: model.linkedTrackers.count)
-            .navigationTitle("Trackers")
-            .navigationBarTitleDisplayMode(.inline)
-            .closeButton()
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("\(Image(systemName: "plus"))") {
-                        presentSheet.toggle()
-                    }
-                }
-            }
-            .fullScreenCover(isPresented: $presentSheet, onDismiss: { Task { await model.prepare() }}) {
-                let titles = model.titles
-                let trackers = model.unlinkedTrackers
-                AddTrackerLinkView(contentId: model.contentID, titles: titles, trackers: trackers)
-                    .accentColor(accentColor)
-                    .tint(accentColor) // For Invalid Tint on Appear
-            }
-            .environmentObject(model)
         }
-        .toast()
+        .task {
+            await model.prepare()
+        }
+        .transition(.opacity)
+        .animation(.default, value: model.linkedTrackers.count)
+        .navigationTitle("Trackers")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("\(Image(systemName: "plus"))") {
+                    presentSheet.toggle()
+                }
+            }
+        }
+        .fullScreenCover(isPresented: $presentSheet, onDismiss: { Task { await model.prepare() }}) {
+            let titles = model.titles
+            let trackers = model.unlinkedTrackers
+            AddTrackerLinkView(contentId: model.contentID, titles: titles, trackers: trackers)
+                .accentColor(accentColor)
+                .tint(accentColor) // For Invalid Tint on Appear
+        }
+        .environmentObject(model)
     }
 }
 
@@ -402,7 +398,6 @@ extension TrackerManagementView {
             .buttonStyle(NeutralButtonStyle())
             .contentShape(Rectangle())
         }
-
 
         func load() async throws -> [DSKCommon.Highlight] {
             try await tracker.getResultsForTitles(titles: titles)

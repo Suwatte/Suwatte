@@ -15,7 +15,7 @@ import UIKit
 
 class STTAppDelegate: NSObject, UIApplicationDelegate {
     private var syncEngine: SyncEngine?
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+    func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         // Register BG Tasks
         STTScheduler.shared.registerTasks()
 

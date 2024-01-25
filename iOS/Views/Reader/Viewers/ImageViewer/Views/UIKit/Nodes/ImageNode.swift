@@ -128,11 +128,12 @@ extension ImageNode {
 
     override func interfaceStateDidChange(_ newState: ASInterfaceState, from oldState: ASInterfaceState) {
         super.interfaceStateDidChange(newState, from: oldState)
-        if newState.rawValue == 1 && oldState.rawValue == 7 { // Leaving Preload to unknown
+        if newState.rawValue == 1, oldState.rawValue == 7 { // Leaving Preload to unknown
             if let indexPath,
                let manager = owningNode as? ASCollectionNode,
                let Y = manager.collectionViewLayout.layoutAttributesForItem(at: indexPath)?.frame.origin.y,
-               Y < manager.contentOffset.y {
+               Y < manager.contentOffset.y
+            {
                 // Is Leaving At Top
                 hardReset()
             }
@@ -255,12 +256,12 @@ extension ImageNode {
             displayImage(image)
             return
         }
-        
+
         guard !isWorking else {
             return
         }
         isWorking = true
-        
+
         let page = page
         let isPad = UIDevice.current.userInterfaceIdiom == .pad
         let data: PanelActor.PageData = .init(data: page,

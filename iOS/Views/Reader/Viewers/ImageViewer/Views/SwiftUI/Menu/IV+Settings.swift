@@ -63,7 +63,7 @@ struct IVSettingsView: View {
                             .onChange(of: isDoublePaged) { _ in
                                 model.producePendingState()
                             }
-                        
+
                         if isDoublePaged {
                             Toggle("Always Isolate First Panel", isOn: $markFirstAsSingle)
                         }

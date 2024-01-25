@@ -11,7 +11,7 @@ import SwiftUI
 
 struct ColorInvertModifier: ViewModifier {
     @AppStorage(STTKeys.ReaderColorInvert) private var useColorInvert = false
-    
+
     func body(content: Content) -> some View {
         if useColorInvert {
             content
@@ -26,7 +26,7 @@ struct ColorInvertModifier: ViewModifier {
 
 struct GrayScaleModifier: ViewModifier {
     @AppStorage(STTKeys.ReaderGrayScale) private var useGrayscale = false
-    
+
     func body(content: Content) -> some View {
         content
             .grayscale(useGrayscale ? 1 : 0)
@@ -39,7 +39,7 @@ struct CustomOverlayModifier: ViewModifier {
     @AppStorage(STTKeys.EnableOverlay) private var overlayEnabled = false
     @AppStorage(STTKeys.OverlayColor) private var overlayColor: Color = .clear
     @AppStorage(STTKeys.ReaderFilterBlendMode) private var readerBlendMode = STTBlendMode.normal
-    
+
     func body(content: Content) -> some View {
         content
             .overlay {
@@ -57,7 +57,7 @@ struct CustomOverlayModifier: ViewModifier {
 struct CustomBackgroundModifier: ViewModifier {
     @AppStorage(STTKeys.BackgroundColor, store: .standard) private var backgroundColor = Color.primary
     @AppStorage(STTKeys.UseSystemBG, store: .standard) private var useSystemBG = true
-    
+
     func body(content: Content) -> some View {
         content
             .background(useSystemBG ? nil : backgroundColor.ignoresSafeArea())
@@ -73,7 +73,7 @@ struct BackgroundTapModifier: ViewModifier {
         content
             .background(Color.primary.opacity(0.01).gesture(tap))
     }
-    
+
     private var tap: some Gesture {
         TapGesture(count: 1)
             .onEnded { _ in
@@ -89,11 +89,11 @@ struct BackgroundTapModifier: ViewModifier {
 struct AutoScrollModifier: ViewModifier {
     @EnvironmentObject private var model: IVViewModel
     @AppStorage(STTKeys.VerticalAutoScroll) private var autoScrollEnabled = false
-    
+
     var shouldShowOverlay: Bool {
         model.readingMode == .VERTICAL && autoScrollEnabled
     }
-    
+
     func body(content: Content) -> some View {
         content
             .overlay(shouldShowOverlay ? AutoScrollOverlay() : nil)
@@ -104,7 +104,7 @@ struct AutoScrollModifier: ViewModifier {
 
 struct ReaderSheetsModifier: ViewModifier {
     @EnvironmentObject private var model: IVViewModel
-    
+
     func body(content: Content) -> some View {
         content
             .sheet(isPresented: $model.control.settings, onDismiss: { model.control.navigationRegions.toggle() }) {
@@ -114,7 +114,7 @@ struct ReaderSheetsModifier: ViewModifier {
                 IVChapterListView()
             }
     }
-    
+
     private func reset() {
         guard let chapter = model.pendingState?.chapter else {
             return
@@ -129,7 +129,7 @@ struct ReaderSheetsModifier: ViewModifier {
 
 struct ReaderMenuModifier: ViewModifier {
     @EnvironmentObject private var model: IVViewModel
-    
+
     func body(content: Content) -> some View {
         content
             .overlay {
@@ -140,13 +140,13 @@ struct ReaderMenuModifier: ViewModifier {
     }
 }
 
-
 // MARK: Navigation Overlay
+
 struct ReaderNavigationRegionModifier: ViewModifier {
     @EnvironmentObject private var model: IVViewModel
     @Preference(\.displayNavOverlay) private var displayNavOverlay
     @Preference(\.tapSidesToNavigate) var tapSidesToNavigate
-    
+
     func body(content: Content) -> some View {
         content
             .overlay {
@@ -160,19 +160,18 @@ struct ReaderNavigationRegionModifier: ViewModifier {
             }
             .onChange(of: model.control.navigationRegions) { val in
                 if !val { return }
-                
+
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                     model.control.navigationRegions = false
                 }
             }
-            .animation(.default,value: model.control.navigationRegions)
+            .animation(.default, value: model.control.navigationRegions)
     }
-    
+
     var isOverlayEnabled: Bool {
         displayNavOverlay && tapSidesToNavigate && model.control.navigationRegions
     }
 }
-
 
 struct NavigationRegionOverlay: View {
     var body: some View {
@@ -190,7 +189,7 @@ struct NavigationRegionOverlay: View {
         .allowsHitTesting(false)
         .opacity(0.3)
     }
-    
+
     private var size: CGSize {
         UIScreen.main.bounds.size
     }

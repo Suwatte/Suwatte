@@ -182,10 +182,10 @@ final class Preferences {
 
     @UserDefault(STTKeys.BlackListOnSourceLevel)
     var blackListProviderOnSourceLevel = true
-    
+
     @UserDefault(STTKeys.SyncDatabase)
     var syncDatabase = false
-    
+
     @UserDefault(STTKeys.AlwaysMarkFirstPageAsSinglePanel)
     var markFirstAsSingle = true
 }

@@ -172,10 +172,10 @@ enum STTKeys {
     }
 
     static let BlackListOnSourceLevel = "APP.blacklist_on_source_level"
-    
+
     static let SyncDatabase = "APP.sync_db"
-    
+
     static let AlwaysMarkFirstPageAsSinglePanel = "READER.mark_first_as_single"
-    
+
     static let UseCompactLibraryView = "APP.compact_library"
 }

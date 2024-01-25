@@ -305,7 +305,7 @@ extension SettingsView {
             } footer: {
                 Text("When enabled, your comic files will be available across all your devices using iCloud Drive.")
             }
-            
+
             Section {
                 Toggle("Sync Library to iCloud", isOn: .constant(false))
                     .disabled(true)

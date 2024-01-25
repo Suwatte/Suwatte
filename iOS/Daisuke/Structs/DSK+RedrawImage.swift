@@ -7,44 +7,40 @@
 
 import UIKit
 
-
 extension DSKCommon {
-    struct Rect : JSCObject {
+    struct Rect: JSCObject {
         let size: Size
         let origin: Point
     }
-    
+
     struct Size: JSCObject {
         let width: Float
         let height: Float
     }
-    
+
     struct Point: JSCObject {
         let x: Float
         let y: Float
     }
 }
 
-
 extension DSKCommon {
     struct RedrawInstruction: JSCObject {
         let source: DSKCommon.Rect
         let destination: DSKCommon.Rect
     }
-    
+
     struct RedrawCommand: JSCObject {
         let size: DSKCommon.Size
         let commands: [RedrawInstruction]
     }
 }
 
-
 extension DSKCommon.Point {
     var local: CGPoint {
-        .init(x:  CGFloat(x), y: CGFloat(y))
+        .init(x: CGFloat(x), y: CGFloat(y))
     }
 }
-
 
 extension DSKCommon.Size {
     var local: CGSize {

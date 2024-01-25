@@ -15,7 +15,7 @@ extension LibraryView {
         var useLibrary = false
         @State var presentCollectionSheet = false
 
-        @StateObject private var model =  ViewModel()
+        @StateObject private var model = ViewModel()
         // Defaults
         @AppStorage(STTKeys.LibraryGridSortKey) private var sortKey: KeyPath = .name
         @AppStorage(STTKeys.LibraryGridSortOrder) private var sortOrder: SortOrder = .asc
@@ -45,7 +45,7 @@ extension LibraryView {
                     ProgressView()
                 }
             }
-            
+
             .task {
                 model.setFilterGroups(collection: collection, readingFlag: readingFlag)
                 observe()
@@ -87,10 +87,8 @@ extension LibraryView {
                             }
 
                             Divider()
-                            
-                        
 
-                            Menu ("More") {
+                            Menu("More") {
                                 Button {
                                     presentOptionsSheet.toggle()
                                 } label: {
@@ -117,20 +115,20 @@ extension LibraryView {
                             } label: {
                                 Label("Refresh Database", systemImage: "arrow.triangle.2.circlepath")
                             }
-                            
+
                             // Compact Library Helpers
                             Divider()
-                            
+
                             if useCompactView {
                                 Button { useCompactView.toggle() } label: {
-                                    Label("Standard Library", systemImage : "list.bullet.clipboard")
+                                    Label("Standard Library", systemImage: "list.bullet.clipboard")
                                 }
-                                
+
                                 Button { presentCollectionSheet.toggle() } label: {
                                     Label("Manage Collections", systemImage: "tray.full")
                                 }
                             }
-                            
+
                         } label: {
                             Image(systemName: "ellipsis.circle")
                                 .imageScale(.large)

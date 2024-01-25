@@ -16,7 +16,7 @@ extension RealmActor {
             .appendingPathComponent("Library", isDirectory: true)
 
         let relativePath = file.url.path.components(separatedBy: directory.path).last
-        
+
         guard let relativePath else {
             Logger.shared.error("unable to retrieve relative path of file")
             return

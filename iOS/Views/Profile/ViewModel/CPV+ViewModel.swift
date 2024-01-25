@@ -30,7 +30,6 @@ extension ProfileView {
 
         @Published var currentChapterSection: String
         @Published var presentCollectionsSheet = false
-        @Published var presentTrackersSheet = false
         @Published var presentSafariView = false
         @Published var presentMigrationView = false
         @Published var presentManageContentLinks: String? = nil
@@ -257,7 +256,6 @@ extension ViewModel {
             Logger.shared.error(error, "{getAuthenticatedUser}-\(source.id)")
         }
         do {
-
             let data = try await source.getProgressState(for: entry.id)
             sourceProgressState = data
         } catch {
