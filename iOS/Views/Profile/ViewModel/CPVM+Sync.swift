@@ -107,15 +107,15 @@ extension ViewModel {
                 }
             }
         })
-        
+
         // Update Local Value if outdated, sources are notified if they have the Chapter Event Handler
         guard maxReadChapter != localHighestRead else { return }
-        
-        let markIndividually =  maxReadChapter == sourceOriginHighestRead && !readIDs.isEmpty
-        
-        let chaptersToMark = markIndividually ? chapters.filter({ readIDs.contains($0.chapterId) }).map(\.chapterOrderKey) : chapters.filter { $0.number <= maxReadChapter }.map(\.chapterOrderKey)
+
+        let markIndividually = maxReadChapter == sourceOriginHighestRead && !readIDs.isEmpty
+
+        let chaptersToMark = markIndividually ? chapters.filter { readIDs.contains($0.chapterId) }.map(\.chapterOrderKey) : chapters.filter { $0.number <= maxReadChapter }.map(\.chapterOrderKey)
         await actor.markChaptersByNumber(for: identifier, chapters: Set(chaptersToMark))
-        
+
         // Notify Linked Titles
         let linked = await actor.getLinkedContent(for: identifier.id)
         await withTaskGroup(of: Void.self, body: { group in

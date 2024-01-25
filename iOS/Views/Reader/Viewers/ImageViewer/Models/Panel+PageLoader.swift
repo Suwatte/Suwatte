@@ -64,7 +64,7 @@ extension PanelActor {
             processors.append(NukeDaisukeRedrawWithSizeProcessor(sourceID: sourceID))
         }
 
-        if shouldSplit && !data.isPad { // Don't split on ipads
+        if shouldSplit, !data.isPad { // Don't split on ipads
             let isSecondaryPage = data.data.isSplitPageChild
             let useRight = (readingMode == .PAGED_COMIC && isSecondaryPage) || (readingMode == .PAGED_MANGA && !isSecondaryPage)
             let half: UIImage.ImageHalf = useRight ? .right : .left
