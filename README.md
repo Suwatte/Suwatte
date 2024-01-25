@@ -1,6 +1,6 @@
 # Suwatte
 
-Suwatte is an ad-free & open source comic/manga reader for iOS. 
+Suwatte is an ad-free, open source & feature-rich comic/manga reader for iOS. 
 
 # Features
 - External Comics (CBR, CBZ, RAR, ZIP)
@@ -16,6 +16,9 @@ Suwatte is an ad-free & open source comic/manga reader for iOS.
 - External Sources
 - Deep Linking
 - Point Accurate Reading Resumption
+- Library Management with Categories & Reading Flags
+- Automatic Library Management
+- Zero Ads, a few bugs n crashes here n there tho :]
 
 # Planned Features
 - Full Library iCloud Sync Support
@@ -44,3 +47,6 @@ Development initially started when I was learning Swift/SwiftUI/UIKIt so the cod
 
 
 App-Wide Translations are planned and as the user base grows, it will become a core priority.
+
+# Disclaimer
+Suwatte and its developer do not claim ownership of, nor are they affiliated with, any content submitted by users for reading within the app via external sources. Suwatte does not host any content and solely functions as a platform for users to organize and manage their subscribed titles in one application.
