@@ -85,7 +85,7 @@ extension RealmActor {
     @discardableResult
     func toggleLibraryState(for ids: ContentIdentifier) async -> Bool {
         let source = await DSK.shared.getSource(id: ids.sourceId)
-        if let target = realm.objects(LibraryEntry.self).first(where: { $0.id == ids.id }) {
+        if let target = self.getObject(of: LibraryEntry.self, with: ids.id), !target.isDeleted {
             // Run Removal Event
             Task {
                 do {
