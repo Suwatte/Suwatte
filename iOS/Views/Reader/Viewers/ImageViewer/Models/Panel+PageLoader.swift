@@ -72,7 +72,7 @@ extension PanelActor {
             processors.append(NukeSplitWidePageProcessor(half: half, page: data.data))
         }
 
-        if downSampleImage || page.isLocal { // Always Downsample Local Images
+        if downSampleImage {
             if data.fitToWidth {
                 processors.append(NukeDownsampleProcessor(width: size.width, scale: await UIScreen.main.scale))
             } else {
