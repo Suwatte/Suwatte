@@ -25,6 +25,7 @@ extension ViewModel {
         let identifier = STTIDPair
         // gets tracker matches in a [TrackerID:EntryID] format
         let matches: [String: String] = await actor.getTrackerLinks(for: identifier.id)
+        var readIDs: Set<String> = []
 
         // Get A Dictionary representing the trackers and the current max read chapter on each tracker
         typealias Marker = (String, Double)
@@ -68,9 +69,10 @@ extension ViewModel {
         if source.intents.progressSyncHandler ?? false, let state = sourceProgressState {
             var chapterListMax: Double = 0
             var markStateMax: Double = 0
-            if let readIds = state.readChapterIds {
+            if let ids = state.readChapterIds {
+                readIDs = Set(ids)
                 chapterListMax = chapters
-                    .filter { readIds.contains($0.chapterId) }
+                    .filter { ids.contains($0.chapterId) }
                     .map(\.number)
                     .max() ?? 0
             }
@@ -105,12 +107,17 @@ extension ViewModel {
                 }
             }
         })
-
+        
         // Update Local Value if outdated, sources are notified if they have the Chapter Event Handler
         guard maxReadChapter != localHighestRead else { return }
-        let chaptersToMark = chapters.filter { $0.number <= maxReadChapter }.map(\.chapterOrderKey)
-        let linked = await actor.getLinkedContent(for: identifier.id)
+        
+        let markIndividually =  maxReadChapter == sourceOriginHighestRead && !readIDs.isEmpty
+        
+        let chaptersToMark = markIndividually ? chapters.filter({ readIDs.contains($0.chapterId) }).map(\.chapterOrderKey) : chapters.filter { $0.number <= maxReadChapter }.map(\.chapterOrderKey)
         await actor.markChaptersByNumber(for: identifier, chapters: Set(chaptersToMark))
+        
+        // Notify Linked Titles
+        let linked = await actor.getLinkedContent(for: identifier.id)
         await withTaskGroup(of: Void.self, body: { group in
             for link in linked {
                 group.addTask {
