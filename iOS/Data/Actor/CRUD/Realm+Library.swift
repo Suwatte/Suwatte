@@ -244,7 +244,7 @@ extension RealmActor {
             .freeze()
             .toArray()
             .filter { !readChapters.contains($0.chapterOrderKey) }
-            .distinct(by: \.chapterOrderKey)
+            .distinct(by: \.number)
             .map { $0.toThreadSafe() }
 
         let filtered = STTHelpers.filterChapters(unreadChapters, with: id)
