@@ -58,8 +58,10 @@ private extension ProfileView.Skeleton {
                 VStack(alignment: .leading, spacing: 5.5) {
                     Summary()
                     Divider()
-                    CorePropertiesView()
-                    Divider()
+                    if let properties = viewModel.content.properties, !properties.isEmpty {
+                        CorePropertiesView()
+                        Divider()
+                    }
                 }
                 .padding(.horizontal)
 
