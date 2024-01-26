@@ -101,7 +101,7 @@ extension DirectoryView.ViewModel {
         let data: DSKCommon.PagedResult = try await runner.getDirectory(request: request)
 
         await MainActor.run {
-            resultCount = data.totalResultCount
+            resultCount = data.totalResultCount ?? data.results.count
             if data.isLastPage {
                 pagination = .END
             }
@@ -141,6 +141,7 @@ extension DirectoryView.ViewModel {
                 currentEntries.append(contentsOf: data.results)
                 withAnimation {
                     self.result = .loaded(currentEntries)
+                    resultCount = data.totalResultCount ?? currentEntries.count
                     if data.isLastPage {
                         self.pagination = .END
                         return
