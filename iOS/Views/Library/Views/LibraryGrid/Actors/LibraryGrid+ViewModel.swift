@@ -12,8 +12,8 @@ import SwiftUI
 
 extension LibraryView.LibraryGrid {
     final class ViewModel: ObservableObject {
-        var collection: LibraryCollection?
-        var readingFlag: LibraryFlag?
+        @Published var collection: LibraryCollection?
+        @Published var readingFlag: LibraryFlag?
         @Published var searchQuery = ""
         // Sheets
 

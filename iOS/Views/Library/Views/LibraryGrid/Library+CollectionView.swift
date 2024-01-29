@@ -26,6 +26,15 @@ extension LibraryView {
         @State private var presentStatsSheet = false
         @AppStorage(STTKeys.UseCompactLibraryView) private var useCompactView = false
 
+        @EnvironmentObject private var stateManager: StateManager
+
+        private var collections: [LibraryCollection]? {
+            if readingFlag == nil {
+                return stateManager.collections
+            }
+            return nil
+        }
+
         private func observe(_: AnyHashable? = nil) {
             model.observe(downloadsOnly: showDownloadsOnly, key: sortKey, order: sortOrder)
         }
@@ -45,7 +54,8 @@ extension LibraryView {
                     ProgressView()
                 }
             }
-
+            .onChange(of: model.readingFlag, perform: observe)
+            .onChange(of: model.collection, perform: observe)
             .task {
                 model.setFilterGroups(collection: collection, readingFlag: readingFlag)
                 observe()
@@ -136,8 +146,12 @@ extension LibraryView {
                     }
                 }
             }
-            .navigationTitle(NAV_TITLE)
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    getCollectionSelectorHeader
+                }
+            }
             .environmentObject(model)
             .searchable(text: $model.query, placement: .navigationBarDrawer(displayMode: .always), prompt: Text("Search \(NAV_TITLE)"))
             .onReceive(model.$query.debounce(for: .seconds(0.15), scheduler: DispatchQueue.main).dropFirst()) { _ in
@@ -164,11 +178,50 @@ extension LibraryView {
         }
 
         private func MainView(_ entries: [LibraryEntry]) -> some View {
-            LibraryGrid.Grid(entries: entries, collection: model.collection)
+            LibraryGrid.Grid(entries: entries, collection: $model.collection)
                 .modifier(CollectionModifier(selection: $model.navSelection))
                 .modifier(SelectionModifier(entries: entries))
                 .environment(\.libraryIsSelecting, model.isSelecting)
                 .animation(.default, value: entries)
+        }
+
+        var getCollectionSelectorHeader: some View {
+            Menu {
+                Button("All") {
+                    if readingFlag != nil {
+                        self.model.readingFlag = nil
+                    } else {
+                        self.model.collection = nil
+                    }
+                }
+                
+                if let collections = self.collections {
+                    ForEach(collections) { coll in
+                        Button(coll.name) {
+                            self.model.collection = coll
+                        }
+                    }
+                }
+                if readingFlag != nil {
+                    ForEach(LibraryFlag.allCases) { flag in
+                        Button(flag.description) {
+                            self.model.readingFlag = flag
+                        }
+                    }
+                }
+            } label: {
+                HStack {
+                    Button {
+                        
+                    } label: {
+                        Text(self.model.collection?.name ?? NAV_TITLE)
+                            .bold()
+                        Image(systemName: "chevron.down")
+                            .font(.caption2)
+                    }
+                    .foregroundColor(Color(UIColor.label))
+                }
+            }
         }
 
         private var No_ENTRIES: some View {
@@ -191,8 +244,6 @@ extension LibraryView {
                     }
                 }
             }
-            .navigationTitle(NAV_TITLE)
-            .navigationBarTitleDisplayMode(.inline)
         }
 
         private func ViewTitle(count: Int) -> String {

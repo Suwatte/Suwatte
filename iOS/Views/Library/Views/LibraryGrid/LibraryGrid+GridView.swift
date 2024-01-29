@@ -12,7 +12,7 @@ import SwiftUI
 extension LibraryView.LibraryGrid {
     struct Grid: View {
         var entries: [LibraryEntry]
-        var collection: LibraryCollection?
+        @Binding var collection: LibraryCollection?
         @AppStorage(STTKeys.TileStyle) var style = TileStyle.COMPACT
         @EnvironmentObject var model: LibraryView.LibraryGrid.ViewModel
         @State var manageSelection: String?
