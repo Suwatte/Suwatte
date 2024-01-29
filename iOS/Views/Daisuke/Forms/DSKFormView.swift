@@ -413,8 +413,8 @@ extension DSKFormView {
                 }
 
                 var prepped = Double(text) ?? current
-                prepped = max(Double(lowerBound), value)
-                prepped = min(Double(upperBound), value)
+                prepped = max(Double(lowerBound), prepped)
+                prepped = min(Double(upperBound), prepped)
                 value = prepped
             }
 
