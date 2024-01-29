@@ -32,7 +32,10 @@ enum AppTabs: Int, CaseIterable {
         case .more:
             MoreView()
         case .library:
-            LibraryGatewayView()
+            SmartNavigationView {
+                LibraryView()
+            }
+            .protectContent()
         case .browse:
             BrowseView()
         case .history:

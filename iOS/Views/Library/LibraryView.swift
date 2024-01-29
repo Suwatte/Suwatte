@@ -75,6 +75,11 @@ struct LibraryView: View {
         .hiddenNav(presenting: $openFirstCollection) {
             LibraryGrid(collection: nil, readingFlag: nil)
         }
+        .hiddenNav(presenting: $useCompactView) {
+            // HACK: Nasty hack due to the underlying Collection View performing weird layout shifts and therefore causing the Nav Bar to disappear
+            CompactLibraryView()
+                .navigationBarBackButtonHidden(true)
+        }
 
         .task {
             if requireAuth && !LocalAuthManager.shared.isExpired {
