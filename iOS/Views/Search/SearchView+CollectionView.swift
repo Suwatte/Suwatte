@@ -85,10 +85,10 @@ extension SearchView.CollectionView {
             VStack(alignment: .leading) {
                 Text(group.sourceName)
                     .font(.headline.weight(.semibold))
-                if let count = result.totalResultCount {
-                    Text(count.description + " Results")
-                        .font(.subheadline.weight(.light))
-                }
+                
+                let count = result.totalResultCount ?? result.results.count
+                Text("\(count.description)\(result.isLastPage ? "" : "+") results")
+                    .font(.subheadline.weight(.light))
             }
             Spacer()
             if !result.isLastPage {
