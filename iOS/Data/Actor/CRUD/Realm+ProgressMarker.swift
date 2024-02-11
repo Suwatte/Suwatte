@@ -197,6 +197,13 @@ extension RealmActor {
                 await notifySourceOfMarkState(identifier: id, chapters: chapterIds, completed: markAsRead)
             }
         }
+        
+        defer {
+            Task {
+                await updateUnreadCount(for: id)
+            }
+        }
+        
         // Get Object
         let target = getContentMarker(for: id.id)
 
@@ -242,6 +249,12 @@ extension RealmActor {
                     .map(\.chapterId)
 
                 await notifySourceOfMarkState(identifier: id, chapters: chapterIds, completed: markAsRead)
+            }
+        }
+        
+        defer {
+            Task {
+                await updateUnreadCount(for: id)
             }
         }
 
