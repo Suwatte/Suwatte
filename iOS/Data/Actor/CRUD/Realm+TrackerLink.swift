@@ -74,15 +74,19 @@ extension RealmActor {
         for (key, value) in trackerLinkData {
             dict[key] = value
         }
-
+        
         // Add Values from Stored Content
-        let contentTrackerData = linked
-            .appending(content)
-            .flatMap { $0.trackerInfo.asKeyValueSequence() }
+        if Preferences.standard.trackerAutoSync {
+            let contentTrackerData = linked
+                .appending(content)
+                .flatMap { $0.trackerInfo.asKeyValueSequence() }
 
-        for (key, value) in contentTrackerData {
-            dict[key] = value
+            for (key, value) in contentTrackerData {
+                dict[key] = value
+            }
         }
+
+
 
         return dict.filter { !$0.value.isEmpty }
     }

@@ -90,9 +90,6 @@ final class Preferences {
     @UserDefault(STTKeys.NovelFont)
     var novelFont = "AvenirNextCondensed-Regular"
 
-    @UserDefault(STTKeys.NonSelectiveSync)
-    var nonSelectiveSync = false
-
     @UserDefault(STTKeys.SelectiveUpdates)
     var selectiveUpdates = false
 
@@ -188,6 +185,9 @@ final class Preferences {
 
     @UserDefault(STTKeys.AlwaysMarkFirstPageAsSinglePanel)
     var markFirstAsSingle = true
+    
+    @UserDefault(STTKeys.TrackerAutoSync)
+    var trackerAutoSync = true
 }
 
 @propertyWrapper
