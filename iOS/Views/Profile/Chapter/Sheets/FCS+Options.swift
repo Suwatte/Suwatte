@@ -55,6 +55,7 @@ struct FCS_Options: View {
             .onChange(of: priorityCache) { value in
                 guard triggeredInitial else { return }
                 STTHelpers.setChapterPriorityMap(for: runnerID, value)
+                didChange()
             }
             .animation(.default, value: providers)
             .animation(.default, value: blacklisted)

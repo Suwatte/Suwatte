@@ -11,6 +11,7 @@ struct ContentSettingsView: View {
     @Preference(\.incognitoMode) var incognitoMode
     @AppStorage(STTKeys.GlobalHideNSFW) var hideNSFW = false
     @Preference(\.blackListProviderOnSourceLevel) var blacklistOnSourceLevel
+    @Preference(\.trackerAutoSync) var trackerAutoSync
 
     var body: some View {
         List {
@@ -40,6 +41,14 @@ struct ContentSettingsView: View {
                 Text("Chapter Providers")
             } footer: {
                 Text("If disabled, hidden providers will only apply to the title being set.")
+            }
+            
+            Section {
+                Toggle("Auto Sync", isOn: $trackerAutoSync)
+            } header: {
+                Text("Trackers")
+            } footer: {
+                Text("If enabled, sources which provide valid tracking ID's will be synced automatically with your installed trackers.")
             }
         }
         .navigationTitle("Content Settings")

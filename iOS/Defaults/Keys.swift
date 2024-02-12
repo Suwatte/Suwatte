@@ -91,7 +91,6 @@ enum STTKeys {
     static let GridItemsPerRow_LS = "APP.grid_items_per_row_landscape"
 
     static let LibrarySections = "LIBRARY.sections_1"
-    static let NonSelectiveSync = "TRACKER.non_selective"
 
     static let SelectiveUpdates = "APP.selective_updates"
     static let JSCommonsVersion = "APP.js_common_version"
@@ -178,4 +177,6 @@ enum STTKeys {
     static let AlwaysMarkFirstPageAsSinglePanel = "READER.mark_first_as_single"
 
     static let UseCompactLibraryView = "APP.compact_library"
+    
+    static let TrackerAutoSync = "APP.tracker_auto_sync"
 }
