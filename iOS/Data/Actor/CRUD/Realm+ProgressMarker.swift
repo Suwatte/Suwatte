@@ -212,6 +212,8 @@ extension RealmActor {
             await operation {
                 if markAsRead { // Insert Into Set
                     target.readChapters.insert(objectsIn: nums)
+                    let numberOnlyChapters = nums.map({ ThreadSafeChapter.vnPair(from: $0).1 })
+                    target.readChapters.insert(objectsIn: numberOnlyChapters)
                 } else {
                     nums.forEach {
                         target.readChapters.remove($0)
@@ -229,6 +231,8 @@ extension RealmActor {
         let marker = ProgressMarker()
         marker.id = id.id
         marker.readChapters.insert(objectsIn: nums)
+        let numberOnlyChapters = nums.map({ ThreadSafeChapter.vnPair(from: $0).1 })
+        marker.readChapters.insert(objectsIn: numberOnlyChapters)
         marker.dateRead = nil
 
         await operation {
@@ -287,6 +291,8 @@ extension RealmActor {
         let marker = ProgressMarker()
         marker.id = id.id
         marker.readChapters.insert(objectsIn: chapters)
+        let numberOnlyChapters = chapters.map({ ThreadSafeChapter.vnPair(from: $0).1 })
+        marker.readChapters.insert(objectsIn: numberOnlyChapters)
         marker.dateRead = nil
 
         await operation {
