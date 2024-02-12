@@ -193,7 +193,6 @@ enum ChapterManager {
         guard let chapter else { return nil }
 
         // check below
-
         while counter >= 0 {
             guard let target = chapters.getOrNil(counter as! T.Index), chapter.number == target.number else { break }
             options.append(target)
@@ -204,11 +203,10 @@ enum ChapterManager {
         counter = index
 
         // check above
-
         while counter >= 0 {
             guard let target = chapters.getOrNil(counter as! T.Index), chapter.number == target.number else { break }
             options.append(target)
-            counter -= 1
+            counter += 1
         }
 
         let titleOrder = STTHelpers.getChapterHighPriorityOrder(for: chapter.STTContentIdentifier)
