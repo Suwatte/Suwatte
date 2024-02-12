@@ -235,6 +235,11 @@ extension MigrationController {
         func link(_ entry: LibraryEntry, with highlight: TaggedHighlight) {
             let one = entry.id
             let two = highlight.id
+            
+            if one == two {
+                return
+            }
+            
             let isAlreadyLinked = !realm
                 .objects(ContentLink.self)
                 .where { $0.ids.contains(one) && $0.ids.contains(two) && $0.isDeleted == false }
@@ -266,12 +271,55 @@ extension MigrationController {
         }
 
         func replace(_ entry: LibraryEntry, with highlight: TaggedHighlight) {
+            if entry.id == highlight.id {
+                return
+            }
+            
             let object = LibraryEntry()
             object.content = findOrCreate(highlight)
             object.collections = entry.collections
             object.flag = entry.flag
             object.dateAdded = entry.dateAdded
+            
+            // Update Read Chapters
+            let readChaptersByOrderKey = realm.object(ofType: ProgressMarker.self, forPrimaryKey: entry.id)?.readChapters ?? .init()
+            let readChaptersByNumber = readChaptersByOrderKey.map { ThreadSafeChapter.orderKey(volume: nil, number: ThreadSafeChapter.vnPair(from: $0).1)  }
+            
+            var marker : ProgressMarker?
+            marker = realm.object(ofType: ProgressMarker.self, forPrimaryKey: object.id)
+            if let marker  {
+                marker.readChapters.formUnion(readChaptersByOrderKey)
+                marker.readChapters.insert(objectsIn: readChaptersByNumber)
+                marker.isDeleted = false // Unflag for deletion as we don't check it's deletion status
 
+            } else {
+                marker = ProgressMarker()
+                marker?.readChapters.formUnion(readChaptersByOrderKey)
+                marker?.readChapters.insert(objectsIn: readChaptersByNumber)
+                realm.add(marker!, update: .modified)
+            }
+            
+            //  Update Unread Count
+            /// Get Max Read Chapter Order key
+            let allReadChapters = Set(marker!.readChapters)
+
+            /// Get All Unread
+            let unreadChapters = realm
+                .objects(StoredChapter.self)
+                .where { $0.contentId == highlight.contentID }
+                .where { $0.sourceId == highlight.sourceID }
+                .freeze()
+                .toArray()
+                .filter { !allReadChapters.contains($0.chapterOrderKey) }
+                .distinct(by: \.number)
+                .map { $0.toThreadSafe() }
+
+            /// Apply Filter
+            let count = STTHelpers.filterChapters(unreadChapters, with: ContentIdentifier(contentId: highlight.contentID, sourceId: highlight.sourceID)).count
+            object.unreadCount = count
+            
+            // TODO: Maintain Previous Links
+            
             // CRUD
             realm.add(object, update: .all)
             entry.isDeleted = true
