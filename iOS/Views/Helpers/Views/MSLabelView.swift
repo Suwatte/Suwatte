@@ -41,20 +41,19 @@ struct STTThumbView: View {
                     if let image = imageFetcher.image {
                         image
                             .resizable()
-
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundColor(color)
                     } else {
                         Image(assetName ?? "stt")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .foregroundColor(color)
-                            .padding(.all, 3)
                     }
                 } else {
                     Image(assetName ?? "stt")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .foregroundColor(color)
-                        .padding(.all, 3)
                 }
             }
             .task {

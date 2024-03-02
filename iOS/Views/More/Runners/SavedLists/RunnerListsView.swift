@@ -26,7 +26,7 @@ struct RunnerListsView: View {
                         Text(list.listName ?? list.url)
                             .font(.headline)
                         if list.listName != nil {
-                            Text(URL(string: list.url)?.sttBase?.absoluteString ?? list.url)
+                            Text(URL(string: list.url)?.absoluteString ?? list.url)
                                 .font(.subheadline)
                                 .fontWeight(.light)
                                 .opacity(0.65)
