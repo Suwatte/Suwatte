@@ -54,7 +54,7 @@ extension DirectoryView.ViewModel {
         guard config == nil else {
             return
         }
-        let config = try await runner.getDirectoryConfig(key: request.configKey)
+        let config = try await runner.getDirectoryConfig(key: request.configID)
         await MainActor.run {
             withAnimation {
                 self.config = config
@@ -64,8 +64,8 @@ extension DirectoryView.ViewModel {
 
     func reset() {
         let prevSort = request.sort
-        let key = request.configKey
-        request = .init(page: 1, configKey: key)
+        let key = request.configID
+        request = .init(page: 1, configID: key)
         request.query = nil
         request.sort = prevSort
     }

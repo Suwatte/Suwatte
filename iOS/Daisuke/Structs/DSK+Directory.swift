@@ -59,7 +59,7 @@ extension DSKCommon {
         var tag: RequestTag?
         var listId: String?
         var context: [String: AnyCodable]?
-        var configKey: String?
+        var configID: String?
         var sort: SortSelection?
 
         struct RequestTag: Parsable, Hashable {
