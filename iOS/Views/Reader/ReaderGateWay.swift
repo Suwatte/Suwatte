@@ -35,6 +35,7 @@ struct ReaderGateWay: View {
         .accentColor(accentColor)
         .onAppear(perform: StateManager.shared.readerOpenedPublisher.send)
         .onDisappear(perform: StateManager.shared.readerClosedPublisher.send)
+        .prefersPersistentSystemOverlaysHidden()
     }
 }
 
@@ -47,6 +48,17 @@ struct WebReader: View {
                 .closeButton()
                 .navigationTitle(chapter.displayName)
                 .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+}
+
+// Reference: https://danielsaidi.com/blog/2022/08/01/removing-the-home-indicator-in-swiftui
+extension View {
+    func prefersPersistentSystemOverlaysHidden() -> some View {
+        if #available(iOS 16.0, macOS 13.0, tvOS 16.0, watchOS 9.0, *) {
+            return self.persistentSystemOverlays(.hidden)
+        } else {
+            return self
         }
     }
 }
