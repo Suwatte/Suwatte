@@ -46,6 +46,10 @@ extension DirectoryView {
         var showButton: Bool {
             !configSort.options.isEmpty || !lists.isEmpty
         }
+        
+        var fullSearch: Bool {
+            request.tag == nil && (config == nil ? false : config?.searchable ?? true)
+        }
     }
 }
 

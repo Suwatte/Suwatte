@@ -18,7 +18,7 @@ struct BrowseView: View {
     @State var runnersWithUpdates: [TaggedRunner] = []
     @State var presentUpdatesView = false
     var body: some View {
-        NavigationView {
+        SmartNavigationView {
             List {
                 if noListInstalled {
                     NoListInstalledView
@@ -89,11 +89,6 @@ struct BrowseView: View {
             .animation(.default, value: model.runners)
             .animation(.default, value: model.pending)
             .animation(.default, value: noListInstalled)
-            
-            if let s = sources.first {
-                SourceLandingPage(sourceID: s.id)
-                    .navigationBarTitle(s.name)
-            }
         }
         .task {
             guard !hasLoaded else { return }
