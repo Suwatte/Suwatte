@@ -99,6 +99,7 @@
 		DF2D842A2A1EFB4D006B17F0 /* STT+Nuke.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2D84292A1EFB4D006B17F0 /* STT+Nuke.swift */; };
 		DF2DA77327CF11C50046FE20 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = DF2DA77227CF11C50046FE20 /* Alamofire */; };
 		DF30193B28C045E30024AA8B /* Backup+Runner.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF30193A28C045E30024AA8B /* Backup+Runner.swift */; };
+		DF31636D2B93049B00B14E84 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = DF31636C2B93049B00B14E84 /* FirebaseAnalytics */; };
 		DF326461280256760066EB08 /* ProfileView+RelatedContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF326460280256760066EB08 /* ProfileView+RelatedContent.swift */; };
 		DF32646328029A380066EB08 /* STTImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF32646228029A380066EB08 /* STTImageProvider.swift */; };
 		DF3264692802A0AF0066EB08 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3264682802A0AE0066EB08 /* ImagePicker.swift */; };
@@ -319,7 +320,6 @@
 		DF9BFE1F2A428A73005D0B63 /* AH+Rar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9BFE1D2A428A73005D0B63 /* AH+Rar.swift */; };
 		DF9BFE252A4295F5005D0B63 /* Unrar in Frameworks */ = {isa = PBXBuildFile; productRef = DF9BFE242A4295F5005D0B63 /* Unrar */; };
 		DF9BFE272A4295FD005D0B63 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = DF9BFE262A4295FD005D0B63 /* ZIPFoundation */; };
-		DF9C9EF0297AE3A9004A3BC5 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = DF9C9EEF297AE3A9004A3BC5 /* FirebaseAnalytics */; };
 		DF9FDD762AAE751A0016BD5E /* DSKPageLInkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9FDD752AAE751A0016BD5E /* DSKPageLInkView.swift */; };
 		DF9FDD782AAE7AE40016BD5E /* DSKHighlightTile.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF9FDD772AAE7AE40016BD5E /* DSKHighlightTile.swift */; };
 		DFA17F662A4916C300179850 /* ASCollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = DFA17F652A4916C300179850 /* ASCollectionView */; };
@@ -930,10 +930,10 @@
 				DF2DA77327CF11C50046FE20 /* Alamofire in Frameworks */,
 				DF9041A22AA3E7E600B72ACC /* R2Shared in Frameworks */,
 				DFF4351E2AA6D09800FAAD8B /* Zephyr in Frameworks */,
-				DF9C9EF0297AE3A9004A3BC5 /* FirebaseAnalytics in Frameworks */,
 				DFB7FB03297B965D00599097 /* OrderedCollections in Frameworks */,
 				DFA17F662A4916C300179850 /* ASCollectionView in Frameworks */,
 				DF70234F29DA852A0076AAD0 /* Nuke in Frameworks */,
+				DF31636D2B93049B00B14E84 /* FirebaseAnalytics in Frameworks */,
 				DF730CD329411F1B00C62C71 /* FlagKit in Frameworks */,
 				DF482F012955A56F002D3308 /* RealmSwift in Frameworks */,
 				DF0D96062824892C00E592D9 /* Realm in Frameworks */,
@@ -2530,7 +2530,6 @@
 				DFF1043D28A9963D00E2C3A4 /* AnyCodable */,
 				DF730CD229411F1B00C62C71 /* FlagKit */,
 				DF482F002955A56F002D3308 /* RealmSwift */,
-				DF9C9EEF297AE3A9004A3BC5 /* FirebaseAnalytics */,
 				DFB7FB02297B965D00599097 /* OrderedCollections */,
 				DF70234E29DA852A0076AAD0 /* Nuke */,
 				DF70235029DA852A0076AAD0 /* NukeUI */,
@@ -2540,6 +2539,7 @@
 				DFF4351D2AA6D09800FAAD8B /* Zephyr */,
 				DF29A6812ABBC313005E11E3 /* AsyncDisplayKit */,
 				DFAE977C2AC866D9001E62D8 /* IceCream */,
+				DF31636C2B93049B00B14E84 /* FirebaseAnalytics */,
 			);
 			productName = "Suwatte (iOS)";
 			productReference = DFCE6EAF280108EA002E220C /* Suwatte.app */;
@@ -2601,7 +2601,6 @@
 				DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar" */,
 				DFF1043C28A9963C00E2C3A4 /* XCRemoteSwiftPackageReference "AnyCodable" */,
 				DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit" */,
-				DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections" */,
 				DF70234D29DA852A0076AAD0 /* XCRemoteSwiftPackageReference "Nuke" */,
 				DFA17F642A4916C300179850 /* XCRemoteSwiftPackageReference "ASCollectionView" */,
@@ -2609,6 +2608,7 @@
 				DFF4351C2AA6D09800FAAD8B /* XCRemoteSwiftPackageReference "Zephyr" */,
 				DF29A6802ABBC313005E11E3 /* XCRemoteSwiftPackageReference "Texture" */,
 				DFAE977B2AC866D9001E62D8 /* XCRemoteSwiftPackageReference "IceCream" */,
+				DF31636B2B93049B00B14E84 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = DF2DA6FF27CD82430046FE20;
 			projectDirPath = "";
@@ -3436,6 +3436,14 @@
 				kind = branch;
 			};
 		};
+		DF31636B2B93049B00B14E84 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.21.0;
+			};
+		};
 		DF59C97B285004850027F19D /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
@@ -3474,14 +3482,6 @@
 			requirement = {
 				kind = upToNextMinorVersion;
 				minimumVersion = 2.5.0;
-			};
-		};
-		DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
-			requirement = {
-				branch = master;
-				kind = branch;
 			};
 		};
 		DFA17F642A4916C300179850 /* XCRemoteSwiftPackageReference "ASCollectionView" */ = {
@@ -3547,6 +3547,11 @@
 			package = DF2DA77127CF11C50046FE20 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
 		};
+		DF31636C2B93049B00B14E84 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF31636B2B93049B00B14E84 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
 		DF482F002955A56F002D3308 /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */;
@@ -3596,11 +3601,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DF59C97B285004850027F19D /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
 			productName = ZIPFoundation;
-		};
-		DF9C9EEF297AE3A9004A3BC5 /* FirebaseAnalytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DF9C9EEE297AE3A9004A3BC5 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalytics;
 		};
 		DFA17F652A4916C300179850 /* ASCollectionView */ = {
 			isa = XCSwiftPackageProductDependency;
