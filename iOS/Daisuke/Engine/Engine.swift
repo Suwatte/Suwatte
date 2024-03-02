@@ -178,12 +178,9 @@ extension DaisukeEngine {
 
         try await DSK.shared.saveRunnerList(at: url.absoluteString)
         let path = url
-            .sttBase?
             .appendingPathComponent("runners")
             .appendingPathComponent("\(runner.path).stt")
-        guard let path else {
-            throw DSK.Errors.NamedError(name: "Host", message: "Invalid Runner URL")
-        }
+        
         try await handleNetworkRunnerImport(from: path, with: url)
         StateManager.shared.runnerListPublisher.send()
     }

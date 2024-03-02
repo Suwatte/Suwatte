@@ -26,12 +26,6 @@ extension URL {
         let date = try? resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate
         return date ?? .distantPast
     }
-
-    var sttBase: URL? {
-        var components = URLComponents(url: self, resolvingAgainstBaseURL: false)
-        components?.path = ""
-        return components?.url
-    }
 }
 
 extension URL {
