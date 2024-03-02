@@ -185,6 +185,7 @@ private extension Skeleton {
             }
 
             .font(.title2.weight(.light))
+            .frame(maxWidth: 250)
         }
 
         var EntryInLibrary: Bool {

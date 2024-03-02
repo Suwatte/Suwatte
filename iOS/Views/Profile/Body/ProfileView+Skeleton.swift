@@ -49,6 +49,7 @@ extension ProfileView {
 }
 
 private extension ProfileView.Skeleton {
+    @ViewBuilder
     var Main: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 15) {

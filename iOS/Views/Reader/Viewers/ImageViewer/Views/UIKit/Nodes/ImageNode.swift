@@ -157,7 +157,6 @@ extension ImageNode {
                     imageNode.alpha = 0
                     progressNode.alpha = 1
                 }
-                imageNode.backgroundColor = .randomColor()
             }
         }
         imageNode.frame = context.finalFrame(for: imageNode)
@@ -336,7 +335,6 @@ extension ImageNode {
         { [unowned self] in
             imageNode.alpha = 1
             progressNode.alpha = 0
-            imageNode.backgroundColor = .randomColor()
         }
     }
 

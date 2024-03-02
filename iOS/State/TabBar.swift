@@ -32,8 +32,9 @@ enum AppTabs: Int, CaseIterable {
         case .more:
             MoreView()
         case .library:
-            SmartNavigationView {
+            NavigationView {
                 LibraryView()
+                LibraryView.LibraryGrid(collection: nil, readingFlag: nil)
             }
             .protectContent()
         case .browse:
