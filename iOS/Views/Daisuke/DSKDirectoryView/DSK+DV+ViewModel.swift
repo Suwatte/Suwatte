@@ -63,10 +63,11 @@ extension DirectoryView.ViewModel {
     }
 
     func reset() {
+        let prevSort = request.sort
         let key = request.configKey
         request = .init(page: 1, configKey: key)
         request.query = nil
-        request.sort = configSort.default
+        request.sort = prevSort
     }
 }
 
