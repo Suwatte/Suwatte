@@ -21,7 +21,7 @@ struct TaggedRunner: Identifiable, Hashable {
 
 extension RealmActor {
     func getRunnerUpdates() async -> [TaggedRunner] {
-        let runners: [StoredRunnerObject] = getSavedAndEnabledSources()
+        let runners: [StoredRunnerObject] = getSavedAndEnabledRunners()
         let savedLists = getRunnerLists()
         struct RList {
             let list: RunnerList
