@@ -205,7 +205,7 @@ extension Controller: ASCollectionDelegate {
         }
 
         let position = resumptionPosition
-        let height = view.frame.height * 0.75
+        let height = view.frame.height * 0.70
         switch item {
         case let .page(page):
             return { [weak self] in

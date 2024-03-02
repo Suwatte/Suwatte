@@ -201,7 +201,8 @@ extension DirectoryView.FilterView.Cell {
                     $0.title.lowercased().contains(query.lowercased())
                 }
             }
-            return ops.sorted(by: \.title, descending: false)
+            
+            return ops
         }
 
         var body: some View {
