@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MoreView: View {
     var body: some View {
-        SmartNavigationView {
+        NavigationView {
             List {
                 // TODO: UserProfileHeader
                 GeneralSection
@@ -19,6 +19,8 @@ struct MoreView: View {
             }
             .listStyle(.insetGrouped)
             .navigationTitle("More")
+            
+            SettingsView()
         }
     }
 

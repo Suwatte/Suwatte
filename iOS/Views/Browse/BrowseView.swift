@@ -18,7 +18,7 @@ struct BrowseView: View {
     @State var runnersWithUpdates: [TaggedRunner] = []
     @State var presentUpdatesView = false
     var body: some View {
-        SmartNavigationView {
+        NavigationView {
             List {
                 if noListInstalled {
                     NoListInstalledView
@@ -89,6 +89,11 @@ struct BrowseView: View {
             .animation(.default, value: model.runners)
             .animation(.default, value: model.pending)
             .animation(.default, value: noListInstalled)
+            
+            if let s = sources.first {
+                SourceLandingPage(sourceID: s.id)
+                    .navigationBarTitle(s.name)
+            }
         }
         .task {
             guard !hasLoaded else { return }
@@ -145,8 +150,14 @@ extension BrowseView {
                             STTThumbView(url: URL(string: runner.thumbnail))
                                 .frame(width: 40, height: 40)
                                 .cornerRadius(5)
-                            Text(runner.name)
-                                .font(.headline)
+                            VStack (alignment: .leading) {
+                                Text(runner.name)
+                                    .font(.headline)
+                                Text("v" + runner.version.clean)
+                                    .font(.footnote)
+                                    .fontWeight(.thin)
+                                    .foregroundStyle(.gray)
+                            }
                             Spacer()
                         }
                     }

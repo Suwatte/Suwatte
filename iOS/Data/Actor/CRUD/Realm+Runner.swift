@@ -126,6 +126,15 @@ extension RealmActor {
             .freeze()
             .toArray()
     }
+    
+    func getSavedAndEnabledRunners() -> [StoredRunnerObject] {
+        realm
+            .objects(StoredRunnerObject.self)
+            .where { $0.enabled == true && $0.isDeleted == false }
+            .sorted(by: [SortDescriptor(keyPath: "name", ascending: true)])
+            .freeze()
+            .toArray()
+    }
 
     func getSearchableSources() -> [StoredRunnerObject] {
         let disabledRunnerIDs: [String] = Array(Preferences.standard.disabledGlobalSearchSources)
