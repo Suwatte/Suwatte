@@ -145,8 +145,14 @@ extension BrowseView {
                             STTThumbView(url: URL(string: runner.thumbnail))
                                 .frame(width: 40, height: 40)
                                 .cornerRadius(5)
-                            Text(runner.name)
-                                .font(.headline)
+                            VStack (alignment: .leading) {
+                                Text(runner.name)
+                                    .font(.headline)
+                                Text("v" + runner.version.clean)
+                                    .font(.footnote)
+                                    .fontWeight(.thin)
+                                    .foregroundStyle(.gray)
+                            }
                             Spacer()
                         }
                     }
