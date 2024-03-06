@@ -17,7 +17,9 @@ extension ProfileView.Skeleton.ChapterView {
     struct PreviewView: View {
         @EnvironmentObject var model: ProfileView.ViewModel
         var body: some View {
-            HStack {
+            VStack {
+                LinkChaptersSection(model: model)
+
                 let chapters = model.getPreviewChapters(for: model.getCurrentStatement())
                 switch model.chapterState {
                 case .loaded:
@@ -60,6 +62,7 @@ extension ProfileView.Skeleton.ChapterView {
             VStack(alignment: .center, spacing: 10) {
                 HStack {
                     VStack(alignment: .leading, spacing: 3) {
+
                         Text("^[\(statement.distinctCount) Chapter](inflect: true)")
                             .font(.title3)
                             .fontWeight(.bold)
@@ -81,8 +84,6 @@ extension ProfileView.Skeleton.ChapterView {
                                 .fontWeight(.light)
                                 .foregroundColor(.gray)
                         }
-
-                        LinkChaptersSection(model: model)
                     }
                     Spacer()
                 }
@@ -187,7 +188,7 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
                             Cell(statement: entryStatement)
                         }
 
-                        ForEach(model.chapterMap.sorted(by: \.value.maxOrderKey), id: \.key) { key, value in
+                        ForEach(model.chapterMap.sorted(by: \.value.index, descending: false), id: \.key) { key, value in
                             if key == model.identifier {
                                 EmptyView()
                             } else {
@@ -195,21 +196,24 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
                             }
                         }
                     }
-                    .padding(.top, 4)
+                    .padding([.top, .bottom], 4)
                 }
             }
         }
 
         @ViewBuilder
         func Cell(statement: ChapterStatement) -> some View {
-            if model.currentChapterSection == statement.content.id {
+            if model.currentChapterSection == statement.content.contentIdentifier.id {
                 Button(statement.content.runnerName) {}
                     .buttonStyle(.borderedProminent)
                     .tint(.accentColor)
             } else {
                 Button(statement.content.runnerName) {
-                    model.currentChapterSection = statement.content.id
+                    model.chapterState = .loading
+                    model.currentChapterSection = statement.content.contentIdentifier.id
+
                     Task {
+                        await model.loadLinkedChapters()
                         await model.setActionState()
                     }
                 }
