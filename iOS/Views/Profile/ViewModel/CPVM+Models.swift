@@ -12,7 +12,7 @@ struct SimpleContentInfo: Hashable {
     let runnerID: String
     let runnerName: String
     let contentName: String
-    let id: String
+    let contentIdentifier: ContentIdentifier
     let highlight: DSKCommon.Highlight
 }
 
@@ -22,6 +22,7 @@ struct ChapterStatement {
     let originalList: [ThreadSafeChapter]
     let distinctCount: Int
     let maxOrderKey: Double
+    let index: Int
 }
 
 extension ViewModel {
