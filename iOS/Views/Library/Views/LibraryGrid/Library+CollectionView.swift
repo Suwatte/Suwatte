@@ -10,12 +10,10 @@ import SwiftUI
 
 extension LibraryView {
     struct LibraryGrid: View {
-        let collection: LibraryCollection?
-        let readingFlag: LibraryFlag?
         var useLibrary = false
         @State var presentCollectionSheet = false
 
-        @StateObject private var model = ViewModel()
+        @StateObject private var model: ViewModel
         // Defaults
         @AppStorage(STTKeys.LibraryGridSortKey) private var sortKey: KeyPath = .name
         @AppStorage(STTKeys.LibraryGridSortOrder) private var sortOrder: SortOrder = .asc
@@ -29,10 +27,26 @@ extension LibraryView {
         @EnvironmentObject private var stateManager: StateManager
 
         private var collections: [LibraryCollection]? {
-            if readingFlag == nil {
+            if model.readingFlag == nil {
                 return stateManager.collections
             }
             return nil
+        }
+        
+        private var readingFlag : LibraryFlag? {
+            model.readingFlag
+        }
+        
+        private var colleciton: LibraryCollection? {
+            model.collection
+        }
+        
+        
+        init(collection: LibraryCollection?, readingFlag: LibraryFlag?, useLibrary: Bool = false) {
+            let m = ViewModel()
+            m.setFilterGroups(collection: collection, readingFlag: readingFlag)
+            self._model = StateObject(wrappedValue: m)
+            self.useLibrary = useLibrary
         }
 
         private func observe(_: AnyHashable? = nil) {
@@ -57,7 +71,6 @@ extension LibraryView {
             .onChange(of: model.readingFlag, perform: observe)
             .onChange(of: model.collection, perform: observe)
             .task {
-                model.setFilterGroups(collection: collection, readingFlag: readingFlag)
                 observe()
             }
             .onDisappear {
@@ -147,11 +160,15 @@ extension LibraryView {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    getCollectionSelectorHeader
-                }
-            }
+            .conditional(useCompactView, transform: { view in
+                view
+                    .toolbar {
+                        ToolbarItem(placement: .principal) {
+                            CollectionSelectorHeader
+                        }
+                    }
+            })
+            .navigationBarTitle(NAV_TITLE)
             .environmentObject(model)
             .searchable(text: $model.query, placement: .navigationBarDrawer(displayMode: .always), prompt: Text("Search \(NAV_TITLE)"))
             .onReceive(model.$query.debounce(for: .seconds(0.15), scheduler: DispatchQueue.main).dropFirst()) { _ in
@@ -185,35 +202,50 @@ extension LibraryView {
                 .animation(.default, value: entries)
         }
 
-        var getCollectionSelectorHeader: some View {
+        private var CollectionSelectorHeader: some View {
             Menu {
-                Button("All") {
-                    if readingFlag != nil {
-                        self.model.readingFlag = nil
-                    } else {
-                        self.model.collection = nil
-                    }
-                }
                 
-                if let collections = self.collections {
-                    ForEach(collections) { coll in
-                        Button(coll.name) {
-                            self.model.collection = coll
+                Section {
+                    Button("All Titles") {
+                        if readingFlag != nil {
+                            self.model.readingFlag = nil
+                        } else {
+                            self.model.collection = nil
                         }
                     }
                 }
-                if readingFlag != nil {
-                    ForEach(LibraryFlag.allCases) { flag in
-                        Button(flag.description) {
-                            self.model.readingFlag = flag
+
+                
+                Divider()
+                
+                Section {
+                    if let collections = self.collections {
+                        ForEach(collections) { coll in
+                            Button(coll.name) {
+                                self.model.collection = coll
+                            }
                         }
                     }
+                } header: {
+                    Text("Collections")
+                }
+
+                Divider()
+                
+                Menu {
+                    Section {
+                        ForEach(LibraryFlag.allCases) { flag in
+                            Button(flag.description) {
+                                self.model.readingFlag = flag
+                            }
+                        }
+                    }
+                } label: {
+                    Label("Reading Flags", systemImage: "flag")
                 }
             } label: {
                 HStack {
-                    Button {
-                        
-                    } label: {
+                    Button {} label: {
                         Text(self.model.collection?.name ?? NAV_TITLE)
                             .bold()
                         Image(systemName: "chevron.down")
