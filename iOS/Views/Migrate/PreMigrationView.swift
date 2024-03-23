@@ -48,13 +48,24 @@ struct PreMigrationView: View {
         Section {
             ForEach(Array(logs.keys).sorted()) { key in
                 let data = logs[key]!
-                let name = model.sources.first(where: { $0.id == key })?.name ?? "Unknown"
+                let source = model.sources.first(where: { $0.id == key })
+                let name = source?.name ?? "Unknown"
+                let version = source?.version
+                
                 NavigationLink {
                     MigrationView(model: .init(contents: data))
                 } label: {
                     HStack {
                         VStack(alignment: .leading) {
-                            Text(name)
+                            HStack (alignment: .bottom, spacing: 2){
+                                Text(name)
+                                if let version {
+                                    Text("v\(version.clean)")
+                                        .font(.footnote)
+                                        .fontWeight(.light)
+                                        .foregroundStyle(.gray)
+                                }
+                            }
                             Text(key)
                                 .font(.caption)
                                 .fontWeight(.light)
