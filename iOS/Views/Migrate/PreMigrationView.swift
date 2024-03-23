@@ -16,24 +16,11 @@ struct PreMigrationView: View {
             ZStack {
                 if model.loaded {
                     List {
-                        ForEach(model.sources, id: \.id) { source in
-                            let data = model.data[source.id]
-                            if let data {
-                                NavigationLink {
-                                    MigrationView(model: .init(contents: data))
-                                } label: {
-                                    HStack {
-                                        Text(source.name)
-                                        Spacer()
-                                        Text(data.count.description + " Title(s)")
-                                            .fontWeight(.light)
-                                            .opacity(0.50)
-                                    }
-                                }
-                            } else {
-                                EmptyView()
-                            }
-                        }
+
+                        
+                        InstalledSourcesSection
+                        DanglingSourcesSection
+                       
                     }
                 } else {
                     ProgressView()
@@ -56,10 +43,49 @@ struct PreMigrationView: View {
             .toast()
         }
     }
+    
+    private func BuildSection(logs: [String: [TaggedHighlight]], title: String) -> some View {
+        Section {
+            ForEach(Array(logs.keys).sorted()) { key in
+                let data = logs[key]!
+                let name = model.sources.first(where: { $0.id == key })?.name ?? "Unknown"
+                NavigationLink {
+                    MigrationView(model: .init(contents: data))
+                } label: {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text(name)
+                            Text(key)
+                                .font(.caption)
+                                .fontWeight(.light)
+                                .foregroundStyle(.gray)
+                        }
+                        Spacer()
+                        Text(data.count.description + " Title(s)")
+                            .fontWeight(.light)
+                            .opacity(0.50)
+                    }
+                }
+                
+            }
+        } header: {
+            Text(title)
+        }
+    }
+    
+    
+    private var InstalledSourcesSection : some View {
+        BuildSection(logs: model.data, title: "Installed Sources")
+    }
+    
+    private var DanglingSourcesSection: some View {
+        BuildSection(logs: model.dangling, title: "Unknown Sources")
+    }
 }
 
 final class PreMigrationController: ObservableObject {
     @Published var data: [String: [TaggedHighlight]] = [:]
+    @Published var dangling: [String: [TaggedHighlight]] = [:]
     @Published var sources: [AnyContentSource] = []
     @Published var loaded = false
     var shouldReset = false
@@ -80,10 +106,14 @@ final class PreMigrationController: ObservableObject {
                 .map { TaggedHighlight(from: $0.toHighlight(), with: $0.sourceId) }
             prepped[source.id] = data
         }
-        let final = prepped
-        await MainActor.run { [weak self] in
+        
+        // Get Dangling Entries
+        let dangling = await actor.getDanglingLibraryHighlights(with: sources.map(\.id))
+        
+        await MainActor.run { [weak self, prepped] in
             self?.sources = sources
-            self?.data = final
+            self?.data = prepped
+            self?.dangling = dangling
             self?.loaded = true
         }
     }
