@@ -1,12 +1,13 @@
 {
+  "originHash" : "0158de25c03b53d3a1cd3e8fc3c37429a65ad754ffb8984d7d644609886e594a",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/abseil-cpp-binary.git",
       "state" : {
-        "revision" : "bfc0b6f81adc06ce5121eb23f628473638d67c5c",
-        "version" : "1.2022062300.0"
+        "revision" : "7ce7be095bc3ed3c98b009532fe2d7698c132614",
+        "version" : "1.2024011601.0"
       }
     },
     {
@@ -15,7 +16,7 @@
       "location" : "https://github.com/Alamofire/Alamofire.git",
       "state" : {
         "branch" : "master",
-        "revision" : "c265d87660c184a033e1d4b559d2ff0f49a1295a"
+        "revision" : "9e9943fbdffbe9d5bb0324f16b44873bc11e6dd9"
       }
     },
     {
@@ -68,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/firebase-ios-sdk.git",
       "state" : {
-        "revision" : "f91c8167141d0279726c6f6d9d4a47c026785cbc",
-        "version" : "10.21.0"
+        "revision" : "fcf5ced6dae2d43fced2581e673cc3b59bdb8ffa",
+        "version" : "10.23.0"
       }
     },
     {
@@ -104,8 +105,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleAppMeasurement.git",
       "state" : {
-        "revision" : "cb8617fab75d181270a1d8f763f26b15c73e2e1e",
-        "version" : "10.21.0"
+        "revision" : "6ec4ca62b00a665fa09b594fab897753a8c635fa",
+        "version" : "10.23.0"
       }
     },
     {
@@ -122,8 +123,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleUtilities.git",
       "state" : {
-        "revision" : "830ffa9276e10267881f2697283c2fcd867603fd",
-        "version" : "7.13.0"
+        "revision" : "26c898aed8bed13b8a63057ee26500abbbcb8d55",
+        "version" : "7.13.1"
       }
     },
     {
@@ -131,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/grpc-binary.git",
       "state" : {
-        "revision" : "a673bc2937fbe886dd1f99c401b01b6d977a9c98",
-        "version" : "1.49.1"
+        "revision" : "67043f6389d0e28b38fa02d1c6952afeb04d807f",
+        "version" : "1.62.1"
       }
     },
     {
@@ -140,8 +141,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/gtm-session-fetcher.git",
       "state" : {
-        "revision" : "76135c9f4e1ac85459d5fec61b6f76ac47ab3a4c",
-        "version" : "3.3.1"
+        "revision" : "9534039303015a84837090d20fa21cae6e5eadb6",
+        "version" : "3.3.2"
       }
     },
     {
@@ -185,8 +186,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/nanopb.git",
       "state" : {
-        "revision" : "819d0a2173aff699fb8c364b6fb906f7cdb1a692",
-        "version" : "2.30909.0"
+        "revision" : "b7e1104502eca3a213b46303391ca4d3bc8ddec1",
+        "version" : "2.30910.0"
       }
     },
     {
@@ -195,7 +196,7 @@
       "location" : "https://github.com/kean/Nuke",
       "state" : {
         "branch" : "main",
-        "revision" : "8ecbfc886da39bccb01c34abef5f2ff4073ad633"
+        "revision" : "02324568691561f94e77b3790b8ab331ab4b369a"
       }
     },
     {
@@ -212,8 +213,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "7227d6a447821c28895daa099b6c7cd4c99d461b",
-        "version" : "13.25.1"
+        "revision" : "374dd672af357732dccc135fecc905406fec3223",
+        "version" : "14.4.1"
       }
     },
     {
@@ -221,8 +222,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift.git",
       "state" : {
-        "revision" : "836cc4b8619886f979f8961c3f592a82b0741591",
-        "version" : "10.45.3"
+        "revision" : "e0c2fbb442979fbf1e4be80e01d142f310a9c762",
+        "version" : "10.49.1"
       }
     },
     {
@@ -293,8 +294,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ArtSabintsev/Zephyr.git",
       "state" : {
-        "revision" : "0030003a7febe0202b039abda1af111ca0d1b617",
-        "version" : "3.7.1"
+        "revision" : "b0dda179006b354680b1df96e279134a704b0c06",
+        "version" : "3.8.0"
       }
     },
     {
@@ -316,5 +317,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
