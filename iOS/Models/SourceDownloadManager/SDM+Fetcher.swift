@@ -13,7 +13,11 @@ extension SDM {
 
         let source = try await DSK.shared.getContentSource(id: identifier.source)
 
-        let data = try await source.getChapterData(contentId: identifier.content, chapterId: identifier.chapter)
+        let chapter = await get(id)?.chapter?.toThreadSafe()
+        guard let chapter else {
+            throw DSK.Errors.NamedError(name: "SourceDownloadManager", message: "Unable to get chapter")
+        }
+        let data = try await source.getChapterData(contentId: identifier.content, chapterId: identifier.chapter, chapter: chapter)
 
         let urls = data.pages?.compactMap { URL(string: $0.url ?? "") } ?? []
         let raws = data.pages?.compactMap { $0.raw }.compactMap { Data(base64Encoded: $0) } ?? []

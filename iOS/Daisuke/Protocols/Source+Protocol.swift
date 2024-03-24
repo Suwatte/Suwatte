@@ -33,7 +33,7 @@ protocol ContentSource: DSKRunner {
 
     func getContentChapters(contentId: String) async throws -> [DSKCommon.Chapter]
 
-    func getChapterData(contentId: String, chapterId: String) async throws -> DSKCommon.ChapterData
+    func getChapterData(contentId: String, chapterId: String, chapter: ThreadSafeChapter) async throws -> DSKCommon.ChapterData
 
     func getAllTags() async throws -> [DaisukeEngine.Structs.Property]
 
