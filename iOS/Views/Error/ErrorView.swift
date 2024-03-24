@@ -14,8 +14,8 @@ struct ErrorView: View {
     var body: some View {
         Group {
             VStack(alignment: .center) {
-                if case DaisukeEngine.Errors.Cloudflare = error, let runnerID = runnerID {
-                    CloudFlareErrorView(sourceID: runnerID, action: handle)
+                if case let DaisukeEngine.Errors.Cloudflare(url) = error, let runnerID = runnerID {
+                    CloudFlareErrorView(sourceID: runnerID, action: handle, resolutionURL: url)
                 } else {
                     BaseErrorView
                 }
