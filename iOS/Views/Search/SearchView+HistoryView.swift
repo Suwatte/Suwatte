@@ -1,5 +1,5 @@
 //
-//  SearchView+HIstoryView.swift
+//  SearchView+HistoryView.swift
 //  Suwatte (iOS)
 //
 //  Created by Mantton on 2023-08-02.
@@ -9,24 +9,20 @@ import SwiftUI
 
 extension SearchView {
     struct HistoryView: View {
+        @FetchRequest(fetchRequest: CDSearchHistory.globalSearchRequest(), animation: .default)
+        private var history: FetchedResults<CDSearchHistory>
+        
         @EnvironmentObject var model: ViewModel
         var body: some View {
             List {
-                ForEach(model.history) { entry in
+                ForEach(history) { entry in
                     Cell(entry: entry)
                         .swipeActions {
                             Button("Delete", role: .destructive) {
-                                Task {
-                                    let actor = await RealmActor.shared()
-                                    await actor.deleteSearch(entry.id)
-                                    await model.loadSearchHistory()
-                                }
+                                CDSearchHistory.remove(entry)
                             }
                         }
                 }
-            }
-            .task {
-                await model.loadSearchHistory()
             }
         }
     }
@@ -35,39 +31,30 @@ extension SearchView {
 extension SearchView.HistoryView {
     struct Cell: View {
         @EnvironmentObject var model: SearchView.ViewModel
-        let entry: UpdatedSearchHistory
+        let entry: CDSearchHistory
         var body: some View {
             Button {
-                model.query = entry.displayText
+                model.query = entry.display
                 Task {
                     await model.makeRequests()
                 }
             }
-            label: {
-                HStack {
-                    Text(entry.displayText)
-                        .font(.headline)
-                        .fontWeight(.light)
-                    Spacer()
-                    Text(entry.date.timeAgo())
+        label: {
+            HStack {
+                Text(entry.display)
+                    .font(.headline)
+                    .fontWeight(.light)
+                Spacer()
+                if let date = entry.date {
+                    Text(date.timeAgo())
                         .font(.subheadline.weight(.light))
                 }
-
-                .contentShape(Rectangle())
+                
             }
-            .buttonStyle(.plain)
+            
+            .contentShape(Rectangle())
         }
-    }
-}
-
-extension SearchView.ViewModel {
-    func loadSearchHistory() async {
-        let actor = await RealmActor.shared()
-        let data = await actor.getAllSearchHistory()
-        await MainActor.run {
-            withAnimation {
-                history = data
-            }
+        .buttonStyle(.plain)
         }
     }
 }

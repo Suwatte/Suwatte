@@ -32,7 +32,6 @@ extension SearchView {
         // Get Sources Filtered for Global Search
         @Published var results = [ResultGroup]()
         @Published var state = Loadable<String>.idle
-        @Published var history: [UpdatedSearchHistory] = []
         @Published var incomplete: IncompleteSources = .init(failing: [], noResults: [])
         @Published var library: Set<String> = []
         @Published var savedForLater: Set<String> = []

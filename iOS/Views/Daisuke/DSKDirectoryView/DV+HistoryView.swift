@@ -12,22 +12,24 @@ extension DirectoryView {
     struct HistoryView: View {
         @EnvironmentObject var model: DirectoryView.ViewModel
         @Environment(\.presentationMode) var presentationMode
-
+        @FetchRequest(fetchRequest: CDSearchHistory.globalSearchRequest(), animation: .default)
+        private var history: FetchedResults<CDSearchHistory>
+        
         @State var presentAlert = false
-        @State var token: NotificationToken?
-        @State var results: [UpdatedSearchHistory] = []
+        
+        init() {
+            let request = CDSearchHistory.singleSourceRequest(id: model.runner.id)
+            self._history = FetchRequest(fetchRequest: request, animation: .default)
+        }
+        
         var body: some View {
             SmartNavigationView {
                 List {
-                    ForEach(results) { result in
+                    ForEach(history) { result in
                         Cell(for: result)
                             .swipeActions {
                                 Button("Delete", role: .destructive) {
-                                    let id = result.id
-                                    Task {
-                                        let actor = await RealmActor.shared()
-                                        await actor.deleteSearch(id)
-                                    }
+                                    CDSearchHistory.remove(result)
                                 }
                             }
                     }
@@ -55,20 +57,15 @@ extension DirectoryView {
                     }
                 }
                 .toast()
-                .animation(.default, value: results)
-                .task {
-                    await observe()
-                }
-                .onDisappear(perform: cancel)
             }
         }
     }
 }
 
 extension DirectoryView.HistoryView {
-    func Cell(for data: UpdatedSearchHistory) -> some View {
+    func Cell(for data: CDSearchHistory) -> some View {
         Button { didTap(data) } label: {
-            Text(data.displayText)
+            Text(data.display)
                 .font(.body.weight(.light))
                 .contentShape(Rectangle())
         }
@@ -79,16 +76,19 @@ extension DirectoryView.HistoryView {
 extension DirectoryView.HistoryView {
     func handleClear() {
         let runnerId = model.runner.id
-        Task {
-            let actor = await RealmActor.shared()
-            await actor.deleteSearchHistory(for: runnerId)
-        }
+        CDSearchHistory.remove(for: runnerId)
     }
-
-    func didTap(_ entry: UpdatedSearchHistory) {
+    
+    func didTap(_ entry: CDSearchHistory) {
         model.reset()
+        
+        guard let data = entry.request else {
+            model.query = entry.display
+            return
+        }
+        
         do {
-            let request = try DSK.parse(entry.data, to: DSKCommon.DirectoryRequest.self)
+            let request = try JSONDecoder().decode(DSKCommon.DirectoryRequest.self, from: data)
             model.request = request
             if let q = request.query {
                 model.query = q
@@ -98,19 +98,5 @@ extension DirectoryView.HistoryView {
             ToastManager.shared.error(error)
         }
         presentationMode.wrappedValue.dismiss()
-    }
-}
-
-extension DirectoryView.HistoryView {
-    func observe() async {
-        let actor = await RealmActor.shared()
-        token = await actor.observeSearchHistory(id: model.runner.id) { value in
-            results = value
-        }
-    }
-
-    func cancel() {
-        token?.invalidate()
-        token = nil
     }
 }

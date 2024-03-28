@@ -1,5 +1,5 @@
 //
-//  +CDSearchHistory.swift
+//  CDSearchHistory.swift
 //  Suwatte (iOS)
 //
 //  Created by Mantton on 2023-12-19.
@@ -9,8 +9,10 @@ import Foundation
 import CoreData
 
 extension CDSearchHistory {
-
     
+    var display : String {
+        display_ ?? ""
+    }
     
     static func add(_ r : DSKCommon.DirectoryRequest, source: String?, label: String, context: NSManagedObjectContext = CDManager.shared.context) {
         let incognito = Preferences.standard.incognitoMode
@@ -47,20 +49,32 @@ extension CDSearchHistory {
         context.safeSave()
     }
     
+    static func remove(for id : String, context: NSManagedObjectContext = CDManager.shared.context) {
+        let request = fetchRequest()
+        request.predicate = NSPredicate(format: "source_ == %@", id)
+        let result = try? context.fetch(request)
+        guard let result else { return }
+        
+        for entry in result {
+            context.delete(entry)
+        }
+        context.safeSave()
+    }
+    
 }
 
 
 extension CDSearchHistory {
     static func globalSearchRequest() -> NSFetchRequest<CDSearchHistory> {
         let request = fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(key: "date_", ascending: false)]
+        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
         request.predicate = NSPredicate(format: "source_ == nil")
         return request
     }
     
     static func singleSourceRequest(id: String) -> NSFetchRequest<CDSearchHistory> {
         let request = fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(key: "date_", ascending: false)]
+        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
         request.predicate = NSPredicate(format: "source_ == %@", id)
         return request
     }

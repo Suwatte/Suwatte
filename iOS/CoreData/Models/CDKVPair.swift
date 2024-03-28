@@ -7,7 +7,7 @@
 
 import Foundation
 import CoreData
-
+import KeychainSwift
 
 extension CDKVPair {
     
@@ -48,5 +48,26 @@ extension CDKVPair {
         guard let pair else { return }
         
         context.delete(pair)
+    }
+}
+
+
+extension CDKVPair {
+    static func getKeychainValue(for id: String, key: String) -> String? {
+        let keychain = KeychainSwift()
+        keychain.synchronizable = true
+        return keychain.get("\(id)_\(key)")
+    }
+
+    static func setKeychainValue(for id: String, key: String, value: String) {
+        let keychain = KeychainSwift()
+        keychain.synchronizable = true
+        keychain.set(value, forKey: "\(id)_\(key)")
+    }
+
+    static func deleteKeyChainValue(for id: String, key: String) {
+        let keychain = KeychainSwift()
+        keychain.synchronizable = true
+        keychain.delete("\(id)_\(key)")
     }
 }
