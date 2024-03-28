@@ -21,44 +21,45 @@ struct TaggedRunner: Identifiable, Hashable {
 
 extension RealmActor {
     func getRunnerUpdates() async -> [TaggedRunner] {
-        let runners: [StoredRunnerObject] = getSavedAndEnabledRunners()
-        let savedLists = getRunnerLists()
-        struct RList {
-            let list: RunnerList
-            let url: String
-        }
-        let runnerLists = await withTaskGroup(of: RList?.self) { group in
-            for list in savedLists {
-                let urlString = list.url
-                guard let url = URL(string: urlString) else { continue }
-                group.addTask {
-                    do {
-                        let runnerList = try await DSK.shared.getRunnerList(at: url)
-                        return .init(list: runnerList, url: urlString)
-                    } catch {
-                        Logger.shared.error(error, "CheckRunnerForUpdates")
-                    }
-                    return nil
-                }
-            }
-
-            var out = [RList]()
-            for await result in group {
-                guard let result else { continue }
-                out.append(result)
-            }
-
-            return out
-        }
-
-        var updates: [TaggedRunner] = []
-
-        for runner in runners {
-            let list = runnerLists.first(where: { $0.url == runner.listURL })
-            guard let list, let _ = list.list.runners.first(where: { $0.id == runner.id && $0.version > runner.version }) else { continue }
-            updates.append(.from(runner))
-        }
-
-        return updates.sorted(by: \.name, descending: false)
+        return []
+//        let runners: [StoredRunnerObject] = getSavedAndEnabledRunners()
+//        let savedLists = getRunnerLists()
+//        struct RList {
+//            let list: RunnerList
+//            let url: String
+//        }
+//        let runnerLists = await withTaskGroup(of: RList?.self) { group in
+//            for list in savedLists {
+//                let urlString = list.url
+//                guard let url = URL(string: urlString) else { continue }
+//                group.addTask {
+//                    do {
+//                        let runnerList = try await DSK.shared.getRunnerList(at: url)
+//                        return .init(list: runnerList, url: urlString)
+//                    } catch {
+//                        Logger.shared.error(error, "CheckRunnerForUpdates")
+//                    }
+//                    return nil
+//                }
+//            }
+//
+//            var out = [RList]()
+//            for await result in group {
+//                guard let result else { continue }
+//                out.append(result)
+//            }
+//
+//            return out
+//        }
+//
+//        var updates: [TaggedRunner] = []
+//
+//        for runner in runners {
+//            let list = runnerLists.first(where: { $0.url == runner.listURL })
+//            guard let list, let _ = list.list.runners.first(where: { $0.id == runner.id && $0.version > runner.version }) else { continue }
+//            updates.append(.from(runner))
+//        }
+//
+//        return updates.sorted(by: \.name, descending: false)
     }
 }

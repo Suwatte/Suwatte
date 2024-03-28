@@ -7,27 +7,6 @@
 
 import Foundation
 
-extension StoredRunnerList: Codable {
-    enum Keys: String, CodingKey {
-        case listName, url
-    }
-
-    convenience init(from decoder: Decoder) throws {
-        self.init()
-
-        let container = try decoder.container(keyedBy: Keys.self)
-        listName = try container.decodeIfPresent(String.self, forKey: .listName)
-        url = try container.decode(String.self, forKey: .url)
-    }
-
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: Keys.self)
-
-        try container.encode(listName, forKey: .listName)
-        try container.encode(url, forKey: .url)
-    }
-}
-
 extension StoredRunnerObject: Codable {
     enum Keys: String, CodingKey {
         case id, parentRunnerID, name, version, environment, enabled, listURL, thumbnail, isLibraryPageLinkProvider, isBrowsePageLinkProvider

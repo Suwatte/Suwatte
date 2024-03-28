@@ -108,10 +108,7 @@ struct BrowseView: View {
     }
 
     func checkLists() {
-        Task {
-            let lists = await RealmActor.shared().getRunnerLists()
-            noListInstalled = lists.isEmpty
-        }
+        noListInstalled = CDRunnerList.noListInstalled()
     }
 
     func checkForRunnerUpdates() async {

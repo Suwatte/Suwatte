@@ -10,27 +10,6 @@ import IceCream
 import RealmSwift
 
 extension RealmActor {
-    func saveRunnerList(_ data: RunnerList, at url: URL) async {
-        let obj = StoredRunnerList()
-        obj.listName = data.listName
-        obj.url = url.absoluteString
-        await operation {
-            realm.add(obj, update: .modified)
-        }
-    }
-
-    func removeRunnerList(with url: String) async {
-        let target = realm
-            .objects(StoredRunnerList.self)
-            .where { $0.url == url && !$0.isDeleted }
-            .first
-        guard let target else { return }
-
-        await operation {
-            target.isDeleted = true
-        }
-    }
-
     func deleteRunner(_ id: String) async {
         let runner = getRunner(id)
         guard let runner else { return }
@@ -157,15 +136,6 @@ extension RealmActor {
             .objects(StoredRunnerObject.self)
             .where { $0.enabled == true && $0.isDeleted == false && $0.environment == environment }
             .sorted(by: [SortDescriptor(keyPath: "name", ascending: true)])
-            .freeze()
-            .toArray()
-    }
-
-    func getRunnerLists() -> [StoredRunnerList] {
-        realm
-            .objects(StoredRunnerList.self)
-            .where { !$0.isDeleted }
-            .sorted(by: \.listName, ascending: true)
             .freeze()
             .toArray()
     }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22522" systemVersion="23B81" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22757" systemVersion="23E214" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
     <entity name="CDArchive" representedClassName="CDArchive" syncable="YES" codeGenerationType="class">
         <attribute name="id_" optional="YES" attributeType="String"/>
         <attribute name="name_" optional="YES" attributeType="String"/>
@@ -87,7 +87,7 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
-    <entity name="CDRunnerList" representedClassName="CDRunnerList" syncable="YES" codeGenerationType="class">
+    <entity name="CDRunnerList" representedClassName="CDRunnerList" syncable="YES" codeGenerationType="category">
         <attribute name="name_" optional="YES" attributeType="String"/>
         <attribute name="url_" attributeType="String"/>
         <uniquenessConstraints>

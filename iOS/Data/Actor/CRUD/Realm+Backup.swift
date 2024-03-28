@@ -27,11 +27,6 @@ extension RealmActor {
             .where { $0.currentChapter != nil && $0.currentChapter.content != nil && !$0.isDeleted }
             .freeze()
 
-        let lists = realm
-            .objects(StoredRunnerList.self)
-            .where { !$0.isDeleted }
-            .freeze()
-
         let runners = realm
             .objects(StoredRunnerObject.self)
             .where { !$0.isDeleted }
@@ -42,7 +37,7 @@ extension RealmActor {
         backup.progressMarkers = progressMarkers.toArray()
         backup.library = libraryEntries.map(CodableLibraryEntry.from(entry:))
         backup.collections = collections.toArray()
-        backup.lists = lists.toArray()
+//        backup.lists = lists.toArray() // TODO: RunnerLists
         backup.runners = runners.toArray()
 
         return backup
@@ -75,9 +70,10 @@ extension RealmActor {
                 realm.add(collections, update: .all)
             }
 
-            if let runnerLists = backup.lists {
-                realm.add(runnerLists, update: .all)
-            }
+                // TODO: Runner Lists
+//            if let runnerLists = backup.lists {
+//                realm.add(runnerLists, update: .all)
+//            }
 
             if let markers = backup.progressMarkers {
                 realm.add(markers, update: .all)
@@ -143,7 +139,7 @@ extension RealmActor {
             realm.objects(UpdatedBookmark.self).setValue(true, forKey: "isDeleted")
             realm.objects(ReadLater.self).setValue(true, forKey: "isDeleted")
             realm.objects(ProgressMarker.self).setValue(true, forKey: "isDeleted")
-            realm.objects(StoredRunnerList.self).setValue(true, forKey: "isDeleted")
+//            realm.objects(StoredRunnerList.self).setValue(true, forKey: "isDeleted")
             realm.objects(StoredRunnerObject.self).setValue(true, forKey: "isDeleted")
             realm.objects(CustomThumbnail.self).setValue(true, forKey: "isDeleted")
             realm.objects(ChapterReference.self).setValue(true, forKey: "isDeleted")

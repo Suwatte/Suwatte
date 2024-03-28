@@ -11,6 +11,7 @@ import SwiftUI
 struct SuwatteApp: App {
     @UIApplicationDelegateAdaptor(STTAppDelegate.self) var AppDelegate
     @StateObject var navModel = NavigationModel.shared
+    @StateObject var cdManager = CDManager.shared
     @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
     var body: some Scene {
         WindowGroup {
@@ -25,6 +26,7 @@ struct SuwatteApp: App {
                 .task {
                     await SDM.shared.appDidStart()
                 }
+                .environment(\.managedObjectContext, cdManager.container.viewContext)
         }
     }
 }

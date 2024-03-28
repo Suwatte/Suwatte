@@ -184,7 +184,6 @@ struct OnboardingAddListsTabView: View {
 struct OnboardingAddRunnersView: View {
     @Binding var tab: Int
     @State private var loadable: Loadable<RunnerList> = .idle
-    @StateObject var model: RunnerListsView.ViewModel = .init()
 
     private let COMMUNITY_LIST_URL = "https://community.suwatte.app"
     var body: some View {
@@ -198,7 +197,7 @@ struct OnboardingAddRunnersView: View {
             LoadableView(nil, load, $loadable) { runnerList in
                 VStack {
                     ForEach(runnerList.runners) { runner in
-                        RunnerListsView.RunnerListInfo.RunnerListCell(listURL: COMMUNITY_LIST_URL, list: runnerList, runner: runner)
+                        RunnerInfoView(runner: runner, list: (runnerList, COMMUNITY_LIST_URL)) // FIXME: Changing Install State
                             .frame(height: 60)
                     }
                 }
@@ -215,13 +214,7 @@ struct OnboardingAddRunnersView: View {
         }
 
         .padding(.horizontal)
-        .environmentObject(model)
-        .animation(.default, value: model.savedRunners)
         .animation(.default, value: loadable)
-        .task {
-            await model.observe()
-        }
-        .onDisappear(perform: model.stopObserving)
     }
 
     func load() async throws -> RunnerList {

@@ -12,7 +12,6 @@
 		DF020A442A89A07C00BC5562 /* ArchiveHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A432A89A07C00BC5562 /* ArchiveHelper.swift */; };
 		DF020A452A89A07C00BC5562 /* ArchiveHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A432A89A07C00BC5562 /* ArchiveHelper.swift */; };
 		DF020A4A2A8B120700BC5562 /* IV+ChapterList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A492A8B120700BC5562 /* IV+ChapterList.swift */; };
-		DF020A512A8C43D200BC5562 /* RLV+ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A502A8C43D200BC5562 /* RLV+ViewModel.swift */; };
 		DF020A542A8C46AE00BC5562 /* Realm+RunnerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A532A8C46AE00BC5562 /* Realm+RunnerListView.swift */; };
 		DF020A5A2A8C5E8A00BC5562 /* PagingController+ContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A592A8C5E8A00BC5562 /* PagingController+ContextMenu.swift */; };
 		DF020A5D2A8C5E9600BC5562 /* PagingController+Scroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A5C2A8C5E9600BC5562 /* PagingController+Scroll.swift */; };
@@ -114,6 +113,9 @@
 		DF327EAA2BB523F300B6676E /* CDManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF327E9E2BB523F300B6676E /* CDManager.swift */; };
 		DF327EAB2BB523F300B6676E /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DF327E9F2BB523F300B6676E /* Model.xcdatamodeld */; };
 		DF327EAE2BB5288100B6676E /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = DF327EAD2BB5288100B6676E /* FirebaseAnalytics */; };
+		DF327EB02BB52EEB00B6676E /* RunnerInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF327EAF2BB52EEB00B6676E /* RunnerInfoView.swift */; };
+		DF327EB22BB52F0100B6676E /* RunnerListInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF327EB12BB52F0100B6676E /* RunnerListInfoView.swift */; };
+		DF327EB62BB536BA00B6676E /* +CDBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF327EB52BB536BA00B6676E /* +CDBackup.swift */; };
 		DF3318512A479346000B092B /* DV+Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3318502A479346000B092B /* DV+Settings.swift */; };
 		DF3318532A47934E000B092B /* DV+DownloadQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3318522A47934E000B092B /* DV+DownloadQueue.swift */; };
 		DF3318552A47A631000B092B /* DV+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3318542A47A631000B092B /* DV+CollectionView.swift */; };
@@ -498,7 +500,6 @@
 		DF01DEEB2A587A680025700B /* Engine+URLHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Engine+URLHandler.swift"; sourceTree = "<group>"; };
 		DF020A432A89A07C00BC5562 /* ArchiveHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ArchiveHelper.swift; path = Shared/ArchiveHelper/ArchiveHelper.swift; sourceTree = SOURCE_ROOT; };
 		DF020A492A8B120700BC5562 /* IV+ChapterList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IV+ChapterList.swift"; sourceTree = "<group>"; };
-		DF020A502A8C43D200BC5562 /* RLV+ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RLV+ViewModel.swift"; sourceTree = "<group>"; };
 		DF020A532A8C46AE00BC5562 /* Realm+RunnerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+RunnerListView.swift"; sourceTree = "<group>"; };
 		DF020A592A8C5E8A00BC5562 /* PagingController+ContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagingController+ContextMenu.swift"; sourceTree = "<group>"; };
 		DF020A5C2A8C5E9600BC5562 /* PagingController+Scroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagingController+Scroll.swift"; sourceTree = "<group>"; };
@@ -596,6 +597,9 @@
 		DF327E9C2BB523F300B6676E /* CDRunnerList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDRunnerList.swift; sourceTree = "<group>"; };
 		DF327E9E2BB523F300B6676E /* CDManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDManager.swift; sourceTree = "<group>"; };
 		DF327EA12BB523F300B6676E /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		DF327EAF2BB52EEB00B6676E /* RunnerInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerInfoView.swift; sourceTree = "<group>"; };
+		DF327EB12BB52F0100B6676E /* RunnerListInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerListInfoView.swift; sourceTree = "<group>"; };
+		DF327EB52BB536BA00B6676E /* +CDBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "+CDBackup.swift"; sourceTree = "<group>"; };
 		DF3318502A479346000B092B /* DV+Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DV+Settings.swift"; sourceTree = "<group>"; };
 		DF3318522A47934E000B092B /* DV+DownloadQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DV+DownloadQueue.swift"; sourceTree = "<group>"; };
 		DF3318542A47A631000B092B /* DV+CollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DV+CollectionView.swift"; sourceTree = "<group>"; };
@@ -1019,7 +1023,8 @@
 			isa = PBXGroup;
 			children = (
 				DFC39E9428A093D700450EC4 /* RunnerListsView.swift */,
-				DF020A502A8C43D200BC5562 /* RLV+ViewModel.swift */,
+				DF327EAF2BB52EEB00B6676E /* RunnerInfoView.swift */,
+				DF327EB12BB52F0100B6676E /* RunnerListInfoView.swift */,
 			);
 			path = SavedLists;
 			sourceTree = "<group>";
@@ -1261,11 +1266,20 @@
 		DF327EA02BB523F300B6676E /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
+				DF327EB32BB5369E00B6676E /* CRUD */,
 				DF327E9D2BB523F300B6676E /* Models */,
 				DF327E9E2BB523F300B6676E /* CDManager.swift */,
 				DF327E9F2BB523F300B6676E /* Model.xcdatamodeld */,
 			);
 			path = CoreData;
+			sourceTree = "<group>";
+		};
+		DF327EB32BB5369E00B6676E /* CRUD */ = {
+			isa = PBXGroup;
+			children = (
+				DF327EB52BB536BA00B6676E /* +CDBackup.swift */,
+			);
+			path = CRUD;
 			sourceTree = "<group>";
 		};
 		DF33184F2A47933A000B092B /* Sheets */ = {
@@ -2760,6 +2774,7 @@
 				DF1EA44F2A70C700003E27C7 /* SDV+CollectionView.swift in Sources */,
 				DFE1B1062A9C0BAF00D300DB /* Migration+PreferredDestination.swift in Sources */,
 				DF67EB8F28E4054C00076FF5 /* LogsView.swift in Sources */,
+				DF327EB22BB52F0100B6676E /* RunnerListInfoView.swift in Sources */,
 				DF9BFDF32A42753B005D0B63 /* DirectoryViewer.swift in Sources */,
 				DFB47F02288107D00040A1BD /* OPDS+FeedView.swift in Sources */,
 				DF1EA4472A70B7FF003E27C7 /* SourceDownloadView.swift in Sources */,
@@ -2790,7 +2805,6 @@
 				DF8D0B2D2800EE47003E4C3E /* STT+Color.swift in Sources */,
 				DFF66BF22A548E4700860B41 /* Backup+ProgressMarker.swift in Sources */,
 				DF020A442A89A07C00BC5562 /* ArchiveHelper.swift in Sources */,
-				DF020A512A8C43D200BC5562 /* RLV+ViewModel.swift in Sources */,
 				DFE1B1082A9C109700D300DB /* Migration+StrategySelectorView.swift in Sources */,
 				DFA25FEC2AA5075200A1369E /* PagingController+Keyboard.swift in Sources */,
 				DFBE48522A25BE7B000ABA16 /* CustomThumbnail.swift in Sources */,
@@ -2806,6 +2820,7 @@
 				DF489C452A848453006A21B9 /* IV+VerticalLayout.swift in Sources */,
 				DFDBF9DA2A7DBA0F006D49AD /* Reader+NavigationGuide.swift in Sources */,
 				DFDBF9752A7C552B006D49AD /* JSCR+JS.swift in Sources */,
+				DF327EB62BB536BA00B6676E /* +CDBackup.swift in Sources */,
 				DF2783622A79B1610098BBA9 /* +Content.swift in Sources */,
 				DFF09B4E2A58C14A00C5CA5E /* +OAuth.swift in Sources */,
 				DF327EA32BB523F300B6676E /* CDArchive.swift in Sources */,
@@ -2837,6 +2852,7 @@
 				DF8D0B752800EE48003E4C3E /* LibraryGrid+OptionsSheet.swift in Sources */,
 				DF60FF242B2D5E0200E1683A /* CompactLibraryView.swift in Sources */,
 				DFDBF9DC2A7DBAE9006D49AD /* IV+ProgressView.swift in Sources */,
+				DF327EB02BB52EEB00B6676E /* RunnerInfoView.swift in Sources */,
 				DFDBF9F82A7E2088006D49AD /* IV+ZoomingScrollView.swift in Sources */,
 				DFDBF9872A7C60B4006D49AD /* Engine+WK.swift in Sources */,
 				DF489C362A8478C9006A21B9 /* Opacity.swift in Sources */,

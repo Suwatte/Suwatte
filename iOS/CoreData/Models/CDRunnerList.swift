@@ -9,6 +9,10 @@ import Foundation
 import CoreData
 
 // MARK: - Definition
+@objc(CDRunnerList)
+final class CDRunnerList : NSManagedObject  {}
+
+// MARK: - Unwrapped Properties
 extension CDRunnerList {
     var displayName: String {
         name_ ?? url_ ?? ""
@@ -75,4 +79,29 @@ extension CDRunnerList {
         }
         
     }
+}
+
+extension CDRunnerList: Codable {
+    enum Keys: String, CodingKey {
+        case listName, url
+    }
+
+    convenience init(from decoder: Decoder) throws {
+        guard let context = decoder.userInfo[CodingUserInfoKey.managedObjectContext] as? NSManagedObjectContext else {
+            throw DecoderConfigurationError.missingManagedObjectContext
+          }
+
+        self.init(context: context)
+        let container = try decoder.container(keyedBy: Keys.self)
+        
+        name_ = try container.decodeIfPresent(String.self, forKey: .listName)
+        url_ = try container.decode(String.self, forKey: .url)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: Keys.self)
+        try container.encode(name_, forKey: .listName)
+        try container.encode(url_, forKey: .url)
+    }
+    
 }

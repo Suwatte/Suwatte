@@ -223,8 +223,7 @@ extension DaisukeEngine {
             throw DSK.Errors.NamedError(name: "Validation", message: "Invalid URL")
         }
         let runnerList = try await getRunnerList(at: base)
-        let actor = await RealmActor.shared()
-        await actor.saveRunnerList(runnerList, at: base)
+        CDRunnerList.add(entry: runnerList, url: base)
     }
 
     // Handle Importing Runner File from Internet

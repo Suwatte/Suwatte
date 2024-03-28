@@ -42,12 +42,6 @@ struct Runner: Codable, Hashable, Identifiable {
     var minSupportedAppVersion: String?
 }
 
-final class StoredRunnerList: Object, ObjectKeyIdentifiable, CKRecordConvertible, CKRecordRecoverable {
-    @Persisted var listName: String?
-    @Persisted(primaryKey: true) var url: String
-    @Persisted var isDeleted = false
-}
-
 final class StoredRunnerObject: Object, Identifiable, CKRecordConvertible, CKRecordRecoverable {
     @Persisted(primaryKey: true) var id: String
     @Persisted var parentRunnerID: String?

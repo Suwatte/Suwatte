@@ -9,7 +9,7 @@ import Foundation
 import RealmSwift
 
 struct Backup: Codable {
-    var lists: [StoredRunnerList]?
+    var lists: [CDRunnerList]?
     var runners: [StoredRunnerObject]?
 
     var library: [CodableLibraryEntry]?
@@ -29,4 +29,14 @@ struct Backup: Codable {
     func encoded() throws -> Data {
         try DaisukeEngine.encode(value: self)
     }
+}
+
+
+// Reference: https://www.donnywals.com/using-codable-with-core-data-and-nsmanagedobject/
+extension CodingUserInfoKey {
+  static let managedObjectContext = CodingUserInfoKey(rawValue: "managedObjectContext")!
+}
+
+enum DecoderConfigurationError: Error {
+  case missingManagedObjectContext
 }
