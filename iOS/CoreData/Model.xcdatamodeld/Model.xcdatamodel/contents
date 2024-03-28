@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22522" systemVersion="23B81" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="CDArchive" representedClassName="CDArchive" syncable="YES" codeGenerationType="class">
+        <attribute name="id_" optional="YES" attributeType="String"/>
+        <attribute name="name_" optional="YES" attributeType="String"/>
+        <attribute name="path_" optional="YES" attributeType="String"/>
+        <fetchIndex name="id__index">
+            <fetchIndexElement property="id_" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id_"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="CDCollection" representedClassName="CDCollection" syncable="YES" codeGenerationType="class">
+        <attribute name="filter_" optional="YES" attributeType="Binary" customClassName="CollectionFilter"/>
+        <attribute name="id_" optional="YES" attributeType="String"/>
+        <attribute name="name_" optional="YES" attributeType="String"/>
+        <attribute name="order_" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <fetchIndex name="id__index">
+            <fetchIndexElement property="id_" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
+    <entity name="CDKVPair" representedClassName="CDKVPair" syncable="YES" codeGenerationType="class">
+        <attribute name="key_" optional="YES" attributeType="String"/>
+        <attribute name="runner_" optional="YES" attributeType="String"/>
+        <attribute name="value_" optional="YES" attributeType="String" allowsCloudEncryption="YES"/>
+        <fetchIndex name="runner_key">
+            <fetchIndexElement property="key_" type="Binary" order="ascending"/>
+            <fetchIndexElement property="runner_" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="key_"/>
+                <constraint value="runner_"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="CDOPublication" representedClassName="CDOPublication" syncable="YES" codeGenerationType="class">
+        <attribute name="id_" optional="YES" attributeType="String"/>
+        <attribute name="lastRead" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="link_" optional="YES" attributeType="String"/>
+        <attribute name="pageCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="thumbnail_" optional="YES" attributeType="String"/>
+        <attribute name="title_" optional="YES" attributeType="String"/>
+        <relationship name="server" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDOServer"/>
+        <fetchIndex name="id__index">
+            <fetchIndexElement property="id_" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id_"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="CDOServer" representedClassName="CDOServer" syncable="YES" codeGenerationType="class">
+        <attribute name="alias_" optional="YES" attributeType="String"/>
+        <attribute name="host_" optional="YES" attributeType="String"/>
+        <attribute name="id_" optional="YES" attributeType="String"/>
+        <attribute name="password_" optional="YES" attributeType="String"/>
+        <attribute name="username_" optional="YES" attributeType="String"/>
+        <fetchIndex name="id__index">
+            <fetchIndexElement property="id_" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id_"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="CDRunner" representedClassName="CDRunner" syncable="YES" codeGenerationType="class">
+        <attribute name="environment_" optional="YES" attributeType="String"/>
+        <attribute name="executable" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
+        <attribute name="id_" attributeType="String"/>
+        <attribute name="intents_" optional="YES" attributeType="Binary"/>
+        <attribute name="listURL" optional="YES" attributeType="String"/>
+        <attribute name="name_" optional="YES" attributeType="String"/>
+        <attribute name="thumbnail_" optional="YES" attributeType="String"/>
+        <attribute name="version" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <fetchIndex name="id__index">
+            <fetchIndexElement property="id_" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id_"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="CDRunnerList" representedClassName="CDRunnerList" syncable="YES" codeGenerationType="class">
+        <attribute name="name_" optional="YES" attributeType="String"/>
+        <attribute name="url_" attributeType="String"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="url_"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="CDSearchHistory" representedClassName="CDSearchHistory" syncable="YES" codeGenerationType="class">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="display_" optional="YES" attributeType="String"/>
+        <attribute name="request" optional="YES" attributeType="Binary"/>
+        <attribute name="source_" optional="YES" attributeType="String"/>
+    </entity>
+</model>

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct RunnerIntents: Parsable {
+struct RunnerIntents: Parsable, Hashable {
     let preferenceMenuBuilder: Bool
 
     let authenticatable: Bool
@@ -38,7 +38,7 @@ struct RunnerIntents: Parsable {
     // Setup
     let requiresSetup: Bool
 
-    enum AuthenticationMethod: String, Codable {
+    enum AuthenticationMethod: String, Codable, Hashable {
         case webview, basic, oauth, unknown
     }
 
@@ -52,5 +52,12 @@ struct RunnerIntents: Parsable {
     enum BasicAuthenticationUIIdentifier: Int, Codable {
         case EMAIL
         case USERNAME
+    }
+}
+
+
+extension RunnerIntents {
+    static var placeholder : Self {
+        .init(preferenceMenuBuilder: false, authenticatable: false, authenticationMethod: .unknown, basicAuthLabel: nil, imageRequestHandler: false, pageLinkResolver: false, libraryPageLinkProvider: false, browsePageLinkProvider: false, chapterEventHandler: false, contentEventHandler: false, librarySyncHandler: false, hasTagsView: false, pageReadHandler: false, providesReaderContext: false, canRefreshHighlight: false, isContextMenuProvider: false, advancedTracker: false, requiresSetup: false, canHandleURL: false, progressSyncHandler: false, groupedUpdateFetcher: false, isRedrawingHandler: false)
     }
 }

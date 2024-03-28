@@ -99,11 +99,21 @@
 		DF2D842A2A1EFB4D006B17F0 /* STT+Nuke.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2D84292A1EFB4D006B17F0 /* STT+Nuke.swift */; };
 		DF2DA77327CF11C50046FE20 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = DF2DA77227CF11C50046FE20 /* Alamofire */; };
 		DF30193B28C045E30024AA8B /* Backup+Runner.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF30193A28C045E30024AA8B /* Backup+Runner.swift */; };
-		DF31636D2B93049B00B14E84 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = DF31636C2B93049B00B14E84 /* FirebaseAnalytics */; };
 		DF326461280256760066EB08 /* ProfileView+RelatedContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF326460280256760066EB08 /* ProfileView+RelatedContent.swift */; };
 		DF32646328029A380066EB08 /* STTImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF32646228029A380066EB08 /* STTImageProvider.swift */; };
 		DF3264692802A0AF0066EB08 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3264682802A0AE0066EB08 /* ImagePicker.swift */; };
 		DF32646B2802A6C70066EB08 /* STTImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF32646A2802A6C70066EB08 /* STTImageView.swift */; };
+		DF327EA22BB523F300B6676E /* +CDSearchHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF327E952BB523F300B6676E /* +CDSearchHistory.swift */; };
+		DF327EA32BB523F300B6676E /* CDArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF327E962BB523F300B6676E /* CDArchive.swift */; };
+		DF327EA42BB523F300B6676E /* CDCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF327E972BB523F300B6676E /* CDCollection.swift */; };
+		DF327EA52BB523F300B6676E /* CDKVPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF327E982BB523F300B6676E /* CDKVPair.swift */; };
+		DF327EA62BB523F300B6676E /* CDOPDSServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF327E992BB523F300B6676E /* CDOPDSServer.swift */; };
+		DF327EA72BB523F300B6676E /* CDOPublication.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF327E9A2BB523F300B6676E /* CDOPublication.swift */; };
+		DF327EA82BB523F300B6676E /* CDRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF327E9B2BB523F300B6676E /* CDRunner.swift */; };
+		DF327EA92BB523F300B6676E /* CDRunnerList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF327E9C2BB523F300B6676E /* CDRunnerList.swift */; };
+		DF327EAA2BB523F300B6676E /* CDManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF327E9E2BB523F300B6676E /* CDManager.swift */; };
+		DF327EAB2BB523F300B6676E /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DF327E9F2BB523F300B6676E /* Model.xcdatamodeld */; };
+		DF327EAE2BB5288100B6676E /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = DF327EAD2BB5288100B6676E /* FirebaseAnalytics */; };
 		DF3318512A479346000B092B /* DV+Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3318502A479346000B092B /* DV+Settings.swift */; };
 		DF3318532A47934E000B092B /* DV+DownloadQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3318522A47934E000B092B /* DV+DownloadQueue.swift */; };
 		DF3318552A47A631000B092B /* DV+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3318542A47A631000B092B /* DV+CollectionView.swift */; };
@@ -576,6 +586,16 @@
 		DF32646228029A380066EB08 /* STTImageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STTImageProvider.swift; sourceTree = "<group>"; };
 		DF3264682802A0AE0066EB08 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		DF32646A2802A6C70066EB08 /* STTImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STTImageView.swift; sourceTree = "<group>"; };
+		DF327E952BB523F300B6676E /* +CDSearchHistory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "+CDSearchHistory.swift"; sourceTree = "<group>"; };
+		DF327E962BB523F300B6676E /* CDArchive.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDArchive.swift; sourceTree = "<group>"; };
+		DF327E972BB523F300B6676E /* CDCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDCollection.swift; sourceTree = "<group>"; };
+		DF327E982BB523F300B6676E /* CDKVPair.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDKVPair.swift; sourceTree = "<group>"; };
+		DF327E992BB523F300B6676E /* CDOPDSServer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDOPDSServer.swift; sourceTree = "<group>"; };
+		DF327E9A2BB523F300B6676E /* CDOPublication.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDOPublication.swift; sourceTree = "<group>"; };
+		DF327E9B2BB523F300B6676E /* CDRunner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDRunner.swift; sourceTree = "<group>"; };
+		DF327E9C2BB523F300B6676E /* CDRunnerList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDRunnerList.swift; sourceTree = "<group>"; };
+		DF327E9E2BB523F300B6676E /* CDManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CDManager.swift; sourceTree = "<group>"; };
+		DF327EA12BB523F300B6676E /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		DF3318502A479346000B092B /* DV+Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DV+Settings.swift"; sourceTree = "<group>"; };
 		DF3318522A47934E000B092B /* DV+DownloadQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DV+DownloadQueue.swift"; sourceTree = "<group>"; };
 		DF3318542A47A631000B092B /* DV+CollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DV+CollectionView.swift"; sourceTree = "<group>"; };
@@ -933,7 +953,7 @@
 				DFB7FB03297B965D00599097 /* OrderedCollections in Frameworks */,
 				DFA17F662A4916C300179850 /* ASCollectionView in Frameworks */,
 				DF70234F29DA852A0076AAD0 /* Nuke in Frameworks */,
-				DF31636D2B93049B00B14E84 /* FirebaseAnalytics in Frameworks */,
+				DF327EAE2BB5288100B6676E /* FirebaseAnalytics in Frameworks */,
 				DF730CD329411F1B00C62C71 /* FlagKit in Frameworks */,
 				DF482F012955A56F002D3308 /* RealmSwift in Frameworks */,
 				DF0D96062824892C00E592D9 /* Realm in Frameworks */,
@@ -1221,6 +1241,31 @@
 				DF9BFE142A428A1A005D0B63 /* Shared */,
 				DF9BFDFF2A4285BC005D0B63 /* ThumbnailProvider */,
 			);
+			sourceTree = "<group>";
+		};
+		DF327E9D2BB523F300B6676E /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				DF327E952BB523F300B6676E /* +CDSearchHistory.swift */,
+				DF327E962BB523F300B6676E /* CDArchive.swift */,
+				DF327E972BB523F300B6676E /* CDCollection.swift */,
+				DF327E982BB523F300B6676E /* CDKVPair.swift */,
+				DF327E992BB523F300B6676E /* CDOPDSServer.swift */,
+				DF327E9A2BB523F300B6676E /* CDOPublication.swift */,
+				DF327E9B2BB523F300B6676E /* CDRunner.swift */,
+				DF327E9C2BB523F300B6676E /* CDRunnerList.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		DF327EA02BB523F300B6676E /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				DF327E9D2BB523F300B6676E /* Models */,
+				DF327E9E2BB523F300B6676E /* CDManager.swift */,
+				DF327E9F2BB523F300B6676E /* Model.xcdatamodeld */,
+			);
+			path = CoreData;
 			sourceTree = "<group>";
 		};
 		DF33184F2A47933A000B092B /* Sheets */ = {
@@ -1562,6 +1607,7 @@
 		DF8D09DF2800EE47003E4C3E /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				DF327EA02BB523F300B6676E /* CoreData */,
 				DF6B5751288F41E9007C6B78 /* Daisuke */,
 				DF8D0A092800EE47003E4C3E /* Data */,
 				DF8D0A022800EE47003E4C3E /* Defaults */,
@@ -2539,7 +2585,7 @@
 				DFF4351D2AA6D09800FAAD8B /* Zephyr */,
 				DF29A6812ABBC313005E11E3 /* AsyncDisplayKit */,
 				DFAE977C2AC866D9001E62D8 /* IceCream */,
-				DF31636C2B93049B00B14E84 /* FirebaseAnalytics */,
+				DF327EAD2BB5288100B6676E /* FirebaseAnalytics */,
 			);
 			productName = "Suwatte (iOS)";
 			productReference = DFCE6EAF280108EA002E220C /* Suwatte.app */;
@@ -2574,7 +2620,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 1530;
 				TargetAttributes = {
 					DF2DA70B27CD82450046FE20 = {
 						CreatedOnToolsVersion = 13.2.1;
@@ -2608,7 +2654,7 @@
 				DFF4351C2AA6D09800FAAD8B /* XCRemoteSwiftPackageReference "Zephyr" */,
 				DF29A6802ABBC313005E11E3 /* XCRemoteSwiftPackageReference "Texture" */,
 				DFAE977B2AC866D9001E62D8 /* XCRemoteSwiftPackageReference "IceCream" */,
-				DF31636B2B93049B00B14E84 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				DF327EAC2BB5288100B6676E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = DF2DA6FF27CD82430046FE20;
 			projectDirPath = "";
@@ -2666,6 +2712,7 @@
 				DF52FBBE289487C6008FAD3A /* STTGridView.swift in Sources */,
 				DFA25FEE2AA50E8D00A1369E /* WebtoonController+Keyboard.swift in Sources */,
 				DF8D0BA02800EE48003E4C3E /* ProfileView+ChapterListTile.swift in Sources */,
+				DF327EAA2BB523F300B6676E /* CDManager.swift in Sources */,
 				DF1114802A92E9BF00FA8A39 /* WebtoonController+DataSource.swift in Sources */,
 				DFE1B10C2A9D5C2600D300DB /* Migration+ManualDestinationView.swift in Sources */,
 				DF489C2C2A835804006A21B9 /* DoublePaged+Cell.swift in Sources */,
@@ -2761,6 +2808,7 @@
 				DFDBF9752A7C552B006D49AD /* JSCR+JS.swift in Sources */,
 				DF2783622A79B1610098BBA9 /* +Content.swift in Sources */,
 				DFF09B4E2A58C14A00C5CA5E /* +OAuth.swift in Sources */,
+				DF327EA32BB523F300B6676E /* CDArchive.swift in Sources */,
 				DF11147A2A92E90A00FA8A39 /* WebtoonController+Scroll.swift in Sources */,
 				DF8D0B382800EE47003E4C3E /* STT+Array.swift in Sources */,
 				DF8D0BAF2800EE48003E4C3E /* BadgeModifier.swift in Sources */,
@@ -2797,6 +2845,7 @@
 				DF1EA4522A70E0FE003E27C7 /* SourceDownloadQueueView.swift in Sources */,
 				DFE1B0F62A9A590100D300DB /* ChapterList+Methods.swift in Sources */,
 				DF020A5A2A8C5E8A00BC5562 /* PagingController+ContextMenu.swift in Sources */,
+				DF327EA82BB523F300B6676E /* CDRunner.swift in Sources */,
 				DFBE48382A25BB53000ABA16 /* Chapter.swift in Sources */,
 				DF270AFE2ADE46F000E64E19 /* DSK+RedrawImage.swift in Sources */,
 				DFD4D86C2A7B1C2500C5AC13 /* Realm+BrowseView.swift in Sources */,
@@ -2822,6 +2871,7 @@
 				DF6C25CD282DC110002BE1AA /* STT+Conditional.swift in Sources */,
 				DF8D0B2B2800EE47003E4C3E /* Loadable.swift in Sources */,
 				DFA25FF02AA540C400A1369E /* UIImageViewAligned.swift in Sources */,
+				DF327EA62BB523F300B6676E /* CDOPDSServer.swift in Sources */,
 				DF9FDD782AAE7AE40016BD5E /* DSKHighlightTile.swift in Sources */,
 				DF8D0B2F2800EE47003E4C3E /* STT+ContentStatus.swift in Sources */,
 				DFDBF9852A7C6049006D49AD /* Engine+JSC.swift in Sources */,
@@ -2841,6 +2891,7 @@
 				DFBE485A2A26CE84000ABA16 /* History+ContentSource.swift in Sources */,
 				DF1114842A92EF3C00FA8A39 /* WebtoonController+Event.swift in Sources */,
 				DF1114762A92E86600FA8A39 /* WebtoonController+Navigation.swift in Sources */,
+				DF327EA92BB523F300B6676E /* CDRunnerList.swift in Sources */,
 				DF79D268281092870052470D /* Shimmer.swift in Sources */,
 				DF2783342A799BEF0098BBA9 /* RealmActor.swift in Sources */,
 				DF8D0B942800EE48003E4C3E /* CPV+ViewModel.swift in Sources */,
@@ -2880,6 +2931,7 @@
 				DF4EB4CD2AB28F82001A73CD /* Realm+Statistics.swift in Sources */,
 				DFBE483C2A25BC2B000ABA16 /* ThreadSafeChapter.swift in Sources */,
 				DFB47EFD2880E9C90040A1BD /* OPDS+AddServer.swift in Sources */,
+				DF327EA42BB523F300B6676E /* CDCollection.swift in Sources */,
 				DF6883852A608FD7009B5642 /* AllTagsView.swift in Sources */,
 				DFDBF9A62A7CC4CD006D49AD /* WKCS+Impl.swift in Sources */,
 				DF1114912A93EF6300FA8A39 /* ImageScrollView.swift in Sources */,
@@ -2929,6 +2981,7 @@
 				DFE1B0FA2A9A59F400D300DB /* ChapterList+ContextMenu.swift in Sources */,
 				DF83DD3328223B680021575B /* ProfileView+TrackersSheet.swift in Sources */,
 				DF489C392A8482D3006A21B9 /* IV+HorizontalLayout.swift in Sources */,
+				DF327EA52BB523F300B6676E /* CDKVPair.swift in Sources */,
 				DF68249F28A5D2CF00AB30A1 /* ContentSourceView.swift in Sources */,
 				DF8D0BB12800EE48003E4C3E /* ViewHeightReader.swift in Sources */,
 				DFBE485C2A2FA20E000ABA16 /* ReadLater+ViewModel.swift in Sources */,
@@ -2979,6 +3032,7 @@
 				DF8D0B332800EE47003E4C3E /* STT+String.swift in Sources */,
 				DF11146F2A917B5E00FA8A39 /* WebtoonController+Setup.swift in Sources */,
 				DF33AC162A700C6600D2993A /* SDM+Download.swift in Sources */,
+				DF327EA72BB523F300B6676E /* CDOPublication.swift in Sources */,
 				DF16F2D02A5F99BE00D7AFBB /* PageView+Tile.swift in Sources */,
 				DFBE483E2A25BC88000ABA16 /* OPDSContent.swift in Sources */,
 				DF9BD6482891D5B4006628D0 /* DSK+Content.swift in Sources */,
@@ -3037,6 +3091,7 @@
 				DF67EB9928E7B07700076FF5 /* AddContentLink.swift in Sources */,
 				DF67EB9B28E7B08400076FF5 /* ManageContentLinks.swift in Sources */,
 				DFA25FF22AA56A9200A1369E /* IV+BasicZoomingScrollView.swift in Sources */,
+				DF327EA22BB523F300B6676E /* +CDSearchHistory.swift in Sources */,
 				DF8D0B3D2800EE47003E4C3E /* Preference.swift in Sources */,
 				DFBE48502A25BE4A000ABA16 /* Bookmark.swift in Sources */,
 				DF8D0BA92800EE48003E4C3E /* SuwatteApp.swift in Sources */,
@@ -3060,6 +3115,7 @@
 				DF8D0B9B2800EE48003E4C3E /* ProfileView+InfoSection.swift in Sources */,
 				DF8D0B922800EE48003E4C3E /* SearchView.swift in Sources */,
 				DF9BD64A2891D837006628D0 /* DSK+Chapter.swift in Sources */,
+				DF327EAB2BB523F300B6676E /* Model.xcdatamodeld in Sources */,
 				DF67EB9128E4CB6500076FF5 /* ToastManager.swift in Sources */,
 				DF8D0B962800EE48003E4C3E /* ProfileView+Covers.swift in Sources */,
 				DF9BD6462891C16D006628D0 /* DSK+Tag.swift in Sources */,
@@ -3095,6 +3151,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -3160,6 +3217,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -3436,12 +3494,12 @@
 				kind = branch;
 			};
 		};
-		DF31636B2B93049B00B14E84 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+		DF327EAC2BB5288100B6676E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 10.21.0;
+				minimumVersion = 10.23.0;
 			};
 		};
 		DF59C97B285004850027F19D /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
@@ -3547,9 +3605,9 @@
 			package = DF2DA77127CF11C50046FE20 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
 		};
-		DF31636C2B93049B00B14E84 /* FirebaseAnalytics */ = {
+		DF327EAD2BB5288100B6676E /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF31636B2B93049B00B14E84 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = DF327EAC2BB5288100B6676E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAnalytics;
 		};
 		DF482F002955A56F002D3308 /* RealmSwift */ = {
@@ -3628,6 +3686,20 @@
 			productName = Zephyr;
 		};
 /* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		DF327E9F2BB523F300B6676E /* Model.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				DF327EA12BB523F300B6676E /* Model.xcdatamodel */,
+			);
+			currentVersion = DF327EA12BB523F300B6676E /* Model.xcdatamodel */;
+			name = Model.xcdatamodeld;
+			path = /Users/mantton/Documents/projects/suwatte/app/iOS/CoreData/Model.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = DF2DA70027CD82430046FE20 /* Project object */;
 }
