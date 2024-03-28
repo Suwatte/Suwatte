@@ -54,10 +54,9 @@ struct STTImageView: View {
 
         guard let url, url.isHTTP || url.isFileURL else { return }
 
-        if identifier.sourceId == STTHelpers.OPDS_CONTENT_ID {
-            let actor = await RealmActor.shared()
-            let pub = await actor.getPublication(id: identifier.contentId)
-            let value = pub?.client?.toClient().authHeader
+        if STTHelpers.isOPDSSource(identifier.sourceId)  {
+            let pub = CDOPublication.get(id: identifier.contentId)
+            let value = pub?.server?.toClient().authHeader
             guard let value else {
                 loader.load(url)
                 return

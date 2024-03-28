@@ -8,6 +8,9 @@
 import Foundation
 import CoreData
 
+// MARK: - Definition
+@objc(CDOServer)
+public final class CDOServer : NSManagedObject  {}
 
 extension CDOServer {
     var serverID: String {
@@ -92,12 +95,3 @@ extension CDOServer {
 }
 
 
-extension NSManagedObjectContext {
-    func safeSave() {
-        do {
-            try save()
-        } catch {
-            Logger.shared.error(error)
-        }
-    }
-}

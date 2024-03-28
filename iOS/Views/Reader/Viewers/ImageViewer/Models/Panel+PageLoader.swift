@@ -133,14 +133,8 @@ extension PanelActor {
             guard let opds = page.opds else {
                 return base
             }
-            let keychain = KeychainSwift()
-            keychain.synchronizable = true
-            let pw = keychain.get("OPDS_\(opds.clientId)")
-            guard let pw else {
-                return base
-            }
             var headers = HTTPHeaders()
-            let merge = "\(opds.userName):\(pw)"
+            let merge = "\(opds.username):\(opds.password)"
             let value = "Basic \(merge.toBase64())"
             headers.add(.init(name: "Authorization", value: value))
             return try .init(url: url, method: .get, headers: headers)

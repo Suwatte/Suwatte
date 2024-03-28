@@ -9,6 +9,10 @@ import Foundation
 import CoreData
 import R2Shared
 
+// MARK: - Definition
+@objc(CDOPublication)
+public final class CDOPublication : NSManagedObject  {}
+
 
 
 extension CDOPublication {

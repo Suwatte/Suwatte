@@ -291,15 +291,12 @@ extension Target {
         }
 
         func handleStreamSelection(publication: Publication) {
-            Task {
-                let actor = await RealmActor.shared()
-                do {
-                    try await actor.savePublication(publication, client.id)
-                    chapter = try publication.toReadableChapter(clientID: client.id)
-                } catch {
-                    ToastManager.shared.error(error)
-                    Logger.shared.error(error, "OPDS")
-                }
+            do {
+                try CDOPublication.add(publication: publication, client: client.id)
+                chapter = try publication.toReadableChapter(clientID: client.id)
+            } catch {
+                ToastManager.shared.error(error)
+                Logger.shared.error(error, "OPDS")
             }
         }
     }

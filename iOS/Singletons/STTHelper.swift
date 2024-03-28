@@ -111,6 +111,10 @@ extension STTHelpers {
     static func isInternalSource(_ id: String) -> Bool {
         return id == LOCAL_CONTENT_ID || id == OPDS_CONTENT_ID
     }
+    
+    static func isOPDSSource(_ id : String) -> Bool {
+        return id == OPDS_CONTENT_ID
+    }
 }
 
 extension STTHelpers {

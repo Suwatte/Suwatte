@@ -27,7 +27,8 @@ struct ReaderChapterData: Hashable, Sendable {
 
 struct OPDSInfo: Hashable {
     let clientId: String
-    let userName: String
+    let username: String
+    let password: String
 }
 
 // MARK: Page Provider

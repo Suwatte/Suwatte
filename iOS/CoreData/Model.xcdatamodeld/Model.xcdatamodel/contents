@@ -37,7 +37,7 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
-    <entity name="CDOPublication" representedClassName="CDOPublication" syncable="YES" codeGenerationType="class">
+    <entity name="CDOPublication" representedClassName="CDOPublication" syncable="YES" codeGenerationType="category">
         <attribute name="id_" optional="YES" attributeType="String"/>
         <attribute name="lastRead" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="link_" optional="YES" attributeType="String"/>
@@ -54,11 +54,11 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
-    <entity name="CDOServer" representedClassName="CDOServer" syncable="YES" codeGenerationType="class">
+    <entity name="CDOServer" representedClassName="CDOServer" syncable="YES" codeGenerationType="category">
         <attribute name="alias_" optional="YES" attributeType="String"/>
         <attribute name="host_" optional="YES" attributeType="String"/>
         <attribute name="id_" optional="YES" attributeType="String"/>
-        <attribute name="password_" optional="YES" attributeType="String"/>
+        <attribute name="password_" optional="YES" attributeType="String" allowsCloudEncryption="YES"/>
         <attribute name="username_" optional="YES" attributeType="String"/>
         <fetchIndex name="id__index">
             <fetchIndexElement property="id_" type="Binary" order="ascending"/>

@@ -150,7 +150,6 @@ extension RealmActor {
             realm.objects(ArchivedContent.self).setValue(true, forKey: "isDeleted")
             realm.objects(LibraryCollectionFilter.self).setValue(true, forKey: "isDeleted")
             realm.objects(UpdatedSearchHistory.self).setValue(true, forKey: "isDeleted")
-            realm.objects(StoredOPDSServer.self).setValue(true, forKey: "isDeleted")
             realm.objects(ChapterBookmark.self).setValue(true, forKey: "isDeleted")
             realm.delete(realm.objects(StoredChapterData.self))
 

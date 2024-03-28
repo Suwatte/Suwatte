@@ -33,3 +33,13 @@ class CDManager: ObservableObject {
         container.viewContext
     }
 }
+
+extension NSManagedObjectContext {
+    func safeSave() {
+        do {
+            try save()
+        } catch {
+            Logger.shared.error(error)
+        }
+    }
+}

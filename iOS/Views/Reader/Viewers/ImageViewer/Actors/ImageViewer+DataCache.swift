@@ -156,8 +156,8 @@ extension IVDataCache {
             let obj = StoredChapterData()
             obj.chapter = chapter.toStored()
             let baseLink = chapter.chapterId
-            let publication = await actor.getPublication(id: chapter.id)
-            guard let publication, let client = publication.client else {
+            let publication = CDOPublication.get(id: chapter.id)
+            guard let publication, let client = publication.server else {
                 throw DSK.Errors.NamedError(name: "OPDS", message: "Unable to fetch OPDS Content")
             }
             let pageCount = publication.pageCount
@@ -167,7 +167,9 @@ extension IVDataCache {
                 return page
             }
 
-            let info = OPDSInfo(clientId: client.id, userName: client.userName)
+            let info = OPDSInfo(clientId: client.serverID,
+                                            username: client.username,
+                                            password: client.password)
             obj.pages.append(objectsIn: pages)
             obj.opdsInfo = info
             return obj.toReadableChapterData(with: chapter)

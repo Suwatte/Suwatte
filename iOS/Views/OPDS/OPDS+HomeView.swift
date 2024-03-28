@@ -11,9 +11,10 @@ import SwiftUI
 struct OPDSView: View {
     @State private var presentAddNewServer = false
     @State private var presentRenameAlert = false
-    @State private var server: StoredOPDSServer? = nil
-    @State private var servers: [StoredOPDSServer] = []
-    @State private var token: NotificationToken?
+    
+    @FetchRequest(fetchRequest: CDOServer.orderedFetch(), animation: .default)
+    private var servers: FetchedResults<CDOServer>
+    
     var body: some View {
         List {
             ForEach(servers) { server in
@@ -23,10 +24,7 @@ struct OPDSView: View {
                 }
                 .swipeActions {
                     Button("Delete") {
-                        Task {
-                            let actor = await RealmActor.shared()
-                            await actor.removeOPDServer(id: server.id)
-                        }
+                        CDOServer.remove(server)
                     }
                     .tint(.red)
                     Button("Rename") {
@@ -48,18 +46,12 @@ struct OPDSView: View {
                 AddNewServerSheet()
                     .closeButton()
             }
-
         })
-        .navigationTitle("OPDS")
-        .animation(.default, value: servers)
-        .task {
-            await observe()
-        }
-        .onDisappear(perform: cancel)
+        .navigationTitle("OPDS Servers")
     }
 
     @MainActor
-    func renamePrompt(server: StoredOPDSServer) {
+    func renamePrompt(server: CDOServer) {
         let ac = UIAlertController(title: "Rename \(server.alias)", message: nil, preferredStyle: .alert)
         ac.addTextField()
 
@@ -67,30 +59,10 @@ struct OPDSView: View {
             let text = ac.textFields![0].text
 
             guard let text else { return }
-
-            Task {
-                let actor = await RealmActor.shared()
-                await actor.renameOPDSServer(id: server.id, name: text)
-            }
+            CDOServer.rename(server, name: text)
         }
         ac.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         ac.addAction(submitAction)
         getKeyWindow()?.rootViewController?.present(ac, animated: true)
-    }
-}
-
-extension OPDSView {
-    func cancel() {
-        token?.invalidate()
-        token = nil
-    }
-
-    func observe() async {
-        let actor = await RealmActor.shared()
-        token = await actor.observeOPDSServers { value in
-            Task { @MainActor in
-                servers = value
-            }
-        }
     }
 }

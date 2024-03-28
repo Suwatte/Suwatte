@@ -17,7 +17,7 @@ extension OPDSView {
                 Section {
                     HStack(alignment: .center, spacing: 0) {
                         Text("Alias: ")
-                        TextField("Alias", text: $entry.alias, prompt: Text("My Definitely Legal Comic Server"))
+                        TextField("Alias", text: $entry.alias, prompt: Text("My Comic Server"))
                             .autocapitalization(.none)
                     }
                     HStack(alignment: .center, spacing: 0) {
@@ -70,11 +70,12 @@ extension OPDSView {
                         // Test
                         Task {
                             do {
+                                // Validate Feed is fetchable
                                 let _ = try await client.getFeed(url: entry.host)
 
                                 // Save
-                                let actor = await RealmActor.shared()
-                                await actor.saveNewOPDSServer(entry: entry)
+                                CDOServer.add(info: entry)
+                                
                                 // Dismiss
                                 presentationMode.wrappedValue.dismiss()
 
