@@ -26,6 +26,17 @@ struct File: Identifiable, Hashable {
     func sizeToString() -> String {
         ByteCountFormatter.string(fromByteCount: size, countStyle: .file)
     }
+    
+    func bookmark() throws -> Data {
+       guard url.startAccessingSecurityScopedResource() else {
+           throw DSK.Errors.NamedError(name: "Permissions", message: "Failed to access file.")
+       }
+       
+       defer {
+           url.stopAccessingSecurityScopedResource()
+       }
+       return try url.bookmarkData(options: [.minimalBookmark], includingResourceValuesForKeys: nil, relativeTo: nil)
+   }
 }
 
 struct Folder: Hashable {

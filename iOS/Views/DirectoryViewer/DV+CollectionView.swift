@@ -89,7 +89,11 @@ extension DirectoryViewer {
             ZStack(alignment: .topTrailing) {
                 Button {
                     if file.isOnDevice {
-                        coreModel.didTapFile(file)
+                        do {
+                            try coreModel.didTapFile(file)
+                        } catch {
+                            ToastManager.shared.error(error)
+                        }
                     } else {
                         coreModel.downloadAndRun(file) {
                             file = $0

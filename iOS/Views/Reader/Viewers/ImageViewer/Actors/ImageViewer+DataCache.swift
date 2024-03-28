@@ -114,7 +114,7 @@ extension IVDataCache {
         switch chapter.chapterType {
         case .LOCAL:
             let id = chapter.contentId
-            let archivedContent = await actor.getArchivedContentInfo(id)
+            let archivedContent = await CDArchive.get(id: id, context: CDManager.shared.container.newBackgroundContext())
 
             guard let archivedContent else {
                 throw DSK.Errors.NamedError(name: "DataLoader", message: "Failed to locate archive information")

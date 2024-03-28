@@ -114,11 +114,6 @@ extension HistoryView {
             downloader.download(file.url) { [weak self] result in
                 do {
                     let updatedFile = try result.get().convertToSTTFile()
-                    Task {
-                        let actor = await RealmActor.shared()
-                        await actor.saveArchivedFile(updatedFile)
-                    }
-
                     guard let self, !self.readerLock else { return }
                     updatedFile.read()
                 } catch {

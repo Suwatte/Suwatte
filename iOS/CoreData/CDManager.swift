@@ -43,3 +43,22 @@ extension NSManagedObjectContext {
         }
     }
 }
+
+
+@available(iOS 15.0.0, *)
+extension NSManagedObjectContext {
+    func get<E, R>(request: NSFetchRequest<E>) async throws -> [R] where E: NSManagedObject, E: ThreadSafeMappable, R == E.SafeType {
+        try await self.perform { [weak self] in
+            try self?.fetch(request).compactMap { try $0.mapToThreadSafe() } ?? []
+        }
+    }
+}
+
+enum SafeMapError: Error {
+    case invalidMapping
+}
+
+protocol ThreadSafeMappable {
+    associatedtype SafeType
+    func mapToThreadSafe() throws -> SafeType
+}

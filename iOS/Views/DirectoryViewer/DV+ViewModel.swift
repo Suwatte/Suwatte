@@ -98,13 +98,8 @@ extension DirectoryViewer {
         @Published var currentlyReading: File?
         private let downloader = CloudDownloader()
 
-        func read(_: [File]) {}
-
-        func didTapFile(_ file: File) {
-            Task {
-                let actor = await RealmActor.shared()
-                await actor.saveArchivedFile(file)
-            }
+        func didTapFile(_ file: File) throws {
+            try CDArchive.add(file)
             // Generate Chapter
             let chapter = file.toReadableChapter()
 
@@ -133,7 +128,7 @@ extension DirectoryViewer {
                     updatedFile.pageCount = pageCount
                     callback(updatedFile)
                     if self?.currentlyReading == nil {
-                        self?.didTapFile(updatedFile)
+                        try self?.didTapFile(updatedFile)
                     }
                 } catch {
                     ToastManager.shared.error(error)
@@ -170,12 +165,13 @@ extension File {
                                   requestedOffset: nil,
                                   readingMode: nil,
                                   dismissAction: nil)
-        Task {
-            let actor = await RealmActor.shared()
-            await actor.saveArchivedFile(self)
-        }
-        Task { @MainActor in
-            StateManager.shared.openReader(state: context)
+        do {
+            try CDArchive.add(self)
+            Task { @MainActor in
+                StateManager.shared.openReader(state: context)
+            }
+        } catch {
+            ToastManager.shared.error(error)
         }
     }
 }

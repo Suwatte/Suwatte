@@ -7,31 +7,3 @@
 
 import Foundation
 import RealmSwift
-
-extension RealmActor {
-    func saveArchivedFile(_ file: File) async {
-        let directory = CloudDataManager
-            .shared
-            .getDocumentDiretoryURL()
-            .appendingPathComponent("Library", isDirectory: true)
-
-        let relativePath = file.url.path.components(separatedBy: directory.path).last
-
-        guard let relativePath else {
-            Logger.shared.error("unable to retrieve relative path of file")
-            return
-        }
-
-        let obj = ArchivedContent()
-        obj.id = file.id
-        obj.name = file.metaData?.title ?? file.name
-        obj.relativePath = relativePath
-        await operation {
-            realm.add(obj, update: .modified)
-        }
-    }
-
-    func getArchivedContentInfo(_ id: String) -> ArchivedContent? {
-        return getObject(of: ArchivedContent.self, with: id)?.freeze()
-    }
-}
