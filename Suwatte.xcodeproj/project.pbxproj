@@ -79,7 +79,6 @@
 		DF2783492A79A0970098BBA9 /* Realm+ReadLater.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783482A79A0970098BBA9 /* Realm+ReadLater.swift */; };
 		DF27834B2A79A0E80098BBA9 /* Realm+LibraryCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF27834A2A79A0E80098BBA9 /* Realm+LibraryCollection.swift */; };
 		DF27834D2A79A13B0098BBA9 /* Realm+Bookmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF27834C2A79A13B0098BBA9 /* Realm+Bookmark.swift */; };
-		DF27834F2A79A16C0098BBA9 /* Realm+CustomThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF27834E2A79A16C0098BBA9 /* Realm+CustomThumbnail.swift */; };
 		DF2783512A79A1A20098BBA9 /* Realm+TrackerLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783502A79A1A20098BBA9 /* Realm+TrackerLink.swift */; };
 		DF2783532A79A1FC0098BBA9 /* Realm+ContentLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783522A79A1FC0098BBA9 /* Realm+ContentLink.swift */; };
 		DF2783552A79A46B0098BBA9 /* Realm+Download.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783542A79A46B0098BBA9 /* Realm+Download.swift */; };
@@ -361,7 +360,6 @@
 		DFBE484C2A25BDEF000ABA16 /* LibraryCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE484B2A25BDEF000ABA16 /* LibraryCollection.swift */; };
 		DFBE484E2A25BE10000ABA16 /* LibraryCollectionFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE484D2A25BE10000ABA16 /* LibraryCollectionFilter.swift */; };
 		DFBE48502A25BE4A000ABA16 /* Bookmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE484F2A25BE4A000ABA16 /* Bookmark.swift */; };
-		DFBE48522A25BE7B000ABA16 /* CustomThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE48512A25BE7B000ABA16 /* CustomThumbnail.swift */; };
 		DFBE48542A25BEA0000ABA16 /* TrackerLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE48532A25BEA0000ABA16 /* TrackerLink.swift */; };
 		DFBE48562A25BEB2000ABA16 /* ContentLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE48552A25BEB2000ABA16 /* ContentLink.swift */; };
 		DFBE485A2A26CE84000ABA16 /* History+ContentSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE48592A26CE84000ABA16 /* History+ContentSource.swift */; };
@@ -371,6 +369,7 @@
 		DFC39E9528A093D700450EC4 /* RunnerListsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC39E9428A093D700450EC4 /* RunnerListsView.swift */; };
 		DFC39E9728A0B0BC00450EC4 /* Runner.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC39E9628A0B0BC00450EC4 /* Runner.swift */; };
 		DFC39E9C28A164A600450EC4 /* ToastModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC39E9B28A164A500450EC4 /* ToastModifier.swift */; };
+		DFCB540B2BB55B9900EDAC6B /* CDThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFCB540A2BB55B9900EDAC6B /* CDThumbnail.swift */; };
 		DFD1EE1229B7CE2600AFAA47 /* PreMigrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD1EE1129B7CE2600AFAA47 /* PreMigrationView.swift */; };
 		DFD4D8682A7AD20300C5AC13 /* Realm+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD4D8672A7AD20300C5AC13 /* Realm+Observer.swift */; };
 		DFD4D86A2A7AD70700C5AC13 /* Realm+ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD4D8692A7AD70700C5AC13 /* Realm+ProfileView.swift */; };
@@ -559,7 +558,6 @@
 		DF2783482A79A0970098BBA9 /* Realm+ReadLater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+ReadLater.swift"; sourceTree = "<group>"; };
 		DF27834A2A79A0E80098BBA9 /* Realm+LibraryCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+LibraryCollection.swift"; sourceTree = "<group>"; };
 		DF27834C2A79A13B0098BBA9 /* Realm+Bookmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+Bookmark.swift"; sourceTree = "<group>"; };
-		DF27834E2A79A16C0098BBA9 /* Realm+CustomThumbnail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+CustomThumbnail.swift"; sourceTree = "<group>"; };
 		DF2783502A79A1A20098BBA9 /* Realm+TrackerLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+TrackerLink.swift"; sourceTree = "<group>"; };
 		DF2783522A79A1FC0098BBA9 /* Realm+ContentLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+ContentLink.swift"; sourceTree = "<group>"; };
 		DF2783542A79A46B0098BBA9 /* Realm+Download.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+Download.swift"; sourceTree = "<group>"; };
@@ -829,7 +827,6 @@
 		DFBE484B2A25BDEF000ABA16 /* LibraryCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryCollection.swift; sourceTree = "<group>"; };
 		DFBE484D2A25BE10000ABA16 /* LibraryCollectionFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryCollectionFilter.swift; sourceTree = "<group>"; };
 		DFBE484F2A25BE4A000ABA16 /* Bookmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bookmark.swift; sourceTree = "<group>"; };
-		DFBE48512A25BE7B000ABA16 /* CustomThumbnail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomThumbnail.swift; sourceTree = "<group>"; };
 		DFBE48532A25BEA0000ABA16 /* TrackerLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerLink.swift; sourceTree = "<group>"; };
 		DFBE48552A25BEB2000ABA16 /* ContentLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentLink.swift; sourceTree = "<group>"; };
 		DFBE48592A26CE84000ABA16 /* History+ContentSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "History+ContentSource.swift"; sourceTree = "<group>"; };
@@ -839,6 +836,7 @@
 		DFC39E9428A093D700450EC4 /* RunnerListsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerListsView.swift; sourceTree = "<group>"; };
 		DFC39E9628A0B0BC00450EC4 /* Runner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Runner.swift; sourceTree = "<group>"; };
 		DFC39E9B28A164A500450EC4 /* ToastModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastModifier.swift; sourceTree = "<group>"; };
+		DFCB540A2BB55B9900EDAC6B /* CDThumbnail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CDThumbnail.swift; sourceTree = "<group>"; };
 		DFCE6EAF280108EA002E220C /* Suwatte.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Suwatte.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DFD1EE1129B7CE2600AFAA47 /* PreMigrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreMigrationView.swift; sourceTree = "<group>"; };
 		DFD4D8672A7AD20300C5AC13 /* Realm+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+Observer.swift"; sourceTree = "<group>"; };
@@ -1183,7 +1181,6 @@
 				DF2783482A79A0970098BBA9 /* Realm+ReadLater.swift */,
 				DF27834A2A79A0E80098BBA9 /* Realm+LibraryCollection.swift */,
 				DF27834C2A79A13B0098BBA9 /* Realm+Bookmark.swift */,
-				DF27834E2A79A16C0098BBA9 /* Realm+CustomThumbnail.swift */,
 				DF2783502A79A1A20098BBA9 /* Realm+TrackerLink.swift */,
 				DF2783522A79A1FC0098BBA9 /* Realm+ContentLink.swift */,
 				DF2783542A79A46B0098BBA9 /* Realm+Download.swift */,
@@ -1245,6 +1242,7 @@
 				DF327E9A2BB523F300B6676E /* CDOPublication.swift */,
 				DF327E9B2BB523F300B6676E /* CDRunner.swift */,
 				DF327E9C2BB523F300B6676E /* CDRunnerList.swift */,
+				DFCB540A2BB55B9900EDAC6B /* CDThumbnail.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2246,7 +2244,6 @@
 				DFBE484B2A25BDEF000ABA16 /* LibraryCollection.swift */,
 				DFBE484D2A25BE10000ABA16 /* LibraryCollectionFilter.swift */,
 				DFBE484F2A25BE4A000ABA16 /* Bookmark.swift */,
-				DFBE48512A25BE7B000ABA16 /* CustomThumbnail.swift */,
 				DFBE48532A25BEA0000ABA16 /* TrackerLink.swift */,
 				DFBE48552A25BEB2000ABA16 /* ContentLink.swift */,
 				DF457DCF2A439F5C002B5350 /* ArchivedContent.swift */,
@@ -2741,6 +2738,7 @@
 				DF020A692A8C5F9000BC5562 /* PagingController+Event.swift in Sources */,
 				DFDBF9772A7C557B006D49AD /* JSCR+Preferences.swift in Sources */,
 				DF33AC142A700AB100D2993A /* SDM+Fetcher.swift in Sources */,
+				DFCB540B2BB55B9900EDAC6B /* CDThumbnail.swift in Sources */,
 				DF020A602A8C5EA000BC5562 /* PagingController+Combine.swift in Sources */,
 				DFE1B0F82A9A598300D300DB /* ChapterList+MenuButton.swift in Sources */,
 				DF62B5BF2A96F23A00F907CD /* CPVM+ContentLink.swift in Sources */,
@@ -2789,7 +2787,6 @@
 				DF020A442A89A07C00BC5562 /* ArchiveHelper.swift in Sources */,
 				DFE1B1082A9C109700D300DB /* Migration+StrategySelectorView.swift in Sources */,
 				DFA25FEC2AA5075200A1369E /* PagingController+Keyboard.swift in Sources */,
-				DFBE48522A25BE7B000ABA16 /* CustomThumbnail.swift in Sources */,
 				DF16F2B12A5F31E000D7AFBB /* DSK+Page.swift in Sources */,
 				DF2783602A79B12A0098BBA9 /* +Chapter.swift in Sources */,
 				DF67EB9328E7A62D00076FF5 /* MigrationManager.swift in Sources */,
@@ -3100,7 +3097,6 @@
 				DFDBF9AD2A7D861D006D49AD /* WKT+Impl.swift in Sources */,
 				DF67EB8828E3674900076FF5 /* LG+MoveFlag.swift in Sources */,
 				DF8D0B952800EE48003E4C3E /* ProfileView+LibrarySheet.swift in Sources */,
-				DF27834F2A79A16C0098BBA9 /* Realm+CustomThumbnail.swift in Sources */,
 				DF020A662A8C5F7900BC5562 /* PagingController+DoublePage.swift in Sources */,
 				DF553CC4297119AD004C3428 /* UserDefaultSerializable.swift in Sources */,
 				DF27833B2A799D950098BBA9 /* Realm+Chapter.swift in Sources */,

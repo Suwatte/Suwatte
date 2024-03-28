@@ -133,7 +133,9 @@ extension RunnerListsView {
 
         func didLoad() {
             guard let url = URL(string: listURL), let list = loadable.value else { return }
-            CDRunnerList.add(entry: list, url: url)
+            Task {
+                await CDRunnerList.add(entry: list, url: url)
+            }
         }
     }
 }

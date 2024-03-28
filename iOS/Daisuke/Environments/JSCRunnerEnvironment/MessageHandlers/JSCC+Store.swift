@@ -66,14 +66,14 @@ extension H {
         case .os: // ObjectStore
             switch message.action {
             case .get:
-                return CDKVPair.getValue(runner: id, key: message.key)
+                return await CDKVPair.getValue(runner: id, key: message.key)
             case .set:
                 guard let value = message.value else {
                     throw DSK.Errors.ValueStoreErrorKeyValuePairInvalid
                 }
-                CDKVPair.setPair(runner: id, key: message.key, value: value)
+                await CDKVPair.setPair(runner: id, key: message.key, value: value)
             case .remove:
-                CDKVPair.removePair(runner: id, key: message.key)
+                await CDKVPair.removePair(runner: id, key: message.key)
             }
 
         case .ss: // SecureStore

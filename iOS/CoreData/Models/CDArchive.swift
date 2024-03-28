@@ -30,6 +30,8 @@ extension CDArchive {
 
 extension CDArchive {
     static func add(_ file: File, context: NSManagedObjectContext = CDManager.shared.context) throws {
+        
+         
         let directory = CloudDataManager
             .shared
             .getDocumentDiretoryURL()
@@ -38,13 +40,16 @@ extension CDArchive {
         let relativePath = file.url.path.replacingOccurrences(of: directory.path, with: "")
         let bookmark = try file.bookmark()
         
-        
-        let record = CDArchive(context: context)
-        record.id_ = file.id
-        record.name_ = file.metaData?.title ?? file.name
-        record.path_ = relativePath
-        record.bookmark_ = bookmark
-        context.safeSave()
+        Task {
+            await context.perform {
+                let record = CDArchive(context: context)
+                record.id_ = file.id
+                record.name_ = file.metaData?.title ?? file.name
+                record.path_ = relativePath
+                record.bookmark_ = bookmark
+                context.safeSave()
+            }
+        }
     }
     
     static func get(id: String, context: NSManagedObjectContext = CDManager.shared.context) async -> TSArchive? {

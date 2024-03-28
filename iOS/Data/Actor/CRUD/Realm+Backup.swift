@@ -141,7 +141,7 @@ extension RealmActor {
             realm.objects(ProgressMarker.self).setValue(true, forKey: "isDeleted")
 //            realm.objects(StoredRunnerList.self).setValue(true, forKey: "isDeleted")
             realm.objects(StoredRunnerObject.self).setValue(true, forKey: "isDeleted")
-            realm.objects(CustomThumbnail.self).setValue(true, forKey: "isDeleted")
+//            realm.objects(CustomThumbnail.self).setValue(true, forKey: "isDeleted")
             realm.objects(ChapterReference.self).setValue(true, forKey: "isDeleted")
             realm.objects(StreamableOPDSContent.self).setValue(true, forKey: "isDeleted")
 //            realm.objects(InteractorStoreObject.self).setValue(true, forKey: "isDeleted")

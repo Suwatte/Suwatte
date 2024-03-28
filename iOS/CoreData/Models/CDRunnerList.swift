@@ -45,12 +45,14 @@ extension CDRunnerList {
     
     
     /// Adds a runner list to the DB
-    static func add(entry: RunnerList, url: URL, context: NSManagedObjectContext = CDManager.shared.context) {
-        let _ = CDRunnerList(name: entry.listName, url: url, context: context)
-        do {
-            try context.save()
-        } catch {
-            Logger.shared.error(error)
+    static func add(entry: RunnerList, url: URL, context: NSManagedObjectContext = CDManager.shared.context) async {
+        await context.perform {
+            let _ = CDRunnerList(name: entry.listName, url: url, context: context)
+            do {
+                try context.save()
+            } catch {
+                Logger.shared.error(error)
+            }
         }
     }
     

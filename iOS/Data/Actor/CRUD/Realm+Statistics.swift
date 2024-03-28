@@ -91,10 +91,10 @@ extension RealmActor {
             .where { !$0.isDeleted && $0.content.isNSFW == true }
             .count
 
-        let customThumbs = realm
-            .objects(CustomThumbnail.self)
-            .where { !$0.isDeleted }
-            .count
+//        let customThumbs = realm
+//            .objects(CustomThumbnail.self)
+//            .where { !$0.isDeleted }
+//            .count
 
         let opened = realm
             .objects(StoredContent.self)
@@ -164,7 +164,7 @@ extension RealmActor {
                      downloads: downloads,
                      savedForLater: savedForLater,
                      nsfw: nsfw,
-                     customThumbnails: customThumbs,
+                     customThumbnails: 0,
                      newThisMonth: newThisMonth,
                      openedTitles: opened,
                      pagesRead: readingStats?.pagesRead ?? 0,

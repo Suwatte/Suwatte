@@ -103,4 +103,13 @@
         <attribute name="request" optional="YES" attributeType="Binary"/>
         <attribute name="source_" optional="YES" attributeType="String"/>
     </entity>
+    <entity name="CDThumbnail" representedClassName="CDThumbnail" syncable="YES" codeGenerationType="class">
+        <attribute name="data_" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
+        <attribute name="id_" optional="YES" attributeType="String"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id_"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
 </model>

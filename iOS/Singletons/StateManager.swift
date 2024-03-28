@@ -199,11 +199,11 @@ extension StateManager {
     func observe() async {
         let actor = await RealmActor.shared()
 
-        thumbnailToken = await actor.observeCustomThumbnails { value in
-            Task { @MainActor [weak self] in
-                self?.titleHasCustomThumbs = value
-            }
-        }
+//        thumbnailToken = await actor.observeCustomThumbnails { value in
+//            Task { @MainActor [weak self] in
+//                self?.titleHasCustomThumbs = value
+//            }
+//        }
 
         collectionToken = await actor.observeLibraryCollection { value in
             Task { @MainActor in

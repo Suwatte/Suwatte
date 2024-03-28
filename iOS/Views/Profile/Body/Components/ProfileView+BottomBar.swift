@@ -180,8 +180,7 @@ extension ProfileView.Skeleton.BottomBar {
             .onChange(of: inputImage) { val in
                 guard let val else { return }
                 Task {
-                    let actor = await RealmActor.shared()
-                    await actor.setCustomThumbnail(image: val, id: sttId.id)
+                    await CDThumbnail.set(image: val, id: sttId.id)
                 }
             }
             .onChange(of: presentNextEntry, perform: { newValue in
@@ -252,8 +251,7 @@ extension ProfileView.Skeleton.BottomBar {
             Button {
                 if hasCustomThumb {
                     Task {
-                        let actor = await RealmActor.shared()
-                        await actor.removeCustomThumbnail(id: sttId.id)
+                        await CDThumbnail.remove(id: sttId.id)
                     }
                 } else {
                     presentImageSheet.toggle()

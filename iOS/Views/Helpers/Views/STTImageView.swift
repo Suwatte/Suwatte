@@ -70,16 +70,13 @@ struct STTImageView: View {
                 loader.load(url)
             }
         } else {
-            if appState.titleHasCustomThumbs.contains(identifier.id) {
-                let actor = await RealmActor.shared()
-                let thumbnailURL = await actor.getCustomThumb(id: identifier.id)?.file?.filePath
-
-                if let thumbnailURL {
-                    loader.load(thumbnailURL)
-                    return
+            if let data = await CDThumbnail.getData(id: identifier.id) {
+                let request = ImageRequest(id: identifier.id + "__thumb") {
+                    return data
                 }
+                loader.load(request)
+                return
             }
-            // Source Has Image Request Handler, prevents sources from being initialized unecessarily
             guard UserDefaults.standard.bool(forKey: STTKeys.RunnerOverridesImageRequest(identifier.sourceId)) else {
                 loader.load(url)
                 return
