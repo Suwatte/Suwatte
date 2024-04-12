@@ -13,6 +13,31 @@ struct MigrationManualDestinationView: View {
 
     @EnvironmentObject private var migrationModel: MigrationController
     @State var searchTask: Task<Void, Never>? = nil
+
+    func hasSearchResults() -> Bool {
+        let results = searchModel.results
+
+        // Only one source found
+        if results.count == 1 {
+            let resultGroup = results[0]
+            let sourceResults = resultGroup.result.results
+            // Exact match
+            if sourceResults.count == 1 {
+                let exactMatch = sourceResults[0]
+
+                // We need to create the ContentIdentifier here because the match still only has the contentId without the Source
+                let exactMatchContentIdentifier = ContentIdentifier(contentId: exactMatch.id, sourceId: resultGroup.sourceID)
+                
+                // If the exact match is the same item, skip
+                if exactMatchContentIdentifier.id == content.id {
+                    return false
+                }
+            }
+        }
+
+        return !results.isEmpty
+    }
+
     var body: some View {
         ZStack {
             if !searchModel.results.isEmpty {
@@ -41,6 +66,7 @@ struct MigrationManualDestinationView: View {
             searchTask?.cancel()
             searchTask = Task {
                 await searchModel.makeRequests()
+                searchModel.removeContentFromResult(contentIdentifier: ContentIdentifier(contentId: content.contentID, sourceId: content.sourceID))
             }
         }
         .onAppear {

@@ -117,7 +117,7 @@ extension MigrationController {
 
             await MainActor.run {
                 withAnimation {
-                    operations[result.0] = result.1
+                    operations[result.id] = result.state
                 }
             }
         }
@@ -127,34 +127,43 @@ extension MigrationController {
         })
     }
 
-    private typealias ReturnValue = (TaggedHighlight, Double)
-    private func handleSourcesSearch(id: String, query: String, chapter: Double?, sources: [AnyContentSource]) async -> (String, MigrationItemState) {
+    private typealias ReturnValue = (entry: TaggedHighlight, number: Double)
+    private func handleSourcesSearch(id: String, query: String, chapter: Double?, sources: [AnyContentSource]) async -> (id: String, state: MigrationItemState) {
         await withTaskGroup(of: ReturnValue?.self, body: { group in
 
             for source in sources {
-                guard !Task.isCancelled else { return (id, .idle) }
+                guard !Task.isCancelled else {
+                    return (id, .idle)
+                }
+
                 group.addTask { [weak self] in
-                    await self?.searchSource(query: query, chapter: chapter, source: source)
+                    await self?.searchSource(query: query, source: source)
                 }
             }
 
             var max: ReturnValue?
             for await value in group {
                 if let value {
+
+                    // Skip migrating to the same item
+                    if id == value.entry.id {
+                        continue
+                    }
+
                     // Chapter matches
-                    let currentChapterNumber = max?.1 ?? 0
-                    let matches = value.1 >= currentChapterNumber
+                    let currentChapterNumber = max?.number ?? 0
+                    let matches = value.number >= currentChapterNumber
 
                     if matches {
-                        if let cId = max?.0.sourceID {
-                            let index = sources.firstIndex(where: { $0.id == value.0.sourceID }) ?? Int.max
-                            let currentIndex = sources.firstIndex(where: { $0.id == cId }) ?? Int.max
+                        if let sourceId = max?.entry.sourceID {
+                            let index = sources.firstIndex(where: { $0.id == value.entry.sourceID }) ?? Int.max
+                            let currentSourceIndex = sources.firstIndex(where: { $0.id == sourceId }) ?? Int.max
 
-                            if index < currentIndex {
+                            if index < currentSourceIndex {
                                 max = value
                             }
                         } else {
-                            if currentChapterNumber < value.1 {
+                            if currentChapterNumber <= value.number {
                                 max = value
                             }
                         }
@@ -163,10 +172,10 @@ extension MigrationController {
             }
 
             if let max {
-                if max.1 >= (chapter ?? 0) {
-                    return (id, .found(max.0))
+                if max.number >= (chapter ?? 0) {
+                    return (id, .found(max.entry))
                 } else {
-                    return (id, .lowerFind(max.0, chapter ?? 0, max.1))
+                    return (id, .lowerFind(max.entry, chapter ?? 0, max.number))
                 }
             } else {
                 return (id, .noMatches)
@@ -174,7 +183,7 @@ extension MigrationController {
         })
     }
 
-    private func searchSource(query: String, chapter: Double?, source: AnyContentSource) async -> ReturnValue? {
+    private func searchSource(query: String, source: AnyContentSource) async -> ReturnValue? {
         let data: DSKCommon.PagedResult? = try? await source.getDirectory(request: .init(query: query, page: 1))
         let result = data?.results.first
 
@@ -191,7 +200,7 @@ extension MigrationController {
 
         let target = chapters?.first
 
-        guard let target, let chapter, target.number >= chapter else { return nil }
+        guard let target else { return nil }
 
         return (TaggedHighlight(from: result, with: source.id), target.number)
     }
@@ -351,27 +360,33 @@ extension MigrationController {
 
         func start() {
             for (id, state) in operations {
-                if Task.isCancelled { return }
-                guard let libEntry = get(id) else { continue }
-                switch state {
-                case .idle, .noMatches, .searching:
-                    continue
+                if Task.isCancelled {
+                    return
+                }
 
-                case let .found(result):
-                    switch libraryStrat {
-                    case .link:
-                        link(libEntry, with: result)
-                    case .replace:
-                        replace(libEntry, with: result)
-                    }
-                case let .lowerFind(result, _, _):
-                    if lessChapterSrat == .skip { continue }
-                    switch libraryStrat {
-                    case .link:
-                        link(libEntry, with: result)
-                    case .replace:
-                        replace(libEntry, with: result)
-                    }
+                guard let libEntry = get(id) else {
+                    continue
+                }
+
+                switch state {
+                    case .idle, .noMatches, .searching:
+                        continue
+
+                    case let .found(result):
+                        switch libraryStrat {
+                            case .link:
+                                link(libEntry, with: result)
+                            case .replace:
+                                replace(libEntry, with: result)
+                        }
+                    case let .lowerFind(result, _, _):
+                        if lessChapterSrat == .skip { continue }
+                        switch libraryStrat {
+                            case .link:
+                                link(libEntry, with: result)
+                            case .replace:
+                                replace(libEntry, with: result)
+                        }
                 }
             }
         }
