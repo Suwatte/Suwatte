@@ -32,8 +32,12 @@ extension LibraryView.LibraryGrid {
         @Published var query = ""
         @Published var library: [LibraryEntry]?
         private var token: NotificationToken?
+        private var didSet = false
 
         func setFilterGroups(collection: LibraryCollection? = nil, readingFlag: LibraryFlag? = nil) {
+            guard !didSet else {
+                return
+            }
             self.collection = collection
             self.readingFlag = readingFlag
         }

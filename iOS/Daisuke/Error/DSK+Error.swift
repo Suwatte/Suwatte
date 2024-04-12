@@ -35,7 +35,7 @@ extension DaisukeEngine {
         case RealmThawFailure
         case NetworkErrorCloudflareProtected
         case LocalFilePathNotFound
-        case Cloudflare
+        case Cloudflare(resolutionURL: String?)
 
         static func nativeError(for errorValue: JSValue) -> Error {
             if let error = errorValue.toObject() as? Error {
@@ -60,7 +60,13 @@ extension DaisukeEngine {
             }
 
             if name == "CloudflareError" {
-                return DSK.Errors.Cloudflare
+                var resolutionURL: String?
+                
+                if let value = errorValue.objectForKeyedSubscript("resolutionURL"), !value.isUndefined, !value.isNull {
+                    resolutionURL = value.toString()
+                }
+                
+                return DSK.Errors.Cloudflare(resolutionURL: resolutionURL)
             }
 
             return DaisukeEngine.Errors.NamedError(name: name, message: message)

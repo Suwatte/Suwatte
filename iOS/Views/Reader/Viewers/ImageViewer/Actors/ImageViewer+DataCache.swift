@@ -146,7 +146,7 @@ extension IVDataCache {
                 throw DaisukeEngine.Errors.NamedError(name: "Engine", message: "Source Not Found")
             }
 
-            let data = try await source.getChapterData(contentId: chapter.contentId, chapterId: chapter.chapterId)
+            let data = try await source.getChapterData(contentId: chapter.contentId, chapterId: chapter.chapterId, chapter: chapter)
             if source.ablityNotDisabled(\.disableChapterDataCaching) {
                 await actor.saveChapterData(data: data, chapter: chapter)
             }

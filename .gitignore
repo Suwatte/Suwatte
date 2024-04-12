@@ -50,4 +50,6 @@ xcuserdata/
 /*.gcno
 **/xcshareddata/WorkspaceSettings.xcsettings
 
+Package.resolved
+
 # End of https://www.toptal.com/developers/gitignore/api/xcode,macos
