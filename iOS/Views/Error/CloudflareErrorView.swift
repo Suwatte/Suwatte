@@ -11,8 +11,9 @@ import UIKit
 import WebKit
 
 struct CloudFlareErrorView: View {
-    var sourceID: String
-    var action: () async -> Void
+    let sourceID: String
+    let action: () async -> Void
+    let resolutionURL: String?
     @State var showSheet: Bool = false
     @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
 
@@ -61,9 +62,11 @@ struct CloudFlareErrorView: View {
 extension CloudFlareErrorView {
     struct CloudFlareWebView: UIViewControllerRepresentable {
         var sourceID: String
+        var resolutionURL: String?
         func makeUIViewController(context _: Context) -> some CloudFlareWebViewViewController {
             let view = CloudFlareWebViewViewController()
             view.sourceID = sourceID
+            view.resolutionURL = resolutionURL
             return view
         }
 
@@ -73,6 +76,7 @@ extension CloudFlareErrorView {
     class CloudFlareWebViewViewController: UIViewController, WKUIDelegate {
         var webView: WKWebView!
         var sourceID: String!
+        var resolutionURL: String?
         var triggered = false
         override func viewDidLoad() {
             super.viewDidLoad()
@@ -87,15 +91,19 @@ extension CloudFlareErrorView {
 
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
-
-            Task { @MainActor in
-                guard let source = await DSK.shared.getSource(id: sourceID), let url = source.cloudflareResolutionURL, url.isHTTP else {
-                    StateManager.shared.alert(title: "Invalid Resolution URL", message: "The source failed to provide a valid url.")
-                    return
-                }
-
+            
+            if let resolutionURL, let url = URL(string: resolutionURL) {
                 let request = URLRequest(url: url)
                 let _ = self.webView.load(request)
+            } else {
+                Task { @MainActor in
+                    guard let source = await DSK.shared.getSource(id: sourceID), let url = source.cloudflareResolutionURL, url.isHTTP else {
+                        StateManager.shared.alert(title: "Invalid Resolution URL", message: "The source failed to provide a valid url.")
+                        return
+                    }
+                    let request = URLRequest(url: url)
+                    let _ = self.webView.load(request)
+                }
             }
         }
     }

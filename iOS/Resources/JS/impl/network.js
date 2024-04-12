@@ -13,9 +13,11 @@ class NetworkError extends Error {
 }
 
 class CloudflareError extends Error {
-  constructor() {
+  resolutionURL;
+  constructor(resolutionURL) {
     super("The requested resource is cloudflare protected");
     this.name = "CloudflareError";
+    this.resolutionURL = resolutionURL
   }
 }
 

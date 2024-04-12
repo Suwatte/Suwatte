@@ -80,7 +80,7 @@ extension Controller {
         snapshot.appendSections([chapter.id])
         snapshot.appendItems(pages, toSection: chapter.id)
         let s = snapshot
-        await MainActor.run { [weak self] in
+        DispatchQueue.main.async { [weak self] in
             self?.dataSource.apply(s, animatingDifferences: false)
         }
     }

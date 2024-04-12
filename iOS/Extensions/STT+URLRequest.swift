@@ -21,7 +21,8 @@ extension URLRequest {
         let headers = self.headers.dictionary
         var body: [String: AnyCodable]?
         if let data = httpBody {
-            let isURLEncoded = self.headers["content-type"]?.contains("x-www-form-urlencoded") ?? false
+            let contentTypeHeader = self.headers["content-type"] ?? self.headers["Content-Type"]
+            let isURLEncoded = contentTypeHeader?.contains("x-www-form-urlencoded") ?? false
 
             if isURLEncoded {
                 let query = String(data: data, encoding: .utf8) ?? ""

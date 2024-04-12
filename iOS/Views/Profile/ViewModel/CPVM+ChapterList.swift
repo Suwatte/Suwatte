@@ -20,11 +20,11 @@ extension ViewModel {
 
 extension ViewModel {
     // O(n)
-    func prepareChapterStatement(_ chapters: [ThreadSafeChapter], content: SimpleContentInfo) -> ChapterStatement {
+    func prepareChapterStatement(_ chapters: [ThreadSafeChapter], content: SimpleContentInfo, loadChapters: Bool, index: Int) -> ChapterStatement {
         var maxOrderKey: Double = 0
         var distinctKeys = Set<Double>()
 
-        let filtered = STTHelpers.filterChapters(chapters, with: .init(contentId: content.highlight.id, sourceId: content.runnerID)) { chapter in
+        let filtered = !loadChapters ? [] : STTHelpers.filterChapters(chapters, with: .init(contentId: content.highlight.id, sourceId: content.runnerID)) { chapter in
             let orderKey = chapter.chapterOrderKey
             maxOrderKey = max(orderKey, maxOrderKey)
             distinctKeys.insert(orderKey)
@@ -32,7 +32,7 @@ extension ViewModel {
         .sorted(by: \.index, descending: false)
 
         let distinctCount = distinctKeys.count
-        return .init(content: content, filtered: filtered, originalList: chapters, distinctCount: distinctCount, maxOrderKey: maxOrderKey)
+        return .init(content: content, filtered: filtered, originalList: chapters, distinctCount: distinctCount, maxOrderKey: maxOrderKey, index: index)
     }
 
     func getSortedChapters(_ chapters: [ThreadSafeChapter], onlyDownloaded: Bool, method: ChapterSortOption, descending: Bool) async -> [ThreadSafeChapter] {
@@ -65,14 +65,14 @@ extension ViewModel {
     }
 
     func getCurrentStatement() -> ChapterStatement {
-        chapterMap[currentChapterSection] ?? .init(content: contentInfo, filtered: [], originalList: [], distinctCount: 0, maxOrderKey: 0)
+        chapterMap[currentChapterSection] ?? .init(content: contentInfo, filtered: [], originalList: [], distinctCount: 0, maxOrderKey: 0, index: 0)
     }
 
     func updateCurrentStatement() {
         let current = getCurrentStatement()
-        let statement = prepareChapterStatement(current.originalList, content: current.content)
+        let statement = prepareChapterStatement(current.originalList, content: current.content, loadChapters: true, index: current.index)
         withAnimation {
-            chapterMap[current.content.id] = statement
+            chapterMap[current.content.contentIdentifier.id] = statement
         }
         Task {
             await setActionState()

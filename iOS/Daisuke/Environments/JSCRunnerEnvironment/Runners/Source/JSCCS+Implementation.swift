@@ -16,8 +16,10 @@ extension JSCContentSource {
         try await callMethodReturningDecodable(method: "getChapters", arguments: [contentId], resolvesTo: [DSKCommon.Chapter].self)
     }
 
-    func getChapterData(contentId: String, chapterId: String) async throws -> DSKCommon.ChapterData {
-        try await callMethodReturningObject(method: "getChapterData", arguments: [contentId, chapterId], resolvesTo: DaisukeEngine.Structs.ChapterData.self)
+    func getChapterData(contentId: String, chapterId: String, chapter: ThreadSafeChapter) async throws -> DSKCommon.ChapterData {
+        let data = try DaisukeEngine.encode(value: chapter)
+        let chapter = try JSONSerialization.jsonObject(with: data)
+        return try await callMethodReturningObject(method: "getChapterData", arguments: [contentId, chapterId, chapter], resolvesTo: DaisukeEngine.Structs.ChapterData.self)
     }
 
     func getAllTags() async throws -> [DaisukeEngine.Structs.Property] {

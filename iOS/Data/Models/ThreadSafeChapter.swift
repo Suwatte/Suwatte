@@ -14,7 +14,7 @@ protocol STTChapterObject {
     var providers: [DSKCommon.ChapterProvider]? { get }
 }
 
-struct ThreadSafeChapter: Hashable, Identifiable, STTChapterObject, Sendable {
+struct ThreadSafeChapter: Hashable, Identifiable, STTChapterObject, Sendable, Encodable {
     let id: String
     let sourceId: String
     let chapterId: String

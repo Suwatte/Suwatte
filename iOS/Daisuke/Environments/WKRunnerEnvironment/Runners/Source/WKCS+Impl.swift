@@ -16,8 +16,9 @@ extension WKContentSource: ContentSource {
         try await eval(script("let data = await RunnerObject.getChapters(id);"), ["id": contentId])
     }
 
-    func getChapterData(contentId: String, chapterId: String) async throws -> DSKCommon.ChapterData {
-        try await eval(script("let data = await RunnerObject.getChapterData(content, chapter);"), ["content": contentId, "chapter": chapterId])
+    func getChapterData(contentId: String, chapterId: String, chapter: ThreadSafeChapter) async throws -> DSKCommon.ChapterData {
+        let chapter = try chapter.asDictionary()
+        return try await eval(script("let data = await RunnerObject.getChapterData(contentId, chapterId, chapter);"), ["contentId": contentId, "chapterId": chapterId, "chapter": chapter])
     }
 
     func getAllTags() async throws -> [DaisukeEngine.Structs.Property] {

@@ -20,6 +20,22 @@ extension RealmActor {
             .freeze()
             .toArray()
     }
+    
+    func getDanglingLibraryHighlights(with known: [String]) -> Dictionary<String, [TaggedHighlight]> {
+        
+        let entries = realm
+            .objects(LibraryEntry.self)
+            .where { $0.content != nil }
+            .where { !$0.content.sourceId.in(known) }
+            .where { !$0.isDeleted }
+            .freeze()
+            .toArray()
+            .map {
+                TaggedHighlight(from: $0.content!.toHighlight(), with: $0.content!.sourceId)
+            }
+        
+        return Dictionary(grouping: entries, by: \.sourceID)
+    }
 }
 
 extension RealmActor {

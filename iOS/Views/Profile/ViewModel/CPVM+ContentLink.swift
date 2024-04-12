@@ -25,22 +25,20 @@ extension ViewModel {
         guard !entries.isEmpty, !Task.isCancelled else { return }
 
         await withTaskGroup(of: Void.self, body: { [weak self] group in
-            for entry in entries {
+            for (index, entry) in entries.enumerated() {
                 group.addTask { [weak self] in
-                    await self?.getChapterSection(for: entry)
+                    await self?.initializeLinkedChapterSection(for: entry, loadChapters: false, index: index)
                 }
             }
         })
     }
 
-    func getChapterSection(for content: StoredContent) async {
-        let source = await DSK.shared.getSource(id: content.sourceId)
-        guard let source else { return }
+    private func getChaptersForLinkedTitle(source: AnyContentSource, contentId: String, sourceId: String) async -> [ThreadSafeChapter] {
         do {
-            let chapters = try await source.getContentChapters(contentId: content.contentId)
+            let chapters = try await source.getContentChapters(contentId: contentId)
             let prepared = chapters
                 .sorted(by: \.index, descending: false)
-                .map { $0.toThreadSafe(sourceID: content.sourceId, contentID: content.contentId) }
+                .map { $0.toThreadSafe(sourceID: sourceId, contentID: contentId) }
 
             Task {
                 let actor = await RealmActor.shared()
@@ -49,15 +47,51 @@ extension ViewModel {
                 await actor.storeChapters(stored)
             }
 
-            let statement = prepareChapterStatement(prepared,
-                                                    content: .init(runnerID: source.id, runnerName: source.name, contentName: content.title, id: content.id, highlight: content.toHighlight()))
-
-            await animate { [weak self] in
-                self?.chapterMap[content.id] = statement
-            }
+            return prepared
         } catch {
             Logger.shared.error(error, source.id)
         }
+
+        return []
+    }
+
+    func loadLinkedChapters() async {
+
+        let current = getCurrentStatement()
+        if !current.originalList.isEmpty {
+            await animate { [weak self] in
+                self?.chapterState = .loaded(true)
+            }
+            return
+        }
+
+        let source = await DSK.shared.getSource(id: current.content.runnerID)
+        guard let source else { return }
+
+        await getChapterStatement(source: source, contentInfo: current.content, loadChapters: true, index: current.index)
+    }
+
+    private func getChapterStatement(source: AnyContentSource, contentInfo: SimpleContentInfo, loadChapters: Bool, index: Int) async {
+        let prepared = !loadChapters
+            ? []
+            : await getChaptersForLinkedTitle(source: source, contentId: contentInfo.contentIdentifier.contentId, sourceId: contentInfo.contentIdentifier.sourceId)
+
+        let statement = prepareChapterStatement(prepared, content: contentInfo, loadChapters: loadChapters, index: index)
+
+        await animate { [weak self] in
+            self?.chapterMap[contentInfo.contentIdentifier.id] = statement
+            self?.chapterState = .loaded(true)
+        }
+    }
+
+    func initializeLinkedChapterSection(for content: StoredContent, loadChapters: Bool, index: Int) async {
+
+        let source = await DSK.shared.getSource(id: content.sourceId)
+        guard let source else { return }
+
+        let contentInfo: SimpleContentInfo = .init(runnerID: source.id, runnerName: source.name, contentName: content.title, contentIdentifier: content.ContentIdentifier, highlight: content.toHighlight())
+
+        await getChapterStatement(source: source, contentInfo: contentInfo, loadChapters: loadChapters, index: index)
     }
 
     func updateContentLinks() async {
@@ -81,10 +115,10 @@ extension ViewModel {
 
         // Add Newly Linked Titles
         await withTaskGroup(of: Void.self, body: { group in
-            for content in added {
+            for (index, content) in added.enumerated() {
                 guard let title = titles.first(where: { $0.id == content }) else { continue }
                 group.addTask { [weak self] in
-                    await self?.getChapterSection(for: title)
+                    await self?.initializeLinkedChapterSection(for: title, loadChapters: false, index: index)
                 }
             }
         })

@@ -62,7 +62,7 @@ extension ProfileView {
         }
 
         var contentInfo: SimpleContentInfo {
-            .init(runnerID: sourceID, runnerName: source.name, contentName: entry.title, id: identifier, highlight: entry)
+            .init(runnerID: sourceID, runnerName: source.name, contentName: entry.title, contentIdentifier: STTIDPair, highlight: entry)
         }
 
         @Published var selection: ThreadSafeChapter?
@@ -106,11 +106,14 @@ extension ViewModel {
                     self?.contentState = .loaded(true)
                 }
 
+                // Load Linked Titles
+                await resolveLinks()
+
                 // Set Chapters
                 let chapters = await getChaptersFromDatabase()
                 if let chapters {
                     let prepared = chapters.map { $0.toThreadSafe() }
-                    let statement = prepareChapterStatement(prepared, content: contentInfo)
+                    let statement = prepareChapterStatement(prepared, content: contentInfo, loadChapters: true, index: 0)
                     await animate { [weak self, identifier] in
                         self?.chapterMap[identifier] = statement
                         self?.chapterState = .loaded(true)
@@ -160,7 +163,7 @@ extension ViewModel {
                     .sorted(by: \.index, descending: false)
                     .map { $0.toThreadSafe(sourceID: sourceID, contentID: contentID) }
                 await animate { [weak self] in
-                    self?.chapterMap[contentInfo.id] = self?.prepareChapterStatement(prepared, content: contentInfo)
+                    self?.chapterMap[contentInfo.contentIdentifier.id] = self?.prepareChapterStatement(prepared, content: contentInfo, loadChapters: true, index: 0)
                     self?.chapterState = .loaded(true)
                 }
                 Task.detached { [weak self] in
@@ -179,7 +182,7 @@ extension ViewModel {
                     await prepare(chapters: chapters)
                 } catch {
                     Logger.shared.error(error, "Content Chapters")
-                    let chapters = chapterMap[contentInfo.id]?.filtered
+                    let chapters = chapterMap[contentInfo.contentIdentifier.id]?.filtered
 
                     guard chapters == nil || (chapters?.isEmpty ?? true) else { return }
                     await animate { [weak self] in
@@ -204,6 +207,7 @@ extension ViewModel {
             self?.savedForLater = false
             self?.inLibrary = false
             self?.bookmarkedChapters = .init()
+            self?.currentChapterSection = self?.identifier ?? ""
         }
         await load()
         await setupObservers()
@@ -212,10 +216,6 @@ extension ViewModel {
 
 extension ViewModel {
     func didLoadChapters() async {
-        Task { [weak self] in
-            await self?.resolveLinks()
-        }
-
         Task { [STTIDPair] in
             let actor = await RealmActor.shared()
             let id = STTIDPair
