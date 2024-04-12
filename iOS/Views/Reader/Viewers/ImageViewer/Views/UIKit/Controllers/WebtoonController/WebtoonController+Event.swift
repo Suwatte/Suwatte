@@ -24,6 +24,7 @@ extension Controller {
             didCompleteChapter(chapter)
             if transition.to == nil {
                 model.showMenu()
+                STTHelpers.triggerHaptic()
             }
         }
     }
