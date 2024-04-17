@@ -49,7 +49,7 @@ struct CloudFlareErrorView: View {
         }
         .fullScreenCover(isPresented: $showSheet, onDismiss: { Task { await action() }}) {
             SmartNavigationView {
-                CloudFlareWebView(sourceID: sourceID)
+                CloudFlareWebView(sourceID: sourceID, resolutionURL: resolutionURL)
                     .navigationBarTitle("Cloudflare Resolve", displayMode: .inline)
                     .closeButton()
                     .tint(accentColor)
@@ -92,13 +92,23 @@ extension CloudFlareErrorView {
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
             
-            if let resolutionURL, let url = URL(string: resolutionURL) {
+            if let resolutionURL {
+                let url = URL(string: resolutionURL)
+                guard let url else {
+                    StateManager.shared.alert(title: "Invalid Resolution URL", message: "The source failed to provide a valid url.")
+                    return
+                }
                 let request = URLRequest(url: url)
                 let _ = self.webView.load(request)
             } else {
                 Task { @MainActor in
-                    guard let source = await DSK.shared.getSource(id: sourceID), let url = source.cloudflareResolutionURL, url.isHTTP else {
-                        StateManager.shared.alert(title: "Invalid Resolution URL", message: "The source failed to provide a valid url.")
+                    guard let source = await DSK.shared.getSource(id: sourceID) else {
+                        StateManager.shared.alert(title: "Error", message: "Unable to Locate Source")
+                        return
+                    }
+                    var url = source.cloudflareResolutionURL ?? URL(string:  source.info.website ?? "")
+                    guard let url else {
+                        StateManager.shared.alert(title: "Error", message: "Invalid URL Provided")
                         return
                     }
                     let request = URLRequest(url: url)
