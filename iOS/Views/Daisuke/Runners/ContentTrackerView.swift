@@ -19,23 +19,25 @@ struct ContentTrackerInfoView: View {
                 DSKAuthView(model: .init(runner: tracker))
             }
 
-            Section {
-                if tracker.intents.requiresSetup {
-                    NavigationLink("Setup") {
-                        DSKLoadableForm(runner: tracker, context: .setup(closeOnSuccess: false))
-                            .navigationTitle("Setup")
+            if tracker.intents.requiresSetup || tracker.intents.preferenceMenuBuilder {
+                Section {
+                    if tracker.intents.requiresSetup {
+                        NavigationLink("Setup") {
+                            DSKLoadableForm(runner: tracker, context: .setup(closeOnSuccess: false))
+                                .navigationTitle("Setup")
+                        }
                     }
-                }
 
-                if tracker.intents.preferenceMenuBuilder {
-                    NavigationLink("Preferences") {
-                        DSKLoadableForm(runner: tracker, context: .preference)
-                            .navigationTitle("Preferences")
+                    if tracker.intents.preferenceMenuBuilder {
+                        NavigationLink("Preferences") {
+                            DSKLoadableForm(runner: tracker, context: .preference)
+                                .navigationTitle("Preferences")
+                        }
                     }
-                }
 
-            } header: {
-                Text("Settings")
+                } header: {
+                    Text("Settings")
+                }
             }
         }
         .navigationTitle(tracker.name)
