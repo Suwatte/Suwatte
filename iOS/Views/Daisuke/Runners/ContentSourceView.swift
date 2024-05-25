@@ -21,23 +21,25 @@ struct ContentSourceInfoView: View {
                 DSKAuthView(model: .init(runner: source))
             }
 
-            Section {
-                if source.intents.requiresSetup {
-                    NavigationLink("Setup") {
-                        DSKLoadableForm(runner: source, context: .setup(closeOnSuccess: false))
-                            .navigationTitle("Setup")
+            if source.intents.requiresSetup || source.intents.preferenceMenuBuilder {
+                Section {
+                    if source.intents.requiresSetup {
+                        NavigationLink("Setup") {
+                            DSKLoadableForm(runner: source, context: .setup(closeOnSuccess: false))
+                                .navigationTitle("Setup")
+                        }
                     }
-                }
 
-                if source.intents.preferenceMenuBuilder {
-                    NavigationLink("Preferences") {
-                        DSKLoadableForm(runner: source, context: .preference)
-                            .navigationTitle("Preferences")
+                    if source.intents.preferenceMenuBuilder {
+                        NavigationLink("Preferences") {
+                            DSKLoadableForm(runner: source, context: .preference)
+                                .navigationTitle("Preferences")
+                        }
                     }
-                }
 
-            } header: {
-                Text("Settings")
+                } header: {
+                    Text("Settings")
+                }
             }
 
             Section {
