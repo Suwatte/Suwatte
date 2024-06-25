@@ -112,10 +112,12 @@ extension ProfileView.Skeleton.ChapterView {
                             guard !redacted else { return }
 
                             if model.content.contentType == .novel {
-                            return
-                        }
-                        let progressMarker = model.readChapters[chapter.STTContentIdentifier]?.first { $0.id == chapter.id }
-                        model.selection = CurrentSelection(id: chapter.id, chapter: chapter, marker: progressMarker)
+                                StateManager.shared.alert(title: "Novel Reading", message: "Novel reading is currently not supported until version 6.1")
+                                return
+                            }
+
+                            let progressMarker = model.readChapters[chapter.STTContentIdentifier]?.first { $0.id == chapter.id }
+                            model.selection = CurrentSelection(id: chapter.id, chapter: chapter, marker: progressMarker)
                         }
                     }
                 }
@@ -149,7 +151,7 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
         guard let chaptersByContent = model.readChapters[chapter.STTContentIdentifier] else {
             return false
         }
-        
+
         return chaptersByContent.first { $0.id == chapter.id }?.isCompleted ?? false
     }
 

@@ -46,18 +46,18 @@ extension RealmActor {
         let ids = getLinkedContent(for: id)
             .map(\.id)
             .appending(id)
-        
+
         let collection = realm
                 .objects(ProgressMarker.self)
                 .where { $0.chapter.content.id.in(ids) && !$0.isDeleted }
-        
+
         func didUpdate(_ results: Results<ProgressMarker>) {
             let readChaptersByContent = createDictionaryFromResults(results)
 
             Task { @MainActor in
                 callback(readChaptersByContent)
             }
-            
+
             func createDictionaryFromResults(_ results: Results<ProgressMarker>) -> [String: Set<ThreadSafeProgressMarker>] {
                 var readChaptersByContent = [String: Set<ThreadSafeProgressMarker>]()
                 for result in results.toArray() {

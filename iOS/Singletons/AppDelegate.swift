@@ -70,11 +70,4 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
 
         return true
     }
-
-    //@MainActor
-    func convertMutableSetToSwiftSet(realmMutableSet: MutableSet<String>, completion: @escaping (Set<String>) -> Void) {
-        let swiftSet: Set<String> = Set(realmMutableSet)
-
-        completion(swiftSet)
-    }
 }
