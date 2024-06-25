@@ -22,7 +22,6 @@ extension RealmActor {
             .where { $0.chapter != nil }
             .where { $0.dateRead != nil }
             .where { $0.dateRead >= threeMonths }
-            .distinct(by: ["chapter.id"])
             .sorted(by: \.dateRead, ascending: false)
 
         func didUpdate(_ results: Results<ProgressMarker>) {
