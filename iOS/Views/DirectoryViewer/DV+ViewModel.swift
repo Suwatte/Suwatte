@@ -147,7 +147,7 @@ extension DirectoryViewer {
 
 extension File {
     func toReadableChapter(_ idx: Int? = nil) -> ThreadSafeChapter {
-        return .init(id: id,
+        return .init(id: "\(STTHelpers.LOCAL_CONTENT_ID)||\(id)",
                      sourceId: STTHelpers.LOCAL_CONTENT_ID,
                      chapterId: id,
                      contentId: id,

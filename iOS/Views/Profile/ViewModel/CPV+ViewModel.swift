@@ -49,7 +49,7 @@ extension ProfileView {
 
         var linkedContentIDs = [String]()
         @Published var downloads: [String: DownloadStatus] = [:]
-        @Published var readChapters = Set<Double>()
+        @Published var readChapters: [String: Set<ThreadSafeProgressMarker>] = [:]
         @Published var savedForLater: Bool = false
         @Published var inLibrary: Bool = false
         @Published var bookmarkedChapters = Set<String>()
@@ -65,7 +65,7 @@ extension ProfileView {
             .init(runnerID: sourceID, runnerName: source.name, contentName: entry.title, contentIdentifier: STTIDPair, highlight: entry)
         }
 
-        @Published var selection: ThreadSafeChapter?
+        @Published var selection: CurrentSelection?
 
         deinit {
             removeNotifier()
@@ -112,8 +112,7 @@ extension ViewModel {
                 // Set Chapters
                 let chapters = await getChaptersFromDatabase()
                 if let chapters {
-                    let prepared = chapters.map { $0.toThreadSafe() }
-                    let statement = prepareChapterStatement(prepared, content: contentInfo, loadChapters: true, index: 0)
+                    let statement = prepareChapterStatement(chapters, content: contentInfo, loadChapters: true, index: 0)
                     await animate { [weak self, identifier] in
                         self?.chapterMap[identifier] = statement
                         self?.chapterState = .loaded(true)
@@ -127,7 +126,10 @@ extension ViewModel {
             // Load Content From Network
             do {
                 content = try await getContentFromSource()
-                guard var content else { throw DSK.Errors.InvalidJSONObject }
+                guard var content else {
+                    throw DSK.Errors.InvalidJSONObject
+                }
+
                 let chapters = content.chapters
                 content.chapters = nil
                 await animate { [weak self] in
@@ -157,13 +159,13 @@ extension ViewModel {
     }
 
     func loadChapters(_ pre: [DSKCommon.Chapter]? = nil) async {
-        await RunnerActor.run { [sourceID, contentInfo, chapterMap] in
+        await RunnerActor.run { [contentInfo, chapterMap] in
+
             func prepare(chapters: [DSKCommon.Chapter]) async {
-                let prepared = chapters
-                    .sorted(by: \.index, descending: false)
-                    .map { $0.toThreadSafe(sourceID: sourceID, contentID: contentID) }
+                let preparedChapters = getPreparedChapters(chapters: chapters)
+
                 await animate { [weak self] in
-                    self?.chapterMap[contentInfo.contentIdentifier.id] = self?.prepareChapterStatement(prepared, content: contentInfo, loadChapters: true, index: 0)
+                    self?.chapterMap[contentInfo.contentIdentifier.id] = self?.prepareChapterStatement(preparedChapters, content: contentInfo, loadChapters: true, index: 0)
                     self?.chapterState = .loaded(true)
                 }
                 Task.detached { [weak self] in
@@ -173,24 +175,27 @@ extension ViewModel {
                     await self?.didLoadChapters()
                 }
             }
-            // Load Chapters From Network
-            if let chapters = pre {
-                await prepare(chapters: chapters)
-            } else {
-                do {
-                    let chapters = try await getChaptersFromSource()
-                    await prepare(chapters: chapters)
-                } catch {
-                    Logger.shared.error(error, "Content Chapters")
-                    let chapters = chapterMap[contentInfo.contentIdentifier.id]?.filtered
 
-                    guard chapters == nil || (chapters?.isEmpty ?? true) else { return }
-                    await animate { [weak self] in
-                        if Task.isCancelled { return }
-                        self?.chapterState = .failed(error)
-                    }
+            // Load Chapters From Network
+            do {
+                var chapters = pre
+                if chapters == nil {
+                    chapters = try await getChaptersFromSource()
+                }
+
+                await prepare(chapters: chapters!)
+            } catch {
+                Logger.shared.error(error, "Content Chapters")
+                let chapters = chapterMap[contentInfo.contentIdentifier.id]?.filtered
+
+                guard chapters == nil || (chapters?.isEmpty ?? true) else { return }
+                await animate { [weak self] in
+                    if Task.isCancelled { return }
+                    self?.chapterState = .failed(error)
                 }
             }
+
+
         }
     }
 
@@ -203,7 +208,7 @@ extension ViewModel {
             self?.linkedContentIDs = []
             self?.actionState = .init(state: .none)
             self?.downloads = [:]
-            self?.readChapters = .init()
+            self?.readChapters = [:]
             self?.savedForLater = false
             self?.inLibrary = false
             self?.bookmarkedChapters = .init()

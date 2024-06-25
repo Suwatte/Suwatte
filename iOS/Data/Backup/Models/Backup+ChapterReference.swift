@@ -10,7 +10,7 @@ import RealmSwift
 
 extension ChapterReference: Codable {
     enum Keys: String, CodingKey {
-        case id, chapterId, number, volume, content
+        case id, chapterId, number, volume, contentId
     }
 
     convenience init(from decoder: Decoder) throws {
@@ -21,8 +21,7 @@ extension ChapterReference: Codable {
         chapterId = try container.decode(String.self, forKey: .chapterId)
         volume = try container.decodeIfPresent(Double.self, forKey: .volume)
         number = try container.decode(Double.self, forKey: .number)
-
-        content = try container.decodeIfPresent(StoredContent.self, forKey: .content)
+        contentId = try container.decode(String.self, forKey: .contentId)
     }
 
     func encode(to encoder: Encoder) throws {
@@ -32,6 +31,10 @@ extension ChapterReference: Codable {
         try container.encode(chapterId, forKey: .chapterId)
         try container.encode(number, forKey: .number)
         try container.encode(volume, forKey: .volume)
-        try container.encode(content, forKey: .content)
+        try container.encode(content!.id, forKey: .contentId)
+    }
+
+    func fromBackup(data: [StoredContent]?) throws {
+        content = data!.first { $0.id == contentId }
     }
 }

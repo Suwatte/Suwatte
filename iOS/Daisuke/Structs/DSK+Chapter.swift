@@ -72,7 +72,7 @@ extension DSKCommon.Chapter {
               contentId: contentID,
               index: index,
               number: number,
-              volume: volume,
+              volume: (volume == nil || volume == 0.0) ? nil : volume,
               title: title,
               language: language,
               date: date,

@@ -18,72 +18,68 @@ extension RealmActor {
     func linkContent(_ one: String, _ two: String) async -> Bool {
         let matches = !realm
             .objects(ContentLink.self)
-            .where { $0.ids.contains(one) && $0.ids.contains(two) && $0.isDeleted == false }
+            .where { $0.entry.id == one && $0.content.id == two && $0.isDeleted == false }
             .isEmpty
 
         if matches {
             return false
         }
 
-        let target = realm
-            .objects(ContentLink.self)
-            .where { $0.ids.containsAny(in: [one, two]) && $0.isDeleted == false }
-            .first
-
-        // A or B already in a linkset
-        if let target {
-            await operation {
-                target.ids.insert(one)
-                target.ids.insert(two)
-            }
-        } else {
-            let obj = ContentLink()
-            obj.ids.insert(one)
-            obj.ids.insert(two)
-            await operation {
-                realm.add(obj, update: .modified)
-            }
+        let entry = realm.object(ofType: LibraryEntry.self, forPrimaryKey: one)
+        guard let entry else {
+            return false
         }
+
+        let content = realm.object(ofType: StoredContent.self, forPrimaryKey: two)
+        guard let content else {
+            return false
+        }
+
+        let obj = ContentLink()
+        obj.entry = entry
+        obj.content = content
+
+        await operation {
+            realm.add(obj, update: .modified)
+        }
+
         return true
     }
 
     func unlinkContent(_ child: String, _ from: String) async {
         let target = realm
             .objects(ContentLink.self)
-            .where { $0.ids.containsAny(in: [child, from]) && $0.isDeleted == false }
-            .first
+            .first { $0.entry!.id == from && $0.content!.id == child && $0.isDeleted == false }
 
         guard let target else {
             return
         }
         await operation {
-            target.ids.remove(child)
+            target.isDeleted = true
         }
     }
 
-    func getLinkedContent(for id: String, _ removeQuery: Bool = true) -> [StoredContent] {
-        let ids = realm
-            .objects(ContentLink.self)
-            .where { $0.ids.contains(id) && $0.isDeleted == false }
-            .first?
-            .ids
-
-        guard let ids else {
-            return []
-        }
-
-        var arr = Array(ids)
-        if removeQuery {
-            arr.removeAll(where: { $0 == id })
-        }
+    func getLinkedContent(for id: String) -> [StoredContent] {
         let contents = realm
-            .objects(StoredContent.self)
-            .filter("id IN %@", ids)
-            .sorted(by: \.title, ascending: true)
+            .objects(ContentLink.self)
+            .where { $0.entry.id == id && $0.isDeleted == false }
+            .sorted(by: \.content!.title, ascending: true)
             .freeze()
             .toArray()
+            .map { $0.content! }
 
         return contents
+    }
+
+    func getEntryContentForLinkedContent(for id: String) -> StoredContent? {
+        let link = realm.objects(ContentLink.self)
+                    .first { $0.content!.id == id && !$0.isDeleted }
+
+        guard let link else {
+            return nil
+        }
+
+        return link.freeze().entry!.content
     }
 
     func saveIfNeeded(_ h: DSKCommon.Highlight, _ sId: String) async {

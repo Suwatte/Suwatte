@@ -26,14 +26,15 @@ extension ViewModel {
         return target
     }
 
-    func getChaptersFromDatabase() async -> [StoredChapter]? {
+    func getChaptersFromDatabase() async -> [ThreadSafeChapter]? {
         let actor = await RealmActor.shared()
 
         let chapters = await actor.getChapters(source.id,
                                                content: entry.id)
 
         if chapters.isEmpty { return nil }
-        return chapters
+
+        return chapters.map { $0.toThreadSafe() }
     }
 }
 

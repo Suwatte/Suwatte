@@ -31,7 +31,11 @@ extension RealmActor {
         }
     }
 
-    func getArchivedContentInfo(_ id: String) -> ArchivedContent? {
-        return getObject(of: ArchivedContent.self, with: id)?.freeze()
+    func getArchivedContentInfo(_ id: String, freezed: Bool = true) -> ArchivedContent? {
+        guard let content = getObject(of: ArchivedContent.self, with: id), !content.isDeleted else {
+            return nil
+        }
+
+        return freezed ? content.freeze() : content
     }
 }

@@ -251,28 +251,17 @@ extension MigrationController {
             
             let isAlreadyLinked = !realm
                 .objects(ContentLink.self)
-                .where { $0.ids.contains(one) && $0.ids.contains(two) && $0.isDeleted == false }
+                .where { $0.entry.id == one && $0.content.id == two && $0.isDeleted == false }
                 .isEmpty
 
             if isAlreadyLinked {
                 return
             }
 
-            let target = realm
-                .objects(ContentLink.self)
-                .where { $0.ids.containsAny(in: [one, two]) && $0.isDeleted == false }
-                .first
-
-            // A or B already in a linkset
-            if let target {
-                target.ids.insert(one)
-                target.ids.insert(two)
-            } else {
-                let object = ContentLink()
-                object.ids.insert(one)
-                object.ids.insert(two)
-                realm.add(object, update: .modified)
-            }
+            let object = ContentLink()
+            object.entry = entry
+            object.content = findOrCreate(highlight)
+            realm.add(object, update: .modified)
         }
 
         func remove(_ entry: LibraryEntry) {
@@ -290,36 +279,49 @@ extension MigrationController {
             object.flag = entry.flag
             object.dateAdded = entry.dateAdded
             
-            // Update Read Chapters
-            let readChaptersByOrderKey = realm.object(ofType: ProgressMarker.self, forPrimaryKey: entry.id)?.readChapters ?? .init()
-            let readChaptersByNumber = readChaptersByOrderKey.map { ThreadSafeChapter.orderKey(volume: nil, number: ThreadSafeChapter.vnPair(from: $0).1)  }
+            let progressMarkers = realm
+                .objects(ProgressMarker.self)
+                .where { $0.chapter.content.sourceId == entry.content!.sourceId && $0.chapter.content.contentId == entry.content!.contentId && $0.isDeleted == false }
+                .freeze()
+                .toArray()
             
-            var marker : ProgressMarker?
-            marker = realm.object(ofType: ProgressMarker.self, forPrimaryKey: object.id)
-            if let marker  {
-                marker.readChapters.formUnion(readChaptersByOrderKey)
-                marker.readChapters.insert(objectsIn: readChaptersByNumber)
-                marker.isDeleted = false // Unflag for deletion as we don't check it's deletion status
-
-            } else {
-                marker = ProgressMarker()
-                marker?.readChapters.formUnion(readChaptersByOrderKey)
-                marker?.readChapters.insert(objectsIn: readChaptersByNumber)
-                realm.add(marker!, update: .modified)
-            }
-            
-            //  Update Unread Count
-            /// Get Max Read Chapter Order key
-            let allReadChapters = Set(marker!.readChapters)
-
-            /// Get All Unread
-            let unreadChapters = realm
+            let highlightChapters = realm
                 .objects(StoredChapter.self)
                 .where { $0.contentId == highlight.contentID }
                 .where { $0.sourceId == highlight.sourceID }
                 .freeze()
                 .toArray()
-                .filter { !allReadChapters.contains($0.chapterOrderKey) }
+            
+            // Update Read Chapters
+            let readChaptersByOrderKey = progressMarkers.map { $0.chapter!.chapterOrderKey }
+            let readChaptersByNumber: [Double] = readChaptersByOrderKey.compactMap { chapterOrderKey in
+                let chapterNumber = ThreadSafeChapter.orderKey(volume: nil, number: ThreadSafeChapter.vnPair(from: chapterOrderKey).1)
+                guard let chapterRef = highlightChapters.first(where: { $0.chapterOrderKey == chapterNumber }) else {
+                    return nil
+                }
+
+                let reference: ChapterReference? = chapterRef.generateReference()
+                reference?.content = realm.objects(StoredContent.self).first { $0.id == chapterRef.contentIdentifier.id && !$0.isDeleted }
+
+                guard let reference, reference.isValid else {
+                    Logger.shared.error("Invalid Chapter Reference")
+                    return nil
+                }
+
+                realm.add(reference, update: .modified)
+
+                let marker = ProgressMarker()
+                marker.id = chapterRef.id
+                marker.chapter = reference
+                marker.setCompleted(hideInHistory: true)
+                marker.isDeleted = false
+                realm.add(marker, update: .modified)
+                return chapterNumber
+            }
+
+            /// Get All Unread
+            let unreadChapters = highlightChapters
+                .filter { !readChaptersByNumber.contains($0.chapterOrderKey) }
                 .distinct(by: \.number)
                 .map { $0.toThreadSafe() }
 
@@ -337,8 +339,7 @@ extension MigrationController {
         func findOrCreate(_ entry: TaggedHighlight) -> StoredContent {
             let target = realm
                 .objects(StoredContent.self)
-                .where { $0.id == entry.id }
-                .first
+                .first { $0.id == entry.id }
 
             if let target {
                 return target

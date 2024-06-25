@@ -138,8 +138,10 @@ extension ProfileView.Skeleton.BottomBar {
         func OpenReader() {
             // Haptic
             STTHelpers.triggerHaptic()
+
             // State
-            model.selection = actionState.chapter
+            let progressMarker = actionState.chapter != nil ? model.readChapters[actionState.chapter!.STTContentIdentifier]?.first { $0.id == actionState.chapter!.id } : nil
+            model.selection = CurrentSelection(id: actionState.chapter!.id, chapter: actionState.chapter as ThreadSafeChapter?, marker: progressMarker)
         }
     }
 }

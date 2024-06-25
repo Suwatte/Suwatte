@@ -49,8 +49,7 @@ extension RealmActor {
         let chaptersRead = realm
             .objects(ProgressMarker.self)
             .where { !$0.isDeleted }
-            .map(\.readChapters.count)
-            .reduce(0, +)
+            .count
 
         let bookmarks = realm
             .objects(UpdatedBookmark.self)

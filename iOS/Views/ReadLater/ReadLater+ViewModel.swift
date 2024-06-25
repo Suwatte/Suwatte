@@ -31,12 +31,14 @@ extension LibraryView.ReadLaterView {
         }
 
         @Published var library = Set<String>()
+        @Published var libraryLinked = Set<String>()
         @Published var readLater = [ReadLater]()
 
         @Published var initialFetchComplete = false
         @Published var selection: HighlightIdentifier?
 
         private var libraryNotificationToken: NotificationToken?
+        private var libraryLinkedNotificationToken: NotificationToken?
         private var readLaterNotificationToken: NotificationToken?
 
         func obs() {
@@ -67,11 +69,21 @@ extension LibraryView.ReadLaterView {
                     self?.initialFetchComplete = true
                 }
             }
+            
+            libraryLinkedNotificationToken = await actor
+                .observeLinkedIDs { values in
+                    Task { @MainActor [weak self] in
+                        self?.libraryLinked = values
+                    }
+                }
         }
 
         func disconnect() {
             libraryNotificationToken?.invalidate()
             libraryNotificationToken = nil
+            
+            libraryLinkedNotificationToken?.invalidate()
+            libraryLinkedNotificationToken = nil
 
             readLaterNotificationToken?.invalidate()
             readLaterNotificationToken = nil

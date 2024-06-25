@@ -68,6 +68,7 @@ final class StoredRunnerObject: Object, Identifiable, CKRecordConvertible, CKRec
 
     static let RUNNER_KEY = "bundle"
     @Persisted var executable: CreamAsset?
+    var fileId: String? // For Backup
 
     var safeEnvironment: RunnerEnvironment {
         environment ?? .unknown

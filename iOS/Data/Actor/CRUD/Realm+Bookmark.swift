@@ -19,31 +19,23 @@ extension RealmActor {
             return false
         }
 
-        var reference: ChapterReference?
-
+        let reference: ChapterReference? = chapter.toStored().generateReference()
         switch chapter.sourceId {
-        case STTHelpers.LOCAL_CONTENT_ID:
-            let content = realm
-                .objects(ArchivedContent.self)
-                .where { $0.id == chapter.contentId && !$0.isDeleted }
-                .first
-            reference = chapter.toStored().generateReference()
-            reference?.archive = content
-        case STTHelpers.OPDS_CONTENT_ID:
-            let content = realm
-                .objects(StreamableOPDSContent.self)
-                .where { $0.id == chapter.id && !$0.isDeleted }
-                .first
-            reference = chapter.toStored().generateReference()
-            reference?.opds = content
-        default:
-            reference = chapter.toStored().generateReference()
-            reference?.content = getObject(of: StoredContent.self, with: chapter.STTContentIdentifier)
+            case STTHelpers.LOCAL_CONTENT_ID:
+                reference?.archive = getArchivedContentInfo(chapter.contentId, freezed: false)
+            case STTHelpers.OPDS_CONTENT_ID:
+                reference?.opds = getPublication(id: chapter.id, freezed: false)
+            default:
+                reference?.content = getStoredContent(chapter.STTContentIdentifier)
         }
 
         guard let reference, reference.isValid else {
             Logger.shared.error("Invalid Chapter Reference")
             return false
+        }
+        
+        await operation {
+            realm.add(reference, update: .modified)
         }
 
         let bookmark = UpdatedBookmark()
@@ -91,7 +83,20 @@ extension RealmActor {
             return false
         }
 
-        let reference = chapter.toStored().generateReference()
+        let reference: ChapterReference? = chapter.toStored().generateReference()
+        switch chapter.sourceId {
+            case STTHelpers.LOCAL_CONTENT_ID:
+                reference?.archive = getArchivedContentInfo(chapter.contentId, freezed: false)
+            case STTHelpers.OPDS_CONTENT_ID:
+                reference?.opds = getPublication(id: chapter.id, freezed: false)
+            default:
+                reference?.content = getStoredContent(chapter.STTContentIdentifier)
+        }
+
+        guard let reference, reference.isValid else {
+            Logger.shared.error("Invalid Chapter Reference")
+            return false
+        }
 
         let object = ChapterBookmark()
         object.id = chapter.id

@@ -33,10 +33,12 @@ extension RealmActor {
         }
     }
 
-    func getPublication(id: String) -> StreamableOPDSContent? {
-        let target = getObject(of: StreamableOPDSContent.self, with: id)
-
-        return target?.freeze()
+    func getPublication(id: String, freezed: Bool = true) -> StreamableOPDSContent? {
+        guard let content = getObject(of: StreamableOPDSContent.self, with: id), !content.isDeleted else {
+            return nil
+        }
+        
+        return freezed ? content.freeze() : content
     }
 
     func getPublicationPageCount(id: String) -> Int? {

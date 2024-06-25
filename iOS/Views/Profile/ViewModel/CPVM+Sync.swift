@@ -85,7 +85,7 @@ extension ViewModel {
 
         // Switch to chapters for this portion.
         // Prepare the Highest Read Chapter Number
-        let localHighestRead = ThreadSafeChapter.vnPair(from: await actor.getMaxReadChapterOrderKey(id: identifier.id)).1
+        let localHighestRead = ThreadSafeChapter.vnPair(from: await actor.getMaxReadChapterOrderKey(for: identifier)).1
         let originHighestRead = Array(markers.values).max() ?? 0
         let maxReadChapter = max(localHighestRead, originHighestRead, sourceOriginHighestRead)
 

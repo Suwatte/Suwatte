@@ -52,7 +52,7 @@ extension LibraryView.ReadLaterView {
         // Computed
         var highlight: Highlight { data.content!.toHighlight() }
         var sourceId: String { data.content!.sourceId }
-        var inLibrary: Bool { model.library.contains(data.id) }
+        var inLibrary: Bool { model.library.contains(data.id) || model.libraryLinked.contains(data.id) }
 
         // Body
         var body: some View {

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import IceCream
 
 extension StoredRunnerList: Codable {
     enum Keys: String, CodingKey {
@@ -30,7 +31,7 @@ extension StoredRunnerList: Codable {
 
 extension StoredRunnerObject: Codable {
     enum Keys: String, CodingKey {
-        case id, parentRunnerID, name, version, environment, enabled, listURL, thumbnail, isLibraryPageLinkProvider, isBrowsePageLinkProvider
+        case id, parentRunnerID, name, version, environment, enabled, listURL, thumbnail, isLibraryPageLinkProvider, isBrowsePageLinkProvider, fileID
     }
 
     convenience init(from decoder: Decoder) throws {
@@ -48,6 +49,7 @@ extension StoredRunnerObject: Codable {
         isLibraryPageLinkProvider = try container.decodeIfPresent(Bool.self, forKey: .isLibraryPageLinkProvider) ?? false
         isBrowsePageLinkProvider = try container.decodeIfPresent(Bool.self, forKey: .isBrowsePageLinkProvider) ?? false
         dateAdded = .now
+        fileId = try container.decodeIfPresent(String.self, forKey: .fileID) ?? ""
     }
 
     func encode(to encoder: Encoder) throws {
@@ -63,5 +65,12 @@ extension StoredRunnerObject: Codable {
         try container.encode(isLibraryPageLinkProvider, forKey: .isLibraryPageLinkProvider)
         try container.encode(isBrowsePageLinkProvider, forKey: .isBrowsePageLinkProvider)
         try container.encode(version, forKey: .version)
+        if let executable {
+            try container.encode(executable.getKey(), forKey: .fileID)
+        }
+    }
+    
+    func fromBackup(data: [CreamAsset]?) throws {
+        executable = data!.first { $0.getKey() == fileId }
     }
 }

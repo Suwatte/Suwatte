@@ -7,13 +7,31 @@
 
 import Foundation
 import RealmSwift
+import IceCream
 
 struct Backup: Codable {
+    var archivedContents: [ArchivedContent]?
+    
+    var creamAssets: [CodableCreamAsset]?
+    var creamLocations: [CodableCreamLocation]?
+    
+    var customThumbnails: [CodableCustomThumbnail]?
+    
+    var interactorStoreObjects: [InteractorStoreObject]?
+    
+    var collections: [LibraryCollection]?
+    
+    var opdsServers: [StoredOPDSServer]?
     var lists: [StoredRunnerList]?
     var runners: [StoredRunnerObject]?
-
-    var library: [CodableLibraryEntry]?
-    var collections: [LibraryCollection]?
+    
+    var storedTags: [StoredTag]?
+    var storedProperties: [StoredProperty]?
+    
+    var storedContents: [StoredContent]?
+    var library: [LibraryEntry]?
+    
+    
     var markers: [OutdatedMarker]?
     var progressMarkers: [ProgressMarker]?
 
