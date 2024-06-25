@@ -19,15 +19,13 @@ extension RealmActor {
         let collection = realm
             .objects(ProgressMarker.self)
             .where { !$0.isDeleted }
-            .where { $0.currentChapter != nil }
+            .where { $0.chapter != nil }
             .where { $0.dateRead != nil }
             .where { $0.dateRead >= threeMonths }
-            .where { $0.currentChapter.content != nil ||
-                $0.currentChapter.opds != nil ||
-                $0.currentChapter.archive != nil
-            }
-            .distinct(by: ["id"])
+            .distinct(by: ["chapter.id"])
             .sorted(by: \.dateRead, ascending: false)
+            /*.toArray()
+            .distinct(by: \.chapter!.id)*/
 
         func didUpdate(_ results: Results<ProgressMarker>) {
             let data = results

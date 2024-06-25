@@ -35,10 +35,12 @@ extension SearchView {
         @Published var history: [UpdatedSearchHistory] = []
         @Published var incomplete: IncompleteSources = .init(failing: [], noResults: [])
         @Published var library: Set<String> = []
+        @Published var libraryLinked: Set<String> = []
         @Published var savedForLater: Set<String> = []
 
         private let isContentLinkModel: Bool
         private var libraryToken: NotificationToken?
+        private var libraryLinkedToken: NotificationToken?
         private var readLaterToken: NotificationToken?
         private var preSources: [AnyContentSource]?
         init(forLinking: Bool = false, preSources: [AnyContentSource]? = nil) {
@@ -93,7 +95,7 @@ extension SearchView {
                     continue
                 }
 
-                var pagedResult = resultGroup.result
+                let pagedResult = resultGroup.result
                 var pagedResults = pagedResult.results
                 pagedResults.removeAll { $0.id == contentIdentifier.contentId }
 
@@ -137,6 +139,10 @@ extension SearchView {
                 self.library = value
             }
 
+            libraryLinkedToken = await actor.observeLinkedIDs { value in
+                self.libraryLinked = value
+            }
+
             readLaterToken = await actor.observeReadLaterIDs { value in
                 self.savedForLater = value
             }
@@ -145,6 +151,9 @@ extension SearchView {
         func stopObserving() {
             libraryToken?.invalidate()
             libraryToken = nil
+
+            libraryLinkedToken?.invalidate()
+            libraryLinkedToken = nil
 
             readLaterToken?.invalidate()
             readLaterToken = nil

@@ -11,9 +11,10 @@ import RealmSwift
 extension RealmActor {
     typealias Callback<T> = (T) -> Void
     func observeLibraryState(for id: String, _ callback: @escaping Callback<Bool>) async -> NotificationToken {
+        let ids = getLinkedContent(for: id).map(\.id).appending(id)
         let collection = realm
             .objects(LibraryEntry.self)
-            .where { $0.id == id && !$0.isDeleted }
+            .where { $0.id.in(ids) && !$0.isDeleted }
 
         func didUpdate(_ results: Results<LibraryEntry>) {
             let inLibrary = !results.isEmpty
@@ -41,17 +42,28 @@ extension RealmActor {
         return await observeCollection(collection: collection, didUpdate)
     }
 
-    func observeReadChapters(for id: String, _ callback: @escaping Callback<Set<Double>>) async -> NotificationToken {
-        let ids = getLinkedContent(for: id).map(\.id).appending(id)
+    func observeReadChapters(for id: String, _ callback: @escaping Callback<[String: Set<ThreadSafeProgressMarker>]>) async -> NotificationToken {
+        let ids = getLinkedContent(for: id)
+            .map(\.id)
+            .appending(id)
+        
         let collection = realm
-            .objects(ProgressMarker.self)
-            .where { $0.id.in(ids) && !$0.isDeleted }
-
+                .objects(ProgressMarker.self)
+                .where { $0.chapter.content.id.in(ids) && !$0.isDeleted }
+        
         func didUpdate(_ results: Results<ProgressMarker>) {
-            let readChapters = Set(results.toArray().map(\.readChapters).flatMap { $0 })
+            let readChaptersByContent = createDictionaryFromResults(results)
 
             Task { @MainActor in
-                callback(readChapters)
+                callback(readChaptersByContent)
+            }
+            
+            func createDictionaryFromResults(_ results: Results<ProgressMarker>) -> [String: Set<ThreadSafeProgressMarker>] {
+                var readChaptersByContent = [String: Set<ThreadSafeProgressMarker>]()
+                for result in results.toArray() {
+                    readChaptersByContent[result.chapter!.content!.id, default: []].insert(result.toThreadSafe())
+                }
+                return readChaptersByContent
             }
         }
 
@@ -59,7 +71,7 @@ extension RealmActor {
     }
 
     func observeDownloadStatus(for id: String, _ callback: @escaping Callback<[String: DownloadStatus]>) async -> NotificationToken {
-        let contents = getLinkedContent(for: id, false)
+        let contents = getLinkedContent(for: id)
             .map(\.id)
             .appending(id)
 

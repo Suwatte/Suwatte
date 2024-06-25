@@ -37,7 +37,7 @@ extension RealmActor {
             let ids = results.map(\.id) as [String]
             let startedTitles = realm
                 .objects(ProgressMarker.self)
-                .where { $0.id.in(ids) }
+                .where { $0.chapter.content.id.in(ids) }
                 .map(\.id) as [String]
 
             results = results

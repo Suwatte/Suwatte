@@ -46,4 +46,7 @@ final class ChapterReference: Object, CKRecordConvertible, CKRecordRecoverable, 
     var isValid: Bool {
         content != nil || opds != nil || archive != nil
     }
+
+    // Backup Fields
+    var contentId: String?
 }

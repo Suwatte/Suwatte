@@ -112,10 +112,10 @@ extension ProfileView.Skeleton.ChapterView {
                             guard !redacted else { return }
 
                             if model.content.contentType == .novel {
-                                StateManager.shared.alert(title: "Novel Reading", message: "Novel reading is currently not supported until version 6.1")
-                                return
-                            }
-                            model.selection = chapter
+                            return
+                        }
+                        let progressMarker = model.readChapters[chapter.STTContentIdentifier]?.first { $0.id == chapter.id }
+                        model.selection = CurrentSelection(id: chapter.id, chapter: chapter, marker: progressMarker)
                         }
                     }
                 }
@@ -146,7 +146,11 @@ extension ProfileView.Skeleton.ChapterView {
 
 extension ProfileView.Skeleton.ChapterView.PreviewView {
     func isChapterCompleted(_ chapter: ThreadSafeChapter) -> Bool {
-        model.readChapters.contains(chapter.chapterOrderKey)
+        guard let chaptersByContent = model.readChapters[chapter.STTContentIdentifier] else {
+            return false
+        }
+        
+        return chaptersByContent.first { $0.id == chapter.id }?.isCompleted ?? false
     }
 
     func isChapterNew(_ chapter: ThreadSafeChapter) -> Bool {
@@ -157,10 +161,11 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
     }
 
     func chapterProgress(_ chapter: ThreadSafeChapter) -> Double? {
-        guard let id = model.actionState.chapter?.id, id == chapter.id else {
+        guard let chaptersByContent = model.readChapters[chapter.STTContentIdentifier] else {
             return nil
         }
-        return model.actionState.marker?.progress
+
+        return chaptersByContent.first { $0.id == chapter.id }?.progress ?? nil
     }
 
     func getDownload(_ chapter: ThreadSafeChapter) -> DownloadStatus? {

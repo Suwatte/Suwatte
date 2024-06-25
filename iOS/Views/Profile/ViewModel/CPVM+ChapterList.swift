@@ -24,12 +24,15 @@ extension ViewModel {
         var maxOrderKey: Double = 0
         var distinctKeys = Set<Double>()
 
-        let filtered = !loadChapters ? [] : STTHelpers.filterChapters(chapters, with: .init(contentId: content.highlight.id, sourceId: content.runnerID)) { chapter in
-            let orderKey = chapter.chapterOrderKey
-            maxOrderKey = max(orderKey, maxOrderKey)
-            distinctKeys.insert(orderKey)
+        var filtered: [ThreadSafeChapter] = []
+        if loadChapters {
+            filtered = STTHelpers.filterChapters(chapters, with: .init(contentId: content.highlight.id, sourceId: content.runnerID)) { chapter in
+                let orderKey = chapter.chapterOrderKey
+                maxOrderKey = max(orderKey, maxOrderKey)
+                distinctKeys.insert(orderKey)
+            }
+            .sorted(by: \.index, descending: false)
         }
-        .sorted(by: \.index, descending: false)
 
         let distinctCount = distinctKeys.count
         return .init(content: content, filtered: filtered, originalList: chapters, distinctCount: distinctCount, maxOrderKey: maxOrderKey, index: index)
