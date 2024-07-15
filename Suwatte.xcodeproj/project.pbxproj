@@ -26,7 +26,6 @@
 		DF0B02882AA05B76004345BA /* DSK+Form.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0B02872AA05B76004345BA /* DSK+Form.swift */; };
 		DF0B028B2AA06063004345BA /* DSKFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0B028A2AA06063004345BA /* DSKFormView.swift */; };
 		DF0B028E2AA1477C004345BA /* DSKTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0B028D2AA1477C004345BA /* DSKTrackerView.swift */; };
-		DF0D96062824892C00E592D9 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = DF0D96052824892C00E592D9 /* Realm */; };
 		DF11146F2A917B5E00FA8A39 /* WebtoonController+Setup.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF11146E2A917B5E00FA8A39 /* WebtoonController+Setup.swift */; };
 		DF1114742A91A01300FA8A39 /* ImageNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1114732A91A01300FA8A39 /* ImageNode.swift */; };
 		DF1114762A92E86600FA8A39 /* WebtoonController+Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1114752A92E86600FA8A39 /* WebtoonController+Navigation.swift */; };
@@ -45,6 +44,10 @@
 		DF1114952A93F70500FA8A39 /* IV+AutoScroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1114942A93F70500FA8A39 /* IV+AutoScroll.swift */; };
 		DF1114972A93FC4900FA8A39 /* WebtoonController+AutoScroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1114962A93FC4900FA8A39 /* WebtoonController+AutoScroll.swift */; };
 		DF1114992A9407AD00FA8A39 /* PagingController+Gesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1114982A9407AD00FA8A39 /* PagingController+Gesture.swift */; };
+		DF12AC882C0125D00094BCBF /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DF12AC872C0125D00094BCBF /* RealmSwift */; };
+		DF12AC8F2C0128CD0094BCBF /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = DF12AC872C0125D00094BCBF /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		DF12AC952C012A960094BCBF /* IceCream in Frameworks */ = {isa = PBXBuildFile; productRef = DF12AC942C012A960094BCBF /* IceCream */; };
+		DF12AC972C012CCE0094BCBF /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = DF12AC962C012CCD0094BCBF /* PrivacyInfo.xcprivacy */; };
 		DF13892228BDCAEF0035BDBB /* STT+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF13892128BDCAEF0035BDBB /* STT+URL.swift */; };
 		DF15F590296621C30085DB1F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF15F58F296621C30085DB1F /* SettingsView.swift */; };
 		DF15F59229677DEF0085DB1F /* FCS+Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF15F59129677DEF0085DB1F /* FCS+Options.swift */; };
@@ -130,7 +133,6 @@
 		DF4817EB2A6E47CE00CB3A47 /* JSCTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4817EA2A6E47CE00CB3A47 /* JSCTimer.swift */; };
 		DF4817F12A6F88A800CB3A47 /* SourceDownload.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4817F02A6F88A800CB3A47 /* SourceDownload.swift */; };
 		DF4817F32A6F8B0300CB3A47 /* SDM.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4817F22A6F8B0300CB3A47 /* SDM.swift */; };
-		DF482F012955A56F002D3308 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DF482F002955A56F002D3308 /* RealmSwift */; };
 		DF489C022A8040DF006A21B9 /* Panel+Watcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF489C012A8040DF006A21B9 /* Panel+Watcher.swift */; };
 		DF489C0C2A817F38006A21B9 /* IV+TransitionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF489C0B2A817F38006A21B9 /* IV+TransitionView.swift */; };
 		DF489C112A81C6F2006A21B9 /* IV+Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF489C102A81C6F2006A21B9 /* IV+Protocol.swift */; };
@@ -330,7 +332,6 @@
 		DFAC77982815D48D00AF6394 /* STTHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAC77972815D48D00AF6394 /* STTHelper.swift */; };
 		DFADB58B29D7D04E00CBE22F /* JSCC+Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFADB58A29D7D04E00CBE22F /* JSCC+Network.swift */; };
 		DFADB58D29D7F19900CBE22F /* STT+URLRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFADB58C29D7F19900CBE22F /* STT+URLRequest.swift */; };
-		DFAE977D2AC866D9001E62D8 /* IceCream in Frameworks */ = {isa = PBXBuildFile; productRef = DFAE977C2AC866D9001E62D8 /* IceCream */; };
 		DFB47EEE2880928C0040A1BD /* RefreshableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB47EED2880928C0040A1BD /* RefreshableScrollView.swift */; };
 		DFB47EF72880C1FB0040A1BD /* STT+OPDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB47EF62880C1FB0040A1BD /* STT+OPDS.swift */; };
 		DFB47EFA2880C3DA0040A1BD /* OPDS+HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB47EF92880C3D90040A1BD /* OPDS+HomeView.swift */; };
@@ -470,6 +471,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		DF12AC842C0125760094BCBF /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				DF12AC8F2C0128CD0094BCBF /* RealmSwift in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DF9BFE092A4285BC005D0B63 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -520,6 +532,7 @@
 		DF1114942A93F70500FA8A39 /* IV+AutoScroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IV+AutoScroll.swift"; sourceTree = "<group>"; };
 		DF1114962A93FC4900FA8A39 /* WebtoonController+AutoScroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebtoonController+AutoScroll.swift"; sourceTree = "<group>"; };
 		DF1114982A9407AD00FA8A39 /* PagingController+Gesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PagingController+Gesture.swift"; sourceTree = "<group>"; };
+		DF12AC962C012CCD0094BCBF /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		DF13892128BDCAEF0035BDBB /* STT+URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+URL.swift"; sourceTree = "<group>"; };
 		DF15F58F296621C30085DB1F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		DF15F59129677DEF0085DB1F /* FCS+Options.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FCS+Options.swift"; sourceTree = "<group>"; };
@@ -930,17 +943,16 @@
 				DF2DA77327CF11C50046FE20 /* Alamofire in Frameworks */,
 				DF9041A22AA3E7E600B72ACC /* R2Shared in Frameworks */,
 				DFF4351E2AA6D09800FAAD8B /* Zephyr in Frameworks */,
+				DF12AC952C012A960094BCBF /* IceCream in Frameworks */,
 				DFB7FB03297B965D00599097 /* OrderedCollections in Frameworks */,
 				DFA17F662A4916C300179850 /* ASCollectionView in Frameworks */,
 				DF70234F29DA852A0076AAD0 /* Nuke in Frameworks */,
 				DF31636D2B93049B00B14E84 /* FirebaseAnalytics in Frameworks */,
+				DF12AC882C0125D00094BCBF /* RealmSwift in Frameworks */,
 				DF730CD329411F1B00C62C71 /* FlagKit in Frameworks */,
-				DF482F012955A56F002D3308 /* RealmSwift in Frameworks */,
-				DF0D96062824892C00E592D9 /* Realm in Frameworks */,
 				DFF1043E28A9963D00E2C3A4 /* AnyCodable in Frameworks */,
 				DF70235129DA852A0076AAD0 /* NukeUI in Frameworks */,
 				DF59C97D285004860027F19D /* ZIPFoundation in Frameworks */,
-				DFAE977D2AC866D9001E62D8 /* IceCream in Frameworks */,
 				DF29A6822ABBC313005E11E3 /* AsyncDisplayKit in Frameworks */,
 				DF9041A42AA3E7E600B72ACC /* ReadiumOPDS in Frameworks */,
 			);
@@ -1209,6 +1221,7 @@
 		DF2DA6FF27CD82430046FE20 = {
 			isa = PBXGroup;
 			children = (
+				DF12AC962C012CCD0094BCBF /* PrivacyInfo.xcprivacy */,
 				DFAE97702AC61AD8001E62D8 /* LICENSE */,
 				DFCE6EAF280108EA002E220C /* Suwatte.app */,
 				DF9BFDFC2A4285BC005D0B63 /* ThumbnailProvider.appex */,
@@ -2514,6 +2527,7 @@
 				DF2DA70927CD82450046FE20 /* Frameworks */,
 				DF2DA70A27CD82450046FE20 /* Resources */,
 				DF9BFE092A4285BC005D0B63 /* Embed Foundation Extensions */,
+				DF12AC842C0125760094BCBF /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2524,12 +2538,10 @@
 			packageProductDependencies = (
 				DF2DA77227CF11C50046FE20 /* Alamofire */,
 				DF248F0B2813844C00818300 /* KeychainSwift */,
-				DF0D96052824892C00E592D9 /* Realm */,
 				DF59C97C285004860027F19D /* ZIPFoundation */,
 				DF59C987285054670027F19D /* Unrar */,
 				DFF1043D28A9963D00E2C3A4 /* AnyCodable */,
 				DF730CD229411F1B00C62C71 /* FlagKit */,
-				DF482F002955A56F002D3308 /* RealmSwift */,
 				DFB7FB02297B965D00599097 /* OrderedCollections */,
 				DF70234E29DA852A0076AAD0 /* Nuke */,
 				DF70235029DA852A0076AAD0 /* NukeUI */,
@@ -2538,8 +2550,9 @@
 				DF9041A32AA3E7E600B72ACC /* ReadiumOPDS */,
 				DFF4351D2AA6D09800FAAD8B /* Zephyr */,
 				DF29A6812ABBC313005E11E3 /* AsyncDisplayKit */,
-				DFAE977C2AC866D9001E62D8 /* IceCream */,
 				DF31636C2B93049B00B14E84 /* FirebaseAnalytics */,
+				DF12AC872C0125D00094BCBF /* RealmSwift */,
+				DF12AC942C012A960094BCBF /* IceCream */,
 			);
 			productName = "Suwatte (iOS)";
 			productReference = DFCE6EAF280108EA002E220C /* Suwatte.app */;
@@ -2596,7 +2609,6 @@
 			packageReferences = (
 				DF2DA77127CF11C50046FE20 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift" */,
-				DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				DF59C97B285004850027F19D /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 				DF59C986285054660027F19D /* XCRemoteSwiftPackageReference "Unrar" */,
 				DFF1043C28A9963C00E2C3A4 /* XCRemoteSwiftPackageReference "AnyCodable" */,
@@ -2607,8 +2619,9 @@
 				DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit" */,
 				DFF4351C2AA6D09800FAAD8B /* XCRemoteSwiftPackageReference "Zephyr" */,
 				DF29A6802ABBC313005E11E3 /* XCRemoteSwiftPackageReference "Texture" */,
-				DFAE977B2AC866D9001E62D8 /* XCRemoteSwiftPackageReference "IceCream" */,
 				DF31636B2B93049B00B14E84 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				DF12AC862C0125CF0094BCBF /* XCRemoteSwiftPackageReference "realm-swift" */,
+				DF12AC932C012A960094BCBF /* XCRemoteSwiftPackageReference "IceCream" */,
 			);
 			productRefGroup = DF2DA6FF27CD82430046FE20;
 			projectDirPath = "";
@@ -2628,6 +2641,7 @@
 				DFDBF9A12A7CABAD006D49AD /* wkFills.js in Resources */,
 				DF90419F2AA3E78E00B72ACC /* GoogleService-Info.plist in Resources */,
 				DF3DA8EE2A5730D400E8E3BD /* store.js in Resources */,
+				DF12AC972C012CCE0094BCBF /* PrivacyInfo.xcprivacy in Resources */,
 				DF3DA8ED2A5730D400E8E3BD /* bridge.js in Resources */,
 				DF3DA8EF2A5730D400E8E3BD /* log.js in Resources */,
 				DF86CACA285841BA0008B17A /* STTLaunchScreen.storyboard in Resources */,
@@ -3404,12 +3418,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+		DF12AC862C0125CF0094BCBF /* XCRemoteSwiftPackageReference "realm-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-swift.git";
 			requirement = {
-				kind = exactVersion;
-				version = 10.49.1;
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.50.1;
+			};
+		};
+		DF12AC932C012A960094BCBF /* XCRemoteSwiftPackageReference "IceCream" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Suwatte/IceCream";
+			requirement = {
+				kind = revision;
+				revision = 2f27eaffa57e0a25c2dc910c0060284df750b8de;
 			};
 		};
 		DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
@@ -3441,7 +3463,7 @@
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 10.21.0;
+				minimumVersion = 10.26.0;
 			};
 		};
 		DF59C97B285004850027F19D /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
@@ -3492,14 +3514,6 @@
 				kind = branch;
 			};
 		};
-		DFAE977B2AC866D9001E62D8 /* XCRemoteSwiftPackageReference "IceCream" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Suwatte/IceCream";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
 		DFB7FB01297B965D00599097 /* XCRemoteSwiftPackageReference "swift-collections" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-collections.git";
@@ -3527,10 +3541,15 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		DF0D96052824892C00E592D9 /* Realm */ = {
+		DF12AC872C0125D00094BCBF /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = Realm;
+			package = DF12AC862C0125CF0094BCBF /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
+		DF12AC942C012A960094BCBF /* IceCream */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF12AC932C012A960094BCBF /* XCRemoteSwiftPackageReference "IceCream" */;
+			productName = IceCream;
 		};
 		DF248F0B2813844C00818300 /* KeychainSwift */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -3551,11 +3570,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DF31636B2B93049B00B14E84 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAnalytics;
-		};
-		DF482F002955A56F002D3308 /* RealmSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DF0D96042824892C00E592D9 /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = RealmSwift;
 		};
 		DF59C97C285004860027F19D /* ZIPFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -3606,11 +3620,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DFA17F642A4916C300179850 /* XCRemoteSwiftPackageReference "ASCollectionView" */;
 			productName = ASCollectionView;
-		};
-		DFAE977C2AC866D9001E62D8 /* IceCream */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = DFAE977B2AC866D9001E62D8 /* XCRemoteSwiftPackageReference "IceCream" */;
-			productName = IceCream;
 		};
 		DFB7FB02297B965D00599097 /* OrderedCollections */ = {
 			isa = XCSwiftPackageProductDependency;
