@@ -10,15 +10,26 @@ import RealmSwift
 
 extension LibraryEntry: Codable {
     enum CodingKeys: String, CodingKey {
-        case id, updateCount, lastUpdated, lastOpened, dateAdded, lastRead, collections, flag, linkedHasUpdates, unreadCount
+        case id, updateCount, lastUpdated, lastOpened, dateAdded, lastRead, collections, flag, linkedHasUpdates, unreadCount, content
+    }
+
+    static var schemaVersionKey: CodingUserInfoKey {
+        return CodingUserInfoKey(rawValue: "schemaVersion")!
     }
 
     convenience init(from decoder: Decoder) throws {
         self.init()
 
+        let schemaVersion = decoder.userInfo[Self.schemaVersionKey] as! Int
+
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        id = try container.decode(String.self, forKey: .id)
+        if schemaVersion > 15 {
+            id = try container.decode(String.self, forKey: .id)
+        }
+        else {
+            content = try container.decode(StoredContent.self, forKey: .content)
+        }
         updateCount = try container.decode(Int.self, forKey: .updateCount)
         unreadCount = try container.decodeIfPresent(Int.self, forKey: .unreadCount) ?? 0
         lastUpdated = try container.decode(Date.self, forKey: .lastUpdated)

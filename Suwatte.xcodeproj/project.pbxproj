@@ -3467,7 +3467,7 @@
 			repositoryURL = "https://github.com/Suwatte/IceCream";
 			requirement = {
 				kind = revision;
-				revision = 2f27eaffa57e0a25c2dc910c0060284df750b8de;
+				revision = 8c951c505330408036636be5ad43bd6fda986203;
 			};
 		};
 		DF248F0A2813844C00818300 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {

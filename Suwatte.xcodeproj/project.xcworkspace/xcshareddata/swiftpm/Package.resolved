@@ -1,5 +1,5 @@
 {
-  "originHash" : "301ad50b5355447a877152912570fee2c52b5d13225a9f1634b707972efafe2f",
+  "originHash" : "0158de25c03b53d3a1cd3e8fc3c37429a65ad754ffb8984d7d644609886e594a",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -150,7 +150,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Suwatte/IceCream",
       "state" : {
-        "revision" : "2f27eaffa57e0a25c2dc910c0060284df750b8de"
+        "revision" : "8c951c505330408036636be5ad43bd6fda986203"
       }
     },
     {

@@ -38,15 +38,31 @@ final class ChapterReference: Object, CKRecordConvertible, CKRecordRecoverable, 
     @Persisted var chapterId: String
     @Persisted var number: Double
     @Persisted var volume: Double?
-    @Persisted var content: StoredContent?
-    @Persisted var opds: StreamableOPDSContent?
-    @Persisted var archive: ArchivedContent?
+    @Persisted var contentId: String?
+    @Persisted var content: StoredContent? {
+        didSet {
+            if let content = content {
+                contentId = content.id
+            }
+        }
+    }
+    @Persisted var opds: StreamableOPDSContent? {
+        didSet {
+            if let opds = opds {
+                contentId = opds.id
+            }
+        }
+    }
+    @Persisted var archive: ArchivedContent? {
+        didSet {
+            if let archive = archive {
+                contentId = archive.id
+            }
+        }
+    }
     @Persisted var isDeleted: Bool = false
 
     var isValid: Bool {
         content != nil || opds != nil || archive != nil
     }
-
-    // Backup Fields
-    var contentId: String?
 }

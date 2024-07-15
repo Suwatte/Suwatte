@@ -47,7 +47,7 @@ extension RealmActor {
 
         backup.storedContents = storedContents.toArray()
         backup.progressMarkers = progressMarkers.toArray()
-        backup.library = libraryEntries.toArray() //.map(CodableLibraryEntry.from(entry:))
+        backup.library = libraryEntries.toArray()
         backup.collections = collections.toArray()
         backup.lists = lists.toArray()
         backup.runners = runners.toArray()
@@ -62,12 +62,15 @@ extension RealmActor {
     func restoreBackup(backup: Backup) async throws {
         try await resetDB()
 
-        if let entries = backup.library {
-            try entries.forEach { try $0.fillContent(data: backup.storedContents ) }
-        }
 
-        if let entries = backup.progressMarkers {
-            try entries.forEach { try $0.chapter!.fromBackup(data: backup.storedContents) }
+        if backup.schemaVersion > 15 {
+            if let entries = backup.library {
+                try entries.forEach { try $0.fillContent(data: backup.storedContents ) }
+            }
+
+            if let entries = backup.progressMarkers {
+                try entries.forEach { try $0.chapter!.fromBackup(data: backup.storedContents) }
+            }
         }
 
         let creamAssets: [CreamAsset] = backup.creamAssets?.compactMap { CreamAsset.create(objectID: $0.key, folder: $0.folder,
