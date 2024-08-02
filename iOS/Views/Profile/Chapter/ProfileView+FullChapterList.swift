@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ChapterList: View {
     @ObservedObject var model: ProfileView.ViewModel
-    @State var selection: ThreadSafeChapter?
+    @State var selection: CurrentSelection?
     @State var selections = Set<ThreadSafeChapter>()
     @State var presentOptions = false
 
@@ -67,12 +67,13 @@ struct ChapterList: View {
         .onChange(of: showOnlyDownloads) { _ in
             doFilter()
         }
-        .fullScreenCover(item: $selection, onDismiss: handleReconnection) { chapter in
+        .fullScreenCover(item: $selection, onDismiss: handleReconnection) { chapterSelection in
             let readingMode = model.readingMode
             ReaderGateWay(title: model.content.title,
                           readingMode: readingMode,
                           chapterList: chapters,
-                          openTo: chapter)
+                          openTo: chapterSelection.chapter!,
+                          marker: chapterSelection.marker)
                 .task {
                     model.removeNotifier()
                 }
@@ -117,7 +118,7 @@ extension ChapterList {
                 return
             }
             if editMode?.wrappedValue != .active {
-                selection = chapter
+                selectChapter(chapter)
             }
         } label: {
             ChapterListTile(chapter: chapter,
@@ -142,6 +143,11 @@ extension ChapterList {
                 }
                 .id(genId(chapter.id, completed, download, isBookmarked))
         )
+    }
+
+    func selectChapter(_ chapter: ThreadSafeChapter) {
+        let progressMarker = model.readChapters[chapter.STTContentIdentifier]?[chapter.id]
+        selection = CurrentSelection(id: chapter.id, chapter: chapter, marker: progressMarker)
     }
 
     func genId(_ id: String, _ completed: Bool, _ status: DownloadStatus?, _ isBookmarked: Bool) -> String {

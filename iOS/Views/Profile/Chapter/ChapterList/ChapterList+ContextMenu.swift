@@ -14,7 +14,7 @@ extension ChapterList {
             let id = model.STTIDPair
             Task {
                 let actor = await RealmActor.shared()
-                await actor.bulkMarkChapters(for: id,
+                await actor.markChapters(for: id,
                                              chapters: [chapter],
                                              markAsRead: !completed)
                 didMark()

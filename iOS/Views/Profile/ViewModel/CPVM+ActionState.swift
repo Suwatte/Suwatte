@@ -26,8 +26,7 @@ extension ViewModel {
 
         let actor = await RealmActor.shared()
 
-        let marker = await actor
-            .getFrozenContentMarker(for: identifier)
+        let lastReadMarker = await actor.getFrozenLatestReadContentMarker(for: STTIDPair)
 
         _ = STTHelpers.getReadingMode(for: identifier) // To Update Reading Mode
 
@@ -50,7 +49,7 @@ extension ViewModel {
             getStateAtIndex(state: .reRead, index: chapters.endIndex - 1)
         }
 
-        guard let marker else {
+        guard let lastReadMarker else {
             if let state = resolveSourceProgressStateAsActionState(chapters: chapters) {
                 return state
             }
@@ -58,28 +57,30 @@ extension ViewModel {
             return getEarliestChapterState()
         }
 
+        let maxReadChapterKey = await actor.getMaxReadKey(for: STTIDPair)
+
         // `calculateActionState` gets called twice. First After Chapters are loaded & after syncing is complete
         // It should return the current action state if the max read chapter was not changed after syncing
         // TODO: Make this not rely on order key
         if safetyCheck, let currentRead = actionState.chapter?.chapterOrderKey,
-           let maxRead = marker.maxReadChapterKey, maxRead <= currentRead
+           maxReadChapterKey > 0, maxReadChapterKey <= currentRead
         {
             return actionState
         }
 
         if let sourceStateLastRead = sourceProgressState?.currentReadingState?.readDate,
-           let markerDate = marker.dateRead, sourceStateLastRead > markerDate,
+           let markerDate = lastReadMarker.dateRead, sourceStateLastRead > markerDate,
            let state = resolveSourceProgressStateAsActionState(chapters: chapters)
         {
             return state
         }
 
-        guard let chapterRef = marker.currentChapter else {
+        // Can this ever happen??
+        guard let chapterRef = lastReadMarker.chapter else {
             // Marker Exists but there is not reference to the chapter
-            let maxReadChapterKey = marker.maxReadChapterKey
 
             // Check the max read chapter and use this instead
-            guard let maxReadChapterKey else {
+            if maxReadChapterKey == 0 {
                 // No Maximum Read Chapter, meaning marker exists without any reference or read chapers, point to first chapter instead
                 return getEarliestChapterState()
             }
@@ -115,8 +116,8 @@ extension ViewModel {
         }
 
         // Marker Exists, Chapter has not been completed, resume
-        if !marker.isCompleted {
-            let asMarker = ActionState.Marker(progress: marker.progress ?? 0.0, date: marker.dateRead)
+        if !lastReadMarker.isCompleted {
+            let asMarker = ActionState.Marker(progress: lastReadMarker.progress ?? 0.0, date: lastReadMarker.dateRead)
             return getStateAtIndex(state: .resume, marker: asMarker, index: targetIndex)
         }
 

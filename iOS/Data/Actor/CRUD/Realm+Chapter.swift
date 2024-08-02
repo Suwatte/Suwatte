@@ -40,7 +40,7 @@ extension RealmActor {
 
         let hasMarker = !realm
             .objects(ProgressMarker.self)
-            .where { $0.isDeleted == false && $0.currentChapter.id == id }
+            .where { $0.isDeleted == false && $0.id == id }
             .isEmpty
 
         guard !hasBookmarks, !hasMarker, !hasChapterBookmarks else {
