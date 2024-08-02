@@ -26,7 +26,7 @@ struct ContentSourcePageView: View {
 
             DSKHighlightTile(data: item,
                              source: source,
-                             inLibrary: model.library.contains(identifier),
+                             inLibrary: model.library.contains(identifier) || model.libraryLinked.contains(identifier),
                              inReadLater: model.readLater.contains(identifier),
                              selection: $selection,
                              hideLibraryBadges: hideLibrayBadges)

@@ -23,7 +23,7 @@ struct ContentSourceDirectoryView: View {
         DirectoryView(model: .init(runner: source, request: request)) { data in
             let identifier = ContentIdentifier(contentId: data.id,
                                                sourceId: source.id).id
-            let inLibrary = model.library.contains(identifier)
+            let inLibrary = model.library.contains(identifier) || model.libraryLinked.contains(identifier)
             let inReadLater = model.readLater.contains(identifier)
 
             DSKHighlightTile(data: data,
@@ -53,15 +53,21 @@ struct ContentSourceDirectoryView: View {
 extension ContentSourceDirectoryView {
     final class ViewModel: ObservableObject {
         @Published var library: Set<String> = []
+        @Published var libraryLinked: Set<String> = []
         @Published var readLater: Set<String> = []
 
         private var libraryToken: NotificationToken?
+        private var libraryLinkedToken: NotificationToken?
         private var rlToken: NotificationToken?
 
         func stop() {
             libraryToken?.invalidate()
-            rlToken?.invalidate()
             libraryToken = nil
+
+            libraryLinkedToken?.invalidate()
+            libraryLinkedToken = nil
+
+            rlToken?.invalidate()
             rlToken = nil
         }
 
@@ -71,6 +77,11 @@ extension ContentSourceDirectoryView {
             libraryToken = await actor
                 .observeLibraryIDs(sourceID: sourceID) { [weak self] values in
                     self?.library = values
+                }
+            
+            libraryLinkedToken = await actor
+                .observeLinkedIDs(sourceID: sourceID) { [weak self] values in
+                    self?.libraryLinked = values
                 }
 
             rlToken = await actor

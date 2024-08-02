@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		29FB9F232BE43EE800F22E2F /* MigrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29FB9F222BE43EE800F22E2F /* MigrationHelper.swift */; };
 		DF01DEEA2A587A5D0025700B /* Engine+LibraryUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF01DEE92A587A5D0025700B /* Engine+LibraryUpdate.swift */; };
 		DF01DEEC2A587A680025700B /* Engine+URLHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF01DEEB2A587A680025700B /* Engine+URLHandler.swift */; };
 		DF020A442A89A07C00BC5562 /* ArchiveHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A432A89A07C00BC5562 /* ArchiveHelper.swift */; };
@@ -496,6 +497,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		29FB9F222BE43EE800F22E2F /* MigrationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationHelper.swift; sourceTree = "<group>"; };
 		DF01DEE92A587A5D0025700B /* Engine+LibraryUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Engine+LibraryUpdate.swift"; sourceTree = "<group>"; };
 		DF01DEEB2A587A680025700B /* Engine+URLHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Engine+URLHandler.swift"; sourceTree = "<group>"; };
 		DF020A432A89A07C00BC5562 /* ArchiveHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ArchiveHelper.swift; path = Shared/ArchiveHelper/ArchiveHelper.swift; sourceTree = SOURCE_ROOT; };
@@ -971,6 +973,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		29FB9F212BE43ECD00F22E2F /* Migrations */ = {
+			isa = PBXGroup;
+			children = (
+				29FB9F222BE43EE800F22E2F /* MigrationHelper.swift */,
+			);
+			path = Migrations;
+			sourceTree = "<group>";
+		};
 		7660DF769E63B9C1CCADAEB4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1696,6 +1706,7 @@
 		DF8D0A092800EE47003E4C3E /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				29FB9F212BE43ECD00F22E2F /* Migrations */,
 				DF27835C2A79A6790098BBA9 /* Extensions */,
 				DFBE48342A25BAB3000ABA16 /* Models */,
 				DF2783322A799BD60098BBA9 /* Actor */,
@@ -2732,6 +2743,7 @@
 				DF1EA4472A70B7FF003E27C7 /* SourceDownloadView.swift in Sources */,
 				DF16F2BC2A5F4F4F00D7AFBB /* DV+ResultsView.swift in Sources */,
 				DF1114882A92F6E300FA8A39 /* WebtoonController+Combine.swift in Sources */,
+				29FB9F232BE43EE800F22E2F /* MigrationHelper.swift in Sources */,
 				DF16F2C12A5F5F0D00D7AFBB /* DV+HistoryView.swift in Sources */,
 				DF52FBC22896F762008FAD3A /* CollectionManagementView.swift in Sources */,
 				DF72E48F281269A900E40E52 /* SauceNao.swift in Sources */,

@@ -251,28 +251,17 @@ extension MigrationController {
             
             let isAlreadyLinked = !realm
                 .objects(ContentLink.self)
-                .where { $0.ids.contains(one) && $0.ids.contains(two) && $0.isDeleted == false }
+                .where { $0.entry.id == one && $0.content.id == two && $0.isDeleted == false }
                 .isEmpty
 
             if isAlreadyLinked {
                 return
             }
 
-            let target = realm
-                .objects(ContentLink.self)
-                .where { $0.ids.containsAny(in: [one, two]) && $0.isDeleted == false }
-                .first
-
-            // A or B already in a linkset
-            if let target {
-                target.ids.insert(one)
-                target.ids.insert(two)
-            } else {
-                let object = ContentLink()
-                object.ids.insert(one)
-                object.ids.insert(two)
-                realm.add(object, update: .modified)
-            }
+            let object = ContentLink()
+            object.entry = entry
+            object.content = findOrCreate(highlight)
+            realm.add(object, update: .modified)
         }
 
         func remove(_ entry: LibraryEntry) {
@@ -337,8 +326,7 @@ extension MigrationController {
         func findOrCreate(_ entry: TaggedHighlight) -> StoredContent {
             let target = realm
                 .objects(StoredContent.self)
-                .where { $0.id == entry.id }
-                .first
+                .first { $0.id == entry.id }
 
             if let target {
                 return target

@@ -9,6 +9,26 @@ import Foundation
 import RealmSwift
 
 extension RealmActor {
+    func observeLinkedIDs(sourceID: String? = nil, _ callback: @escaping Callback<Set<String>>) async -> NotificationToken {
+        var collection = realm
+            .objects(ContentLink.self)
+            .where { !$0.isDeleted }
+
+        if let sourceID {
+            collection = collection
+                .where { $0.content.sourceId == sourceID }
+        }
+
+        func didUpdate(_ result: Results<ContentLink>) {
+            let ids = Set(result.map(\.content!.id) as [String])
+            Task { @MainActor in
+                callback(ids)
+            }
+        }
+
+        return await observeCollection(collection: collection, didUpdate(_:))
+    }
+
     func observeLibraryIDs(sourceID: String? = nil, _ callback: @escaping Callback<Set<String>>) async -> NotificationToken {
         var collection = realm
             .objects(LibraryEntry.self)
