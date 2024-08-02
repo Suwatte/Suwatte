@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		29B50C112C5C8DEF00A6C13F /* MigrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B50C0F2C5C8DEF00A6C13F /* MigrationHelper.swift */; };
 		DF01DEEA2A587A5D0025700B /* Engine+LibraryUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF01DEE92A587A5D0025700B /* Engine+LibraryUpdate.swift */; };
 		DF01DEEC2A587A680025700B /* Engine+URLHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF01DEEB2A587A680025700B /* Engine+URLHandler.swift */; };
 		DF020A442A89A07C00BC5562 /* ArchiveHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A432A89A07C00BC5562 /* ArchiveHelper.swift */; };
@@ -496,6 +497,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		29B50C0F2C5C8DEF00A6C13F /* MigrationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationHelper.swift; sourceTree = "<group>"; };
 		DF01DEE92A587A5D0025700B /* Engine+LibraryUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Engine+LibraryUpdate.swift"; sourceTree = "<group>"; };
 		DF01DEEB2A587A680025700B /* Engine+URLHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Engine+URLHandler.swift"; sourceTree = "<group>"; };
 		DF020A432A89A07C00BC5562 /* ArchiveHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ArchiveHelper.swift; path = Shared/ArchiveHelper/ArchiveHelper.swift; sourceTree = SOURCE_ROOT; };
@@ -971,6 +973,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		29B50C102C5C8DEF00A6C13F /* Migrations */ = {
+			isa = PBXGroup;
+			children = (
+				29B50C0F2C5C8DEF00A6C13F /* MigrationHelper.swift */,
+			);
+			path = Migrations;
+			sourceTree = "<group>";
+		};
 		7660DF769E63B9C1CCADAEB4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1696,6 +1706,7 @@
 		DF8D0A092800EE47003E4C3E /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				29B50C102C5C8DEF00A6C13F /* Migrations */,
 				DF27835C2A79A6790098BBA9 /* Extensions */,
 				DFBE48342A25BAB3000ABA16 /* Models */,
 				DF2783322A799BD60098BBA9 /* Actor */,
@@ -3043,6 +3054,7 @@
 				DF489C292A830350006A21B9 /* IV+PagingController.swift in Sources */,
 				DF62B5C52A970BF300F907CD /* CPVM+Models.swift in Sources */,
 				DF020A4A2A8B120700BC5562 /* IV+ChapterList.swift in Sources */,
+				29B50C112C5C8DEF00A6C13F /* MigrationHelper.swift in Sources */,
 				DF8D0B742800EE48003E4C3E /* LibraryGrid+GridTile.swift in Sources */,
 				DFE1B1002A9C053900D300DB /* Migration+ViewModel.swift in Sources */,
 				DF977E162A0ECB3900AA1E90 /* StateManager.swift in Sources */,

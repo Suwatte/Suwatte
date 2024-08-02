@@ -153,8 +153,6 @@ extension RealmActor {
         try await realm.asyncWrite {
 
             realm.objects(ArchivedContent.self).setValue(true, forKey: "isDeleted") // 1. No relation
-            realm.delete(realm.objects(CreamAsset.self)) // 5. No relation
-            realm.objects(CreamLocation.self).setValue(true, forKey: "isDeleted") // 6. No relation
             realm.objects(CustomThumbnail.self).setValue(true, forKey: "isDeleted") // 7. Relation: CreamAsset
             realm.objects(InteractorStoreObject.self).setValue(true, forKey: "isDeleted") // 8. No relation
             realm.objects(LibraryCollectionFilter.self).setValue(true, forKey: "isDeleted") // 10. No relation
