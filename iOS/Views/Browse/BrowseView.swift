@@ -148,7 +148,7 @@ extension BrowseView {
                             VStack (alignment: .leading) {
                                 Text(runner.name)
                                     .font(.headline)
-                                Text("v" + runner.version.clean)
+                                Text("v" + runner.version.description)
                                     .font(.footnote)
                                     .fontWeight(.thin)
                                     .foregroundStyle(.gray)
