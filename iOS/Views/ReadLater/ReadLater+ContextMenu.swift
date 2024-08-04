@@ -11,7 +11,7 @@ import UIKit
 
 extension LibraryView.ReadLaterView.CollectionView {
     func inLibrary(_ entry: ReadLater) -> Bool {
-        model.library.contains(entry.id)
+        model.library.contains(entry.id) || model.libraryLinked.contains(entry.id)
     }
 
     func contextMenuProvider(int _: Int, entry: ReadLater) -> UIContextMenuConfiguration? {

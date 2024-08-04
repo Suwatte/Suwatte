@@ -135,7 +135,7 @@ extension SearchView.CollectionView {
         }
 
         var inLibrary: Bool {
-            model.library.contains(identifier)
+            model.library.contains(identifier) || model.libraryLinked.contains(identifier)
         }
 
         var inReadLater: Bool {

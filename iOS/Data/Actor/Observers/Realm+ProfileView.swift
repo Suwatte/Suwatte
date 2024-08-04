@@ -11,9 +11,10 @@ import RealmSwift
 extension RealmActor {
     typealias Callback<T> = (T) -> Void
     func observeLibraryState(for id: String, _ callback: @escaping Callback<Bool>) async -> NotificationToken {
+        let ids = getLinkedContent(for: id).map(\.id).appending(id)
         let collection = realm
             .objects(LibraryEntry.self)
-            .where { $0.id == id && !$0.isDeleted }
+            .where { $0.id.in(ids) && !$0.isDeleted }
 
         func didUpdate(_ results: Results<LibraryEntry>) {
             let inLibrary = !results.isEmpty
@@ -59,7 +60,7 @@ extension RealmActor {
     }
 
     func observeDownloadStatus(for id: String, _ callback: @escaping Callback<[String: DownloadStatus]>) async -> NotificationToken {
-        let contents = getLinkedContent(for: id, false)
+        let contents = getLinkedContent(for: id)
             .map(\.id)
             .appending(id)
 
