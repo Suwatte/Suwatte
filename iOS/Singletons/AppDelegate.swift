@@ -52,6 +52,7 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
         var config = Realm.Configuration(schemaVersion: UInt64(SCHEMA_VERSION), migrationBlock: { migration, oldSchemaVersion in
             if oldSchemaVersion < 16 {
                 MigrationHelper.migrateProgressMarker(migration: migration)
+                MigrationHelper.migrateContentLinks(migration: migration)
             }
         })
 
