@@ -16,6 +16,7 @@ struct Backup: Codable {
     var library: [LibraryEntry]?
     var markers: [OutdatedMarker]?
     var progressMarkers: [ProgressMarker]?
+    var contentLinks: [CodableContentLink]?
 
     var date: Date = .init()
     var appVersion: String = Bundle.main.releaseVersionNumber ?? "UNKNOWN"

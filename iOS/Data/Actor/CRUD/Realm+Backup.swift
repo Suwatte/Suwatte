@@ -32,6 +32,11 @@ extension RealmActor {
             .where { $0.chapter != nil && $0.chapter.content != nil && !$0.isDeleted }
             .freeze()
 
+        let contentLinks = realm
+            .objects(ContentLink.self)
+            .where { $0.entry != nil && $0.content != nil && !$0.isDeleted }
+            .freeze()
+
         let lists = realm
             .objects(StoredRunnerList.self)
             .where { !$0.isDeleted }
@@ -50,7 +55,7 @@ extension RealmActor {
         backup.collections = collections.toArray()
         backup.lists = lists.toArray()
         backup.runners = runners.toArray()
-
+        backup.contentLinks = contentLinks.map(CodableContentLink.from(contentLink: ))
         return backup
     }
 }
@@ -61,7 +66,6 @@ extension RealmActor {
     func restoreBackup(backup: Backup) async throws {
         try await resetDB()
 
-
         if backup.schemaVersion > 15 {
             if let entries = backup.library {
                 try entries.forEach { try $0.fillContent(data: backup.storedContents ) }
@@ -71,6 +75,9 @@ extension RealmActor {
                 try entries.forEach { try $0.chapter!.fromBackup(data: backup.storedContents) }
             }
         }
+
+        let contentLinks: [ContentLink] = try backup.contentLinks?.compactMap { try $0.restore(storedContent: backup.storedContents, library: backup.library) } ?? []
+
         try await realm.asyncWrite {
             if let markers = backup.markers {
                 restoreOutdatedMarkers(markers, realm: realm)
@@ -94,6 +101,10 @@ extension RealmActor {
 
             if let markers = backup.progressMarkers {
                 realm.add(markers, update: .all)
+            }
+
+            if !contentLinks.isEmpty {
+                realm.add(contentLinks, update: .all)
             }
         }
     }
