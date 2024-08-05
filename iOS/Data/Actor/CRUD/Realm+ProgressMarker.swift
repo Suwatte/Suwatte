@@ -9,176 +9,126 @@ import Foundation
 import RealmSwift
 
 extension RealmActor {
-    func getContentMarker(for id: String) -> ProgressMarker? {
-        return getObject(of: ProgressMarker.self, with: id)
+    func getContentMarkers(for contentIdentifier: ContentIdentifier) -> Results<ProgressMarker> {
+        let progressMarkers = realm
+            .objects(ProgressMarker.self)
+            .where { $0.id.starts(with: contentIdentifier.id, options: []) && $0.isDeleted == false }
+
+        return progressMarkers
     }
 
-    func getFrozenContentMarker(for id: String) -> ProgressMarker? {
-        return getContentMarker(for: id)?.freeze()
-    }
-
-    func getMaxReadKey(for id: String) -> Double {
-        getContentMarker(for: id)?.maxReadChapterKey ?? 0
-    }
-
-    private func getLatestLinkedMarker(for id: String) -> ProgressMarker? {
-        let maxedMarker = getLinkedContent(for: id)
-            .map { getContentMarker(for: $0.id) }
-            .appending(getContentMarker(for: id))
-            .compactMap { $0 }
-            .max { lhs, rhs in
-                (lhs.currentChapter?.chapterOrderKey ?? 0.0) < (rhs.currentChapter?.chapterOrderKey ?? 0.0)
-            }
-
-        return maxedMarker?
+    func getFrozenContentMarkers(for contentIdentifier: ContentIdentifier) -> [ProgressMarker] {
+        let progressMarkers = getContentMarkers(for: contentIdentifier)
             .freeze()
+            .toArray()
+
+        return progressMarkers
+    }
+
+    func getFrozenContentMarker(for chapterId: String) -> ProgressMarker? {
+        let progressMarker = realm
+            .objects(ProgressMarker.self)
+            .where { $0.id == chapterId && !$0.isDeleted }
+            .freeze()
+            .first
+
+        return progressMarker
+    }
+
+    func getContentMarker(for chapterId: String) -> ProgressMarker? {
+        return getObject(of: ProgressMarker.self, with: chapterId)
+    }
+
+    func getLatestReadContentMarker(for contentIdentifier: ContentIdentifier) -> ProgressMarker? {
+        return getContentMarkers(for: contentIdentifier)
+            .sorted(by: \.dateRead, ascending: false)
+            .first
+    }
+
+    func getFrozenLatestReadContentMarker(for contentIdentifier: ContentIdentifier) -> ProgressMarker? {
+        return getLatestReadContentMarker(for: contentIdentifier)?.freeze()
+    }
+    
+    func getMaxReadKey(for contentIdentifier: ContentIdentifier) -> Double {
+        getFrozenContentMarkers(for: contentIdentifier).map { $0.chapter!.chapterOrderKey }.max() ?? 0
     }
 
     func didCompleteChapter(chapter: ThreadSafeChapter) async {
         let id = chapter.STTContentIdentifier
-        // Get Object
-        let target = getContentMarker(for: id)
 
-        var reference: ChapterReference?
-
+        let reference: ChapterReference? = chapter.toStored().generateReference()
         switch chapter.sourceId {
-        case STTHelpers.LOCAL_CONTENT_ID:
-            let content = realm
-                .objects(ArchivedContent.self)
-                .where { $0.id == chapter.contentId && !$0.isDeleted }
-                .first
-            reference = chapter.toStored().generateReference()
-            reference?.archive = content
-        case STTHelpers.OPDS_CONTENT_ID:
-            let content = realm
-                .objects(StreamableOPDSContent.self)
-                .where { $0.id == chapter.id && !$0.isDeleted }
-                .first
-            reference = chapter.toStored().generateReference()
-            reference?.opds = content
-        default:
-            reference = chapter.toStored().generateReference()
-            reference?.content = getStoredContent(id)
+            case STTHelpers.LOCAL_CONTENT_ID:
+                reference?.archive = getArchivedContentInfo(chapter.contentId, freezed: false)
+            case STTHelpers.OPDS_CONTENT_ID:
+                reference?.opds = getPublication(id: chapter.id, freezed: false)
+            default:
+                reference?.content = getObject(of: StoredContent.self, with: chapter.STTContentIdentifier)
         }
 
-        // Ensure Chapter Reference has been generated, Save Reference
-        let hasValidReference = reference?.content != nil || reference?.archive != nil || reference?.opds != nil
-        guard let reference, hasValidReference else { return }
-
+        guard let reference, reference.isValid else {
+            Logger.shared.error("Invalid Chapter Reference")
+            return
+        }
+        
         await operation {
             realm.add(reference, update: .modified)
         }
 
-        // Has Marker, Update
-        if let target {
-            let prevMarkerID = target.currentChapter?.id
-            await operation {
-                target.dateRead = .now
-                target.lastPageRead = nil
-                target.totalPageCount = nil
-                target.lastPageOffsetPCT = nil
-                target.readChapters.insert(chapter.chapterOrderKey)
-                target.currentChapter = reference
-            }
-
-            if let prevMarkerID, prevMarkerID != chapter.id {
-                await validateChapterReference(id: prevMarkerID)
-            }
-            await decrementUnreadCount(for: id)
-
-            return
-        }
-
-        // Marker DNE, Create
-
+        // Marker DNE -> Create, Has Marker -> Update
         let marker = ProgressMarker()
         marker.id = id
-        marker.readChapters.insert(chapter.chapterOrderKey)
-        marker.currentChapter = reference
+        marker.chapter = reference
+        marker.setCompleted()
 
         await operation {
             realm.add(marker, update: .modified)
         }
+
         await decrementUnreadCount(for: id)
     }
 
     func updateContentProgress(chapter: ThreadSafeChapter, lastPageRead: Int, totalPageCount: Int, lastPageOffsetPCT: Double? = nil) async {
         let id = chapter.STTContentIdentifier
-        // Get Object
-        let target = getContentMarker(for: id)
-
-        var reference: ChapterReference?
-
+        
+        let reference: ChapterReference? = chapter.toStored().generateReference()
         switch chapter.sourceId {
-        case STTHelpers.LOCAL_CONTENT_ID:
-            let content = realm
-                .objects(ArchivedContent.self)
-                .where { $0.id == chapter.contentId && !$0.isDeleted }
-                .first
-            reference = chapter.toStored().generateReference()
-            reference?.archive = content
-        case STTHelpers.OPDS_CONTENT_ID:
-            let content = realm
-                .objects(StreamableOPDSContent.self)
-                .where { $0.id == chapter.id && !$0.isDeleted }
-                .first
-            reference = chapter.toStored().generateReference()
-            reference?.opds = content
-        default:
-            reference = chapter.toStored().generateReference()
-            reference?.content = getStoredContent(id)
+            case STTHelpers.LOCAL_CONTENT_ID:
+                reference?.archive = getArchivedContentInfo(chapter.contentId, freezed: false)
+            case STTHelpers.OPDS_CONTENT_ID:
+                reference?.opds = getPublication(id: chapter.id, freezed: false)
+            default:
+                reference?.content = getStoredContent(id)
         }
 
-        // Ensure Chapter Reference has been generated, Save Reference
-        guard let reference, reference.isValid else { return }
+        guard let reference, reference.isValid else {
+            Logger.shared.error("Invalid Chapter Reference")
+            return
+        }
 
         await operation {
             realm.add(reference, update: .modified)
         }
 
-        // Target exists, save
-        if let target {
-            let prevMarkerID = target.currentChapter?.id
-            await operation {
-                target.dateRead = .now
-                target.lastPageRead = lastPageRead
-                target.totalPageCount = totalPageCount
-                target.lastPageOffsetPCT = lastPageOffsetPCT
-                target.currentChapter = reference
-
-                if lastPageRead == totalPageCount {
-                    target.readChapters.insert(chapter.chapterOrderKey)
-                }
-            }
-
-            if let prevMarkerID, prevMarkerID != chapter.id {
-                await validateChapterReference(id: prevMarkerID)
-            }
-            await updateLastRead(forId: id)
-            return
-        }
-
-        // Marker DNE, Create
+        // Marker DNE -> Create, Marker exists -> save
         let marker = ProgressMarker()
-        marker.id = id
+        marker.id = reference.id
+        marker.chapter = reference
         marker.dateRead = .now
-        marker.currentChapter = reference
         marker.lastPageRead = lastPageRead
         marker.totalPageCount = totalPageCount
         marker.lastPageOffsetPCT = lastPageOffsetPCT
-        if lastPageRead == totalPageCount {
-            marker.readChapters.insert(chapter.chapterOrderKey)
-        }
 
         await operation {
             realm.add(marker, update: .modified)
         }
+
         await updateLastRead(forId: id)
     }
 
-    func removeFromHistory(id: String) async {
+    func removeFromHistory(chapterId: String) async {
         // Get Object
-        let target = getContentMarker(for: id)
+        let target = getContentMarker(for: chapterId)
 
         guard let target else {
             return
@@ -188,115 +138,66 @@ extension RealmActor {
         }
     }
 
-    func bulkMarkChapters(for id: ContentIdentifier, chapters: [ThreadSafeChapter], markAsRead: Bool = true) async {
-        let nums = Set(chapters.map(\.chapterOrderKey))
+    func markChaptersByNumber(for id: ContentIdentifier, chapters: Set<Double>, markAsRead: Bool = true) async {
+        // Get Chapters
+        let filteredChapters =
+            realm
+            .objects(StoredChapter.self)
+            .where { $0.contentId == id.contentId && $0.sourceId == id.sourceId }
+            .toArray()
+            .filter { chapters.contains($0.chapterOrderKey) }
+            .map { $0.toThreadSafe() }
 
-        defer {
-            Task {
-                let chapterIds = chapters.map { $0.chapterId }
-                await notifySourceOfMarkState(identifier: id, chapters: chapterIds, completed: markAsRead)
-            }
-        }
-        
-        defer {
-            Task {
-                await updateUnreadCount(for: id)
-            }
-        }
-        
-        // Get Object
-        let target = getContentMarker(for: id.id)
-
-        // Has Marker, Update
-        if let target {
-            await operation {
-                if markAsRead { // Insert Into Set
-                    target.readChapters.insert(objectsIn: nums)
-                    let numberOnlyChapters = nums.map({ ThreadSafeChapter.vnPair(from: $0).1 })
-                    target.readChapters.insert(objectsIn: numberOnlyChapters)
-                } else {
-                    nums.forEach {
-                        target.readChapters.remove($0)
-                    }
-                }
-            }
-
-            return
-        }
-
-        guard markAsRead else { // Marker DNE, If not marking as read, no point creating a marker
-            return
-        }
-
-        let marker = ProgressMarker()
-        marker.id = id.id
-        marker.readChapters.insert(objectsIn: nums)
-        let numberOnlyChapters = nums.map({ ThreadSafeChapter.vnPair(from: $0).1 })
-        marker.readChapters.insert(objectsIn: numberOnlyChapters)
-        marker.dateRead = nil
-
-        await operation {
-            realm.add(marker, update: .modified)
-        }
+        await markChapters(for: id, chapters: filteredChapters, markAsRead: markAsRead)
     }
 
-    func markChaptersByNumber(for id: ContentIdentifier, chapters: Set<Double>, markAsRead: Bool = true) async {
+    func markChapters(for id: ContentIdentifier, chapters: [ThreadSafeChapter], markAsRead: Bool = true) async {
         defer {
             Task {
-                // Get Chapters
-                let chapterIds = realm
-                    .objects(StoredChapter.self)
-                    .where { $0.contentId == id.contentId }
-                    .where { $0.sourceId == id.sourceId }
-                    .toArray()
-                    .filter { chapters.contains($0.chapterOrderKey) }
-                    .map(\.chapterId)
-
+                let chapterIds = chapters.map(\.chapterId)
                 await notifySourceOfMarkState(identifier: id, chapters: chapterIds, completed: markAsRead)
             }
         }
-        
+
         defer {
             Task {
                 await updateUnreadCount(for: id)
             }
         }
 
-        let target = getContentMarker(for: id.id)
-
-        // Has Marker, Update
-        if let target {
-            await operation {
-                if markAsRead { // Insert Into Set
-                    target.readChapters.insert(objectsIn: chapters)
-
-                    // Update Progress if more
-                    guard let chapter = target.currentChapter, let maxRead = chapters.max(), maxRead >= ThreadSafeChapter.orderKey(volume: chapter.volume, number: chapter.number) else { return }
-                    target.totalPageCount = 1
-                    target.lastPageRead = 1
-                } else {
-                    chapters.forEach {
-                        target.readChapters.remove($0)
-                    }
-                }
-            }
-
-            return
-        }
-
-        guard markAsRead else { // Marker DNE, If not marking as read, no point creating a marker
-            return
-        }
-
-        let marker = ProgressMarker()
-        marker.id = id.id
-        marker.readChapters.insert(objectsIn: chapters)
-        let numberOnlyChapters = chapters.map({ ThreadSafeChapter.vnPair(from: $0).1 })
-        marker.readChapters.insert(objectsIn: numberOnlyChapters)
-        marker.dateRead = nil
-
         await operation {
-            realm.add(marker, update: .modified)
+            for chapter in chapters {
+                let reference: ChapterReference? = chapter.toStored().generateReference()
+                switch chapter.sourceId {
+                    case STTHelpers.LOCAL_CONTENT_ID:
+                        reference?.archive = getArchivedContentInfo(chapter.contentId, freezed: false)
+                    case STTHelpers.OPDS_CONTENT_ID:
+                        reference?.opds = getPublication(id: chapter.id, freezed: false)
+                    default:
+                        reference?.content = getStoredContent(chapter.STTContentIdentifier)
+                }
+
+                guard let reference, reference.isValid else {
+                    Logger.shared.error("Invalid Chapter Reference")
+                    continue
+                }
+
+                realm.add(reference, update: .modified)
+                
+                let marker = ProgressMarker()
+                marker.id = chapter.id
+                marker.chapter = reference
+                marker.dateRead = nil
+
+                if (markAsRead) {
+                    marker.setCompleted()
+                }
+                else {
+                    marker.isDeleted = true
+                }
+
+                realm.add(marker, update: .modified)
+            }
         }
     }
 
@@ -318,10 +219,11 @@ extension RealmActor {
 
 extension RealmActor {
     /// Fetches the highest marked chapter with respect to content links
-    func getMaxReadChapterOrderKey(id: String) -> Double {
-        let maxReadOnTarget = getContentMarker(for: id)?.maxReadChapterKey ?? 0.0
-        let maxReadOnLinked = getLinkedContent(for: id)
-            .map { getContentMarker(for: $0.id)?.maxReadChapterKey ?? 0.0 }
+    func getMaxReadChapterOrderKey(for contentIdentifier: ContentIdentifier) -> Double {
+        let maxReadOnTarget = getMaxReadKey(for: contentIdentifier)
+        let maxReadOnLinked =
+            getLinkedContent(for: contentIdentifier.id)
+            .map { getMaxReadKey(for: $0.ContentIdentifier) }
             .max() ?? 0.0
 
         return max(maxReadOnTarget, maxReadOnLinked)

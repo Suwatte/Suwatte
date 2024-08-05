@@ -38,15 +38,12 @@ class STTHelpers {
         }
     }
 
-    static func getInitialPanelPosition(for id: String, chapterId: String, limit: Int) async -> (Int, CGFloat?) {
+    static func getInitialPanelPosition(for id: String, limit: Int) async -> (Int, CGFloat?) {
         let actor = await RealmActor.shared()
         let marker = await actor.getFrozenContentMarker(for: id)
-        guard let marker, let chapter = marker.currentChapter else {
-            return (0, nil) // No Marker, Start from beginning
-        }
 
-        guard chapter.chapterId == chapterId else {
-            return (0, nil) // Chapter is not the last read chapter, restart from beginnig
+        guard let marker else {
+            return (0, nil) // No Marker, Start from beginning
         }
 
         guard let lastPageRead = marker.lastPageRead else { // Marker has last page

@@ -39,8 +39,11 @@ extension DaisukeEngine {
         return json?.invokeMethod("stringify", withArguments: [val]).toString()
     }
 
-    static func decode<T: Decodable>(data: Data, to _: T.Type, dateFormatter: DateFormatter? = nil) throws -> T {
+    static func decode<T: Decodable>(data: Data, to _: T.Type, dateFormatter: DateFormatter? = nil, userInfo: [CodingUserInfoKey: Any]? = nil) throws -> T {
         let decoder = JSONDecoder()
+        if userInfo != nil {
+            decoder.userInfo = userInfo!
+        }
 
         // Date Formatter
         decoder.dateDecodingStrategy = dateFormatter != nil ? .formatted(dateFormatter!) : .iso8601

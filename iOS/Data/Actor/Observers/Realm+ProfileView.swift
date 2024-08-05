@@ -42,17 +42,28 @@ extension RealmActor {
         return await observeCollection(collection: collection, didUpdate)
     }
 
-    func observeReadChapters(for id: String, _ callback: @escaping Callback<Set<Double>>) async -> NotificationToken {
-        let ids = getLinkedContent(for: id).map(\.id).appending(id)
+    func observeReadChapters(for id: String, _ callback: @escaping Callback<[String: [String: ThreadSafeProgressMarker]]>) async -> NotificationToken {
+        let ids = getLinkedContent(for: id)
+            .map(\.id)
+            .appending(id)
+
         let collection = realm
-            .objects(ProgressMarker.self)
-            .where { $0.id.in(ids) && !$0.isDeleted }
+                .objects(ProgressMarker.self)
+                .where { $0.chapter.contentId.in(ids) && !$0.isDeleted }
 
         func didUpdate(_ results: Results<ProgressMarker>) {
-            let readChapters = Set(results.toArray().map(\.readChapters).flatMap { $0 })
+            let readChaptersByContent = createDictionaryFromResults(results)
 
             Task { @MainActor in
-                callback(readChapters)
+                callback(readChaptersByContent)
+            }
+
+            func createDictionaryFromResults(_ results: Results<ProgressMarker>) -> [String: [String: ThreadSafeProgressMarker]] {
+                var readChaptersByContent = [String: [String: ThreadSafeProgressMarker]]()
+                for result in results.toArray() {
+                    readChaptersByContent[result.chapter!.content!.id, default: [:]][result.id] = result.toThreadSafe()
+                }
+                return readChaptersByContent
             }
         }
 

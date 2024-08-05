@@ -12,7 +12,6 @@ extension HistoryView {
     struct OPDSCell: View {
         var marker: ProgressMarker
         var content: StreamableOPDSContent
-        var chapter: ChapterReference
         var size = 140.0
 
         var body: some View {

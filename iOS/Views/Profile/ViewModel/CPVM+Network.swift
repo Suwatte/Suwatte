@@ -19,6 +19,12 @@ extension ViewModel {
         try await source
             .getContentChapters(contentId: entry.id)
     }
+
+    func getPreparedChapters(chapters: [DSKCommon.Chapter]) -> [ThreadSafeChapter] {
+        return chapters
+            .sorted(by: \.index, descending: false)
+            .map { $0.toThreadSafe(sourceID: source.id, contentID: entry.id) }
+    }
 }
 
 extension ViewModel {}
