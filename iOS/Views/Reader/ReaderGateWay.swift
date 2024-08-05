@@ -12,7 +12,6 @@ struct ReaderGateWay: View {
     var readingMode: ReadingMode = .defaultPanelMode
     var chapterList: [ThreadSafeChapter]
     var openTo: ThreadSafeChapter
-    var marker: ThreadSafeProgressMarker?
     var pageIndex: Int?
     var pageOffset: Double?
     @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
@@ -22,7 +21,6 @@ struct ReaderGateWay: View {
             if readingMode.isPanelMode {
                 ImageViewer(initial: .init(chapters: chapterList,
                                            openTo: openTo,
-                                           marker: marker,
                                            pageIndex: pageIndex,
                                            pageOffset: pageOffset.flatMap(CGFloat.init),
                                            title: title,

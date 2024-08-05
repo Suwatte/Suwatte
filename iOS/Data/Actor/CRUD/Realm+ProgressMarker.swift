@@ -25,6 +25,16 @@ extension RealmActor {
         return progressMarkers
     }
 
+    func getFrozenContentMarker(for chapterId: String) -> ProgressMarker? {
+        let progressMarker = realm
+            .objects(ProgressMarker.self)
+            .where { $0.id == chapterId && !$0.isDeleted }
+            .freeze()
+            .first
+
+        return progressMarker
+    }
+
     func getContentMarker(for chapterId: String) -> ProgressMarker? {
         return getObject(of: ProgressMarker.self, with: chapterId)
     }

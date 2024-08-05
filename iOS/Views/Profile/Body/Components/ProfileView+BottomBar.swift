@@ -140,8 +140,7 @@ extension ProfileView.Skeleton.BottomBar {
             STTHelpers.triggerHaptic()
 
             // State
-            let progressMarker = actionState.chapter != nil ? model.readChapters[actionState.chapter!.STTContentIdentifier]?[actionState.chapter!.id] : nil
-            model.selection = CurrentSelection(id: actionState.chapter!.id, chapter: actionState.chapter as ThreadSafeChapter?, marker: progressMarker)
+            model.selection = actionState.chapter
         }
     }
 }

@@ -65,7 +65,7 @@ extension ProfileView {
             .init(runnerID: sourceID, runnerName: source.name, contentName: entry.title, contentIdentifier: STTIDPair, highlight: entry)
         }
 
-        @Published var selection: CurrentSelection?
+        @Published var selection: ThreadSafeChapter?
 
         deinit {
             removeNotifier()

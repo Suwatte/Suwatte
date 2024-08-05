@@ -38,7 +38,10 @@ class STTHelpers {
         }
     }
 
-    static func getInitialPanelPosition(for marker: ThreadSafeProgressMarker?, limit: Int) async -> (Int, CGFloat?) {
+    static func getInitialPanelPosition(for id: String, limit: Int) async -> (Int, CGFloat?) {
+        let actor = await RealmActor.shared()
+        let marker = await actor.getFrozenContentMarker(for: id)
+
         guard let marker else {
             return (0, nil) // No Marker, Start from beginning
         }

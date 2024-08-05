@@ -10,7 +10,6 @@ import Foundation
 struct InitialIVState {
     let chapters: [ThreadSafeChapter]
     let openTo: ThreadSafeChapter
-    let marker: ThreadSafeProgressMarker?
     let pageIndex: Int?
     let pageOffset: CGFloat?
     let title: String

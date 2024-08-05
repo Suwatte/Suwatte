@@ -75,7 +75,7 @@ extension IVViewModel {
         // Check DB For Last Known State
         if pendingState?.pageIndex == nil {
 
-            let values = await STTHelpers.getInitialPanelPosition(for: value.marker, limit: pageCount)
+            let values = await STTHelpers.getInitialPanelPosition(for: requested.id, limit: pageCount)
             pendingState?.pageIndex = values.0
             pendingState?.pageOffset = values.1
         }

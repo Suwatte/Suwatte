@@ -29,13 +29,12 @@ extension ProfileView {
                 ProfileView.Skeleton()
                     .navigationTitle(viewModel.content.title)
                     .transition(.opacity)
-                    .fullScreenCover(item: $viewModel.selection) { selection in
+                    .fullScreenCover(item: $viewModel.selection) { chapter in
                         let readingMode = viewModel.readingMode
                         ReaderGateWay(title: viewModel.content.title,
                                       readingMode: readingMode,
                                       chapterList: viewModel.getCurrentStatement().filtered,
-                                      openTo: selection.chapter!,
-                                      marker: selection.marker)
+                                      openTo: chapter)
                             .task {
                                 viewModel.removeNotifier()
                             }

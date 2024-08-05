@@ -115,9 +115,7 @@ extension ProfileView.Skeleton.ChapterView {
                                 StateManager.shared.alert(title: "Novel Reading", message: "Novel reading is currently not supported until version 6.1")
                                 return
                             }
-
-                            let progressMarker = model.readChapters[chapter.STTContentIdentifier]?[chapter.id]
-                            model.selection = CurrentSelection(id: chapter.id, chapter: chapter, marker: progressMarker)
+                            model.selection = chapter
                         }
                     }
                 }
