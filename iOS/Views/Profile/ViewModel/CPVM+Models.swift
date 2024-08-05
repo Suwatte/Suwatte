@@ -66,10 +66,3 @@ extension ViewModel {
         }
     }
 }
-
-struct CurrentSelection : Hashable, Identifiable {
-    var id: String
-
-    var chapter: ThreadSafeChapter?
-    var marker: ThreadSafeProgressMarker?
-}
