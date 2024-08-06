@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		292776932C61776B00FB7DB0 /* Backup+ContentLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292776922C61776B00FB7DB0 /* Backup+ContentLink.swift */; };
 		29FB9F232BE43EE800F22E2F /* MigrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29FB9F222BE43EE800F22E2F /* MigrationHelper.swift */; };
 		DF01DEEA2A587A5D0025700B /* Engine+LibraryUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF01DEE92A587A5D0025700B /* Engine+LibraryUpdate.swift */; };
 		DF01DEEC2A587A680025700B /* Engine+URLHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF01DEEB2A587A680025700B /* Engine+URLHandler.swift */; };
@@ -497,6 +498,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		292776922C61776B00FB7DB0 /* Backup+ContentLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Backup+ContentLink.swift"; sourceTree = "<group>"; };
 		29FB9F222BE43EE800F22E2F /* MigrationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationHelper.swift; sourceTree = "<group>"; };
 		DF01DEE92A587A5D0025700B /* Engine+LibraryUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Engine+LibraryUpdate.swift"; sourceTree = "<group>"; };
 		DF01DEEB2A587A680025700B /* Engine+URLHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Engine+URLHandler.swift"; sourceTree = "<group>"; };
@@ -1735,6 +1737,7 @@
 				DF30193A28C045E30024AA8B /* Backup+Runner.swift */,
 				DFF66BF12A548E4700860B41 /* Backup+ProgressMarker.swift */,
 				DFE1B1142A9FEFD600D300DB /* Backup+ChapterReference.swift */,
+				292776922C61776B00FB7DB0 /* Backup+ContentLink.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -3061,6 +3064,7 @@
 				DF977E162A0ECB3900AA1E90 /* StateManager.swift in Sources */,
 				DFB47EF72880C1FB0040A1BD /* STT+OPDS.swift in Sources */,
 				DF8D0BA72800EE48003E4C3E /* AppDelegate.swift in Sources */,
+				292776932C61776B00FB7DB0 /* Backup+ContentLink.swift in Sources */,
 				DF67EB9928E7B07700076FF5 /* AddContentLink.swift in Sources */,
 				DF67EB9B28E7B08400076FF5 /* ManageContentLinks.swift in Sources */,
 				DFA25FF22AA56A9200A1369E /* IV+BasicZoomingScrollView.swift in Sources */,
