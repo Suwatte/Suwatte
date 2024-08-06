@@ -142,7 +142,10 @@ class MigrationHelper {
     }
 
     static func migrationCheck(realm: Realm) {
-        let interactorStoreObjects = realm.dynamicObjects(interactorStoreObjectTypeName)
-        assert(interactorStoreObjects.count == 0, "InteractorStoreObject wasn't fully migrated and there are still objects left inside.")
+        let schema = realm.schema[interactorStoreObjectTypeName]
+        if schema != nil {
+            let interactorStoreObjects = realm.dynamicObjects(interactorStoreObjectTypeName)
+            assert(interactorStoreObjects.count == 0, "InteractorStoreObject wasn't fully migrated and there are still objects left inside.")
+        }
     }
 }
