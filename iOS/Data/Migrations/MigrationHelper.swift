@@ -41,7 +41,7 @@ class MigrationHelper {
         }
     }
   
-  static func migrateProgressMarker(migration: Migration) {
+    static func migrateProgressMarker(migration: Migration) {
         migration.renameProperty(onType: ProgressMarker.className(), from: "currentChapter", to: "chapter")
         migration.enumerateObjects(ofType: ProgressMarker.className()) { oldProgressMarkerObject, newProgressMarkerObject in
             guard let oldProgressMarkerObject = oldProgressMarkerObject else { return }
@@ -117,5 +117,32 @@ class MigrationHelper {
                 migration.delete(newProgressMarkerObject!)
             }
         }
+    }
+
+    static let interactorStoreObjectTypeName: String = "InteractorStoreObject"
+
+    static func migrateInteractorStoreObjects(migration: Migration) {
+        let userDefaultKey = "InteractorStoreObjects"
+        var interactorStoreObjects = UserDefaults.standard.dictionary(forKey: userDefaultKey) as? [String: String] ?? [:]
+        let countBeforeMigration = interactorStoreObjects.count
+
+        migration.enumerateObjects(ofType: interactorStoreObjectTypeName) { oldInteractorStoreObject, _ in
+            guard let oldInteractorStoreObject = oldInteractorStoreObject else { return }
+
+            let id = oldInteractorStoreObject["id"] as! String
+            let value = oldInteractorStoreObject["value"] as! String
+
+            interactorStoreObjects[id] = value
+        }
+
+        if interactorStoreObjects.count > countBeforeMigration {
+            UserDefaults.standard.set(interactorStoreObjects, forKey: userDefaultKey)
+            migration.deleteData(forType: "InteractorStoreObject")
+        }
+    }
+
+    static func migrationCheck(realm: Realm) {
+        let interactorStoreObjects = realm.dynamicObjects(interactorStoreObjectTypeName)
+        assert(interactorStoreObjects.count == 0, "InteractorStoreObject wasn't fully migrated and there are still objects left inside.")
     }
 }

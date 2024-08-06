@@ -347,7 +347,6 @@
 		DFBE483A2A25BBC1000ABA16 /* ChapterReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE48392A25BBC1000ABA16 /* ChapterReference.swift */; };
 		DFBE483C2A25BC2B000ABA16 /* ThreadSafeChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE483B2A25BC2B000ABA16 /* ThreadSafeChapter.swift */; };
 		DFBE483E2A25BC88000ABA16 /* OPDSContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE483D2A25BC88000ABA16 /* OPDSContent.swift */; };
-		DFBE48402A25BCA7000ABA16 /* StoreObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE483F2A25BCA7000ABA16 /* StoreObject.swift */; };
 		DFBE48422A25BCD1000ABA16 /* ChapterData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE48412A25BCD0000ABA16 /* ChapterData.swift */; };
 		DFBE48442A25BD07000ABA16 /* SearchHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE48432A25BD07000ABA16 /* SearchHistory.swift */; };
 		DFBE48462A25BD59000ABA16 /* LibraryEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE48452A25BD59000ABA16 /* LibraryEntry.swift */; };
@@ -823,7 +822,6 @@
 		DFBE48392A25BBC1000ABA16 /* ChapterReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterReference.swift; sourceTree = "<group>"; };
 		DFBE483B2A25BC2B000ABA16 /* ThreadSafeChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadSafeChapter.swift; sourceTree = "<group>"; };
 		DFBE483D2A25BC88000ABA16 /* OPDSContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPDSContent.swift; sourceTree = "<group>"; };
-		DFBE483F2A25BCA7000ABA16 /* StoreObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreObject.swift; sourceTree = "<group>"; };
 		DFBE48412A25BCD0000ABA16 /* ChapterData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterData.swift; sourceTree = "<group>"; };
 		DFBE48432A25BD07000ABA16 /* SearchHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchHistory.swift; sourceTree = "<group>"; };
 		DFBE48452A25BD59000ABA16 /* LibraryEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryEntry.swift; sourceTree = "<group>"; };
@@ -2220,7 +2218,6 @@
 				DFB47EFF2881013A0040A1BD /* OPDSClient.swift */,
 				DFBE483B2A25BC2B000ABA16 /* ThreadSafeChapter.swift */,
 				DFBE483D2A25BC88000ABA16 /* OPDSContent.swift */,
-				DFBE483F2A25BCA7000ABA16 /* StoreObject.swift */,
 				DFBE48412A25BCD0000ABA16 /* ChapterData.swift */,
 				DFBE48432A25BD07000ABA16 /* SearchHistory.swift */,
 				DFBE48452A25BD59000ABA16 /* LibraryEntry.swift */,
@@ -2793,7 +2790,6 @@
 				DF11147A2A92E90A00FA8A39 /* WebtoonController+Scroll.swift in Sources */,
 				DF8D0B382800EE47003E4C3E /* STT+Array.swift in Sources */,
 				DF8D0BAF2800EE48003E4C3E /* BadgeModifier.swift in Sources */,
-				DFBE48402A25BCA7000ABA16 /* StoreObject.swift in Sources */,
 				DF1114822A92EA2100FA8A39 /* WebtoonController+Rotation.swift in Sources */,
 				DF4EB4D02AB295C4001A73CD /* ReadingStatistics.swift in Sources */,
 				DF326461280256760066EB08 /* ProfileView+RelatedContent.swift in Sources */,
