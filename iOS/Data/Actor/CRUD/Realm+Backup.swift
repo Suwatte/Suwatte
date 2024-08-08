@@ -165,7 +165,6 @@ extension RealmActor {
 
             realm.objects(ArchivedContent.self).setValue(true, forKey: "isDeleted") // 1. No relation
             realm.objects(CustomThumbnail.self).setValue(true, forKey: "isDeleted") // 7. Relation: CreamAsset
-            realm.objects(InteractorStoreObject.self).setValue(true, forKey: "isDeleted") // 8. No relation
             realm.objects(LibraryCollectionFilter.self).setValue(true, forKey: "isDeleted") // 10. No relation
             realm.objects(LibraryCollection.self).setValue(true, forKey: "isDeleted") // 9. Relation: LibraryCollectionFilter
             realm.objects(StoredOPDSServer.self).setValue(true, forKey: "isDeleted") // 19. No relation

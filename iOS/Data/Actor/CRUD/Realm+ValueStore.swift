@@ -10,29 +10,30 @@ import KeychainSwift
 import RealmSwift
 
 extension RealmActor {
-    func setStoreValue(for id: String, key: String, value: String) async {
-        let obj = InteractorStoreObject()
-        obj.interactorId = id
-        obj.key = key
-        obj.value = value
-        obj.prepareID()
-        await operation {
-            realm.add(obj, update: .modified)
-        }
+
+    func getInteractorStoreDictionary() -> [String: String] {
+        return UserDefaults.standard.dictionary(forKey: "InteractorStoreObjects") as? [String: String] ?? [:]
     }
 
-    func getStoreValue(for id: String, key: String) -> String? {
-        getObject(of: InteractorStoreObject.self, with: "\(id)|\(key)")?
-            .value
+    func setInteractorStoreDictionary(_ dict: [String: String]) {
+        UserDefaults.standard.set(dict, forKey: "InteractorStoreObjects")
     }
 
-    func removeStoreValue(for id: String, key: String) async {
-        let target = getObject(of: InteractorStoreObject.self, with: "\(id)|\(key)")
-        if let target {
-            await operation {
-                target.isDeleted = true
-            }
-        }
+    func setStoreValue(for key: String, value: String) async {
+        var dict = getInteractorStoreDictionary()
+        dict.updateValue(value, forKey: key)
+        setInteractorStoreDictionary(dict)
+    }
+
+    func getStoreValue(for key: String) -> String? {
+        var dict = getInteractorStoreDictionary()
+        return dict[key]
+    }
+
+    func removeStoreValue(for key: String) async {
+        var dict = getInteractorStoreDictionary()
+        dict.removeValue(forKey: key)
+        setInteractorStoreDictionary(dict)
     }
 }
 
