@@ -128,7 +128,7 @@ extension RealmActor {
             guard let reference else { continue }
 
             let marker = ProgressMarker()
-            marker.id = id.id
+            marker.id = reference.id
             marker.chapter = reference
             marker.dateRead = marker.dateRead
             marker.lastPageRead = marker.lastPageRead
