@@ -62,7 +62,8 @@ extension ProgressMarker {
               dateRead: dateRead,
               lastPageRead: lastPageRead,
               totalPageCount: totalPageCount,
-              lastPageOffsetPCT: lastPageOffsetPCT
+              lastPageOffsetPCT: lastPageOffsetPCT,
+              chapterOrderKey: chapter?.chapterOrderKey
         )
     }
 }
@@ -73,6 +74,7 @@ struct ThreadSafeProgressMarker : Hashable, Identifiable, Sendable, Encodable {
     let lastPageRead: Int?
     let totalPageCount: Int?
     let lastPageOffsetPCT: Double?
+    let chapterOrderKey: Double?
 
     var isCompleted: Bool {
         guard let lastPageRead, let totalPageCount, totalPageCount >= 1, lastPageRead >= 1 else {

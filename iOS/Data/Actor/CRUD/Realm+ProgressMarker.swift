@@ -12,7 +12,7 @@ extension RealmActor {
     func getContentMarkers(for contentIdentifier: ContentIdentifier) -> Results<ProgressMarker> {
         let progressMarkers = realm
             .objects(ProgressMarker.self)
-            .where { $0.id.starts(with: contentIdentifier.id, options: []) && $0.isDeleted == false }
+            .where { $0.id.starts(with: contentIdentifier.id + "||", options: []) && $0.isDeleted == false }
 
         return progressMarkers
     }
@@ -40,21 +40,32 @@ extension RealmActor {
     }
 
     func getLatestReadContentMarker(for contentIdentifier: ContentIdentifier) -> ProgressMarker? {
-        return getContentMarkers(for: contentIdentifier)
+        let latestReadContentMarker = getContentMarkers(for: contentIdentifier)
             .sorted(by: \.dateRead, ascending: false)
             .first
+
+        guard latestReadContentMarker?.dateRead != nil else {
+            return getMaxReadContentMarker(for: contentIdentifier)
+        }
+
+        return latestReadContentMarker
     }
 
     func getFrozenLatestReadContentMarker(for contentIdentifier: ContentIdentifier) -> ProgressMarker? {
         return getLatestReadContentMarker(for: contentIdentifier)?.freeze()
     }
-    
+
+    func getMaxReadContentMarker(for contentIdentifier: ContentIdentifier) -> ProgressMarker? {
+        return getFrozenContentMarkers(for: contentIdentifier)
+            .max(by: \.chapter!.chapterOrderKey)
+    }
+
     func getMaxReadKey(for contentIdentifier: ContentIdentifier) -> Double {
-        getFrozenContentMarkers(for: contentIdentifier).map { $0.chapter!.chapterOrderKey }.max() ?? 0
+        getMaxReadContentMarker(for: contentIdentifier)?.chapter?.chapterOrderKey ?? 0
     }
 
     func didCompleteChapter(chapter: ThreadSafeChapter) async {
-        let id = chapter.STTContentIdentifier
+        let contentId = chapter.STTContentIdentifier
 
         let reference: ChapterReference? = chapter.toStored().generateReference()
         switch chapter.sourceId {
@@ -77,7 +88,7 @@ extension RealmActor {
 
         // Marker DNE -> Create, Has Marker -> Update
         let marker = ProgressMarker()
-        marker.id = id
+        marker.id = chapter.id
         marker.chapter = reference
         marker.setCompleted()
 
@@ -85,7 +96,7 @@ extension RealmActor {
             realm.add(marker, update: .modified)
         }
 
-        await decrementUnreadCount(for: id)
+        await decrementUnreadCount(for: contentId)
     }
 
     func updateContentProgress(chapter: ThreadSafeChapter, lastPageRead: Int, totalPageCount: Int, lastPageOffsetPCT: Double? = nil) async {
@@ -187,7 +198,7 @@ extension RealmActor {
                 let marker = ProgressMarker()
                 marker.id = chapter.id
                 marker.chapter = reference
-                marker.dateRead = nil
+                marker.dateRead = Date.now
 
                 if (markAsRead) {
                     marker.setCompleted()
