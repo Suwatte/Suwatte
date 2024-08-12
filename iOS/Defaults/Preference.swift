@@ -135,6 +135,15 @@ final class Preferences {
     @UserDefault(STTKeys.DefaultPanelReadingMode)
     var defaultPanelReadingMode = ReadingMode.PAGED_COMIC
 
+    @UserDefault(STTKeys.ReaderScrollbarPosition)
+    var readerScrollbarPosition = ReaderScrollbarPosition.RIGHT
+
+    @UserDefault(STTKeys.ReaderBottomScrollbarDirection)
+    var readerBottomScrollbarDirection = ReaderBottomScrollbarDirection.RIGHT
+
+    @UserDefault(STTKeys.ReaderScrollbarWidth)
+    var readerScrollbarWidth = 14.0
+
     @UserDefault(STTKeys.MoveDownloadToArchive)
     var archiveSourceDownload = false
 

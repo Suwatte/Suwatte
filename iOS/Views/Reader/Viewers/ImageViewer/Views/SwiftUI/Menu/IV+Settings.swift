@@ -72,7 +72,17 @@ struct IVSettingsView: View {
                     }
                 }
 
+                Section {
+                    ScrollbarPositionSelectorView()
+                    if model.readingMode.isVertical && !model.scrollbarPosition.isVertical() {
+                        BottomScrollbarDirectionSelectorView()
+                    }
+                } header: {
+                    Text("Scrollbar Position")
+                }
+
                 if model.readingMode == .VERTICAL {
+
                     Section {
                         Toggle("AutoScroll", isOn: $verticalAutoScroll)
                         if verticalAutoScroll {
@@ -284,6 +294,56 @@ extension IVSettingsView {
             let id = model.viewerState.chapter.STTContentIdentifier
             let container = UserDefaults.standard
             let key = STTKeys.ReaderType + "%%" + id
+            container.setValue(value.rawValue, forKey: key)
+        }
+    }
+
+    struct ScrollbarPositionSelectorView: View {
+        @EnvironmentObject var model: IVViewModel
+
+        var body: some View {
+            Picker("Position", selection: $model.scrollbarPosition) {
+                ForEach(ReaderScrollbarPosition.PositionCases(), id: \.rawValue) {
+                    Text($0.description)
+                        .tag($0)
+                }
+            }
+            .onChange(of: model.scrollbarPosition, perform: updateScrollbarPosition)
+        }
+
+        func updateScrollbarPosition(_ value: ReaderScrollbarPosition) {
+            model.producePendingState()
+            model.scrollbarPosition = value
+
+            // Update on a per-comic basis
+            let id = model.viewerState.chapter.STTContentIdentifier
+            let container = UserDefaults.standard
+            let key = STTKeys.ReaderScrollbarPosition + "%%" + id
+            container.setValue(value.rawValue, forKey: key)
+        }
+    }
+
+    struct BottomScrollbarDirectionSelectorView: View {
+        @EnvironmentObject var model: IVViewModel
+
+        var body: some View {
+            Picker("Direction", selection: $model.bottomScrollbarDirection) {
+                ForEach(ReaderBottomScrollbarDirection.DirectionCases(), id: \.rawValue) {
+                    Text($0.description)
+                        .tag($0)
+                }
+            }
+            .onChange(of: model.bottomScrollbarDirection, perform: updateBottomScrollbarDirection)
+        }
+
+        func updateBottomScrollbarDirection(_ value: ReaderBottomScrollbarDirection) {
+            model.producePendingState()
+            model.bottomScrollbarDirection = value
+
+            // Update on a per-comic basis
+            let id = model.viewerState.chapter.STTContentIdentifier
+            let container = UserDefaults.standard
+            let key = STTKeys.ReaderBottomScrollbarDirection + "%%" + id
             container.setValue(value.rawValue, forKey: key)
         }
     }
