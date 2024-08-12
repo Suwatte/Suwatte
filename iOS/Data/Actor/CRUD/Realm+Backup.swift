@@ -66,13 +66,27 @@ extension RealmActor {
     func restoreBackup(backup: Backup) async throws {
         try await resetDB()
 
+        var progressMarkers: [ProgressMarker] = []
+
         if backup.schemaVersion > 15 {
             if let entries = backup.library {
                 try entries.forEach { try $0.fillContent(data: backup.storedContents ) }
             }
 
             if let entries = backup.progressMarkers {
-                try entries.forEach { try $0.chapter!.fromBackup(data: backup.storedContents) }
+                for marker in entries {
+                    guard let chapter = marker.chapter else {
+                        continue
+                    }
+
+                    let idSeperatorOccurences = marker.id.filter { $0 == "|" }
+                    if idSeperatorOccurences.count < 4 {
+                        continue
+                    }
+
+                    try chapter.fromBackup(data: backup.storedContents)
+                    progressMarkers.append(marker)
+                }
             }
         }
 
@@ -99,8 +113,8 @@ extension RealmActor {
                 realm.add(runnerLists, update: .all)
             }
 
-            if let markers = backup.progressMarkers {
-                realm.add(markers, update: .all)
+            if !progressMarkers.isEmpty {
+                realm.add(progressMarkers, update: .all)
             }
 
             if !contentLinks.isEmpty {
@@ -171,26 +185,22 @@ extension RealmActor {
             realm.objects(StoredOPDSServer.self).setValue(true, forKey: "isDeleted") // 19. No relation
             realm.objects(StoredRunnerList.self).setValue(true, forKey: "isDeleted") // 21. No relation
             realm.objects(StoredRunnerObject.self).setValue(true, forKey: "isDeleted") // 22. Relation: CreamAsset
-            realm.objects(StoredTag.self).setValue(true, forKey: "isDeleted") // 23. No relation
-            realm.objects(StoredProperty.self).setValue(true, forKey: "isDeleted") // 20. Relation: StoredTag
+            realm.delete(realm.objects(StoredTag.self)) // 23. No relation
+            realm.delete(realm.objects(StoredProperty.self)) // 20. Relation: StoredTag
             realm.objects(StreamableOPDSContent.self).setValue(true, forKey: "isDeleted") // 24. Relation: StoredOPDSServer
             realm.objects(TrackerLink.self).setValue(true, forKey: "isDeleted") // 25. No relation
             realm.objects(UpdatedSearchHistory.self).setValue(true, forKey: "isDeleted") // 27. No relation
             realm.objects(UserReadingStatistic.self).setValue(true, forKey: "isDeleted") // 28. No relation
-
-
 
             realm.objects(LibraryEntry.self).setValue(true, forKey: "isDeleted") // 11. Relation: StoredContent
             realm.objects(ContentLink.self).setValue(true, forKey: "isDeleted") // 4. Relation: LibraryEntry, StoredContent
 
             realm.objects(ReadLater.self).setValue(true, forKey: "isDeleted") // 13. Relation: StoredContent
 
-
-            realm.objects(ChapterReference.self).setValue(true, forKey: "isDeleted") // 3. Relation: StoredContent, StreamableOPDSContent, ArchivedContent
-            realm.objects(ChapterBookmark.self).setValue(true, forKey: "isDeleted") // 2. Relation: ChapterReference
-            realm.objects(UpdatedBookmark.self).setValue(true, forKey: "isDeleted") // 26. Relation: ChapterReference, CreamAsset
-            realm.objects(ProgressMarker.self).setValue(true, forKey: "isDeleted") // 12. Relation: ChapterReference
-
+            realm.delete(realm.objects(ChapterReference.self)) // 3. Relation: StoredContent, StreamableOPDSContent, ArchivedContent
+            realm.delete(realm.objects(ChapterBookmark.self)) // 2. Relation: ChapterReference
+            realm.delete(realm.objects(UpdatedBookmark.self)) // 26. Relation: ChapterReference, CreamAsset
+            realm.delete(realm.objects(ProgressMarker.self)) // 12. Relation: ChapterReference
 
 
             // Relation: 14. StoredChapter, StoredContent
