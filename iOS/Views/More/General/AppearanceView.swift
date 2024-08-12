@@ -13,6 +13,8 @@ struct AppearanceView: View {
     @AppStorage(STTKeys.GridItemsPerRow_P) var IPRP = 2
     @AppStorage(STTKeys.GridItemsPerRow_LS) var IPRLS = 6
     @AppStorage(STTKeys.AppAccentColor) var appAccentColor: Color = .sttDefault
+    
+    @Preference(\.readerScrollbarWidth) var scrollBarWidth
 
     var body: some View {
         Form {
@@ -45,6 +47,21 @@ struct AppearanceView: View {
                 }
             } header: {
                 Text("Tiles")
+            }
+
+            Section {
+                VStack(alignment: .leading) {
+                    Text("Scrollbar Width (\(scrollBarWidth.description))")
+                    Slider(value: $scrollBarWidth, in: 5...15, step: 1) {
+
+                    } minimumValueLabel: {
+                        Text("5")
+                    } maximumValueLabel: {
+                        Text("15")
+                    }
+                }
+            } header: {
+                Text("Reader")
             }
         }
         .buttonStyle(.plain)

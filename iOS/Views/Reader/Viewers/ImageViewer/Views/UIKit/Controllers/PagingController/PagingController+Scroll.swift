@@ -17,13 +17,6 @@ extension Controller {
     }
 
     func onUserDidScroll(to point: CGPoint) {
-        // Hide Menu if not scrubbing
-        if !model.slider.isScrubbing, model.control.menu {
-            Task { @MainActor in
-                model.hideMenu()
-            }
-        }
-
         let pos = isVertical ? point.y : point.x
 
         if pos < 0, !didTriggerBackTick {
@@ -62,8 +55,6 @@ extension Controller {
     }
 
     func onScrollStop() {
-        model.hideMenu()
-
         if didTriggerBackTick {
             Task { [weak self] in
                 await self?.loadPrevChapter()

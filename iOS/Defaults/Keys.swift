@@ -109,19 +109,9 @@ enum STTKeys {
     static let FilteredProviders = "CONTENT.filtered_providers"
     static let FilteredLanguages = "CONTENT.filtered_langauges"
 
-    static let ImageScaleType = "READER.image_scale"
-
-    static let ReaderType = "READER.type"
-
     static let AlwaysAskForLibraryConfig = "APP.library_always_asks"
     static let DefaultCollection = "LIBRARY.default_collection"
     static let DefaultReadingFlag = "LIBRARY.default_reading_flag"
-
-    static let VerticalPillarBoxEnabled = "READER.pillar_box_enabled"
-    static let VerticalPillarBoxPCT = "READER.pillar_box_pct"
-    static let EnableReaderHaptics = "READER.haptics"
-    static let PagedSplitsWide = "READER.split_wide"
-    static let PagedZoomWide = "READER.zoom_wide"
 
     static let LocalStorageUsesICloud = "APP.local_use_icloud"
 
@@ -133,11 +123,7 @@ enum STTKeys {
         "RUNNER.PLR:\(id)"
     }
 
-    static let DefaultPanelReadingMode = "READER.panel_default_mode"
-
     static let MoveDownloadToArchive = "APP.archive_sdm_objct"
-
-    static let CurrentReadingMode = "READER.current_mode"
 
     static let GlobalContentLanguages = "APP.global.content_languages"
 
@@ -164,8 +150,6 @@ enum STTKeys {
         "RUNNER.THPO:\(id)"
     }
 
-    static let OverrideSourceRecommendedReadingMode = "READER.override_provided_mode"
-
     static func TitleBlackListedProviders(_ id: String) -> String {
         "RUNNER.TBLP:\(id)"
     }
@@ -174,9 +158,22 @@ enum STTKeys {
 
     static let SyncDatabase = "APP.sync_db"
 
-    static let AlwaysMarkFirstPageAsSinglePanel = "READER.mark_first_as_single"
-
     static let UseCompactLibraryView = "APP.compact_library"
     
     static let TrackerAutoSync = "APP.tracker_auto_sync"
+
+    static let ImageScaleType = "READER.image_scale"
+    static let ReaderType = "READER.type"
+    static let VerticalPillarBoxEnabled = "READER.pillar_box_enabled"
+    static let VerticalPillarBoxPCT = "READER.pillar_box_pct"
+    static let EnableReaderHaptics = "READER.haptics"
+    static let PagedSplitsWide = "READER.split_wide"
+    static let PagedZoomWide = "READER.zoom_wide"
+    static let DefaultPanelReadingMode = "READER.panel_default_mode"
+    static let CurrentReadingMode = "READER.current_mode"
+    static let OverrideSourceRecommendedReadingMode = "READER.override_provided_mode"
+    static let AlwaysMarkFirstPageAsSinglePanel = "READER.mark_first_as_single"
+    static let ReaderScrollbarPosition = "READER.scrollbar_position"
+    static let ReaderBottomScrollbarDirection = "READER.bottom_scrollbar_direction"
+    static let ReaderScrollbarWidth = "READER.scrollbar_width"
 }

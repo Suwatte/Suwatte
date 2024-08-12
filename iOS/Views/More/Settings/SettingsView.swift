@@ -170,6 +170,8 @@ extension SettingsView {
         @Preference(\.enableReaderHaptics) var readerHaptics
         @Preference(\.defaultPanelReadingMode) var readerMode
         @Preference(\.overrideProvidedReaderMode) var overrideReaderMode
+        @Preference(\.readerScrollbarPosition) var scrollBarPosition
+        @Preference(\.readerBottomScrollbarDirection) var bottomScrollbarDirection
 
         var body: some View {
             Section {
@@ -188,8 +190,22 @@ extension SettingsView {
             Section {
                 Toggle("Transition Pages", isOn: $forceTransitions)
                 Toggle("Haptic Feedback", isOn: $readerHaptics)
+                Picker("Default Scrollbar Position", selection: $scrollBarPosition) {
+                    ForEach(ReaderScrollbarPosition.PositionCases(), id: \.hashValue) { position in
+                        Text(position.description)
+                            .tag(position)
+                    }
+                }
+                Picker("Default Bottom Scrollbar Direction", selection: $bottomScrollbarDirection) {
+                    ForEach(ReaderBottomScrollbarDirection.DirectionCases(), id: \.hashValue) { direction in
+                        Text(direction.description)
+                            .tag(direction)
+                    }
+                }
             } header: {
                 Text("Reader")
+            } footer: {
+                Text("Bottom Scrollbar Direction will only take effect in vertical/webtoon reading mode")
             }
         }
     }

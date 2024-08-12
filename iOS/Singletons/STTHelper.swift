@@ -23,6 +23,20 @@ class STTHelpers {
         }
     }
 
+    static func getScrollbarPosition(for id: String) -> ReaderScrollbarPosition? {
+        let key = STTKeys.ReaderScrollbarPosition + "%%" + id
+        let container = UserDefaults.standard
+        let value = container.object(forKey: key) as? Int
+        return value.flatMap { ReaderScrollbarPosition(rawValue: $0) }
+    }
+
+    static func getBottomScrollbarDirection(for id: String) -> ReaderBottomScrollbarDirection? {
+        let key = STTKeys.ReaderBottomScrollbarDirection + "%%" + id
+        let container = UserDefaults.standard
+        let value = container.object(forKey: key) as? Int
+        return value.flatMap { ReaderBottomScrollbarDirection(rawValue: $0) }
+    }
+
     static func getNavigationMode() -> ReaderNavigation.Modes {
         let currentMode = Preferences.standard.currentReadingMode
         let isVertical = currentMode.isVertical

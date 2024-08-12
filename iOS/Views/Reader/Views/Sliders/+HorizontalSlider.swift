@@ -14,16 +14,10 @@ struct ReaderHSlider: View {
     @Environment(\.colorScheme) var colorScheme
     var range: ClosedRange<Double>
 
-    var knobSize: CGSize = .init(width: 17, height: 17)
+    var knobSize: CGSize = .init(width: 25, height: 25)
+    var barSize: CGFloat
 
-    func completionOpacity() -> Double {
-        let out = value / range.upperBound
-        return Double(out)
-    }
-
-    func scrollColor() -> Color {
-        isScrolling || value >= range.upperBound ? Color.accentColor : Color(hex: "77777D")
-    }
+    var backgroundBarColor: Color { colorScheme == .dark ? Color(hex: "3d3d40") : .init(hex: "58585C") }
 
     var body: some View {
         ZStack {
@@ -33,23 +27,28 @@ struct ReaderHSlider: View {
 
                     // BG
                     RoundedRectangle(cornerRadius: 50)
-                        .frame(height: 5)
-                        .foregroundColor(colorScheme == .dark ? Color(hex: "3d3d40") : .init(hex: "58585C"))
+                        .frame(height: barSize)
+                        .foregroundColor(backgroundBarColor)
+                        .overlay {
+                            Capsule(style: .continuous)
+                                .stroke(backgroundBarColor, lineWidth: 1.5)
+                        }
 
                     // Trailing
 
                     RoundedRectangle(cornerRadius: 50)
-                        .foregroundColor(scrollColor())
+                        .foregroundColor(Color.accentColor)
                         .frame(width: $value.wrappedValue.map(from: range,
                                                               to: (knobSize.width) ... max(geometry.size.width, knobSize.width)),
-                               height: 5)
+                               height: barSize)
 
                     // KNOB
                     RoundedRectangle(cornerRadius: 50)
                         .frame(width: knobSize.width, height: knobSize.height, alignment: .center)
                         .foregroundColor(.white)
+                        .scaleEffect(isScrolling ? 1.2 : 1.0)
+                        .shadow(color: .black, radius: 2)
                         .offset(x: $value.wrappedValue.map(from: range, to: 0 ... max(geometry.size.width - knobSize.width, 0)))
-                        .shadow(radius: 8)
                         .gesture(
                             DragGesture(minimumDistance: 0)
                                 .onChanged { value in
@@ -73,9 +72,5 @@ struct ReaderHSlider: View {
             }
         }
         .frame(height: knobSize.height)
-        .padding(.horizontal, 7)
-        .frame(height: 25)
-        .background(colorScheme == .light ? .black : .sttGray)
-        .cornerRadius(100)
     }
 }

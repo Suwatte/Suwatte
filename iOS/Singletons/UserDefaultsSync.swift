@@ -50,6 +50,8 @@ class UDSync {
                               STTKeys.DefaultCollection,
                               STTKeys.DefaultReadingFlag,
                               STTKeys.DefaultPanelReadingMode,
+                              STTKeys.ReaderScrollbarPosition,
+                              STTKeys.ReaderBottomScrollbarDirection,
                               STTKeys.MoveDownloadToArchive,
                               STTKeys.OnlyCheckForUpdateInSpecificCollections,
                               STTKeys.UpdateApprovedCollections,

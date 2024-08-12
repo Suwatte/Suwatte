@@ -35,8 +35,6 @@ extension Controller: UIScrollViewDelegate {
 
 extension Controller {
     func onScrollStop() {
-        model.hideMenu()
-
         // Load Previous Chapter if requested
         if didTriggerBackTick {
             Task { [weak self] in
@@ -59,13 +57,6 @@ extension Controller {
     }
 
     func onUserDidScroll(to position: CGFloat) {
-        // Hide Menu if not scrubbing
-        if !model.slider.isScrubbing, model.control.menu {
-            Task { @MainActor in
-                model.hideMenu()
-            }
-        }
-
         // If current offset is lower than 0, user wants to see previous chapter
         if position < 0, !didTriggerBackTick {
             didTriggerBackTick = true
