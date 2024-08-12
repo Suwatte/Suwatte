@@ -74,7 +74,7 @@ struct IVSettingsView: View {
 
                 Section {
                     ScrollbarPositionSelectorView()
-                    if model.readingMode.isVertical && !model.scrollbarPosition.isVertical() {
+                    if model.readingMode.isVertical && !model.scrollbarPosition.isVertical(model.readingMode.isVertical) {
                         BottomScrollbarDirectionSelectorView()
                     }
                 } header: {

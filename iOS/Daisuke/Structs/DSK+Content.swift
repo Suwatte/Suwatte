@@ -84,7 +84,8 @@ enum ReadingMode: Int, CaseIterable, Hashable, UserDefaultsSerializable {
 }
 
 enum ReaderScrollbarPosition: Int, CaseIterable, Hashable, UserDefaultsSerializable {
-    case BOTTOM,
+    case AUTO,
+         BOTTOM,
          RIGHT,
          LEFT
 
@@ -96,8 +97,10 @@ enum ReaderScrollbarPosition: Int, CaseIterable, Hashable, UserDefaultsSerializa
         Preferences.standard.readerScrollbarPosition
     }
 
-    func isVertical() -> Bool {
+    func isVertical(_ isReadingModeVertical: Bool) -> Bool {
         switch self {
+            case.AUTO:
+                return isReadingModeVertical
             case .BOTTOM:
                 return false
             default:
@@ -113,6 +116,8 @@ enum ReaderScrollbarPosition: Int, CaseIterable, Hashable, UserDefaultsSerializa
                 return "Right"
             case .LEFT:
                 return "Left"
+            case .AUTO:
+                return "Auto"
         }
     }
 }

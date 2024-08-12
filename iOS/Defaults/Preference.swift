@@ -136,7 +136,7 @@ final class Preferences {
     var defaultPanelReadingMode = ReadingMode.PAGED_COMIC
 
     @UserDefault(STTKeys.ReaderScrollbarPosition)
-    var readerScrollbarPosition = ReaderScrollbarPosition.RIGHT
+    var readerScrollbarPosition = ReaderScrollbarPosition.AUTO
 
     @UserDefault(STTKeys.ReaderBottomScrollbarDirection)
     var readerBottomScrollbarDirection = ReaderBottomScrollbarDirection.RIGHT
