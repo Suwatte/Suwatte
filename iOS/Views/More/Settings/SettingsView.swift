@@ -205,7 +205,7 @@ extension SettingsView {
             } header: {
                 Text("Reader")
             } footer: {
-                Text("Bottom Scrollbar Direction will only take effect in vertical/webtoon reading mode")
+                Text("Bottom scrollbar direction will only take effect in vertical/webtoon reading mode")
             }
         }
     }

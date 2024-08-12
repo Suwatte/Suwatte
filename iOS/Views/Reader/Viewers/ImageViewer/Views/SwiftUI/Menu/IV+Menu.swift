@@ -12,7 +12,7 @@ struct IVMenuView: View {
     var body: some View {
         ZStack(alignment: .center) {
             MainBody()
-            if model.scrollbarPosition.isVertical() {
+            if model.scrollbarPosition.isVertical(model.readingMode.isVertical) {
                 GeometryReader { proxy in
                     ZStack(alignment: .center) {
                         VerticalSliderView()
@@ -52,7 +52,7 @@ extension IVMenuView {
                         .frame(height: proxy.size.height * 0.40, alignment: .top)
                     Spacer()
 
-                    if !model.scrollbarPosition.isVertical() {
+                    if !model.scrollbarPosition.isVertical(model.readingMode.isVertical) {
                         BottomView()
                             .frame(height: proxy.size.height * 0.225, alignment: .bottom)
                     }
@@ -263,7 +263,7 @@ extension IVMenuView {
         var inverted: Bool {
             model.readingMode.isInverted
             || (model.readingMode.isVertical
-                && !model.scrollbarPosition.isVertical()
+                && !model.scrollbarPosition.isVertical(model.readingMode.isVertical)
                 && model.bottomScrollbarDirection == .LEFT)
         }
 
