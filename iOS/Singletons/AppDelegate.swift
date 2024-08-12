@@ -53,6 +53,7 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
             if oldSchemaVersion < 16 {
                 MigrationHelper.migrateProgressMarker(migration: migration)
                 MigrationHelper.migrateContentLinks(migration: migration)
+                MigrationHelper.migrateInteractorStoreObjects(migration: migration)
             }
         }, shouldCompactOnLaunch: { totalBytes, usedBytes in
             return (Double(usedBytes) / Double(totalBytes)) < 0.5
@@ -66,6 +67,8 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
         Realm.Configuration.defaultConfiguration = config
 
         try! Realm.performMigration()
+        let realm = try! Realm(configuration: config)
+        MigrationHelper.migrationCheck(realm: realm)
 
         // Analytics
         FirebaseApp.configure()
