@@ -125,18 +125,18 @@ struct ChapterListTile: View {
 
     @ViewBuilder
     var ProgressSubview: some View {
-        if let progress = progress {
+        if let progress = progress, progress < 1.0 {
             Circle()
                 .trim(from: 0, to: progress)
-                .stroke(ProgressColor(progress), style: .init(lineWidth: 2.5, lineCap: .round))
+                .stroke(ProgressColor(), style: .init(lineWidth: 2.5, lineCap: .round))
                 .rotationEffect(.degrees(-90))
-                .background(Circle().stroke(ProgressColor(progress).opacity(0.2), style: .init(lineWidth: 2.5, lineCap: .round)))
+                .background(Circle().stroke(ProgressColor().opacity(0.2), style: .init(lineWidth: 2.5, lineCap: .round)))
                 .frame(width: 15, height: 15, alignment: .center)
         }
     }
 
-    func ProgressColor(_ progress: Double) -> Color {
-        progress == 1.0 ? .green : .accentColor
+    func ProgressColor() -> Color {
+        .accentColor
     }
 
     @ViewBuilder

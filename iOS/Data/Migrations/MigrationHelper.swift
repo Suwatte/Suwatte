@@ -11,42 +11,15 @@ import RealmSwift
 class MigrationHelper {
     static func migrateContentLinks(migration: Migration) {
         migration.enumerateObjects(ofType: ContentLink.className()) { oldContentLinkObject, newContentLinkObject in
-            guard let oldContentLinkObject = oldContentLinkObject else { return }
-
-            let isDeleted = oldContentLinkObject["isDeleted"] as! Bool
-            if isDeleted { return }
-
-            var ids = Set(oldContentLinkObject["ids"] as! RealmSwift.MutableSet<String>)
-
-            migration.enumerateObjects(ofType: LibraryEntry.className()) { _, libraryEntryObject in
-                guard let libraryEntryObject else { return }
-                if let libraryEntryId = libraryEntryObject["id"] as? String {
-
-                    if ids.remove(libraryEntryId) != nil {
-
-                        ids.forEach { linkContentId in
-                            let newLink = migration.create(ContentLink.className())
-                            newLink["id"] = "\(libraryEntryId)||\(linkContentId)"
-                            newLink["entry"] = libraryEntryObject
-
-                            migration.enumerateObjects(ofType: StoredContent.className()) { _, contentObject in
-                                guard let contentObject else { return }
-                                if let contentId = contentObject["id"] as? String {
-                                    if contentId == linkContentId {
-                                        newLink["content"] = contentObject
-                                    }
-                                }
-                            }
-                        }
-
-                        migration.delete(newContentLinkObject!)
-                    }
-                }
-            }
+            migration.delete(newContentLinkObject!)
         }
     }
+    
     static func migrateProgressMarker(realm: Realm) {
-        let progressMarkers = realm.objects(ProgressMarker.self).where { !$0.isDeleted && $0.readChapters.count > 0 }
+        let progressMarkers = realm.objects(ProgressMarker.self)
+            .where { !$0.isDeleted && $0.readChapters.count > 0 }
+            .freeze()
+
         for progressMarker in progressMarkers {
             let contentId = progressMarker.id
 
@@ -56,9 +29,12 @@ class MigrationHelper {
 
             let readChapters = progressMarker.readChapters
             readChapterLoop: for readChapter in readChapters {
-                let storedChapters = realm.objects(StoredChapter.self).where { $0.id.starts(with: contentId, options: []) }
+                let storedChapters = realm.objects(StoredChapter.self)
+                    .where { $0.id.starts(with: contentId) }
+                    .freeze()
+
                 storedChapterLoop: for storedChapter in storedChapters {
-                    let chapterOrderKey = ThreadSafeChapter.orderKey(volume: readChapter < 10000 ? 0 : storedChapter["volume"] as? Double, number: storedChapter["number"] as! Double)
+                    let chapterOrderKey = ThreadSafeChapter.orderKey(volume: readChapter < 10000 ? 0 : storedChapter.volume, number: storedChapter.number)
 
                     if chapterOrderKey == readChapter {
                         let chapterReference = ChapterReference()
@@ -90,15 +66,18 @@ class MigrationHelper {
                 }
 
                 if migrated {
-                    do {
-                        try realm.write {
-                            progressMarker.readChapters.removeAll()
-                            progressMarker.isDeleted = true
-                        }
-                    } catch {
-                        Logger.shared.error(error, "RealmActor")
-                    }
+                    let thawnMarker = progressMarker.thaw()
+                    if let thawnMarker {
+                        do {
+                            try realm.write {
 
+                                thawnMarker.readChapters.removeAll()
+                                thawnMarker.isDeleted = true
+                            }
+                        } catch {
+                            Logger.shared.error(error, "RealmActor")
+                        }
+                    }
                 }
             }
         }
@@ -123,14 +102,6 @@ class MigrationHelper {
         if interactorStoreObjects.count > countBeforeMigration {
             UserDefaults.standard.set(interactorStoreObjects, forKey: userDefaultKey)
             migration.deleteData(forType: "InteractorStoreObject")
-        }
-    }
-
-    static func migrationCheck(realm: Realm) {
-        let schema = realm.schema[interactorStoreObjectTypeName]
-        if schema != nil {
-            let interactorStoreObjects = realm.dynamicObjects(interactorStoreObjectTypeName)
-            assert(interactorStoreObjects.count == 0, "InteractorStoreObject wasn't fully migrated and there are still objects left inside.")
         }
     }
 }
