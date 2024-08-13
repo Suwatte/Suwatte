@@ -71,7 +71,6 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
 
         try! Realm.performMigration()
         let realm = try! Realm(configuration: config)
-        MigrationHelper.migrationCheck(realm: realm)
 
         if oldSchemaVer < 16 {
             MigrationHelper.migrateProgressMarker(realm: realm)
