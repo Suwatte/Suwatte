@@ -45,7 +45,6 @@ class MigrationHelper {
             }
         }
     }
-
     static func migrateProgressMarker(realm: Realm) {
         let progressMarkers = realm.objects(ProgressMarker.self).where { !$0.isDeleted && $0.readChapters.count > 0 }
         for progressMarker in progressMarkers {
