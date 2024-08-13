@@ -13,12 +13,23 @@ extension LibraryEntry: Codable {
         case id, content, updateCount, lastUpdated, lastOpened, dateAdded, lastRead, collections, flag, linkedHasUpdates, unreadCount
     }
 
+    static var schemaVersionKey: CodingUserInfoKey {
+        return CodingUserInfoKey(rawValue: "schemaVersion")!
+    }
+
     convenience init(from decoder: Decoder) throws {
         self.init()
 
+        let schemaVersion = decoder.userInfo[Self.schemaVersionKey] as! Int
+
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        content = try container.decode(StoredContent.self, forKey: .content)
+        if schemaVersion > 15 {
+            id = try container.decode(String.self, forKey: .id)
+        }
+        else {
+            content = try container.decode(StoredContent.self, forKey: .content)
+        }
         updateCount = try container.decode(Int.self, forKey: .updateCount)
         unreadCount = try container.decodeIfPresent(Int.self, forKey: .unreadCount) ?? 0
         lastUpdated = try container.decode(Date.self, forKey: .lastUpdated)
@@ -34,7 +45,6 @@ extension LibraryEntry: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         try container.encode(id, forKey: .id)
-        try container.encode(content, forKey: .content)
         try container.encode(updateCount, forKey: .updateCount)
         try container.encode(unreadCount, forKey: .unreadCount)
         try container.encode(lastUpdated, forKey: .lastUpdated)
@@ -44,6 +54,13 @@ extension LibraryEntry: Codable {
         try container.encode(flag, forKey: .flag)
         try container.encode(lastOpened, forKey: .lastOpened)
         try container.encode(linkedHasUpdates, forKey: .linkedHasUpdates)
+    }
+    
+    func fillContent(data: [StoredContent]?) throws {
+        content = data!.first { $0.id == id }
+        if content == nil {
+            throw DSK.Errors.NamedError(name: "Restore Backup", message: "No content found for library entry with the id \(id)")
+        }
     }
 }
 
@@ -60,11 +77,7 @@ struct CodableContent: Codable {
 }
 
 struct CodableLibraryEntry: Codable {
-    var id: String {
-        content.id
-    }
-
-    var content: CodableContent
+    var id: String
 
     // Update information
     var updateCount: Int
@@ -82,7 +95,7 @@ struct CodableLibraryEntry: Codable {
 
     static func from(entry: LibraryEntry) -> Self {
         .init(
-            content: CodableContent.from(content: entry.content!),
+            id: entry.content!.id,
             updateCount: entry.updateCount,
             lastUpdated: entry.lastRead,
             dateAdded: entry.dateAdded,

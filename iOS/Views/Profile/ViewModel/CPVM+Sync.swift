@@ -63,6 +63,8 @@ extension ViewModel {
         })
 
         let chapters = chapterMap[identifier.id]?.filtered
+        let completedLocalChapters = readChapters[identifier.id]?.filter { $0.value.isCompleted }.map { $0.value.id }
+
         guard let chapters else { return }
         // Source Chapter Sync Handler
         var sourceOriginHighestRead: Double = 0
@@ -85,7 +87,7 @@ extension ViewModel {
 
         // Switch to chapters for this portion.
         // Prepare the Highest Read Chapter Number
-        let localHighestRead = ThreadSafeChapter.vnPair(from: await actor.getMaxReadChapterOrderKey(id: identifier.id)).1
+        let localHighestRead = ThreadSafeChapter.vnPair(from: await actor.getMaxReadChapterOrderKey(for: identifier)).1
         let originHighestRead = Array(markers.values).max() ?? 0
         let maxReadChapter = max(localHighestRead, originHighestRead, sourceOriginHighestRead)
 
@@ -113,16 +115,23 @@ extension ViewModel {
 
         let markIndividually = maxReadChapter == sourceOriginHighestRead && !readIDs.isEmpty
 
-        let chaptersToMark = markIndividually ? chapters.filter { readIDs.contains($0.chapterId) }.map(\.chapterOrderKey) : chapters.filter { $0.number <= maxReadChapter }.map(\.chapterOrderKey)
-        await actor.markChaptersByNumber(for: identifier, chapters: Set(chaptersToMark))
+        var chaptersToMark = markIndividually ? chapters.filter { readIDs.contains($0.chapterId) } : chapters.filter { $0.number <= maxReadChapter }
+
+        if completedLocalChapters?.count ?? 0 > 0 {
+            chaptersToMark = chaptersToMark.filter { chapter in !completedLocalChapters!.contains(chapter.id) }
+        }
+
+        chaptersToMark = chaptersToMark.sorted(by: \.index, descending: true)
+
+        await actor.markChapters(for: identifier, chapters: chaptersToMark)
 
         // Notify Linked Titles
         let linked = await actor.getLinkedContent(for: identifier.id)
         await withTaskGroup(of: Void.self, body: { group in
             for link in linked {
-                group.addTask {
+                group.addTask { [chaptersToMark] in
                     await actor
-                        .markChaptersByNumber(for: link.ContentIdentifier, chapters: Set(chaptersToMark))
+                        .markChapters(for: link.ContentIdentifier, chapters: chaptersToMark)
                 }
             }
         })

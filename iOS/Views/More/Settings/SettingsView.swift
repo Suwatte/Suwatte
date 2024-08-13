@@ -170,6 +170,10 @@ extension SettingsView {
         @Preference(\.enableReaderHaptics) var readerHaptics
         @Preference(\.defaultPanelReadingMode) var readerMode
         @Preference(\.overrideProvidedReaderMode) var overrideReaderMode
+        @Preference(\.readerScrollbarPosition) var scrollBarPosition
+        @Preference(\.readerBottomScrollbarDirection) var bottomScrollbarDirection
+        @Preference(\.readerHideMenuOnSwipe) var readerHideMenuOnSwipe
+        @Preference(\.readerScrollbarWidth) var scrollBarWidth
 
         var body: some View {
             Section {
@@ -188,8 +192,34 @@ extension SettingsView {
             Section {
                 Toggle("Transition Pages", isOn: $forceTransitions)
                 Toggle("Haptic Feedback", isOn: $readerHaptics)
+                Toggle("Hide Menu on swipe", isOn: $readerHideMenuOnSwipe)
+                Picker("Default Scrollbar Position", selection: $scrollBarPosition) {
+                    ForEach(ReaderScrollbarPosition.PositionCases(), id: \.hashValue) { position in
+                        Text(position.description)
+                            .tag(position)
+                    }
+                }
+                Picker("Default Bottom Scrollbar Direction", selection: $bottomScrollbarDirection) {
+                    ForEach(ReaderBottomScrollbarDirection.DirectionCases(), id: \.hashValue) { direction in
+                        Text(direction.description)
+                            .tag(direction)
+                    }
+                }
+
+                VStack(alignment: .leading) {
+                    Text("Scrollbar Thickness (\(scrollBarWidth.description))")
+                    Slider(value: $scrollBarWidth, in: 5...15, step: 1) {
+
+                    } minimumValueLabel: {
+                        Text("5")
+                    } maximumValueLabel: {
+                        Text("15")
+                    }
+                }
             } header: {
                 Text("Reader")
+            } footer: {
+                Text("Bottom scrollbar direction will only take effect in vertical/webtoon reading mode")
             }
         }
     }

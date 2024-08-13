@@ -25,6 +25,9 @@ final class IVViewModel: ObservableObject {
     @Published var slider: SliderControl = .init()
 
     @Published var readingMode: ReadingMode = .defaultPanelMode
+    @Published var scrollbarPosition: ReaderScrollbarPosition = .defaultScrollbarPosition
+    @Published var bottomScrollbarDirection: ReaderBottomScrollbarDirection = .defaultBottomScrollbarDirection
+    @Published var scrollbarWidth: CGFloat = 14.0
 
     @Published var title: String = ""
 
@@ -55,6 +58,7 @@ extension IVViewModel {
         }
 
         setReadingMode(for: requested.STTContentIdentifier, requested: value.mode)
+        setScrollbar(for: requested.STTContentIdentifier)
 
         // Sort Chapters
         let useIndex = chapters.map { $0.index }.reduce(0, +) > 0
@@ -74,10 +78,8 @@ extension IVViewModel {
         let pageCount = await dataCache.getCount(requested.id)
         // Check DB For Last Known State
         if pendingState?.pageIndex == nil {
-            let values = await STTHelpers
-                .getInitialPanelPosition(for: requested.STTContentIdentifier,
-                                         chapterId: requested.chapterId,
-                                         limit: pageCount)
+
+            let values = await STTHelpers.getInitialPanelPosition(for: requested.id, limit: pageCount)
             pendingState?.pageIndex = values.0
             pendingState?.pageOffset = values.1
         }
@@ -104,6 +106,12 @@ extension IVViewModel {
         }
 
         Preferences.standard.currentReadingMode = readingMode
+    }
+
+    func setScrollbar(for id: String) {
+        scrollbarPosition = STTHelpers.getScrollbarPosition(for: id) ?? .defaultScrollbarPosition
+        bottomScrollbarDirection = STTHelpers.getBottomScrollbarDirection(for: id) ?? .defaultBottomScrollbarDirection
+        scrollbarWidth = Preferences.standard.readerScrollbarWidth
     }
 
     func producePendingState() {

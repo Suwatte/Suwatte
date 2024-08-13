@@ -12,14 +12,14 @@ struct IVMenuView: View {
     var body: some View {
         ZStack(alignment: .center) {
             MainBody()
-            if model.readingMode.isVertical {
+            if model.scrollbarPosition.isVertical(model.readingMode.isVertical) {
                 GeometryReader { proxy in
                     ZStack(alignment: .center) {
                         VerticalSliderView()
                             .transition(.move(edge: .trailing))
                             .frame(width: proxy.size.width,
                                    height: proxy.size.height * 0.60,
-                                   alignment: Alignment(horizontal: .trailing, vertical: .center))
+                                   alignment: Alignment(horizontal: model.scrollbarPosition == .LEFT ? .leading : .trailing, vertical: .center))
                     }
                     .frame(height: proxy.size.height)
                 }
@@ -52,7 +52,7 @@ extension IVMenuView {
                         .frame(height: proxy.size.height * 0.40, alignment: .top)
                     Spacer()
 
-                    if !model.readingMode.isVertical {
+                    if !model.scrollbarPosition.isVertical(model.readingMode.isVertical) {
                         BottomView()
                             .frame(height: proxy.size.height * 0.225, alignment: .bottom)
                     }
@@ -262,6 +262,9 @@ extension IVMenuView {
 
         var inverted: Bool {
             model.readingMode.isInverted
+            || (model.readingMode.isVertical
+                && !model.scrollbarPosition.isVertical(model.readingMode.isVertical)
+                && model.bottomScrollbarDirection == .LEFT)
         }
 
         var SliderAndButtons: some View {
@@ -269,7 +272,7 @@ extension IVMenuView {
                 if model.viewerState.hasPreviousChapter {
                     ReaderNavButton(asNext: false)
                 }
-                ReaderHSlider(value: $model.slider.current, isScrolling: $model.slider.isScrubbing, range: 0 ... 1)
+                ReaderHSlider(value: $model.slider.current, isScrolling: $model.slider.isScrubbing, range: 0 ... 1, barSize: model.scrollbarWidth)
 
                 if model.viewerState.hasNextChapter {
                     ReaderNavButton()
@@ -314,7 +317,7 @@ extension IVMenuView {
                     ReaderNavButton(asNext: false)
                         .rotationEffect(.degrees(90))
                 }
-                ReaderVSlider(value: $model.slider.current, isScrolling: $model.slider.isScrubbing, range: 0 ... 1)
+                ReaderVSlider(value: $model.slider.current, isScrolling: $model.slider.isScrubbing, range: 0 ... 1, barSize: model.scrollbarWidth)
 
                 if model.viewerState.hasNextChapter {
                     ReaderNavButton()

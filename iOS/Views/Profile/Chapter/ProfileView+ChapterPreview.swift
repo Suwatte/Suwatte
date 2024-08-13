@@ -146,7 +146,11 @@ extension ProfileView.Skeleton.ChapterView {
 
 extension ProfileView.Skeleton.ChapterView.PreviewView {
     func isChapterCompleted(_ chapter: ThreadSafeChapter) -> Bool {
-        model.readChapters.contains(chapter.chapterOrderKey)
+        guard let marker = model.readChapters[chapter.STTContentIdentifier]?[chapter.id] else {
+            return false
+        }
+
+        return marker.isCompleted
     }
 
     func isChapterNew(_ chapter: ThreadSafeChapter) -> Bool {
@@ -157,10 +161,11 @@ extension ProfileView.Skeleton.ChapterView.PreviewView {
     }
 
     func chapterProgress(_ chapter: ThreadSafeChapter) -> Double? {
-        guard let id = model.actionState.chapter?.id, id == chapter.id else {
+        guard let marker = model.readChapters[chapter.STTContentIdentifier]?[chapter.id] else {
             return nil
         }
-        return model.actionState.marker?.progress
+
+        return marker.progress
     }
 
     func getDownload(_ chapter: ThreadSafeChapter) -> DownloadStatus? {

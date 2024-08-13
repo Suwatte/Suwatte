@@ -49,13 +49,26 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
         }
 
         // Realm
-        var config = Realm.Configuration(schemaVersion: UInt64(SCHEMA_VERSION))
+        var config = Realm.Configuration(schemaVersion: UInt64(SCHEMA_VERSION), migrationBlock: { migration, oldSchemaVersion in
+            if oldSchemaVersion < 16 {
+                MigrationHelper.migrateProgressMarker(migration: migration)
+                MigrationHelper.migrateContentLinks(migration: migration)
+                MigrationHelper.migrateInteractorStoreObjects(migration: migration)
+            }
+        }, shouldCompactOnLaunch: { totalBytes, usedBytes in
+            return (Double(usedBytes) / Double(totalBytes)) < 0.5
+        })
+
         let directory = FileManager.default.applicationSupport.appendingPathComponent("Database", isDirectory: true)
         if !directory.exists {
             directory.createDirectory()
         }
         config.fileURL = directory.appendingPathComponent("suwatte_db.realm")
         Realm.Configuration.defaultConfiguration = config
+
+        try! Realm.performMigration()
+        let realm = try! Realm(configuration: config)
+        MigrationHelper.migrationCheck(realm: realm)
 
         // Analytics
         FirebaseApp.configure()

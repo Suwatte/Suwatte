@@ -23,7 +23,11 @@ extension ChapterList {
 
 extension ChapterList {
     func isChapterCompleted(_ chapter: ThreadSafeChapter) -> Bool {
-        model.readChapters.contains(chapter.chapterOrderKey)
+        guard let marker = model.readChapters[chapter.STTContentIdentifier]?[chapter.id] else {
+            return false
+        }
+
+        return marker.isCompleted
     }
 
     func isChapterNew(_ chapter: ThreadSafeChapter) -> Bool {
@@ -34,10 +38,11 @@ extension ChapterList {
     }
 
     func chapterProgress(_ chapter: ThreadSafeChapter) -> Double? {
-        guard let id = model.actionState.chapter?.id, id == chapter.id else {
+        guard let marker = model.readChapters[chapter.STTContentIdentifier]?[chapter.id] else {
             return nil
         }
-        return model.actionState.marker?.progress
+
+        return marker.progress
     }
 
     func getDownload(_ chapter: ThreadSafeChapter) -> DownloadStatus? {
@@ -123,7 +128,7 @@ extension ChapterList {
         let chapters = Array(selections)
         Task {
             let actor = await RealmActor.shared()
-            await actor.bulkMarkChapters(for: id, chapters: chapters)
+            await actor.markChapters(for: id, chapters: chapters)
             didMark()
         }
         deselectAll()
@@ -134,7 +139,7 @@ extension ChapterList {
         let chapters = Array(selections)
         Task {
             let actor = await RealmActor.shared()
-            await actor.bulkMarkChapters(for: id, chapters: chapters, markAsRead: false)
+            await actor.markChapters(for: id, chapters: chapters, markAsRead: false)
         }
         deselectAll()
     }
@@ -165,17 +170,17 @@ extension ChapterList {
     }
 
     func didMark() { // This is called before the notification is delivered to for model `readChapters` property to update
-        let identifier = model.identifier
+        let identifier = model.STTIDPair
         Task {
             let actor = await RealmActor.shared()
-            let maxRead = await actor
-                .getFrozenContentMarker(for: identifier)?
-                .readChapters
-                .max()
-            guard let maxRead else { return }
+            let maxRead = await actor.getMaxReadKey(for: identifier)
+            if (maxRead == 0) {
+                return
+            }
+
             let (volume, number) = ThreadSafeChapter.vnPair(from: maxRead)
             let progress = DSKCommon.TrackProgressUpdate(chapter: number, volume: volume)
-            await actor.updateTrackProgress(for: identifier, progress: progress)
+            await actor.updateTrackProgress(for: identifier.id, progress: progress)
         }
     }
 }

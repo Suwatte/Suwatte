@@ -138,6 +138,7 @@ extension ProfileView.Skeleton.BottomBar {
         func OpenReader() {
             // Haptic
             STTHelpers.triggerHaptic()
+
             // State
             model.selection = actionState.chapter
         }
@@ -239,12 +240,14 @@ extension ProfileView.Skeleton.BottomBar {
 
         @ViewBuilder
         var ManageLinkedContentButton: some View {
-            Button {
-                model.presentManageContentLinks = model.identifier
-            } label: {
-                Label("Linked Titles", systemImage: "link")
+            if model.inLibrary {
+                Button {
+                    model.presentManageContentLinks = model.identifier
+                } label: {
+                    Label("Linked Titles", systemImage: "link")
+                }
+                .disabled(!model.source.ablityNotDisabled(\.disableContentLinking))
             }
-            .disabled(!model.source.ablityNotDisabled(\.disableContentLinking))
         }
 
         @ViewBuilder

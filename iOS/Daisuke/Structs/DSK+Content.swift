@@ -83,6 +83,68 @@ enum ReadingMode: Int, CaseIterable, Hashable, UserDefaultsSerializable {
     }
 }
 
+enum ReaderScrollbarPosition: Int, CaseIterable, Hashable, UserDefaultsSerializable {
+    case AUTO,
+         BOTTOM,
+         RIGHT,
+         LEFT
+
+    static func PositionCases() -> [Self] {
+        allCases
+    }
+
+    static var defaultScrollbarPosition: Self {
+        Preferences.standard.readerScrollbarPosition
+    }
+
+    func isVertical(_ isReadingModeVertical: Bool) -> Bool {
+        switch self {
+            case.AUTO:
+                return isReadingModeVertical
+            case .BOTTOM:
+                return false
+            default:
+                return true
+        }
+    }
+
+    var description: String {
+        switch self {
+            case .BOTTOM:
+                return "Bottom"
+            case .RIGHT:
+                return "Right"
+            case .LEFT:
+                return "Left"
+            case .AUTO:
+                return "Auto"
+        }
+    }
+}
+
+enum ReaderBottomScrollbarDirection: Int, CaseIterable, Hashable, UserDefaultsSerializable {
+    case RIGHT,
+         LEFT
+
+    static func DirectionCases() -> [Self] {
+        allCases
+    }
+
+    static var defaultBottomScrollbarDirection: Self {
+        Preferences.standard.readerBottomScrollbarDirection
+    }
+
+    var description: String {
+        switch self {
+            case .RIGHT:
+                return "Right"
+            case .LEFT:
+                return "Left"
+        }
+    }
+}
+
+
 extension DaisukeEngine.Structs {
     struct Highlight: Parsable, Identifiable, Hashable {
         var id: String

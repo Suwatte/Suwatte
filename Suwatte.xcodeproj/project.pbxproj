@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		292776932C61776B00FB7DB0 /* Backup+ContentLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292776922C61776B00FB7DB0 /* Backup+ContentLink.swift */; };
+		29FB9F232BE43EE800F22E2F /* MigrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29FB9F222BE43EE800F22E2F /* MigrationHelper.swift */; };
 		DF01DEEA2A587A5D0025700B /* Engine+LibraryUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF01DEE92A587A5D0025700B /* Engine+LibraryUpdate.swift */; };
 		DF01DEEC2A587A680025700B /* Engine+URLHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF01DEEB2A587A680025700B /* Engine+URLHandler.swift */; };
 		DF020A442A89A07C00BC5562 /* ArchiveHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF020A432A89A07C00BC5562 /* ArchiveHelper.swift */; };
@@ -248,7 +250,7 @@
 		DF8D0B522800EE47003E4C3E /* Backup+LibraryEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A232800EE47003E4C3E /* Backup+LibraryEntry.swift */; };
 		DF8D0B532800EE47003E4C3E /* Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A242800EE47003E4C3E /* Backup.swift */; };
 		DF8D0B552800EE47003E4C3E /* Backup+Chapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A262800EE47003E4C3E /* Backup+Chapter.swift */; };
-		DF8D0B562800EE47003E4C3E /* Backup+Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A272800EE47003E4C3E /* Backup+Content.swift */; };
+		DF8D0B562800EE47003E4C3E /* Backup+StoredContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A272800EE47003E4C3E /* Backup+StoredContent.swift */; };
 		DF8D0B6F2800EE48003E4C3E /* Loadable+View.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A512800EE47003E4C3E /* Loadable+View.swift */; };
 		DF8D0B712800EE48003E4C3E /* ManageCollectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A572800EE47003E4C3E /* ManageCollectionsView.swift */; };
 		DF8D0B722800EE48003E4C3E /* ReadLaterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8D0A592800EE47003E4C3E /* ReadLaterView.swift */; };
@@ -345,7 +347,6 @@
 		DFBE483A2A25BBC1000ABA16 /* ChapterReference.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE48392A25BBC1000ABA16 /* ChapterReference.swift */; };
 		DFBE483C2A25BC2B000ABA16 /* ThreadSafeChapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE483B2A25BC2B000ABA16 /* ThreadSafeChapter.swift */; };
 		DFBE483E2A25BC88000ABA16 /* OPDSContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE483D2A25BC88000ABA16 /* OPDSContent.swift */; };
-		DFBE48402A25BCA7000ABA16 /* StoreObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE483F2A25BCA7000ABA16 /* StoreObject.swift */; };
 		DFBE48422A25BCD1000ABA16 /* ChapterData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE48412A25BCD0000ABA16 /* ChapterData.swift */; };
 		DFBE48442A25BD07000ABA16 /* SearchHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE48432A25BD07000ABA16 /* SearchHistory.swift */; };
 		DFBE48462A25BD59000ABA16 /* LibraryEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFBE48452A25BD59000ABA16 /* LibraryEntry.swift */; };
@@ -496,6 +497,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		292776922C61776B00FB7DB0 /* Backup+ContentLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Backup+ContentLink.swift"; sourceTree = "<group>"; };
+		29FB9F222BE43EE800F22E2F /* MigrationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationHelper.swift; sourceTree = "<group>"; };
 		DF01DEE92A587A5D0025700B /* Engine+LibraryUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Engine+LibraryUpdate.swift"; sourceTree = "<group>"; };
 		DF01DEEB2A587A680025700B /* Engine+URLHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Engine+URLHandler.swift"; sourceTree = "<group>"; };
 		DF020A432A89A07C00BC5562 /* ArchiveHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ArchiveHelper.swift; path = Shared/ArchiveHelper/ArchiveHelper.swift; sourceTree = SOURCE_ROOT; };
@@ -726,7 +729,7 @@
 		DF8D0A232800EE47003E4C3E /* Backup+LibraryEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Backup+LibraryEntry.swift"; sourceTree = "<group>"; };
 		DF8D0A242800EE47003E4C3E /* Backup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Backup.swift; sourceTree = "<group>"; };
 		DF8D0A262800EE47003E4C3E /* Backup+Chapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Backup+Chapter.swift"; sourceTree = "<group>"; };
-		DF8D0A272800EE47003E4C3E /* Backup+Content.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Backup+Content.swift"; sourceTree = "<group>"; };
+		DF8D0A272800EE47003E4C3E /* Backup+StoredContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Backup+StoredContent.swift"; sourceTree = "<group>"; };
 		DF8D0A512800EE47003E4C3E /* Loadable+View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Loadable+View.swift"; sourceTree = "<group>"; };
 		DF8D0A572800EE47003E4C3E /* ManageCollectionsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManageCollectionsView.swift; sourceTree = "<group>"; };
 		DF8D0A592800EE47003E4C3E /* ReadLaterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReadLaterView.swift; sourceTree = "<group>"; };
@@ -819,7 +822,6 @@
 		DFBE48392A25BBC1000ABA16 /* ChapterReference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterReference.swift; sourceTree = "<group>"; };
 		DFBE483B2A25BC2B000ABA16 /* ThreadSafeChapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadSafeChapter.swift; sourceTree = "<group>"; };
 		DFBE483D2A25BC88000ABA16 /* OPDSContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OPDSContent.swift; sourceTree = "<group>"; };
-		DFBE483F2A25BCA7000ABA16 /* StoreObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreObject.swift; sourceTree = "<group>"; };
 		DFBE48412A25BCD0000ABA16 /* ChapterData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterData.swift; sourceTree = "<group>"; };
 		DFBE48432A25BD07000ABA16 /* SearchHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchHistory.swift; sourceTree = "<group>"; };
 		DFBE48452A25BD59000ABA16 /* LibraryEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryEntry.swift; sourceTree = "<group>"; };
@@ -971,6 +973,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		29FB9F212BE43ECD00F22E2F /* Migrations */ = {
+			isa = PBXGroup;
+			children = (
+				29FB9F222BE43EE800F22E2F /* MigrationHelper.swift */,
+			);
+			path = Migrations;
+			sourceTree = "<group>";
+		};
 		7660DF769E63B9C1CCADAEB4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1696,6 +1706,7 @@
 		DF8D0A092800EE47003E4C3E /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				29FB9F212BE43ECD00F22E2F /* Migrations */,
 				DF27835C2A79A6790098BBA9 /* Extensions */,
 				DFBE48342A25BAB3000ABA16 /* Models */,
 				DF2783322A799BD60098BBA9 /* Actor */,
@@ -1720,10 +1731,11 @@
 				DF8D0A232800EE47003E4C3E /* Backup+LibraryEntry.swift */,
 				DF8D0A242800EE47003E4C3E /* Backup.swift */,
 				DF8D0A262800EE47003E4C3E /* Backup+Chapter.swift */,
-				DF8D0A272800EE47003E4C3E /* Backup+Content.swift */,
+				DF8D0A272800EE47003E4C3E /* Backup+StoredContent.swift */,
 				DF30193A28C045E30024AA8B /* Backup+Runner.swift */,
 				DFF66BF12A548E4700860B41 /* Backup+ProgressMarker.swift */,
 				DFE1B1142A9FEFD600D300DB /* Backup+ChapterReference.swift */,
+				292776922C61776B00FB7DB0 /* Backup+ContentLink.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2206,7 +2218,6 @@
 				DFB47EFF2881013A0040A1BD /* OPDSClient.swift */,
 				DFBE483B2A25BC2B000ABA16 /* ThreadSafeChapter.swift */,
 				DFBE483D2A25BC88000ABA16 /* OPDSContent.swift */,
-				DFBE483F2A25BCA7000ABA16 /* StoreObject.swift */,
 				DFBE48412A25BCD0000ABA16 /* ChapterData.swift */,
 				DFBE48432A25BD07000ABA16 /* SearchHistory.swift */,
 				DFBE48452A25BD59000ABA16 /* LibraryEntry.swift */,
@@ -2732,6 +2743,7 @@
 				DF1EA4472A70B7FF003E27C7 /* SourceDownloadView.swift in Sources */,
 				DF16F2BC2A5F4F4F00D7AFBB /* DV+ResultsView.swift in Sources */,
 				DF1114882A92F6E300FA8A39 /* WebtoonController+Combine.swift in Sources */,
+				29FB9F232BE43EE800F22E2F /* MigrationHelper.swift in Sources */,
 				DF16F2C12A5F5F0D00D7AFBB /* DV+HistoryView.swift in Sources */,
 				DF52FBC22896F762008FAD3A /* CollectionManagementView.swift in Sources */,
 				DF72E48F281269A900E40E52 /* SauceNao.swift in Sources */,
@@ -2778,7 +2790,6 @@
 				DF11147A2A92E90A00FA8A39 /* WebtoonController+Scroll.swift in Sources */,
 				DF8D0B382800EE47003E4C3E /* STT+Array.swift in Sources */,
 				DF8D0BAF2800EE48003E4C3E /* BadgeModifier.swift in Sources */,
-				DFBE48402A25BCA7000ABA16 /* StoreObject.swift in Sources */,
 				DF1114822A92EA2100FA8A39 /* WebtoonController+Rotation.swift in Sources */,
 				DF4EB4D02AB295C4001A73CD /* ReadingStatistics.swift in Sources */,
 				DF326461280256760066EB08 /* ProfileView+RelatedContent.swift in Sources */,
@@ -2845,7 +2856,7 @@
 				DFD1EE1229B7CE2600AFAA47 /* PreMigrationView.swift in Sources */,
 				DF8D0B722800EE48003E4C3E /* ReadLaterView.swift in Sources */,
 				DF8D0B552800EE47003E4C3E /* Backup+Chapter.swift in Sources */,
-				DF8D0B562800EE47003E4C3E /* Backup+Content.swift in Sources */,
+				DF8D0B562800EE47003E4C3E /* Backup+StoredContent.swift in Sources */,
 				DF6824A728A5FD8000AB30A1 /* DSKAuthView.swift in Sources */,
 				DF8D0B232800EE47003E4C3E /* Queue.swift in Sources */,
 				DF27834D2A79A13B0098BBA9 /* Realm+Bookmark.swift in Sources */,
@@ -3043,11 +3054,13 @@
 				DF489C292A830350006A21B9 /* IV+PagingController.swift in Sources */,
 				DF62B5C52A970BF300F907CD /* CPVM+Models.swift in Sources */,
 				DF020A4A2A8B120700BC5562 /* IV+ChapterList.swift in Sources */,
+				29B50C112C5C8DEF00A6C13F /* MigrationHelper.swift in Sources */,
 				DF8D0B742800EE48003E4C3E /* LibraryGrid+GridTile.swift in Sources */,
 				DFE1B1002A9C053900D300DB /* Migration+ViewModel.swift in Sources */,
 				DF977E162A0ECB3900AA1E90 /* StateManager.swift in Sources */,
 				DFB47EF72880C1FB0040A1BD /* STT+OPDS.swift in Sources */,
 				DF8D0BA72800EE48003E4C3E /* AppDelegate.swift in Sources */,
+				292776932C61776B00FB7DB0 /* Backup+ContentLink.swift in Sources */,
 				DF67EB9928E7B07700076FF5 /* AddContentLink.swift in Sources */,
 				DF67EB9B28E7B08400076FF5 /* ManageContentLinks.swift in Sources */,
 				DFA25FF22AA56A9200A1369E /* IV+BasicZoomingScrollView.swift in Sources */,

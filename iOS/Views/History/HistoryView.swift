@@ -133,15 +133,15 @@ extension HistoryView {
 
 extension HistoryView {
     func action(_ marker: ProgressMarker) {
-        if let content = marker.currentChapter?.content {
+        if let content = marker.chapter?.content {
             if content.streamable {
                 StateManager.shared.stream(item: content.toHighlight(), sourceId: content.sourceId)
             } else {
                 model.csSelection = (content.sourceId, content.toHighlight())
             }
-        } else if let content = marker.currentChapter?.opds {
+        } else if let content = marker.chapter?.opds {
             content.read()
-        } else if let archive = marker.currentChapter?.archive {
+        } else if let archive = marker.chapter?.archive {
             do {
                 let file = try archive.getURL()?.convertToSTTFile()
                 guard let file else {
@@ -163,14 +163,14 @@ extension HistoryView {
         var marker: ProgressMarker
         var body: some View {
             ZStack {
-                if let reference = marker.currentChapter {
+                if let reference = marker.chapter {
                     if let content = reference.content {
                         ContentSourceCell(marker: marker, content: content, chapter: reference)
                     } else if let content = reference.opds {
-                        OPDSCell(marker: marker, content: content, chapter: reference)
+                        OPDSCell(marker: marker, content: content)
                     } else if let content = reference.archive {
                         if let file = try? content.getURL()?.convertToSTTFile() {
-                            ArchiveCell(marker: marker, archive: content, chapter: reference, file: file)
+                            ArchiveCell(marker: marker, file: file)
                         } else {
                             EmptyView()
                         }
@@ -229,7 +229,7 @@ extension HistoryView {
         private func handleRemoveMarker() {
             Task {
                 let actor = await RealmActor.shared()
-                await actor.removeFromHistory(id: id)
+                await actor.removeFromHistory(chapterId: id)
             }
         }
     }
