@@ -50,7 +50,6 @@ extension Controller {
         didChangePage(page, indexPath: currentPath)
         lastIndexPath = currentPath
 
-        guard !model.control.menu else { return }
         Task { @MainActor [weak self] in
             self?.setScrollPCT()
         }
@@ -71,6 +70,9 @@ extension Controller {
         // Only real-time update when the user is not scrubbing & the menu is being shown
         guard !model.slider.isScrubbing, model.control.menu else { return }
         Task { @MainActor [weak self] in
+            if Preferences.standard.readerHideMenuOnSwipe {
+                self?.model.hideMenu()
+            }
             self?.setScrollPCT()
         }
     }

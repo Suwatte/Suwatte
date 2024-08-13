@@ -31,6 +31,9 @@ extension Controller {
             guard let self else { return }
             // Only real-time update when the user is not scrubbing & the menu is being shown
             guard !model.slider.isScrubbing, model.control.menu else { return }
+            if Preferences.standard.readerHideMenuOnSwipe {
+                model.hideMenu()
+            }
             setScrollPCT()
         }
     }
@@ -71,7 +74,7 @@ extension Controller {
         lastIndexPath = currentPath
 
         Task { @MainActor [weak self] in
-            guard let self, !self.model.control.menu else { return }
+            guard let self else { return }
             self.setScrollPCT()
         }
     }

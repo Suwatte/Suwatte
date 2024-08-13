@@ -176,4 +176,5 @@ enum STTKeys {
     static let ReaderScrollbarPosition = "READER.scrollbar_position"
     static let ReaderBottomScrollbarDirection = "READER.bottom_scrollbar_direction"
     static let ReaderScrollbarWidth = "READER.scrollbar_width"
+    static let ReaderHideMenuOnSwipe = "READER.hide_menu_on_swipe"
 }
