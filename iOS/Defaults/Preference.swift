@@ -141,6 +141,9 @@ final class Preferences {
     @UserDefault(STTKeys.ReaderBottomScrollbarDirection)
     var readerBottomScrollbarDirection = ReaderBottomScrollbarDirection.RIGHT
 
+    @UserDefault(STTKeys.ReaderHideMenuOnSwipe)
+    var readerHideMenuOnSwipe = true
+
     @UserDefault(STTKeys.ReaderScrollbarWidth)
     var readerScrollbarWidth = 14.0
 
