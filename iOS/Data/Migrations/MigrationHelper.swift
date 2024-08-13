@@ -11,38 +11,7 @@ import RealmSwift
 class MigrationHelper {
     static func migrateContentLinks(migration: Migration) {
         migration.enumerateObjects(ofType: ContentLink.className()) { oldContentLinkObject, newContentLinkObject in
-            guard let oldContentLinkObject = oldContentLinkObject else { return }
-
-            let isDeleted = oldContentLinkObject["isDeleted"] as! Bool
-            if isDeleted { return }
-
-            var ids = Set(oldContentLinkObject["ids"] as! RealmSwift.MutableSet<String>)
-
-            migration.enumerateObjects(ofType: LibraryEntry.className()) { _, libraryEntryObject in
-                guard let libraryEntryObject else { return }
-                if let libraryEntryId = libraryEntryObject["id"] as? String {
-
-                    if ids.remove(libraryEntryId) != nil {
-
-                        ids.forEach { linkContentId in
-                            let newLink = migration.create(ContentLink.className())
-                            newLink["id"] = "\(libraryEntryId)||\(linkContentId)"
-                            newLink["entry"] = libraryEntryObject
-
-                            migration.enumerateObjects(ofType: StoredContent.className()) { _, contentObject in
-                                guard let contentObject else { return }
-                                if let contentId = contentObject["id"] as? String {
-                                    if contentId == linkContentId {
-                                        newLink["content"] = contentObject
-                                    }
-                                }
-                            }
-                        }
-
-                        migration.delete(newContentLinkObject!)
-                    }
-                }
-            }
+            migration.delete(newContentLinkObject!)
         }
     }
     static func migrateProgressMarker(realm: Realm) {
