@@ -13,10 +13,14 @@ class MigrationHelper {
         migration.enumerateObjects(ofType: ContentLink.className()) { oldContentLinkObject, newContentLinkObject in
             guard let oldContentLinkObject = oldContentLinkObject else { return }
 
+            let isDeleted = oldContentLinkObject["isDeleted"] as! Bool
+            if isDeleted { return }
+
             var ids = Set(oldContentLinkObject["ids"] as! RealmSwift.MutableSet<String>)
 
             migration.enumerateObjects(ofType: LibraryEntry.className()) { _, libraryEntryObject in
-                if let libraryEntryId = libraryEntryObject!["id"] as? String {
+                guard let libraryEntryObject else { return }
+                if let libraryEntryId = libraryEntryObject["id"] as? String {
 
                     if ids.remove(libraryEntryId) != nil {
 
@@ -26,7 +30,8 @@ class MigrationHelper {
                             newLink["entry"] = libraryEntryObject
 
                             migration.enumerateObjects(ofType: StoredContent.className()) { _, contentObject in
-                                if let contentId = contentObject!["id"] as? String {
+                                guard let contentObject else { return }
+                                if let contentId = contentObject["id"] as? String {
                                     if contentId == linkContentId {
                                         newLink["content"] = contentObject
                                     }
@@ -45,6 +50,9 @@ class MigrationHelper {
         migration.renameProperty(onType: ProgressMarker.className(), from: "currentChapter", to: "chapter")
         migration.enumerateObjects(ofType: ProgressMarker.className()) { oldProgressMarkerObject, newProgressMarkerObject in
             guard let oldProgressMarkerObject = oldProgressMarkerObject else { return }
+
+            let isDeleted = oldProgressMarkerObject["isDeleted"] as! Bool
+            if isDeleted { return }
 
             let contentId = oldProgressMarkerObject["id"] as! String
 
