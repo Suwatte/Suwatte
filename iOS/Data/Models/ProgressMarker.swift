@@ -17,6 +17,9 @@ final class ProgressMarker: Object, Identifiable, CKRecordConvertible, CKRecordR
     @Persisted var totalPageCount: Int?
     @Persisted var lastPageOffsetPCT: Double?
 
+    @Persisted var readChapters: MutableSet<Double>
+
+
     @Persisted var isDeleted: Bool = false
 
     var isCompleted: Bool {
