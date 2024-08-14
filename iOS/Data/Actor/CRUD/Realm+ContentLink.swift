@@ -49,7 +49,7 @@ extension RealmActor {
     func unlinkContent(_ child: String, _ from: String) async {
         let target = realm
             .objects(ContentLink.self)
-            .first { $0.entry!.id == from && $0.content!.id == child && $0.isDeleted == false }
+            .first { $0.entry?.id == from && $0.content?.id == child && !$0.isDeleted }
 
         guard let target else {
             return
@@ -62,7 +62,7 @@ extension RealmActor {
     func getLinkedContent(for id: String) -> [StoredContent] {
         let contents = realm
             .objects(ContentLink.self)
-            .where { $0.entry.id == id && $0.isDeleted == false }
+            .where { $0.entry.id == id && !$0.isDeleted }
             .sorted(by: \.content!.title, ascending: true)
             .freeze()
             .toArray()
