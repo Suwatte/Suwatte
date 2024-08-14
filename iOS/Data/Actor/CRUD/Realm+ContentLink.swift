@@ -62,7 +62,7 @@ extension RealmActor {
     func getLinkedContent(for id: String) -> [StoredContent] {
         let contents = realm
             .objects(ContentLink.self)
-            .where { $0.entry.id == id && !$0.isDeleted }
+            .where { $0.content != nil && $0.entry.id == id && !$0.isDeleted }
             .sorted(by: \.content!.title, ascending: true)
             .freeze()
             .toArray()
@@ -73,7 +73,7 @@ extension RealmActor {
 
     func getEntryContentForLinkedContent(for id: String) -> StoredContent? {
         let link = realm.objects(ContentLink.self)
-                    .first { $0.content!.id == id && !$0.isDeleted }
+            .first { $0.entry != nil && $0.content?.id == id && !$0.isDeleted }
 
         guard let link else {
             return nil
