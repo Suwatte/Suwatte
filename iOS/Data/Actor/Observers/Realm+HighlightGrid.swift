@@ -12,7 +12,7 @@ extension RealmActor {
     func observeLinkedIDs(sourceID: String? = nil, _ callback: @escaping Callback<Set<String>>) async -> NotificationToken {
         var collection = realm
             .objects(ContentLink.self)
-            .where { !$0.isDeleted }
+            .where { $0.content != nil && $0.entry != nil && !$0.isDeleted }
 
         if let sourceID {
             collection = collection
