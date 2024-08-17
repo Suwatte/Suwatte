@@ -81,6 +81,14 @@ class MigrationHelper {
                 }
             }
         }
+
+        let oldMarkers = realm.objects(ProgressMarker.self)
+            .where { $0.readChapters.count > 0 }
+            .freeze()
+
+        if oldMarkers.count == 0 {
+            UserDefaults.standard.set(true, forKey: STTKeys.OldProgressMarkersMigrated)
+        }
     }
 
     static let interactorStoreObjectTypeName: String = "InteractorStoreObject"
