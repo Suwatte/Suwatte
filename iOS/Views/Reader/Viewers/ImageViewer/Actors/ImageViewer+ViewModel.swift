@@ -185,19 +185,25 @@ extension IVViewModel {
 extension IVViewModel {
     nonisolated func toggleMenu() {
         Task { @MainActor in
-            control.menu.toggle()
+            withAnimation(.easeInOut(duration: 0.25)) {
+                control.menu.toggle()
+            }
         }
     }
 
     nonisolated func hideMenu() {
         Task { @MainActor in
-            control.menu = false
+            withAnimation(.easeInOut(duration: 0.25)) {
+                control.menu = false
+            }
         }
     }
 
     nonisolated func showMenu() {
         Task { @MainActor in
-            control.menu = true
+            withAnimation(.easeInOut(duration: 0.25)) {
+                control.menu = true
+            }
         }
     }
 
