@@ -88,24 +88,48 @@ struct NukeWhitespaceProcessor: ImageProcessing, Hashable {
         let heightInt = Int(height)
         let widthInt = Int(width)
         let whiteThreshold = 0xE0
-        for y in 0 ..< heightInt {
+        let blackThreshold = 0x05
+        for y in stride(from: 0, to: heightInt, by: 15) {
             let y = CGFloat(y)
             try Task.checkCancellation()
-            for x in 0 ..< widthInt {
+
+            for x in stride(from: 0, to: widthInt, by: 3) {
                 let x = CGFloat(x)
                 let pixelIndex = (width * y + x) * 4 /* 4 for A, R, G, B */
                 let idx = Int(pixelIndex)
                 let alpha = data[idx]
-                guard alpha != 0 else { continue } // Transparent
+
+                // Transparent
+                guard alpha != 0 else {
+                    continue
+                }
                 let red = data[idx + 1]
                 let green = data[idx + 2]
                 let blue = data[idx + 3]
-                if red > whiteThreshold, green > whiteThreshold, blue > whiteThreshold { continue } // White
+
+                // White
+                if red > whiteThreshold
+                    && green > whiteThreshold
+                    && blue > whiteThreshold {
+                    continue
+                }
+
+                // Black
+                if red < blackThreshold
+                    && green < blackThreshold
+                    && blue < blackThreshold {
+                    continue
+                }
+
                 lowX = min(lowX, x)
                 highX = max(highX, x)
                 lowY = min(lowY, y)
                 highY = max(highY, y)
             }
+        }
+
+        if lowX > highX {
+            return nil
         }
 
         out = CGRect(x: lowX, y: lowY, width: highX - lowX, height: highY - lowY)
