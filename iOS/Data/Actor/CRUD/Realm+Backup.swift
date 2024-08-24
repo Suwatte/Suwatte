@@ -63,6 +63,57 @@ extension RealmActor {
 // MARK: - Restore
 
 extension RealmActor {
+    func restoreOldProgressMarkers(progressMarkers: [OldProgressMarker]) async throws -> Int {
+        var importedMarkers = 0
+
+        for progressMarker in progressMarkers {
+            let contentId = progressMarker.id
+
+            let dateRead = progressMarker.dateRead
+
+            let readChapters = progressMarker.readChapters
+            readChapterLoop: for readChapter in readChapters {
+                let storedChapters = realm.objects(StoredChapter.self)
+                    .where { $0.id.starts(with: contentId) }
+                    .freeze()
+
+                storedChapterLoop: for storedChapter in storedChapters {
+                    let chapterOrderKey = ThreadSafeChapter.orderKey(volume: readChapter < 10000 ? 0 : storedChapter.volume, number: storedChapter.number)
+
+                    if chapterOrderKey == readChapter {
+                        let chapterReference = ChapterReference()
+                        chapterReference.id = storedChapter.id
+                        chapterReference.chapterId = storedChapter.chapterId
+                        chapterReference.number = storedChapter.number
+                        chapterReference.volume = storedChapter.volume == 0.0 ? nil : storedChapter.volume
+                        chapterReference.content = realm.object(ofType: StoredContent.self, forPrimaryKey: contentId)
+
+                        let newProgressMarker = ProgressMarker()
+                        newProgressMarker.id = storedChapter.id
+                        newProgressMarker.chapter = chapterReference
+                        newProgressMarker.totalPageCount = 1
+                        newProgressMarker.lastPageRead = 1
+                        newProgressMarker.lastPageOffsetPCT = nil
+                        newProgressMarker.dateRead = dateRead
+
+                        do {
+                            try realm.write {
+                                realm.add(newProgressMarker, update: .all)
+                                importedMarkers = importedMarkers + 1
+                            }
+                        } catch {
+                            Logger.shared.error(error, "RealmActor")
+                        }
+
+                        break storedChapterLoop
+                    }
+                }
+            }
+        }
+
+        return importedMarkers
+    }
+
     func restoreBackup(backup: Backup) async throws {
         try await resetDB()
 
