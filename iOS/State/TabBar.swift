@@ -16,73 +16,83 @@ enum AppTabs: Int, CaseIterable {
     }
 
     @MainActor
-    @ViewBuilder
-    func view() -> some View {
-        switch self {
-        case .downloads:
-            SourceDownloadView()
-                .protectContent()
-
-        case .feed:
-            SmartNavigationView {
-                UpdateFeedView()
-            }
-            .protectContent()
-
-        case .more:
-            MoreView()
-        case .library:
-            SmartNavigationView {
-                LibraryView()
-            }
-            .protectContent()
-        case .browse:
-            BrowseView()
-        case .history:
-            SmartNavigationView {
-                HistoryView()
-            }
-            .protectContent()
-        }
-    }
-
     func label() -> String {
         switch self {
-        case .downloads:
-            return "Download Queue"
-        case .feed:
-            return "Feed"
-        case .more:
-            return "More"
-        case .library:
-            return "Library"
-        case .browse:
-            return "Browse"
-        case .history:
-            return "History"
+            case .downloads:
+                return "Download Queue"
+            case .feed:
+                return "Feed"
+            case .more:
+                return "More"
+            case .library:
+                return "Library"
+            case .browse:
+                return "Browse"
+            case .history:
+                return "History"
         }
     }
 
     @MainActor
     func systemImage() -> String {
         switch self {
-        case .downloads:
-            return "square.and.arrow.down"
-        case .feed:
-            let hasNotifs = UIApplication.shared.applicationIconBadgeNumber > 0
-            return hasNotifs ? "bell.badge" : "bell"
-        case .more:
-            return "ellipsis.circle"
-        case .library:
-            return "books.vertical"
-        case .browse:
-            return "safari"
-        case .history:
-            return "clock"
+            case .downloads:
+                return "square.and.arrow.down"
+            case .feed:
+                let hasNotifs = UIApplication.shared.applicationIconBadgeNumber > 0
+                return hasNotifs ? "bell.badge" : "bell"
+            case .more:
+                return "ellipsis.circle"
+            case .library:
+                return "books.vertical"
+            case .browse:
+                return "safari"
+            case .history:
+                return "clock"
         }
     }
 
     static let defaultSettings: [AppTabs] = [.library, .feed, .history, .browse, .more]
+}
+
+struct AppTab: View {
+    let id: UUID = UUID()
+
+    var tab: AppTabs
+
+    @MainActor
+    var body: some View {
+        switch tab {
+            case .downloads:
+                SourceDownloadView()
+                    .protectContent()
+
+            case .feed:
+                SmartNavigationView {
+                    UpdateFeedView()
+                }
+                .protectContent()
+
+            case .more:
+                MoreView()
+            case .library:
+                SmartNavigationView {
+                    LibraryView()
+                }
+                .protectContent()
+            case .browse:
+                BrowseView()
+            case .history:
+                SmartNavigationView {
+                    HistoryView()
+                }
+                .protectContent()
+        }
+    }
+
+
+
+    static let tabs: [AppTab] = AppTabs.defaultSettings.map { .init(tab: $0) }
 }
 
 struct SmartNavigationView<Content>: View where Content: View {
