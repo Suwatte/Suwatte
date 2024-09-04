@@ -31,7 +31,6 @@ struct ImageViewer: View {
         .statusBarHidden(!model.control.menu)
         .modifier(CustomBackgroundModifier())
         .ignoresSafeArea()
-        .animation(StandardAnimation, value: model.control)
         .animation(StandardAnimation, value: model.presentationState)
         .animation(StandardAnimation, value: model.viewerState)
         .animation(StandardAnimation, value: model.slider)
