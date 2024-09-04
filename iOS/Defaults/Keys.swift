@@ -101,6 +101,8 @@ enum STTKeys {
 
     static let LastAutoBackup = "APP.last_auto_backup"
 
+    static let OldProgressMarkersMigrated = "APP.old_progressmarkers_migrated"
+
     static let CheckLinkedOnUpdateCheck = "APP.check_linked_on_update_check"
     static let BlurWhenAppSwiching = "APP.blur_while_switching"
     static let DefaultUserAgent = "APP.default_UserAgent"
