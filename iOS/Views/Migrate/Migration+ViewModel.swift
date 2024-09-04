@@ -389,11 +389,11 @@ extension MigrationController {
                     case let .found(result):
                         switch libraryStrat {
                             case .link:
-                                link(libEntry, with: result)
+                                link(libEntry, with: result.0)
                             case .replace:
-                                replace(libEntry, with: result)
+                                replace(libEntry, with: result.0)
                         }
-                    case let .lowerFind(result, _, _):
+                    case let .lowerFind(result, _, _, _):
                         if lessChapterSrat == .skip { continue }
                         switch libraryStrat {
                             case .link:
