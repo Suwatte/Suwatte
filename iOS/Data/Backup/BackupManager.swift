@@ -65,6 +65,29 @@ class BackupManager: ObservableObject {
         try await actor.restoreBackup(backup: backup)
     }
 
+    func restoreProgressMarkers(from url: URL) async throws -> Int {
+        var backup: OldBackup?
+
+        do {
+            backup = try OldBackup.load(from: url)
+        } catch {
+            Logger.shared.error(error, "BackupManager")
+            throw error
+        }
+
+        guard let backup = backup, let version = backup.schemaVersion, version < 16 else {
+            throw BackUpError.InvalidBackup
+        }
+
+        guard let progressMarkers = backup.progressMarkers else {
+            throw BackUpError.EmptyBackup
+        }
+
+        // Install
+        let actor = await RealmActor.shared()
+        return try await actor.restoreOldProgressMarkers(progressMarkers: progressMarkers)
+    }
+
     func restore(from url: URL) async throws {
         // Load
         var backup: Backup?

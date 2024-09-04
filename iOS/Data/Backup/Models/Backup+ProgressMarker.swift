@@ -37,6 +37,12 @@ extension ProgressMarker: Codable {
     }
 }
 
+struct OldProgressMarker: Codable, Hashable {
+    var id: String
+    var readChapters: Set<Double>
+    var dateRead: Date?
+}
+
 struct OutdatedMarker: Codable, Hashable {
     // Identifier
     var id: String

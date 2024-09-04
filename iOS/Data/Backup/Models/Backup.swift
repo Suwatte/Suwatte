@@ -8,6 +8,18 @@
 import Foundation
 import RealmSwift
 
+struct OldBackup: Codable {
+    var progressMarkers: [OldProgressMarker]?
+
+    var date: Date?
+    var schemaVersion: Int?
+
+    static func load(from url: URL) throws -> OldBackup {
+        let json = try Data(contentsOf: url)
+        return try DaisukeEngine.decode(data: json, to: OldBackup.self)
+    }
+}
+
 struct Backup: Codable {
     var collections: [LibraryCollection]?
     var lists: [StoredRunnerList]?
