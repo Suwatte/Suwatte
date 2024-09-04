@@ -142,15 +142,18 @@ extension RealmActor {
         await updateLastRead(forId: id)
     }
 
-    func removeFromHistory(chapterId: String) async {
-        // Get Object
-        let target = getContentMarker(for: chapterId)
+    func removeFromHistory(contentId: String) async {
+        let collection = realm
+                .objects(ProgressMarker.self)
+                .where { $0.chapter.contentId == contentId && !$0.isDeleted }
 
-        guard let target else {
+        guard !collection.isEmpty else {
             return
         }
         await operation {
-            target.dateRead = nil // Simply Removes Date Value so keeps contents read marker.
+            for marker in collection {
+                marker.dateRead = nil // Simply Removes Date Value so keeps contents read marker.
+            }
         }
     }
 
