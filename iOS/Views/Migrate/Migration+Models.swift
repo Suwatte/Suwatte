@@ -21,8 +21,8 @@ enum MigrationOperationState {
 }
 
 enum MigrationItemState: Equatable {
-    case idle, searching, found(_ entry: TaggedHighlight), noMatches
-    case lowerFind(_ entry: TaggedHighlight, _ initial: Double, _ next: Double)
+    case idle, searching, found(_ entry: TaggedHighlight, _ chapterCount: Int?), noMatches
+    case lowerFind(_ entry: TaggedHighlight, _ initial: Double, _ next: Double, _ chapterCount: Int?)
 
     static func == (lhs: Self, rhs: Self) -> Bool {
         switch (lhs, rhs) {
@@ -31,11 +31,11 @@ enum MigrationItemState: Equatable {
         }
     }
 
-    func value() -> TaggedHighlight? {
+    func value() -> (TaggedHighlight?, Int?)? {
         switch self {
         case .searching, .idle, .noMatches: return nil
-        case let .found(entry), let .lowerFind(entry, _, _):
-            return entry
+        case let .found(entry, chapterCount), let .lowerFind(entry, _, _, chapterCount):
+            return (entry, chapterCount)
         }
     }
 

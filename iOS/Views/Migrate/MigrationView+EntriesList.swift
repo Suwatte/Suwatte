@@ -15,48 +15,53 @@ struct MigrationEntryListView: View {
     }
 
     var body: some View {
-        Section {
-            ForEach(entries) { content in
+        ForEach(Array(entries.enumerated()), id: \.offset) { index, content in
+            Section {
                 let state = model.operations[content.id] ?? .idle
                 MigrationEntryListCell(content: content, state: state)
+                    .padding(.top, 10)
+                    .id(content.id + (state.value()?.0?.id ?? ""))
+            } header: {
+                if index == 0 {
+                    Text("Titles")
+                } else {
+                    Rectangle().frame(height: 0)
+                }
+            } footer: {
+                Rectangle().frame(height: 0)
             }
-        } header: {
-            Text("Titles")
+            .listRowInsets(EdgeInsets(top: 0, leading: 10, bottom: 10, trailing: 10))
+            .headerProminence(.increased)
+            // Ugly hack, there is no SectionSeperatorSpacing in ios 15 so we need it right now
         }
-        .headerProminence(.increased)
     }
 }
 
 struct MigrationEntryListCell: View {
     let content: TaggedHighlight
     let state: MigrationItemState
+    @State var chapterCount: Int = 0
     @EnvironmentObject private var model: MigrationController
-    @AppStorage(STTKeys.TileStyle) private var tileStyle = TileStyle.SEPARATED
 
     var body: some View {
-        VStack {
-            // Warning
+        VStack(alignment: .leading, spacing: 0) {
+            MigrationTile(highlight: content.highlight, sourceId: content.sourceID, chapterCount: chapterCount)
+                .onAppear {
+                    Task {
+                        chapterCount = await model.getStoredChapterCount(for: content)
+                    }
+                }
             HStack {
-                Text(model.sources[content.sourceID]?.name ?? "")
                 Spacer()
-                Text("Destination")
-            }
-            .font(.subheadline.weight(.light))
-            HStack(alignment: .center, spacing: 0) {
-                let WIDTH: CGFloat = 150
-                let HEIGHT: CGFloat = (WIDTH * 1.5) + tileStyle.titleHeight
-                DefaultTile(entry: content.highlight, sourceId: content.sourceID)
-                    .frame(width: WIDTH, height: HEIGHT)
-                Spacer()
-                Image(systemName: "chevron.right.circle")
+                Image(systemName: "chevron.down.circle")
                     .resizable()
                     .scaledToFit()
                     .foregroundColor(state.color)
                     .frame(width: 15, height: 15)
                 Spacer()
-                MigrationEntryListResultCell(state: state, content: content)
-                    .frame(width: WIDTH, height: HEIGHT, alignment: state == .noMatches ? .trailing : .center)
             }
+            .padding(.vertical, 3)
+            MigrationEntryListResultCell(state: state, content: content)
         }
         .swipeActions {
             Button(role: .destructive) {
@@ -68,6 +73,49 @@ struct MigrationEntryListCell: View {
     }
 }
 
+struct MigrationTile: View {
+    var highlight: DaisukeEngine.Structs.Highlight
+    var sourceId: String?
+    var chapterCount: Int?
+
+    @EnvironmentObject private var model: MigrationController
+
+    var body: some View {
+        let WIDTH: CGFloat = 50
+        let HEIGHT: CGFloat = (WIDTH * 1.5)
+
+        HStack(alignment: .top) {
+            STTImageView(url: URL(string: highlight.cover), identifier: .init(contentId: highlight.id, sourceId: sourceId ?? ""))
+                .frame(minWidth: 0, idealWidth: WIDTH, maxWidth: WIDTH, minHeight: 0, idealHeight: HEIGHT, maxHeight: HEIGHT, alignment: .leading)
+                .scaledToFit()
+                .cornerRadius(5)
+                .shadow(radius: 3)
+
+            let sourceName = sourceId != nil ? model.sources[sourceId!]?.name ?? sourceId! : ""
+
+            VStack(alignment: .leading, spacing: 2.5) {
+                Text(sourceName)
+                    .font(.footnote)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.gray)
+                Text(highlight.title)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .lineLimit(3)
+                if let chapterCount = chapterCount {
+                    Text("\(chapterCount) Chapters")
+                        .font(.footnote)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.gray)
+                }
+                Spacer()
+            }
+            .frame(maxWidth: .infinity, minHeight: 0, idealHeight: HEIGHT, maxHeight: HEIGHT, alignment: .topLeading)
+        }
+    }
+}
+
+
 // MARK: Result Cell
 
 struct MigrationEntryListResultCell: View {
@@ -77,27 +125,41 @@ struct MigrationEntryListResultCell: View {
     @EnvironmentObject private var model: MigrationController
 
     var body: some View {
-        ZStack {
-            switch state {
-            case .idle, .searching:
-                DefaultTile(entry: .placeholder)
-                    .redacted(reason: .placeholder)
-            case .noMatches:
-                Button {
-                    model.selectedToSearch = content
-                } label: {
-                    VStack(alignment: .trailing) {
-                        Text("No Matches")
-                        Text("Tap To Search")
-                            .font(.callout)
-                            .fontWeight(.light)
-                    }
-                }
-                .buttonStyle(.plain)
+        Button {
+            model.selectedToSearch = content
+        } label: {
+            HStack {
+                switch state {
+                    case .idle, .searching:
+                        MigrationTile(highlight: .placeholder)
+                            .redacted(reason: .placeholder)
+                    case .noMatches:
+                        Image(systemName: "magnifyingglass")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 20, height: 20)
+                            .padding(.horizontal, 15)
+                            .foregroundColor(.accentColor)
+                        Text("No matches! Tap To Search")
+                            .font(.footnote)
+                            .fixedSize(horizontal: true, vertical: false)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .lineLimit(2)
 
-            case let .found(entry), let .lowerFind(entry, _, _):
-                DefaultTile(entry: entry.highlight, sourceId: entry.sourceID)
+
+                    case let .found(entry, chapterCount), let .lowerFind(entry, _, _, chapterCount):
+                        MigrationTile(highlight: entry.highlight, sourceId: entry.sourceID, chapterCount: chapterCount)
+                }
+
+                Image(systemName: "chevron.right")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 12, height: 12)
+                    .foregroundColor(.gray)
             }
+            .padding(.top, state == .noMatches ? 10 : 0)
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
     }
 }
