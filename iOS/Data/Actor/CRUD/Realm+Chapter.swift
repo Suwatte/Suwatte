@@ -61,7 +61,8 @@ extension RealmActor {
     func getStoredChapterCount(_ sourceId: String, _ contentId: String) -> Int {
         realm
             .objects(StoredChapter.self)
-            .count { $0.contentId == contentId && $0.sourceId == sourceId}
+            .where { $0.contentId == contentId && $0.sourceId == sourceId }
+            .count
     }
 
     func getLatestStoredChapter(_ sourceId: String, _ contentId: String) -> StoredChapter? {
