@@ -101,9 +101,12 @@ struct MigrationManualDestinationResultGroupCell: View {
                         DefaultTile(entry: highlight)
                             .frame(width: 150)
                             .onTapGesture {
-                                model.operations[content.id] = .found(.init(from: highlight,
-                                                                            with: result.sourceID))
-                                model.selectedToSearch = nil
+                                Task {
+                                    let chapterCount = await model.getChapters(for: result.sourceID, id: highlight.id)?.count ?? nil
+                                    model.operations[content.id] = .found(.init(from: highlight,
+                                                                                with: result.sourceID), chapterCount)
+                                    model.selectedToSearch = nil
+                                }
                             }
                     }
                 }
