@@ -69,10 +69,6 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
         try! Realm.performMigration()
         let realm = try! Realm(configuration: config)
 
-        if !UserDefaults.standard.bool(forKey: STTKeys.OldProgressMarkersMigrated) {
-            MigrationHelper.migrateProgressMarker(realm: realm)
-        }
-
         // Analytics
         FirebaseApp.configure()
 

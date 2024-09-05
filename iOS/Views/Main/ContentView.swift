@@ -54,6 +54,10 @@ struct ContentView: View {
             .task {
                 appState.initialize()
                 await appState.observe()
+
+                if !UserDefaults.standard.bool(forKey: STTKeys.OldProgressMarkersMigrated) {
+                    await MigrationHelper.migrateProgressMarker()
+                }
             }
             .environmentObject(toaster)
             .environmentObject(appState)
