@@ -204,7 +204,7 @@ extension SDM {
         let url = folder(for: id)
 
         if url.hasDirectoryPath {
-            let imageExtensions = ["jpg", "png", "gif", "jpeg", "bmp", "tiff", "heif", "heic"]
+            let imageExtensions = ["jpg", "png", "gif", "jpeg", "bmp", "tiff", "heif", "heic", "webp"]
             let directoryContents = try FileManager
                 .default
                 .contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
