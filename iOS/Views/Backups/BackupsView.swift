@@ -86,6 +86,13 @@ struct BackupsView: View {
                         Label("Import Backup", systemImage: "tray.and.arrow.down.fill")
                     }
 
+                    Button {
+                        let directory = FileManager.default.applicationSupport.appendingPathComponent("Database", isDirectory: true)
+                        handleShareURL(url: directory.appendingPathComponent("suwatte_db.realm"))
+                    } label: {
+                        Label("Export Realm Database", systemImage: "square.and.arrow.up")
+                    }
+
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }

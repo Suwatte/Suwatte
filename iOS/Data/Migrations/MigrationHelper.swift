@@ -15,23 +15,27 @@ class MigrationHelper {
         }
     }
     
-    static func migrateProgressMarker(realm: Realm) {
+    @MainActor
+    static func migrateProgressMarker() async {
+        let realm = try! await Realm(actor: MainActor.shared)
         let progressMarkers = realm.objects(ProgressMarker.self)
             .where { !$0.isDeleted && $0.readChapters.count > 0 }
             .freeze()
+            .toArray()
 
         for progressMarker in progressMarkers {
             let contentId = progressMarker.id
 
             let dateRead = progressMarker.dateRead
+            var newProgressMarkers: Set<ProgressMarker> = []
 
-            var migrated = false
+            let storedChapters = realm.objects(StoredChapter.self)
+                .where { $0.id.starts(with: contentId) }
+                .freeze()
+                .toArray()
 
             let readChapters = progressMarker.readChapters
             readChapterLoop: for readChapter in readChapters {
-                let storedChapters = realm.objects(StoredChapter.self)
-                    .where { $0.id.starts(with: contentId) }
-                    .freeze()
 
                 storedChapterLoop: for storedChapter in storedChapters {
                     let chapterOrderKey = ThreadSafeChapter.orderKey(volume: readChapter < 10000 ? 0 : storedChapter.volume, number: storedChapter.number)
@@ -52,31 +56,35 @@ class MigrationHelper {
                         newProgressMarker.lastPageOffsetPCT = nil
                         newProgressMarker.dateRead = dateRead
 
-                        do {
-                            try realm.write {
-                                realm.add(newProgressMarker, update: .all)
-                            }
-                        } catch {
-                            Logger.shared.error(error, "RealmActor")
-                        }
+                        newProgressMarkers.insert(newProgressMarker)
 
-                        migrated = true
                         break storedChapterLoop
                     }
                 }
 
-                if migrated {
-                    let thawnMarker = progressMarker.thaw()
-                    if let thawnMarker {
-                        do {
-                            try realm.write {
+            }
 
-                                thawnMarker.readChapters.removeAll()
-                                thawnMarker.isDeleted = true
-                            }
-                        } catch {
-                            Logger.shared.error(error, "RealmActor")
+            if !newProgressMarkers.isEmpty {
+                do {
+                    try realm.write {
+                        for newProgressMarker in newProgressMarkers {
+                            realm.add(newProgressMarker, update: .all)
                         }
+                    }
+                } catch {
+                    Logger.shared.error(error, "RealmActor")
+                }
+
+                let thawnMarker = progressMarker.thaw()
+                if let thawnMarker {
+                    do {
+                        try realm.write {
+
+                            thawnMarker.readChapters.removeAll()
+                            thawnMarker.isDeleted = true
+                        }
+                    } catch {
+                        Logger.shared.error(error, "RealmActor")
                     }
                 }
             }
