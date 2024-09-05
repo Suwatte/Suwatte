@@ -100,6 +100,7 @@ struct MigrationManualDestinationResultGroupCell: View {
                     ForEach(result.result.results) { highlight in
                         DefaultTile(entry: highlight)
                             .frame(width: 150)
+                            .contentShape(Rectangle())
                             .onTapGesture {
                                 Task {
                                     let chapterCount = await model.getChapters(for: result.sourceID, id: highlight.id)?.count ?? nil

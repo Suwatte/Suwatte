@@ -89,6 +89,7 @@ struct AddContentLink: View {
                     ForEach(result) { highlight in
                         DefaultTile(entry: highlight)
                             .frame(width: 150)
+                            .contentShape(Rectangle())
                             .onTapGesture {
                                 handleSelection(highlight, sourceId)
                             }
