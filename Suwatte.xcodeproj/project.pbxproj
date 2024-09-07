@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		290F57D12C8C158000056492 /* NavigationSearchBar in Frameworks */ = {isa = PBXBuildFile; productRef = 290F57D02C8C158000056492 /* NavigationSearchBar */; };
 		292776932C61776B00FB7DB0 /* Backup+ContentLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292776922C61776B00FB7DB0 /* Backup+ContentLink.swift */; };
 		29FB9F232BE43EE800F22E2F /* MigrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29FB9F222BE43EE800F22E2F /* MigrationHelper.swift */; };
 		DF01DEEA2A587A5D0025700B /* Engine+LibraryUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF01DEE92A587A5D0025700B /* Engine+LibraryUpdate.swift */; };
@@ -950,6 +951,7 @@
 				DFA17F662A4916C300179850 /* ASCollectionView in Frameworks */,
 				DF70234F29DA852A0076AAD0 /* Nuke in Frameworks */,
 				DF31636D2B93049B00B14E84 /* FirebaseAnalytics in Frameworks */,
+				290F57D12C8C158000056492 /* NavigationSearchBar in Frameworks */,
 				DF12AC882C0125D00094BCBF /* RealmSwift in Frameworks */,
 				DF730CD329411F1B00C62C71 /* FlagKit in Frameworks */,
 				DFF1043E28A9963D00E2C3A4 /* AnyCodable in Frameworks */,
@@ -2564,6 +2566,7 @@
 				DF31636C2B93049B00B14E84 /* FirebaseAnalytics */,
 				DF12AC872C0125D00094BCBF /* RealmSwift */,
 				DF12AC942C012A960094BCBF /* IceCream */,
+				290F57D02C8C158000056492 /* NavigationSearchBar */,
 			);
 			productName = "Suwatte (iOS)";
 			productReference = DFCE6EAF280108EA002E220C /* Suwatte.app */;
@@ -2633,6 +2636,7 @@
 				DF31636B2B93049B00B14E84 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				DF12AC862C0125CF0094BCBF /* XCRemoteSwiftPackageReference "realm-swift" */,
 				DF12AC932C012A960094BCBF /* XCRemoteSwiftPackageReference "IceCream" */,
+				290F57CF2C8C158000056492 /* XCRemoteSwiftPackageReference "NavigationSearchBar" */,
 			);
 			productRefGroup = DF2DA6FF27CD82430046FE20;
 			projectDirPath = "";
@@ -3431,6 +3435,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		290F57CF2C8C158000056492 /* XCRemoteSwiftPackageReference "NavigationSearchBar" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/markvanwijnen/NavigationSearchBar.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.0;
+			};
+		};
 		DF12AC862C0125CF0094BCBF /* XCRemoteSwiftPackageReference "realm-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-swift.git";
@@ -3554,6 +3566,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		290F57D02C8C158000056492 /* NavigationSearchBar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 290F57CF2C8C158000056492 /* XCRemoteSwiftPackageReference "NavigationSearchBar" */;
+			productName = NavigationSearchBar;
+		};
 		DF12AC872C0125D00094BCBF /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DF12AC862C0125CF0094BCBF /* XCRemoteSwiftPackageReference "realm-swift" */;
