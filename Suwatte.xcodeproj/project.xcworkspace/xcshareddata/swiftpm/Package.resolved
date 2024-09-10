@@ -16,7 +16,7 @@
       "location" : "https://github.com/Alamofire/Alamofire.git",
       "state" : {
         "branch" : "master",
-        "revision" : "9b5bd5be3c2d451006ca16b286cf1ed30f434b9c"
+        "revision" : "5de514be7ce47c01bd6af5ca8743843f6f72ab01"
       }
     },
     {
@@ -195,7 +195,7 @@
       "location" : "https://github.com/kean/Nuke",
       "state" : {
         "branch" : "main",
-        "revision" : "a30faed641d958162898f45b66051e9f38a6957c"
+        "revision" : "0e953da39106db3f989364ba443a8ca12e558668"
       }
     },
     {
@@ -212,8 +212,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "c2552e1d36867cb42b28130e894a81fc17081062",
-        "version" : "14.12.0"
+        "revision" : "b36f2436c2746c32b1f93dcc06ea8b859671a767",
+        "version" : "14.12.1"
       }
     },
     {
@@ -221,8 +221,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift.git",
       "state" : {
-        "revision" : "5221a83dc720823e3017493394d00d49ccf13446",
-        "version" : "10.52.3"
+        "revision" : "9b9992d59a5148eb557e6c0445fec05009022c8c",
+        "version" : "10.53.1"
       }
     },
     {
@@ -248,8 +248,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-protobuf.git",
       "state" : {
-        "revision" : "e17d61f26df0f0e06f58f6977ba05a097a720106",
-        "version" : "1.27.1"
+        "revision" : "edb6ed4919f7756157fe02f2552b7e3850a538e5",
+        "version" : "1.28.1"
       }
     },
     {

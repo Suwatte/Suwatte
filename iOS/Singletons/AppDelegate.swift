@@ -42,12 +42,6 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
 
         ImagePipeline.shared = pipeline
 
-        // Notification Center
-        let center = UNUserNotificationCenter.current()
-
-        center.requestAuthorization(options: [.alert, .badge, .sound]) { _, _ in
-        }
-
         // Realm
         var config = Realm.Configuration(schemaVersion: UInt64(SCHEMA_VERSION), migrationBlock: { migration, oldSchemaVersion in
             if oldSchemaVersion < 16 {
@@ -65,9 +59,6 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
         }
         config.fileURL = directory.appendingPathComponent("suwatte_db.realm")
         Realm.Configuration.defaultConfiguration = config
-
-        try! Realm.performMigration()
-        let realm = try! Realm(configuration: config)
 
         // Analytics
         FirebaseApp.configure()
