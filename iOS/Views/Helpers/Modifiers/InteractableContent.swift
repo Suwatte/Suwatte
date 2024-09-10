@@ -23,7 +23,8 @@ struct InteractableContent: ViewModifier {
     }
 }
 
-typealias HighlightIdentifier = (sourceId: String, entry: DaisukeEngine.Structs.Highlight)
+typealias HighlightIdentifier = (sourceId: String, sourceName: String?, entry: DaisukeEngine.Structs.Highlight)
+
 struct InteractableContainer: ViewModifier {
     @State private var isActive = false
     @Binding var selection: HighlightIdentifier?

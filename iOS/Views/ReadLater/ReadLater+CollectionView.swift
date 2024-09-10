@@ -59,7 +59,7 @@ extension LibraryView.ReadLaterView {
             DefaultTile(entry: highlight, sourceId: sourceId)
                 .coloredBadge(inLibrary ? .accentColor : nil)
                 .onTapGesture {
-                    model.selection = (sourceId, highlight)
+                    model.selection = (sourceId, nil, highlight)
                 }
         }
     }
