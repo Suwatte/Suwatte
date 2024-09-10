@@ -61,6 +61,7 @@ struct IVSettingsView: View {
                     Section {
                         Toggle("Double Paged", isOn: $isDoublePaged)
                             .onChange(of: isDoublePaged) { _ in
+                                model.setIsDoublePaged(isDoublePaged: isDoublePaged)
                                 model.producePendingState()
                             }
 
