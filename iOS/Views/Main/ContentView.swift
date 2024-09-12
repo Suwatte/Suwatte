@@ -52,12 +52,7 @@ struct ContentView: View {
                     .onDisappear(perform: ctx.dismissAction)
             }
             .task {
-                appState.initialize()
-                await appState.observe()
-
-                if !UserDefaults.standard.bool(forKey: STTKeys.OldProgressMarkersMigrated) {
-                    await MigrationHelper.migrateProgressMarker()
-                }
+                await startup()
             }
             .environmentObject(toaster)
             .environmentObject(appState)
@@ -74,6 +69,26 @@ struct ContentView: View {
                             .environment(\.symbolVariants, .none)
                     }
                     .toast()
+            }
+        }
+    }
+    
+    private func startup() async {
+        appState.initialize()
+        await appState.observe()
+        
+        // Notification Center
+
+        do {
+            let center = UNUserNotificationCenter.current()
+            try await center.requestAuthorization(options: [.alert, .badge, .sound])
+        } catch {
+            Logger.shared.error(error)
+        }
+        
+        Task.detached {
+            if !UserDefaults.standard.bool(forKey: STTKeys.OldProgressMarkersMigrated) {
+                await MigrationHelper.migrateProgressMarker()
             }
         }
     }
