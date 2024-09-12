@@ -14,12 +14,15 @@ struct LibraryView: View {
     @StateObject var pageProviderModel = PageLinkProviderModel(isForBrowsePage: false)
     @State var presentCollectionSheet = false
     @State var presentOrderSheet = false
-    @State var openFirstCollection = false
-    @State var hasOpenedFirst = false
-    @AppStorage(STTKeys.OpenAllTitlesOnAppear) var openAllOnAppear = false
+    @State var openDefaultCollection = false
+    @State var hasOpenedDefaultCollection = false
+    @AppStorage(STTKeys.OpenDefaultCollection) var defaultCollectionToOpen = ""
+    @AppStorage(STTKeys.OpenDefaultCollectionEnabled) var openDefaultCollectionOnAppear = false
     @AppStorage(STTKeys.LibraryAuth) var requireAuth = false
     @State var hasLoadedPages = false
     @AppStorage(STTKeys.UseCompactLibraryView) var useCompactView = false
+
+    @StateObject var appState = StateManager.shared
 
     var body: some View {
         List {
@@ -70,27 +73,33 @@ struct LibraryView: View {
                     .navigationBarTitleDisplayMode(.inline)
                     .closeButton()
             }
-
         })
-        .hiddenNav(presenting: $openFirstCollection) {
-            LibraryGrid(collection: nil, readingFlag: nil)
+        .hiddenNav(presenting: $openDefaultCollection) {
+            if appState.isCollectionInitialized() {
+                let collectionToOpen: LibraryCollection? = StateManager.shared.collections.first { $0.id == defaultCollectionToOpen }
+
+                LibraryGrid(collection: collectionToOpen, readingFlag: nil)
+            } else {
+                ProgressView()
+            }
         }
         .hiddenNav(presenting: $useCompactView) {
             // HACK: Nasty hack due to the underlying Collection View performing weird layout shifts and therefore causing the Nav Bar to disappear
             CompactLibraryView()
                 .navigationBarBackButtonHidden(true)
         }
-
-        .task {
+        .onAppear {
             if requireAuth && !LocalAuthManager.shared.isExpired {
                 return
             }
 
-            if openAllOnAppear && !hasOpenedFirst {
+            if openDefaultCollectionOnAppear && !hasOpenedDefaultCollection && !useCompactView {
                 withAnimation {
-                    openFirstCollection = true
-                    hasOpenedFirst = true
+                    openDefaultCollection = true
+                    hasOpenedDefaultCollection = true
                 }
+            } else if useCompactView {
+                hasOpenedDefaultCollection = true
             }
         }
         .sheet(isPresented: $presentCollectionSheet) {

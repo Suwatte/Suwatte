@@ -7,7 +7,8 @@
 
 enum STTKeys {
     static let IntialTabIndex = "APP.initial_tab"
-    static let OpenAllTitlesOnAppear = "LIBRARY.open_all"
+    static let OpenDefaultCollectionEnabled = "LIBRARY.open_default_collection_enabled"
+    static let OpenDefaultCollection = "LIBRARY.open_default_collection"
 
     static let TileStyle = "APP.tile_style"
 
@@ -60,8 +61,11 @@ enum STTKeys {
     static let TimeoutDuration = "LOCAL_AUTH.timeout"
 
     static let ShowOnlyDownloadedTitles = "LIBRARY.download_only"
+    static let FilterByTrackedTitles = "LIBRARY.filter_tracked_titles"
     static let LibraryShowBadges = "LIBRARY.badges"
     static let LibraryBadgeType = "LIBRARY.badge_type"
+    static let LibraryPinningType = "LIBRARY.pinning_type"
+    static let LibraryEnableTitlePinning = "LIBRARY.pinning"
     static let ShowNavigationOverlay = "READER.display_overlay"
 
     // Novel Reader

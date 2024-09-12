@@ -14,14 +14,36 @@ struct LibraryGridState {
     let query: String
     let sort: LibraryView.LibraryGrid.KeyPath
     let order: LibraryView.LibraryGrid.SortOrder
-    let showOnlyDownloadedTitles: Bool
+    let filterByDownloadedTitles: Bool
+    let filterByTrackedTitles: Bool
+    let titlePinningType: TitlePinningType?
+
+    func getTitlePinningType() -> TitlePinningType? {
+        // Collection settings takes priority
+        if let collection, collection.pinningType != nil && collection.pinningType != TitlePinningType.none {
+            return collection.pinningType
+        }
+
+        // Global setting
+        if let titlePinningType, titlePinningType != TitlePinningType.none {
+            return titlePinningType
+        }
+
+        return nil
+    }
 }
 
 extension RealmActor {
-    func observeLibrary(state: LibraryGridState, _ callback: @escaping Callback<[LibraryEntry]>) async -> NotificationToken {
+
+    func getLibraryEntries(state: LibraryGridState) -> Results<LibraryEntry> {
+        let tracked = realm
+            .objects(TrackerLink.self)
+            .where { !$0.isDeleted }
+
         let downloads = realm
             .objects(SourceDownloadIndex.self)
             .where { $0.content != nil && $0.count > 0 }
+
         var library = realm
             .objects(LibraryEntry.self)
             .where { $0.content != nil && $0.isDeleted == false }
@@ -44,11 +66,11 @@ extension RealmActor {
 
             if let filter = collection.filter {
                 switch filter.adultContent {
-                case .both: break
-                case .only:
-                    predicates.append(NSPredicate(format: "content.adultContent = true"))
-                case .none:
-                    predicates.append(NSPredicate(format: "content.adultContent = false"))
+                    case .both: break
+                    case .only:
+                        predicates.append(NSPredicate(format: "content.isNSFW = true"))
+                    case .none:
+                        predicates.append(NSPredicate(format: "content.isNSFW = false"))
                 }
 
                 if !filter.readingFlags.isEmpty {
@@ -74,7 +96,8 @@ extension RealmActor {
                 }
 
                 if !filter.contentType.isEmpty {
-                    //                        let types = filter.contentType.map({ $0 }) as [ExternalContentType]
+                    let types = filter.contentType.map({ $0 }) as [ExternalContentType]
+                    predicates.append(NSPredicate(format: "content.contentType IN %@", types))
                 }
 
                 if !filter.tagContains.isEmpty {
@@ -83,7 +106,10 @@ extension RealmActor {
                 }
             }
 
-            let compound = NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
+            let compound = collection.filter?.logicalOperator == .or
+                ? NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
+                : NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+
             library = library
                 .filter(compound)
         }
@@ -96,9 +122,18 @@ extension RealmActor {
                 }
         }
 
-        if state.showOnlyDownloadedTitles {
+        if state.filterByDownloadedTitles {
             let ids = downloads
                 .compactMap(\.content?.id) as [String]
+            library = library
+                .where {
+                    $0.id.in(ids)
+                }
+        }
+
+        if state.filterByTrackedTitles {
+            let ids = tracked
+                .compactMap { $0.id } as [String]
             library = library
                 .where {
                     $0.id.in(ids)
@@ -109,6 +144,42 @@ extension RealmActor {
         let keyPath = state.sort.path
         library = library
             .sorted(byKeyPath: keyPath, ascending: ascending)
+        return library
+    }
+
+    func observeRegularLibrary(state: LibraryGridState, _ callback: @escaping Callback<[LibraryEntry]>) async -> NotificationToken {
+        var library = getLibraryEntries(state: state)
+
+        if let pinningType = state.getTitlePinningType() {
+            if pinningType == .unread {
+                library = library.where { $0.unreadCount == 0 }
+            } else if pinningType == .updated {
+                library = library.where { $0.lastUpdated <= $0.lastOpened }
+            }
+        }
+
+        func didUpdate(_ results: Results<LibraryEntry>) {
+            let data = results
+                .freeze()
+                .toArray()
+            Task { @MainActor in
+                callback(data)
+            }
+        }
+
+        return await observeCollection(collection: library, didUpdate(_:))
+    }
+
+    func observePinnedLibrary(state: LibraryGridState, _ callback: @escaping Callback<[LibraryEntry]>) async -> NotificationToken {
+        var library = getLibraryEntries(state: state)
+
+        if let pinningType = state.getTitlePinningType() {
+            if pinningType == .unread {
+                library = library.where { $0.unreadCount > 0 }
+            } else if pinningType == .updated {
+                library = library.where { $0.lastUpdated > $0.lastOpened }
+            }
+        }
 
         func didUpdate(_ results: Results<LibraryEntry>) {
             let data = results

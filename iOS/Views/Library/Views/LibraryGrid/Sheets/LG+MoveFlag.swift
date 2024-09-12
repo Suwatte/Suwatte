@@ -55,9 +55,9 @@ extension LibraryView.LibraryGrid {
         }
 
         func setFlags(_ flag: LibraryFlag) {
-            let targets = zip(entries.indices, entries)
-                .filter { model.selectedIndexes.contains($0.0) }
-                .map { $0.1.id }
+            model.clearSelection()
+            let targets = entries
+                .map { $0.id }
             let ids = Set(targets)
             Task {
                 let actor = await Suwatte.RealmActor.shared()

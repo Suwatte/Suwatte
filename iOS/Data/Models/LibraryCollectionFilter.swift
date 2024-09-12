@@ -18,5 +18,7 @@ final class LibraryCollectionFilter: Object, CKRecordConvertible, CKRecordRecove
     @Persisted var sources: List<String>
     @Persisted var tagContains: List<String>
     @Persisted var contentType: List<ExternalContentType>
+    @Persisted var logicalOperator: LogicalOperator = .and
+
     @Persisted var isDeleted: Bool
 }

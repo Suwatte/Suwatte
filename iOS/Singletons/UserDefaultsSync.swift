@@ -12,7 +12,8 @@ class UDSync {
     static func sync() {
         return
         guard isUserLoggedInToiCloud() else { return }
-        var keys: [String] = [STTKeys.OpenAllTitlesOnAppear,
+        var keys: [String] = [STTKeys.OpenDefaultCollectionEnabled,
+                              STTKeys.OpenDefaultCollection,
                               STTKeys.TileStyle,
                               STTKeys.LibraryGridSortKey,
                               STTKeys.LibraryGridSortOrder,

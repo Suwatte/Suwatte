@@ -11,41 +11,83 @@ import SwiftUI
 struct CollectionManagementView: View {
     @StateRealmObject var collection: LibraryCollection
     @State var collectionName: String
+    @State var pinningType: TitlePinningType = .unread
     @State var enableFilters: Bool = false
+    @State var enableTitlePinning: Bool = false
+
+    @State var presentationState: Loadable<Bool> = .idle
+
+    @ViewBuilder
+    var filters: some View {
+        Section {
+            TextField("Collection Name", text: $collectionName)
+        } header: {
+            Text("Collection Name")
+        }
+
+        Section {
+            Toggle("Pin Titles", isOn: $enableTitlePinning.animation())
+            if enableTitlePinning {
+                HStack {
+                    Text("Pin Type")
+                    Spacer()
+                    Picker("", selection: $pinningType) {
+                        ForEach(TitlePinningType.pinTypes, id: \.self) {
+                            Text($0.description)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .fixedSize()
+                }
+            }
+        } header: {
+            Text("Pinning")
+        }
+
+        Section {
+            Toggle("Enable Smart Filters", isOn: $enableFilters.animation())
+
+        } header: {
+            Text("Smart Filters")
+        }
+
+        if let filter = collection.filter, enableFilters {
+            FilterSections(collectionId: collection.id,
+                           currentFilterID: collection.filter?.id,
+                           adultContent: filter.adultContent,
+                           sourceSelections: filter.sources.toArray(),
+                           flagSelections: filter.readingFlags.toArray(),
+                           contentSelections: filter.contentType.toArray(),
+                           titleContains: filter.textContains.toArray(),
+                           tagContains: filter.tagContains.toArray(),
+                           contentStatuses: filter.statuses.toArray(),
+                           logicalOperator: filter.logicalOperator)
+            .transition(.opacity)
+        }
+    }
 
     var body: some View {
-        List {
-            HStack {
-                Text("Name: ")
-                    .fontWeight(.light)
-                    .foregroundColor(.gray)
-                TextField("Collection Name", text: $collectionName)
+        filters
+            .onChange(of: pinningType, perform: { _ in
+                if presentationState == .loaded(true) {
+                    setTitlePinningType(pinningType)
+                }
+            })
+            .onChange(of: enableTitlePinning, perform: { _ in
+                if presentationState == .loaded(true) {
+                    setTitlePinningType(enableTitlePinning ? .unread : TitlePinningType.none)
+                }
+            })
+            .onChange(of: enableFilters, perform: handleToggleFilterEnabled)
+            .onAppear(perform: load)
+            .onSubmit {
+                saveName(collectionName)
             }
-
-            Toggle("Enable Smart Filters", isOn: $enableFilters)
-
-            if let filter = collection.filter, enableFilters {
-                FilterSections(collectionId: collection.id,
-                               currentFilterID: collection.filter?.id,
-                               sourceSelections: filter.sources.toArray(),
-                               flagSelections: filter.readingFlags.toArray(),
-                               contentSelections: filter.contentType.toArray(),
-                               titleContains: filter.textContains.toArray(),
-                               tagContains: filter.tagContains.toArray(),
-                               contentStatuses: filter.statuses.toArray())
-                    .transition(.slide)
-                    .animation(.default)
+            .task {
+                presentationState = .loaded(true)
             }
-        }
-        .onAppear(perform: load)
-        .onSubmit {
-            saveName(collectionName)
-        }
-
-        .onChange(of: enableFilters, perform: handleToggleFilterEnabled)
-        .animation(.default)
-        .navigationTitle("Manage \(collection.name)")
-        .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Collection Settings")
+            .navigationBarTitleDisplayMode(.inline)
     }
 
     func saveName(_ str: String) {
@@ -61,8 +103,14 @@ struct CollectionManagementView: View {
     }
 
     func load() {
+        presentationState = .loading
+
         collectionName = collection.name
         enableFilters = collection.filter != nil
+        if let pinType = collection.pinningType, pinningType != TitlePinningType.none {
+            pinningType = pinType
+        }
+        enableTitlePinning = collection.pinningType != TitlePinningType.none && collection.pinningType != nil
     }
 }
 
@@ -80,7 +128,10 @@ extension CollectionManagementView {
         @State var titleText = ""
         @State var tagText = ""
         @State var sources: [StoredRunnerObject] = []
+        @State var logicalOperator = LogicalOperator.and
+
         var body: some View {
+            LogicalOperatorSection
             AdultContentSection
             TitlesSection
             Section {
@@ -110,7 +161,6 @@ extension CollectionManagementView {
                 .onChange(of: contentSelections) { _ in
                     saveAll()
                 }
-
                 .onChange(of: tagContains) { _ in
                     saveAll()
                 }
@@ -118,6 +168,9 @@ extension CollectionManagementView {
                     saveAll()
                 }
                 .onChange(of: contentStatuses) { _ in
+                    saveAll()
+                }
+                .onChange(of: logicalOperator) { _ in
                     saveAll()
                 }
                 .task {
@@ -335,6 +388,24 @@ extension CollectionManagementView.FilterSections {
             }
         }
     }
+
+    var LogicalOperatorSection: some View {
+        Section {
+            HStack {
+                Text("Logical Operator")
+                Spacer()
+                Picker("", selection: $logicalOperator) {
+                    ForEach(LogicalOperator.allCases, id: \.self) {
+                        Text($0.description)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .fixedSize()
+            }
+        } footer: {
+            Text("(AND) requires all applied filters to match. (OR) requires only one of the applied filters to match.")
+        }
+    }
 }
 
 extension CollectionManagementView.FilterSections {
@@ -359,6 +430,7 @@ extension CollectionManagementView.FilterSections {
         filter.tagContains.append(objectsIn: tagContains)
         filter.textContains.append(objectsIn: titleContains)
         filter.statuses.append(objectsIn: contentStatuses)
+        filter.logicalOperator = logicalOperator
         Task {
             let actor = await RealmActor.shared()
             await actor.saveCollectionFilters(for: collectionId, filter: filter)
@@ -368,11 +440,27 @@ extension CollectionManagementView.FilterSections {
 
 extension CollectionManagementView {
     func handleToggleFilterEnabled(_ value: Bool) {
+        if presentationState != .loaded(true) {
+            return
+        }
+
         let id = collection.id
 
         Task {
             let actor = await RealmActor.shared()
             await actor.toggleCollectionFilters(id: id, value: value)
+        }
+    }
+
+    func setTitlePinningType(_ value: TitlePinningType) {
+        let id = collection.id
+        if value != .none {
+            pinningType = value
+        }
+
+        Task {
+            let actor = await RealmActor.shared()
+            await actor.setTitlePinningType(for: id, pinningType: value)
         }
     }
 }
