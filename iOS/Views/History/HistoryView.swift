@@ -137,7 +137,7 @@ extension HistoryView {
             if content.streamable {
                 StateManager.shared.stream(item: content.toHighlight(), sourceId: content.sourceId)
             } else {
-                model.csSelection = (content.sourceId, content.toHighlight())
+                model.csSelection = (content.sourceId, nil, content.toHighlight())
             }
         } else if let content = marker.chapter?.opds {
             content.read()

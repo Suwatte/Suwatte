@@ -23,6 +23,30 @@ struct AddContentLink: View {
                     .listRowSeparator(.hidden)
             }
         }
+        .alert("Confirm Link", isPresented: $isPresenting) {
+            Button("Cancel", role: .cancel) {}
+            Button("Link") {
+                guard let selection else { return }
+                Task {
+                    let actor = await RealmActor.shared()
+                    let result = await actor.linkContent(id, selection.entry, selection.sourceId)
+                    if result {
+                        ToastManager.shared.info("Linked Contents!")
+                    }
+                }
+                presentationMode.wrappedValue.dismiss()
+            }
+        } message: {
+            if let selection {
+                Text("Link \(selection.entry.title) to [\(selection.sourceName ?? selection.sourceId)] \(highlight.title)")
+
+            } else {
+                EmptyView()
+            }
+        }
+        .onChange(of: isPresenting) { newValue in
+            if !newValue { selection = nil }
+        }
         .listStyle(.plain)
         .listRowInsets(.init(top: 0, leading: 20, bottom: 0, trailing: 0))
         .navigationTitle("Add Content Link")
@@ -47,7 +71,7 @@ struct AddContentLink: View {
     func SourceSection(result: SearchView.ResultGroup) -> some View {
         let data = result.result
         Section {
-            ResultGroup(data.results, result.sourceID)
+            ResultGroup(data.results, result.sourceID, result.sourceName)
         } header: {
             HStack {
                 Text(result.sourceName)
@@ -55,34 +79,10 @@ struct AddContentLink: View {
             .padding(.horizontal)
         }
         .headerProminence(.increased)
-        .alert("Confirm Link", isPresented: $isPresenting) {
-            Button("Cancel", role: .cancel) {}
-            Button("Link") {
-                guard let selection else { return }
-                Task {
-                    let actor = await RealmActor.shared()
-                    let result = await actor.linkContent(id, selection.entry, selection.sourceId)
-                    if result {
-                        ToastManager.shared.info("Linked Contents!")
-                    }
-                }
-                presentationMode.wrappedValue.dismiss()
-            }
-        } message: {
-            if let selection {
-                Text("Link \(selection.entry.title) to [\(result.sourceName)] \(highlight.title)")
-
-            } else {
-                EmptyView()
-            }
-        }
-        .onChange(of: isPresenting) { newValue in
-            if !newValue { selection = nil }
-        }
     }
 
     @ViewBuilder
-    func ResultGroup(_ result: [DSKCommon.Highlight], _ sourceId: String) -> some View {
+    func ResultGroup(_ result: [DSKCommon.Highlight], _ sourceId: String, _ sourceName: String) -> some View {
         HStack {
             ScrollView(.horizontal) {
                 LazyHStack {
@@ -91,7 +91,7 @@ struct AddContentLink: View {
                             .frame(width: 150)
                             .contentShape(Rectangle())
                             .onTapGesture {
-                                handleSelection(highlight, sourceId)
+                                handleSelection(highlight, sourceId, sourceName)
                             }
                     }
                 }
@@ -118,8 +118,8 @@ struct AddContentLink: View {
         }
     }
 
-    func handleSelection(_ h: DSKCommon.Highlight, _ s: String) {
-        selection = (sourceId: s, entry: h)
+    func handleSelection(_ h: DSKCommon.Highlight, _ s: String, _ sn: String) {
+        selection = (sourceId: s, sourceName: sn, entry: h)
         isPresenting.toggle()
     }
 }
