@@ -36,6 +36,7 @@ final class IVViewModel: ObservableObject {
     let dataCache = IVDataCache()
 
     var pendingState: PendingViewerState?
+    var isDoublePaged: Bool?
 }
 
 // MARK: State & Initial Load
@@ -112,6 +113,10 @@ extension IVViewModel {
         scrollbarPosition = STTHelpers.getScrollbarPosition(for: id) ?? .defaultScrollbarPosition
         bottomScrollbarDirection = STTHelpers.getBottomScrollbarDirection(for: id) ?? .defaultBottomScrollbarDirection
         scrollbarWidth = Preferences.standard.readerScrollbarWidth
+    }
+
+    func setIsDoublePaged(isDoublePaged: Bool) {
+        self.isDoublePaged = isDoublePaged
     }
 
     func producePendingState() {
