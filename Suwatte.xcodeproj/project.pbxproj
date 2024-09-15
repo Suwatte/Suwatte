@@ -3058,7 +3058,6 @@
 				DF489C292A830350006A21B9 /* IV+PagingController.swift in Sources */,
 				DF62B5C52A970BF300F907CD /* CPVM+Models.swift in Sources */,
 				DF020A4A2A8B120700BC5562 /* IV+ChapterList.swift in Sources */,
-				29B50C112C5C8DEF00A6C13F /* MigrationHelper.swift in Sources */,
 				DF8D0B742800EE48003E4C3E /* LibraryGrid+GridTile.swift in Sources */,
 				DFE1B1002A9C053900D300DB /* Migration+ViewModel.swift in Sources */,
 				DF977E162A0ECB3900AA1E90 /* StateManager.swift in Sources */,
