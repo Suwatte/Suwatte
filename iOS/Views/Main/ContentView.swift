@@ -86,7 +86,7 @@ struct ContentView: View {
             Logger.shared.error(error)
         }
         
-        Task.detached {
+        Task { @MainActor in
             if !UserDefaults.standard.bool(forKey: STTKeys.OldProgressMarkersMigrated) {
                 await MigrationHelper.migrateProgressMarker()
             }
