@@ -40,6 +40,8 @@ struct LoadableView<Value, Idle, Loading, Content>: View where Idle: View,
             switch loadable {
             case .idle:
                 idle()
+                Rectangle()
+                    .hidden()
                     .onAppear {
                         Task {
                             if loaded {

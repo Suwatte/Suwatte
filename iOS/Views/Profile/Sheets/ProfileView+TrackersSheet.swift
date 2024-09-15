@@ -7,6 +7,7 @@
 
 import RealmSwift
 import SwiftUI
+import NavigationSearchBar
 
 struct TrackerManagementView: View {
     @StateObject var model: ViewModel
@@ -35,9 +36,9 @@ struct TrackerManagementView: View {
             }
         }
         .fullScreenCover(isPresented: $presentSheet, onDismiss: { Task { await model.prepare() }}) {
-            let titles = model.titles
+            let title = model.title
             let trackers = model.unlinkedTrackers
-            AddTrackerLinkView(contentId: model.contentID, titles: titles, trackers: trackers)
+            AddTrackerLinkView(query: title, contentId: model.contentID, trackers: trackers)
                 .accentColor(accentColor)
                 .tint(accentColor) // For Invalid Tint on Appear
         }
@@ -118,14 +119,14 @@ extension TrackerManagementView {
         typealias TrackItem = DSKCommon.Highlight
 
         var contentID: String
-        var titles: [String]
+        var title: String
         @MainActor @Published var linkedTrackers: [AnyContentTracker] = []
         @MainActor @Published var unlinkedTrackers: [AnyContentTracker] = []
         var matches: [String: String] = [:]
 
-        init(id: String, _ titles: [String]) {
+        init(id: String, _ title: String) {
             contentID = id
-            self.titles = titles
+            self.title = title
         }
 
         func loadTrackers(_ keys: [String]) async {
@@ -301,24 +302,45 @@ extension TrackerManagementView {
 
 extension TrackerManagementView {
     struct AddTrackerLinkView: View {
+        @State var query: String
+        @State var debouncedQuery: String
+
         let contentId: String
-        let titles: [String]
         let trackers: [AnyContentTracker]
         @State private var selections: [String: String] = [:]
         @Environment(\.presentationMode) var presentationMode
+
+        init(query: String, contentId: String, trackers: [AnyContentTracker]) {
+            self.query = query
+            self.debouncedQuery = query
+            self.contentId = contentId
+            self.trackers = trackers
+        }
+
         var body: some View {
             SmartNavigationView {
                 ScrollView {
                     VStack(alignment: .center) {
                         ForEach(trackers, id: \.id) {
-                            TrackerResultsSection(tracker: $0, titles: titles, selections: $selections)
+                            TrackerResultsSection(tracker: $0, title: $debouncedQuery, selections: $selections)
                         }
                     }
                 }
-
                 .navigationBarTitle("Add Trackers")
                 .navigationBarTitleDisplayMode(.inline)
+                .animation(.default, value: query)
                 .closeButton()
+                .navigationSearchBar(text: $query,
+                                     options: [
+                                        .hidesNavigationBarDuringPresentation: false
+                                     ])
+                .task(id: query) {
+
+                    try? await Task.sleep(seconds: 0.45)
+                    if Task.isCancelled { return }
+
+                    debouncedQuery = query
+                }
                 .toolbar {
                     ToolbarItem {
                         Button("Add") {
@@ -337,7 +359,7 @@ extension TrackerManagementView {
 
     struct TrackerResultsSection: View {
         var tracker: AnyContentTracker
-        var titles: [String]
+        @Binding var title: String
         @State private var loadable: Loadable<[DSKCommon.Highlight]> = .idle
         @Binding var selections: [String: String]
         @State var key = ""
@@ -365,6 +387,9 @@ extension TrackerManagementView {
                         ScrollableResultView(results)
                     }
                 }
+            }
+            .onChange(of: title) { value in
+                loadable = .idle
             }
             .frame(alignment: .center)
             .task {
@@ -400,7 +425,7 @@ extension TrackerManagementView {
         }
 
         func load() async throws -> [DSKCommon.Highlight] {
-            try await tracker.getResultsForTitles(titles: titles)
+            try await tracker.getResultsForTitles(titles: [title])
         }
 
         func handleSelection(_ item: String) {
