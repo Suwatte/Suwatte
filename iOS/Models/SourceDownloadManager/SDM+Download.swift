@@ -118,7 +118,7 @@ extension SDM {
                 return (downloadPath, [.removePreviousFile, .createIntermediateDirectories])
             }
 
-            let task = AF.download(request, to: destination).serializingDownloadedFileURL()
+            let task = DSKNetworkClient.shared.session.download(request, to: destination).serializingDownloadedFileURL()
 
             _ = try await task.result.get()
             let progress = Double(counter) / Double(total)
