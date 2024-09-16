@@ -10,7 +10,7 @@ import Foundation
 
 final class DSKNetworkClient {
     static let shared = DSKNetworkClient()
-    private let session: Session
+    let session: Session
 
     init() {
         let configuration = URLSessionConfiguration.af.default
