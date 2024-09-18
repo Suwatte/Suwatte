@@ -137,7 +137,10 @@ extension DSK {
             return chapters
         }
 
-        let chapters = try await source.getContentChapters(contentId: id)
+        var chapters = try await source.getContent(id: id).chapters ?? []
+        if chapters.isEmpty {
+            chapters = try await source.getContentChapters(contentId: id)
+        }
         return chapters
     }
 
@@ -182,7 +185,13 @@ extension DSK {
     func checkLinked(title: StoredContent, min: Double?) async -> Bool {
         let actor = await RealmActor.shared()
         guard let source = await DSK.shared.getSource(id: title.sourceId) else { return false }
-        guard let chapters = try? await source.getContentChapters(contentId: title.contentId) else { return false }
+        
+        var chapters = try? await source.getContent(id: title.contentId).chapters
+        if chapters != nil && chapters!.isEmpty {
+            chapters = try? await source.getContentChapters(contentId: title.contentId)
+        }
+
+        guard let chapters else { return false }
         var marked: [String] = []
 
         if Task.isCancelled { return false }

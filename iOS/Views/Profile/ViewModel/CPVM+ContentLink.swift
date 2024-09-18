@@ -35,7 +35,11 @@ extension ViewModel {
 
     private func getChaptersForLinkedTitle(source: AnyContentSource, contentId: String, sourceId: String) async -> [ThreadSafeChapter] {
         do {
-            let chapters = try await source.getContentChapters(contentId: contentId)
+            var chapters = try await source.getContent(id: contentId).chapters ?? []
+            if chapters.isEmpty {
+                chapters = try await source.getContentChapters(contentId: contentId)
+            }
+
             let prepared = chapters
                 .sorted(by: \.index, descending: false)
                 .map { $0.toThreadSafe(sourceID: sourceId, contentID: contentId) }
