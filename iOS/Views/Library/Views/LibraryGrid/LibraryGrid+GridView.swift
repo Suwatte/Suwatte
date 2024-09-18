@@ -56,9 +56,13 @@ extension LibraryView.LibraryGrid {
                 getCell(entry, state)
             }
             .sectionHeader {
-                HStack {
+                HStack(spacing: 4) {
+                    Image(systemName: "pin.fill")
+                        .font(.footnote)
+                        .rotationEffect(Angle(degrees: -30))
+                        .foregroundColor(.accentColor)
                     Text("^[\(pinnedLibrary.count) Title](inflect: true)")
-                        .font(.caption)
+                        .font(.footnote)
                         .fontWeight(.semibold)
                         .foregroundColor(.gray)
                     Spacer()

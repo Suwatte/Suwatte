@@ -59,6 +59,7 @@ extension RealmActor {
         // Collection Filter
         if let collection = state.collection {
             var predicates = [NSPredicate]()
+            var smartFilterPredicates = [NSPredicate]()
 
             let idPredicate = NSPredicate(format: "ANY collections CONTAINS[cd] %@", collection.id)
 
@@ -68,47 +69,56 @@ extension RealmActor {
                 switch filter.adultContent {
                     case .both: break
                     case .only:
-                        predicates.append(NSPredicate(format: "content.isNSFW = true"))
+                        smartFilterPredicates.append(NSPredicate(format: "content.isNSFW = true"))
                     case .none:
-                        predicates.append(NSPredicate(format: "content.isNSFW = false"))
+                        smartFilterPredicates.append(NSPredicate(format: "content.isNSFW = false"))
                 }
 
                 if !filter.readingFlags.isEmpty {
                     let flags = filter.readingFlags.map { $0 } as [LibraryFlag]
-                    predicates.append(NSPredicate(format: "flag IN %@", flags))
+                    smartFilterPredicates.append(NSPredicate(format: "flag IN %@", flags))
                 }
 
                 if !filter.statuses.isEmpty {
                     let statuses = filter.statuses.map { $0 } as [ContentStatus]
-                    predicates.append(NSPredicate(format: "content.status IN %@", statuses))
+                    smartFilterPredicates.append(NSPredicate(format: "content.status IN %@", statuses))
                 }
 
                 if !filter.sources.isEmpty {
                     let sources = filter.sources.map { $0 } as [String]
-                    predicates.append(NSPredicate(format: "content.sourceId IN %@", sources))
+                    smartFilterPredicates.append(NSPredicate(format: "content.sourceId IN %@", sources))
                 }
 
                 if !filter.textContains.isEmpty {
                     let texts = filter.textContains.map { $0 } as [String]
                     for text in texts {
-                        predicates.append(NSPredicate(format: "ANY content.additionalTitles CONTAINS[cd] %@ OR content.title CONTAINS[cd] %@ OR content.summary CONTAINS[cd] %@", text, text, text))
+                        smartFilterPredicates.append(NSPredicate(format: "ANY content.additionalTitles CONTAINS[cd] %@ OR content.title CONTAINS[cd] %@ OR content.summary CONTAINS[cd] %@", text, text, text))
                     }
                 }
 
                 if !filter.contentType.isEmpty {
                     let types = filter.contentType.map({ $0 }) as [ExternalContentType]
-                    predicates.append(NSPredicate(format: "content.contentType IN %@", types))
+                    smartFilterPredicates.append(NSPredicate(format: "content.contentType IN %@", types))
                 }
 
                 if !filter.tagContains.isEmpty {
                     let tags = filter.tagContains.map { $0.lowercased() } as [String]
-                    predicates.append(NSPredicate(format: "ANY content.properties.tags.label IN[cd] %@", tags))
+                    smartFilterPredicates.append(NSPredicate(format: "ANY content.properties.tags.label IN[cd] %@", tags))
                 }
+
+                if smartFilterPredicates.isEmpty {
+                    smartFilterPredicates.append(NSPredicate.init(value: true))
+                }
+
+                let compoundSmartFilter = NSCompoundPredicate(type: collection.filter?.logicalOperator == LogicalOperator.or
+                                                              ? .or
+                                                              : .and,
+                                                              subpredicates: smartFilterPredicates)
+
+                predicates.append(compoundSmartFilter)
             }
 
-            let compound = collection.filter?.logicalOperator == .or
-                ? NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
-                : NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+            let compound = NSCompoundPredicate(orPredicateWithSubpredicates: predicates)
 
             library = library
                 .filter(compound)

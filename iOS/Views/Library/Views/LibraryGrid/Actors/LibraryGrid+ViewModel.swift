@@ -92,7 +92,7 @@ extension LibraryView.LibraryGrid {
                 } else {
                     pinnedLibraryToken?.invalidate()
                     pinnedLibraryToken = nil
-                    pinnedLibrary = nil
+                    pinnedLibrary = []
                 }
             }
         }
