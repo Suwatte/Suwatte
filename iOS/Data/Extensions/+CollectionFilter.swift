@@ -8,6 +8,19 @@
 import Foundation
 import RealmSwift
 
+enum LogicalOperator: Int, PersistableEnum, CaseIterable, Codable {
+    case and, or
+
+    var description: String {
+        switch self {
+            case .and:
+                return "AND"
+            case .or:
+                return "OR"
+        }
+    }
+}
+
 enum ContentSelectionType: Int, PersistableEnum, CaseIterable, Identifiable, Codable {
     case none, only, both
 

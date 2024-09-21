@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import RealmSwift
+
 enum LibraryBadge: Int, CaseIterable {
     case unread, update
 
@@ -22,36 +24,56 @@ extension LibraryView.LibraryGrid {
         @AppStorage(STTKeys.LibraryShowBadges) var showBadges = true
         @AppStorage(STTKeys.LibraryBadgeType) var badgeType: LibraryBadge = .update
         @AppStorage(STTKeys.ShowOnlyDownloadedTitles) var showDownloadsOnly = false
-        var collection: LibraryCollection?
+        @AppStorage(STTKeys.LibraryPinningType) var pinningType: TitlePinningType = .unread
+        @AppStorage(STTKeys.LibraryEnableTitlePinning) var enableTitlePinning = false
+        @EnvironmentObject var model: LibraryView.LibraryGrid.ViewModel
+
         var body: some View {
-            SmartNavigationView {
-                List {
-                    Section {
-                        Toggle("Show Badges", isOn: $showBadges)
-                        if showBadges {
-                            Picker("Badge Type", selection: $badgeType) {
-                                ForEach(LibraryBadge.allCases, id: \.rawValue) {
-                                    Text($0.description)
-                                        .tag($0)
-                                }
+            List {
+                Section {
+                    Toggle("Show Badges", isOn: $showBadges)
+                    if showBadges {
+                        Picker("Badge Type", selection: $badgeType) {
+                            ForEach(LibraryBadge.allCases, id: \.rawValue) {
+                                Text($0.description)
+                                    .tag($0)
                             }
                         }
-                        Toggle("Show Only Downloaded Titles", isOn: $showDownloadsOnly)
                     }
 
-                    Section {
-                        if let collection = collection?.thaw() {
-                            NavigationLink("Collection Settings") {
-                                CollectionManagementView(collection: collection, collectionName: collection.name)
+                    Toggle("Pin Titles", isOn: $enableTitlePinning)
+                    if enableTitlePinning {
+                        HStack {
+                            Text("Pin Type")
+                            Spacer()
+                            Picker("", selection: $pinningType) {
+                                ForEach(TitlePinningType.pinTypes, id: \.self) {
+                                    Text($0.description)
+                                }
                             }
+                            .pickerStyle(.segmented)
+                            .fixedSize()
                         }
                     }
+                } header: {
+                    Text("Global Settings")
                 }
-                .navigationTitle("Settings")
-                .navigationBarTitleDisplayMode(.inline)
-                .animation(.default, value: showBadges)
-                .closeButton()
+
+                if let collection = model.collection?.thaw() {
+                    Section {
+
+                    } header: {
+                        Text("Collection Settings")
+                    }
+
+                    CollectionManagementView(collection: collection, collectionName: collection.name)
+                }
             }
+            .navigationTitle("Collection Settings")
+            .navigationBarTitleDisplayMode(.inline)
+            .animation(.default, value: showBadges)
+            .animation(.default, value: enableTitlePinning)
+            .closeButton()
         }
     }
 }

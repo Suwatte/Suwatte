@@ -22,16 +22,19 @@ extension LibraryView.LibraryGrid {
             didSet {
                 // Clear Selections when user exits selection mode
                 if !isSelecting {
-                    selectedIndexes.removeAll()
+                    clearSelection()
                 }
             }
         }
 
-        @Published var selectedIndexes: Set<Int> = []
+        @Published var selectedPinnedIndexes: Set<Int> = []
+        @Published var selectedRegularIndexes: Set<Int> = []
         @Published var navSelection: LibraryEntry?
         @Published var query = ""
-        @Published var library: [LibraryEntry]?
-        private var token: NotificationToken?
+        @Published var regularLibrary: [LibraryEntry]?
+        @Published var pinnedLibrary: [LibraryEntry]?
+        private var regularLibraryToken: NotificationToken?
+        private var pinnedLibraryToken: NotificationToken?
         private var didSet = false
 
         func setFilterGroups(collection: LibraryCollection? = nil, readingFlag: LibraryFlag? = nil) {
@@ -43,40 +46,71 @@ extension LibraryView.LibraryGrid {
         }
 
         func disconnect() {
-            token?.invalidate()
-            token = nil
+            regularLibraryToken?.invalidate()
+            regularLibraryToken = nil
+            regularLibrary = nil
+            pinnedLibraryToken?.invalidate()
+            pinnedLibraryToken = nil
+            pinnedLibrary = nil
         }
 
-        func didSetResult(_ lib: [LibraryEntry]) {
-            withAnimation {
-                self.library = lib
-            }
+        func clearSelection() {
+            selectedPinnedIndexes.removeAll()
+            selectedRegularIndexes.removeAll()
         }
 
-        func observe(downloadsOnly: Bool, key: KeyPath, order: SortOrder) {
+        func isLibraryStillLoading() -> Bool {
+            regularLibrary == nil || pinnedLibrary == nil
+        }
+
+        func observe(filterByDownloadedTitles: Bool, filterByTrackedTitles: Bool, key: KeyPath, order: SortOrder, pinningType: TitlePinningType? = nil) {
             disconnect()
             let state: LibraryGridState = .init(collection: collection?.freeze(),
                                                 readingFlag: readingFlag,
                                                 query: query,
                                                 sort: key,
                                                 order: order,
-                                                showOnlyDownloadedTitles: downloadsOnly)
+                                                filterByDownloadedTitles: filterByDownloadedTitles,
+                                                filterByTrackedTitles: filterByTrackedTitles,
+                                                titlePinningType: pinningType)
             Task { @MainActor in
-                token = await RealmActor
-                    .shared()
-                    .observeLibrary(state: state) { [weak self] result in
-                        self?.didSetResult(result)
+                let actor = await RealmActor.shared()
+                regularLibraryToken = await actor
+                    .observeRegularLibrary(state: state) { [weak self] result in
+                        withAnimation {
+                            self?.regularLibrary = result
+                        }
                     }
+
+                if state.getTitlePinningType() != nil {
+                    pinnedLibraryToken = await actor
+                        .observePinnedLibrary(state: state) { [weak self] result in
+                            withAnimation {
+                                self?.pinnedLibrary = result
+                            }
+                        }
+                } else {
+                    pinnedLibraryToken?.invalidate()
+                    pinnedLibraryToken = nil
+                    pinnedLibrary = []
+                }
             }
         }
 
         func refresh() {
-            guard let library, !library.isEmpty else { return }
+            guard let regularLibrary, let pinnedLibrary else {
+                return
+            }
+
+            if pinnedLibrary.isEmpty && regularLibrary.isEmpty {
+                return
+            }
+
             ToastManager.shared.info("Refreshing Database.")
 
-            Task { [library] in
+            Task { [regularLibrary, pinnedLibrary] in
                 let actor = await Suwatte.RealmActor.shared()
-                for content in library.compactMap(\.content) {
+                for content in (regularLibrary + pinnedLibrary).compactMap(\.content) {
                     await actor.refreshStored(contentId: content.contentId, sourceId: content.sourceId)
                 }
                 ToastManager.shared.info("Database Refreshed")

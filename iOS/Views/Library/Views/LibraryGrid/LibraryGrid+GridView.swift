@@ -11,53 +11,100 @@ import SwiftUI
 
 extension LibraryView.LibraryGrid {
     struct Grid: View {
-        var entries: [LibraryEntry]
-        @Binding var collection: LibraryCollection?
         @AppStorage(STTKeys.TileStyle) var style = TileStyle.COMPACT
         @EnvironmentObject var model: LibraryView.LibraryGrid.ViewModel
         @State var manageSelection: String?
+
+        var regularLibrary: [LibraryEntry] {
+            model.regularLibrary ?? []
+        }
+
+        var pinnedLibrary: [LibraryEntry] {
+            model.pinnedLibrary ?? []
+        }
+
+        func getCell(_ entry: LibraryEntry, _ state: ASCellContext) -> some View {
+            ZStack(alignment: .topTrailing) {
+                Button {
+                    model.navSelection = entry
+                } label: {
+                    LibraryView.LibraryGrid.GridTile(entry: entry)
+                }
+                .buttonStyle(NeutralButtonStyle())
+                .disabled(model.isSelecting)
+
+                Image(systemName: "circle.fill")
+                    .resizable()
+                    .foregroundColor(state.isSelected ? .accentColor : .black)
+                    .clipShape(Circle())
+                    .frame(width: 20, height: 20)
+                    .overlay(Circle().stroke(Color.white, lineWidth: 3).shadow(radius: 10))
+                    .padding(.all, 5)
+                    .opacity(model.isSelecting ? 1 : 0)
+            }
+            .animation(.default, value: model.isSelecting)
+            .animation(.default, value: model.selectedPinnedIndexes)
+            .animation(.default, value: model.selectedRegularIndexes)
+        }
+
+        func getPinnedSection() -> ASCollectionViewSection<Int> {
+            ASCollectionViewSection(id: 0,
+                                    data: pinnedLibrary,
+                                    selectionMode: model.isSelecting ? .selectMultiple($model.selectedPinnedIndexes) : .none,
+                                    contextMenuProvider: contextMenuProvider)
+            { entry, state in
+                getCell(entry, state)
+            }
+            .sectionHeader {
+                HStack(spacing: 4) {
+                    Image(systemName: "pin.fill")
+                        .font(.footnote)
+                        .rotationEffect(Angle(degrees: -30))
+                        .foregroundColor(.accentColor)
+                    Text("^[\(pinnedLibrary.count) Title](inflect: true)")
+                        .font(.footnote)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.gray)
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .sectionFooter {
+                EmptyView()
+            }
+        }
+
+        func getRegularSection() -> ASCollectionViewSection<Int> {
+            ASCollectionViewSection(id: 1,
+                                    data: regularLibrary,
+                                    selectionMode: model.isSelecting ? .selectMultiple($model.selectedRegularIndexes) : .none,
+                                    contextMenuProvider: contextMenuProvider)
+            { entry, state in
+                getCell(entry, state)
+            }
+            .sectionHeader {
+                HStack {
+                    Text("^[\(regularLibrary.count) Title](inflect: true)")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.gray)
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .sectionFooter {
+                EmptyView()
+            }
+        }
+
         var body: some View {
             ASCollectionView(editMode: model.isSelecting) {
-                ASCollectionViewSection(id: 0,
-                                        data: entries,
-                                        selectionMode: model.isSelecting ? .selectMultiple($model.selectedIndexes) : .none,
-                                        contextMenuProvider: contextMenuProvider)
-                { entry, state in
-
-                    ZStack(alignment: .topTrailing) {
-                        Button {
-                            model.navSelection = entry
-                        } label: {
-                            LibraryView.LibraryGrid.GridTile(entry: entry)
-                        }
-                        .buttonStyle(NeutralButtonStyle())
-                        .disabled(model.isSelecting)
-
-                        Image(systemName: "circle.fill")
-                            .resizable()
-                            .foregroundColor(state.isSelected ? .accentColor : .black)
-                            .clipShape(Circle())
-                            .frame(width: 20, height: 20)
-                            .overlay(Circle().stroke(Color.white, lineWidth: 3).shadow(radius: 10))
-                            .padding(.all, 5)
-                            .opacity(model.isSelecting ? 1 : 0)
-                    }
-                    .animation(.default, value: model.isSelecting)
-                    .animation(.default, value: model.selectedIndexes)
+                if !pinnedLibrary.isEmpty {
+                    getPinnedSection()
                 }
-                .sectionHeader(content: {
-                    HStack {
-                        Text("^[\(entries.count) Title](inflect: true)")
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.gray)
-                        Spacer()
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                })
-                .sectionFooter(content: {
-                    EmptyView()
-                })
+                if !regularLibrary.isEmpty {
+                    getRegularSection()
+                }
             }
             .layout {
                 DynamicGridLayout(header: .absolute(22))
@@ -67,7 +114,8 @@ extension LibraryView.LibraryGrid {
             .shouldInvalidateLayoutOnStateChange(true)
             .ignoresSafeArea(.keyboard, edges: .all)
             .animation(.default, value: model.isSelecting)
-            .animation(.default, value: model.selectedIndexes)
+            .animation(.default, value: model.selectedPinnedIndexes)
+            .animation(.default, value: model.selectedRegularIndexes)
             .sheet(item: $manageSelection) { selection in
                 ProfileView.Sheets.LibrarySheet(id: selection)
                     .environmentObject(StateManager.shared)
@@ -116,7 +164,7 @@ extension LibraryView.LibraryGrid {
                 }
 
                 // Remove from Collection
-                if let collection = collection {
+                if let collection = model.collection {
                     let removeFromCollection = UIAction(title: "Remove from Collection", image: .init(systemName: "xmark"), attributes: .destructive) { _ in
                         //
                         let contentId = content.id

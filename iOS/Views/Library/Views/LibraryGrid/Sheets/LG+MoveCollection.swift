@@ -60,13 +60,16 @@ extension LibraryView.LibraryGrid {
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Done") {
                             ToastManager.shared.loading.toggle()
-                            let targets = zip(entries.indices, entries)
-                                .filter { model.selectedIndexes.contains($0.0) }
-                                .map { $0.1.id }
+
+                            model.clearSelection()
+
+                            let targets = entries
+                                .map { $0.id }
                             Task {
                                 let actor = await Suwatte.RealmActor.shared()
                                 await actor.moveToCollections(entries: Set(targets), cids: selectedCollections)
                             }
+
                             ToastManager.shared.loading.toggle()
                             presentationMode.wrappedValue.dismiss()
                         }

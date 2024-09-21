@@ -8,10 +8,20 @@
 import SwiftUI
 
 struct CompactLibraryView: View {
+    @AppStorage(STTKeys.OpenDefaultCollection) var defaultCollectionToOpen = ""
+    @AppStorage(STTKeys.OpenDefaultCollectionEnabled) var openDefaultCollectionOnAppear = false
+
+    @StateObject var appState = StateManager.shared
+
     var body: some View {
         ZStack {
-            LibraryView.LibraryGrid(collection: nil, readingFlag: nil, useLibrary: true)
+            if appState.isCollectionInitialized() {
+                let collectionToOpen: LibraryCollection? = openDefaultCollectionOnAppear ? StateManager.shared.collections.first { $0.id == defaultCollectionToOpen } : nil
+
+                LibraryView.LibraryGrid(collection: collectionToOpen, readingFlag: nil, useLibrary: true)
+            } else {
+                ProgressView()
+            }
         }
-        .navigationTitle("Library")
     }
 }

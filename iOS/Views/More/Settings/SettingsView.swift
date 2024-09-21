@@ -33,13 +33,11 @@ extension SettingsView {
     struct MiscSection: View {
         private let options = AppTabs.defaultSettings
         @AppStorage(STTKeys.IntialTabIndex) var InitialSelection = 3
-        @AppStorage(STTKeys.OpenAllTitlesOnAppear) var openAllOnAppear = false
+
         var body: some View {
             Section {
                 // Initial Opening Tab
                 OpeningTab
-                Toggle("Open Default Collection", isOn: $openAllOnAppear)
-
             } header: {
                 Text("Tabs")
             }
@@ -246,6 +244,8 @@ extension SettingsView {
         @AppStorage(STTKeys.AlwaysAskForLibraryConfig) private var alwaysAsk = true
         @AppStorage(STTKeys.DefaultCollection) var defaultCollection: String = ""
         @AppStorage(STTKeys.DefaultReadingFlag) var defaultFlag = LibraryFlag.unknown
+        @AppStorage(STTKeys.OpenDefaultCollectionEnabled) var openDefaultCollectionOnAppear = false
+        @AppStorage(STTKeys.OpenDefaultCollection) var defaultCollectionToOpen: String = ""
         @EnvironmentObject private var stateManager: StateManager
 
         private var collections: [LibraryCollection] {
@@ -254,8 +254,25 @@ extension SettingsView {
 
         var body: some View {
             Section {
-                Toggle("Always Prompt", isOn: $alwaysAsk)
+                Toggle("Open Default Collection", isOn: $openDefaultCollectionOnAppear)
+                if openDefaultCollectionOnAppear {
+                    Picker("Default Collection", selection: .init($defaultCollectionToOpen, deselectTo: "-1")) {
+                        Text("All Titles")
+                            .tag("-1")
+                        ForEach(collections) {
+                            Text($0.name)
+                                .tag($0.id)
+                        }
+                    }
+                    .transition(.slide)
+                }
+            } header: {
+                Text("Library - Navigation")
+            }
+            .animation(.default, value: openDefaultCollectionOnAppear)
 
+            Section {
+                Toggle("Open prompt when adding titles", isOn: $alwaysAsk)
                 if !alwaysAsk {
                     Picker("Default Collection", selection: .init($defaultCollection, deselectTo: "")) {
                         Text("None")
@@ -278,7 +295,7 @@ extension SettingsView {
                     .transition(.slide)
                 }
             } header: {
-                Text("Library")
+                Text("Library - Data")
             }
             .animation(.default, value: alwaysAsk)
         }
