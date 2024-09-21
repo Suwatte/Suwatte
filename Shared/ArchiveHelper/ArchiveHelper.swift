@@ -17,7 +17,7 @@ protocol ArchiveController {
 
 extension ArchiveController {
     var extensions: Set<String> {
-        ["png", "jpg", "jpeg", "gif"]
+        ["jpg", "png", "gif", "jpeg", "bmp", "tiff", "heif", "heic", "webp", "avif"]
     }
 
     func isImagePath(_ path: String) -> Bool {
