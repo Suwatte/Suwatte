@@ -6,22 +6,11 @@
 //
 
 import Foundation
-import RealmSwift
 
-class StoredChapterData: Object {
-    @Persisted var chapter: StoredChapter? {
-        didSet {
-            guard let chapter = chapter else {
-                return
-            }
-            _id = chapter.id
-        }
-    }
+struct StoredChapterData {
 
-    @Persisted(primaryKey: true) var _id: String
-
-    @Persisted var pages: List<StoredChapterPage>
-    @Persisted var text: String?
+    var pages: [StoredChapterPage] = []
+    var text: String?
 
     var imageURLs: [String] {
         pages.compactMap { $0.url }
@@ -37,7 +26,7 @@ class StoredChapterData: Object {
     var opdsInfo: OPDSInfo?
 }
 
-class StoredChapterPage: EmbeddedObject, Parsable {
-    @Persisted var url: String?
-    @Persisted var raw: String?
+class StoredChapterPage: Parsable {
+    var url: String?
+    var raw: String?
 }

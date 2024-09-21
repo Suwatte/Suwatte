@@ -79,7 +79,6 @@
 		DF2783372A799C7E0098BBA9 /* Realm+ProgressMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783362A799C7E0098BBA9 /* Realm+ProgressMarker.swift */; };
 		DF2783392A799D480098BBA9 /* Realm+Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783382A799D480098BBA9 /* Realm+Content.swift */; };
 		DF27833B2A799D950098BBA9 /* Realm+Chapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF27833A2A799D950098BBA9 /* Realm+Chapter.swift */; };
-		DF27833D2A799E400098BBA9 /* Realm+ChapterData.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF27833C2A799E400098BBA9 /* Realm+ChapterData.swift */; };
 		DF27833F2A799E8D0098BBA9 /* Realm+OPDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF27833E2A799E8D0098BBA9 /* Realm+OPDS.swift */; };
 		DF2783412A799ECE0098BBA9 /* Realm+Archive.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783402A799ECE0098BBA9 /* Realm+Archive.swift */; };
 		DF2783432A799F290098BBA9 /* Realm+Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF2783422A799F290098BBA9 /* Realm+Search.swift */; };
@@ -564,7 +563,6 @@
 		DF2783362A799C7E0098BBA9 /* Realm+ProgressMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+ProgressMarker.swift"; sourceTree = "<group>"; };
 		DF2783382A799D480098BBA9 /* Realm+Content.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+Content.swift"; sourceTree = "<group>"; };
 		DF27833A2A799D950098BBA9 /* Realm+Chapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+Chapter.swift"; sourceTree = "<group>"; };
-		DF27833C2A799E400098BBA9 /* Realm+ChapterData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+ChapterData.swift"; sourceTree = "<group>"; };
 		DF27833E2A799E8D0098BBA9 /* Realm+OPDS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+OPDS.swift"; sourceTree = "<group>"; };
 		DF2783402A799ECE0098BBA9 /* Realm+Archive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+Archive.swift"; sourceTree = "<group>"; };
 		DF2783422A799F290098BBA9 /* Realm+Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+Search.swift"; sourceTree = "<group>"; };
@@ -1186,7 +1184,6 @@
 			children = (
 				DF2783382A799D480098BBA9 /* Realm+Content.swift */,
 				DF27833A2A799D950098BBA9 /* Realm+Chapter.swift */,
-				DF27833C2A799E400098BBA9 /* Realm+ChapterData.swift */,
 				DF2783362A799C7E0098BBA9 /* Realm+ProgressMarker.swift */,
 				DF27833E2A799E8D0098BBA9 /* Realm+OPDS.swift */,
 				DF2783402A799ECE0098BBA9 /* Realm+Archive.swift */,
@@ -2755,7 +2752,6 @@
 				DFF09B642A5A847500C5CA5E /* +UIStepper.swift in Sources */,
 				DFADB58D29D7F19900CBE22F /* STT+URLRequest.swift in Sources */,
 				DFE1B1022A9C070400D300DB /* Highlight.swift in Sources */,
-				DF27833D2A799E400098BBA9 /* Realm+ChapterData.swift in Sources */,
 				DF32646328029A380066EB08 /* STTImageProvider.swift in Sources */,
 				DFBE48562A25BEB2000ABA16 /* ContentLink.swift in Sources */,
 				DF16F2CC2A5F8FAA00D7AFBB /* PageView+CollectionView.swift in Sources */,

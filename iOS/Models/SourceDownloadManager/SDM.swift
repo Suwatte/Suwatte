@@ -177,8 +177,7 @@ extension SDM {
 
         guard let download, download.status == .completed else { return nil }
 
-        let data = StoredChapterData()
-        data.chapter = download.chapter
+        var data = StoredChapterData()
 
         // Text
         if let text = download.text {

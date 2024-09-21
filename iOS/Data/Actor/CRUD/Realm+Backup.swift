@@ -277,8 +277,6 @@ extension RealmActor {
                 .objects(StoredContent.self)
                 .where { !$0.id.in(downloadedTitles) }
                 .setValue(true, forKey: "isDeleted")
-
-            realm.delete(realm.objects(StoredChapterData.self)) // 17. Relation: StoredChapter
         }
     }
 }

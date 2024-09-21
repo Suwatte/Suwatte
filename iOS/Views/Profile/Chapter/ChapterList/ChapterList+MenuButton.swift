@@ -76,8 +76,6 @@ extension ChapterList {
         Menu("Options") {
             Button("Download Chapter(s)") { addToDownloadQueue() }
             Button("Delete / Cancel Download(s)", role: .destructive) { removeDownload() }
-            Divider()
-            Button("Reset Chapter Data", role: .destructive) { clearChapterData() }
         }
     }
 }

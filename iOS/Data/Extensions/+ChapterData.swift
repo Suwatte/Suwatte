@@ -9,8 +9,7 @@ import Foundation
 
 extension DaisukeEngine.Structs.ChapterData {
     func toStored(withStoredChapter chapter: StoredChapter) -> StoredChapterData {
-        let object = StoredChapterData()
-        object.chapter = chapter
+        var object = StoredChapterData()
 
         if let pages {
             for page in pages {

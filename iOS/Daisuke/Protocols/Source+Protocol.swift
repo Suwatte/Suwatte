@@ -8,7 +8,7 @@
 import Foundation
 
 struct SourceConfig: Parsable {
-    let disableChapterDataCaching: Bool?
+    let disableChapterDataCaching: Bool? // Deprecated
     let disableChapterDates: Bool?
     let disableLanguageFlags: Bool?
     let disableTagNavigation: Bool?
