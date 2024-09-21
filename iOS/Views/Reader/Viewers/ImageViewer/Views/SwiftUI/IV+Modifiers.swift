@@ -109,6 +109,7 @@ struct ReaderSheetsModifier: ViewModifier {
         content
             .sheet(isPresented: $model.control.settings, onDismiss: { model.control.navigationRegions.toggle() }) {
                 IVSettingsView()
+                    .environmentObject(model)
             }
             .sheet(isPresented: $model.control.chapterList, onDismiss: reset) {
                 IVChapterListView()
