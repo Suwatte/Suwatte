@@ -160,15 +160,6 @@ extension ChapterList {
         deselectAll()
     }
 
-    func clearChapterData() {
-        let ids = selections.map(\.id)
-        Task {
-            let actor = await RealmActor.shared()
-            await actor.resetChapterData(for: ids)
-        }
-        deselectAll()
-    }
-
     func didMark() { // This is called before the notification is delivered to for model `readChapters` property to update
         let identifier = model.STTIDPair
         Task {
