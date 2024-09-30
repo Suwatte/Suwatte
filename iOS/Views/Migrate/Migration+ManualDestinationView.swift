@@ -29,7 +29,7 @@ struct MigrationManualDestinationView: View {
                 let exactMatchContentIdentifier = ContentIdentifier(contentId: exactMatch.id, sourceId: resultGroup.sourceID)
                 
                 // If the exact match is the same item, skip
-                if exactMatchContentIdentifier.id == content.id {
+                if searchModel.getSelectedSourceCount() > 1 && exactMatchContentIdentifier.id == content.id {
                     return false
                 }
             }
@@ -66,7 +66,6 @@ struct MigrationManualDestinationView: View {
             searchTask?.cancel()
             searchTask = Task {
                 await searchModel.makeRequests()
-                searchModel.removeContentFromResult(contentIdentifier: ContentIdentifier(contentId: content.contentID, sourceId: content.sourceID))
             }
         }
         .onAppear {

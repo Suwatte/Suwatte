@@ -48,6 +48,10 @@ extension SearchView {
             self.preSources = preSources
         }
 
+        func getSelectedSourceCount() -> Int {
+            preSources?.count ?? 0
+        }
+
         private func getSources() async -> [AnyContentSource] {
             if let preSources {
                 return preSources
@@ -80,32 +84,6 @@ extension SearchView {
 
             await MainActor.run {
                 state = .loaded("")
-            }
-        }
-
-        func removeContentFromResult(contentIdentifier: ContentIdentifier) {
-            if results.isEmpty {
-                return
-            }
-
-            var resultGroupsToClean: [Int] = []
-
-            for resultGroup in results {
-                if resultGroup.sourceID != contentIdentifier.sourceId {
-                    continue
-                }
-
-                let pagedResult = resultGroup.result
-                var pagedResults = pagedResult.results
-                pagedResults.removeAll { $0.id == contentIdentifier.contentId }
-
-                if pagedResults.isEmpty {
-                    resultGroupsToClean.append(resultGroup.hashValue)
-                }
-            }
-
-            if !resultGroupsToClean.isEmpty {
-                results.removeAll { resultGroupsToClean.contains($0.hashValue) }
             }
         }
 
