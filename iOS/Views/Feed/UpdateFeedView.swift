@@ -44,7 +44,7 @@ struct UpdateFeedView: View {
         Section {
             ForEach(entries) { entry in
                 UpdateFeedTile(entry: entry)
-                    .swipeActions(allowsFullSwipe: true) {
+                    .swipeActions {
                         Button(action: { clear(for: entry.id) }) {
                             Label("Clear Updates", systemImage: "xmark.circle")
                         }

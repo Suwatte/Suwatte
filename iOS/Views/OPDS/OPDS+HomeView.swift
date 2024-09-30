@@ -22,11 +22,13 @@ struct OPDSView: View {
                         .environmentObject(server.toClient())
                 }
                 .swipeActions {
-                    Button("Delete") {
+                    Button(role: .destructive) {
                         Task {
                             let actor = await RealmActor.shared()
                             await actor.removeOPDServer(id: server.id)
                         }
+                    } label: {
+                        Label("Delete", systemImage: "trash")
                     }
                     .tint(.red)
                     Button("Rename") {

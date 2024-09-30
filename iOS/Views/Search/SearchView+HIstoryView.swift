@@ -15,13 +15,16 @@ extension SearchView {
                 ForEach(model.history) { entry in
                     Cell(entry: entry)
                         .swipeActions {
-                            Button("Delete", role: .destructive) {
+                            Button(role: .destructive) {
                                 Task {
                                     let actor = await RealmActor.shared()
                                     await actor.deleteSearch(entry.id)
                                     await model.loadSearchHistory()
                                 }
+                            } label: {
+                                Label("Delete", systemImage: "trash")
                             }
+                            .tint(.red)
                         }
                 }
             }

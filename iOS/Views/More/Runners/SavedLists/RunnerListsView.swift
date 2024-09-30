@@ -33,14 +33,15 @@ struct RunnerListsView: View {
                         }
                     }
                 }
-                .swipeActions(allowsFullSwipe: true) {
-                    Button {
+                .swipeActions {
+                    Button(role: .destructive) {
                         Task {
                             await RealmActor.shared().removeRunnerList(with: list.url)
                         }
                     } label: {
                         Label("Delete", systemImage: "trash")
                     }
+                    .tint(.red)
                 }
             }
         }
@@ -102,7 +103,10 @@ extension RunnerListsView {
         }))
         ac.addAction(submitAction)
 
-        getKeyWindow()?.rootViewController?.present(ac, animated: true)
+        let window = getKeyWindow()
+        let viewController = window?.rootViewController?.presentedViewController ?? window?.rootViewController
+
+        viewController?.present(ac, animated: true)
     }
 }
 
