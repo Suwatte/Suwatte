@@ -284,10 +284,6 @@ extension MigrationController {
         }
 
         func replace(_ entry: LibraryEntry, with highlight: TaggedHighlight) {
-            if entry.id == highlight.id {
-                return
-            }
-            
             let object = LibraryEntry()
             object.content = findOrCreate(highlight)
             object.collections = entry.collections
