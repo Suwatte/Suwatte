@@ -34,7 +34,9 @@ extension RealmActor {
 
         let contentLinks = realm
             .objects(ContentLink.self)
-            .where { $0.entry != nil && $0.content != nil && !$0.isDeleted }
+            .where { $0.entry != nil && !$0.entry.isDeleted
+                && $0.content != nil && !$0.content.isDeleted
+                && !$0.isDeleted }
             .freeze()
 
         let lists = realm
