@@ -46,6 +46,22 @@ extension RealmActor {
         return true
     }
 
+    func unlinkAll(for entry: String) async {
+        let targets = realm
+            .objects(ContentLink.self)
+            .where { $0.entry.id == entry && !$0.isDeleted }
+
+        guard !targets.isEmpty else {
+            return
+        }
+        
+        await operation {
+            for target in targets {
+                target.isDeleted = true
+            }
+        }
+    }
+
     func unlinkContent(_ child: String, _ from: String) async {
         let target = realm
             .objects(ContentLink.self)
