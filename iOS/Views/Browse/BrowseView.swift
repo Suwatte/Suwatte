@@ -17,6 +17,10 @@ struct BrowseView: View {
     @State var hasCheckedForRunnerUpdates = false
     @State var runnersWithUpdates: [TaggedRunner] = []
     @State var presentUpdatesView = false
+    @State var selectedSourceInfo: String?
+    @State var presentSavedLists = false
+    @State var showAddLocalSourceSheet = false
+
     var body: some View {
         SmartNavigationView {
             List {
@@ -34,6 +38,23 @@ struct BrowseView: View {
             .navigationBarTitle("Browse")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem {
+                    Menu {
+                        Button {
+                            presentSavedLists.toggle()
+                        } label: {
+                            Label("Lists", systemImage: "book.pages")
+                        }
+                        Button {
+                            showAddLocalSourceSheet.toggle()
+                        } label: {
+                            Label("Install locale source", systemImage: "externaldrive.fill.badge.plus")
+                        }
+                    } label: {
+                        Image(systemName: "shippingbox")
+                    }
+                }
+
                 ToolbarItem {
                     NavigationLink {
                         SearchView()
@@ -80,15 +101,51 @@ struct BrowseView: View {
                     .closeButton(title: "Done")
                 }
             })
+            .sheet(item: $selectedSourceInfo, onDismiss: { selectedSourceInfo = nil }) { sourceInfo in
+                SmartNavigationView {
+                    SourceInfoGateway(runnerID: sourceInfo)
+                        .navigationBarTitleDisplayMode(.inline)
+                        .closeButton(title: "Close")
+                }
+            }
             .sheet(isPresented: $presentUpdatesView, content: {
                 SmartNavigationView {
                     UpdateRunnersView(data: $runnersWithUpdates)
                 }
             })
+            .sheet(isPresented: $presentSavedLists) {
+                SmartNavigationView {
+                    RunnerListsView()
+                        .closeButton(title: "Close")
+                }
+            }
             .animation(.default, value: model.links)
             .animation(.default, value: model.runners)
             .animation(.default, value: model.pending)
             .animation(.default, value: noListInstalled)
+            .fileImporter(isPresented: $showAddLocalSourceSheet, allowedContentTypes: [.init(filenameExtension: "stt")!]) { result in
+
+                guard let path = try? result.get() else {
+                    ToastManager.shared.error("Task Failed")
+                    return
+                }
+
+                if path.startAccessingSecurityScopedResource() {
+                    Task {
+                        do {
+                            try await DSK.shared.importRunner(from: path)
+                            await MainActor.run {
+                                ToastManager.shared.info("Added!")
+                            }
+                        } catch {
+                            await MainActor.run {
+                                ToastManager.shared.error(error)
+                            }
+                        }
+                        path.stopAccessingSecurityScopedResource()
+                    }
+                }
+            }
         }
         .task {
             guard !hasLoaded else { return }
@@ -156,6 +213,7 @@ extension BrowseView {
                             Spacer()
                         }
                     }
+                    .modifier(BrowseViewSourceModifier(selectedSourceInfo: $selectedSourceInfo, runner: runner))
                     .disabled(!runner.enabled)
                 }
             } header: {
@@ -191,11 +249,72 @@ extension BrowseView {
                             Spacer()
                         }
                     }
+                    .modifier(BrowseViewSourceModifier(selectedSourceInfo: $selectedSourceInfo, runner: runner))
                     .disabled(!runner.enabled)
                 }
             } header: {
                 Text("Trackers")
             }
+        }
+    }
+}
+
+extension BrowseView {
+    struct SourceInfoGateway: View {
+        let runnerID: String
+        var body: some View {
+            LoadableRunnerView(runnerID: runnerID) { runner in
+                if let source = runner as? AnyContentSource {
+                    ContentSourceInfoView(source: source)
+                } else if let tracker = runner as? JSCContentTracker {
+                    ContentTrackerInfoView(tracker: tracker)
+                }
+            }
+        }
+    }
+}
+
+struct BrowseViewSourceModifier: ViewModifier {
+    @Binding var selectedSourceInfo: String?
+    @State var runner: StoredRunnerObject
+
+    func body(content: Content) -> some View {
+        content
+            .swipeActions {
+                removeRunnerButton
+                    .tint(.red)
+            }
+            .swipeActions(edge: .leading) {
+                selectSourceInfoButton
+                    .tint(.orange)
+            }
+            .contextMenu {
+                selectSourceInfoButton
+                removeRunnerButton
+            }
+    }
+
+    var selectSourceInfoButton: some View {
+        Button {
+            selectedSourceInfo = runner.id
+        } label: {
+            Label("Info", systemImage: "info.circle")
+        }
+    }
+
+    var removeRunnerButton: some View {
+        Button(role: .destructive) {
+            removeRunner()
+        } label: {
+            Label("Uninstall", systemImage: "trash")
+        }
+    }
+
+    func removeRunner() {
+        Task {
+            await DSK.shared.removeRunner(runner.id)
+            StateManager.shared.browseUpdateRunnerPageLinks.send()
+            StateManager.shared.libraryUpdateRunnerPageLinks.send()
         }
     }
 }
@@ -216,9 +335,11 @@ extension BrowseView {
                 let id = object.id
                 if let links = model.links[id] {
                     PageLinksView(object, links)
+                        .modifier(BrowseViewSourceModifier(selectedSourceInfo: $selectedSourceInfo, runner: object))
                 }
             }
         }
+
     }
 
     func PageLinksView(_ runner: StoredRunnerObject, _ links: [DSKCommon.PageLinkLabel]) -> some View {

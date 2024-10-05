@@ -46,9 +46,12 @@ struct BackupsView: View {
                     }
                 }
                 .swipeActions {
-                    Button("Delete", role: .destructive) {
+                    Button(role: .destructive) {
                         manager.remove(url: url)
+                    } label: {
+                        Label("Delete", systemImage: "trash")
                     }
+                    .tint(.red)
                 }
             }
         }

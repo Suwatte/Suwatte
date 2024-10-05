@@ -216,14 +216,14 @@ extension HistoryView {
         var marker: ProgressMarker
         func body(content: Content) -> some View {
             content
-                .swipeActions(allowsFullSwipe: true, content: {
+                .swipeActions {
                     Button(role: .destructive) {
                         handleHideMarkers()
                     } label: {
                         Label("Remove", systemImage: "eye.slash")
                     }
                     .tint(.red)
-                })
+                }
         }
 
         private func handleHideMarkers() {

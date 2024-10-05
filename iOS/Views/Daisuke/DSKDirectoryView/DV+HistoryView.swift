@@ -22,13 +22,16 @@ extension DirectoryView {
                     ForEach(results) { result in
                         Cell(for: result)
                             .swipeActions {
-                                Button("Delete", role: .destructive) {
+                                Button(role: .destructive) {
                                     let id = result.id
                                     Task {
                                         let actor = await RealmActor.shared()
                                         await actor.deleteSearch(id)
                                     }
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
                                 }
+                                .tint(.red)
                             }
                     }
                 }
