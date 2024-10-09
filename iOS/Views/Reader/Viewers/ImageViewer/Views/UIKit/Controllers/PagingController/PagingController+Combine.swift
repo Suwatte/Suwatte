@@ -57,7 +57,6 @@ extension Controller {
                     }
                     self?.setReadingOrder()
                     self?.collectionView.collectionViewLayout.invalidateLayout()
-                    self?.collectionView.setNeedsDisplay()
                 }
             }
             .store(in: &subscriptions)

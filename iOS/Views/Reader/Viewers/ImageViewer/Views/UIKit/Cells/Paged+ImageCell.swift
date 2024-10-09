@@ -32,7 +32,6 @@ class PagedViewerImageCell: UICollectionViewCell, CancellableImageCell {
         pageView = nil
         NSLayoutConstraint.deactivate(pageViewContraints)
         pageViewContraints.removeAll()
-        self.transform = .identity
     }
 
     func set(page: PanelPage, delegate: UIContextMenuInteractionDelegate?) {
