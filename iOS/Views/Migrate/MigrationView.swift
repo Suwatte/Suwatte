@@ -38,6 +38,9 @@ struct MigrationView: View {
 
                     MigrationEntryListView()
                 }
+                // Ugly hack, there is no SectionSeperatorSpacing in ios 15 so we need it right now
+                .environment(\.defaultMinListHeaderHeight, 0)
+
             } else {
                 ProgressView()
                     .task {

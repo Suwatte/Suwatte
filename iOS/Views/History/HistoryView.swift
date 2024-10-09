@@ -18,7 +18,7 @@ struct HistoryView: View {
                 Cell(marker: marker)
                     .listRowSeparator(.hidden)
                     .modifier(StyleModifier())
-                    .modifier(DeleteModifier(id: marker.id))
+                    .modifier(DeleteModifier(marker: marker))
                     .onTapGesture {
                         action(marker)
                     }
@@ -137,7 +137,7 @@ extension HistoryView {
             if content.streamable {
                 StateManager.shared.stream(item: content.toHighlight(), sourceId: content.sourceId)
             } else {
-                model.csSelection = (content.sourceId, content.toHighlight())
+                model.csSelection = (content.sourceId, nil, content.toHighlight())
             }
         } else if let content = marker.chapter?.opds {
             content.read()
@@ -213,23 +213,27 @@ extension HistoryView {
     }
 
     struct DeleteModifier: ViewModifier {
-        var id: String
+        var marker: ProgressMarker
         func body(content: Content) -> some View {
             content
-                .swipeActions(allowsFullSwipe: true, content: {
+                .swipeActions {
                     Button(role: .destructive) {
-                        handleRemoveMarker()
+                        handleHideMarkers()
                     } label: {
                         Label("Remove", systemImage: "eye.slash")
                     }
                     .tint(.red)
-                })
+                }
         }
 
-        private func handleRemoveMarker() {
+        private func handleHideMarkers() {
+            guard let contentId = marker.chapter?.contentId else {
+                return
+            }
+
             Task {
                 let actor = await RealmActor.shared()
-                await actor.removeFromHistory(chapterId: id)
+                await actor.removeFromHistory(contentId: contentId)
             }
         }
     }

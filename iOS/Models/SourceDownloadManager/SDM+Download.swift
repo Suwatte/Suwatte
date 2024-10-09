@@ -49,8 +49,7 @@ extension SDM {
             announce(id, state: .downloading(progress: 0.0))
             let completion = try await handleFetchResponse(id: id, urls: data.urls, raws: data.raws, text: data.text)
 
-            guard completion else { return }
-            await didFinishTasksAtHead(id: id, with: .completed)
+            await didFinishTasksAtHead(id: id, with: completion ? .completed : .failed)
         } catch {
             Logger.shared.error(error, CONTEXT)
             await didFinishTasksAtHead(id: id, with: .failed)
@@ -119,7 +118,7 @@ extension SDM {
                 return (downloadPath, [.removePreviousFile, .createIntermediateDirectories])
             }
 
-            let task = AF.download(request, to: destination).serializingDownloadedFileURL()
+            let task = DSKNetworkClient.shared.session.download(request, to: destination).serializingDownloadedFileURL()
 
             _ = try await task.result.get()
             let progress = Double(counter) / Double(total)

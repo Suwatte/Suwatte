@@ -177,8 +177,7 @@ extension SDM {
 
         guard let download, download.status == .completed else { return nil }
 
-        let data = StoredChapterData()
-        data.chapter = download.chapter
+        var data = StoredChapterData()
 
         // Text
         if let text = download.text {
@@ -204,7 +203,7 @@ extension SDM {
         let url = folder(for: id)
 
         if url.hasDirectoryPath {
-            let imageExtensions = ["jpg", "png", "gif", "jpeg", "bmp", "tiff", "heif", "heic"]
+            let imageExtensions = ["jpg", "png", "gif", "jpeg", "bmp", "tiff", "heif", "heic", "webp", "avif"]
             let directoryContents = try FileManager
                 .default
                 .contentsOfDirectory(at: url, includingPropertiesForKeys: nil)

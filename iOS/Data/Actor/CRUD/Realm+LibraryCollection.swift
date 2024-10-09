@@ -84,4 +84,12 @@ extension RealmActor {
             collection.filter = filter
         }
     }
+
+    func setTitlePinningType(for id: String, pinningType: TitlePinningType) async {
+        let collection = getLibraryCollection(for: id)
+        guard let collection else { return }
+        await operation {
+            collection.pinningType = pinningType
+        }
+    }
 }

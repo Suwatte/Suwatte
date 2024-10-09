@@ -18,6 +18,8 @@ struct BackupsView: View {
 
     @State var presentActions = false
     @State var presentAlert = false
+    @State var markerSelection: URL?
+    @State var presentMarkerAlert = false
     @State var presentImporter = false
     @State var restoreTask: Task<Void, Never>? = nil
     private let downloader = CloudDownloader()
@@ -30,14 +32,26 @@ struct BackupsView: View {
                 }
                 .buttonStyle(.plain)
                 .contextMenu {
-                    Button { handleShareURL(url: url) } label: {
+                    Button { 
+                        markerSelection = url
+                        presentMarkerAlert.toggle()
+                    } label: {
+                        Label("Restore Progress Markers", systemImage: "clock.arrow.2.circlepath")
+                    }
+
+                    Button {
+                        handleShareURL(url: url) }
+                    label: {
                         Label("Share", systemImage: "square.and.arrow.up")
                     }
                 }
                 .swipeActions {
-                    Button("Delete", role: .destructive) {
+                    Button(role: .destructive) {
                         manager.remove(url: url)
+                    } label: {
+                        Label("Delete", systemImage: "trash")
                     }
+                    .tint(.red)
                 }
             }
         }
@@ -47,6 +61,14 @@ struct BackupsView: View {
             if let selection = selection {
                 Button("Restore", role: .destructive) {
                     handleRestore(url: selection)
+                }
+            }
+        }
+        .alert("IMPORTANT NOTICE!! \n Restoring the Progress requires you to have visited the titles once since the last imported backup or update. This is needed because the app needs the metadata of the chapters!", isPresented: $presentMarkerAlert) {
+                Button("Cancel", role: .cancel) {}
+            if let markerSelection = markerSelection {
+                Button("Restore", role: .destructive) {
+                    handleRestoreOldProgressMarker(url: markerSelection)
                 }
             }
         }
@@ -65,6 +87,13 @@ struct BackupsView: View {
 
                     Button { presentImporter.toggle() } label: {
                         Label("Import Backup", systemImage: "tray.and.arrow.down.fill")
+                    }
+
+                    Button {
+                        let directory = FileManager.default.applicationSupport.appendingPathComponent("Database", isDirectory: true)
+                        handleShareURL(url: directory.appendingPathComponent("suwatte_db.realm"))
+                    } label: {
+                        Label("Export Realm Database", systemImage: "square.and.arrow.up")
                     }
 
                 } label: {
@@ -116,6 +145,26 @@ extension BackupsView {
         }
 
         controller.present(activityController, animated: true, completion: nil)
+    }
+
+    func handleRestoreOldProgressMarker(url: URL) {
+        ToastManager.shared.loading = true
+
+        restoreTask = Task {
+            do {
+                let restoredMarkers = try await manager.restoreProgressMarkers(from: url)
+                await MainActor.run(body: {
+                    ToastManager.shared.loading = false
+                    ToastManager.shared.info("Restored \(restoredMarkers) Progress Markers from Backup!")
+                })
+            } catch {
+                Logger.shared.error("[BackUpView] [Restore] \(error)")
+                await MainActor.run(body: {
+                    ToastManager.shared.error(error)
+                    ToastManager.shared.loading = false
+                })
+            }
+        }
     }
 
     func handleRestore(url: URL) {

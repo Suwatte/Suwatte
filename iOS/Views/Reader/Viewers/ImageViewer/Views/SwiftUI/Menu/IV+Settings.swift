@@ -9,18 +9,18 @@ import SwiftUI
 
 struct IVSettingsView: View {
     // AppStorage
-    @AppStorage(STTKeys.EnableOverlay) var enableOverlay = false
-    @AppStorage(STTKeys.TapSidesToNavigate) var tapToNavigate = false
     @AppStorage(STTKeys.OverlayColor) var overlayColor: Color = .black
     @AppStorage(STTKeys.BackgroundColor) var backgroundColor = Color.primary
-    @AppStorage(STTKeys.UseSystemBG) var useSystemBG = true
     @AppStorage(STTKeys.PagedNavigator) var pagedNavigator = ReaderNavigation.Modes.standard
     @AppStorage(STTKeys.VerticalNavigator) var verticalNavigator = ReaderNavigation.Modes.lNav
     @AppStorage(STTKeys.ReaderFilterBlendMode) var readerBlendMode = STTBlendMode.normal
     @AppStorage(STTKeys.ReaderGrayScale) var useGrayscale = false
     @AppStorage(STTKeys.ReaderColorInvert) var useColorInvert = false
-    @AppStorage(STTKeys.VerticalAutoScroll) var verticalAutoScroll = false
     // Preference Publisher
+    @Preference(\.enableOverlay) var enableOverlay
+    @Preference(\.useSystemBG) var useSystemBG
+    @Preference(\.verticalAutoScroll) var verticalAutoScroll
+    @Preference(\.tapSidesToNavigate) var tapToNavigate
     @Preference(\.verticalAutoScrollSpeed) var autoScrollSpeed
     @Preference(\.imageInteractions) var imageInteractions
     @Preference(\.downsampleImages) var downsampleImages
@@ -61,6 +61,7 @@ struct IVSettingsView: View {
                     Section {
                         Toggle("Double Paged", isOn: $isDoublePaged)
                             .onChange(of: isDoublePaged) { _ in
+                                model.setIsDoublePaged(isDoublePaged: isDoublePaged)
                                 model.producePendingState()
                             }
 

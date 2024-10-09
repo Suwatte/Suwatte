@@ -13,6 +13,8 @@ extension LibraryView {
         @Environment(\.presentationMode) private var presentationMode
         @EnvironmentObject private var model: StateManager
 
+        @State private var editMode = EditMode.inactive
+
         var collections: [LibraryCollection] {
             model.collections
         }
@@ -25,11 +27,10 @@ extension LibraryView {
                 }
                 .navigationTitle("Collections")
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbar(content: {
-                    EditButton()
-                })
+                .toolbar(content: { EditButton() })
                 .closeButton()
                 .animation(.default, value: collections)
+                .environment(\.editMode, $editMode)
             }
         }
     }
@@ -47,7 +48,9 @@ extension MCV {
         Section {
             ForEach(collections) { collection in
                 NavigationLink {
-                    CollectionManagementView(collection: collection, collectionName: collection.name)
+                    Form {
+                        CollectionManagementView(collection: collection, collectionName: collection.name)
+                    }
                 } label: {
                     Text(collection.name)
                 }

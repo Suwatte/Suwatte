@@ -36,6 +36,7 @@ final class IVViewModel: ObservableObject {
     let dataCache = IVDataCache()
 
     var pendingState: PendingViewerState?
+    var isDoublePaged: Bool?
 }
 
 // MARK: State & Initial Load
@@ -114,6 +115,10 @@ extension IVViewModel {
         scrollbarWidth = Preferences.standard.readerScrollbarWidth
     }
 
+    func setIsDoublePaged(isDoublePaged: Bool) {
+        self.isDoublePaged = isDoublePaged
+    }
+
     func producePendingState() {
         pendingState = .init(chapter: viewerState.chapter,
                              pageIndex: viewerState.page - 1,
@@ -185,19 +190,25 @@ extension IVViewModel {
 extension IVViewModel {
     nonisolated func toggleMenu() {
         Task { @MainActor in
-            control.menu.toggle()
+            withAnimation(.easeInOut(duration: 0.25)) {
+                control.menu.toggle()
+            }
         }
     }
 
     nonisolated func hideMenu() {
         Task { @MainActor in
-            control.menu = false
+            withAnimation(.easeInOut(duration: 0.25)) {
+                control.menu = false
+            }
         }
     }
 
     nonisolated func showMenu() {
         Task { @MainActor in
-            control.menu = true
+            withAnimation(.easeInOut(duration: 0.25)) {
+                control.menu = true
+            }
         }
     }
 

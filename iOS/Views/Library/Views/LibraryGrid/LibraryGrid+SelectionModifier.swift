@@ -7,6 +7,7 @@
 
 import RealmSwift
 import SwiftUI
+
 extension LibraryView.LibraryGrid {
     struct SelectionModifier: ViewModifier {
         enum SelectionOption: Identifiable {
@@ -17,7 +18,9 @@ extension LibraryView.LibraryGrid {
             case collections, flags, migrate
         }
 
-        var entries: [LibraryEntry]
+        var regularEntries: [LibraryEntry]
+        var pinnedEntries: [LibraryEntry]
+
         @State var selectionOption: SelectionOption?
         @State var confirmRemoval = false
         @EnvironmentObject var model: ViewModel
@@ -31,11 +34,11 @@ extension LibraryView.LibraryGrid {
 
         func body(content: Content) -> some View {
             content
-                .fullScreenCover(item: $selectionOption, onDismiss: { model.selectedIndexes.removeAll() }) { option in
+                .fullScreenCover(item: $selectionOption) { option in
                     Group {
                         switch option {
-                        case .collections: MoveCollectionsView(entries: entries)
-                        case .flags: MoveReadingFlag(entries: entries)
+                        case .collections: MoveCollectionsView(entries: selectedEntries)
+                        case .flags: MoveReadingFlag(entries: selectedEntries)
                         case .migrate:
                             SmartNavigationView {
                                 MigrationView(model: .init(contents: migrationSelections))
@@ -57,7 +60,7 @@ extension LibraryView.LibraryGrid {
                         removeFromLibrary()
                     }
                 }, message: {
-                    Text("Are you sure you want to remove these \(model.selectedIndexes.count) titles from your library?")
+                    Text("Are you sure you want to remove these \(selectedCount) titles from your library?")
 
                 })
                 .modifier(ConditionalToolBarModifier(showBB: $model.isSelecting))
@@ -72,8 +75,8 @@ extension LibraryView.LibraryGrid {
                             }
                             .padding()
                             Spacer()
-                            if !model.selectedIndexes.isEmpty {
-                                Text("^[\(model.selectedIndexes.count) Selection](inflect: true)")
+                            if didSelectSomething {
+                                Text("^[\(selectedCount) Selection](inflect: true)")
                                 Menu("Options") {
                                     Button(role: .destructive) { confirmRemoval.toggle() } label: {
                                         Label("Remove From Library", systemImage: "trash")
@@ -95,33 +98,55 @@ extension LibraryView.LibraryGrid {
         }
 
         func selectAll() {
-            model.selectedIndexes = Set(entries.indices.map { $0 })
+            model.selectedPinnedIndexes = Set(pinnedEntries.indices.map { $0 })
+            model.selectedRegularIndexes = Set(regularEntries.indices.map { $0 })
         }
 
         func deselectAll() {
-            model.selectedIndexes.removeAll()
+            model.clearSelection()
         }
 
         func invert() {
-            let all = Set(entries.indices)
-            model.selectedIndexes = all.symmetricDifference(all)
+            let allRegular = Set(regularEntries.indices)
+            model.selectedRegularIndexes = model.selectedRegularIndexes.symmetricDifference(allRegular)
+
+            let allPinned = Set(pinnedEntries.indices)
+            model.selectedPinnedIndexes = model.selectedPinnedIndexes.symmetricDifference(allPinned)
         }
 
         func fillRange() {
-            if model.selectedIndexes.isEmpty { return }
+            if !didSelectSomething { return }
 
-            let indexes = model.selectedIndexes.sorted()
+            let pinnedIndexes = model.selectedPinnedIndexes.sorted()
+            let pinnedStart = pinnedIndexes.first
+            let pinnedEnd = pinnedIndexes.last
 
-            let start = indexes.first!
-            let end = indexes.last!
+            let regularIndexes = model.selectedRegularIndexes.sorted()
 
-            model.selectedIndexes = Set(entries.indices[start ... end])
+            let regularStart = regularIndexes.first
+            let regularEnd = regularIndexes.last
+
+            if pinnedStart != nil {
+                var end = 0
+                if regularStart != nil {
+                    end = pinnedEntries.endIndex - 1
+                } else if let pinnedEnd {
+                    end = pinnedEnd
+                }
+                model.selectedPinnedIndexes = Set(pinnedEntries.indices[pinnedStart! ... end])
+            }
+
+            let start = pinnedStart != nil && regularStart != nil ? 0 : regularStart!
+            let end = regularEnd != nil ? regularEnd! : 0
+
+            if end > start {
+                model.selectedRegularIndexes = Set(regularEntries.indices[start ... end])
+            }
         }
 
         func removeFromLibrary() {
-            let targets = zip(entries.indices, entries)
-                .filter { model.selectedIndexes.contains($0.0) }
-                .map { $0.1.id }
+            let targets = selectedEntries
+                .map { $0.id }
 
             Task {
                 let actor = await Suwatte.RealmActor.shared()
@@ -129,14 +154,32 @@ extension LibraryView.LibraryGrid {
             }
 
             DispatchQueue.main.async {
-                model.selectedIndexes.removeAll()
+                deselectAll()
             }
         }
 
         var selectedEntries: [LibraryEntry] {
-            zip(entries.indices, entries)
-                .filter { model.selectedIndexes.contains($0.0) }
+            let regularSelectedEntries = zip(regularEntries.indices, regularEntries)
+                .filter { model.selectedRegularIndexes.contains($0.0) }
                 .map { $0.1 }
+
+            let pinnedSelectedEntries = zip(pinnedEntries.indices, pinnedEntries)
+                .filter { model.selectedPinnedIndexes.contains($0.0) }
+                .map { $0.1 }
+
+            return regularSelectedEntries + pinnedSelectedEntries
+        }
+
+        var didSelectSomething: Bool {
+            return !model.selectedPinnedIndexes.isEmpty || !model.selectedRegularIndexes.isEmpty
+        }
+
+        var selectedCount: Int {
+            if !didSelectSomething {
+                return 0
+            }
+
+            return model.selectedPinnedIndexes.count + model.selectedRegularIndexes.count
         }
     }
 }

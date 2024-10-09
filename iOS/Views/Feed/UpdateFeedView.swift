@@ -44,7 +44,7 @@ struct UpdateFeedView: View {
         Section {
             ForEach(entries) { entry in
                 UpdateFeedTile(entry: entry)
-                    .swipeActions(allowsFullSwipe: true) {
+                    .swipeActions {
                         Button(action: { clear(for: entry.id) }) {
                             Label("Clear Updates", systemImage: "xmark.circle")
                         }
@@ -57,7 +57,7 @@ struct UpdateFeedView: View {
                             StateManager.shared.stream(item: highlight, sourceId: content.sourceId)
                         } else {
                             selection = nil
-                            selection = (content.sourceId, highlight)
+                            selection = (content.sourceId, nil, highlight)
                         }
                     }
                     .id(entry.hashValue)

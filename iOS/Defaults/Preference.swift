@@ -93,6 +93,9 @@ final class Preferences {
     @UserDefault(STTKeys.SelectiveUpdates)
     var selectiveUpdates = false
 
+    @UserDefault(STTKeys.VerticalAutoScroll)
+    var verticalAutoScroll = false
+
     @UserDefault(STTKeys.VerticalAutoScrollSpeed)
     var verticalAutoScrollSpeed: Double = 16
 
@@ -200,6 +203,12 @@ final class Preferences {
     
     @UserDefault(STTKeys.TrackerAutoSync)
     var trackerAutoSync = true
+
+    @UserDefault(STTKeys.UseSystemBG)
+    var useSystemBG = true
+
+    @UserDefault(STTKeys.EnableOverlay)
+    var enableOverlay = false
 }
 
 @propertyWrapper

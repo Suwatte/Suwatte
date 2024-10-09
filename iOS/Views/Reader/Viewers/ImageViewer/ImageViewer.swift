@@ -31,12 +31,14 @@ struct ImageViewer: View {
         .statusBarHidden(!model.control.menu)
         .modifier(CustomBackgroundModifier())
         .ignoresSafeArea()
-        .animation(StandardAnimation, value: model.control)
         .animation(StandardAnimation, value: model.presentationState)
         .animation(StandardAnimation, value: model.viewerState)
         .animation(StandardAnimation, value: model.slider)
         .modifier(ReaderSheetsModifier())
         .environmentObject(model)
+        .task {
+            model.setIsDoublePaged(isDoublePaged: doublePaged)
+        }
         .onDisappear {
             Task { @MainActor in
                 ImageCache.shared.removeAll()
@@ -46,6 +48,8 @@ struct ImageViewer: View {
             guard UIDevice.current.userInterfaceIdiom == .pad, orientation.isLandscape, !doublePaged else {
                 return
             }
+
+            model.setIsDoublePaged(isDoublePaged: true)
             model.producePendingState()
             doublePaged = true
         })

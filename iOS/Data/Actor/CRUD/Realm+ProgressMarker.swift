@@ -17,12 +17,17 @@ extension RealmActor {
         return progressMarkers
     }
 
-    func getFrozenContentMarkers(for contentIdentifier: ContentIdentifier) -> [ProgressMarker] {
-        let progressMarkers = getContentMarkers(for: contentIdentifier)
-            .freeze()
-            .toArray()
+    func getFrozenContentMarkers(for contentIdentifier: ContentIdentifier, completed: Bool? = nil) -> [ProgressMarker] {
+        var progressMarkers = getContentMarkers(for: contentIdentifier)
+        if completed != nil {
+            let pred = NSPredicate(format: "chapter != null && isDeleted == false && \(completed! ? "" : "not")(totalPageCount >= 1 && lastPageRead == totalPageCount)")
+            progressMarkers = progressMarkers
+                .filter(pred)
+        }
 
         return progressMarkers
+            .freeze()
+            .toArray()
     }
 
     func getFrozenContentMarker(for chapterId: String) -> ProgressMarker? {
@@ -55,13 +60,13 @@ extension RealmActor {
         return getLatestReadContentMarker(for: contentIdentifier)?.freeze()
     }
 
-    func getMaxReadContentMarker(for contentIdentifier: ContentIdentifier) -> ProgressMarker? {
-        return getFrozenContentMarkers(for: contentIdentifier)
+    func getMaxReadContentMarker(for contentIdentifier: ContentIdentifier, completed: Bool? = nil) -> ProgressMarker? {
+        return getFrozenContentMarkers(for: contentIdentifier, completed: completed)
             .max(by: \.chapter!.chapterOrderKey)
     }
 
-    func getMaxReadKey(for contentIdentifier: ContentIdentifier) -> Double {
-        getMaxReadContentMarker(for: contentIdentifier)?.chapter?.chapterOrderKey ?? 0
+    func getMaxReadKey(for contentIdentifier: ContentIdentifier, completed: Bool? = nil) -> Double {
+        getMaxReadContentMarker(for: contentIdentifier, completed: completed)?.chapter?.chapterOrderKey ?? 0
     }
 
     func didCompleteChapter(chapter: ThreadSafeChapter) async {
@@ -137,15 +142,18 @@ extension RealmActor {
         await updateLastRead(forId: id)
     }
 
-    func removeFromHistory(chapterId: String) async {
-        // Get Object
-        let target = getContentMarker(for: chapterId)
+    func removeFromHistory(contentId: String) async {
+        let collection = realm
+                .objects(ProgressMarker.self)
+                .where { $0.chapter.contentId == contentId && !$0.isDeleted }
 
-        guard let target else {
+        guard !collection.isEmpty else {
             return
         }
         await operation {
-            target.dateRead = nil // Simply Removes Date Value so keeps contents read marker.
+            for marker in collection {
+                marker.dateRead = nil // Simply Removes Date Value so keeps contents read marker.
+            }
         }
     }
 
@@ -230,8 +238,8 @@ extension RealmActor {
 
 extension RealmActor {
     /// Fetches the highest marked chapter with respect to content links
-    func getMaxReadChapterOrderKey(for contentIdentifier: ContentIdentifier) -> Double {
-        let maxReadOnTarget = getMaxReadKey(for: contentIdentifier)
+    func getMaxReadChapterOrderKey(for contentIdentifier: ContentIdentifier, completed: Bool? = nil) -> Double {
+        let maxReadOnTarget = getMaxReadKey(for: contentIdentifier, completed: completed)
         let maxReadOnLinked =
             getLinkedContent(for: contentIdentifier.id)
             .map { getMaxReadKey(for: $0.ContentIdentifier) }

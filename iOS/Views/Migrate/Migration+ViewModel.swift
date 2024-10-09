@@ -127,7 +127,7 @@ extension MigrationController {
         })
     }
 
-    private typealias ReturnValue = (entry: TaggedHighlight, number: Double)
+    private typealias ReturnValue = (entry: TaggedHighlight, number: Double, chapterCount: Int)
     private func handleSourcesSearch(id: String, query: String, chapter: Double?, sources: [AnyContentSource]) async -> (id: String, state: MigrationItemState) {
         await withTaskGroup(of: ReturnValue?.self, body: { group in
 
@@ -173,9 +173,9 @@ extension MigrationController {
 
             if let max {
                 if max.number >= (chapter ?? 0) {
-                    return (id, .found(max.entry))
+                    return (id, .found(max.entry, max.chapterCount))
                 } else {
-                    return (id, .lowerFind(max.entry, chapter ?? 0, max.number))
+                    return (id, .lowerFind(max.entry, chapter ?? 0, max.number, max.chapterCount))
                 }
             } else {
                 return (id, .noMatches)
@@ -202,11 +202,24 @@ extension MigrationController {
 
         guard let target else { return nil }
 
-        return (TaggedHighlight(from: result, with: source.id), target.number)
+        return (TaggedHighlight(from: result, with: source.id), target.number, chapters?.count ?? 0)
+    }
+
+    func getChapters(for sourceId: String, id: String) async -> [DSKCommon.Chapter]? {
+        guard let source = sources[sourceId] else {
+            return nil
+        }
+
+        return await getChapters(for: source, id: id)
     }
 
     private func getChapters(for source: AnyContentSource, id: String) async -> [DSKCommon.Chapter] {
         (try? await source.getContentChapters(contentId: id)) ?? []
+    }
+
+    func getStoredChapterCount(for content: TaggedHighlight) async -> Int {
+        let actor = await RealmActor.shared()
+        return await actor.getStoredChapterCount(content.sourceID, content.contentID)
     }
 }
 
@@ -376,11 +389,11 @@ extension MigrationController {
                     case let .found(result):
                         switch libraryStrat {
                             case .link:
-                                link(libEntry, with: result)
+                                link(libEntry, with: result.0)
                             case .replace:
-                                replace(libEntry, with: result)
+                                replace(libEntry, with: result.0)
                         }
-                    case let .lowerFind(result, _, _):
+                    case let .lowerFind(result, _, _, _):
                         if lessChapterSrat == .skip { continue }
                         switch libraryStrat {
                             case .link:

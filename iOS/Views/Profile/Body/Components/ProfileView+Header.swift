@@ -160,8 +160,7 @@ private extension Skeleton {
 
                 if model.source.ablityNotDisabled(\.disableTrackerLinking) {
                     NavigationLink {
-                        let titles = (model.content.additionalTitles ?? []).appending(model.content.title).distinct()
-                        TrackerManagementView(model: .init(id: model.identifier, titles))
+                        TrackerManagementView(model: .init(id: model.identifier, model.content.title))
                             .tint(accentColor)
                             .accentColor(accentColor)
                     } label: {

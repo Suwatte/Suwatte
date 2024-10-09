@@ -33,6 +33,11 @@ final class StateManager: ObservableObject {
     // Tokens
     private var thumbnailToken: NotificationToken?
     private var collectionToken: NotificationToken?
+    private var collectionInitialized: Bool = false
+
+    func isCollectionInitialized() -> Bool {
+        collectionInitialized
+    }
 
     func initialize() {
         registerNetworkObserver()
@@ -209,6 +214,7 @@ extension StateManager {
             Task { @MainActor in
                 withAnimation { [weak self] in
                     self?.collections = value
+                    self?.collectionInitialized = true
                 }
             }
         }
@@ -220,6 +226,7 @@ extension StateManager {
 
         collectionToken?.invalidate()
         collectionToken = nil
+        collectionInitialized = false
     }
 }
 

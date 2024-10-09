@@ -115,6 +115,8 @@ extension RealmActor {
             await operation {
                 target.isDeleted = true
             }
+
+            await unlinkAll(for: ids.id)
             return false
         }
 

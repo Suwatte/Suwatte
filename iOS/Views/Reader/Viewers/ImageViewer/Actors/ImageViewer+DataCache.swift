@@ -125,10 +125,7 @@ extension IVDataCache {
                 throw DSK.Errors.NamedError(name: "FileManager", message: "File not found.")
             }
             let arr = try ArchiveHelper().getImagePaths(for: url)
-            let obj = StoredChapterData()
-            obj.chapter = chapter.toStored()
-            obj.archivePaths = arr
-            obj.archiveURL = url
+            let obj = StoredChapterData(archivePaths: arr, archiveURL: url)
             return obj.toReadableChapterData(with: chapter)
 
         case .EXTERNAL:
@@ -137,24 +134,17 @@ extension IVDataCache {
                 return data.toReadableChapterData(with: chapter)
             }
 
-            // Get from Database
-            if let data = await actor.getChapterData(forId: chapter.id) {
-                return data.toReadableChapterData(with: chapter)
-            }
             // Get from source
             guard let source = await DSK.shared.getSource(id: chapter.sourceId) else {
                 throw DaisukeEngine.Errors.NamedError(name: "Engine", message: "Source Not Found")
             }
 
             let data = try await source.getChapterData(contentId: chapter.contentId, chapterId: chapter.chapterId, chapter: chapter)
-            if source.ablityNotDisabled(\.disableChapterDataCaching) {
-                await actor.saveChapterData(data: data, chapter: chapter)
-            }
+
             return data.toStored(withStoredChapter: chapter.toStored()).toReadableChapterData(with: chapter)
 
         case .OPDS:
-            let obj = StoredChapterData()
-            obj.chapter = chapter.toStored()
+
             let baseLink = chapter.chapterId
             let publication = await actor.getPublication(id: chapter.id)
             guard let publication, let client = publication.client else {
@@ -168,7 +158,8 @@ extension IVDataCache {
             }
 
             let info = OPDSInfo(clientId: client.id, userName: client.userName)
-            obj.pages.append(objectsIn: pages)
+            var obj = StoredChapterData()
+            obj.pages.append(contentsOf: pages)
             obj.opdsInfo = info
             return obj.toReadableChapterData(with: chapter)
         }
