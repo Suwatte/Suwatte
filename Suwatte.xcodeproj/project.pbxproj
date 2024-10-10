@@ -219,6 +219,7 @@
 		DF7B188A2830B4B1006A54C9 /* ReaderGateWay.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7B18892830B4B1006A54C9 /* ReaderGateWay.swift */; };
 		DF83DD3328223B680021575B /* ProfileView+TrackersSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF83DD3228223B670021575B /* ProfileView+TrackersSheet.swift */; };
 		DF86CACA285841BA0008B17A /* STTLaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DF86CAC9285841BA0008B17A /* STTLaunchScreen.storyboard */; };
+		DF87411C2CB8826C003F4A47 /* SwiftyJSON in Frameworks */ = {isa = PBXBuildFile; productRef = DF87411B2CB8826C003F4A47 /* SwiftyJSON */; };
 		DF8B8746282077AC0044D277 /* InteractiveTagCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8B8745282077AC0044D277 /* InteractiveTagCell.swift */; };
 		DF8BEAFF2A71E8FC005C396F /* ReadLater+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8BEAFE2A71E8FC005C396F /* ReadLater+CollectionView.swift */; };
 		DF8BEB012A7205AB005C396F /* ReadLater+ContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8BEB002A7205AB005C396F /* ReadLater+ContextMenu.swift */; };
@@ -333,7 +334,6 @@
 		DFA25FF22AA56A9200A1369E /* IV+BasicZoomingScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA25FF12AA56A9200A1369E /* IV+BasicZoomingScrollView.swift */; };
 		DFAC77982815D48D00AF6394 /* STTHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAC77972815D48D00AF6394 /* STTHelper.swift */; };
 		DFADB58B29D7D04E00CBE22F /* JSCC+Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFADB58A29D7D04E00CBE22F /* JSCC+Network.swift */; };
-		DFADB58D29D7F19900CBE22F /* STT+URLRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFADB58C29D7F19900CBE22F /* STT+URLRequest.swift */; };
 		DFB47EEE2880928C0040A1BD /* RefreshableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB47EED2880928C0040A1BD /* RefreshableScrollView.swift */; };
 		DFB47EF72880C1FB0040A1BD /* STT+OPDS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB47EF62880C1FB0040A1BD /* STT+OPDS.swift */; };
 		DFB47EFA2880C3DA0040A1BD /* OPDS+HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB47EF92880C3D90040A1BD /* OPDS+HomeView.swift */; };
@@ -805,7 +805,6 @@
 		DFA25FF12AA56A9200A1369E /* IV+BasicZoomingScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IV+BasicZoomingScrollView.swift"; sourceTree = "<group>"; };
 		DFAC77972815D48D00AF6394 /* STTHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STTHelper.swift; sourceTree = "<group>"; };
 		DFADB58A29D7D04E00CBE22F /* JSCC+Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSCC+Network.swift"; sourceTree = "<group>"; };
-		DFADB58C29D7F19900CBE22F /* STT+URLRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "STT+URLRequest.swift"; sourceTree = "<group>"; };
 		DFAE97702AC61AD8001E62D8 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		DFAE97712AC61AD8001E62D8 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		DFAE97722AC61AF6001E62D8 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
@@ -956,6 +955,7 @@
 				DF70235129DA852A0076AAD0 /* NukeUI in Frameworks */,
 				DF59C97D285004860027F19D /* ZIPFoundation in Frameworks */,
 				DF29A6822ABBC313005E11E3 /* AsyncDisplayKit in Frameworks */,
+				DF87411C2CB8826C003F4A47 /* SwiftyJSON in Frameworks */,
 				DF9041A42AA3E7E600B72ACC /* ReadiumOPDS in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1683,7 +1683,6 @@
 				DF6C25CA282D97EB002BE1AA /* STT+Parsable.swift */,
 				DFF1044128A9A89700E2C3A4 /* STT+JSValue.swift */,
 				DF13892128BDCAEF0035BDBB /* STT+URL.swift */,
-				DFADB58C29D7F19900CBE22F /* STT+URLRequest.swift */,
 				DF2D84292A1EFB4D006B17F0 /* STT+Nuke.swift */,
 				DF489C312A8462EA006A21B9 /* STT+UICollectionView.swift */,
 				DFE1B10F2A9EAC2400D300DB /* STT+UIDevice.swift */,
@@ -2564,6 +2563,7 @@
 				DF12AC872C0125D00094BCBF /* RealmSwift */,
 				DF12AC942C012A960094BCBF /* IceCream */,
 				290F57D02C8C158000056492 /* NavigationSearchBar */,
+				DF87411B2CB8826C003F4A47 /* SwiftyJSON */,
 			);
 			productName = "Suwatte (iOS)";
 			productReference = DFCE6EAF280108EA002E220C /* Suwatte.app */;
@@ -2634,6 +2634,7 @@
 				DF12AC862C0125CF0094BCBF /* XCRemoteSwiftPackageReference "realm-swift" */,
 				DF12AC932C012A960094BCBF /* XCRemoteSwiftPackageReference "IceCream" */,
 				290F57CF2C8C158000056492 /* XCRemoteSwiftPackageReference "NavigationSearchBar" */,
+				DF87411A2CB8826C003F4A47 /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
 			);
 			productRefGroup = DF2DA6FF27CD82430046FE20;
 			projectDirPath = "";
@@ -2750,7 +2751,6 @@
 				DF72E48F281269A900E40E52 /* SauceNao.swift in Sources */,
 				DF8D0B502800EE47003E4C3E /* BackupManager.swift in Sources */,
 				DFF09B642A5A847500C5CA5E /* +UIStepper.swift in Sources */,
-				DFADB58D29D7F19900CBE22F /* STT+URLRequest.swift in Sources */,
 				DFE1B1022A9C070400D300DB /* Highlight.swift in Sources */,
 				DF32646328029A380066EB08 /* STTImageProvider.swift in Sources */,
 				DFBE48562A25BEB2000ABA16 /* ContentLink.swift in Sources */,
@@ -3518,6 +3518,14 @@
 				kind = branch;
 			};
 		};
+		DF87411A2CB8826C003F4A47 /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.2;
+			};
+		};
 		DF9041A02AA3E7E600B72ACC /* XCRemoteSwiftPackageReference "swift-toolkit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/readium/swift-toolkit.git";
@@ -3620,6 +3628,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DF730CD129411F1B00C62C71 /* XCRemoteSwiftPackageReference "FlagKit" */;
 			productName = FlagKit;
+		};
+		DF87411B2CB8826C003F4A47 /* SwiftyJSON */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DF87411A2CB8826C003F4A47 /* XCRemoteSwiftPackageReference "SwiftyJSON" */;
+			productName = SwiftyJSON;
 		};
 		DF9041A12AA3E7E600B72ACC /* R2Shared */ = {
 			isa = XCSwiftPackageProductDependency;

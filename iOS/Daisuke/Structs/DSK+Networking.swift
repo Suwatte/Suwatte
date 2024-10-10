@@ -8,16 +8,17 @@
 import Alamofire
 import AnyCodable
 import Foundation
+import SwiftyJSON
 
 // MARK: Reqeust
 
 extension DSKCommon {
     typealias CodableDict = [String: AnyCodable]
-    struct Request: Codable, Hashable, Parsable {
+    struct Request: Codable, Parsable {
         var url: String
         var method: String?
         var params: CodableDict?
-        var body: CodableDict?
+        var body: SwiftyJSON.JSON?
         var headers: [String: String]?
         var cookies: [Cookie]?
         var timeout: Double?
@@ -36,7 +37,7 @@ extension DSKCommon {
 
     struct RequestConfig: Codable, Parsable {
         var params: CodableDict?
-        var body: CodableDict?
+        var body: SwiftyJSON.JSON?
         var headers: [String: String]?
         var cookies: [Cookie]?
         var timeout: Double?
