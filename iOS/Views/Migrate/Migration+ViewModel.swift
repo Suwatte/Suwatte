@@ -141,12 +141,14 @@ extension MigrationController {
                 }
             }
 
+            let singleSourceMigration = sources.count == 1
+
             var max: ReturnValue?
             for await value in group {
                 if let value {
 
                     // Skip migrating to the same item
-                    if id == value.entry.id {
+                    if !singleSourceMigration && id == value.entry.id {
                         continue
                     }
 
@@ -282,10 +284,6 @@ extension MigrationController {
         }
 
         func replace(_ entry: LibraryEntry, with highlight: TaggedHighlight) {
-            if entry.id == highlight.id {
-                return
-            }
-            
             let object = LibraryEntry()
             object.content = findOrCreate(highlight)
             object.collections = entry.collections
@@ -294,7 +292,9 @@ extension MigrationController {
             
             let progressMarkers = realm
                 .objects(ProgressMarker.self)
-                .where { $0.chapter.content.sourceId == entry.content!.sourceId && $0.chapter.content.contentId == entry.content!.contentId && $0.isDeleted == false }
+                .where { $0.chapter.content.sourceId == entry.content!.sourceId 
+                    && $0.chapter.content.contentId == entry.content!.contentId
+                    && !$0.isDeleted }
                 .freeze()
                 .toArray()
             
@@ -306,7 +306,7 @@ extension MigrationController {
                 .toArray()
             
             // Update Read Chapters
-            let readChaptersByOrderKey = progressMarkers.map { $0.chapter!.chapterOrderKey }
+            let readChaptersByOrderKey = progressMarkers.filter { $0.isCompleted }.map { $0.chapter!.chapterOrderKey }
             let readChaptersByNumber: [Double] = readChaptersByOrderKey.compactMap { chapterOrderKey in
                 let chapterNumber = ThreadSafeChapter.orderKey(volume: nil, number: ThreadSafeChapter.vnPair(from: chapterOrderKey).1)
                 guard let chapterRef = highlightChapters.first(where: { $0.chapterOrderKey == chapterNumber }) else {
