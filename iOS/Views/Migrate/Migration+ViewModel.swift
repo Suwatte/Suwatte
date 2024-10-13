@@ -346,7 +346,10 @@ extension MigrationController {
             
             // CRUD
             realm.add(object, update: .all)
-            entry.isDeleted = true
+            
+            if object.id != entry.id {
+                entry.isDeleted = true
+            }
         }
 
         func findOrCreate(_ entry: TaggedHighlight) -> StoredContent {
