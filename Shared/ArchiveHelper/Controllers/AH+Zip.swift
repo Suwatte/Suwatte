@@ -17,8 +17,9 @@ extension ArchiveHelper {
                 throw Errors.ArchiveNotFound
             }
 
+            // Reference: https://medium.com/macoclock/how-to-implement-natural-sorting-on-the-alphanumeric-array-in-swift-5b8f64173725
             let files = archive
-                .sorted(by: { $0.path < $1.path })
+                .sorted(by: { $0.path.compare($1.path, options: .numeric) == .orderedAscending })
                 .filter { $0.type == .file && isImagePath($0.path) }
                 .map { $0.path }
 
