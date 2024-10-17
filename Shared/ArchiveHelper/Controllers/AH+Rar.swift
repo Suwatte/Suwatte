@@ -19,7 +19,7 @@ extension ArchiveHelper {
 
             let files = try archive
                 .entries()
-                .sorted(by: { $0.fileName < $1.fileName })
+                .sorted(by: { $0.fileName.compare($1.fileName, options: .numeric) == .orderedAscending })
                 .filter { !$0.directory && isImagePath($0.fileName) }
                 .map { $0.fileName }
 
