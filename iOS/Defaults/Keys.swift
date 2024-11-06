@@ -57,7 +57,6 @@ enum STTKeys {
     static let LastFetchedUpdates = "APP.last_fetched_updates"
 
     static let LibraryAuth = "LOCAL_AUTH.lib_auth"
-    static let LastVerifiedAuth = "LOCAL_AUTH.last_auth_ver"
     static let TimeoutDuration = "LOCAL_AUTH.timeout"
 
     static let ShowOnlyDownloadedTitles = "LIBRARY.download_only"

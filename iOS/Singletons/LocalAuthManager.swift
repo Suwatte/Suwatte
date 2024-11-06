@@ -8,21 +8,20 @@
 import Combine
 import Foundation
 import LocalAuthentication
+import SwiftUI
 
 final class LocalAuthManager: ObservableObject {
     static let shared = LocalAuthManager()
 
     var subscriptions = Set<AnyCancellable>()
     @Published var isAuthenticating = false
+    var backgroundSince: Date?
+    var foregroundSince: Date?
+    var verified = false
 
     // Init
     init() {
         subscribe()
-    }
-
-    // Keys
-    var LastVerified: Date {
-        UserDefaults.standard.object(forKey: STTKeys.LastVerifiedAuth) as? Date ?? Date()
     }
 
     var Timeout: TimeoutDuration {
@@ -32,9 +31,12 @@ final class LocalAuthManager: ObservableObject {
     }
 
     var isExpired: Bool {
-        let lastVerified = LastVerified
-        let interval = abs(lastVerified.timeIntervalSinceNow)
+        if(foregroundSince == nil || backgroundSince == nil){
+            return true
+        }
+        let interval = abs(foregroundSince!.timeIntervalSince(backgroundSince!))
         return interval >= Double(Timeout.durationInSeconds)
+
     }
 
     enum TimeoutDuration: Int, CaseIterable, UserDefaultsSerializable {
@@ -91,8 +93,10 @@ final class LocalAuthManager: ObservableObject {
         if !UserDefaults.standard.bool(forKey: STTKeys.LibraryAuth) {
             return
         }
-        if isExpired {
+        if !verified && isExpired {
             authenticate(toggleOnFail: false)
+        } else if !verified  {
+            verified = true
         }
     }
 
@@ -130,11 +134,19 @@ final class LocalAuthManager: ObservableObject {
                     self.authenticate()
                 }
             }.store(in: &subscriptions)
+
+        NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)
+                .sink { [weak self] _ in self?.handleBackground() }
+                .store(in: &subscriptions)
+
+        NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)
+            .sink { [weak self] _ in self?.handleForeground() }
+                .store(in: &subscriptions)
     }
 
     func handleSuccess() {
-        UserDefaults.standard.set(Date(), forKey: STTKeys.LastVerifiedAuth)
         isAuthenticating = false
+        verified = true
     }
 
     func handleFail(toggle: Bool) {
@@ -145,4 +157,15 @@ final class LocalAuthManager: ObservableObject {
     }
 
     func handleTimeoutChange(_: TimeoutDuration) {}
+
+    private func handleBackground() {
+        backgroundSince = Date()
+        verified = false
+    }
+
+    private func handleForeground() {
+        foregroundSince = Date()
+        verified = false
+        verify()
+    }
 }

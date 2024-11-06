@@ -28,7 +28,7 @@ struct LocalAuthGateway: ViewModifier {
     }
 
     var shouldHide: Bool {
-        protectContent && manager.isExpired
+        protectContent && manager.isExpired && !manager.verified
     }
 
     var OVERLAY_CONTENT: some View {
