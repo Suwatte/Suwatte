@@ -148,6 +148,8 @@ enum STTKeys {
     static let RunnerDevMode = "DEBUG.RUNNER_DEV_MODE"
     static let LogAddress = "DEBUG.LOG_ADDRESS"
 
+    static let UseWebKitDirective = "EXPERIMENTAL.USE_WEBKIT"
+
     static func SourceChapterProviderPriority(_ id: String) -> String {
         "RUNNER.SCPP:\(id)"
     }

@@ -10,8 +10,7 @@ function overrideConsole() {
           ? JSON.stringify(v)
           : v.toString()
       )
-      .map((v) => v.substring(0, 3000)) // Limit msg to 3000 chars
-      .join(", ")}`;
+      .join(" ")}`;
         _logger.post({
             context: IDENTIFIER ?? "BOOTSTRAP",
             level,

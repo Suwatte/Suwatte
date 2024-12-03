@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		290F57D12C8C158000056492 /* NavigationSearchBar in Frameworks */ = {isa = PBXBuildFile; productRef = 290F57D02C8C158000056492 /* NavigationSearchBar */; };
 		292776932C61776B00FB7DB0 /* Backup+ContentLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 292776922C61776B00FB7DB0 /* Backup+ContentLink.swift */; };
+		29EF27B52CFF9135009E9599 /* ExperimentalFeaturesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29EF27B42CFF9135009E9599 /* ExperimentalFeaturesView.swift */; };
 		29FB9F232BE43EE800F22E2F /* MigrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29FB9F222BE43EE800F22E2F /* MigrationHelper.swift */; };
 		DF01DEEA2A587A5D0025700B /* Engine+LibraryUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF01DEE92A587A5D0025700B /* Engine+LibraryUpdate.swift */; };
 		DF01DEEC2A587A680025700B /* Engine+URLHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF01DEEB2A587A680025700B /* Engine+URLHandler.swift */; };
@@ -498,6 +499,7 @@
 
 /* Begin PBXFileReference section */
 		292776922C61776B00FB7DB0 /* Backup+ContentLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Backup+ContentLink.swift"; sourceTree = "<group>"; };
+		29EF27B42CFF9135009E9599 /* ExperimentalFeaturesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExperimentalFeaturesView.swift; sourceTree = "<group>"; };
 		29FB9F222BE43EE800F22E2F /* MigrationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationHelper.swift; sourceTree = "<group>"; };
 		DF01DEE92A587A5D0025700B /* Engine+LibraryUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Engine+LibraryUpdate.swift"; sourceTree = "<group>"; };
 		DF01DEEB2A587A680025700B /* Engine+URLHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Engine+URLHandler.swift"; sourceTree = "<group>"; };
@@ -1860,6 +1862,7 @@
 			isa = PBXGroup;
 			children = (
 				DF8D0A6A2800EE47003E4C3E /* AppearanceView.swift */,
+				29EF27B42CFF9135009E9599 /* ExperimentalFeaturesView.swift */,
 			);
 			path = General;
 			sourceTree = "<group>";
@@ -3092,6 +3095,7 @@
 				DFBE48482A25BD87000ABA16 /* ReadLater.swift in Sources */,
 				DF020A722A9024D100BC5562 /* Webtoon+Representable.swift in Sources */,
 				DF3318552A47A631000B092B /* DV+CollectionView.swift in Sources */,
+				29EF27B52CFF9135009E9599 /* ExperimentalFeaturesView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

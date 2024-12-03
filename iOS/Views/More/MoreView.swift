@@ -97,6 +97,9 @@ struct MoreView: View {
                 NavigationLink("Appearance") {
                     AppearanceView()
                 }
+                NavigationLink("Experimental Features") {
+                    ExperimentalFeaturesView()
+                }
             } header: {
                 Text("General")
             }

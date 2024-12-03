@@ -50,12 +50,21 @@ extension Logger {
 
 extension Logger {
     private func add(entry: Entry) {
+        var entry = entry
+        let devMode = UserDefaults.standard.bool(forKey: STTKeys.RunnerDevMode)
+        // Limit msg to 3000 chars
+        if !devMode && entry.message.count >= 3000 {
+            entry.message = entry.message.subString(from: 0, to: 3000)
+            + "\r\n Suwatte: The log is longer than 3000 characters and was cut. Enable developer mode to see the full message!"
+        }
+        let localEntry = entry
+
         Task { @MainActor in
             // Add Entry
             if logs.count >= 100 {
                 logs.removeAll()
             }
-            logs.append(entry)
+            logs.append(localEntry)
         }
 
         // Print to console in debugging
@@ -65,15 +74,15 @@ extension Logger {
 
         // Write to File
         Task {
-            write(entry: entry)
+            write(entry: localEntry)
         }
 
         if entry.level == .info {
-            ToastManager.shared.info(entry.message)
+            ToastManager.shared.info(localEntry.message)
         }
 
         Task {
-            let devMode = UserDefaults.standard.bool(forKey: STTKeys.RunnerDevMode)
+
             let logAddress = UserDefaults.standard.string(forKey: STTKeys.LogAddress)
 
             guard devMode, let logAddress, let address = URL(string: logAddress) else { return }
@@ -81,7 +90,7 @@ extension Logger {
             do {
                 var request = URLRequest(url: address)
                 request.method = .post
-                request.httpBody = try DSK.encode(value: entry)
+                request.httpBody = try DSK.encode(value: localEntry)
                 AF.request(request).response { _ in
                     //
                 }

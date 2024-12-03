@@ -8,6 +8,18 @@
 import Foundation
 
 extension String {
+    func subString(from: Int, to: Int) -> String {
+        if (to >= self.count) {
+            return self
+        }
+        
+        let startIndex = self.index(self.startIndex, offsetBy: from)
+        let endIndex = self.index(self.startIndex, offsetBy: to)
+        return String(self[startIndex..<endIndex])
+    }
+}
+
+extension String {
     // Reference: https://stackoverflow.com/a/26845710
     static func random(length: Int = 30) -> String {
         let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
