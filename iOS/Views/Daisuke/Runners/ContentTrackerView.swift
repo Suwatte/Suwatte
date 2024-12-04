@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentTrackerInfoView: View {
-    var tracker: JSCContentTracker
+    var tracker: AnyContentTracker
 
     var body: some View {
         List {

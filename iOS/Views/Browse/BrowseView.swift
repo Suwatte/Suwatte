@@ -266,7 +266,7 @@ extension BrowseView {
             LoadableRunnerView(runnerID: runnerID) { runner in
                 if let source = runner as? AnyContentSource {
                     ContentSourceInfoView(source: source)
-                } else if let tracker = runner as? JSCContentTracker {
+                } else if let tracker = runner as? AnyContentTracker {
                     ContentTrackerInfoView(tracker: tracker)
                 }
             }
