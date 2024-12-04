@@ -72,7 +72,8 @@ extension Controller {
                                      volume: chapter.volume)
             await actor
                 .updateTrackProgress(for: chapter.STTContentIdentifier,
-                                     progress: progress)
+                                     progress: progress,
+                                     ignoreTrackerProgress: false)
         }
     }
 

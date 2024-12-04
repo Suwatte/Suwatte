@@ -242,7 +242,7 @@ extension RealmActor {
         let maxReadOnTarget = getMaxReadKey(for: contentIdentifier, completed: completed)
         let maxReadOnLinked =
             getLinkedContent(for: contentIdentifier.id)
-            .map { getMaxReadKey(for: $0.ContentIdentifier) }
+            .map { getMaxReadKey(for: $0.ContentIdentifier, completed: completed) }
             .max() ?? 0.0
 
         return max(maxReadOnTarget, maxReadOnLinked)

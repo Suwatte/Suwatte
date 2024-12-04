@@ -111,7 +111,7 @@ extension RealmActor {
         return matches
     }
 
-    func updateTrackProgress(for id: String, progress: DSKCommon.TrackProgressUpdate) async {
+    func updateTrackProgress(for id: String, progress: DSKCommon.TrackProgressUpdate, ignoreTrackerProgress: Bool = true) async {
         let links = await getTrackerLinks(for: id)
 
         for (trackerId, mediaId) in links {
@@ -119,6 +119,15 @@ extension RealmActor {
             do {
                 let user = try await tracker.getAuthenticatedUser()
                 guard user != nil else { continue }
+
+                if !ignoreTrackerProgress {
+                    let entry = try await tracker.getTrackItem(id: mediaId).entry
+                    guard let entry, let chapterProgress = progress.chapter else { continue }
+
+                    if chapterProgress <= entry.progress.lastReadChapter {
+                        continue
+                    }
+                }
             } catch {
                 Logger.shared.error(error, trackerId)
             }
