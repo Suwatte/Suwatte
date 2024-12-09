@@ -38,7 +38,7 @@ struct BrowseView: View {
             .navigationBarTitle("Browse")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem {
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
                         Button {
                             presentSavedLists.toggle()
@@ -55,7 +55,7 @@ struct BrowseView: View {
                     }
                 }
 
-                ToolbarItem {
+                ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink {
                         SearchView()
                     } label: {
