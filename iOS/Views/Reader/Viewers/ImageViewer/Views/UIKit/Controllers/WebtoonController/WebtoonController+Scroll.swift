@@ -47,8 +47,10 @@ extension Controller {
         guard let currentPath else { return }
 
         guard let page = dataSource.itemIdentifier(for: currentPath) else { return }
-        didChangePage(page, indexPath: currentPath)
-        lastIndexPath = currentPath
+        if lastIndexPath.item != currentPath.item {
+            didChangePage(page, indexPath: currentPath)
+            lastIndexPath = currentPath
+        }
 
         Task { @MainActor [weak self] in
             self?.setScrollPCT()

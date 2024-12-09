@@ -67,11 +67,11 @@ extension Controller {
         let currentPath = collectionView.pathAtCenterOfScreen
         guard let currentPath else { return }
 
-        guard currentPath.item != lastIndexPath.item,
-              let page = dataSource.itemIdentifier(for: currentPath) else { return }
-        didChangePage(page)
-
-        lastIndexPath = currentPath
+        guard let page = dataSource.itemIdentifier(for: currentPath) else { return }
+        if lastIndexPath.item != currentPath.item {
+            didChangePage(page)
+            lastIndexPath = currentPath
+        }
 
         Task { @MainActor [weak self] in
             guard let self else { return }
