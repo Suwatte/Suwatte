@@ -117,6 +117,7 @@ extension DirectoryView.ViewModel {
 
     func reloadRequest() {
         result = .idle
+        pagination = .IDLE
     }
 
     func paginate() async {

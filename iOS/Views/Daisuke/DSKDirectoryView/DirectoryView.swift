@@ -58,6 +58,7 @@ struct DirectoryView<C: View>: View {
     
     func reload() {
         model.result = .idle
+        model.pagination = .IDLE
     }
     
     func load() async throws -> [DSKCommon.Highlight] {
