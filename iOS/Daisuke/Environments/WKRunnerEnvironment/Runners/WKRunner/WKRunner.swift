@@ -40,6 +40,7 @@ public class WKRunner: DSKRunner {
         """
         info = try await eval(infoScript)
         intents = try await eval(intentsScript)
+        saveState()
     }
 
     func handleURL(url: String) async throws -> DSKCommon.DeepLinkContext? {

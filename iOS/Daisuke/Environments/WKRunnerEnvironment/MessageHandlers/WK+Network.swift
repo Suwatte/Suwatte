@@ -28,7 +28,7 @@ extension WKHandler {
                 let value = try await handle(message: message).asDictionary()
                 return (value, nil)
             } catch {
-                return (nil, "\(error)")
+                return (nil, "\(error.localizedDescription)")
             }
         }
     }

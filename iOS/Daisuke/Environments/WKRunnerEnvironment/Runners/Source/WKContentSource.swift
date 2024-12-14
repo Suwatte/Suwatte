@@ -23,5 +23,6 @@ final class WKContentSource: WKRunner {
 
         let conf: SourceConfig? = try await evalNullable(script)
         config = conf
+        saveState()
     }
 }
