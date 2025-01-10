@@ -160,6 +160,12 @@ extension PagedViewerImageHolder {
         subscriptions.forEach { $0.cancel() }
         subscriptions.removeAll()
     }
+
+    private func resetNukeTasksAsync() async {
+        await MainActor.run { [weak self] in
+            self?.nukeTask = nil
+        }
+    }
 }
 
 extension PagedViewerImageHolder {
@@ -183,7 +189,10 @@ extension PagedViewerImageHolder {
                 do {
                     let request = try await PanelActor.shared.loadPage(for: data)
 
-                    guard !Task.isCancelled else { return }
+                    guard !Task.isCancelled else {
+                        await self?.resetNukeTasksAsync()
+                        return
+                    }
 
                     for await progress in request.progress {
                         // Update progress
@@ -193,11 +202,17 @@ extension PagedViewerImageHolder {
                         }
                     }
 
-                    guard !Task.isCancelled else { return }
+                    guard !Task.isCancelled else {
+                        await self?.resetNukeTasksAsync()
+                        return
+                    }
 
                     let image = try await request.image
 
-                    guard !Task.isCancelled else { return }
+                    guard !Task.isCancelled else { 
+                        await self?.resetNukeTasksAsync()
+                        return
+                    }
 
                     await MainActor.run { [weak self] in
                         self?.displayImage(image: image)
@@ -205,15 +220,17 @@ extension PagedViewerImageHolder {
 
                 } catch {
                     Logger.shared.error(error, rPage.chapter.sourceId)
-                    if error is CancellationError { return }
+                    if error is CancellationError {
+                        await self?.resetNukeTasksAsync()
+                        return
+
+                    }
                     await MainActor.run { [weak self] in
                         self?.setError(error)
                     }
                 }
 
-                await MainActor.run { [weak self] in
-                    self?.nukeTask = nil
-                }
+                await self?.resetNukeTasksAsync()
             }
         }
     }

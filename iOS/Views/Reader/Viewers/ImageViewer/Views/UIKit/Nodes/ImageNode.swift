@@ -32,6 +32,7 @@ class ImageNode: ASCellNode {
 
     private var hasTriggeredChapterDelegateCall = false
     private var isWorking = false
+    private var imageSetup = false
     var image: UIImage?
 
     var isLeading: Bool {
@@ -53,7 +54,6 @@ class ImageNode: ASCellNode {
         automaticallyManagesSubnodes = true
         backgroundColor = .clear
         progressNode.backgroundColor = .clear
-        imageNode.backgroundColor = .clear
         imageNode.isUserInteractionEnabled = false
         imageNode.shouldAnimateSizeChanges = false
         imageNode.alpha = 0
@@ -125,20 +125,6 @@ extension ImageNode {
         cancel()
         checkIfChapterDelegateShouldBeCalled()
     }
-
-    override func interfaceStateDidChange(_ newState: ASInterfaceState, from oldState: ASInterfaceState) {
-        super.interfaceStateDidChange(newState, from: oldState)
-        if newState.rawValue == 1, oldState.rawValue == 7 { // Leaving Preload to unknown
-            if let indexPath,
-               let manager = owningNode as? ASCollectionNode,
-               let Y = manager.collectionViewLayout.layoutAttributesForItem(at: indexPath)?.frame.origin.y,
-               Y < manager.contentOffset.y
-            {
-                // Is Leaving At Top
-                hardReset()
-            }
-        }
-    }
 }
 
 // MARK: - Layout
@@ -163,6 +149,7 @@ extension ImageNode {
         context.completeTransition(true)
         Task { @MainActor in
             delegate?.updateChapterScrollRange()
+            delegate?.setScrollPCT()
         }
 
         // Inserting At Top
@@ -239,6 +226,14 @@ extension ImageNode {
     private func resetTasks() {
         imageTask = nil
         nukeTask = nil
+        isWorking = false
+    }
+
+    private func resetNukeTasksAsync() async {
+        await MainActor.run { [weak self] in
+            self?.nukeTask = nil
+            self?.isWorking = false
+        }
     }
 
     private func cancel() {
@@ -246,6 +241,7 @@ extension ImageNode {
         nukeTask?.cancel()
         imageTask = nil
         nukeTask = nil
+        isWorking = false
     }
 }
 
@@ -272,7 +268,10 @@ extension ImageNode {
                 do {
                     let request = try await PanelActor.shared.loadPage(for: data)
 
-                    guard !Task.isCancelled else { return }
+                    guard !Task.isCancelled else {
+                        await self?.resetNukeTasksAsync()
+                        return
+                    }
 
                     for await progress in request.progress {
                         // Update progress
@@ -282,34 +281,45 @@ extension ImageNode {
                         }
                     }
 
-                    guard !Task.isCancelled else { return }
+                    guard !Task.isCancelled else {
+                        await self?.resetNukeTasksAsync()
+                        return
+                    }
 
                     let image = try await request.image
 
-                    guard !Task.isCancelled else { return }
+                    guard !Task.isCancelled else {
+                        await self?.resetNukeTasksAsync()
+                        return
+                    }
 
                     await MainActor.run { [weak self] in
                         self?.didLoadImage(image)
                     }
 
                 } catch {
-                    if error is CancellationError { return }
+                    if error is CancellationError {
+                        await self?.resetNukeTasksAsync()
+                        return
+                    }
                     Logger.shared.error(error, page.page.chapter.sourceId)
                     await MainActor.run { [weak self] in
                         self?.handleImageFailure(error)
                     }
                 }
 
-                await MainActor.run { [weak self] in
-                    self?.nukeTask = nil
-                    self?.isWorking = false
-                }
+                await self?.resetNukeTasksAsync()
             }
         }
     }
 
     func displayImage(_ image: UIImage) {
-        guard imageNode.image == nil else { return }
+        guard imageNode.image == nil else {
+            if !imageSetup {
+                postImageSetSetup()
+            }
+            return
+        }
         imageNode.image = image
         imageNode.shouldAnimateSizeChanges = false
         let size = image.size.scaledTo(UIScreen.main.bounds.size)
@@ -326,8 +336,10 @@ extension ImageNode {
 
     func postImageSetSetup() {
         listen()
+        imageSetup = true
         imageTask = nil
         nukeTask = nil
+        isWorking = false
         guard imageNode.alpha == 0 else { return }
         UIView.animate(withDuration: 0.33,
                        delay: 0,
@@ -336,27 +348,6 @@ extension ImageNode {
             imageNode.alpha = 1
             progressNode.alpha = 0
         }
-    }
-
-    func hardReset() {
-        // Reset
-        if isZoomed { return }
-
-        imageTask?.cancel()
-        nukeTask?.cancel()
-
-        imageTask = nil
-        nukeTask = nil
-
-        imageNode.image = nil
-        image = nil
-        ratio = nil
-
-        imageNode.alpha = 0
-        progressNode.alpha = 1
-
-        subscriptions.forEach { $0.cancel() }
-        subscriptions.removeAll()
     }
 
     func checkIfChapterDelegateShouldBeCalled() {

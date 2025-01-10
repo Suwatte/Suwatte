@@ -28,7 +28,10 @@ extension Controller {
         var current = contentOffset - currentChapterRange.min
         current = max(0, current)
         current = min(currentChapterRange.max, current)
-        let target = Double(current) / Double(total)
+        var target = Double(current) / Double(total)
+        if target.isNaN {
+            target = 1.0
+        }
 
         Task { @MainActor [weak self] in
             self?.model.slider.current = target
