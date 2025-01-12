@@ -43,14 +43,7 @@ extension Controller {
             didTriggerBackTick = false
         }
 
-        let currentPath = pathAtCenterOfScreen
-        guard let currentPath else { return }
-
-        guard let page = dataSource.itemIdentifier(for: currentPath) else { return }
-        if lastIndexPath.item != currentPath.item {
-            didChangePage(page, indexPath: currentPath)
-            lastIndexPath = currentPath
-        }
+        checkPageChanged()
 
         Task { @MainActor [weak self] in
             self?.setScrollPCT()
@@ -71,11 +64,25 @@ extension Controller {
 
         // Only real-time update when the user is not scrubbing & the menu is being shown
         guard !model.slider.isScrubbing, model.control.menu else { return }
+
+        checkPageChanged()
+
         Task { @MainActor [weak self] in
             if Preferences.standard.readerHideMenuOnSwipe {
                 self?.model.hideMenu()
             }
             self?.setScrollPCT()
+        }
+    }
+
+    func checkPageChanged() {
+        let currentPath = pathAtCenterOfScreen
+        guard let currentPath else { return }
+
+        guard let page = dataSource.itemIdentifier(for: currentPath) else { return }
+        if lastIndexPath.item != currentPath.item {
+            didChangePage(page, indexPath: currentPath)
+            lastIndexPath = currentPath
         }
     }
 }
