@@ -54,6 +54,7 @@ extension LibraryView.LibraryGrid {
                                     contextMenuProvider: contextMenuProvider)
             { entry, state in
                 getCell(entry, state)
+                    .navigationBarHidden(false) // HACK: To prevent the navigation bar from vanishing
             }
             .sectionHeader {
                 HStack(spacing: 4) {
@@ -81,6 +82,7 @@ extension LibraryView.LibraryGrid {
                                     contextMenuProvider: contextMenuProvider)
             { entry, state in
                 getCell(entry, state)
+                    .navigationBarHidden(false) // HACK: To prevent the navigation bar from vanishing
             }
             .sectionHeader {
                 HStack {

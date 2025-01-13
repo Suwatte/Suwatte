@@ -33,7 +33,7 @@ enum AppTabs: Int, CaseIterable {
             MoreView()
         case .library:
             SmartNavigationView {
-                LibraryView()
+                LibraryGateway()
             }
             .protectContent()
         case .browse:

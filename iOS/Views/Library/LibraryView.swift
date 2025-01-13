@@ -83,23 +83,16 @@ struct LibraryView: View {
                 ProgressView()
             }
         }
-        .hiddenNav(presenting: $useCompactView) {
-            // HACK: Nasty hack due to the underlying Collection View performing weird layout shifts and therefore causing the Nav Bar to disappear
-            CompactLibraryView()
-                .navigationBarBackButtonHidden(true)
-        }
         .onAppear {
             if requireAuth && !LocalAuthManager.shared.isExpired {
                 return
             }
 
-            if openDefaultCollectionOnAppear && !hasOpenedDefaultCollection && !useCompactView {
+            if openDefaultCollectionOnAppear && !hasOpenedDefaultCollection{
                 withAnimation {
                     openDefaultCollection = true
                     hasOpenedDefaultCollection = true
                 }
-            } else if useCompactView {
-                hasOpenedDefaultCollection = true
             }
         }
         .sheet(isPresented: $presentCollectionSheet) {
