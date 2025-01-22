@@ -17,13 +17,13 @@ struct CodableContentLink: Codable {
         .init(id: contentLink.id, libraryEntryId: contentLink.entry!.id, contentId: contentLink.content!.id)
     }
 
-    func restore(storedContent: Dictionary<String, [StoredContent]>, library: [LibraryEntry]?) throws -> ContentLink? {
+    func restore(storedContent: Dictionary<String, [StoredContent]>, library: [LibraryEntry]?) -> ContentLink? {
         if let library = library {
             let content = storedContent[contentId]?.first
             let entry = library.first { $0.id == libraryEntryId }
 
             guard let entry, let content else {
-                throw DSK.Errors.NamedError(name: "Restore Backup", message: "No content or library found for contentlink with the id \(id)")
+                return nil
             }
 
             let contentLink = ContentLink()

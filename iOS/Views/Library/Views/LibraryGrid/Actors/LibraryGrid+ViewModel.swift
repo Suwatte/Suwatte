@@ -48,10 +48,8 @@ extension LibraryView.LibraryGrid {
         func disconnect() {
             regularLibraryToken?.invalidate()
             regularLibraryToken = nil
-            regularLibrary = nil
             pinnedLibraryToken?.invalidate()
             pinnedLibraryToken = nil
-            pinnedLibrary = nil
         }
 
         func clearSelection() {

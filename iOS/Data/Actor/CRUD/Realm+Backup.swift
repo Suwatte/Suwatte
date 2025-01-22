@@ -124,7 +124,7 @@ extension RealmActor {
 
         if backup.schemaVersion > 15 {
             if let entries = backup.library {
-                try entries.forEach { try $0.fillContent(data: storedContentDict ) }
+                entries.forEach { $0.fillContent(data: storedContentDict ) }
             }
 
             if let entries = backup.progressMarkers {
@@ -138,14 +138,16 @@ extension RealmActor {
                         continue
                     }
 
-                    try chapter.fromBackup(data: storedContentDict)
+                    chapter.updateFromBackup(data: storedContentDict)
                     progressMarkers.append(marker)
                 }
             }
         }
 
-        let contentLinks: [ContentLink] = try backup.contentLinks?.compactMap { try $0.restore(storedContent: storedContentDict, library: backup.library) } ?? []
+        let contentLinks: [ContentLink] = backup.contentLinks?.compactMap { $0.restore(storedContent: storedContentDict, library: backup.library) } ?? []
 
+        let library = backup.library?.filter({ $0.content != nil })
+        
         try await realm.asyncWrite {
             if let markers = backup.markers {
                 restoreOutdatedMarkers(markers, realm: realm)
@@ -155,7 +157,7 @@ extension RealmActor {
                 realm.add(storedContents, update: .all)
             }
 
-            if let library = backup.library {
+            if let library {
                 realm.add(library, update: .all)
             }
 

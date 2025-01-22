@@ -56,11 +56,8 @@ extension LibraryEntry: Codable {
         try container.encode(linkedHasUpdates, forKey: .linkedHasUpdates)
     }
     
-    func fillContent(data: Dictionary<String, [StoredContent]>) throws {
+    func fillContent(data: Dictionary<String, [StoredContent]>) {
         content = data[id]?.first
-        if content == nil {
-            throw DSK.Errors.NamedError(name: "Restore Backup", message: "No content found for library entry with the id \(id)")
-        }
     }
 }
 
