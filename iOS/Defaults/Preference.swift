@@ -209,6 +209,9 @@ final class Preferences {
 
     @UserDefault(STTKeys.EnableOverlay)
     var enableOverlay = false
+    
+    @UserDefault(STTKeys.AutoDeleteCompletedChapters)
+    var autoDeleteCompletedChapters = false
 }
 
 @propertyWrapper

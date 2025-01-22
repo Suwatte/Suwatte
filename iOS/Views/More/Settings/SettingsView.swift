@@ -21,7 +21,7 @@ struct SettingsView: View {
             DownloadsSection()
             CacheSection()
             NetworkSection()
-            LogSection()
+            DeveloperSection()
         }
         .navigationBarTitle("App Settings")
     }
@@ -375,27 +375,30 @@ public extension Binding where Value: Equatable {
 extension SettingsView {
     struct DownloadsSection: View {
         @Preference(\.archiveSourceDownload) var archive
+        @Preference(\.autoDeleteCompletedChapters) var downloads
+
         var body: some View {
             Section {
-                Toggle("Archive Download", isOn: $archive)
+                Toggle("Download as Archive (CBZ)", isOn: $archive)
+                Toggle("Delete Download on Completion", isOn: $downloads)
             } header: {
                 Text("Chapter Downloads")
             } footer: {
-                Text("If enabled, suwatte will compress downloaded chapters and store them as CBZ files.")
+                Text("If enabled, Suwatte will delete downloaded chapters after you read them")
             }
         }
     }
 }
 
 extension SettingsView {
-    struct LogSection: View {
+    struct DeveloperSection: View {
         @AppStorage(STTKeys.RunnerDevMode) private var runnerDevMode = false
         @AppStorage(STTKeys.LogAddress) private var logAddress = ""
+        @AppStorage(STTKeys.UseWebKitDirective) var useWebKitDirective = false
         var body: some View {
             Section {
-                Toggle(isOn: $runnerDevMode) {
-                    Text("Enabled")
-                }
+                Toggle("Use WebKit Engine", isOn: $useWebKitDirective)
+                Toggle("Developer Mode", isOn: $runnerDevMode)
                 if runnerDevMode {
                     HStack {
                         Text("Log Address:")
@@ -403,7 +406,7 @@ extension SettingsView {
                     }
                 }
             } header: {
-                Text("Runner Developer Mode")
+                Text("Developer & Experimental Features")
             }
             .animation(.default, value: runnerDevMode)
         }

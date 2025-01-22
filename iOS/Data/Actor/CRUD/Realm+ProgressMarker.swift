@@ -102,6 +102,10 @@ extension RealmActor {
         }
 
         await decrementUnreadCount(for: contentId)
+        
+        if Preferences.standard.autoDeleteCompletedChapters {
+            await SDM.shared.delete(ids: [chapter.id])
+        }
     }
 
     func updateContentProgress(chapter: ThreadSafeChapter, lastPageRead: Int, totalPageCount: Int, lastPageOffsetPCT: Double? = nil) async {
