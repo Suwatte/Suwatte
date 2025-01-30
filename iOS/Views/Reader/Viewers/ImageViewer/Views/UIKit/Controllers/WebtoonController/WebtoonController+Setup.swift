@@ -130,9 +130,11 @@ extension Controller {
         let section = dataSource.sections.count - 1
         let paths = pages.indices.map { IndexPath(item: $0, section: section) }
         let set = IndexSet(integer: section)
-        await collectionNode.performBatch(animated: false) { [weak self] in
-            self?.collectionNode.insertSections(set)
-            self?.collectionNode.insertItems(at: paths)
+        DispatchQueue.main.async { [weak self] in
+            self?.collectionNode.performBatch(animated: false) { [weak self] in
+                self?.collectionNode.insertSections(set)
+                self?.collectionNode.insertItems(at: paths)
+            }
         }
     }
 
