@@ -11,7 +11,7 @@ import Nuke
 import UIKit
 
 class ImageNode: ASCellNode {
-    private let imageNode = BareBonesImageNode()
+    let imageNode = BareBonesImageNode()
     private let progressNode = ASDisplayNode(viewBlock: {
         CircularProgressView()
     })
@@ -23,7 +23,7 @@ class ImageNode: ASCellNode {
         delegate?.isZooming ?? false
     }
 
-    private weak var nukeTask: AsyncImageTask?
+    private weak var nukeTask: ImageTask?
     private var imageTask: Task<Void, Never>?
     private var subscriptions = Set<AnyCancellable>()
     private var contextMenuEnabled: Bool {
@@ -33,7 +33,6 @@ class ImageNode: ASCellNode {
     private var hasTriggeredChapterDelegateCall = false
     private var isWorking = false
     private var imageSetup = false
-    var image: UIImage?
 
     var isLeading: Bool {
         let collectionNode = owningNode as? ASCollectionNode
@@ -73,7 +72,7 @@ class ImageNode: ASCellNode {
                     changedKeyPath == \Preferences.pillarBoxPCT
             }
             .sink { [weak self] _ in
-                guard let image = self?.image else { return }
+                guard let image = self?.imageNode.image else { return }
                 let size = image.size.scaledTo(UIScreen.main.bounds.size)
                 self?.frame = .init(origin: .init(x: 0, y: 0), size: size)
                 self?.ratio = size.height / size.width
@@ -88,7 +87,6 @@ class ImageNode: ASCellNode {
                 path == \Preferences.downsampleImages
             }
             .sink { [weak self] _ in
-                self?.image = nil
                 self?.imageNode.image = nil
                 self?.loadImage()
             }
@@ -101,11 +99,6 @@ class ImageNode: ASCellNode {
 extension ImageNode {
     override func didEnterDisplayState() {
         super.didEnterDisplayState()
-        guard let image else {
-            loadImage()
-            return
-        }
-        displayImage(image)
     }
 
     override func didEnterPreloadState() {
@@ -171,7 +164,7 @@ extension ImageNode {
     }
 
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
-        if let image {
+        if let image = imageNode.image {
             if Preferences.standard.usePillarBox {
                 var pct = CGFloat(Preferences.standard.pillarBoxPCT)
                 // Guards
@@ -202,12 +195,7 @@ extension ImageNode {
 // MARK: - Image
 
 extension ImageNode {
-    func setImage(_ image: UIImage) {
-        self.image = image
-    }
-
     func didLoadImage(_ image: UIImage) {
-        setImage(image)
         guard isNodeLoaded else { return }
         displayImage(image)
         resetTasks()
@@ -247,12 +235,7 @@ extension ImageNode {
 
 extension ImageNode {
     func loadImage() {
-        if let image {
-            displayImage(image)
-            return
-        }
-
-        guard !isWorking else {
+        guard !isWorking, imageNode.image == nil else {
             return
         }
         isWorking = true

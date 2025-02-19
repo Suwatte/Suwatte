@@ -163,12 +163,17 @@ struct NukeDownsampleProcessor: ImageProcessing, Hashable {
             return image
         }
 
-        let size = CGSize(width: image.size.width * ratio, height: image.size.height * ratio)
+        let size = CGSize(width: round(image.size.width * ratio),
+                          height: round(image.size.height * ratio))
 
-        let data = image.pngData()
+        let data = if let data = image.pngData() {
+            data
+        } else {
+            image.jpegData(compressionQuality: 1)
+        }
 
         guard let data, let out = ds(data, size, image.scale) else {
-            return nil
+            return image
         }
 
         return .init(cgImage: out, scale: image.scale, orientation: image.imageOrientation)
@@ -188,7 +193,7 @@ struct NukeDownsampleProcessor: ImageProcessing, Hashable {
             return nil
         }
 
-        let maxDimensionInPixels = max(size.width, size.height) * scale
+        let maxDimensionInPixels = round(max(size.width, size.height) * scale)
         let downsampleOptions: [CFString: Any] = [
             kCGImageSourceCreateThumbnailFromImageAlways: true,
             kCGImageSourceShouldCacheImmediately: true,

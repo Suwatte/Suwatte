@@ -119,7 +119,7 @@ extension RealmActor {
     func restoreBackup(backup: Backup) async throws {
         try await resetDB()
 
-        let storedContentDict: Dictionary<String, [StoredContent]> = Dictionary(grouping: backup.storedContents!, by: \.id)
+        let storedContentDict: Dictionary<String, [StoredContent]> = Dictionary(grouping: backup.storedContents ?? [], by: \.id)
         var progressMarkers: [ProgressMarker] = []
 
         if backup.schemaVersion > 15 {

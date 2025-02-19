@@ -14,7 +14,7 @@ private typealias Controller = WebtoonController
 extension Controller: ZoomingViewController, ZoomableHostDelegate, ZoomHandlerDelegate {
     func cellTappedAt(point: CGPoint, frame: CGRect, path: IndexPath) {
         guard let node = collectionNode.nodeForItem(at: path) as? ImageNode,
-              let image = node.image
+              let image = node.imageNode.image
         else {
             return
         }
@@ -50,6 +50,6 @@ extension Controller: ZoomingViewController, ZoomableHostDelegate, ZoomHandlerDe
             return nil
         }
 
-        return node.image
+        return node.imageNode.image
     }
 }
