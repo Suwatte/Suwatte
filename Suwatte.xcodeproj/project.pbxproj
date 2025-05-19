@@ -3442,8 +3442,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-swift.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 10.50.1;
+				branch = community;
+				kind = branch;
 			};
 		};
 		DF12AC932C012A960094BCBF /* XCRemoteSwiftPackageReference "IceCream" */ = {

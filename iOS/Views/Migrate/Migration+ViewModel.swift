@@ -239,194 +239,28 @@ extension MigrationController {
     }
 }
 
+// MARK: - MigrationController refactor (synchronous writes)
 extension MigrationController {
+
+    // MARK: – Public entry‑point
     func migrate() async -> Bool {
-        defer {
-            Task { @MainActor in
-                ToastManager.shared.loading = false
-            }
-        }
+        defer { Task { @MainActor in ToastManager.shared.loading = false } }
 
-        await MainActor.run {
-            ToastManager.shared.loading = true
-            ToastManager.shared.info("Migration In Progress\nYour Data is being backed up.")
-        }
+        await migrate_showLoadingToast()
 
-        do {
-            try await BackupManager.shared.save(name: "PreMigration")
-        } catch {
-            Task { @MainActor in
-                ToastManager.shared.error(error)
-            }
-            return false
-        }
+        guard await migrate_runBackup() else { return false }
 
         let realm = try! await Realm(actor: BGActor.shared)
 
-        func get(_ id: String) -> LibraryEntry? {
-            realm
-                .objects(LibraryEntry.self)
-                .where { $0.id == id }
-                .first
-        }
-
-        func link(_ entry: LibraryEntry, with highlight: TaggedHighlight) {
-            let one = entry.id
-            let two = highlight.id
-            
-            if one == two {
-                return
-            }
-            
-            let isAlreadyLinked = !realm
-                .objects(ContentLink.self)
-                .where { $0.entry.id == one && $0.content.id == two && $0.isDeleted == false }
-                .isEmpty
-
-            if isAlreadyLinked {
-                return
-            }
-
-            let object = ContentLink()
-            object.entry = entry
-            object.content = findOrCreate(highlight)
-            realm.add(object, update: .modified)
-        }
-
-        func remove(_ entry: LibraryEntry) {
-            entry.isDeleted = true
-        }
-
-        func replace(_ entry: LibraryEntry, with highlight: TaggedHighlight) {
-            let object = LibraryEntry()
-            object.content = findOrCreate(highlight)
-            object.collections = entry.collections
-            object.flag = entry.flag
-            object.dateAdded = entry.dateAdded
-            
-            let progressMarkers = realm
-                .objects(ProgressMarker.self)
-                .where { $0.chapter.content.sourceId == entry.content!.sourceId 
-                    && $0.chapter.content.contentId == entry.content!.contentId
-                    && !$0.isDeleted }
-                .freeze()
-                .toArray()
-            
-            let highlightChapters = realm
-                .objects(StoredChapter.self)
-                .where { $0.contentId == highlight.contentID }
-                .where { $0.sourceId == highlight.sourceID }
-                .freeze()
-                .toArray()
-            
-            // Update Read Chapters
-            let readChaptersByOrderKey = progressMarkers.filter { $0.isCompleted }.map { $0.chapter!.chapterOrderKey }
-            let readChaptersByNumber: [Double] = readChaptersByOrderKey.compactMap { chapterOrderKey in
-                let chapterNumber = ThreadSafeChapter.orderKey(volume: nil, number: ThreadSafeChapter.vnPair(from: chapterOrderKey).1)
-                guard let chapterRef = highlightChapters.first(where: { $0.chapterOrderKey == chapterNumber }) else {
-                    return nil
-                }
-
-                let reference: ChapterReference? = chapterRef.generateReference()
-                reference?.content = realm.objects(StoredContent.self).first { $0.id == chapterRef.contentIdentifier.id && !$0.isDeleted }
-
-                guard let reference, reference.isValid else {
-                    Logger.shared.error("Invalid Chapter Reference")
-                    return nil
-                }
-
-                realm.add(reference, update: .modified)
-
-                let marker = ProgressMarker()
-                marker.id = chapterRef.id
-                marker.chapter = reference
-                marker.setCompleted(hideInHistory: true)
-                marker.isDeleted = false
-                realm.add(marker, update: .modified)
-                return chapterNumber
-            }
-
-            /// Get All Unread
-            let unreadChapters = highlightChapters
-                .filter { !readChaptersByNumber.contains($0.chapterOrderKey) }
-                .distinct(by: \.number)
-                .map { $0.toThreadSafe() }
-
-            /// Apply Filter
-            let count = STTHelpers.filterChapters(unreadChapters, with: ContentIdentifier(contentId: highlight.contentID, sourceId: highlight.sourceID)).count
-            object.unreadCount = count
-            
-            // TODO: Maintain Previous Links
-            
-            // CRUD
-            realm.add(object, update: .all)
-            
-            if object.id != entry.id {
-                entry.isDeleted = true
-            }
-        }
-
-        func findOrCreate(_ entry: TaggedHighlight) -> StoredContent {
-            let target = realm
-                .objects(StoredContent.self)
-                .first { $0.id == entry.id }
-
-            if let target {
-                return target
-            }
-
-            let object = StoredContent()
-            object.contentId = entry.contentID
-            object.cover = entry.coverURL
-            object.title = entry.title
-            object.sourceId = entry.sourceID
-
-            realm.add(object, update: .modified)
-            return object
-        }
-
-        let operations = self.operations
-        let libraryStrat = self.libraryStrat
-        let lessChapterSrat = self.lessChapterSrat
-
-        func start() {
-            for (id, state) in operations {
-                if Task.isCancelled {
-                    return
-                }
-
-                guard let libEntry = get(id) else {
-                    continue
-                }
-
-                switch state {
-                    case .idle, .noMatches, .searching:
-                        continue
-
-                    case let .found(result):
-                        switch libraryStrat {
-                            case .link:
-                                link(libEntry, with: result.0)
-                            case .replace:
-                                replace(libEntry, with: result.0)
-                        }
-                    case let .lowerFind(result, _, _, _):
-                        if lessChapterSrat == .skip { continue }
-                        switch libraryStrat {
-                            case .link:
-                                link(libEntry, with: result)
-                            case .replace:
-                                replace(libEntry, with: result)
-                        }
-                }
-            }
-        }
-
         do {
-            try await realm
-                .asyncWrite {
-                    start()
-                }
+            try realm.write {
+                migrate_start(
+                    operations: self.operations,
+                    libraryStrat: self.libraryStrat,
+                    lessChapterSrat: self.lessChapterSrat,
+                    realm: realm
+                )
+            }
         } catch {
             Logger.shared.error(error, "MigrationController")
             ToastManager.shared.error("Migration Failed")
@@ -435,5 +269,191 @@ extension MigrationController {
 
         ToastManager.shared.info("Migration Complete!")
         return true
+    }
+
+    // MARK: – Top‑level helpers
+    @MainActor
+    private func migrate_showLoadingToast() async {
+        ToastManager.shared.loading = true
+        ToastManager.shared.info("Migration In Progress\nYour Data is being backed up.")
+    }
+
+    private func migrate_runBackup() async -> Bool {
+        do {
+            try await BackupManager.shared.save(name: "PreMigration")
+            return true
+        } catch {
+            Task { @MainActor in ToastManager.shared.error(error) }
+            return false
+        }
+    }
+
+    // MARK: – Core loop (executed inside the single write)
+    private func migrate_start(
+        operations: [String: MigrationItemState],
+        libraryStrat: LibraryMigrationStrategy,
+        lessChapterSrat: LowerChapterMigrationStrategy,
+        realm: Realm
+    ) {
+        for (id, state) in operations {
+            if Task.isCancelled { return }
+
+            guard let libEntry = migrate_get(id, in: realm) else { continue }
+
+            switch state {
+            case .idle, .noMatches, .searching:
+                continue
+
+            case let .found(result, _):
+                switch libraryStrat {
+                case .link:    migrate_link(libEntry, with: result, in: realm)
+                case .replace: migrate_replace(libEntry, with: result, in: realm)
+                }
+
+            case let .lowerFind(result, _, _, _):
+                if lessChapterSrat == .skip { continue }
+                switch libraryStrat {
+                case .link:    migrate_link(libEntry, with: result, in: realm)
+                case .replace: migrate_replace(libEntry, with: result, in: realm)
+                }
+            }
+        }
+    }
+
+    // MARK: – Extracted helpers (bodies unchanged)
+    private func migrate_get(_ id: String, in realm: Realm) -> LibraryEntry? {
+        realm
+            .objects(LibraryEntry.self)
+            .where { $0.id == id }
+            .first
+    }
+
+    private func migrate_link(
+        _ entry: LibraryEntry,
+        with highlight: TaggedHighlight,
+        in realm: Realm
+    ) {
+        let one = entry.id
+        let two = highlight.id
+        if one == two { return }
+
+        let isAlreadyLinked = !realm
+            .objects(ContentLink.self)
+            .where { $0.entry.id == one && $0.content.id == two && $0.isDeleted == false }
+            .isEmpty
+        if isAlreadyLinked { return }
+
+        let object = ContentLink()
+        object.entry   = entry
+        object.content = migrate_findOrCreate(highlight, in: realm)
+        realm.add(object, update: .modified)
+    }
+
+    private func migrate_remove(_ entry: LibraryEntry) {
+        entry.isDeleted = true
+    }
+
+    private func migrate_replace(
+        _ entry: LibraryEntry,
+        with highlight: TaggedHighlight,
+        in realm: Realm
+    ) {
+        let object = LibraryEntry()
+        object.content     = migrate_findOrCreate(highlight, in: realm)
+        object.collections = entry.collections
+        object.flag        = entry.flag
+        object.dateAdded   = entry.dateAdded
+
+        let progressMarkers = realm
+            .objects(ProgressMarker.self)
+            .where { $0.chapter.content.sourceId == entry.content!.sourceId &&
+                     $0.chapter.content.contentId == entry.content!.contentId &&
+                     !$0.isDeleted }
+            .freeze()
+            .toArray()
+
+        let highlightChapters = realm
+            .objects(StoredChapter.self)
+            .where { $0.contentId == highlight.contentID }
+            .where { $0.sourceId  == highlight.sourceID }
+            .freeze()
+            .toArray()
+
+        // Update Read Chapters
+        let readChaptersByOrderKey = progressMarkers
+            .filter { $0.isCompleted }
+            .map   { $0.chapter!.chapterOrderKey }
+
+        let readChaptersByNumber: [Double] = readChaptersByOrderKey.compactMap { chapterOrderKey in
+            let chapterNumber = ThreadSafeChapter.orderKey(
+                volume: nil,
+                number: ThreadSafeChapter.vnPair(from: chapterOrderKey).1
+            )
+            guard let chapterRef = highlightChapters
+                    .first(where: { $0.chapterOrderKey == chapterNumber }) else { return nil }
+
+            let reference: ChapterReference? = chapterRef.generateReference()
+            reference?.content = realm
+                .objects(StoredContent.self)
+                .first { $0.id == chapterRef.contentIdentifier.id && !$0.isDeleted }
+
+            guard let reference, reference.isValid else {
+                Logger.shared.error("Invalid Chapter Reference")
+                return nil
+            }
+
+            realm.add(reference, update: .modified)
+
+            let marker    = ProgressMarker()
+            marker.id     = chapterRef.id
+            marker.chapter = reference
+            marker.setCompleted(hideInHistory: true)
+            marker.isDeleted = false
+            realm.add(marker, update: .modified)
+            return chapterNumber
+        }
+
+        // Get All Unread
+        let unreadChapters = highlightChapters
+            .filter { !readChaptersByNumber.contains($0.chapterOrderKey) }
+            .distinct(by: \.number)
+            .map { $0.toThreadSafe() }
+
+        // Apply Filter
+        let count = STTHelpers.filterChapters(
+            unreadChapters,
+            with: ContentIdentifier(
+                contentId: highlight.contentID,
+                sourceId:  highlight.sourceID
+            )
+        ).count
+        object.unreadCount = count
+
+        // TODO: Maintain Previous Links
+
+        // CRUD
+        realm.add(object, update: .all)
+
+        if object.id != entry.id { entry.isDeleted = true }
+    }
+
+    private func migrate_findOrCreate(
+        _ entry: TaggedHighlight,
+        in realm: Realm
+    ) -> StoredContent {
+        if let target = realm
+            .objects(StoredContent.self)
+            .first(where: { $0.id == entry.id }) {
+            return target
+        }
+
+        let object       = StoredContent()
+        object.contentId = entry.contentID
+        object.cover     = entry.coverURL
+        object.title     = entry.title
+        object.sourceId  = entry.sourceID
+
+        realm.add(object, update: .modified)
+        return object
     }
 }
