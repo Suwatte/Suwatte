@@ -49,6 +49,7 @@ extension PanelActor {
         var processors = [ImageProcessing]()
         let cropWhiteSpaces = Preferences.standard.cropWhiteSpaces
         let downSampleImage = Preferences.standard.downsampleImages
+        let isVertical = Preferences.standard.currentReadingMode == .VERTICAL
 
         let readingMode = Preferences.standard.currentReadingMode
         let shouldSplit = [ReadingMode.PAGED_COMIC, .PAGED_MANGA].contains(readingMode) && Preferences.standard.splitWidePages && Preferences.standard.imageScaleType != .height && Preferences.standard.imageScaleType != .stretch
@@ -86,7 +87,7 @@ extension PanelActor {
             }
         }
 
-        if cropWhiteSpaces {
+        if cropWhiteSpaces && !isVertical {
             processors.append(NukeWhitespaceProcessor())
         }
 
