@@ -58,7 +58,8 @@ struct MigrationView: View {
             Button("Cancel", role: .cancel) {}
             Button("Start", role: .destructive) {
                 Task {
-                    let result = await model.migrate()
+                    let actor = try! await InnerMigrationActor(operations: model.operations, libStrat: model.libraryStrat, lessChStrat: model.lessChapterSrat)
+                    let result = await actor.migrate()
                     guard result else { return }
                     await MainActor.run {
                         presentationMode.wrappedValue.dismiss()

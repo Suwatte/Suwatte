@@ -239,26 +239,37 @@ extension MigrationController {
     }
 }
 
+
+final actor InnerMigrationActor {
+    var operations: [String: MigrationItemState] = [:]
+    var libraryStrat: LibraryMigrationStrategy
+    var lessChapterSrat: LowerChapterMigrationStrategy
+    var realm: Realm!
+    init(operations: [String: MigrationItemState], libStrat: LibraryMigrationStrategy, lessChStrat: LowerChapterMigrationStrategy) async throws {
+        self.operations = operations
+        self.libraryStrat = libStrat
+        self.lessChapterSrat = lessChStrat
+    }
+}
 // MARK: - MigrationController refactor (synchronous writes)
-extension MigrationController {
+extension InnerMigrationActor {
 
     // MARK: – Public entry‑point
     func migrate() async -> Bool {
         defer { Task { @MainActor in ToastManager.shared.loading = false } }
+        self.realm = try! await Realm(actor: self)
 
         await migrate_showLoadingToast()
 
         guard await migrate_runBackup() else { return false }
 
-        let realm = try! await Realm(actor: BGActor.shared)
 
         do {
             try realm.write {
                 migrate_start(
                     operations: self.operations,
                     libraryStrat: self.libraryStrat,
-                    lessChapterSrat: self.lessChapterSrat,
-                    realm: realm
+                    lessChapterSrat: self.lessChapterSrat
                 )
             }
         } catch {
@@ -292,8 +303,7 @@ extension MigrationController {
     private func migrate_start(
         operations: [String: MigrationItemState],
         libraryStrat: LibraryMigrationStrategy,
-        lessChapterSrat: LowerChapterMigrationStrategy,
-        realm: Realm
+        lessChapterSrat: LowerChapterMigrationStrategy
     ) {
         for (id, state) in operations {
             if Task.isCancelled { return }
@@ -306,15 +316,15 @@ extension MigrationController {
 
             case let .found(result, _):
                 switch libraryStrat {
-                case .link:    migrate_link(libEntry, with: result, in: realm)
-                case .replace: migrate_replace(libEntry, with: result, in: realm)
+                case .link:    migrate_link(libEntry, with: result)
+                case .replace: migrate_replace(libEntry, with: result)
                 }
 
             case let .lowerFind(result, _, _, _):
                 if lessChapterSrat == .skip { continue }
                 switch libraryStrat {
-                case .link:    migrate_link(libEntry, with: result, in: realm)
-                case .replace: migrate_replace(libEntry, with: result, in: realm)
+                case .link:    migrate_link(libEntry, with: result)
+                case .replace: migrate_replace(libEntry, with: result)
                 }
             }
         }
@@ -322,16 +332,12 @@ extension MigrationController {
 
     // MARK: – Extracted helpers (bodies unchanged)
     private func migrate_get(_ id: String, in realm: Realm) -> LibraryEntry? {
-        realm
-            .objects(LibraryEntry.self)
-            .where { $0.id == id }
-            .first
+        realm.object(ofType: LibraryEntry.self, forPrimaryKey: id)
     }
 
     private func migrate_link(
         _ entry: LibraryEntry,
-        with highlight: TaggedHighlight,
-        in realm: Realm
+        with highlight: TaggedHighlight
     ) {
         let one = entry.id
         let two = highlight.id
@@ -345,7 +351,7 @@ extension MigrationController {
 
         let object = ContentLink()
         object.entry   = entry
-        object.content = migrate_findOrCreate(highlight, in: realm)
+        object.content = migrate_findOrCreate(highlight)
         realm.add(object, update: .modified)
     }
 
@@ -355,11 +361,10 @@ extension MigrationController {
 
     private func migrate_replace(
         _ entry: LibraryEntry,
-        with highlight: TaggedHighlight,
-        in realm: Realm
+        with highlight: TaggedHighlight
     ) {
         let object = LibraryEntry()
-        object.content     = migrate_findOrCreate(highlight, in: realm)
+        object.content     = migrate_findOrCreate(highlight)
         object.collections = entry.collections
         object.flag        = entry.flag
         object.dateAdded   = entry.dateAdded
@@ -393,9 +398,10 @@ extension MigrationController {
                     .first(where: { $0.chapterOrderKey == chapterNumber }) else { return nil }
 
             let reference: ChapterReference? = chapterRef.generateReference()
-            reference?.content = realm
-                .objects(StoredContent.self)
-                .first { $0.id == chapterRef.contentIdentifier.id && !$0.isDeleted }
+            let content = realm.object(ofType: StoredContent.self, forPrimaryKey: chapterRef.contentIdentifier.id)
+            if let content, !content.isDeleted {
+                reference?.content = content
+            }
 
             guard let reference, reference.isValid else {
                 Logger.shared.error("Invalid Chapter Reference")
@@ -438,14 +444,10 @@ extension MigrationController {
     }
 
     private func migrate_findOrCreate(
-        _ entry: TaggedHighlight,
-        in realm: Realm
+        _ entry: TaggedHighlight
     ) -> StoredContent {
-        if let target = realm
-            .objects(StoredContent.self)
-            .first(where: { $0.id == entry.id }) {
-            return target
-        }
+        if let target = realm.object(ofType: StoredContent.self, forPrimaryKey: entry.id) { return target }
+
 
         let object       = StoredContent()
         object.contentId = entry.contentID
