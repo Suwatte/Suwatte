@@ -16,7 +16,6 @@ struct LoadableView<Value, Idle, Loading, Content>: View where Idle: View,
     let idle: () -> Idle
     let loading: () -> Loading
     let action: () async throws -> Value
-    @State private var loaded = false
 
     let runnerID: String?
     init(
@@ -41,12 +40,9 @@ struct LoadableView<Value, Idle, Loading, Content>: View where Idle: View,
             idle()
             Rectangle()
                 .hidden()
-                .onAppear {
+                .onAppear  {
                     Task {
-                        if loaded {
-                            loaded = false
-                            await load()
-                        }
+                        await load()
                     }
                 }
                 .transition(.opacity)
@@ -67,15 +63,12 @@ struct LoadableView<Value, Idle, Loading, Content>: View where Idle: View,
             }
             .transition(.opacity)
         }
-        .task {
-            await load()
-        }
+
     }
 }
 
 extension LoadableView {
-    private func load() async {
-        guard !loaded else { return }
+    private func load(force: Bool = false) async {
         do {
             await animate {
                 loadable = .loading
@@ -93,7 +86,6 @@ extension LoadableView {
                 loadable = .failed(error)
             }
         }
-        loaded = true
     }
 }
 

@@ -48,7 +48,7 @@ struct BrowseView: View {
                         Button {
                             showAddLocalSourceSheet.toggle()
                         } label: {
-                            Label("Install locale source", systemImage: "externaldrive.fill.badge.plus")
+                            Label("Add Source From Files", systemImage: "externaldrive.fill.badge.plus")
                         }
                     } label: {
                         Image(systemName: "shippingbox")
