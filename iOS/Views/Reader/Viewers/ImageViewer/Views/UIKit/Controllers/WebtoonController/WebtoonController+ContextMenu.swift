@@ -42,7 +42,6 @@ extension Controller: UIContextMenuInteractionDelegate, UIGestureRecognizerDeleg
             previewVC.view = imageView
             return previewVC
         }, actionProvider: { _ in
-
             guard let image else { return nil }
             // Save to Photos
             let saveToAlbum = UIAction(title: "Save Panel", image: UIImage(systemName: "square.and.arrow.down")) { _ in
@@ -65,7 +64,6 @@ extension Controller: UIContextMenuInteractionDelegate, UIGestureRecognizerDeleg
                                                image: UIImage(systemName: "bookmark"),
                                                attributes: [])
             { [weak self] _ in
-
                 self?.addBookmark(image: image)
             }
 

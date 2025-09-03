@@ -8,6 +8,7 @@
 import FlagKit
 import RealmSwift
 import SwiftUI
+
 struct ChapterListTile: View {
     let chapter: ThreadSafeChapter
     let isCompleted: Bool
@@ -236,7 +237,6 @@ struct DownloadIndicator: View {
             case .completed:
                 Circle()
                     .foregroundColor(.green)
-
             case .cancelled:
                 Image(systemName: "x.circle")
                     .resizable()

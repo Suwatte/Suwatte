@@ -204,7 +204,6 @@ extension PageViewTile {
                     }
                 }
                 .foregroundColor(.white)
-
                 .padding()
             }
             .animation(.default, value: loader.image)
@@ -359,7 +358,6 @@ extension PageViewTile {
                 if loader.image != nil || loader.isLoading { return }
                 loader.transaction = .init(animation: .easeInOut(duration: 0.25))
                 loader.onCompletion = { result in
-
                     guard let result = try? result.get() else {
                         return
                     }

@@ -104,7 +104,6 @@ struct MigrationTile: View {
     }
 }
 
-
 // MARK: Result Cell
 
 struct MigrationEntryListResultCell: View {
@@ -119,25 +118,25 @@ struct MigrationEntryListResultCell: View {
         } label: {
             HStack {
                 switch state {
-                    case .idle, .searching:
-                        MigrationTile(highlight: .placeholder)
-                            .redacted(reason: .placeholder)
-                    case .noMatches:
-                        Image(systemName: "magnifyingglass")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 20, height: 20)
-                            .padding(.horizontal, 15)
-                            .foregroundColor(.accentColor)
-                        Text("No matches! Tap To Search")
-                            .font(.footnote)
-                            .fixedSize(horizontal: true, vertical: false)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .lineLimit(2)
+                case .idle, .searching:
+                    MigrationTile(highlight: .placeholder)
+                        .redacted(reason: .placeholder)
 
+                case .noMatches:
+                    Image(systemName: "magnifyingglass")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 20, height: 20)
+                        .padding(.horizontal, 15)
+                        .foregroundColor(.accentColor)
+                    Text("No matches! Tap To Search")
+                        .font(.footnote)
+                        .fixedSize(horizontal: true, vertical: false)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .lineLimit(2)
 
-                    case let .found(entry, chapterCount), let .lowerFind(entry, _, _, chapterCount):
-                        MigrationTile(highlight: entry.highlight, sourceId: entry.sourceID, chapterCount: chapterCount)
+                case let .found(entry, chapterCount), let .lowerFind(entry, _, _, chapterCount):
+                    MigrationTile(highlight: entry.highlight, sourceId: entry.sourceID, chapterCount: chapterCount)
                 }
 
                 Image(systemName: "chevron.right")

@@ -262,9 +262,9 @@ extension IVMenuView {
 
         var inverted: Bool {
             model.readingMode.isInverted
-            || (model.readingMode.isVertical
-                && !model.scrollbarPosition.isVertical(model.readingMode.isVertical)
-                && model.bottomScrollbarDirection == .LEFT)
+                || (model.readingMode.isVertical
+                    && !model.scrollbarPosition.isVertical(model.readingMode.isVertical)
+                    && model.bottomScrollbarDirection == .LEFT)
         }
 
         var SliderAndButtons: some View {

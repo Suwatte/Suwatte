@@ -46,7 +46,7 @@ extension DirectoryView {
         var showButton: Bool {
             !configSort.options.isEmpty || !lists.isEmpty
         }
-        
+
         var fullSearch: Bool {
             request.tag == nil && (config == nil ? false : config?.searchable ?? true)
         }
@@ -84,7 +84,7 @@ extension DirectoryView.ViewModel {
                 Logger.shared.error(error)
             }
         }
-        if config != nil && request.sort == nil {
+        if config != nil, request.sort == nil {
             await MainActor.run {
                 request.sort = configSort.default
                 if request.sort == nil, let firstSortOption = configSort.options.first {
@@ -93,7 +93,7 @@ extension DirectoryView.ViewModel {
             }
         }
 
-        if config != nil && request.sort == nil && request.listId == nil, let listID = config?.lists?.first?.id {
+        if config != nil, request.sort == nil, request.listId == nil, let listID = config?.lists?.first?.id {
             await MainActor.run {
                 request.listId = listID
             }

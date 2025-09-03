@@ -20,7 +20,7 @@ struct LibraryGridState {
 
     func getTitlePinningType() -> TitlePinningType? {
         // Collection settings takes priority
-        if let collection, collection.pinningType != nil && collection.pinningType != TitlePinningType.none {
+        if let collection, collection.pinningType != nil, collection.pinningType != TitlePinningType.none {
             return collection.pinningType
         }
 
@@ -34,7 +34,6 @@ struct LibraryGridState {
 }
 
 extension RealmActor {
-
     func getLibraryEntries(state: LibraryGridState) -> Results<LibraryEntry> {
         let tracked = realm
             .objects(TrackerLink.self)
@@ -67,11 +66,11 @@ extension RealmActor {
 
             if let filter = collection.filter {
                 switch filter.adultContent {
-                    case .both: break
-                    case .only:
-                        smartFilterPredicates.append(NSPredicate(format: "content.isNSFW = true"))
-                    case .none:
-                        smartFilterPredicates.append(NSPredicate(format: "content.isNSFW = false"))
+                case .both: break
+                case .only:
+                    smartFilterPredicates.append(NSPredicate(format: "content.isNSFW = true"))
+                case .none:
+                    smartFilterPredicates.append(NSPredicate(format: "content.isNSFW = false"))
                 }
 
                 if !filter.readingFlags.isEmpty {
@@ -97,7 +96,7 @@ extension RealmActor {
                 }
 
                 if !filter.contentType.isEmpty {
-                    let types = filter.contentType.map({ $0 }) as [ExternalContentType]
+                    let types = filter.contentType.map { $0 } as [ExternalContentType]
                     smartFilterPredicates.append(NSPredicate(format: "content.contentType IN %@", types))
                 }
 
@@ -107,13 +106,13 @@ extension RealmActor {
                 }
 
                 if smartFilterPredicates.isEmpty {
-                    smartFilterPredicates.append(NSPredicate.init(value: true))
+                    smartFilterPredicates.append(NSPredicate(value: true))
                 }
 
                 let compoundSmartFilter = NSCompoundPredicate(type: collection.filter?.logicalOperator == LogicalOperator.or
-                                                              ? .or
-                                                              : .and,
-                                                              subpredicates: smartFilterPredicates)
+                    ? .or
+                    : .and,
+                    subpredicates: smartFilterPredicates)
 
                 predicates.append(compoundSmartFilter)
             }

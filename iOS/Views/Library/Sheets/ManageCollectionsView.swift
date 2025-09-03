@@ -74,7 +74,7 @@ extension MCV {
 
     func delete(from idxs: IndexSet) {
         let ids = idxs.compactMap { collections.getOrNil($0)?.id }
-        ids.forEach { id in
+        for id in ids {
             Task {
                 let actor = await RealmActor.shared()
                 await actor.deleteCollection(id: id)
@@ -130,7 +130,6 @@ extension MCV {
         var body: some View {
             HStack {
                 TextField("Enter Name", text: $name, onEditingChanged: { change in
-
                     if change {
                         withAnimation {
                             editting = false

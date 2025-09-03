@@ -36,7 +36,6 @@ extension JSCRunner {
                 return
             }
             runnerClass.daisukeCall(method: method, arguments: arguments) { value in
-
                 if value.isNull || value.isUndefined {
                     handler.resume(returning: nil)
                     return
@@ -61,7 +60,6 @@ extension JSCRunner {
 
     func callMethodReturningObject<T: Parsable>(method: String, arguments: [Any], resolvesTo _: T.Type) async throws -> T {
         try await withCheckedThrowingContinuation { handler in
-
             guard runnerClass.hasProperty(method) else {
                 handler.resume(throwing: DaisukeEngine.Errors.MethodNotFound(name: method))
                 return
@@ -88,7 +86,6 @@ extension JSCRunner {
                 return
             }
             runnerClass.daisukeCall(method: method, arguments: arguments) { value in
-
                 let str = DaisukeEngine.stringify(val: value)
                 guard let str = str else {
                     handler.resume(throwing: DaisukeEngine.Errors.NamedError(name: "Invalid Return", message: "Returned Array Object cannot be converted to JSON String"))

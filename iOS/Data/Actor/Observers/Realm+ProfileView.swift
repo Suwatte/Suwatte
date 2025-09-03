@@ -48,8 +48,8 @@ extension RealmActor {
             .appending(id)
 
         let collection = realm
-                .objects(ProgressMarker.self)
-                .where { $0.chapter.contentId.in(ids) && !$0.isDeleted }
+            .objects(ProgressMarker.self)
+            .where { $0.chapter.contentId.in(ids) && !$0.isDeleted }
 
         func didUpdate(_ results: Results<ProgressMarker>) {
             let readChaptersByContent = createDictionaryFromResults(results)

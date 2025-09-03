@@ -72,30 +72,30 @@ extension H {
         let actor = await RealmActor.shared()
         let key = "\(id)|\(message.key)"
         switch message.store {
-            case .os: // ObjectStore
-                switch message.action {
-                    case .get:
-                        return await actor.getStoreValue(for: key)
-                    case .set:
-                        guard let value = message.value else {
-                            throw DSK.Errors.ValueStoreErrorKeyValuePairInvalid
-                        }
-                        await actor.setStoreValue(for: key, value: value)
-                    case .remove:
-                        await actor.removeStoreValue(for: key)
+        case .os: // ObjectStore
+            switch message.action {
+            case .get:
+                return await actor.getStoreValue(for: key)
+            case .set:
+                guard let value = message.value else {
+                    throw DSK.Errors.ValueStoreErrorKeyValuePairInvalid
                 }
-            case .ss: // SecureStore
-                switch message.action {
-                    case .get:
-                        return await actor.getKeychainValue(for: id, key: message.key)
-                    case .set:
-                        guard let value = message.value else {
-                            throw DSK.Errors.ValueStoreErrorKeyValuePairInvalid
-                        }
-                        await actor.setKeychainValue(for: id, key: message.key, value: value)
-                    case .remove:
-                        await actor.deleteKeyChainValue(for: id, key: message.key)
+                await actor.setStoreValue(for: key, value: value)
+            case .remove:
+                await actor.removeStoreValue(for: key)
+            }
+        case .ss: // SecureStore
+            switch message.action {
+            case .get:
+                return await actor.getKeychainValue(for: id, key: message.key)
+            case .set:
+                guard let value = message.value else {
+                    throw DSK.Errors.ValueStoreErrorKeyValuePairInvalid
                 }
+                await actor.setKeychainValue(for: id, key: message.key, value: value)
+            case .remove:
+                await actor.deleteKeyChainValue(for: id, key: message.key)
+            }
         }
         return nil
     }

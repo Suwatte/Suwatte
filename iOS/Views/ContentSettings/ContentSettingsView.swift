@@ -42,7 +42,7 @@ struct ContentSettingsView: View {
             } footer: {
                 Text("If disabled, hidden providers will only apply to the title being set.")
             }
-            
+
             Section {
                 Toggle("Auto Sync", isOn: $trackerAutoSync)
             } header: {

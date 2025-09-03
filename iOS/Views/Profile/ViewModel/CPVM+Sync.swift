@@ -30,7 +30,6 @@ extension ViewModel {
         // Get A Dictionary representing the trackers and the current max read chapter on each tracker
         typealias Marker = (String, Double)
         let markers = await withTaskGroup(of: Marker.self, body: { group in
-
             for (key, value) in matches {
                 // Get Tracker To handle
                 guard let tracker = await DSK.shared.getTracker(id: key) else {
@@ -56,7 +55,7 @@ extension ViewModel {
 
             var markers: [String: Double] = [:]
 
-            for await(key, originMaxReadChapter) in group {
+            for await (key, originMaxReadChapter) in group {
                 markers[key] = originMaxReadChapter
             }
             return markers

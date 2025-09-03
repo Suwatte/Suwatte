@@ -27,7 +27,7 @@ struct MigrationManualDestinationView: View {
 
                 // We need to create the ContentIdentifier here because the match still only has the contentId without the Source
                 let exactMatchContentIdentifier = ContentIdentifier(contentId: exactMatch.id, sourceId: resultGroup.sourceID)
-                
+
                 // If the exact match is the same item, skip
                 if searchModel.getSelectedSourceCount() > 1 && exactMatchContentIdentifier.id == content.id {
                     return false

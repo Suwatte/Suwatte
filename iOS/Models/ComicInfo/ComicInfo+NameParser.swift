@@ -43,7 +43,6 @@ class ComicNameParser {
 
         var wordList = [Substring]()
         filename.enumerateSubstrings(in: filename.startIndex..., options: .byWords) { word, range, _, _ in
-
             if let word, !word.isEmpty {
                 wordList.append(filename[range])
             }

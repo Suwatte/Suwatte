@@ -200,7 +200,7 @@ final class Preferences {
 
     @UserDefault(STTKeys.AlwaysMarkFirstPageAsSinglePanel)
     var markFirstAsSingle = true
-    
+
     @UserDefault(STTKeys.TrackerAutoSync)
     var trackerAutoSync = true
 
@@ -209,7 +209,7 @@ final class Preferences {
 
     @UserDefault(STTKeys.EnableOverlay)
     var enableOverlay = false
-    
+
     @UserDefault(STTKeys.AutoDeleteCompletedChapters)
     var autoDeleteCompletedChapters = false
 }

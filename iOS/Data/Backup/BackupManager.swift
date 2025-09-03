@@ -108,7 +108,7 @@ class BackupManager: ObservableObject {
         // Install
         try await restoreDB(backup: backup)
 
-        guard !runners.isEmpty && backup.schemaVersion >= 14 else { return }
+        guard !runners.isEmpty, backup.schemaVersion >= 14 else { return }
 
         await withTaskGroup(of: Void.self) { group in
             for runner in runners {

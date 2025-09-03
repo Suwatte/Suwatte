@@ -124,7 +124,6 @@ struct BrowseView: View {
             .animation(.default, value: model.pending)
             .animation(.default, value: noListInstalled)
             .fileImporter(isPresented: $showAddLocalSourceSheet, allowedContentTypes: [.init(filenameExtension: "stt")!]) { result in
-
                 guard let path = try? result.get() else {
                     ToastManager.shared.error("Task Failed")
                     return
@@ -202,7 +201,7 @@ extension BrowseView {
                             STTThumbView(url: URL(string: runner.thumbnail))
                                 .frame(width: 40, height: 40)
                                 .cornerRadius(5)
-                            VStack (alignment: .leading) {
+                            VStack(alignment: .leading) {
                                 Text(runner.name)
                                     .font(.headline)
                                 Text("v" + runner.version.description)
@@ -339,7 +338,6 @@ extension BrowseView {
                 }
             }
         }
-
     }
 
     func PageLinksView(_ runner: StoredRunnerObject, _ links: [DSKCommon.PageLinkLabel]) -> some View {
@@ -476,7 +474,6 @@ final class PageLinkProviderModel: ObservableObject {
             .map(\.id)
 
         let results = await withTaskGroup(of: AnyRunner?.self) { group in
-
             for id in ids {
                 group.addTask {
                     await DSK.shared.getRunner(id)
@@ -533,7 +530,7 @@ final class PageLinkProviderModel: ObservableObject {
             }
 
             if let runner = runner as? AnyContentSource, runner.config?.requiresAuthenticationToAccessContent ?? false {
-                guard runner.intents.authenticatable && runner.intents.authenticationMethod != .unknown else {
+                guard runner.intents.authenticatable, runner.intents.authenticationMethod != .unknown else {
                     Logger.shared.warn("Runner has requested authentication to display content but has not implemented the required authentication methods.", runner.id)
                     return
                 }
@@ -559,8 +556,7 @@ final class PageLinkProviderModel: ObservableObject {
         }
     }
 
-    nonisolated
-    func reload() {
+    nonisolated func reload() {
         Task {
             stopObserving()
             await observe()

@@ -54,7 +54,7 @@ extension RealmActor {
         guard !targets.isEmpty else {
             return
         }
-        
+
         await operation {
             for target in targets {
                 target.isDeleted = true

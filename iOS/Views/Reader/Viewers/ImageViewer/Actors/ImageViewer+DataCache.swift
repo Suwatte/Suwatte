@@ -145,7 +145,6 @@ extension IVDataCache {
             return data.toStored(withStoredChapter: chapter.toStored()).toReadableChapterData(with: chapter)
 
         case .OPDS:
-
             let baseLink = chapter.chapterId
             let publication = await actor.getPublication(id: chapter.id)
             guard let publication, let client = publication.client else {

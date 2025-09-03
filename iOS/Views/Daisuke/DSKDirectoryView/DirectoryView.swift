@@ -11,16 +11,16 @@ struct DirectoryView<C: View>: View {
     @StateObject var model: ViewModel
     @AppStorage(STTKeys.AppAccentColor) var accentColor: Color = .sttDefault
     @Environment(\.isSearching) private var isSearching: Bool
-    
+
     var title: String?
     var content: (DSKCommon.Highlight) -> C
     @State var text = ""
-    
+
     init(model: ViewModel, @ViewBuilder _ content: @escaping (DSKCommon.Highlight) -> C) {
         _model = StateObject(wrappedValue: model)
         self.content = content
     }
-    
+
     var body: some View {
         LoadableResultsView
             .navigationBarTitleDisplayMode(.inline)
@@ -38,7 +38,7 @@ struct DirectoryView<C: View>: View {
                 guard let query = model.request.query, !model.result.LOADED else { return }
                 model.query = query
             }
-        
+
             .environmentObject(model)
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
@@ -47,7 +47,7 @@ struct DirectoryView<C: View>: View {
                             Image(systemName: "line.3.horizontal.decrease")
                         }
                         .disabled(model.filters.isEmpty)
-                        
+
                         Button { model.presentHistory.toggle() } label: {
                             Image(systemName: "clock.arrow.circlepath")
                         }
@@ -55,33 +55,33 @@ struct DirectoryView<C: View>: View {
                 }
             }
     }
-    
+
     func reload() {
         model.result = .idle
         model.pagination = .IDLE
     }
-    
+
     func load() async throws -> [DSKCommon.Highlight] {
         try await model.sendRequest()
     }
-    
+
     func didRecieveQuery(_ val: String, save: Bool = false) {
         if model.callFromHistory {
             model.callFromHistory.toggle()
             return
         }
-        
+
         model.reset()
-        
+
         if val.isEmpty {
             reload()
             return
         }
         model.request.query = val
             .trimmingCharacters(in: .whitespacesAndNewlines)
-        
+
         reload()
-        
+
         if save {
             Task {
                 await RealmActor.shared().saveSearch(model.request, sourceId: model.runner.id, display: model.request.query ?? "")
@@ -103,7 +103,7 @@ extension DirectoryView {
             }
         }
     }
-    
+
     var LoadableResultsView: some View {
         LoadableView(model.runner.id, load, $model.result) { value in
             if value.isEmpty {
@@ -131,7 +131,7 @@ extension DirectoryView {
 struct RunnerDirectoryView: View {
     let runner: AnyRunner
     let request: DSKCommon.DirectoryRequest
-    
+
     var body: some View {
         Group {
             switch runner.environment {
