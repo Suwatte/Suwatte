@@ -83,7 +83,6 @@ struct IVSettingsView: View {
                 }
 
                 if model.readingMode == .VERTICAL {
-
                     Section {
                         Toggle("AutoScroll", isOn: $verticalAutoScroll)
                         if verticalAutoScroll {
@@ -163,7 +162,6 @@ struct IVSettingsView: View {
 
                         Picker("Navigation Layout", selection: model.readingMode.isVertical ? $verticalNavigator : $pagedNavigator) {
                             ForEach(ReaderNavigation.Modes.allCases) { entry in
-
                                 Text(entry.mode.title)
                                     .tag(entry)
                             }

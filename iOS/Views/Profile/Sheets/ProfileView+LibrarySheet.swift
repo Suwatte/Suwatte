@@ -8,6 +8,7 @@
 import Foundation
 import RealmSwift
 import SwiftUI
+
 extension ProfileView {
     struct Sheets {}
 }

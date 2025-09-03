@@ -108,16 +108,18 @@ struct NukeWhitespaceProcessor: ImageProcessing, Hashable {
                 let blue = data[idx + 3]
 
                 // White
-                if red > whiteThreshold
-                    && green > whiteThreshold
-                    && blue > whiteThreshold {
+                if red > whiteThreshold,
+                   green > whiteThreshold,
+                   blue > whiteThreshold
+                {
                     continue
                 }
 
                 // Black
-                if red < blackThreshold
-                    && green < blackThreshold
-                    && blue < blackThreshold {
+                if red < blackThreshold,
+                   green < blackThreshold,
+                   blue < blackThreshold
+                {
                     continue
                 }
 
@@ -220,7 +222,7 @@ struct NukeSplitWidePageProcessor: ImageProcessing, Hashable {
     func process(_ image: Nuke.PlatformImage) -> Nuke.PlatformImage? {
         let isWide = image.size.ratio > 1
 
-        if isWide && !page.isSplitPageChild { // fire if the page is wide AND is the primary page
+        if isWide, !page.isSplitPageChild { // fire if the page is wide AND is the primary page
             PanelPublisher.shared.willSplitPage.send(page)
         }
         return isWide ? split(take: half, image: image) : image

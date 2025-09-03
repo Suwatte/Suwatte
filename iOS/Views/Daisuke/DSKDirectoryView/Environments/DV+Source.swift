@@ -78,7 +78,7 @@ extension ContentSourceDirectoryView {
                 .observeLibraryIDs(sourceID: sourceID) { [weak self] values in
                     self?.library = values
                 }
-            
+
             libraryLinkedToken = await actor
                 .observeLinkedIDs(sourceID: sourceID) { [weak self] values in
                     self?.libraryLinked = values

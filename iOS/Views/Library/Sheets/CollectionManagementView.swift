@@ -62,7 +62,7 @@ struct CollectionManagementView: View {
                            tagContains: filter.tagContains.toArray(),
                            contentStatuses: filter.statuses.toArray(),
                            logicalOperator: filter.logicalOperator)
-            .transition(.opacity)
+                .transition(.opacity)
         }
     }
 
@@ -204,7 +204,6 @@ extension CollectionManagementView.FilterSections {
                     }
                 }
                 .animation(.default, value: adultContent)
-
                 .navigationBarTitle("Adult Content")
                 .navigationBarTitleDisplayMode(.inline)
             } label: {
@@ -257,7 +256,6 @@ extension CollectionManagementView.FilterSections {
                 }
 
                 .animation(.default, value: tagContains)
-
                 .navigationTitle("Tags")
 
             } label: {
@@ -319,7 +317,6 @@ extension CollectionManagementView.FilterSections {
                 }
             }
             .animation(.default, value: flagSelections)
-
             .navigationBarTitle("Reading Flags")
             .navigationBarTitleDisplayMode(.inline)
         } label: {

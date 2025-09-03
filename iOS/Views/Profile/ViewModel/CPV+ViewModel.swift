@@ -160,7 +160,6 @@ extension ViewModel {
 
     func loadChapters(_ pre: [DSKCommon.Chapter]? = nil) async {
         await RunnerActor.run { [contentInfo, chapterMap] in
-
             func prepare(chapters: [DSKCommon.Chapter]) async {
                 let preparedChapters = getPreparedChapters(chapters: chapters)
 

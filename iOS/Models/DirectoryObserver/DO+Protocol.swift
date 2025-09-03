@@ -59,7 +59,7 @@ enum DirectorySortOption: Int, CaseIterable, UserDefaultsSerializable {
 
 protocol DirectoryObserver {
     func observe(_ callback: @escaping ((Folder) -> Void))
-    func stop() -> Void
+    func stop()
 
     var path: URL { get }
     var extensions: [String] { get }

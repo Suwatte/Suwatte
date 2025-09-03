@@ -5,8 +5,8 @@
 //  Created by Mantton on 2022-03-25.
 //
 
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 enum LibraryBadge: Int, CaseIterable {
     case unread, update
@@ -60,9 +60,7 @@ extension LibraryView.LibraryGrid {
                 }
 
                 if let collection = model.collection?.thaw() {
-                    Section {
-
-                    } header: {
+                    Section {} header: {
                         Text("Collection Settings")
                     }
 

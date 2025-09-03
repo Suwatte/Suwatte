@@ -16,7 +16,6 @@ extension DSK {
 
         // Fetch Update For Each Source
         let result = await withTaskGroup(of: Int.self) { group in
-
             for source in sources {
                 group.addTask { [weak self] in
                     do {
@@ -164,7 +163,6 @@ extension DSK {
         let linkedTitles = await actor.getLinkedContent(for: id)
 
         let result = await withTaskGroup(of: Bool.self, body: { group in
-
             for title in linkedTitles {
                 group.addTask { [unowned self] in
                     await checkLinked(title: title, min: lowerChapterLimit)
@@ -185,7 +183,7 @@ extension DSK {
     func checkLinked(title: StoredContent, min: Double?) async -> Bool {
         let actor = await RealmActor.shared()
         guard let source = await DSK.shared.getSource(id: title.sourceId) else { return false }
-        
+
         var chapters = try? await source.getContent(id: title.contentId).chapters
         if chapters != nil && chapters!.isEmpty {
             chapters = try? await source.getContentChapters(contentId: title.contentId)

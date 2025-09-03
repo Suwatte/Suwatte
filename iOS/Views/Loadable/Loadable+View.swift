@@ -36,38 +36,36 @@ struct LoadableView<Value, Idle, Loading, Content>: View where Idle: View,
     }
 
     var body: some View {
-        ZStack {
-            switch loadable {
-            case .idle:
-                idle()
-                Rectangle()
-                    .hidden()
-                    .onAppear {
-                        Task {
-                            if loaded {
-                                loaded = false
-                                await load()
-                            }
+        switch loadable {
+        case .idle:
+            idle()
+            Rectangle()
+                .hidden()
+                .onAppear {
+                    Task {
+                        if loaded {
+                            loaded = false
+                            await load()
                         }
-                    }
-                    .transition(.opacity)
-
-            case .loading:
-                loading()
-                    .transition(.opacity)
-
-            case let .loaded(value):
-                content(value)
-                    .transition(.opacity)
-
-            case let .failed(error):
-                ErrorView(error: error, runnerID: runnerID) {
-                    await animate {
-                        loadable = .idle
                     }
                 }
                 .transition(.opacity)
+
+        case .loading:
+            loading()
+                .transition(.opacity)
+
+        case let .loaded(value):
+            content(value)
+                .transition(.opacity)
+
+        case let .failed(error):
+            ErrorView(error: error, runnerID: runnerID) {
+                await animate {
+                    loadable = .idle
+                }
             }
+            .transition(.opacity)
         }
         .task {
             await load()
@@ -184,6 +182,7 @@ struct OldLoadableView<Value, Idle, Loading, Failure, Content>: View where Idle:
                             await load()
                         }
                     }
+
             case .loading:
                 loading()
                     .transition(.opacity)

@@ -126,7 +126,7 @@ extension RealmActor {
             .freeze()
             .toArray()
     }
-    
+
     func getSavedAndEnabledRunners() -> [StoredRunnerObject] {
         realm
             .objects(StoredRunnerObject.self)

@@ -32,7 +32,7 @@ struct BackupsView: View {
                 }
                 .buttonStyle(.plain)
                 .contextMenu {
-                    Button { 
+                    Button {
                         markerSelection = url
                         presentMarkerAlert.toggle()
                     } label: {
@@ -40,7 +40,8 @@ struct BackupsView: View {
                     }
 
                     Button {
-                        handleShareURL(url: url) }
+                        handleShareURL(url: url)
+                    }
                     label: {
                         Label("Share", systemImage: "square.and.arrow.up")
                     }
@@ -65,7 +66,7 @@ struct BackupsView: View {
             }
         }
         .alert("IMPORTANT NOTICE!! \n Restoring the Progress requires you to have visited the titles once since the last imported backup or update. This is needed because the app needs the metadata of the chapters!", isPresented: $presentMarkerAlert) {
-                Button("Cancel", role: .cancel) {}
+            Button("Cancel", role: .cancel) {}
             if let markerSelection = markerSelection {
                 Button("Restore", role: .destructive) {
                     handleRestoreOldProgressMarker(url: markerSelection)

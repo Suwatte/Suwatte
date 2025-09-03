@@ -34,7 +34,6 @@ struct ImageSearchView: View {
             }
         }
         .onChange(of: image) { val in
-
             if val == nil {
                 response = .idle
             }

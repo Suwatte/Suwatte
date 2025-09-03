@@ -26,7 +26,7 @@ class DoublePagedDisplayHolder: UIView {
     private let scrollView = ZoomingScrollView()
     private let stackView = UIStackView()
     private let progressView = CircularProgressView()
-    private var errorView: UIView? = nil
+    private var errorView: UIView?
 
     private weak var nukeTask: AsyncImageTask?
     private var imageTask: Task<Void, Never>?
@@ -97,7 +97,6 @@ class DoublePagedDisplayHolder: UIView {
             await PanelActor.run { [weak self] in
                 do {
                     let images = try await withThrowingTaskGroup(of: (ReaderPage, UIImage).self) { [weak self] group in
-
                         for page in [firstPage, secondPage] {
                             group.addTask { [weak self] in
                                 try Task.checkCancellation()
@@ -253,6 +252,7 @@ extension DoublePagedDisplayHolder {
                     errorView?.removeFromSuperview()
                     errorView = nil
                     progressView.alpha = 1
+
                 case .error:
                     errorView?.alpha = 1
                     scrollView.alpha = 0
@@ -283,7 +283,7 @@ extension DoublePagedDisplayHolder {
     }
 
     func resetStackView() {
-        stackView.subviews.forEach { view in
+        for view in stackView.subviews {
             view.removeFromSuperview()
         }
     }

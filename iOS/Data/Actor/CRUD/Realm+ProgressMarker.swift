@@ -74,19 +74,19 @@ extension RealmActor {
 
         let reference: ChapterReference? = chapter.toStored().generateReference()
         switch chapter.sourceId {
-            case STTHelpers.LOCAL_CONTENT_ID:
-                reference?.archive = getArchivedContentInfo(chapter.contentId, freezed: false)
-            case STTHelpers.OPDS_CONTENT_ID:
-                reference?.opds = getPublication(id: chapter.id, freezed: false)
-            default:
-                reference?.content = getObject(of: StoredContent.self, with: chapter.STTContentIdentifier)
+        case STTHelpers.LOCAL_CONTENT_ID:
+            reference?.archive = getArchivedContentInfo(chapter.contentId, freezed: false)
+        case STTHelpers.OPDS_CONTENT_ID:
+            reference?.opds = getPublication(id: chapter.id, freezed: false)
+        default:
+            reference?.content = getObject(of: StoredContent.self, with: chapter.STTContentIdentifier)
         }
 
         guard let reference, reference.isValid else {
             Logger.shared.error("Invalid Chapter Reference")
             return
         }
-        
+
         await operation {
             realm.add(reference, update: .modified)
         }
@@ -102,7 +102,7 @@ extension RealmActor {
         }
 
         await decrementUnreadCount(for: contentId)
-        
+
         if Preferences.standard.autoDeleteCompletedChapters {
             await SDM.shared.delete(ids: [chapter.id])
         }
@@ -110,15 +110,15 @@ extension RealmActor {
 
     func updateContentProgress(chapter: ThreadSafeChapter, lastPageRead: Int, totalPageCount: Int, lastPageOffsetPCT: Double? = nil) async {
         let id = chapter.STTContentIdentifier
-        
+
         let reference: ChapterReference? = chapter.toStored().generateReference()
         switch chapter.sourceId {
-            case STTHelpers.LOCAL_CONTENT_ID:
-                reference?.archive = getArchivedContentInfo(chapter.contentId, freezed: false)
-            case STTHelpers.OPDS_CONTENT_ID:
-                reference?.opds = getPublication(id: chapter.id, freezed: false)
-            default:
-                reference?.content = getStoredContent(id)
+        case STTHelpers.LOCAL_CONTENT_ID:
+            reference?.archive = getArchivedContentInfo(chapter.contentId, freezed: false)
+        case STTHelpers.OPDS_CONTENT_ID:
+            reference?.opds = getPublication(id: chapter.id, freezed: false)
+        default:
+            reference?.content = getStoredContent(id)
         }
 
         guard let reference, reference.isValid else {
@@ -148,8 +148,8 @@ extension RealmActor {
 
     func removeFromHistory(contentId: String) async {
         let collection = realm
-                .objects(ProgressMarker.self)
-                .where { $0.chapter.contentId == contentId && !$0.isDeleted }
+            .objects(ProgressMarker.self)
+            .where { $0.chapter.contentId == contentId && !$0.isDeleted }
 
         guard !collection.isEmpty else {
             return
@@ -165,11 +165,11 @@ extension RealmActor {
         // Get Chapters
         let filteredChapters =
             realm
-            .objects(StoredChapter.self)
-            .where { $0.contentId == id.contentId && $0.sourceId == id.sourceId }
-            .toArray()
-            .filter { chapters.contains($0.chapterOrderKey) }
-            .map { $0.toThreadSafe() }
+                .objects(StoredChapter.self)
+                .where { $0.contentId == id.contentId && $0.sourceId == id.sourceId }
+                .toArray()
+                .filter { chapters.contains($0.chapterOrderKey) }
+                .map { $0.toThreadSafe() }
 
         await markChapters(for: id, chapters: filteredChapters, markAsRead: markAsRead)
     }
@@ -192,12 +192,12 @@ extension RealmActor {
             for chapter in chapters {
                 let reference: ChapterReference? = chapter.toStored().generateReference()
                 switch chapter.sourceId {
-                    case STTHelpers.LOCAL_CONTENT_ID:
-                        reference?.archive = getArchivedContentInfo(chapter.contentId, freezed: false)
-                    case STTHelpers.OPDS_CONTENT_ID:
-                        reference?.opds = getPublication(id: chapter.id, freezed: false)
-                    default:
-                        reference?.content = getStoredContent(chapter.STTContentIdentifier)
+                case STTHelpers.LOCAL_CONTENT_ID:
+                    reference?.archive = getArchivedContentInfo(chapter.contentId, freezed: false)
+                case STTHelpers.OPDS_CONTENT_ID:
+                    reference?.opds = getPublication(id: chapter.id, freezed: false)
+                default:
+                    reference?.content = getStoredContent(chapter.STTContentIdentifier)
                 }
 
                 guard let reference, reference.isValid else {
@@ -206,16 +206,15 @@ extension RealmActor {
                 }
 
                 realm.add(reference, update: .modified)
-                
+
                 let marker = ProgressMarker()
                 marker.id = chapter.id
                 marker.chapter = reference
                 marker.dateRead = Date.now
 
-                if (markAsRead) {
+                if markAsRead {
                     marker.setCompleted()
-                }
-                else {
+                } else {
                     marker.isDeleted = true
                 }
 
@@ -246,8 +245,8 @@ extension RealmActor {
         let maxReadOnTarget = getMaxReadKey(for: contentIdentifier, completed: completed)
         let maxReadOnLinked =
             getLinkedContent(for: contentIdentifier.id)
-            .map { getMaxReadKey(for: $0.ContentIdentifier, completed: completed) }
-            .max() ?? 0.0
+                .map { getMaxReadKey(for: $0.ContentIdentifier, completed: completed) }
+                .max() ?? 0.0
 
         return max(maxReadOnTarget, maxReadOnLinked)
     }

@@ -63,13 +63,13 @@ extension LibraryView.ReadLaterView {
                 .observeReadLater(query: query,
                                   ascending: ascending,
                                   sort: sort)
-            { values in
-                Task { @MainActor [weak self] in
-                    self?.readLater = values
-                    self?.initialFetchComplete = true
+                { values in
+                    Task { @MainActor [weak self] in
+                        self?.readLater = values
+                        self?.initialFetchComplete = true
+                    }
                 }
-            }
-            
+
             libraryLinkedNotificationToken = await actor
                 .observeLinkedIDs { values in
                     Task { @MainActor [weak self] in
@@ -81,7 +81,7 @@ extension LibraryView.ReadLaterView {
         func disconnect() {
             libraryNotificationToken?.invalidate()
             libraryNotificationToken = nil
-            
+
             libraryLinkedNotificationToken?.invalidate()
             libraryLinkedNotificationToken = nil
 

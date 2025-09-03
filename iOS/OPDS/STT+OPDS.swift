@@ -111,7 +111,7 @@ class OPDSLocalParser: Loggable {
     /// Feed can only be v1 (XML).
     /// - parameter document: The XMLDocument data
     /// - Returns: The resulting Feed
-    public static func parse(document: Fuzi.XMLDocument, feedURL: URL) throws -> Feed {
+    static func parse(document: Fuzi.XMLDocument, feedURL: URL) throws -> Feed {
         document.definePrefix("thr", forNamespace: "http://purl.org/syndication/thread/1.0")
         document.definePrefix("dcterms", forNamespace: "http://purl.org/dc/terms/")
         document.definePrefix("opds", forNamespace: "http://opds-spec.org/2010/catalog")
@@ -246,7 +246,7 @@ class OPDSLocalParser: Loggable {
     /// Publication can only be v1 (XML).
     /// - parameter document: The XMLDocument data
     /// - Returns: The resulting Publication
-    public static func parseEntry(document: Fuzi.XMLDocument, feedURL: URL) throws -> Publication? {
+    static func parseEntry(document: Fuzi.XMLDocument, feedURL: URL) throws -> Publication? {
         guard let root = document.root else {
             throw OPDS1ParserError.rootNotFound
         }
@@ -255,7 +255,7 @@ class OPDSLocalParser: Loggable {
 
     /// Fetch an Open Search template from an OPDS feed.
     /// - parameter feed: The OPDS feed
-    public static func fetchOpenSearchTemplate(feed: Feed, completion: @escaping (String?, Error?) -> Void) {
+    static func fetchOpenSearchTemplate(feed: Feed, completion: @escaping (String?, Error?) -> Void) {
         guard let openSearchHref = feed.links.first(withRel: .search)?.href,
               let openSearchURL = URL(string: openSearchHref)
         else {

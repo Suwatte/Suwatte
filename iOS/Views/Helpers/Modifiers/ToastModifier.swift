@@ -92,13 +92,13 @@ struct ToastView: View {
 }
 
 struct BlurView: UIViewRepresentable {
-    public typealias UIViewType = UIVisualEffectView
+    typealias UIViewType = UIVisualEffectView
     var style: UIBlurEffect.Style = .systemMaterial
-    public func makeUIView(context _: Context) -> UIVisualEffectView {
+    func makeUIView(context _: Context) -> UIVisualEffectView {
         return UIVisualEffectView(effect: UIBlurEffect(style: style))
     }
 
-    public func updateUIView(_ uiView: UIVisualEffectView, context _: Context) {
+    func updateUIView(_ uiView: UIVisualEffectView, context _: Context) {
         uiView.effect = UIBlurEffect(style: style)
     }
 }

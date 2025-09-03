@@ -33,12 +33,11 @@ import UIKit
     /// Save the image to this app's album.
     ///
     /// - Parameter image: Image to save.
-    public func save(_ image: UIImage?) {
+    func save(_ image: UIImage?) {
         guard let image = image else { return }
 
         // Request authorization and create the album
         requestAuthorizationIfNeeded { _ in
-
             // If it all went well, we've got our asset collection
             guard let assetCollection = self.assetCollection else { return }
 

@@ -7,6 +7,7 @@
 
 import RealmSwift
 import SwiftUI
+
 extension ProfileView.Skeleton {
     struct ChapterView {}
 }
@@ -62,7 +63,6 @@ extension ProfileView.Skeleton.ChapterView {
             VStack(alignment: .center, spacing: 10) {
                 HStack {
                     VStack(alignment: .leading, spacing: 3) {
-
                         Text("^[\(statement.distinctCount) Chapter](inflect: true)")
                             .font(.title3)
                             .fontWeight(.bold)

@@ -22,14 +22,14 @@ class ImageNode: ASCellNode {
     private var isZoomed: Bool {
         delegate?.isZooming ?? false
     }
-    
+
     private var loadImageTask: Task<ImageTask, Error>?
     private weak var nukeTask: ImageTask?
     private var subscriptions = Set<AnyCancellable>()
     private var contextMenuEnabled: Bool {
         Preferences.standard.imageInteractions
     }
-    
+
     private var hasTriggeredChapterDelegateCall = false
     var image: UIImage? {
         didSet {
@@ -37,7 +37,7 @@ class ImageNode: ASCellNode {
             ratio = image.size.height / image.size.width
         }
     }
-    
+
     var isLeading: Bool {
         let collectionNode = owningNode as? ASCollectionNode
         guard let collectionNode, let indexPath else { return false }
@@ -45,11 +45,11 @@ class ImageNode: ASCellNode {
         guard let yOrigin else { return false }
         return yOrigin < collectionNode.contentOffset.y
     }
-    
+
     private var downsample: Bool {
         Preferences.standard.downsampleImages
     }
-    
+
     init(page: PanelPage) {
         self.page = page
         super.init()
@@ -67,13 +67,13 @@ class ImageNode: ASCellNode {
         shadowRadius = .zero
         shadowRadius = .zero
     }
-    
+
     func listen() {
         // Pillarbox
         Preferences.standard.preferencesChangedSubject
             .filter { changedKeyPath in
                 changedKeyPath == \Preferences.usePillarBox ||
-                changedKeyPath == \Preferences.pillarBoxPCT
+                    changedKeyPath == \Preferences.pillarBoxPCT
             }
             .sink { [weak self] _ in
                 guard let image = self?.image else { return }
@@ -83,7 +83,7 @@ class ImageNode: ASCellNode {
                 self?.transitionLayout(with: .init(min: size, max: size), animated: true, shouldMeasureAsync: false)
             }
             .store(in: &subscriptions)
-        
+
         Preferences
             .standard
             .preferencesChangedSubject
@@ -107,19 +107,19 @@ extension ImageNode {
         super.didEnterPreloadState()
         loadImage()
     }
-    
+
     override func didEnterDisplayState() {
         super.didEnterDisplayState()
         didRequestImage()
     }
-    
+
     override func didEnterVisibleState() {
         super.didEnterVisibleState()
     }
-    
+
     override func didExitPreloadState() {
         super.didExitPreloadState()
-        self.reset()
+        reset()
     }
 }
 
@@ -128,21 +128,21 @@ extension ImageNode {
         guard let loadImageTask else {
             return
         }
-        
+
         Task {
             do {
                 let task = try await loadImageTask.value
                 // Update progress
                 for await progress in task.progress {
-                   let p = Double(progress.fraction)
-                   await MainActor.run { [weak self] in
-                       self?.handleProgressBlock(p)
-                   }
-               }
-                
+                    let p = Double(progress.fraction)
+                    await MainActor.run { [weak self] in
+                        self?.handleProgressBlock(p)
+                    }
+                }
+
                 // Completed
                 let result = try await task.image
-                
+
                 await MainActor.run { [weak self] in
                     self?.didLoadImage(result)
                 }
@@ -179,11 +179,11 @@ extension ImageNode {
         Task { @MainActor in
             delegate?.updateChapterScrollRange()
         }
-        
+
         // Inserting At Top
         let manager = owningNode as? ASCollectionNode
         let layout = manager?.collectionViewLayout as? VImageViewerLayout
-        
+
         guard let layout, let manager, let indexPath else { return }
         let Y = manager.collectionViewLayout.layoutAttributesForItem(at: indexPath)?.frame.origin.y
         guard let Y else { return }
@@ -191,13 +191,13 @@ extension ImageNode {
         guard let savedOffset else {
             return
         }
-        
+
         let requestedOffset = imageNode.frame.height * savedOffset
         manager.contentOffset.y += requestedOffset
         self.savedOffset = nil
         delegate?.clearResumption()
     }
-    
+
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
         if let image {
             if Preferences.standard.usePillarBox {
@@ -205,7 +205,7 @@ extension ImageNode {
                 // Guards
                 pct = max(pct, 0.15)
                 pct = min(pct, 1.0)
-                
+
                 imageNode.style.width = ASDimensionMakeWithFraction(pct)
                 // Height Calculations
                 let width = constrainedSize.max.width * pct
@@ -219,7 +219,7 @@ extension ImageNode {
             } else {
                 return ASRatioLayoutSpec(ratio: 1 / image.size.ratio, child: imageNode)
             }
-            
+
         } else {
             let ratio = 1 / UIScreen.main.bounds.size.ratio
             return ASRatioLayoutSpec(ratio: ratio, child: progressNode)
@@ -235,12 +235,12 @@ extension ImageNode {
         handleProgressBlock(1.0, animated: true)
         displayImage(image)
     }
-    
+
     func handleProgressBlock(_ progress: Double, animated: Bool = false) {
         (progressNode.view as? CircularProgressView)?
             .setProgress(to: progress, withAnimation: animated)
     }
-    
+
     func handleImageFailure(_: Error) {
         imageNode.alpha = 0
         progressNode.alpha = 1
@@ -258,13 +258,11 @@ extension ImageNode {
                                               fitToWidth: true,
                                               isPad: isPad)
 
-        self.loadImageTask = Task {
+        loadImageTask = Task {
             try await PanelActor.shared.loadPage(for: data)
         }
     }
-    
-    
-    
+
     func displayImage(_ image: UIImage) {
         imageNode.image = image
         imageNode.shouldAnimateSizeChanges = false
@@ -276,7 +274,7 @@ extension ImageNode {
             self?.postImageSetSetup()
         }
     }
-    
+
     func postImageSetSetup() {
         listen()
         UIView.animate(withDuration: 0.33,
@@ -287,30 +285,30 @@ extension ImageNode {
             progressNode.alpha = 0
         }
     }
-    
+
     func reset() {
         // Reset
         if isZoomed { return }
-        
+
         nukeTask?.cancel()
         nukeTask = nil
-        
+
         loadImageTask?.cancel()
         loadImageTask = nil
-        
+
         imageNode.image = nil
         image = nil
         ratio = nil
-        
+
         imageNode.alpha = 0
         progressNode.alpha = 1
-        
+
         subscriptions.forEach { $0.cancel() }
         subscriptions.removeAll()
-        
+
         checkIfChapterDelegateShouldBeCalled()
     }
-    
+
     func checkIfChapterDelegateShouldBeCalled() {
         guard page.page.isLastPage,
               !hasTriggeredChapterDelegateCall,
@@ -318,26 +316,25 @@ extension ImageNode {
               let indexPath,
               let maxY = delegate.frameOfItem(at: indexPath)?.maxY,
               maxY < delegate.offset else { return }
-        
+
         delegate.didCompleteChapter(page.page.chapter)
         hasTriggeredChapterDelegateCall = true
     }
 }
-
 
 // MARK: - Bare Bones Image Node
 
 class BareBonesImageNode: ASDisplayNode {
     var image: UIImage? {
         didSet {
-            self.setNeedsDisplay()
+            setNeedsDisplay()
         }
     }
-    
+
     class Params: NSObject {
         var image: UIImage?
     }
-    
+
     override func calculateSizeThatFits(_ constrainedSize: CGSize) -> CGSize {
         guard let image else {
             let prepped = super.calculateSizeThatFits(constrainedSize)
@@ -345,29 +342,29 @@ class BareBonesImageNode: ASDisplayNode {
         }
         return image.size.scaledTo(UIScreen.main.bounds.size)
     }
-    
+
     override func drawParameters(forAsyncLayer _: _ASDisplayLayer) -> NSObjectProtocol? {
-        if self.image == nil {
+        if image == nil {
             return nil
         }
         let params = Params()
-        params.image = self.image
+        params.image = image
         return params
     }
-    
+
     override class func display(withParameters parameters: Any?, isCancelled: () -> Bool) -> UIImage? {
         if isCancelled() {
             return nil
         }
-        
+
         guard let params = parameters as? Params else {
             return nil
         }
-        
+
         guard let image = params.image else {
             return nil // For Future references add a breakpoint here
         }
-        
+
         return image
     }
 }

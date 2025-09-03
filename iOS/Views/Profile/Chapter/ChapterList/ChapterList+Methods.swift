@@ -165,7 +165,7 @@ extension ChapterList {
         Task {
             let actor = await RealmActor.shared()
             let maxRead = await actor.getMaxReadKey(for: identifier)
-            if (maxRead == 0) {
+            if maxRead == 0 {
                 return
             }
 

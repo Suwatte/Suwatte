@@ -209,7 +209,7 @@ extension PagedViewerImageHolder {
 
                     let image = try await request.image
 
-                    guard !Task.isCancelled else { 
+                    guard !Task.isCancelled else {
                         await self?.resetNukeTasksAsync()
                         return
                     }
@@ -223,7 +223,6 @@ extension PagedViewerImageHolder {
                     if error is CancellationError {
                         await self?.resetNukeTasksAsync()
                         return
-
                     }
                     await MainActor.run { [weak self] in
                         self?.setError(error)
@@ -398,6 +397,7 @@ extension PagedViewerImageHolder {
             errorView?.removeFromSuperview()
             errorView = nil
             progressView.isHidden = false
+
         case .error:
             errorView?.isHidden = false
             scrollView.isHidden = true

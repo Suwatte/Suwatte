@@ -5,9 +5,9 @@
 //  Created by Mantton on 2022-05-04.
 //
 
+import NavigationSearchBar
 import RealmSwift
 import SwiftUI
-import NavigationSearchBar
 
 struct TrackerManagementView: View {
     @StateObject var model: ViewModel
@@ -312,7 +312,7 @@ extension TrackerManagementView {
 
         init(query: String, contentId: String, trackers: [AnyContentTracker]) {
             self.query = query
-            self.debouncedQuery = query
+            debouncedQuery = query
             self.contentId = contentId
             self.trackers = trackers
         }
@@ -332,10 +332,9 @@ extension TrackerManagementView {
                 .closeButton()
                 .navigationSearchBar(text: $query,
                                      options: [
-                                        .hidesNavigationBarDuringPresentation: false
+                                         .hidesNavigationBarDuringPresentation: false,
                                      ])
                 .task(id: query) {
-
                     try? await Task.sleep(seconds: 0.45)
                     if Task.isCancelled { return }
 
@@ -388,7 +387,7 @@ extension TrackerManagementView {
                     }
                 }
             }
-            .onChange(of: title) { value in
+            .onChange(of: title) { _ in
                 loadable = .idle
             }
             .frame(alignment: .center)
@@ -430,7 +429,7 @@ extension TrackerManagementView {
 
         func handleSelection(_ item: String) {
             withAnimation {
-                if selections[key] != nil && item == selections[key] {
+                if selections[key] != nil, item == selections[key] {
                     selections[key] = nil
                 } else {
                     selections[key] = item

@@ -20,7 +20,7 @@ struct DoublePagedImageViewer: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ controller: IVPagingController, context _: Context) {
-        guard model.pendingState != nil, model.isDoublePaged == true && controller.isLoaded, controller.loadingTask == nil else { return }
+        guard model.pendingState != nil, model.isDoublePaged == true, controller.isLoaded, controller.loadingTask == nil else { return }
         controller.hardReset()
         controller.startup()
     }

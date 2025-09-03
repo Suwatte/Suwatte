@@ -7,6 +7,7 @@
 
 import FlagKit
 import SwiftUI
+
 struct LanguageCellView: View {
     var language: String
     var body: some View {
