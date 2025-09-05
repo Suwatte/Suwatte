@@ -118,6 +118,11 @@ class WebtoonController: ASDKViewController<ASCollectionNode> {
             return
         }
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        UIApplication.shared.isIdleTimerDisabled = false
+    }
 
     @objc func appMovedToBackground() {
         cancelAutoScroll()

@@ -28,11 +28,13 @@ struct DirectoryView<C: View>: View {
                 FilterView(filters: model.filters)
                     .tint(accentColor)
                     .accentColor(accentColor)
+                    .environmentObject(model)
             }
             .sheet(isPresented: $model.presentHistory, onDismiss: reload) {
                 HistoryView()
                     .tint(accentColor)
                     .accentColor(accentColor)
+                    .environmentObject(model)
             }
             .task {
                 guard let query = model.request.query, !model.result.LOADED else { return }
