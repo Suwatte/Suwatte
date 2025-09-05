@@ -43,7 +43,7 @@ struct BrowseView: View {
                         Button {
                             presentSavedLists.toggle()
                         } label: {
-                            Label("Lists", systemImage: "book.pages")
+                            Label("Saved Lists", systemImage: "book.pages")
                         }
                         Button {
                             showAddLocalSourceSheet.toggle()

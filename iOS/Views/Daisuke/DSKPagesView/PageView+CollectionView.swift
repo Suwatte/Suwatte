@@ -17,7 +17,7 @@ extension DSKPageView {
         @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
         @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
         @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
-        @EnvironmentObject var model: ViewModel
+        @EnvironmentObject var model: DSKPageViewModel
 
         init(sections: [DSKCommon.PageSection], runner: AnyRunner, @ViewBuilder _ tileModifier: @escaping PageItemModifier) {
             pageSections = sections
