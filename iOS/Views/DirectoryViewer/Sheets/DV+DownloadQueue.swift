@@ -8,7 +8,6 @@
 import Alamofire
 import Nuke
 import SwiftUI
-
 extension DirectoryViewer {
     final class DownloadManager: ObservableObject {
         static let shared = DownloadManager()

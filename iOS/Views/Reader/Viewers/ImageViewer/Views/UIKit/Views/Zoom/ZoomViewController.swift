@@ -111,6 +111,7 @@ extension ZoomTransitioningDelegate: UIViewControllerAnimatedTransitioning {
             self.configureViews(for: postTransitionState, containerView: containerView, backgroundViewController: backgroundViewController, viewsInBackground: (backgroundImageView, backgroundImageView), viewsInForeground: (foregroundImageView, foregroundImageView), snapshotViews: (imageViewSnapshot, imageViewSnapshot))
 
         }) { _ in
+
             imageViewSnapshot.removeFromSuperview()
             backgroundImageView.isHidden = false
             foregroundImageView.isHidden = false

@@ -131,6 +131,7 @@ extension ChapterList {
                             isBookmarked: isBookmarked)
         }
         .buttonStyle(.plain)
+
         .background(
             Color.clear
                 .contextMenu {

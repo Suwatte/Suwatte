@@ -37,7 +37,6 @@ extension Controller {
         switch action {
         case .MENU:
             model.toggleMenu()
-
         case .LEFT:
             model.hideMenu()
             moveToPage(next: false)

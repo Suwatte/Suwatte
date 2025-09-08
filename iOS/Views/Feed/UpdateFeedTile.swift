@@ -7,7 +7,6 @@
 
 import RealmSwift
 import SwiftUI
-
 extension UpdateFeedView {
     struct UpdateFeedTile: View {
         var entry: LibraryEntry

@@ -94,7 +94,7 @@ extension ArchiveHelper {
 }
 
 extension ArchiveHelper.Errors: LocalizedError {
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case .ArchiveNotFound:
             return NSLocalizedString(

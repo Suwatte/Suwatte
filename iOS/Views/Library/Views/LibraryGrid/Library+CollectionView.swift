@@ -35,8 +35,8 @@ extension LibraryView {
             }
             return nil
         }
-
-        private var readingFlag: LibraryFlag? {
+        
+        private var readingFlag : LibraryFlag? {
             model.readingFlag
         }
 
@@ -48,10 +48,11 @@ extension LibraryView {
             model.pinnedLibrary ?? []
         }
 
+        
         init(collection: LibraryCollection?, readingFlag: LibraryFlag?, useLibrary: Bool = false) {
             let m = ViewModel()
             m.setFilterGroups(collection: collection, readingFlag: readingFlag)
-            _model = StateObject(wrappedValue: m)
+            self._model = StateObject(wrappedValue: m)
             self.useLibrary = useLibrary
         }
 
@@ -167,6 +168,7 @@ extension LibraryView {
                                         .transition(.scale)
                                 }
                             }
+
                         }
                         .tag(path)
                     }
@@ -196,6 +198,7 @@ extension LibraryView {
                                     .transition(.scale)
                             }
                         }
+
                     }
                     Button {
                         withAnimation {
@@ -210,6 +213,7 @@ extension LibraryView {
                                     .transition(.scale)
                             }
                         }
+
                     }
                 } header: {
                     Text("Filter By")
@@ -220,6 +224,7 @@ extension LibraryView {
             }
 
             Menu {
+
                 // Select
                 Button {
                     model.isSelecting = true
@@ -236,6 +241,7 @@ extension LibraryView {
 
                     Divider()
                 }
+
 
                 Button {
                     presentOptionsSheet.toggle()
@@ -281,6 +287,7 @@ extension LibraryView {
 
         private var CollectionSelectorHeader: some View {
             Menu {
+                
                 Section {
                     Button("All Titles") {
                         if readingFlag != nil {
@@ -291,8 +298,9 @@ extension LibraryView {
                     }
                 }
 
+                
                 Divider()
-
+                
                 Section {
                     if let collections = self.collections {
                         ForEach(collections) { coll in
@@ -306,7 +314,7 @@ extension LibraryView {
                 }
 
                 Divider()
-
+                
                 Menu {
                     Section {
                         ForEach(LibraryFlag.allCases) { flag in

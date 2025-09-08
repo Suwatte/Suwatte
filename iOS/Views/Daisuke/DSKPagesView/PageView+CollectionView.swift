@@ -17,7 +17,7 @@ extension DSKPageView {
         @AppStorage(STTKeys.TileStyle) var tileStyle = TileStyle.SEPARATED
         @AppStorage(STTKeys.GridItemsPerRow_P) var PortraitPerRow = 2
         @AppStorage(STTKeys.GridItemsPerRow_LS) var LSPerRow = 6
-        @EnvironmentObject var model: DSKPageViewModel
+        @EnvironmentObject var model: ViewModel
 
         init(sections: [DSKCommon.PageSection], runner: AnyRunner, @ViewBuilder _ tileModifier: @escaping PageItemModifier) {
             pageSections = sections
@@ -48,7 +48,7 @@ extension DSKPageView {
 
 extension DSKPageView.CollectionView {
     func loadAll(force: Bool = false) {
-        guard !locked, !force else { return }
+        guard !locked && !force else { return }
         locked = true // prevent from refiring
         let unresolved = pageSections.filter { $0.items == nil }.map(\.id)
 

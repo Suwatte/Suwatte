@@ -175,7 +175,6 @@ extension SDM {
     }
 
     func delete(ids: [String]) async {
-        await cancel(ids: ids)
         let realm = await getRealmActor()
 
         let targets = realm

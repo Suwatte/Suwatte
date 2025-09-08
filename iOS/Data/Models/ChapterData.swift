@@ -8,6 +8,7 @@
 import Foundation
 
 struct StoredChapterData {
+
     var pages: [StoredChapterPage] = []
     var text: String?
 

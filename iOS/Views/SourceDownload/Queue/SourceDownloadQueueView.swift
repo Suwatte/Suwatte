@@ -359,7 +359,6 @@ extension SDQV {
                         .scaledToFit()
                         .foregroundColor(.green.opacity(0.5))
                         .shimmering()
-
                 case let .downloading(progress: progress):
                     ProgressCircle(progress: progress)
                 }
