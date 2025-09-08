@@ -10,6 +10,7 @@ import KeychainSwift
 import RealmSwift
 
 extension RealmActor {
+
     func getInteractorStoreDictionary() -> [String: String] {
         return UserDefaults.standard.dictionary(forKey: "InteractorStoreObjects") as? [String: String] ?? [:]
     }

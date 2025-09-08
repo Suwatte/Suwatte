@@ -7,7 +7,6 @@
 
 import RealmSwift
 import SwiftUI
-
 extension ProfileView {
     struct Skeleton: View {
         @EnvironmentObject var viewModel: ProfileView.ViewModel

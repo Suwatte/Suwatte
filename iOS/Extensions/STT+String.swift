@@ -9,13 +9,13 @@ import Foundation
 
 extension String {
     func subString(from: Int, to: Int) -> String {
-        if to >= count {
+        if (to >= self.count) {
             return self
         }
-
-        let startIndex = index(self.startIndex, offsetBy: from)
-        let endIndex = index(self.startIndex, offsetBy: to)
-        return String(self[startIndex ..< endIndex])
+        
+        let startIndex = self.index(self.startIndex, offsetBy: from)
+        let endIndex = self.index(self.startIndex, offsetBy: to)
+        return String(self[startIndex..<endIndex])
     }
 }
 

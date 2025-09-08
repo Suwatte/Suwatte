@@ -6,7 +6,6 @@
 //
 
 import Foundation
-
 private typealias ViewModel = ProfileView.ViewModel
 
 struct SimpleContentInfo: Hashable {

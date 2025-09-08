@@ -131,6 +131,7 @@ extension DSKFormView {
             guard let tracker = runner as? AnyContentTracker else { return }
 
             ToastManager.shared.block { [form] in
+
                 try await tracker
                     .didSubmitEntryForm(id: id, form: form)
                 ToastManager.shared.info("Done.")

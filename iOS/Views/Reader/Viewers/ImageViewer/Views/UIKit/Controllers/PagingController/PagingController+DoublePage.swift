@@ -6,7 +6,6 @@
 //
 
 import Foundation
-
 private typealias Controller = IVPagingController
 
 extension Controller: DoublePageResolverDelegate {

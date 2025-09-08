@@ -27,6 +27,7 @@ extension Controller: UIContextMenuInteractionDelegate {
         let chapter = page.page.chapter
         let midPoint = collectionView.frame.midX
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { [weak self, isInverted, isDoublePager] _ in
+
             // Image Actions menu
             // Save to Photos
             let saveToAlbum = UIAction(title: "Save Panel", image: UIImage(systemName: "square.and.arrow.down")) { _ in

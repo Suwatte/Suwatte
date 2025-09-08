@@ -26,7 +26,8 @@ extension LibraryEntry: Codable {
 
         if schemaVersion > 15 {
             id = try container.decode(String.self, forKey: .id)
-        } else {
+        }
+        else {
             content = try container.decode(StoredContent.self, forKey: .content)
         }
         updateCount = try container.decode(Int.self, forKey: .updateCount)
@@ -54,8 +55,8 @@ extension LibraryEntry: Codable {
         try container.encode(lastOpened, forKey: .lastOpened)
         try container.encode(linkedHasUpdates, forKey: .linkedHasUpdates)
     }
-
-    func fillContent(data: [String: [StoredContent]]) {
+    
+    func fillContent(data: Dictionary<String, [StoredContent]>) {
         content = data[id]?.first
     }
 }

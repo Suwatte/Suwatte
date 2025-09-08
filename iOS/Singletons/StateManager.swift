@@ -192,7 +192,6 @@ extension StateManager {
             }
 
             break
-
         @unknown default:
             break
         }

@@ -60,6 +60,7 @@ extension ViewModel {
     }
 
     func loadLinkedChapters() async {
+
         let current = getCurrentStatement()
         if !current.originalList.isEmpty {
             await animate { [weak self] in
@@ -88,6 +89,7 @@ extension ViewModel {
     }
 
     func initializeLinkedChapterSection(for content: StoredContent, loadChapters: Bool, index: Int) async {
+
         let source = await DSK.shared.getSource(id: content.sourceId)
         guard let source else { return }
 

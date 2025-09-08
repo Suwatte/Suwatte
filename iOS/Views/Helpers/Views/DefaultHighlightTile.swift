@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-
 struct DefaultTile: View {
     var entry: DaisukeEngine.Structs.Highlight
     var sourceId: String?

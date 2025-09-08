@@ -91,7 +91,7 @@ extension CloudFlareErrorView {
 
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
-
+            
             if let resolutionURL {
                 let url = URL(string: resolutionURL)
                 guard let url else {
@@ -99,14 +99,14 @@ extension CloudFlareErrorView {
                     return
                 }
                 let request = URLRequest(url: url)
-                _ = webView.load(request)
+                let _ = self.webView.load(request)
             } else {
                 Task { @MainActor in
                     guard let source = await DSK.shared.getSource(id: sourceID) else {
                         StateManager.shared.alert(title: "Error", message: "Unable to Locate Source")
                         return
                     }
-                    var url = source.cloudflareResolutionURL ?? URL(string: source.info.website ?? "")
+                    var url = source.cloudflareResolutionURL ?? URL(string:  source.info.website ?? "")
                     guard let url else {
                         StateManager.shared.alert(title: "Error", message: "Invalid URL Provided")
                         return
@@ -127,7 +127,8 @@ extension CloudFlareErrorView.CloudFlareWebViewViewController: WKNavigationDeleg
     func webView(_ webView: WKWebView, didFinish _: WKNavigation!) {
         let cookieStore = webView.configuration.websiteDataStore.httpCookieStore
         cookieStore.getAllCookies { cookies in
-            for cookie in cookies {
+
+            cookies.forEach { cookie in
                 AF.session.configuration.httpCookieStorage?.setCookie(cookie)
             }
         }

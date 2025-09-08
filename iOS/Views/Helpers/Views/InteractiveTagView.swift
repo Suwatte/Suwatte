@@ -37,6 +37,7 @@ struct InteractiveTagView<T: RandomAccessCollection, Content: View>: View where 
 
         ZStack(alignment: .topLeading) {
             ForEach(tags) { tag in
+
                 content(tag)
                     .padding(.all, 3.5)
                     .alignmentGuide(.leading, computeValue: { d in

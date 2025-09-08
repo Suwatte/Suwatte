@@ -206,7 +206,9 @@ extension SettingsView {
 
                 VStack(alignment: .leading) {
                     Text("Scrollbar Thickness (\(scrollBarWidth.description))")
-                    Slider(value: $scrollBarWidth, in: 5 ... 15, step: 1) {} minimumValueLabel: {
+                    Slider(value: $scrollBarWidth, in: 5...15, step: 1) {
+
+                    } minimumValueLabel: {
                         Text("5")
                     } maximumValueLabel: {
                         Text("15")

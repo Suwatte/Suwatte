@@ -19,6 +19,7 @@ final class ProgressMarker: Object, Identifiable, CKRecordConvertible, CKRecordR
 
     @Persisted var readChapters: MutableSet<Double>
 
+
     @Persisted var isDeleted: Bool = false
 
     var isCompleted: Bool {
@@ -30,13 +31,13 @@ final class ProgressMarker: Object, Identifiable, CKRecordConvertible, CKRecordR
 
         return totalPageCount == lastPageRead && lastPageOffsetPCT == nil
     }
-
+    
     func setCompleted(hideInHistory: Bool = false) {
         totalPageCount = 1
         lastPageRead = 1
         lastPageOffsetPCT = nil
-
-        if hideInHistory {
+        
+        if (hideInHistory) {
             dateRead = nil
         }
     }
@@ -59,17 +60,18 @@ extension ProgressMarker {
 }
 
 extension ProgressMarker {
-    func toThreadSafe() -> ThreadSafeProgressMarker {
+    func toThreadSafe()-> ThreadSafeProgressMarker {
         .init(id: id,
               dateRead: dateRead,
               lastPageRead: lastPageRead,
               totalPageCount: totalPageCount,
               lastPageOffsetPCT: lastPageOffsetPCT,
-              chapterOrderKey: chapter?.chapterOrderKey)
+              chapterOrderKey: chapter?.chapterOrderKey
+        )
     }
 }
 
-struct ThreadSafeProgressMarker: Hashable, Identifiable, Sendable, Encodable {
+struct ThreadSafeProgressMarker : Hashable, Identifiable, Sendable, Encodable {
     let id: String
     let dateRead: Date?
     let lastPageRead: Int?

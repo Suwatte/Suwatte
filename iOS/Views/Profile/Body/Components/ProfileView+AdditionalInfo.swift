@@ -25,6 +25,7 @@ extension ProfileView.Skeleton {
         var AdditionalProperties: some View {
             if let props = entry.properties, props.count > 1 {
                 ForEach(props[1...], id: \.title) { property in
+
                     VStack(alignment: .leading, spacing: 3) {
                         Text(property.title)
                             .font(.headline)
@@ -76,6 +77,7 @@ extension ProfileView.Skeleton {
                                 .padding(.horizontal)
                         }
                         .padding(.vertical)
+
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)

@@ -169,7 +169,6 @@ extension Target {
 
 import Alamofire
 import NukeUI
-
 extension Target {
     struct Tile: View {
         var publication: Publication

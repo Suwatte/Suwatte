@@ -19,6 +19,7 @@ extension JSValue {
         // Rejector Block
         let rejector: @convention(block) (JSValue) -> Void = {
             errorValue in
+
             onFailure(DaisukeEngine.Errors.nativeError(for: errorValue))
         }
 

@@ -49,6 +49,7 @@ struct InstalledRunnersView: View {
         }
         .animation(.default, value: model.runners)
         .fileImporter(isPresented: $showAddSheet, allowedContentTypes: [.init(filenameExtension: "stt")!]) { result in
+
             guard let path = try? result.get() else {
                 ToastManager.shared.error("Task Failed")
                 return

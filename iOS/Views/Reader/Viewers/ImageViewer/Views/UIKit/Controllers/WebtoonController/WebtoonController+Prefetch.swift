@@ -7,7 +7,6 @@
 
 import AsyncDisplayKit
 import UIKit
-
 private typealias Controller = WebtoonController
 
 extension Controller {
