@@ -13,6 +13,7 @@ public class WKRunner: DSKRunner {
     var intents: RunnerIntents
     let wv: WKWebView!
     var configCache: [String: DSKCommon.DirectoryConfig] = [:]
+    var bootstrapper: WKBootstrapper?
 
     var customID: String?
     var customName: String?
@@ -43,6 +44,10 @@ public class WKRunner: DSKRunner {
         saveState()
     }
 
+    func setBootstrapper(_ bootstrapper: WKBootstrapper) {
+        self.bootstrapper = bootstrapper
+    }
+
     func handleURL(url: String) async throws -> DSKCommon.DeepLinkContext? {
         try await eval(script("let data = await RunnerObject.handleURL(url)"),
                        ["url": url])
@@ -53,6 +58,8 @@ class WKBootstrapper: NSObject {
     private weak var wv: WKWebView?
     var isClientReady = false
     fileprivate var continuation: CheckedContinuation<Void, Never>?
+    private var hasSetupDelegate = false
+
     init(wv: WKWebView) {
         self.wv = wv
         super.init()
@@ -74,6 +81,22 @@ class WKBootstrapper: NSObject {
 
     @MainActor
     func prepare() async {
+        // Set up navigation delegate to handle process termination
+        if !hasSetupDelegate {
+            wv?.navigationDelegate = self
+            hasSetupDelegate = true
+        }
+
+        wv?.configuration.userContentController.add(self, contentWorld: .defaultClient, name: "state")
+        await withCheckedContinuation { continuation in
+            self.continuation = continuation
+            wv?.loadHTMLString(HTML, baseURL: nil)
+        }
+    }
+
+    @MainActor
+    func reload() async {
+        isClientReady = false
         wv?.configuration.userContentController.add(self, contentWorld: .defaultClient, name: "state")
         await withCheckedContinuation { continuation in
             self.continuation = continuation
@@ -88,7 +111,6 @@ extension WKBootstrapper: WKScriptMessageHandler {
         continuation?.resume()
         continuation = nil
         wv?.configuration.userContentController.removeScriptMessageHandler(forName: "state", contentWorld: .defaultClient)
-        wv = nil
     }
 
     func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) {
@@ -99,6 +121,16 @@ extension WKBootstrapper: WKScriptMessageHandler {
             didEnterReadyState()
         default:
             break
+        }
+    }
+}
+
+extension WKBootstrapper: WKNavigationDelegate {
+    @MainActor
+    func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+        Logger.shared.log("WKWebView process terminated, reloading...")
+        Task {
+            await reload()
         }
     }
 }

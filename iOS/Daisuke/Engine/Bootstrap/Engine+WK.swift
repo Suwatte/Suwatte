@@ -68,10 +68,10 @@ extension DSK {
             window?.addSubview(wv)
             let bootstrapper = WKBootstrapper(wv: wv)
             await bootstrapper.prepare()
-            return wv
+            return (wv, bootstrapper)
         }
 
-        let wv = await task.value
+        let (wv, bootstrapper) = await task.value
 
         let environment = try await wv
             .evaluateJavaScript("(function(){ return RunnerEnvironment })()", contentWorld: .defaultClient)
@@ -92,6 +92,7 @@ extension DSK {
             throw DSK.Errors.NamedError(name: "Engine", message: "Failed to recognize runner environment.")
         }
 
+        runner.setBootstrapper(bootstrapper)
         return runner
     }
 }
