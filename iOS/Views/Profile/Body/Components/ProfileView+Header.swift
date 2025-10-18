@@ -104,6 +104,7 @@ extension Skeleton.Header {
             .frame(width: ImageWidth, height: ImageWidth * 1.5)
             .cornerRadius(7)
             .shadow(radius: 3)
+            .contentShape(Rectangle())
             .onTapGesture {
                 presentThumbnails.toggle()
             }
