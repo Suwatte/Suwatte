@@ -110,7 +110,7 @@ extension ViewModel {
         })
 
         // Update Local Value if outdated, sources are notified if they have the Chapter Event Handler
-        guard maxReadChapter != localHighestRead else { return }
+        guard maxReadChapter != localHighestRead || !readIDs.isEmpty else { return }
 
         let markIndividually = maxReadChapter == sourceOriginHighestRead && !readIDs.isEmpty
 
