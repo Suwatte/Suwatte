@@ -197,10 +197,11 @@ private extension Skeleton {
                 STTHelpers.triggerHaptic(true)
             }
             let ids = model.STTIDPair
-            if !EntryInLibrary {
+            let wasInLibrary = EntryInLibrary
+            if !wasInLibrary {
                 await actor.toggleLibraryState(for: ids)
             }
-            if promptForConfig || EntryInLibrary {
+            if promptForConfig || wasInLibrary {
                 model.presentCollectionsSheet.toggle()
             } else {
                 if !defaultCollection.isEmpty {
