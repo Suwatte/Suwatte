@@ -17,18 +17,7 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
-        MainContent
-            .onChange(of: scenePhase) { phase in
-                switch phase {
-                case .background:
-                    STTScheduler.shared.scheduleAll()
-                default: break
-                }
-                appState.didScenePhaseChange(phase)
-            }
-            .onAppear {
-                selection = InitialSelection
-            }
+        ContentViewContainer
             .fullScreenCover(item: $navModel.content) { taggedHighlight in
                 SmartNavigationView {
                     ProfileView(entry: taggedHighlight.highlight, sourceId: taggedHighlight.sourceID)
@@ -51,11 +40,28 @@ struct ContentView: View {
                               pageOffset: ctx.requestedOffset)
                     .onDisappear(perform: ctx.dismissAction)
             }
-            .task {
-                await startup()
+    }
+
+    var ContentViewContainer: some View {
+        ZStack {
+            MainContent
+                .onAppear {
+                    selection = InitialSelection
+                }
+                .task {
+                    await startup()
+                }
+                .environmentObject(toaster)
+                .environmentObject(appState)
+        }
+        .onChange(of: scenePhase) { phase in
+            switch phase {
+            case .background:
+                STTScheduler.shared.scheduleAll()
+            default: break
             }
-            .environmentObject(toaster)
-            .environmentObject(appState)
+            appState.didScenePhaseChange(phase)
+        }
     }
 
     var MainContent: some View {
