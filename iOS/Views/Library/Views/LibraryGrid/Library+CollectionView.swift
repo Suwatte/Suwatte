@@ -178,7 +178,7 @@ extension LibraryView {
                     sortOrder.toggle()
 
                 } label: {
-                    Label("Order", systemImage: sortOrder.ascending ? "arrow.down" : "arrow.up")
+                    Label("Order", systemImage: sortOrder.ascending ? "arrow.up" : "arrow.down")
                         .transition(.scale)
                 }
 
