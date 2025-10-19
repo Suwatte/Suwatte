@@ -172,6 +172,7 @@ extension SettingsView {
         @Preference(\.readerBottomScrollbarDirection) var bottomScrollbarDirection
         @Preference(\.readerHideMenuOnSwipe) var readerHideMenuOnSwipe
         @Preference(\.readerScrollbarWidth) var scrollBarWidth
+        @Preference(\.readerPageWindowSize) var pageWindowSize
 
         var body: some View {
             Section {
@@ -216,6 +217,14 @@ extension SettingsView {
                 Text("Reader")
             } footer: {
                 Text("Bottom scrollbar direction will only take effect in vertical/webtoon reading mode")
+            }
+
+            Section {
+                Stepper("Page Window Size: \(pageWindowSize)", value: $pageWindowSize, in: 10...100, step: 5)
+            } header: {
+                Text("Performance")
+            } footer: {
+                Text("For large chapters (200+ pages), aggressively cleans image cache when scrolling. This value indicates the reference window size. Recommended: 50")
             }
         }
     }

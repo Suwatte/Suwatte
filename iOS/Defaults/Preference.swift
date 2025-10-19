@@ -212,6 +212,9 @@ final class Preferences {
 
     @UserDefault(STTKeys.AutoDeleteCompletedChapters)
     var autoDeleteCompletedChapters = false
+
+    @UserDefault(STTKeys.ReaderPageWindowSize)
+    var readerPageWindowSize = 50
 }
 
 @propertyWrapper

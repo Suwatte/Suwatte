@@ -186,4 +186,5 @@ enum STTKeys {
     static let ReaderScrollbarWidth = "READER.scrollbar_width"
     static let ReaderHideMenuOnSwipe = "READER.hide_menu_on_swipe"
     static let AutoDeleteCompletedChapters = "APP.auto_delete_completed_chapters"
+    static let ReaderPageWindowSize = "READER.page_window_size"
 }

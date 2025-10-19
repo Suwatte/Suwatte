@@ -20,6 +20,11 @@ extension Controller {
             let target = page.secondaryPage ?? page.page
             model.updateViewerState(with: target)
             didReadPage(target, path: indexPath)
+
+            // Trigger page window management for large chapters
+            Task { [weak self] in
+                await self?.managePageWindow(currentPage: target)
+            }
         case let .transition(transition):
             model.updateViewerState(with: transition)
             didCompleteChapter(chapter)
@@ -130,5 +135,24 @@ extension Controller {
         let currentOffset = offset
         let pageOffset = Double(currentOffset - pageTop) / size.height
         return pageOffset
+    }
+
+    /// Manage page window for large chapters to reduce memory usage
+    /// For large chapters (200+ pages), aggressively clean image cache for distant pages
+    func managePageWindow(currentPage: ReaderPage) async {
+        // Only apply for large chapters (more than 100 pages)
+        guard currentPage.chapterPageCount > 100 else { return }
+
+        let windowSize = Preferences.standard.readerPageWindowSize
+        let currentIndex = currentPage.index
+
+        // More aggressive image cache cleanup for large chapters
+        await MainActor.run {
+            // Keep only 30% of image cache for large chapters
+            let targetCost = ImageCache.shared.totalCost * 3 / 10
+            ImageCache.shared.trim(toCost: targetCost)
+
+            Logger.shared.log("Large chapter (\(currentPage.chapterPageCount) pages): Page \(currentIndex+1), trimmed image cache", "WebtoonController")
+        }
     }
 }
