@@ -14,10 +14,6 @@ private typealias Controller = IVPagingController
 extension Controller {
     func addTapGestures() {
         let tapGR = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        let doubleTapGR = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
-        doubleTapGR.numberOfTapsRequired = 2
-        tapGR.require(toFail: doubleTapGR)
-        collectionView.addGestureRecognizer(doubleTapGR)
         collectionView.addGestureRecognizer(tapGR)
     }
 
@@ -28,10 +24,6 @@ extension Controller {
 
         let location = sender.location(in: view)
         handleNavigation(at: location)
-    }
-
-    @objc private func handleDoubleTap(_: UITapGestureRecognizer? = nil) {
-        // Do Nothing
     }
 }
 
