@@ -57,7 +57,7 @@ struct UpdateFeedView: View {
                             StateManager.shared.stream(item: highlight, sourceId: content.sourceId)
                         } else {
                             selection = nil
-                            selection = (content.sourceId, nil, highlight)
+                            selection = HighlightIdentifier(sourceId: content.sourceId, sourceName: nil, entry: highlight)
                         }
                     }
                     .id(entry.hashValue)

@@ -8,73 +8,93 @@
 import RealmSwift
 import SwiftUI
 
+struct ProfileNavigationDestination: Hashable {
+    let entryId: String
+    let entryTitle: String
+    let entryCover: String
+    let sourceId: String
+
+    init(entry: DaisukeEngine.Structs.Highlight, sourceId: String) {
+        self.entryId = entry.id
+        self.entryTitle = entry.title
+        self.entryCover = entry.cover
+        self.sourceId = sourceId
+    }
+
+    func toHighlight() -> DaisukeEngine.Structs.Highlight {
+        DaisukeEngine.Structs.Highlight(id: entryId, cover: entryCover, title: entryTitle)
+    }
+}
+
 struct InteractableContent: ViewModifier {
-    @State var isActive = false
     var entry: DaisukeEngine.Structs.Highlight
     var sourceId: String
     @Environment(\.redactionReasons) var reasons
     func body(content: Content) -> some View {
-        NavigationLink {
-            ProfileView(entry: entry, sourceId: sourceId)
-        } label: {
+        NavigationLink(value: ProfileNavigationDestination(entry: entry, sourceId: sourceId)) {
             content
         }
         .buttonStyle(NeutralButtonStyle())
     }
 }
 
-typealias HighlightIdentifier = (sourceId: String, sourceName: String?, entry: DaisukeEngine.Structs.Highlight)
+struct HighlightIdentifier: Equatable {
+    var sourceId: String
+    var sourceName: String?
+    var entry: DaisukeEngine.Structs.Highlight
+}
 
 struct InteractableContainer: ViewModifier {
-    @State private var isActive = false
     @Binding var selection: HighlightIdentifier?
+    @State private var isNavigating = false
+    @State private var destination: ProfileNavigationDestination?
+
     func body(content: Content) -> some View {
         content
-            .background(
-                Group {
-                    if let selection = selection {
-                        HiddenLink(sourceId: selection.sourceId, entry: selection.entry)
+            .navigationDestination(isPresented: $isNavigating) {
+                if let destination = destination {
+                    ProfileView(entry: destination.toHighlight(), sourceId: destination.sourceId)
+                }
+            }
+            .onChange(of: selection) { newSelection in
+                if let newSelection = newSelection {
+                    destination = ProfileNavigationDestination(entry: newSelection.entry, sourceId: newSelection.sourceId)
+                    isNavigating = true
+                    // Clear after navigation is initiated
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        selection = nil
                     }
                 }
-            )
-            .onChange(of: selection?.entry) { _ in
-                isActive.toggle()
+            }
+            .onChange(of: isNavigating) { navigating in
+                if !navigating {
+                    destination = nil
+                }
             }
             .onAppear {
                 selection = nil
             }
     }
-
-    func HiddenLink(sourceId: String, entry: DaisukeEngine.Structs.Highlight) -> some View {
-        NavigationLink(isActive: $isActive,
-                       destination: {
-                           ProfileView(entry: entry, sourceId: sourceId)
-                       },
-                       label: { EmptyView() })
-            .buttonStyle(.plain)
-            .frame(width: 0)
-            .opacity(0)
-    }
 }
 
-struct V1<A: View>: ViewModifier {
-    typealias V = A
-    @Binding var isActive: Bool
-    var child: () -> A
+// MARK: - Hidden Navigation (NavigationStack compatible)
+
+struct HiddenNavigationModifier<Destination: View>: ViewModifier {
+    @Binding var isPresented: Bool
+    @ViewBuilder var destination: () -> Destination
+
     func body(content: Content) -> some View {
         content
-            .background {
-                NavigationLink(isActive: $isActive) {
-                    child()
-                } label: {
-                    EmptyView()
-                }
+            .navigationDestination(isPresented: $isPresented) {
+                destination()
             }
     }
 }
 
 extension View {
+    /// Hidden navigation helper compatible with NavigationStack
+    /// Use this for programmatic navigation triggered by state changes
     func hiddenNav<T: View>(presenting: Binding<Bool>, @ViewBuilder _ view: @escaping () -> T) -> some View {
-        modifier(V1(isActive: presenting, child: view))
+        modifier(HiddenNavigationModifier(isPresented: presenting, destination: view))
     }
 }

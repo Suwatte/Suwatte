@@ -144,7 +144,7 @@ extension DSKHighlightTile {
         if data.link != nil {
             presentLink.toggle()
         } else {
-            selection = (source.id, nil, data)
+            selection = HighlightIdentifier(sourceId: source.id, sourceName: nil, entry: data)
         }
     }
 }

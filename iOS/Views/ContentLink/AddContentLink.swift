@@ -119,7 +119,7 @@ struct AddContentLink: View {
     }
 
     func handleSelection(_ h: DSKCommon.Highlight, _ s: String, _ sn: String) {
-        selection = (sourceId: s, sourceName: sn, entry: h)
+        selection = HighlightIdentifier(sourceId: s, sourceName: sn, entry: h)
         isPresenting.toggle()
     }
 }
