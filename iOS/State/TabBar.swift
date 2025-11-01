@@ -85,9 +85,11 @@ enum AppTabs: Int, CaseIterable {
 
 struct SmartNavigationView<Content>: View where Content: View {
     let content: () -> Content
+    @State private var navigationPath = NavigationPath()
 
     var body: some View {
-        NavigationView(content: content)
-            .navigationViewStyle(.stack)
+        NavigationStack(path: $navigationPath) {
+            content()
+        }
     }
 }

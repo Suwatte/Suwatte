@@ -151,7 +151,6 @@ extension ProfileView.Skeleton.BottomBar {
     struct ActionsListButton: View {
         @State private var inputImage: UIImage?
         @State private var presentImageSheet = false
-        @State private var presentNextEntry = false
         @State private var selections: (DaisukeEngine.Structs.Highlight, String)?
         @EnvironmentObject var model: ProfileView.ViewModel
 
@@ -177,7 +176,6 @@ extension ProfileView.Skeleton.BottomBar {
             .sheet(isPresented: $presentImageSheet) {
                 ImagePicker(image: $inputImage)
             }
-
             .onChange(of: inputImage) { val in
                 guard let val else { return }
                 Task {
@@ -185,22 +183,11 @@ extension ProfileView.Skeleton.BottomBar {
                     await actor.setCustomThumbnail(image: val, id: sttId.id)
                 }
             }
-            .onChange(of: presentNextEntry, perform: { newValue in
-                if !newValue {
-                    selections = nil
-                }
-            })
             .background(
-                VStack {
-                    if let selections = selections {
-                        NavigationLink(destination: ProfileView(entry: selections.0, sourceId: selections.1), isActive: $presentNextEntry) {
-                            EmptyView()
-                        }
-                        .buttonStyle(.plain)
-                        .frame(width: 0)
-                        .opacity(0)
-                    }
+                NavigationLink(value: selections.map { ProfileNavigationDestination(entry: $0.0, sourceId: $0.1) }) {
+                    EmptyView()
                 }
+                .opacity(0)
             )
         }
 
