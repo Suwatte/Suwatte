@@ -23,12 +23,12 @@ enum TitlePinningType: Int, PersistableEnum, CaseIterable, Codable {
 
     var description: String {
         switch self {
-            case .none:
-                return "None"
-            case .unread:
-                return "Unread"
-            case .updated:
-                return "Updated"
+        case .none:
+            return "None"
+        case .unread:
+            return "Unread"
+        case .updated:
+            return "Updated"
         }
     }
 

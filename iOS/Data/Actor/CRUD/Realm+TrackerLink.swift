@@ -17,7 +17,7 @@ extension RealmActor {
 
         if let target {
             await operation {
-                values.forEach { key, value in
+                for (key, value) in values {
                     let pctEncodedKey = key.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
                     target.data.updateValue(value, forKey: pctEncodedKey)
                 }
@@ -27,7 +27,7 @@ extension RealmActor {
 
         let obj = TrackerLink()
         obj.id = id
-        values.forEach { key, value in
+        for (key, value) in values {
             let pctEncodedKey = key.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
             obj.data.updateValue(value, forKey: pctEncodedKey)
         }
@@ -76,7 +76,6 @@ extension RealmActor {
             }
         }
 
-        
         // Add Values from Stored Content
         if Preferences.standard.trackerAutoSync {
             let contentTrackerData = linked
@@ -88,8 +87,6 @@ extension RealmActor {
                 }
             }
         }
-
-
 
         return dict.filter { !$0.value.isEmpty }
     }

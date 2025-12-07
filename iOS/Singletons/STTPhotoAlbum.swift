@@ -33,16 +33,15 @@ import UIKit
     /// Save the image to this app's album.
     ///
     /// - Parameter image: Image to save.
-    public func save(_ image: UIImage?) {
+    func save(_ image: UIImage?) {
         guard let image = image else { return }
 
         // Request authorization and create the album
         requestAuthorizationIfNeeded { _ in
-
             // If it all went well, we've got our asset collection
             guard let assetCollection = self.assetCollection else { return }
 
-            PHPhotoLibrary.shared().performChanges({
+            PHPhotoLibrary.shared().performChanges {
                 // Make sure that there's no issue while creating the request
                 let request = PHAssetChangeRequest.creationRequestForAsset(from: image)
                 guard let placeholder = request.placeholderForCreatedAsset,
@@ -54,9 +53,9 @@ import UIKit
                 let enumeration: NSArray = [placeholder]
                 albumChangeRequest.addAssets(enumeration)
 
-            }, completionHandler: { _, _ in
+            } completionHandler: { _, _ in
                 ToastManager.shared.display(.info("Saved Image"))
-            })
+            }
         }
     }
 }

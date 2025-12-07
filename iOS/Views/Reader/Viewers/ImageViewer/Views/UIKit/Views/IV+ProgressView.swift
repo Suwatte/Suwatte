@@ -17,16 +17,16 @@ class CircularProgressView: UIView {
 
     // MARK: Public
 
-    public var lineWidth: CGFloat = 5.5 {
+    var lineWidth: CGFloat = 5.5 {
         didSet {
             foregroundLayer.lineWidth = lineWidth
             backgroundLayer.lineWidth = lineWidth - (0.20 * lineWidth)
         }
     }
 
-    public var safePercent: Int = 100
+    var safePercent: Int = 100
 
-    public func setProgress(to progressConstant: Double, withAnimation: Bool) {
+    func setProgress(to progressConstant: Double, withAnimation: Bool) {
         var progress: Double {
             if progressConstant > 1 { return 1 }
             else if progressConstant < 0 { return 0 }

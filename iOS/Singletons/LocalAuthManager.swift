@@ -106,7 +106,6 @@ final class LocalAuthManager: ObservableObject {
             let reason = "Please authenticate yourself to unlock your protected content."
 
             context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { success, _ in
-
                 Task { @MainActor in
                     if !success {
                         self.handleFail(toggle: toggleOnFail)

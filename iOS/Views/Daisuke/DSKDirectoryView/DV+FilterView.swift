@@ -123,7 +123,6 @@ extension DirectoryView {
                         let txt = "Excluding \(label): \(excluded)"
                         texts.append(txt)
                     }
-
                 default: break
                 }
             }
@@ -201,7 +200,7 @@ extension DirectoryView.FilterView.Cell {
                     $0.title.lowercased().contains(query.lowercased())
                 }
             }
-            
+
             return ops
         }
 
@@ -292,7 +291,7 @@ extension DirectoryView.FilterView.Cell {
                     data.updateValue(AnyCodable(props.included), forKey: filter.id)
                 }
             case .excludableMultiselect:
-                if props.included.isEmpty && props.excluded.isEmpty {
+                if props.included.isEmpty, props.excluded.isEmpty {
                     data.removeValue(forKey: filter.id)
                 } else {
                     data.updateValue(AnyCodable(props), forKey: filter.id)

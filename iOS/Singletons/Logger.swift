@@ -53,9 +53,9 @@ extension Logger {
         var entry = entry
         let devMode = UserDefaults.standard.bool(forKey: STTKeys.RunnerDevMode)
         // Limit msg to 3000 chars
-        if !devMode && entry.message.count >= 3000 {
+        if !devMode, entry.message.count >= 3000 {
             entry.message = entry.message.subString(from: 0, to: 3000)
-            + "\r\n Suwatte: The log is longer than 3000 characters and was cut. Enable developer mode to see the full message!"
+                + "\r\n Suwatte: The log is longer than 3000 characters and was cut. Enable developer mode to see the full message!"
         }
         let localEntry = entry
 
@@ -82,7 +82,6 @@ extension Logger {
         }
 
         Task {
-
             let logAddress = UserDefaults.standard.string(forKey: STTKeys.LogAddress)
 
             guard devMode, let logAddress, let address = URL(string: logAddress) else { return }

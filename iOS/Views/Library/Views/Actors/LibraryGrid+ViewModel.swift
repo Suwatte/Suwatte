@@ -31,7 +31,7 @@ extension LibraryView.LibraryGrid {
         @Published var navSelection: LibraryEntry?
         @Published var query = ""
         @Published var library: Results<LibraryEntry>?
-        private var token: NotificationToken? = nil
+        private var token: NotificationToken?
 
         init(collection: LibraryCollection? = nil, readingFlag: LibraryFlag? = nil) {
             self.collection = collection

@@ -100,7 +100,7 @@ extension LibraryView.LibraryGrid {
                 return
             }
 
-            if pinnedLibrary.isEmpty && regularLibrary.isEmpty {
+            if pinnedLibrary.isEmpty, regularLibrary.isEmpty {
                 return
             }
 

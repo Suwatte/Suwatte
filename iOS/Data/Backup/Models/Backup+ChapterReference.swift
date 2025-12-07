@@ -34,7 +34,7 @@ extension ChapterReference: Codable {
         try container.encode(content!.id, forKey: .contentId)
     }
 
-    func updateFromBackup(data: Dictionary<String, [StoredContent]>) {
+    func updateFromBackup(data: [String: [StoredContent]]) {
         content = data[contentId!]?.first
     }
 }

@@ -51,7 +51,7 @@ class STTAppDelegate: NSObject, UIApplicationDelegate {
                 MigrationHelper.migrateInteractorStoreObjects(migration: migration)
             }
         }, shouldCompactOnLaunch: { totalBytes, usedBytes in
-            return (Double(usedBytes) / Double(totalBytes)) < 0.5
+            (Double(usedBytes) / Double(totalBytes)) < 0.5
         })
 
         let directory = FileManager.default.applicationSupport.appendingPathComponent("Database", isDirectory: true)

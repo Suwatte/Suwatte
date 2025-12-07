@@ -32,8 +32,8 @@ extension RealmActor {
                 .keys
                 .sorted(by: { grouped[$0]![0].lastUpdated > grouped[$1]![0].lastUpdated })
             var data = [UpdateFeedGroup]()
-            sortedKeys.forEach {
-                data.append(.init(header: $0, content: grouped[$0] ?? []))
+            for sortedKey in sortedKeys {
+                data.append(.init(header: sortedKey, content: grouped[sortedKey] ?? []))
             }
 
             return data

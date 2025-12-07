@@ -48,7 +48,7 @@ extension DSKPageView {
 
 extension DSKPageView.CollectionView {
     func loadAll(force: Bool = false) {
-        guard !locked && !force else { return }
+        guard !locked, !force else { return }
         locked = true // prevent from refiring
         let unresolved = pageSections.filter { $0.items == nil }.map(\.id)
 

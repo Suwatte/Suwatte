@@ -22,13 +22,11 @@ enum AppTabs: Int, CaseIterable {
         case .downloads:
             SourceDownloadView()
                 .protectContent()
-
         case .feed:
             SmartNavigationView {
                 UpdateFeedView()
             }
             .protectContent()
-
         case .more:
             MoreView()
         case .library:

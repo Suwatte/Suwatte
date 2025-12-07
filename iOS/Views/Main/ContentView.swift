@@ -72,11 +72,11 @@ struct ContentView: View {
             }
         }
     }
-    
+
     private func startup() async {
         appState.initialize()
         await appState.observe()
-        
+
         // Notification Center
 
         do {
@@ -85,7 +85,7 @@ struct ContentView: View {
         } catch {
             Logger.shared.error(error)
         }
-        
+
         Task { @MainActor in
             if !UserDefaults.standard.bool(forKey: STTKeys.OldProgressMarkersMigrated) {
                 await MigrationHelper.migrateProgressMarker()

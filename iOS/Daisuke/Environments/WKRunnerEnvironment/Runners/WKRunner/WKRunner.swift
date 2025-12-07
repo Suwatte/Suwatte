@@ -91,7 +91,7 @@ extension WKBootstrapper: WKScriptMessageHandler {
         wv = nil
     }
 
-    public func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) {
+    func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) {
         let msg = message.body as? String
         guard let msg else { return }
         switch msg {

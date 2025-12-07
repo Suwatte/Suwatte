@@ -44,7 +44,6 @@ extension DSKAuthView {
             let url = try basicURL.toURL()
 
             let session = ASWebAuthenticationSession(url: url, callbackURLScheme: "suwatte") { callbackURL, error in
-
                 if let error {
                     Logger.shared.error(error)
                     alert()
