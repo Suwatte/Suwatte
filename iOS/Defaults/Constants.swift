@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 
-
 enum STTHost {
     static let root = URL(string: "https://www.suwatte.app")!
 

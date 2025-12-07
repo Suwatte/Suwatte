@@ -124,7 +124,6 @@ extension LibraryView.LibraryGrid {
 
         func contextMenuProvider(int _: Int, content: LibraryEntry) -> UIContextMenuConfiguration? {
             let configuration = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ -> UIMenu? in
-
                 var nonDestructiveActions = [UIAction]()
                 var destructiveActions: [UIAction] = []
 
@@ -211,7 +210,6 @@ struct NeutralButtonStyle: ButtonStyle {
 @MainActor
 func DynamicGridLayout(header: NSCollectionLayoutDimension? = nil, footer: NSCollectionLayoutDimension? = nil, _ titleSize: CGFloat? = nil) -> UICollectionViewCompositionalLayout {
     UICollectionViewCompositionalLayout { _, environment in
-
         let viewingPortrait = environment.container.contentSize.width < environment.container.contentSize.height
         let itemsPerRow = UserDefaults.standard.integer(forKey: viewingPortrait ? STTKeys.GridItemsPerRow_P : STTKeys.GridItemsPerRow_LS)
         let style = TileStyle(rawValue: UserDefaults.standard.integer(forKey: STTKeys.TileStyle)) ?? .COMPACT

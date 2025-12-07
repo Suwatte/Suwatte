@@ -37,7 +37,7 @@ extension RealmActor {
         guard let content = getObject(of: StreamableOPDSContent.self, with: id), !content.isDeleted else {
             return nil
         }
-        
+
         return freezed ? content.freeze() : content
     }
 

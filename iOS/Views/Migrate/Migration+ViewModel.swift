@@ -89,8 +89,8 @@ extension MigrationController {
 
         withAnimation {
             contents.removeAll(where: { cases.contains($0.id) })
-            cases.forEach {
-                operations.removeValue(forKey: $0)
+            for item in cases {
+                operations.removeValue(forKey: item)
             }
         }
     }
@@ -130,7 +130,6 @@ extension MigrationController {
     private typealias ReturnValue = (entry: TaggedHighlight, number: Double, chapterCount: Int)
     private func handleSourcesSearch(id: String, query: String, chapter: Double?, sources: [AnyContentSource]) async -> (id: String, state: MigrationItemState) {
         await withTaskGroup(of: ReturnValue?.self, body: { group in
-
             for source in sources {
                 guard !Task.isCancelled else {
                     return (id, .idle)
@@ -146,9 +145,8 @@ extension MigrationController {
             var max: ReturnValue?
             for await value in group {
                 if let value {
-
                     // Skip migrating to the same item
-                    if !singleSourceMigration && id == value.entry.id {
+                    if !singleSourceMigration, id == value.entry.id {
                         continue
                     }
 
@@ -239,7 +237,6 @@ extension MigrationController {
     }
 }
 
-
 final actor InnerMigrationActor {
     var operations: [String: MigrationItemState] = [:]
     var libraryStrat: LibraryMigrationStrategy
@@ -247,22 +244,23 @@ final actor InnerMigrationActor {
     var realm: Realm!
     init(operations: [String: MigrationItemState], libStrat: LibraryMigrationStrategy, lessChStrat: LowerChapterMigrationStrategy) async throws {
         self.operations = operations
-        self.libraryStrat = libStrat
-        self.lessChapterSrat = lessChStrat
+        libraryStrat = libStrat
+        lessChapterSrat = lessChStrat
     }
 }
-// MARK: - MigrationController refactor (synchronous writes)
-extension InnerMigrationActor {
 
+// MARK: - MigrationController refactor (synchronous writes)
+
+extension InnerMigrationActor {
     // MARK: – Public entry‑point
+
     func migrate() async -> Bool {
         defer { Task { @MainActor in ToastManager.shared.loading = false } }
-        self.realm = try! await Realm(actor: self)
+        realm = try! await Realm(actor: self)
 
         await migrate_showLoadingToast()
 
         guard await migrate_runBackup() else { return false }
-
 
         do {
             try realm.write {
@@ -283,6 +281,7 @@ extension InnerMigrationActor {
     }
 
     // MARK: – Top‑level helpers
+
     @MainActor
     private func migrate_showLoadingToast() async {
         ToastManager.shared.loading = true
@@ -300,6 +299,7 @@ extension InnerMigrationActor {
     }
 
     // MARK: – Core loop (executed inside the single write)
+
     private func migrate_start(
         operations: [String: MigrationItemState],
         libraryStrat: LibraryMigrationStrategy,
@@ -316,14 +316,14 @@ extension InnerMigrationActor {
 
             case let .found(result, _):
                 switch libraryStrat {
-                case .link:    migrate_link(libEntry, with: result)
+                case .link: migrate_link(libEntry, with: result)
                 case .replace: migrate_replace(libEntry, with: result)
                 }
 
             case let .lowerFind(result, _, _, _):
                 if lessChapterSrat == .skip { continue }
                 switch libraryStrat {
-                case .link:    migrate_link(libEntry, with: result)
+                case .link: migrate_link(libEntry, with: result)
                 case .replace: migrate_replace(libEntry, with: result)
                 }
             }
@@ -331,6 +331,7 @@ extension InnerMigrationActor {
     }
 
     // MARK: – Extracted helpers (bodies unchanged)
+
     private func migrate_get(_ id: String, in realm: Realm) -> LibraryEntry? {
         realm.object(ofType: LibraryEntry.self, forPrimaryKey: id)
     }
@@ -350,7 +351,7 @@ extension InnerMigrationActor {
         if isAlreadyLinked { return }
 
         let object = ContentLink()
-        object.entry   = entry
+        object.entry = entry
         object.content = migrate_findOrCreate(highlight)
         realm.add(object, update: .modified)
     }
@@ -364,30 +365,31 @@ extension InnerMigrationActor {
         with highlight: TaggedHighlight
     ) {
         let object = LibraryEntry()
-        object.content     = migrate_findOrCreate(highlight)
+        object.content = migrate_findOrCreate(highlight)
         object.collections = entry.collections
-        object.flag        = entry.flag
-        object.dateAdded   = entry.dateAdded
+        object.flag = entry.flag
+        object.dateAdded = entry.dateAdded
 
         let progressMarkers = realm
             .objects(ProgressMarker.self)
             .where { $0.chapter.content.sourceId == entry.content!.sourceId &&
-                     $0.chapter.content.contentId == entry.content!.contentId &&
-                     !$0.isDeleted }
+                $0.chapter.content.contentId == entry.content!.contentId &&
+                !$0.isDeleted
+            }
             .freeze()
             .toArray()
 
         let highlightChapters = realm
             .objects(StoredChapter.self)
             .where { $0.contentId == highlight.contentID }
-            .where { $0.sourceId  == highlight.sourceID }
+            .where { $0.sourceId == highlight.sourceID }
             .freeze()
             .toArray()
 
         // Update Read Chapters
         let readChaptersByOrderKey = progressMarkers
             .filter { $0.isCompleted }
-            .map   { $0.chapter!.chapterOrderKey }
+            .map { $0.chapter!.chapterOrderKey }
 
         let readChaptersByNumber: [Double] = readChaptersByOrderKey.compactMap { chapterOrderKey in
             let chapterNumber = ThreadSafeChapter.orderKey(
@@ -395,7 +397,7 @@ extension InnerMigrationActor {
                 number: ThreadSafeChapter.vnPair(from: chapterOrderKey).1
             )
             guard let chapterRef = highlightChapters
-                    .first(where: { $0.chapterOrderKey == chapterNumber }) else { return nil }
+                .first(where: { $0.chapterOrderKey == chapterNumber }) else { return nil }
 
             let reference: ChapterReference? = chapterRef.generateReference()
             let content = realm.object(ofType: StoredContent.self, forPrimaryKey: chapterRef.contentIdentifier.id)
@@ -410,8 +412,8 @@ extension InnerMigrationActor {
 
             realm.add(reference, update: .modified)
 
-            let marker    = ProgressMarker()
-            marker.id     = chapterRef.id
+            let marker = ProgressMarker()
+            marker.id = chapterRef.id
             marker.chapter = reference
             marker.setCompleted(hideInHistory: true)
             marker.isDeleted = false
@@ -430,7 +432,7 @@ extension InnerMigrationActor {
             unreadChapters,
             with: ContentIdentifier(
                 contentId: highlight.contentID,
-                sourceId:  highlight.sourceID
+                sourceId: highlight.sourceID
             )
         ).count
         object.unreadCount = count
@@ -448,12 +450,11 @@ extension InnerMigrationActor {
     ) -> StoredContent {
         if let target = realm.object(ofType: StoredContent.self, forPrimaryKey: entry.id) { return target }
 
-
-        let object       = StoredContent()
+        let object = StoredContent()
         object.contentId = entry.contentID
-        object.cover     = entry.coverURL
-        object.title     = entry.title
-        object.sourceId  = entry.sourceID
+        object.cover = entry.coverURL
+        object.title = entry.title
+        object.sourceId = entry.sourceID
 
         realm.add(object, update: .modified)
         return object

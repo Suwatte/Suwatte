@@ -1,5 +1,5 @@
 //
-//  Migration.swift
+//  MigrationHelper.swift
 //  Suwatte (iOS)
 //
 //  Created by Seyden on 02.05.24.
@@ -10,11 +10,11 @@ import RealmSwift
 
 class MigrationHelper {
     static func migrateContentLinks(migration: Migration) {
-        migration.enumerateObjects(ofType: ContentLink.className()) { oldContentLinkObject, newContentLinkObject in
+        migration.enumerateObjects(ofType: ContentLink.className()) { _, newContentLinkObject in
             migration.delete(newContentLinkObject!)
         }
     }
-    
+
     @MainActor
     static func migrateProgressMarker() async {
         let realm = try! await Realm(actor: MainActor.shared)
@@ -36,7 +36,6 @@ class MigrationHelper {
 
             let readChapters = progressMarker.readChapters
             readChapterLoop: for readChapter in readChapters {
-
                 storedChapterLoop: for storedChapter in storedChapters {
                     let chapterOrderKey = ThreadSafeChapter.orderKey(volume: readChapter < 10000 ? 0 : storedChapter.volume, number: storedChapter.number)
 
@@ -61,7 +60,6 @@ class MigrationHelper {
                         break storedChapterLoop
                     }
                 }
-
             }
 
             if !newProgressMarkers.isEmpty {

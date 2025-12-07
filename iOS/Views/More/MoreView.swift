@@ -19,7 +19,7 @@ struct MoreView: View {
             }
             .listStyle(.insetGrouped)
             .navigationTitle("More")
-            
+
             SettingsView()
         }
     }

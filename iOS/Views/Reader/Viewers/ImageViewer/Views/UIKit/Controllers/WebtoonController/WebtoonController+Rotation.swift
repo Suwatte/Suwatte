@@ -6,6 +6,7 @@
 //
 
 import UIKit
+
 private typealias Controller = WebtoonController
 
 extension Controller: UICollectionViewDelegate {

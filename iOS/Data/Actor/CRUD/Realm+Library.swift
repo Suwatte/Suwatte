@@ -20,9 +20,8 @@ extension RealmActor {
             .freeze()
             .toArray()
     }
-    
-    func getDanglingLibraryHighlights(with known: [String]) -> Dictionary<String, [TaggedHighlight]> {
-        
+
+    func getDanglingLibraryHighlights(with known: [String]) -> [String: [TaggedHighlight]] {
         let entries = realm
             .objects(LibraryEntry.self)
             .where { $0.content != nil }
@@ -33,7 +32,7 @@ extension RealmActor {
             .map {
                 TaggedHighlight(from: $0.content!.toHighlight(), with: $0.content!.sourceId)
             }
-        
+
         return Dictionary(grouping: entries, by: \.sourceID)
     }
 }
@@ -101,7 +100,7 @@ extension RealmActor {
     @discardableResult
     func toggleLibraryState(for ids: ContentIdentifier) async -> Bool {
         let source = await DSK.shared.getSource(id: ids.sourceId)
-        if let target = self.getObject(of: LibraryEntry.self, with: ids.id), !target.isDeleted {
+        if let target = getObject(of: LibraryEntry.self, with: ids.id), !target.isDeleted {
             // Run Removal Event
             Task {
                 do {
@@ -213,9 +212,9 @@ extension RealmActor {
         let objects = realm.objects(LibraryEntry.self)
             .where { $0.id.in(entries) }
         await operation {
-            objects.forEach {
-                $0.collections.removeAll()
-                $0.collections.append(objectsIn: cids)
+            for object in objects {
+                object.collections.removeAll()
+                object.collections.append(objectsIn: cids)
             }
         }
     }

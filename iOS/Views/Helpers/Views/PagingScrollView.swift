@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct PagingView<Views: View>: View {
-    public typealias Config = _PagingViewConfig
-    public typealias PageIndex = _VariadicView.Children.Index
+    typealias Config = _PagingViewConfig
+    typealias PageIndex = _VariadicView.Children.Index
 
     private let tree: _VariadicView.Tree<Root, Views>
 
-    public init(
+    init(
         config: Config = Config(),
         page: Binding<PageIndex>? = nil,
         @ViewBuilder _ content: () -> Views
@@ -24,7 +24,7 @@ struct PagingView<Views: View>: View {
         )
     }
 
-    public init(
+    init(
         direction: _PagingViewConfig.Direction,
         page: Binding<PageIndex>? = nil,
         @ViewBuilder _ content: () -> Views
@@ -35,7 +35,7 @@ struct PagingView<Views: View>: View {
         )
     }
 
-    public var body: some View { tree }
+    var body: some View { tree }
 
     struct Root: _VariadicView.UnaryViewRoot {
         let config: Config

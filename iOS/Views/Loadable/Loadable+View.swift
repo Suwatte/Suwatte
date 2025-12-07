@@ -184,6 +184,7 @@ struct OldLoadableView<Value, Idle, Loading, Failure, Content>: View where Idle:
                             await load()
                         }
                     }
+
             case .loading:
                 loading()
                     .transition(.opacity)

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 private typealias Controller = WebtoonController
 
 extension Controller {

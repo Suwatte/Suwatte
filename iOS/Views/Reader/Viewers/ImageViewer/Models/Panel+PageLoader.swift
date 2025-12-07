@@ -14,7 +14,7 @@ import UIKit
 // Global actor that handles image loading
 @globalActor actor PanelActor: GlobalActor {
     static let shared = PanelActor()
-    public static func run<T>(resultType _: T.Type = T.self, body: @Sendable () async throws -> T) async rethrows -> T where T: Sendable {
+    static func run<T>(resultType _: T.Type = T.self, body: @Sendable () async throws -> T) async rethrows -> T where T: Sendable {
         try await body()
     }
 }
@@ -87,7 +87,7 @@ extension PanelActor {
             }
         }
 
-        if cropWhiteSpaces && !isVertical {
+        if cropWhiteSpaces, !isVertical {
             processors.append(NukeWhitespaceProcessor())
         }
 

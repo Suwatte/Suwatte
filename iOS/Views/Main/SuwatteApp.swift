@@ -81,14 +81,12 @@ extension SuwatteApp {
     private func handleDirectoryPath(_ url: URL) {
         switch url.pathExtension.lowercased() {
         case "json":
-
             do {
                 try BackupManager.shared.import(from: url)
                 ToastManager.shared.display(.info("File Imported"))
             } catch {
                 ToastManager.shared.display(.error(error))
             }
-
         case "stt":
             Task {
                 do {

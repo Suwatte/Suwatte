@@ -19,7 +19,6 @@ extension LibraryView.ReadLaterView.CollectionView {
             return nil
         }
         let configuration = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ -> UIMenu? in
-
             var actions = [UIAction]()
             let removeAction = UIAction(title: "Remove from Read Later", image: UIImage(systemName: "bookmark.slash"), attributes: .destructive) {
                 _ in

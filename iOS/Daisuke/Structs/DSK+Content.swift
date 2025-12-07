@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 struct ContentIdentifier: Parsable, Hashable {
     var contentId: String
     var sourceId: String
@@ -99,25 +100,25 @@ enum ReaderScrollbarPosition: Int, CaseIterable, Hashable, UserDefaultsSerializa
 
     func isVertical(_ isReadingModeVertical: Bool) -> Bool {
         switch self {
-            case.AUTO:
-                return isReadingModeVertical
-            case .BOTTOM:
-                return false
-            default:
-                return true
+        case .AUTO:
+            return isReadingModeVertical
+        case .BOTTOM:
+            return false
+        default:
+            return true
         }
     }
 
     var description: String {
         switch self {
-            case .BOTTOM:
-                return "Bottom"
-            case .RIGHT:
-                return "Right"
-            case .LEFT:
-                return "Left"
-            case .AUTO:
-                return "Auto"
+        case .BOTTOM:
+            return "Bottom"
+        case .RIGHT:
+            return "Right"
+        case .LEFT:
+            return "Left"
+        case .AUTO:
+            return "Auto"
         }
     }
 }
@@ -136,14 +137,13 @@ enum ReaderBottomScrollbarDirection: Int, CaseIterable, Hashable, UserDefaultsSe
 
     var description: String {
         switch self {
-            case .RIGHT:
-                return "Right"
-            case .LEFT:
-                return "Left"
+        case .RIGHT:
+            return "Right"
+        case .LEFT:
+            return "Left"
         }
     }
 }
-
 
 extension DaisukeEngine.Structs {
     struct Highlight: Parsable, Identifiable, Hashable {

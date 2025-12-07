@@ -9,7 +9,7 @@ import Foundation
 
 @globalActor actor RunnerActor: GlobalActor {
     static let shared = RunnerActor()
-    public static func run<T>(resultType _: T.Type = T.self, body: @Sendable () async throws -> T) async rethrows -> T where T: Sendable {
+    static func run<T>(resultType _: T.Type = T.self, body: @Sendable () async throws -> T) async rethrows -> T where T: Sendable {
         try await body()
     }
 }

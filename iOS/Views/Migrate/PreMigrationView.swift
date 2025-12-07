@@ -16,11 +16,8 @@ struct PreMigrationView: View {
             ZStack {
                 if model.loaded {
                     List {
-
-                        
                         InstalledSourcesSection
                         DanglingSourcesSection
-                       
                     }
                 } else {
                     ProgressView()
@@ -43,7 +40,7 @@ struct PreMigrationView: View {
             .toast()
         }
     }
-    
+
     private func BuildSection(logs: [String: [TaggedHighlight]], title: String) -> some View {
         Section {
             ForEach(Array(logs.keys).sorted()) { key in
@@ -51,13 +48,13 @@ struct PreMigrationView: View {
                 let source = model.sources.first(where: { $0.id == key })
                 let name = source?.name ?? "Unknown"
                 let version = source?.version
-                
+
                 NavigationLink {
                     MigrationView(model: .init(contents: data))
                 } label: {
                     HStack {
                         VStack(alignment: .leading) {
-                            HStack (alignment: .bottom, spacing: 2){
+                            HStack(alignment: .bottom, spacing: 2) {
                                 Text(name)
                                 if let version {
                                     Text("v\(version.clean)")
@@ -77,18 +74,16 @@ struct PreMigrationView: View {
                             .opacity(0.50)
                     }
                 }
-                
             }
         } header: {
             Text(title)
         }
     }
-    
-    
-    private var InstalledSourcesSection : some View {
+
+    private var InstalledSourcesSection: some View {
         BuildSection(logs: model.data, title: "Installed Sources")
     }
-    
+
     private var DanglingSourcesSection: some View {
         BuildSection(logs: model.dangling, title: "Unknown Sources")
     }
@@ -117,10 +112,10 @@ final class PreMigrationController: ObservableObject {
                 .map { TaggedHighlight(from: $0.toHighlight(), with: $0.sourceId) }
             prepped[source.id] = data
         }
-        
+
         // Get Dangling Entries
         let dangling = await actor.getDanglingLibraryHighlights(with: sources.map(\.id))
-        
+
         await MainActor.run { [weak self, prepped] in
             self?.sources = sources
             self?.data = prepped

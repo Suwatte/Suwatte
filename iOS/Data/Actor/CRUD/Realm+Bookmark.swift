@@ -21,19 +21,19 @@ extension RealmActor {
 
         let reference: ChapterReference? = chapter.toStored().generateReference()
         switch chapter.sourceId {
-            case STTHelpers.LOCAL_CONTENT_ID:
-                reference?.archive = getArchivedContentInfo(chapter.contentId, freezed: false)
-            case STTHelpers.OPDS_CONTENT_ID:
-                reference?.opds = getPublication(id: chapter.id, freezed: false)
-            default:
-                reference?.content = getStoredContent(chapter.STTContentIdentifier)
+        case STTHelpers.LOCAL_CONTENT_ID:
+            reference?.archive = getArchivedContentInfo(chapter.contentId, freezed: false)
+        case STTHelpers.OPDS_CONTENT_ID:
+            reference?.opds = getPublication(id: chapter.id, freezed: false)
+        default:
+            reference?.content = getStoredContent(chapter.STTContentIdentifier)
         }
 
         guard let reference, reference.isValid else {
             Logger.shared.error("Invalid Chapter Reference")
             return false
         }
-        
+
         await operation {
             realm.add(reference, update: .modified)
         }
@@ -85,12 +85,12 @@ extension RealmActor {
 
         let reference: ChapterReference? = chapter.toStored().generateReference()
         switch chapter.sourceId {
-            case STTHelpers.LOCAL_CONTENT_ID:
-                reference?.archive = getArchivedContentInfo(chapter.contentId, freezed: false)
-            case STTHelpers.OPDS_CONTENT_ID:
-                reference?.opds = getPublication(id: chapter.id, freezed: false)
-            default:
-                reference?.content = getStoredContent(chapter.STTContentIdentifier)
+        case STTHelpers.LOCAL_CONTENT_ID:
+            reference?.archive = getArchivedContentInfo(chapter.contentId, freezed: false)
+        case STTHelpers.OPDS_CONTENT_ID:
+            reference?.opds = getPublication(id: chapter.id, freezed: false)
+        default:
+            reference?.content = getStoredContent(chapter.STTContentIdentifier)
         }
 
         guard let reference, reference.isValid else {

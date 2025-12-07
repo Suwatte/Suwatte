@@ -13,10 +13,10 @@ enum LogicalOperator: Int, PersistableEnum, CaseIterable, Codable {
 
     var description: String {
         switch self {
-            case .and:
-                return "AND"
-            case .or:
-                return "OR"
+        case .and:
+            return "AND"
+        case .or:
+            return "OR"
         }
     }
 }

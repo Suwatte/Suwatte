@@ -46,6 +46,7 @@ final class ChapterReference: Object, CKRecordConvertible, CKRecordRecoverable, 
             }
         }
     }
+
     @Persisted var opds: StreamableOPDSContent? {
         didSet {
             if let opds = opds {
@@ -53,6 +54,7 @@ final class ChapterReference: Object, CKRecordConvertible, CKRecordRecoverable, 
             }
         }
     }
+
     @Persisted var archive: ArchivedContent? {
         didSet {
             if let archive = archive {
@@ -60,6 +62,7 @@ final class ChapterReference: Object, CKRecordConvertible, CKRecordRecoverable, 
             }
         }
     }
+
     @Persisted var isDeleted: Bool = false
 
     var isValid: Bool {

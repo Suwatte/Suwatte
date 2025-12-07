@@ -167,7 +167,7 @@ enum STTKeys {
     static let SyncDatabase = "APP.sync_db"
 
     static let UseCompactLibraryView = "APP.compact_library"
-    
+
     static let TrackerAutoSync = "APP.tracker_auto_sync"
 
     static let ImageScaleType = "READER.image_scale"
