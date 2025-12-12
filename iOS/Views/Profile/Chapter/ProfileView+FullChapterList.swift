@@ -41,18 +41,15 @@ struct ChapterList: View {
         .animation(.default, value: selections)
         .animation(.default, value: model.actionState)
         .navigationTitle("Chapters")
-        .modifier(ConditionalToolBarModifier(showBB: Binding.constant(editMode?.wrappedValue == .active)))
-        .toolbar {
-            ToolbarItemGroup(placement: .bottomBar) {
-                if editMode?.wrappedValue == .active {
-                    BottomBar
-                }
-            }
-        }
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 EditButton()
-                MenuButton()
+                if editMode?.wrappedValue == .active {
+                    EditOptionsButton
+                } else {
+                    MenuButton()
+                }
+                
             }
         }
         .onAppear {
