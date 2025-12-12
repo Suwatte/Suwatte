@@ -56,26 +56,26 @@ extension ChapterList {
 
 extension ChapterList {
     @ViewBuilder
-    var BottomBar: some View {
-        Menu("Select") {
-            Button("Select All") { selectAll() }
-            Button("Deselect All") { deselectAll() }
-            Divider()
-            Button("Fill Range") { fillRange() }
-            Button("Invert Selection") { invertSelection() }
-            Divider()
-            Button("Select All Below") { selectBelow() }
-            Button("Select All Above") { selectAbove() }
-        }
-        Spacer()
-        Menu("Mark") {
-            Button("Read") { markAsRead() }
-            Button("Unread") { markAsUnread() }
-        }
-        Spacer()
+    var EditOptionsButton: some View {
         Menu("Options") {
-            Button("Download Chapter(s)") { addToDownloadQueue() }
-            Button("Delete / Cancel Download(s)", role: .destructive) { removeDownload() }
+            Menu("Select") {
+                Button("Select All") { selectAll() }
+                Button("Deselect All") { deselectAll() }
+                Divider()
+                Button("Fill Range") { fillRange() }
+                Button("Invert Selection") { invertSelection() }
+                Divider()
+                Button("Select All Below") { selectBelow() }
+                Button("Select All Above") { selectAbove() }
+            }
+            Menu("Mark") {
+                Button("Read") { markAsRead() }
+                Button("Unread") { markAsUnread() }
+            }
+            Menu("Options") {
+                Button("Download Chapter(s)") { addToDownloadQueue() }
+                Button("Delete / Cancel Download(s)", role: .destructive) { removeDownload() }
+            }
         }
     }
 }
