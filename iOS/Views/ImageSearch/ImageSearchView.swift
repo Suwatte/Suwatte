@@ -102,9 +102,9 @@ extension ImageSearchView {
                     Text(entry.header.similarity + "% Match")
                         .font(.subheadline)
                         .padding(.bottom)
-                    Text("Written By " + entry.data.author)
+                    Text("Written By " + (entry.data.author ?? "Unknown"))
                         .font(.footnote)
-                    Text("Art By " + entry.data.artist)
+                    Text("Art By " + (entry.data.artist ?? "Unknown"))
                         .font(.footnote)
                     Spacer()
                 }

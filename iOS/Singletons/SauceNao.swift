@@ -66,7 +66,7 @@ extension SauceNao {
         var mal_id: Int?
         var source: String
         var part: String
-        var artist: String
-        var author: String
+        var artist: String?
+        var author: String?
     }
 }
