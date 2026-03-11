@@ -27,7 +27,7 @@ class PagedViewerImageHolder: UIView {
     var errorView: UIView?
 
     // Tasks
-    private weak var nukeTask: AsyncImageTask?
+    private weak var nukeTask: ImageTask?
     private var imageTask: Task<Void, Never>?
 
     // Image Constraints

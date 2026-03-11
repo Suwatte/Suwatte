@@ -28,7 +28,7 @@ class DoublePagedDisplayHolder: UIView {
     private let progressView = CircularProgressView()
     private var errorView: UIView?
 
-    private weak var nukeTask: AsyncImageTask?
+    private weak var nukeTask: ImageTask?
     private var imageTask: Task<Void, Never>?
     private var pageProgress: (Double, Double) = (0, 0)
 
